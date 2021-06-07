@@ -1,41 +1,37 @@
-import { Subscription } from 'rxjs';
-import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
-import { } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
-import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { LoginHandlerService } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 import {
-  Profile,
+  AuditProps,
+  AuditType, CorReleationDataType, Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Subscription } from 'rxjs';
+import {
+  AuditState, CorrelationData, Profile,
   ProfileService,
   ProfileSource,
   ProfileType,
   SharedPreferences,
-  CorrelationData,
-  AuditState,
   UpdateServerProfileInfoRequest
 } from 'sunbird-sdk';
-import {
-  Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId,
-  CorReleationDataType,
-  AuditProps,
-  AuditType
-} from '@app/services/telemetry-constants';
-import { ContainerService } from '@app/services/container.services';
-import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { LoginHandlerService } from '@app/services';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -54,12 +50,13 @@ export class UserTypeSelectionPage implements OnDestroy {
   otherImageUri = 'assets/imgs/ic_other.svg';
   selectCardImageUri = 'assets/imgs/ic_check.svg';
   private navParams: any;
-  @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
+  @ViewChild(IonRouterOutlet, { static: false }) routerOutlet: IonRouterOutlet;
   appName = '';
   public hideBackButton = true;
   ProfileType = ProfileType;
   categoriesProfileData: any;
   supportedUserTypeConfig: Array<any>;
+  isUserTypeSelected = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -132,8 +129,11 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         PageId.USER_TYPE
       );
-      this.handleBackButton();
-      this.backButtonFunc.unsubscribe();
+      if (this.categoriesProfileData) {
+        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      } else {
+        this.backButtonFunc.unsubscribe();
+      }
     });
     this.hideBackButton = false;
   }
@@ -161,7 +161,9 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
     }
-    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+    if (!this.categoriesProfileData) {
+      this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+    }
   }
 
   handleHeaderEvents($event) {
@@ -201,6 +203,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   selectCard(userType, profileType) {
     this.zone.run(() => {
       this.selectedUserType = profileType;
+      this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
         this.commonUtilService.translateMessage(userType)
@@ -295,8 +298,11 @@ export class UserTypeSelectionPage implements OnDestroy {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() :
+        if (this.selectedUserType === ProfileType.ADMIN) {
+          this.router.navigate([RouterLinks.SIGN_IN]);
+        } else {
           this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+        }
       }
     } else {
       this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
@@ -343,15 +349,20 @@ export class UserTypeSelectionPage implements OnDestroy {
         } else if (this.categoriesProfileData) {
           this.navigateToTabsAsLogInUser();
         } else {
-          this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() : this.navigateToProfileSettingsPage(params);
-          // this.navigateToProfileSettingsPage(params);
+          if (this.selectedUserType === ProfileType.ADMIN) {
+            this.router.navigate([RouterLinks.SIGN_IN]);
+          } else {
+            this.navigateToProfileSettingsPage(params);
+          }
         }
       }).catch(error => {
         console.error('Error=', error);
       });
     const request: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
-      userType: this.selectedUserType
+      profileUserType: {
+        type: this.selectedUserType
+      }
     };
     this.profileService.updateServerProfile(request).toPromise()
       .then().catch((e) => console.log('server error for update profile', e));
@@ -361,7 +372,11 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.categoriesProfileData.status) {
       if (this.categoriesProfileData.showOnlyMandatoryFields) {
         initTabs(this.container, LOGIN_TEACHER_TABS);
-        if (this.categoriesProfileData.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
+        if (this.categoriesProfileData.hasFilledLocation || isSSOUser) {
+          if (!isSSOUser) {
+            this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+          }
           this.router.navigate([RouterLinks.TABS]);
         } else {
           const navigationExtras: NavigationExtras = {

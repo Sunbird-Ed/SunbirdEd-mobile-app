@@ -24,3 +24,5 @@ export { LocalCourseService } from './local-course.service';
 export { GroupHandlerService } from './group/group-handler.service';
 export { CollectionService } from './collection.service';
 export {ContentAggregatorHandler} from './content/content-aggregator-handler.service';
+export {LoginNavigationHandlerService} from './login-navigation-handler.service';
+export {SbProgressLoader} from './sb-progress-loader.service';

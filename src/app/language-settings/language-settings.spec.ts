@@ -1,7 +1,8 @@
 import { LanguageSettingsPage } from './language-settings';
 import { SharedPreferences } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import {
     AppHeaderService,
@@ -23,7 +24,18 @@ import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
 describe('LanguageSettingsPage', () => {
     let languageSettingsPage: LanguageSettingsPage;
 
-    const mockPreferences: Partial<SharedPreferences> = {};
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
+
+    const mockPreferences: Partial<SharedPreferences> = {
+        putBoolean: jest.fn(() => of(undefined))
+    };
 
     const mockTranslateService: Partial<TranslateService> = {};
 

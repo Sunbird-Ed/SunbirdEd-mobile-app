@@ -11,8 +11,8 @@ const LIBRARY_TAB = {
 
 const HOME_TAB = {
     root: 'home',
-    icon: 'resources',
-    label: 'HOME_BNAV',
+    icon: 'home',
+    label: 'FRMELEMNTS_LBL_TAB_HOME',
     index: 1,
     isSelected: true
 };
@@ -32,9 +32,9 @@ const COURSE_TAB_DISABLED = {
     disabled: true
 };
 
-const DISCOVER_TAB = {
-    root: 'discover',
-    icon: 'courses',
+const SEARCH_TAB = {
+    root: 'search',
+    icon: 'discover',
     label: 'DISCOVER_BNAV',
     index: 2
 };
@@ -102,17 +102,25 @@ export const GUEST_STUDENT_TABS = [
 ];
 
 // todo name
-export const GUEST_HOME_DISCOVER_TABS = [
+export const GUEST_HOME_SEARCH_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
-export const LOGGEDIN_HOME_DISCOVER_TABS = [
+export const LOGGEDIN_HOME_SEARCH_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    PROFILE_TAB
+];
+
+export const LOGIN_ADMIN_TABS = [
+    HOME_TAB,
+    COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB

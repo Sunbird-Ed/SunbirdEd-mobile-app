@@ -1,0 +1,24 @@
+<!-- <div *ngIf="chartOption">
+  <highcharts-chart
+    [Highcharts]="highcharts"
+    [runOutsideAngular]="runOutsideAngular"
+    [constructorType]="chartConstructor"
+    [options]="chartOption"
+    class="chart-layout"
+  >
+  </highcharts-chart>
+</div> -->
+<div *ngIf="doughnutChartData">
+  <div style="display: block">
+    <canvas
+      baseChart
+      [data]="doughnutChartData"
+      [labels]="doughnutChartLabels"
+      [chartType]="doughnutChartType"
+      [options]="chartOptions"
+      [colors]="chartColors"
+      [plugins]="chartPlugins"
+    >
+    </canvas>
+  </div>
+</div>

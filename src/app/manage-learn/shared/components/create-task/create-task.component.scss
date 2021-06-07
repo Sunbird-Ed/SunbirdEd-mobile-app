@@ -1,0 +1,16 @@
+@import "../../../../../assets/styles/_variables.scss";
+.close-popup{
+    margin: 10px;
+    font-size: 24px;
+    right: 0px;
+    position: absolute;
+}
+.P16 {
+    padding: 16px !important;
+    h5{
+        font-weight: 600;
+    }
+  }
+.task-desc{
+    border:1px solid $gray-400;
+}

@@ -1,7 +1,6 @@
 <ion-content>
   <div class="gd-deactivated" *ngIf="isSuspended">
-    <div class="gd-deactivated-info pull-left" *ngIf="!isGroupCreatorOrAdmin">{{'FRMELEMENTS_MSG_ACTIVATEGRPPOPUP' | translate}}</div>
-    <div class="gd-deactivated-info pull-left" *ngIf="isGroupCreatorOrAdmin">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
+    <div class="gd-deactivated-info pull-left">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
     <div class="gd-deactivated-btn pull-left text-center" *ngIf="isGroupCreatorOrAdmin">
       <button class="sb-btn-large sb-btn-small" (click)="showReactivateGroupPopup()">
         {{'FRMELEMENTS_BTN_ACTIVATEGRP' | translate}}
@@ -19,7 +18,9 @@
             </div>
           </div>
           <div class="gd-opts">
-            <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
+            <accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
+              <!-- <ion-icon [accessDiscussion]="fetchForumIdRequest" src="assets/imgs/ic_chat.svg" class="card-icons" (click)="openDiscussionForum()"></ion-icon> -->
+            <ion-icon ios="ellipsis-horizontal" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon>
           </div>
         </div>
       </div>

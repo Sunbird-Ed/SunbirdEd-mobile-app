@@ -1,0 +1,25 @@
+<ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+        <ion-title class="sb-popover-title">{{'FRMELEMNTS_LBL_OPEN_CONTENT_WITH' | translate}}
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12" *ngIf="!isAppListAvailable">
+                {{'FRMELEMENTS_VENDOR_APP_DESCRIPTION' | translate: {'appName': appName} }}
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="4" *ngFor="let apps of appLists">
+                <div class="app-content" [ngClass]="{'not-available': isAppListAvailable && !appListAvailability[apps?.android?.packageId]}"
+                     (click)="openThirdPartyApps(apps?.android?.packageId, appListAvailability[apps?.android?.packageId])">
+                    <img class="app-logo" [src]="apps?.logo" alt="">
+                    {{apps.name}}
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

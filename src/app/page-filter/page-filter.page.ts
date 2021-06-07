@@ -1,5 +1,6 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
-import { Events, NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
+import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';

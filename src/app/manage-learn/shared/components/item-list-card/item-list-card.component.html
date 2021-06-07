@@ -1,0 +1,37 @@
+<ion-card (click)="programDetails(id)" class="card-container">
+  <ion-card-content>
+    <div class="d-flex flex-jc-ai-center">
+      <div>
+        <ng-content select="[color]"></ng-content>
+      </div>
+      <div class="flex-dc d-flex flex-basis-1">
+        <div class="d-flex flex-ai-center flex-jc-space-between">
+          <div class="title w-90">
+            {{ title | titlecase }}
+          </div>
+          <ng-content select="[arrow]"></ng-content>
+          <ng-content select="[report]"></ng-content>
+        </div>
+        <div class="info">
+          <span *ngIf="isNumber(subTitle)">{{ subTitle }}</span>
+          <div *ngIf="!isNumber(subTitle)" class="d-flex flex-ai-center">
+            <span>{{ subTitle | titlecase }}</span> <ng-content select="[info]" class="ml-5"></ng-content>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  -->
+    <!-- <div class="d-flex flex-ai-center flex-jc-space-between">
+      <div class="title d-flex flex-ai-center title" text-capitalize>
+        <ng-content select="[color]"></ng-content>
+        {{ title | titlecase }}
+      </div>
+      <ng-content select="[arrow]"></ng-content>
+      <ng-content select="[report]"></ng-content>
+    </div>
+    <div class="info grade_ellipsis">
+      <span>{{ subTitle | titlecase }}</span>
+    </div> -->
+  </ion-card-content>
+</ion-card>

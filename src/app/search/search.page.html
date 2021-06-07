@@ -1,193 +1,224 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-      class="search-input" (keyup.enter)="handleSearch()"
-      (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
-      [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_PLACEHOLDER' | translate"></ion-input>
-    <ion-buttons slot="start">
-      <ion-button icon-only (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons class="search-buttons-group" slot="primary" *ngIf="!dialCode">
-      <ion-button icon-only (click)="handleSearch()" *ngIf="(searchKeywords && !filterIcon) || (!searchKeywords && isFromGroupFlow)">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_search.svg" alt="search">
-      </ion-button>
-      <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_close.svg" alt="close">
-      </ion-button>
-      <ion-button icon-only (click)="showFilter()" *ngIf="filterIcon">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_filter.svg" alt="filter">
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
 <ion-content #contentView class="search-bg">
-  <ng-container *ngIf="searchHistory$">
-    <ng-container *ngIf="searchHistory$ | async as searchHistory">
-      <ng-container *ngIf="!(
-                  showLoader ||
-                  isEmptyResult ||
-                  displayDialCodeResult ||
-                  (dialCodeContentResult && dialCodeContentResult.length) ||
-                  (searchContentResult && searchContentResult.length) ||
-                  (!showLoader && showEmptyMessage)
-            )">
-        <ng-container *ngIf="!searchHistory.length && !searchKeywords">
-          <div class="sb-no-search-history text-center">
-            <span>
-              {{'SEARCH_TO_FIND_CONTENT' | translate: {'%s': appName} }}
-            </span>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="searchKeywords">
-          <div class="sb-search-history-entry sb-search-header-meta row">
-            <div class="col-auto invisible">
-              <img src="assets/imgs/icon_recent.svg" alt="recent">
-            </div>
-            <div class="col" (click)="handleSearch()">
-              {{'SEE_ALL_RESULTS_FOR' | translate: {'%s': searchKeywords} }}
-            </div>
-            <div class="col-auto">
-              <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search.svg" alt="search">
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="searchHistory.length">
-          <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
-            class="sb-search-history-entry row">
-            <div class="col-auto">
-              <img style="width: 14px; height: 14px" src="./assets/imgs/icon_recent.svg" alt="recent">
-            </div>
-            <div class="col">
-              {{searchEntry.query}}
-            </div>
-            <div class="col-auto">
-              <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search_grey.svg" alt="search">
-            </div>
-          </div>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-
-  <ng-container *ngIf="isEmptyResult">
-    <div class="sb-no-search-history">
-      <span>
-        {{ 'EMPTY_SEARCH_RESULTS' | translate }}
-      </span>
+  <div class="spinner-div" *ngIf="refresh">
+      <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
+  </div>
+  <ion-refresher #refresher slot="fixed" (ionRefresh)="discoverCmp.doRefresh($event)">
+      <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+  </ion-refresher>
+  <div class="container-focus sticky-position">
+    <div class="search-info pt-16 mx-24">
+      <div [@labelVisibility]="searchInfolVisibility">
+        <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
+        <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appName} }}</p>
+      </div>
     </div>
-  </ng-container>
-
-  <div class="m-n" *ngIf="showLoader">
-    <div class="skeleton-header">
-      <app-skeleton-item height="12px" width="75%" style="height:12px; width:75%;"></app-skeleton-item>
-      <app-skeleton-item height="12px" width="40%" style="height:12px; width:40%; margin-top:8px;"></app-skeleton-item>
-    </div>
-    <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
-      <ion-avatar slot="end" class="skleton-avatar">
-        <app-skeleton-item height="56px" width="56px" style="height:56px; width:56px;"></app-skeleton-item>
-      </ion-avatar>
-      <div style=" flex: 22 auto;">
-        <app-skeleton-item height="12px" width="40%" style="height:12px; width:100%; padding-bottom: 8px;">
-        </app-skeleton-item>
-        <app-skeleton-item height="12px" width="30%"
-          style="height:12px; width:100%; padding-bottom: 8px;margin-top:8px;"></app-skeleton-item>
+    <div class="search-container" [ngClass]="{'search-filter': filterIcon, '': !filterIcon}">
+      <div class="search-input d-flex">
+        <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
+          class="search-input" (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
+          (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
+          [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
+        </ion-input>
+        <button (click)="handleSearch()" *ngIf="!filterIcon || isFromGroupFlow">
+          <img src="assets/imgs/search.svg" alt="search">
+        </button>
+        <button (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
+          <img src="assets/imgs/ic_action_close.svg" alt="search">
+        </button>
+      </div>
+      <div class="filter-btn" *ngIf="filterIcon">
+        <button (click)="showFilter()">
+          <img src="assets/imgs/filter.svg" alt="search">
+        </button>
       </div>
     </div>
   </div>
-  <!-- Testing here  -->
-  <ion-list no-lines *ngIf="displayDialCodeResult" class="collection-list" class="search-bg">
-    <div *ngFor="let resultlist of displayDialCodeResult">
 
-      <!-- Course -->
-      <div
-        *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
-        <div class="sb-textbook-container">
-          <div class="sb-textbook-items">
-            <div class="sb-textbook-title-container">
-              <span class="textbook-title">
-                {{'COURSES' | translate}}
+  <ng-container *ngIf="enableSearch">
+    <ng-container *ngIf="searchHistory$">
+      <ng-container *ngIf="searchHistory$ | async as searchHistory">
+        <ng-container *ngIf="!(
+                    showLoader ||
+                    isEmptyResult ||
+                    displayDialCodeResult ||
+                    (dialCodeContentResult && dialCodeContentResult.length) ||
+                    (searchContentResult && searchContentResult.length) ||
+                    (!showLoader && showEmptyMessage)
+              )">
+          <ng-container *ngIf="!searchHistory.length && !searchKeywords">
+            <div class="sb-no-search-history text-center">
+              <span>
+                {{'SEARCH_TO_FIND_CONTENT' | translate: {'%s': appName} }}
               </span>
             </div>
-            <div class="sb-card-container sb-card-textbook-container">
-              <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index">
-                <sb-course-card appContentDirection class="sb-card-grid__item" [course]="content"
-                  (click)="openContent(undefined, content, i);" [cardImg]="content?.appIcon || content?.courseLogoUrl || defaultAppIcon" [section]="null">
-                </sb-course-card>
+          </ng-container>
+
+          <ng-container *ngIf="searchKeywords">
+            <div class="sb-search-history-entry sb-search-header-meta row">
+              <div class="col-auto invisible">
+                <img src="assets/imgs/icon_recent.svg" alt="recent">
+              </div>
+              <div class="col" (click)="handleSearch()">
+                {{'FRMELEMENTS_LBL_SEARCH_SUB_HEADING' | translate: {'appName': appName, 'searchText': searchKeywords} }}
+              </div>
+              <div class="col-auto">
+                <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search.svg" alt="search">
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="searchHistory.length">
+            <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
+              class="sb-search-history-entry row">
+              <div class="col-auto">
+                <img style="width: 14px; height: 14px" src="./assets/imgs/icon_recent.svg" alt="recent">
+              </div>
+              <div class="col">
+                {{searchEntry.query}}
+              </div>
+              <div class="col-auto">
+                <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search_grey.svg" alt="search">
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="isEmptyResult">
+      <div class="sb-no-search-history">
+        <span>
+          {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+        </span>
+      </div>
+    </ng-container>
+
+    <div class="m-n" *ngIf="showLoader">
+      <div class="skeleton-header">
+        <app-skeleton-item height="12px" width="75%" style="height:12px; width:75%;"></app-skeleton-item>
+        <app-skeleton-item height="12px" width="40%" style="height:12px; width:40%; margin-top:8px;"></app-skeleton-item>
+      </div>
+      <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
+        <ion-avatar slot="end" class="skleton-avatar">
+          <app-skeleton-item height="56px" width="56px" style="height:56px; width:56px;"></app-skeleton-item>
+        </ion-avatar>
+        <div style=" flex: 22 auto;">
+          <app-skeleton-item height="12px" width="40%" style="height:12px; width:100%; padding-bottom: 8px;">
+          </app-skeleton-item>
+          <app-skeleton-item height="12px" width="30%"
+            style="height:12px; width:100%; padding-bottom: 8px;margin-top:8px;"></app-skeleton-item>
+        </div>
+      </div>
+    </div>
+    <!-- Testing here  -->
+    <ion-list no-lines *ngIf="displayDialCodeResult" class="collection-list" class="search-bg">
+      <div *ngFor="let resultlist of displayDialCodeResult">
+
+        <!-- Course -->
+        <div
+          *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
+          <div class="sb-textbook-container">
+            <div class="sb-textbook-items">
+              <div class="sb-textbook-title-container">
+                <span class="textbook-title">
+                  {{'COURSES' | translate}}
+                </span>
+              </div>
+              <div class="sb-card-container sb-card-textbook-container">
+                <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index">
+                  <sb-course-card appContentDirection class="sb-card-grid__item" [course]="content"
+                    (click)="openContent(undefined, content, i);" [cardImg]="content?.appIcon || content?.courseLogoUrl || defaultAppIcon" [section]="null">
+                  </sb-course-card>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div *ngIf="resultlist && !resultlist.isCourse">
-        <div class="px-8">
+        <div *ngIf="resultlist && !resultlist.isCourse">
+          <div class="px-8">
 
-          <div class="pt-8">
-            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
-              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
-              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
-            </p>
-          </div>
-          <!-- Collection List -->
-          <div class="sb-textbook-title-container">
-            <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
-          </div>
-          <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
+            <div class="pt-8">
+              <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+                {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
+                <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+              </p>
+            </div>
+            <!-- Collection List -->
+            <div class="sb-textbook-title-container">
+              <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
+            </div>
+            <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
 
-            <div *ngIf="result && result.content && result.content.length">
-              <div *ngFor="let content of result.content; let last = last, let i = index"
-                class="content-list ion-no-padding">
-                <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT"
-                  (click)="openContent(result, content, i);" [cardImg]="result?.appIcon || defaultAppIcon"
-                  [moreInfoLabel]="'Section'" [section]="content.name">
+              <div *ngIf="result && result.content && result.content.length">
+                <div *ngFor="let content of result.content; let last = last, let i = index"
+                  class="content-list ion-no-padding">
+                  <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT"
+                    [layoutConfig]="{layout: 'v3'}"
+                    (click)="openContent(result, content, i);" [cardImg]="result?.appIcon || defaultAppIcon"
+                    [moreInfoLabel]="'Section'" [section]="content.name">
+                  </sb-library-card>
+
+                  <div *ngIf="!last" class="inner-divider"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content List -->
+            <div no-lines *ngIf="resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
+              <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
+                class="content-list">
+                <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
+                  [layoutConfig]="{layout: 'v3'}"
+                  (click)="openContent(content, content, i + ((resultlist && resultlist.dialCodeResult) ? resultlist.dialCodeResult.length : 0) )"
+                  [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
 
                 <div *ngIf="!last" class="inner-divider"></div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </ion-list>
 
-          <!-- Content List -->
-          <div no-lines *ngIf="resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
-            <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
-              class="content-list">
-              <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
-                (click)="openContent(content, content, i + ((resultlist && resultlist.dialCodeResult) ? resultlist.dialCodeResult.length : 0) )"
-                [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
-              </sb-library-card>
-
-              <div *ngIf="!last" class="inner-divider"></div>
-            </div>
-          </div>
+    <div *ngIf="searchContentResult && searchContentResult.length">
+      <div class="pills-filter">
+        <sb-pills-grid *ngIf="primaryCategoryFilters && primaryCategoryFilters.length" (select)="handleFilterSelect($event)"
+          [pillsViewType]="PillsViewType.SCROLL"
+          [pillBorder]="PillBorder.ROUND">
+          <sb-pill-item *ngFor="let filter of primaryCategoryFilters"
+            [name]="filter?.name | titlecase"
+            [theme]="(filter?.name === selectedPrimaryCategoryFilter?.name) ? {pillBgColor:appPrimaryColor, pillTextColor:'white'} : {pillBgColor:'white'}"
+            [value]="filter">
+          </sb-pill-item>
+        </sb-pills-grid>
+      </div>
+      <div class="sb-search-history-entry sb-search-header-meta row">
+        <div class="col" *ngIf="searchKeywords">
+          {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+        </div>
+        <div class="col" *ngIf="!searchKeywords">
+          {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
+        </div>
+      </div>
+      <div class="sc-container">
+        <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
+          <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
+            [layoutConfig]="{layout: 'v3'}"
+            (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
+          </sb-library-card>
         </div>
       </div>
     </div>
-  </ion-list>
+    <div class="empty-search-result ion-text-center ion-padding-top" *ngIf="!showLoader && showEmptyMessage">
+      {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+    </div>
+  </ng-container>
 
-  <div *ngIf="searchContentResult && searchContentResult.length">
-    <div class="sb-search-history-entry sb-search-header-meta row">
-      <div class="col" *ngIf="searchKeywords">
-        {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
-      </div>
-      <div class="col" *ngIf="!searchKeywords">
-        {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
-      </div>
-    </div>
-    <div class="sc-container">
-      <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
-        <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
-          (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
-        </sb-library-card>
-      </div>
-    </div>
-  </div>
-  <div class="empty-search-result ion-text-center" *ngIf="!showLoader && showEmptyMessage" padding-top>
-    {{ 'EMPTY_SEARCH_RESULTS' | translate }}
-  </div>
+  <ng-container *ngIf="!enableSearch">
+    <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
+  </ng-container>
 </ion-content>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">	

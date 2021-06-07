@@ -45,10 +45,9 @@
 						</ion-item>
 						<div class="ps-board">
 							<div class="ps-board-label">{{'BOARD' | translate}}</div>
-							<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block"
-								[style.background-color]="btnColor">
+							<button class="sb-btn-secondary sb-btn-md PR35 W100 ellipsis btn-block">
 								{{ 'BOARD_OPTION_TEXT' | translate }}
-								<img class="arrow-icon" src="assets/imgs/ic_back.svg" alt="">
+								<img class="arrow-icon" src="assets/imgs/ic_back_black.svg" alt="">
 							</button>
 						</div>
 					</div>
@@ -98,7 +97,7 @@
 	</div>
 </ion-content>
 
-<div class="ion-padding" no-border style="background: white;" *ngIf="!showQRScanner">
+<div class="ion-padding ion-no-border" style="background: white;" *ngIf="!showQRScanner">
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
 		[style.background-color]="btnColor" (click)="onSubmitAttempt()">
 		{{ 'CONTINUE' | translate }}

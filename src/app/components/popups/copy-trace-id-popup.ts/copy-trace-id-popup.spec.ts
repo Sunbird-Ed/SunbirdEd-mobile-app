@@ -1,4 +1,5 @@
-import { Events, PopoverController, Platform, NavParams } from '@ionic/angular';
+import { PopoverController, NavParams } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { CopyTraceIdPopoverComponent } from './copy-trace-id-popup.component';
 import { CommonUtilService, UtilityService } from '@app/services';
 import { Location } from '@angular/common';

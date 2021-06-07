@@ -1,0 +1,17 @@
+<ion-content fullscreen>
+  <app-common-header
+    title="{{ 'FRMELEMNTS_LBL_REPORTS' | translate }}"
+    subTitle="{{ 'FRMELEMNTS_LBL_REPORTS_DESC' | translate }}"
+  ></app-common-header>
+  <section>
+    <app-item-list-card
+      title="{{ item?.title | translate }}"
+      subTitle="{{ item?.subTitle | translate }}"
+      (cardSelect)="onReportClick(item)"
+      *ngFor="let item of reportsArray"
+    >
+      <span class="dot" color></span>
+      <ion-icon arrow class="mg-popup-btn-icon" name="arrow-forward"></ion-icon>
+    </app-item-list-card>
+  </section>
+</ion-content>

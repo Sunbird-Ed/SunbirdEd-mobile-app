@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { FormConfigCategories, Location, PreferenceKey } from '@app/app/app.constant';
+import { FormConfigCategories, PreferenceKey } from '@app/app/app.constant';
 import { FieldConfig, FieldConfigOption } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 import { SharedPreferences } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { LocationHandler } from './location-handler';
+
 @Injectable()
 export class ProfileHandler {
     private formFields: PersonaConfig[];
@@ -27,7 +28,7 @@ export class ProfileHandler {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
         const userTypeSpecificConfig = formFields.find(config => config.code === userType);
-        if(!userTypeSpecificConfig){
+        if (!userTypeSpecificConfig) {
             return {};
         }
         let supportedAttribute = userTypeSpecificConfig['attributes']['mandatory'];

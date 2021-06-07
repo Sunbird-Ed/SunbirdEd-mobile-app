@@ -899,4 +899,14 @@ describe('ActivityDetailsPage', () => {
             });
         })
     })
+    describe('openDashboard', () => {
+        it('should open activity dashboard', () => {
+            // arrange
+            mockRouter.navigate = jest.fn();
+            // act
+            activityDetailsPage.openDashboard()
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
+        })
+    })
 });

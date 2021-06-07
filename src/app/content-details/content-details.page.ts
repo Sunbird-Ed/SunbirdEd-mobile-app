@@ -4,10 +4,10 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
-  Events,
   Platform,
   PopoverController
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription, Observable } from 'rxjs';
 import {
   Content,
@@ -43,14 +43,14 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, PreferenceKey, AssessmentConstant
+  ShareItemType, PreferenceKey, AssessmentConstant, MaxAttempt
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
   LocalCourseService,
   UtilityService,
   TelemetryGeneratorService,
-  CommonUtilService,
+  CommonUtilService, FormAndFrameworkUtilService,
 } from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
@@ -82,6 +82,9 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
+import {FormConstants} from '@app/app/form.constants';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 declare const window;
 @Component({
@@ -176,8 +179,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
-  private isLastAttempt = false;
-  private isContentDisabled = false;
+  maxAttemptAssessment: any;
+  isCompatibleWithVendorApps = false;
+  appLists: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -208,11 +212,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
-    private loginHandlerService: LoginHandlerService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private sbProgressLoader: SbProgressLoader,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private formFrameworkUtilService: FormAndFrameworkUtilService,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -256,8 +260,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.subscribeEvents();
+    this.appLists = await this.formFrameworkUtilService.getFormFields(FormConstants.VENDOR_APPS_CONFIG);
+    this.appLists = this.appLists.filter((appData) => {
+      if (appData.target.mimeType &&
+          appData.target.mimeType.indexOf(this.cardData.mimeType) !== -1 &&
+          appData.target.primaryCategory &&
+          appData.target.primaryCategory.indexOf(this.cardData.primaryCategory)) {
+        return true;
+      }
+    });
+    if (this.appLists.length) {
+      this.isCompatibleWithVendorApps = true;
+    }
   }
 
   subscribeEvents() {
@@ -293,12 +309,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
     this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
       this.generateEndEvent();
-      // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-      // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
       this.content = data.content;
       this.course = data.course;
       this.getNavParams();
-      // this.subscribeEvents();
       setTimeout(() => {
         this.contentPlayerHandler.setLastPlayedContentId('');
         this.generateTelemetry(true);
@@ -326,11 +339,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
         this.isUsrGrpAlrtOpen = false;
-      } else {
-        // migration-TODO - tested, not affecting current behaviour
-        // this.navCtrl.insert(this.navCtrl.length() - 1, EnrolledCourseDetailsPage, {
-        //   content: this.navParams.get('resumedCourseCardData')
-        // });
       }
     } else {
       this.generateTelemetry();
@@ -472,7 +480,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         await loader.dismiss();
         if (this.isDownloadStarted) {
           this.contentDownloadable[this.content.identifier] = false;
-          // this.content.downloadable = false;
           this.isDownloadStarted = false;
         }
         if (error.hasOwnProperty('CONNECTION_ERROR')) {
@@ -682,23 +689,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   popToPreviousPage(isNavBack?) {
-    // if (this.isResumedCourse) {
-    //   // migration-TODO
-    //   // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
-    //   this.router.navigate(['../../'], { relativeTo: this.route });
-    // } else {
-    //   if (isNavBack) {
-    //     this.location.back();
-    //   }
-    // }
     this.appGlobalService.showCourseCompletePopup = false;
-    // Tested in ionic 4 working as expected
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.resultLength === 1) {
-      // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
       window.history.go(-2);
     } else {
       this.location.back();
@@ -836,7 +832,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
-    if (!(this.content.contentData.downloadUrl)) {
+    if (this.cardData.mimeType === 'application/vnd.sunbird.questionset' || !(this.content.contentData.downloadUrl)) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
@@ -951,13 +947,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async handleContentPlay(isStreaming) {
-    if (this.isContentDisabled) {
-      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+    const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(this.maxAttemptAssessment);
+    if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
       return;
-    }
-    if (this.isLastAttempt) {
-      await this.commonUtilService.showAssessmentLastAttemptPopup();
-      this.isLastAttempt = false;
     }
     if (this.limitedShareContentFlag) {
       if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
@@ -1014,8 +1006,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             }
           ],
           icon: {
-            md: 'md-sad',
-            ios: 'ios-sad',
+            md: 'sad',
+            ios: 'sad',
             className: ''
           },
           metaInfo: '',
@@ -1059,8 +1051,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         actionsButtons: [
         ],
         icon: {
-          md: 'md-warning',
-          ios: 'ios-warning',
+          md: 'warning',
+          ios: 'warning',
           className: ''
         }
       },
@@ -1075,7 +1067,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async openPlayAsPopup(isStreaming) {
     const profile = this.appGlobalService.getCurrentUser();
     this.isUsrGrpAlrtOpen = true;
-    // if (profile.board.length > 1) {
+
     const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -1310,7 +1302,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
-      this.loginHandlerService.signIn();
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
     this.isLoginPromptOpen = false;
   }
@@ -1324,6 +1316,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = content.contentId || content.identifier;
       this.telemetryObject = ContentUtil.getTelemetryObject(content);
       this.promptToLogin();
+      window['segmentation'].SBTagService.pushTag(
+        window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+        TagPrefixConstants.CONTENT_ID,
+        window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+      );
     }
   }
 
@@ -1388,9 +1385,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.showCourseCompletePopup = true;
         }
 
-        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.identifier);
-        this.isLastAttempt = assesmentsStatus.isLastAttempt;
-        this.isContentDisabled = assesmentsStatus.isContentDisabled;
+        this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
       }
       resolve();
     });
@@ -1455,6 +1450,25 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       return '';
     }
 
+  }
+
+  async openWithVendorApps() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.OPEN_WITH_PLAYER_CLICKED,
+        Environment.HOME,
+        PageId.CONTENT_DETAIL,
+    );
+    const popoverElement = await this.popoverCtrl.create({
+        component: ShowVendorAppsComponent,
+        componentProps: {
+          content: this.content,
+          appLists: this.appLists
+        },
+        cssClass: 'sb-popover'
+      });
+
+    await popoverElement.present();
   }
 
 }

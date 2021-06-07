@@ -26,7 +26,7 @@ export class FormConstants {
     public static  SEARCH_FILTER: FormRequest = {
         type: 'config',
         subType: 'search',
-        action: 'filter',
+        action: 'filter_v3',
         component: 'app'
     };
 
@@ -40,6 +40,38 @@ export class FormConstants {
         type: 'profileConfig',
         subType: 'default',
         action: 'get'
+    };
+
+    public static  DEEPLINK_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'deeplink',
+        action: 'get'
+    };
+
+    public static  UTILITY_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'utility',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static  VENDOR_APPS_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'vendorapps',
+        action: 'get',
+        component: 'app',
+    };
+
+    public static  PROJECT_CREATE_META: FormRequest = {
+        type: 'user',
+        subType: 'project',
+        action: 'create'
+    };
+
+    public static  TASK_CREATE_META: FormRequest = {
+        type: 'user',
+        subType: 'project',
+        action: 'createTask'
     };
 
 }

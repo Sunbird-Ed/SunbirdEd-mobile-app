@@ -1,6 +1,5 @@
 import { Router } from '@angular/router';
-import {
-  Events} from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
@@ -34,7 +33,7 @@ import {
 import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { PreferenceKey, RegexPatterns } from '@app/app/app.constant';
+import {PreferenceKey, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
@@ -70,6 +69,16 @@ export class GuestEditPage implements OnInit, OnDestroy {
   public gradeList: { name: string, code: string }[] = [];
   public subjectList: { name: string, code: string }[] = [];
   public supportedProfileAttributes: { [key: string]: string } = {};
+  public supportedUserTypes: Array<any> = [];
+
+  private availableProfileTypes = [
+    { profileType: ProfileType.STUDENT, name: this.commonUtilService.translateMessage('USER_TYPE_2') },
+    { profileType: ProfileType.TEACHER, name: this.commonUtilService.translateMessage('USER_TYPE_1') },
+    { profileType: ProfileType.ADMIN, name: this.commonUtilService.translateMessage('LEADER') },
+    { profileType: ProfileType.PARENT, name: this.commonUtilService.translateMessage('USER_TYPE_5') },
+    { profileType: ProfileType.OTHER, name: this.commonUtilService.translateMessage('USER_TYPE_3') }
+  ];
+  public profileTypeList = [];
 
   syllabusOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
@@ -174,6 +183,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       PageId.CREATE_USER
     );
     this.addAttributeSubscription(this.profile.profileType || undefined);
+    this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
   }
 
   private async addAttributeSubscription(userType: string) {
@@ -522,19 +532,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.events.publish('refresh:onboardingcard');
 
     if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
-      if (formVal.profileType === ProfileType.STUDENT) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
-        initTabs(this.container, GUEST_STUDENT_TABS);
-      } else if (formVal.profileType === ProfileType.TEACHER) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
-        initTabs(this.container, GUEST_TEACHER_TABS);
-      } else if (formVal.profileType === ProfileType.ADMIN) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
-        this.loginHandlerService.signIn();
-      } else {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.OTHER).toPromise().then();
-        initTabs(this.container, GUEST_TEACHER_TABS);
-      }
+      if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
+        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, formVal.profileType).toPromise().then();
+        if (formVal.profileType === ProfileType.ADMIN) {
+            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
+            this.router.navigate([RouterLinks.SIGN_IN]);
+          }
+        }
     }
     this.location.back();
   }

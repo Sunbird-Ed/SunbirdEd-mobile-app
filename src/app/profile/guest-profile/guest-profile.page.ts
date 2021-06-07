@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
-import { Events, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   Framework,
   FrameworkCategoryCodesGroup,
@@ -21,6 +22,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-guest-profile',
@@ -112,8 +114,9 @@ export class GuestProfilePage implements OnInit {
   }
 
   async refreshProfileData(refresher: any = false, showLoader: boolean = true) {
-    this.loader = await this.commonUtilService.getLoader();
-
+    if (!this.loader) {
+      this.loader = await this.commonUtilService.getLoader();
+    }
     if (showLoader) {
       await this.loader.present();
     }
@@ -128,6 +131,13 @@ export class GuestProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then(async (res: any) => {
         this.profile = res;
+        const tagObj = {
+          board: res.board,
+          grade: res.grade,
+          syllabus: res.syllabus,
+          medium: res.medium,
+        };
+        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
         this.getSyllabusDetails();
         this.refreshSignInCard();
         this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType);
@@ -179,7 +189,7 @@ export class GuestProfilePage implements OnInit {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then((result: Framework[]) => {
+      .then(async (result: Framework[]) => {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             if (this.profile && this.profile.syllabus && this.profile.syllabus.length && this.profile.syllabus[0] === element.identifier) {
@@ -191,10 +201,10 @@ export class GuestProfilePage implements OnInit {
           if (selectedFrameworkId !== undefined && selectedFrameworkId.length > 0) {
             this.getFrameworkDetails();
           } else {
-            this.loader.dismiss();
+            await this.loader.dismiss();
           }
         } else {
-          this.loader.dismiss();
+          await this.loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       });
@@ -221,7 +231,6 @@ export class GuestProfilePage implements OnInit {
         if (this.profile.subject && this.profile.subject.length) {
           this.subjects = this.getFieldDisplayValues(this.profile.subject, 3);
         }
-
         await this.loader.dismiss();
       });
   }

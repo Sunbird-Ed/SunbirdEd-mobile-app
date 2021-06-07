@@ -53,10 +53,10 @@ export class Search {
     ];
 
     public static readonly FACETS = [
-        'board',
-        'gradeLevel',
+        'se_boards',
+        'se_gradeLevels',
         'subject',
-        'medium',
+        'se_mediums',
         'primaryCategory',
         'publisher',
         'mimeType',
@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
+    public static readonly BANNER = 'banner';
 }
 
 export class ShareUrl {
@@ -175,8 +176,10 @@ export class ShareUrl {
 
 export class MenuOverflow {
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
-    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_DELETE_GROUP'];
-    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'ENABLE_DISCUSSION_FORUM', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'ENABLE_DISCUSSION_FORUM', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR_DISABLE_DF = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'DISABLE_DISCUSSION_FORUM', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN_DISABLE_DF = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'DISABLE_DISCUSSION_FORUM', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_CREATOR_SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_DELETE_GROUP'];
     public static readonly MENU_GROUP_ADMIN__SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
@@ -228,6 +231,15 @@ export class PreferenceKey {
     public static readonly NOTIFICAITON_RECEIVED_AT = 'notification_received_at';
     public static readonly CURRENT_SELECTED_THEME = 'current_selected_theme';
     public static readonly DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP = 'do_not_show_pnc_popup';
+    public static readonly IS_JOYFUL_THEME_POPUP_DISPLAYED = 'is_joyful_theme_popup_displayed';
+    public static readonly SELECTED_SWITCHABLE_TABS_CONFIG = 'selected_switchable_tabs_config';
+    public static readonly IS_NEW_USER = 'is_new_user';
+    public static readonly NAVIGATION_SOURCE = 'navigation_source';
+}
+
+export enum SwitchableTabsConfig {
+    RESOURCE_COURSE_TABS_CONFIG = 'RESOURCE_COURSE_TABS_CONFIG',
+    HOME_DISCOVER_TABS_CONFIG = 'HOME_DISCOVER_TABS_CONFIG'
 }
 
 export class GenericAppConfig {
@@ -383,6 +395,7 @@ export class SystemSettingsIds {
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
+    public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
 }
 
 export class StoreRating {
@@ -441,6 +454,7 @@ export class RouterLinks {
     public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
     public static readonly FRAMEWORK_SELECTION = 'framework-selection';
+    public static readonly CERTIFICATE_VIEW = 'certificate-view';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
@@ -449,6 +463,8 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
+    // ADMIN HOME Routes
+    public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -461,9 +477,6 @@ export class RouterLinks {
 
     // HOME Routes
     public static readonly HOME = 'home';
-
-    // Discover(SEARCH) Routes
-    public static readonly DISCOVER = 'discover';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -521,12 +534,11 @@ export class RouterLinks {
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
-    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
+    public static readonly SEARCH_TAB = `/${RouterLinks.TABS}/${RouterLinks.SEARCH}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
     public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
-
 
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
@@ -546,15 +558,66 @@ export class RouterLinks {
     public static readonly ACTIVITY_TOC = 'activity-toc';
     public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
     public static readonly ACTIVITY_VIEW_MORE = 'activity-view-more';
+    public static readonly ACTIVITY_DASHBOARD = 'activity-dashboard';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
-    public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
 
+    //Manage learn router
+    public static readonly PROGRAM = 'program';
+    public static readonly SURVEY = 'survey';
+    public static readonly PROJECT = 'project';
+    public static readonly REPORTS = "reports";
+    public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
+    public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
+    public static readonly PROJECT_REPORT = "project-report";
+    public static readonly PROJECT_FULL_REPORT = "project-full-report";
+    public static readonly DEEPLINK_REDIRECT = "deeplink-redirect";
+    public static readonly DETAILS = 'details';
+    public static readonly TASK_VIEW = 'task-view';
+    public static readonly LEARNING_RESOURCES = 'learning-resources';
+    public static readonly SYNC = 'sync';
+    public static readonly ATTACHMENTS = 'attachments';
+    public static readonly PROJECT_EDIT = 'project-edit';
+    public static readonly PROJECT_OPERATION = `project-operation`;
+    public static readonly CREATE_PROJECT = `create-project`;
+    public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
+    public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
+    public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+
+
+    public static readonly SOLUTIONS = 'solutions';
+    public static readonly QUESTIONNAIRE = 'questionnaire';
+    public static readonly OBSERVATION = 'observation';
+    public static readonly SECTION_LISTING = 'section-listing';
+    public static readonly ECM_LISTING = 'ecm-listing';
+    public static readonly SUBMISSION_PREVIEW = 'submission_preview';
+    public static readonly IMAGE_LISTING = 'image-listing';
+    public static readonly ALL_EVIDENCE = 'all-evidence';
+    public static readonly DOMAIN_ECM_LISTING = 'domain-ecm-listing';
+    public static readonly IMP_SUGGESTIONS = 'imp-suggestions';
+
+    // Observation routes
+    public static readonly OBSERVATION_DETAILS = 'observation-details';
+    public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
+    public static readonly OBSERVATION_REPORTS = 'observation-reports';
+    public static readonly REPORT_WITH_SCORE = 'reports-with-score';
+    public static readonly SURVEY_REPORTS = 'survey-reports';
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
     public static readonly DISCUSSION = 'discussion-forum';
+
+    public static readonly HOME_USER = 'user';
+    public static readonly HOME_ADMIN = 'admin';
+    // filter page
+    public static readonly SEARCH_FILTER = 'search-filter';
+    //assessment
+    public static readonly GENERIC_REPORT = 'generic-report';
+    // sign-in page
+    public static readonly SIGN_IN = 'sign-in';
+    // my-playlist page
+    public static readonly MY_PLAYLIST = 'my-playlist';
 }
 
 export class ShareItemType {
@@ -589,7 +652,6 @@ export class IgnoreTelemetryPatters {
     public static readonly IGNORE_DIAL_CODE_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"search"}/;
     public static readonly IGNORE_CHANNEL_IMPRESSION_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/;
     public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
-
 }
 
 export class FormConfigCategories {
@@ -610,11 +672,107 @@ export class AppThemes {
     public static readonly DEFAULT = 'DEFAULT';
     public static readonly JOYFUL = 'JOYFUL';
 }
+export class AppMode {
+    public static readonly DEFAULT = 'DEFAULT';
+    public static readonly DARKMODE = 'DARKMODE';
+}
 
 export class StatusBarTheme {
     public static readonly SET_DEFAULT = '#BB000000';
 }
 
 export class AssessmentConstant {
-    public static readonly MAX_ATTEMPTS = 3;
+    public static readonly MAX_ATTEMPTS = 25;
 }
+
+export const ColorMapping = [
+    {
+        primary: 'rgba(255,139,46,1)',
+        secondary: 'rgba(255,139,46,0.3)'
+    },
+    {
+        primary: 'rgba(163,99,255,1)',
+        secondary: 'rgba(163,99,255,0.3)'
+    },
+    {
+        primary: 'rgba(34,139,255,1)',
+        secondary: 'rgba(34,139,255,0.3)'
+    },
+    {
+        primary: 'rgba(95,192,32,1)',
+        secondary: 'rgba(95,192,32,0.3)'
+    },
+    {
+        primary: 'rgba(255,128,47,1)',
+        secondary: 'rgba(255,128,47,0.3)'
+    },
+    {
+        primary: 'rgba(251,70,70,1)',
+        secondary: 'rgba(251,70,70,0.3)'
+    },
+    {
+        primary: 'rgba(83,109,252,1)',
+        secondary: 'rgba(83,109,252,0.3)'
+    },
+    {
+        primary: 'rgba(15,186,208,1)',
+        secondary: 'rgba(15,186,208,0.3)'
+    }
+]
+
+export const SubjectMapping = {
+    english: {
+        icon: 'assets/imgs/book_english.svg',
+        theme: {
+            iconBgColor: ColorMapping[0].primary,
+            pillBgColor: ColorMapping[0].secondary
+        }
+    },
+    mathematics: {
+        icon: 'assets/imgs/calculator.svg',
+        theme: {
+            iconBgColor: ColorMapping[1].primary,
+            pillBgColor: ColorMapping[1].secondary
+        }
+    },
+    science: {
+        icon: 'assets/imgs/globe.svg',
+        theme: {
+            iconBgColor: ColorMapping[2].primary,
+            pillBgColor: ColorMapping[2].secondary
+        }
+    },
+    default: {
+        icon: 'assets/imgs/book_default.svg',
+        theme: null
+    }
+}
+
+export const PrimaryCaregoryMapping = {
+    "digital textbooks": {
+        icon: 'assets/imgs/textbook.svg'
+    },
+    "courses": {
+        icon: 'assets/imgs/course.svg'
+    },
+    "tv programs": {
+        icon: 'assets/imgs/tv.svg'
+    },
+    "documents": {
+        icon: 'assets/imgs/documents.svg'
+    },
+    "videos": {
+        icon: 'assets/imgs/videos.svg'
+    },
+    "default": {
+        icon: 'assets/imgs/all_content.svg'
+    }
+}
+
+export interface MaxAttempt {
+    isLastAttempt: boolean;
+    limitExceeded: boolean;
+    isCloseButtonClicked: boolean;
+}
+
+

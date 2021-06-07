@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {
     CorrelationData,
     Rollup,
@@ -14,14 +14,17 @@ import {
     TelemetryInterruptRequest,
     DeviceSpecification,
     Actor,
-    AuditState
+    AuditState,
+    TelemetrySummaryRequest
 } from 'sunbird-sdk';
-import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType,
-    Mode, PageId, CorReleationDataType, ID, ImpressionSubtype } from './telemetry-constants';
-import { MimeType } from '../app/app.constant';
-import { ContentUtil } from '@app/util/content-util';
-import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import {Map} from '../app/telemetryutil';
+import {
+    Environment, ImpressionType, InteractSubtype, InteractType,
+    Mode, PageId, CorReleationDataType, ID, ImpressionSubtype
+} from './telemetry-constants';
+import {MimeType} from '../app/app.constant';
+import {ContentUtil} from '@app/util/content-util';
+import {SbProgressLoader} from '../services/sb-progress-loader.service';
 
 @Injectable()
 export class TelemetryGeneratorService {
@@ -177,6 +180,37 @@ export class TelemetryGeneratorService {
         this.telemetryService.start(telemetryStartRequest).subscribe();
     }
 
+    generateSummaryTelemetry(type, starttime, endtime, timpespent,
+                             pageviews, interactions, env, object?: TelemetryObject,
+                             rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        const telemetrySummaryRequest = new TelemetrySummaryRequest();
+        telemetrySummaryRequest.type = type;
+        telemetrySummaryRequest.starttime = starttime;
+        telemetrySummaryRequest.endtime = endtime;
+        telemetrySummaryRequest.timespent = timpespent;
+        telemetrySummaryRequest.pageviews = pageviews;
+        telemetrySummaryRequest.interactions = interactions;
+        telemetrySummaryRequest.mode = Mode.PLAY;
+        if (object && object.id) {
+            telemetrySummaryRequest.objId = object.id;
+        }
+
+        if (object && object.type) {
+            telemetrySummaryRequest.objType = object.type;
+        }
+
+        if (object && object.version) {
+            telemetrySummaryRequest.objVer = object.version + '';
+        }
+        if (rollup !== undefined) {
+            telemetrySummaryRequest.rollup = rollup;
+        }
+        if (corRelationList !== undefined) {
+            telemetrySummaryRequest.correlationData = corRelationList;
+        }
+        this.telemetryService.summary(telemetrySummaryRequest).subscribe();
+    }
+
     generateLogEvent(logLevel, message, env, type, params: Array<any>) {
         const telemetryLogRequest = new TelemetryLogRequest();
         telemetryLogRequest.level = logLevel;
@@ -186,6 +220,7 @@ export class TelemetryGeneratorService {
         telemetryLogRequest.params = params;
         this.telemetryService.log(telemetryLogRequest).subscribe();
     }
+
     genererateAppStartTelemetry(deviceSpec: DeviceSpecification) {
         const telemetryStartRequest = new TelemetryStartRequest();
         telemetryStartRequest.type = 'app';
@@ -457,5 +492,28 @@ export class TelemetryGeneratorService {
             rollup,
             correlationList
         );
+    }
+
+    generateNewExprienceSwitchTelemetry(pageId, subType, corRelationInfo) {
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({
+            type: CorReleationDataType.FIRST_TIME_USER,
+            id: corRelationInfo['isNewUser'] + ''
+        });
+        corRelationList.push({
+            type: CorReleationDataType.USERTYPE,
+            id:  corRelationInfo['userType']
+        });
+        this.generateInteractTelemetry(
+            InteractType.NEW_EXPERIENCE,
+            subType,
+            Environment.HOME,
+            pageId,
+            undefined,
+            undefined,
+            undefined,
+            corRelationList,
+            ID.SWITCH_CLICKED
+          );
     }
 }

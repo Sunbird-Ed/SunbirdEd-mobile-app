@@ -8,7 +8,10 @@ export enum Environment {
     ONBOARDING = 'onboarding',
     NOTIFICATION = 'notification',
     GROUP = 'group',
-    PLAYER = 'player'
+    PLAYER = 'player',
+    DISCUSSION = 'discussion',
+    FAQ = 'faq',
+    SEARCH = 'search'
 }
 
 export enum ErrorCode {
@@ -53,7 +56,6 @@ export enum PageId {
     LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
-    CURRICULUM_COURSE_DETAIL = 'curriculum-course-detail',
     CONTENT_DETAIL = 'content-detail',
     COURSE_BATCHES = 'course-batches',
     SHARE_CONTENT = 'share-content',
@@ -146,7 +148,7 @@ export enum PageId {
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
     PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
-    MY_GROUP = 'my-group',
+    MY_GROUP = 'groups-list',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
     TEXTBOOK_IMPORT = 'textbookimport',
@@ -157,11 +159,20 @@ export enum PageId {
     RELEVANT_CONTENTS = 'relevant-contents',
     PLAYER = 'player',
     ADMIN_HOME = 'admin-home',
+    CATEGORY_RESULTS = 'category-results',
+    BOARD_RESULTS = 'board-results',
+    SUBJECT_RESULTS = 'subject-results',
+    AUDIENCE_RESULTS = 'audience-results',
+    NEW_EXPERIENCE_POPUP = 'new-experience-popup',
+    MENU = 'menu',
+    CERTIFICATE_VIEW = 'certificate-view',
+    ACTIVITY_DASHBOARD = 'activity-dashboard'
 }
 
 export enum LogType {
     NOTIFICATION = 'notification'
 }
+
 
 export enum LogLevel {
     TRACE = 'TRACE',
@@ -186,7 +197,8 @@ export enum ImpressionType {
     PAGE_LOADED = 'page-loaded',
     PAGE_REQUEST = 'page-request',
     SET_LANGUAGE = 'set-language',
-    QR_REQUEST = 'qr-request'
+    QR_REQUEST = 'qr-request',
+    POP_UP_CATEGORY = 'pop-up-category'
 }
 
 export enum ImpressionSubtype {
@@ -206,7 +218,9 @@ export enum ImpressionSubtype {
     DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
     GROUP_TUTORIAL = 'my-group-tutorial-popup',
     OFFLINE_MODE = 'offline-mode',
-    AUTO = 'auto'
+    AUTO = 'auto',
+    LOCATION = 'location',
+    HOME = 'home'
 }
 
 export enum InteractType {
@@ -236,6 +250,7 @@ export enum InteractType {
     SELECT_QRSCANER = 'select-qrscanner',
     SELECT_CATEGORY = 'select-category',
     SELECT_ATTRIBUTE = 'select-attribute',
+    SELECT_AUDIENCE = 'select-audience',
     SELECT_SUBMIT = 'select-submit',
     SELECT_CANCEL = 'select-cancel',
     SELECT_ADD = 'select-add',
@@ -258,7 +273,25 @@ export enum InteractType {
     FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
-    SELECT_CARD = 'select-card'
+    SELECT_CARD = 'select-card',
+    SELECT_SUBJECT = 'select-subject',
+    SELECT_VIEW_ALL = 'select-view-all',
+    SELECT_CONTENT = 'select-content',
+    SELECT_BOARD = 'select-board',
+    NEW_EXPERIENCE = 'new-experience',
+    SELECT_CREATE_GROUP = 'select-create-group',
+    CREATE_GROUP = 'create-group',
+    SELECT_GROUP = 'select-group',
+    ADD_MEMBER = 'add-member',
+    VERIFY_USER = 'verify-user',
+    ADD_ACTIVITY = 'add-activity',
+    VIEW_ACTIVITY = 'view-activity',
+    SELECT_ACTIVITY = 'select-activity',
+    UPDATE_GROUP = 'update-group',
+    SELECT_DEACTIVATE = 'select-deactivate',
+    SELECT_DELETE = 'select-delete',
+    DOWNLOAD_CLICKED = 'download-clicked',
+    SELECT_ACTIVITY_DASHBOARD = "select-activity-dashboard"
 }
 
 export enum InteractSubtype {
@@ -382,7 +415,7 @@ export enum InteractSubtype {
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
     DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
-    DOWNLOAD_CLICKED = 'download-from-device-button-clicked',
+    DOWNLOAD_CLICKED = 'download-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
     HELP_SECTION_CLICKED = 'help-section-clicked',
@@ -490,7 +523,26 @@ export enum InteractSubtype {
     LET_US_KNOW_CLICKED = 'let-us-know-clicked',
     DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked',
     DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
-    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked'
+    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked',
+    ENABLE_DISCUSSIONS_CLICKED = 'enable-discussions-clicked',
+    DISABLE_DISCUSSIONS_CLICKED = 'disable-discussions-clicked',
+    SYNC_PROGRESS_CLICKED = 'sync-progress-clicked',
+    SYNC_PROGRESS_INITIATE = 'sync-progress-initiated',
+    SYNC_PROGRESS_SUCCESS = 'sync-progress-success',
+    SYNC_PROGRESS_FAILED = 'sync-progress-failed',
+    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked',
+    SELECT_CONTENT = 'select-content',
+    SELECT_BELL = 'select-bell',
+    OPTED_IN = 'opted-in',
+    OPTED_OUT = 'opted-out',
+    GROUP_KEBAB_MENU_CLICKED = 'group-kebab-menu-clicked',
+    FORUM_ICON_CLICKED = 'forum-icon-clicked',
+    OBSERVATION_TILE_CLICKED ='observation-tile-clicked',
+    PROGRAM_TILE_CLICKED ='program-tile-clicked',
+    PROJECT_TILE_CLICKED ='project-tile-clicked',
+    SURVEY_TILE_CLICKED ='survey-tile-clicked',
+    REPORTS_TILE_CLICKED ='reports-tile-clicked',
+    COURSE_TILE_CLICKED ='course-tile-clicked'
 }
 
 export enum ID {
@@ -538,7 +590,23 @@ export enum ID {
     NOTIFICATION_REQUEST = 'notification-request',
     DEACTIVATE_GROUP= 'deactivate-group',
     REACTIVATE_GROUP= 'reactivate-group',
-    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines'
+    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines',
+    ENABLE_DISCUSSIONS = 'enable-discussions',
+    DISABLE_DISCUSSIONS = 'disable-discussions',
+    SWITCH_CLICKED = 'switch-clicked',
+    SELECT_CREATE_GROUP = 'select-create-group',
+    SELECT_GROUP = 'select-group',
+    ADD_MEMBER = 'add-member',
+    VERIFY_USER = 'verify-user',
+    ADD_ACTIVITY = 'add-activity',
+    SELECT_CATEGORY = 'select-category',
+    VIEW_ACTIVITY = 'view-activity',
+    SELECT_ACTIVITY = 'select-activity',
+    UPDATE_GROUP = 'update-group',
+    SELECT_DEACTIVATE = 'select-deactivate',
+    SELECT_DELETE = 'select-delete',
+    SELECT_ACTIVITY_DASHBOARD = "select-activity-dashboard",
+    DOWNLOAD_CLICKED = 'download-clicked',
 }
 
 export enum ActionButtonType {
@@ -585,7 +653,7 @@ export enum CorReleationDataType {
     CHILD_UI = 'ChildUi',
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
-    COUNT_CONTENT = 'CountContent',
+    COUNT_CONTENT = 'ContentCount',
     FROM_PAGE = 'FromPage',
     LANGUAGE = 'Language',
     MODE = 'Mode',
@@ -596,7 +664,18 @@ export enum CorReleationDataType {
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
     COUNT_NODE = 'CountNode',
-    CONTENT_NAME = 'ContentName'
+    CONTENT_NAME = 'ContentName',
+    CONTENT = 'Content',
+    BATCH = 'Batch',
+    NEW_NOTIFICATION = 'new-notification',
+    FORM_PAGE = 'form-page',
+    SUBJECT_LIST = 'subject-list',
+    CATEGORY_NAME = 'category-name',
+    CATEGORY_LIST = 'CategoryList',
+    OTHER_BOARDS = 'OtherBoards',
+    ROOT_SECTION = 'RootSection',
+    AUDIENCE_LIST = 'AudienceList',
+    AUDIENCE = 'Audience'
 }
 
 export enum AuditProps {

@@ -10,7 +10,8 @@ import {
     TelemetryErrorCode,
     TelemetryObject
 } from 'sunbird-sdk';
-import {Events, IonContent, Platform, PopoverController} from '@ionic/angular';
+import {IonContent, Platform, PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -42,6 +43,7 @@ import { isObject } from 'util';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -116,6 +118,16 @@ describe('collectionDetailEtbPage', () => {
         navigateToContent: jest.fn(),
         navigateTo: jest.fn(),
         navigateToCollection: jest.fn()
+    };
+
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            getTags: jest.fn(() => undefined),
+            restoreTags: jest.fn()
+        }
     };
 
     beforeEach(() => {

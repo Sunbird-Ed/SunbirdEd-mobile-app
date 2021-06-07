@@ -1,13 +1,12 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { IonButton, PopoverController } from '@ionic/angular';
-import { GenerateOtpRequest, ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
-import { CommonUtilService } from '../common-util.service';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
-
+import { PopoverController } from '@ionic/angular';
+import { GenerateOtpRequest, ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
+import { FieldConfig } from 'common-form-elements';
+import { CommonUtilService } from '../common-util.service';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { FieldConfig, AsyncValidatorFactory } from 'common-form-elements';
 
 @Injectable({ providedIn: 'root' })
 export class FormValidationAsyncFactory {

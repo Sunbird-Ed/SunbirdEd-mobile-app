@@ -1,0 +1,96 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+.custom-padding {
+    padding: 0px 10px;
+}
+.skip-icon{
+    margin-bottom: 10px;
+}
+.skip-button {
+    position: absolute;
+    margin-top: 20px;
+    z-index: 99999999999999999999;
+    margin-left: 12px;
+}
+
+.project-title {
+    padding-top: 15px;
+    ion-input {
+        padding: 10px 0px !important;
+        --padding-start: 0px;
+    }
+}
+.resources-link{
+    color:$info-color;
+}
+
+.program-block {
+    margin: 30px 0px;
+    ion-item {
+        // border: 1px solid $dark-grey-color;
+        border-radius: 6px;
+        margin: 10px 0px;
+
+        ion-icon {
+            font-size: 16px;
+        }
+    }
+}
+
+.program-data {
+    margin: 30px 0px;
+}
+
+.entity-block {
+    margin: 50px 0px;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+.rating-block {
+    ion-icon {
+        padding: 5px;
+        font-size: 24px;
+        // color: $yellow-color;
+    }
+}
+
+.data-list {
+    padding: 10px;
+    margin: 10px 0px;
+    background:$white-color;
+    ion-item {
+        --padding-start: 0px;
+    }
+
+
+}
+
+.footer-btn {
+    text-align: center;
+    padding: 15px;
+    /* min-height: 50px; */
+    background:$primary-color;
+    color: $white;
+}
+
+.secondary {
+    // background: $dark-brown-color;
+    // color: $white-color
+}
+
+.learningResources {
+    .text-center {
+        text-align: center;
+
+        span {
+            // color: $blue-color;
+        }
+    }
+}
+
+.padding {
+    padding: 0px 15px;
+}

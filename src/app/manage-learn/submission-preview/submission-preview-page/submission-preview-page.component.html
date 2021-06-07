@@ -1,0 +1,116 @@
+<ion-content>
+  <div style="margin-bottom: 100px" *ngIf="loaded">
+    <h3 padding>{{ currentEvidence?.name }}</h3>
+    <ion-card *ngFor="let section of currentEvidence?.sections">
+      <ion-card-header>
+        {{ section?.name }}
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let question of section?.questions; let i = index" text-wrap>
+            <div
+              *ngIf="
+                question?.responseType !== 'matrix' && question?.responseType !== 'pageQuestions' && question?.value
+              "
+            >
+              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+              <p *ngIf="question?.responseType !== 'radio' && question?.responseType !== 'multiselect'">
+                Ans. {{ question?.value }}
+              </p>
+              <p *ngIf="question?.responseType === 'radio' || question?.responseType === 'multiselect'">
+                Ans.
+                {{ question | getLabels }}
+              </p>
+              <p *ngIf="question.remarks">{{ question.remarks }}</p>
+            </div>
+
+            <div
+              *ngIf="
+                question?.responseType === 'matrix' && question?.responseType !== 'pageQuestions' && question?.value
+              "
+            >
+              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+              <div *ngFor="let instance of question.value; let j = index" class="instanceQuest">
+                <h5 class="instacnce">{{ question?.instanceIdentifier }} {{ j + 1 }}</h5>
+                <div *ngFor="let answer of instance; let k = index" class="matrixQuestion">
+                  <div *ngIf="answer?.value">
+                    <h3>Q{{ k + 1 }}. {{ answer?.question[0] }}</h3>
+                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
+                      Ans. {{ answer?.value }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'radio' || answer?.responseType === 'multiselect'">
+                      Ans.
+                      {{ answer | getLabels }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'date'">
+                      Ans.
+                      {{ answer?.value | date:'medium':'IST' }} 
+                    </p>
+                    <p *ngIf="question.remarks">{{ question.remarks }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="question?.responseType === 'pageQuestions'">
+              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+
+              <div *ngFor="let answer of question.pageQuestions; let k = index" class="matrixQuestion">
+                <div *ngIf="answer?.responseType === 'matrix'; else notMatrix">
+                  <div *ngIf="answer.value">
+                    <h3>Q{{ i + 1 }}. {{ answer?.question[0] }}</h3>
+                    <div *ngFor="let instance of answer.value; let j = index" class="instanceQuest">
+                      <h5 class="instacnce">{{ answer?.instanceIdentifier }} {{ j + 1 }}</h5>
+                      <div *ngFor="let ans of instance; let k = index" class="matrixQuestion">
+                        <h3>Q{{ k + 1 }}. {{ ans?.question[0] }}</h3>
+                        {{ans?.responseType}}
+                        <p *ngIf="ans?.responseType !== 'radio' && ans?.responseType !== 'multiselect' && ans?.responseType !== 'date'">
+                          Ans. {{ ans?.value }}
+                        </p>
+                        <p *ngIf="ans?.responseType === 'radio' || ans?.responseType === 'multiselect'">
+                          Ans.
+                          {{ ans | getLabels }}
+                        </p>
+                        <p *ngIf="ans?.responseType === 'date'">
+                          Ans.
+                          {{ ans?.value | date:'medium':'IST' }} 
+                        </p>
+                        <p *ngIf="question.remarks">{{ question.remarks }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #notMatrix>
+                  <div class="instanceQuest" *ngIf="answer?.value">
+                    <h5>Q{{ k + 1 }}. {{ answer?.question[0] }}</h5>
+                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
+                      Ans. {{ answer?.value }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'radio' || answer?.responseType === 'multiselect'">
+                      Ans.
+                      {{ answer | getLabels }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'date'">
+                      Ans.
+                      {{ answer?.value | date:'medium':'IST' }}
+                    </p>
+                    <p *ngIf="question.remarks">{{ question.remarks }}</p>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer no-shadow *ngIf="(allAnsweredForEvidence && !currentEvidence.isSubmitted) || currentEvidence?.enableSubmit">
+  <ion-toolbar position="bottom">
+    <ion-row>
+      <ion-button full class="w-100" (click)="checkForNetworkTypeAlert()">
+        {{ 'FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT' | translate }}
+      </ion-button>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

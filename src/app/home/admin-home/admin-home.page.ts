@@ -1,23 +1,35 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import {
+  AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService
+} from '@app/services';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
+import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
+import {
+  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+  CachedItemRequestSourceFrom, SearchType, InteractType, FormService, FormRequest
+} from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events, IonContent as ContentView  } from '@ionic/angular';
+import { IonContent as ContentView } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
+import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
+import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
+import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
+import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-admin-home',
   templateUrl: './admin-home.page.html',
   styleUrls: ['./admin-home.page.scss'],
 })
-export class AdminHomePage implements OnInit, OnDestroy {
+export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
@@ -30,14 +42,16 @@ export class AdminHomePage implements OnInit, OnDestroy {
   profile: Profile;
   guestUser: boolean;
   appLabel: string;
+  newThemeTimeout: any;
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-  @ViewChild('contentView') contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -48,6 +62,10 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
+    private storage: LocalStorageService,
+    private unnatiService: UnnatiDataService,
+    private db: DbService,
+
   ) {
   }
 
@@ -61,6 +79,16 @@ export class AdminHomePage implements OnInit, OnDestroy {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+    this.db.createDb();
+    this.events.subscribe('onAfterLanguageChange:update', (res) => {
+      if (res && res.selectedLanguage) {
+        this.fetchDisplayElements();
+      }
+    });
+  }
+
+  tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async ionViewWillEnter() {
@@ -73,12 +101,34 @@ export class AdminHomePage implements OnInit, OnDestroy {
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
+  getCreateProjectForm() {
+    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
+    }, async error => {
+      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.PROJECT_CREATE_META);
+      if(createProjectMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+      }
+      this.getTaskForm();
+    })
+  }
+
+  getTaskForm() {
+    this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(resp => {
+    },async error => {
+      const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.TASK_CREATE_META);
+      if(createTaskMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta)
+      }
+    })
+  }
+
   async getUserProfileDetails() {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .subscribe((profile: Profile) => {
         this.profile = profile;
         this.getFrameworkDetails();
         this.fetchDisplayElements();
+        this.getCreateProjectForm();
       });
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     this.appLabel = await this.commonUtilService.getAppName();
@@ -97,6 +147,19 @@ export class AdminHomePage implements OnInit, OnDestroy {
       };
       this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }
+  }
+
+  ionViewDidLeave() {
+    if (this.newThemeTimeout && this.newThemeTimeout.clearTimeout) {
+      this.newThemeTimeout.clearTimeout();
+    }
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    // this.newThemeTimeout = setTimeout(() => {
+    //   this.appGlobalService.showNewTabsSwitchPopup();
+    // }, 2000);
   }
 
   getFrameworkDetails(): void {
@@ -147,28 +210,59 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   onPillClick(event) {
-    const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
-    this.commonUtilService.showToast(title);
     switch (event.data[0].value.code) {
-      case 'course':
-        this.router.navigate([RouterLinks.SEARCH], {
-          state: {
-            source: PageId.ADMIN_HOME,
-            preAppliedFilter: event.data[0].value.search
-          }
-        });
+      case 'program':
+        this.router.navigate([RouterLinks.PROGRAM], {});
+        this.generateTelemetry('PROGRAM_TILE_CLICKED');
         break;
+      case 'project':
+        this.router.navigate([RouterLinks.PROJECT], {});
+        this.generateTelemetry('PROJECT_TILE_CLICKED');
+        break;
+      case 'observation':
+        this.router.navigate([RouterLinks.OBSERVATION], {});
+        this.generateTelemetry('OBSERVATION_TILE_CLICKED');
+        break;
+      case 'survey':
+        this.router.navigate([RouterLinks.SURVEY], {});
+        this.generateTelemetry('SURVEY_TILE_CLICKED');
+        break;
+      case 'report':
+        this.router.navigate([RouterLinks.REPORTS], {});
+        this.generateTelemetry('REPORTS_TILE_CLICKED');
+        break;
+      case 'course':
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
+        this.generateTelemetry('COURSE_TILE_CLICKED');
+
+      // this.router.navigate([RouterLinks.SEARCH], {
+      //   state: {
+      //     source: PageId.ADMIN_HOME,
+      //     preAppliedFilter: event.data[0].value.search
+      //   }
+      // });
     }
+
+    
   }
 
-  navigateToViewMoreContentsPage(section, pageName) {
+  generateTelemetry(interactiveSubtype) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      // InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+      InteractSubtype[interactiveSubtype],
+      Environment.HOME,
+      PageId.ADMIN_HOME
+    );
+  }
+
+  navigateToViewMoreContentsPage(section) {
     const params: NavigationExtras = {
       state: {
-        requestParams: {
-          request: section.searchRequest
-        },
+        enrolledCourses: section.data.sections[0].contents,
+        pageName: ViewMore.PAGE_COURSE_ENROLLED,
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        userId: this.appGlobalService.getUserId()
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
@@ -227,6 +321,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.events.unsubscribe('onAfterLanguageChange:update');
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }

@@ -3,7 +3,7 @@ import {Subject} from 'rxjs';
 import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {SharedPreferences} from 'sunbird-sdk';
-import {AppThemes, StatusBarTheme} from '@app/app/app.constant';
+import {AppThemes, StatusBarTheme,AppMode} from '@app/app/app.constant';
 
 @Injectable()
 export class AppHeaderService {
@@ -36,6 +36,8 @@ export class AppHeaderService {
         const defaultConfig = {
             showHeader: true,
             showBurgerMenu: true,
+            showKebabMenu: false,
+            kebabMenuOptions: [],
             pageTitle: '',
             actionButtons: ['search'],
         };
@@ -78,9 +80,17 @@ export class AppHeaderService {
         const theme = await this.preferences.getString('current_selected_theme').toPromise();
         if (theme === 'JOYFUL') {
             document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
+            document.querySelector('html').setAttribute('device-accessable-theme','accessible' );
             const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-header');
-            this.statusBar.backgroundColorByHexString(themeColor);
+            this.statusBar.backgroundColorByHexString(themeColor);      
         }
+        const mode = await this.preferences.getString('data-mode').toPromise();
+        if(mode===AppMode.DARKMODE){
+            document.querySelector('html').setAttribute('data-mode',AppMode.DARKMODE);
+        }else{
+            document.querySelector('html').setAttribute('data-mode',AppMode.DEFAULT);
+        }
+        
     }
 
     hideStatusBar() {

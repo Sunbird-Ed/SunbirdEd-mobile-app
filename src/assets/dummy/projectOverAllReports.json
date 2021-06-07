@@ -1,0 +1,32 @@
+{
+    "message": "Reports generated successfully.",
+    "status": 200,
+    "result": {
+        "dataAvailable": true,
+        "data": {
+            "categories": {
+                "total": 11,
+                "schoolProcess": 2,
+                "ting": 1,
+                "students": 1,
+                "community": 3,
+                "teachers": 2,
+                "educationLeader": 2
+            },
+            "tasks": {
+                "total": 15,
+                "overdue": 0,
+                "completed": 0,
+                "inProgress": 1,
+                "notStarted": 14
+            },
+            "projects": {
+                "total": 6,
+                "overdue": 0,
+                "completed": 0,
+                "inProgress": 1,
+                "notStarted": 5
+            }
+        }
+    }
+}
