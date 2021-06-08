@@ -74,7 +74,6 @@ export class ProjectListingComponent implements OnInit {
             this.clearFields();
             this.networkFlag = available;
             this.projects = [];
-            console.log(this.projects, "this.projects 123");
             this.fetchProjectList();
         });
     }
@@ -134,9 +133,7 @@ export class ProjectListingComponent implements OnInit {
     // }
 
     getDownloadedProjectsList() {
-        console.log('in getDownloadedProjectsList');
         this.getDownloadedProjects().then(project => {
-            console.log(project, "getDownloadedProjects 131");
             this.projects = project;
         })
     }
@@ -147,11 +144,9 @@ export class ProjectListingComponent implements OnInit {
     }
 
     async getCreatedProjects() {
-        console.log("in getCreatedProjects");
         this.getOfflineCreatedProjects().then(offlineProjects => {
             this.projects = offlineProjects;
             this.currentOnlineProjectLength = 0;
-            console.log(this.projects, " this.projects ");
             this.getProjectList();
         })
     }
@@ -195,10 +190,8 @@ export class ProjectListingComponent implements OnInit {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            console.log(this.projects, "this.projects 185", this.networkFlag, this.selectedFilterIndex);
             this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
         } else {
-            console.log(this.projects, "this.projects 188", this.networkFlag);
             this.getDownloadedProjectsList();
         }
     }
