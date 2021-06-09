@@ -898,11 +898,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          let menuSource = this.router.url.split('/').pop();
-          if (menuSource !== PageId.COURSES) {
-            menuSource = PageId.PROFILE;
-          }
-          this.router.navigate([RouterLinks.SIGN_IN], {state: {source: menuSource}});
+          this.router.navigate([RouterLinks.SIGN_IN]);
         }
         break;
     }
