@@ -76,5 +76,9 @@
                 </sb-library-cards-stack>
             </div>
         </div>
+
+        <div class="no-result-found" *ngIf="!sectionGroup?.sections?.length">
+            {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+        </div>
     </div>
 </ion-content>

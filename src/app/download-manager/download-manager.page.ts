@@ -189,7 +189,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async deleteContents(emitedContents: EmitedContents) {
     const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
     emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
-    
+
     if (!emitedContents.selectedContents.length) {
       this.deleteProjects(projectContents)
       return
@@ -394,16 +394,16 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   deleteProjects(contents) {
-    
-    contents.forEach(async(element) => {
+
+    contents.forEach(async (element) => {
       let project = await this.db.getById(element.contentId)
       project.downloaded = false
-      await this.db.delete(project._id,project._rev)
+      await this.db.delete(project._id, project._rev)
       this.events.publish('savedResources:update', {
         update: true,
       });
-       this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
-      
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
+
 
     });
   }
