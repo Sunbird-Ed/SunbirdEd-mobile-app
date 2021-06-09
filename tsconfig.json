@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es5",
+    "skipLibCheck": true,
     "types": [
       "node",
       "reflect-metadata",

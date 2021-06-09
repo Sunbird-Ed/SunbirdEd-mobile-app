@@ -33,12 +33,13 @@ import {
 import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import {PreferenceKey, RegexPatterns, RouterLinks} from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { LoginHandlerService } from '@app/services';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-guest-edit',
@@ -141,7 +142,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private profileHandler: ProfileHandler,
-    private loginHandlerService: LoginHandlerService
+    private loginHandlerService: LoginHandlerService,
+    private segmentationTagService: SegmentationTagService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -511,11 +513,27 @@ export class GuestEditPage implements OnInit, OnDestroy {
         } else {
           this.location.back();
         }
+        this.refreshSegmentTags();
       }, () => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
       });
   }
+
+  refreshSegmentTags() {
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+      .then(async (res: any) => {
+        this.profile = res;
+        const tagObj = {
+          board: res.board,
+          grade: res.grade,
+          syllabus: res.syllabus,
+          medium: res.medium,
+        };
+        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        this.segmentationTagService.evalCriteria();
+      });
+}
 
   publishProfileEvents(formVal) {
     // Publish event if the all the fields are submitted

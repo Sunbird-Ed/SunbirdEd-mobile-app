@@ -7,7 +7,7 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
   ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService, InteractSubtype, InteractType, AndroidPermissionsService
+  CollectionService, AppGlobalService, InteractSubtype, InteractType, ID, AndroidPermissionsService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
@@ -26,7 +26,6 @@ import { File } from '@ionic-native/file/ngx';
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -372,8 +371,19 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
       });
   }
-
+  
   openDashboard() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_ACTIVITY_DASHBOARD,
+      undefined,
+      Environment.GROUP,
+      PageId.ACTIVITY_DETAIL,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelationList,
+      ID.SELECT_ACTIVITY_DASHBOARD
+    );
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
     {
       state: {
@@ -383,7 +393,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         },
         hierarchyData: this.courseData,
         activity: this.activity,
-        lastUpdatedOn: this.getActivityAggLastUpdatedOn()
+        lastUpdatedOn: this.getActivityAggLastUpdatedOn(),
+        collectionName: this.courseData.name
       }
     });
   }

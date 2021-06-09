@@ -27,7 +27,9 @@ import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
   RouterLinks, Search, ContentCard,
-  ContentFilterConfig
+  ContentFilterConfig,
+  PreferenceKey,
+  SwitchableTabsConfig
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
@@ -162,6 +164,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   appPrimaryColor: string;
   selectedPrimaryCategoryFilter: any;
   searchWithBackButton = false;
+  private selectedSwitchableTab: string;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -253,6 +256,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.isFirstLaunch = false;
       this.handleSearch(true);
     }
+    this.selectedSwitchableTab = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise()
   }
 
   ionViewDidEnter() {
@@ -1769,6 +1773,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           this.searchInfolVisibility = 'show';
           this.headerService.showHeaderWithHomeButton();
           this.appGlobalService.isDiscoverBackEnabled = false; 
+        } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
+          break;
         } else {
           this.location.back()
         }

@@ -26,6 +26,7 @@ export class ActivityDashboardPage {
     dashletData: any;
     activity: any;
     lastUpdatedOn: any;
+    collectionName: string;
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -34,7 +35,7 @@ export class ActivityDashboardPage {
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private location: Location,
-        private commonUtilService: CommonUtilService
+        public commonUtilService: CommonUtilService
     ) {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
@@ -42,6 +43,7 @@ export class ActivityDashboardPage {
             this.aggData = extras.aggData;
             this.activity = extras.activity;
             this.lastUpdatedOn = extras.lastUpdatedOn;
+            this.collectionName = extras.collectionName;
             console.log('lastUpdatedOn', this.lastUpdatedOn)
         }
     }

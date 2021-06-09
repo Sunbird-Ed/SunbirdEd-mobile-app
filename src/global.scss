@@ -80,46 +80,79 @@
 }
 
 // dashlet
-  .dataTables_wrapper{
-    width: 100vw;
-    overflow-x: auto;
-  }
 
-  table.dataTable.no-footer {
-    padding: 0.5rem 1rem;  
-    border: 1px solid #cccc;
-    font-size: .875rem;
-    width: 100%!important;
-    box-shadow: 5px 5px 10px;
-    border-bottom: 0px !important;
-    cursor: pointer;
-    background: #fff;
-  }
-  .dataTables_wrapper .dataTables_length,
-  .dataTables_wrapper .dataTables_filter,
-  .dataTables_wrapper .dataTables_info,
-  .dataTables_wrapper .dataTables_processing,
-  .dataTables_wrapper .dataTables_paginate {
-    margin-bottom: 1rem !important;
-    text-align: right !important;
-  }
-  table.dataTable thead {
-    text-align: left;
-    background: #fff;
-  }
-  table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled 
-  {
-    cursor: hand;
-    background-position: center left;
-  }
-  table.dataTable thead th, table.dataTable thead td {
-    padding: 12px 24px;
-    border-bottom: 0px !important;
-  }
-  table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable.display tbody th, table.dataTable.display tbody td {
-    border-top: none !important;
-  }
-  table.dataTable.hover tbody tr:nth-child(odd), table.dataTable.display tbody tr:nth-child(odd) {
-    background-color: #f6f6f6;
-  }
+.dataTables_wrapper {
+  white-space: nowrap;
+  height: calc(100vh - 100px);
+  overflow: auto;
+}
 
+table.dataTable.no-footer {
+  display: table;
+  overflow: hidden;
+  width: 100% !important;
+  margin: 0 auto 1rem auto;
+  clear: both;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: .875rem;
+  border-radius: 1.5rem;
+  box-shadow: 0.375rem 0.375rem 0.125rem 0 rgb(0 0 0 / 10%);
+  border-bottom: 0px !important;
+  background: transparent;
+  border: 1px solid #ddd;
+  text-transform: capitalize;
+  background-color: $white !important;
+}
+
+table thead .sorting_asc {
+  background-image: url(http://www.miankoutu.com/uploadfiles/2015-9-24/2015924141740312.png);
+  background-size: 20px 20px;
+}
+
+table thead .sorting_desc {
+  background-image: url(http://www.miankoutu.com/uploadfiles/2015-9-24/2015924141733340.png);
+  background-size: 20px 20px;
+}
+
+table thead.sorting {
+  background-image: url(assets/imgs/sort-icon.svg) !important;
+  background-size: 20px 10px;
+}
+
+table.dataTable tbody td {
+  padding: 8px 24px;
+}
+
+table.dataTable thead tr th {
+  text-align: left;
+}
+
+table.dataTable thead th {
+  padding: 8px 24px !important;
+  border-bottom: none !important;
+}
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+  cursor: pointer;
+  background-repeat: no-repeat !important;
+  background-position: center left !important;
+  position: relative !important;
+  left: 1rem !important;
+  right: 1rem !important;
+}
+
+table.dataTable.row-border tbody th,
+table.dataTable.row-border tbody td,
+table.dataTable.display tbody th,
+table.dataTable.display tbody td {
+  border-top: none !important;
+}
+
+table.dataTable tbody tr:nth-child(odd) {
+  background-color: #f6f6f6 !important;
+}

@@ -66,7 +66,7 @@ export class SyncService {
       if (success['docs'].length) {
 
         //check the sync settings
-        if(!this.network.isNetworkAvailable){
+        if (!this.network.isNetworkAvailable) {
           this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
         } else {
           this.router.navigate(['/menu/sync']);
@@ -91,7 +91,7 @@ export class SyncService {
     const obj = this.processPayload(payload);
     const { _id } = payload;
     delete payload._id;
-    if(!obj.programId){
+    if (!obj.programId) {
       delete obj.programId
     }
     showLoader ? this.loader.startLoader() : null;
@@ -111,19 +111,30 @@ export class SyncService {
   }
 
 
-  createNewProject(showLoader: boolean = false): Promise<any> {
-    showLoader ? this.loader.startLoader() : null;
-    // const config = {
-    //   url: urlConstants.API_URLS.CREATE_PROJECT_DOC
-    // }
+  createNewProject(showLoader: boolean = false, project?): Promise<any> {
+    if(showLoader){
+      this.loader.startLoader()
+    }
+    // const project = JSON.parse(JSON.stringify(project));
+    const payload = this.removeKeys(project, ['isNew', 'isEdit']);
+    delete payload._rev;
+    delete payload._id;
+    const config = {
+      url: urlConstants.API_URLS.CREATE_PROJECT,
+      payload: payload
+    }
     return new Promise((resolve, reject) => {
-      // this.unnatiServ.get(config).subscribe(success => {
-      //   showLoader ? this.loader.stopLoader() : null;
-        resolve([])
-      // }, error => {
-      //   showLoader ? this.loader.stopLoader() : null;
-      //   reject(error);
-      // })
+      this.unnatiServ.post(config).subscribe(success => {
+        if(showLoader){
+          this.loader.stopLoader()
+        }
+        resolve(success)
+      }, error => {
+        if(showLoader){
+          this.loader.stopLoader()
+        }
+        reject(error);
+      })
     })
   }
 

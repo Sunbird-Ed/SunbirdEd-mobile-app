@@ -22,6 +22,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
     SplaschreenDeeplinkActionHandlerDelegate
 } from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -54,6 +55,7 @@ describe('UserHomePage', () => {
     const mockTranslateService: Partial<TranslateService> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -75,7 +77,8 @@ describe('UserHomePage', () => {
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
             mockTranslateService as TranslateService,
-            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
@@ -138,7 +141,6 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        mockSharedPreferences.getBoolean = jest.fn(() => of(true));
         // act
         userHomePage.ngOnInit();
         // assert
@@ -148,7 +150,6 @@ describe('UserHomePage', () => {
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-            expect(mockSharedPreferences.getBoolean).toHaveBeenCalledWith('display_banner');
             done();
         }, 0);
     });
@@ -193,6 +194,12 @@ describe('UserHomePage', () => {
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                showBanner: true
+            }
+        }];
         // act
         userHomePage.ionViewWillEnter();
         // assert
@@ -405,6 +412,13 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                showBanner: true
+            }
+        }];
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         // act
         userHomePage.tabViewWillEnter();
         // assert
@@ -412,6 +426,8 @@ describe('UserHomePage', () => {
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
             expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+            expect(mockSegmentationTagService.exeCommands).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
             done();
         }, 0);
     });

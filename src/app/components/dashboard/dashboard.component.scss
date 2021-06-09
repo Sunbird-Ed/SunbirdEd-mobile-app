@@ -4,5 +4,10 @@
     padding: 8px;
 }
 .ad-dw{
-    color: map-get($colors, primary);
+    color: $blue;
+    font-weight: bold;
+}
+.ad-csv-btn{
+    position: relative;
+    bottom: 10px;
 }

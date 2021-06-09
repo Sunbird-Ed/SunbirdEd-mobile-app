@@ -154,18 +154,20 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
            downloaded: true,
           },
         };  
-        let projectData: any = await this.db.customQuery(query);
-        if (projectData.docs) {
-          projectData.docs.sort(function (a, b) {
-              return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
-            });
-              projectData.docs.map(doc => {
-                doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-                doc.type = 'project'
-                doc.identifier=doc._id;
-                data.push(doc)
-                
-            })
+        if(this.db.pdb){
+          let projectData: any = await this.db.customQuery(query);
+          if (projectData.docs) {
+            projectData.docs.sort(function (a, b) {
+                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+              });
+                projectData.docs.map(doc => {
+                  doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                  doc.type = 'project'
+                  doc.identifier=doc._id;
+                  data.push(doc)
+                  
+              })
+          }
         }
 
         this.ngZone.run(async () => {

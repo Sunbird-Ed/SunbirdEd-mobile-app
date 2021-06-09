@@ -1,11 +1,11 @@
 <ion-content class="activity-dashboard-container">
-<!-- <sb-course-card [section]="null"
+<sb-course-card [section]="null"
     [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
-</sb-course-card>   -->
-    <div *ngIf="lastUpdatedOn > 0" class="ad-timestamp"
+</sb-course-card>  
+    <div *ngIf="lastUpdatedOn > 0" class="adb-timestamp"
         [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (lastUpdatedOn | dateAgo: 'month' : 'M/d/yy') }">
     </div>
     <div *ngIf="dashletData">
-        <dashboard-component [dashletData]="dashletData"></dashboard-component>
+        <dashboard-component [dashletData]="dashletData" [collectionName]="collectionName"></dashboard-component>
     </div>
 </ion-content>
