@@ -77,22 +77,24 @@ export class LogoutHandlerService {
 
     await this.appGlobalService.getGuestUserInfo();
 
+    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
+      true : false;
+    if (selectedUserType === ProfileType.ADMIN && !isOnboardingCompleted) {
+      this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+    } else {
+      this.events.publish('UPDATE_TABS');
+    }
+
     if (selectedUserType === ProfileType.STUDENT) {
       initTabs(this.containerService, GUEST_STUDENT_TABS);
-    } else if (this.commonUtilService.isAccessibleForNonStudentRole(selectedUserType)) {
+    } else if (this.commonUtilService.isAccessibleForNonStudentRole(selectedUserType) && selectedUserType !== ProfileType.ADMIN) {
       initTabs(this.containerService, GUEST_TEACHER_TABS);
     }
 
-    this.events.publish('UPDATE_TABS');
-
-    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
-      true : false;
-    if (selectedUserType === ProfileType.ADMIN) {
-      this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN]);
-    } else if (isOnboardingCompleted) {
+    if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
-    } else {
+    } else if (selectedUserType !== ProfileType.ADMIN) {
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }
