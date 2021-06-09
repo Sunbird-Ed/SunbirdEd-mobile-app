@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { GenericPopUpService } from '../../shared';
 
-describe('ProjectListingComponent', () => {
+xdescribe('ProjectListingComponent', () => {
     let component: ProjectListingComponent;
     let mockUnnatiDataService: Partial<UnnatiDataService> = {};
     const mockLoaderService: Partial<LoaderService> = {};

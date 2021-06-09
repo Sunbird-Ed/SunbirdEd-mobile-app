@@ -154,7 +154,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
            downloaded: true,
           },
         };  
-        if(!this.db.pdb){
+        if(this.db.pdb){
           let projectData: any = await this.db.customQuery(query);
           if (projectData.docs) {
             projectData.docs.sort(function (a, b) {
