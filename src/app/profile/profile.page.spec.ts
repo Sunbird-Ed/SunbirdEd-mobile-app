@@ -31,6 +31,7 @@ import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
+import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -131,6 +132,9 @@ describe('Profile.page', () => {
             restoreTags: jest.fn()
         }
     };
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        evalCriteria: jest.fn()
+    };
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -158,7 +162,8 @@ describe('Profile.page', () => {
             mockToastController as ToastController,
             mockTranslateService as TranslateService,
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
