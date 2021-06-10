@@ -1071,6 +1071,12 @@ html[data-theme="JOYFUL"]{
       box-shadow: var(--block-style-shadow) !important;
     }
   }
+  app-create-edit-group .cr-terms-container .cr-terms {
+    padding: 14px 0 !important;
+  }
+  app-group-details .gd-opts ion-icon{
+    padding: 0 !important;
+  }
 
   // my-groups-popover component
   app-my-groups-popover{
