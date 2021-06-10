@@ -4,7 +4,7 @@ import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService} from '@app/services';
+import {CommonUtilService, FormAndFrameworkUtilService} from '@app/services';
 import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
@@ -14,9 +14,10 @@ import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterCompone
     providers: [FilterFormConfigMapper, TitleCasePipe]
 })
 export class SearchFilterPage implements OnInit {
-    @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
+    @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
+    @Input('resetData') resetData: boolean;
 
     public config: FieldConfig<any>[];
 
@@ -25,6 +26,7 @@ export class SearchFilterPage implements OnInit {
     public searchResultFacets: ContentSearchFilter[];
 
     private appliedFilterCriteria: ContentSearchCriteria;
+    private isPageLoadedFirstTime: boolean;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -33,11 +35,18 @@ export class SearchFilterPage implements OnInit {
         private location: Location,
         private modalController: ModalController,
         private commonUtilService: CommonUtilService,
-        private filterFormConfigMapper: FilterFormConfigMapper
+        private filterFormConfigMapper: FilterFormConfigMapper,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) {
     }
 
     ngOnInit() {
+        this.isPageLoadedFirstTime = true;
+        this.initilizeSearchFilter();
+    }
+
+    private async initilizeSearchFilter(){
+        this.initialFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(this.initialFilterCriteria);
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
         if (!this.filterFormTemplateConfig) {
             const {config, defaults} = this.buildConfig(this.appliedFilterCriteria);
@@ -55,7 +64,7 @@ export class SearchFilterPage implements OnInit {
 
     applyFilter() {
         this.modalController.dismiss({
-            appliedFilterCriteria: this.appliedFilterCriteria
+            appliedFilterCriteria: this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria)
         });
     }
 
@@ -83,12 +92,14 @@ export class SearchFilterPage implements OnInit {
 
         });
 
+        this.formAndFrameworkUtilService.changeChannelNameToId(searchCriteria);
+
         const loader = await this.commonUtilService.getLoader();
         await loader.present();
 
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
-            this.appliedFilterCriteria = contentSearchResult.filterCriteria;
+            this.appliedFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(contentSearchResult.filterCriteria);
             this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
             // todo show error toast
@@ -111,6 +122,17 @@ export class SearchFilterPage implements OnInit {
         if (!event) {
             return;
         }
+        if (this.isPageLoadedFirstTime) {
+            this.isPageLoadedFirstTime = false;
+            if (this.resetData) {
+                setTimeout(() => {
+                    this.resetFilter();
+                }, 500);
+                this.resetData = false;
+            }
+            return;
+        }
+
         this.refreshForm(event);
     }
 }

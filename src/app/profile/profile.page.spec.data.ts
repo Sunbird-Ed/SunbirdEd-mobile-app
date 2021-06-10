@@ -54,7 +54,11 @@ export const mockProfileData = {
     }, {
         orgId: 'sample_org_id2'
     }],
-    userLocations: [ 'State', 'District', 'Block', 'Cluster' ]
+    userLocations: [ 'State', 'District', 'Block', 'Cluster' ],
+    framework: {
+        medium: ['English', 'Bengali'],
+        board: ['CBSE'],
+    }
 };
 
 export const mockFormData =  [

@@ -22,7 +22,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-guest-profile',
@@ -62,7 +62,8 @@ export class GuestProfilePage implements OnInit {
     private headerService: AppHeaderService,
     public toastController: ToastController,
     private router: Router,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private segmentationTagService: SegmentationTagService
   ) { }
 
   async ngOnInit() {
@@ -138,6 +139,7 @@ export class GuestProfilePage implements OnInit {
           medium: res.medium,
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
         this.refreshSignInCard();
         this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType);

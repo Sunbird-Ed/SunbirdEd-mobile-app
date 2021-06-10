@@ -29,6 +29,7 @@ import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 describe('GuestEditPage', () => {
     let guestEditPage: GuestEditPage;
@@ -88,6 +89,9 @@ describe('GuestEditPage', () => {
         getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        evalCriteria: jest.fn()
+    };
 
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
@@ -106,7 +110,8 @@ describe('GuestEditPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockProfileHandler as ProfileHandler,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
