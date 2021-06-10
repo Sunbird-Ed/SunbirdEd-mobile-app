@@ -44,7 +44,7 @@
     <div class="gd-tab-container">
       <div class="gd-tab-content" *ngIf="activeTab=='members'">
         <div class="gd-member-search">
-          <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="">
           <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onMemberSearch(searchMember)">
         </div>
@@ -88,7 +88,7 @@
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='activities'">
         <div class="gd-member-search">
-          <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="">
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
