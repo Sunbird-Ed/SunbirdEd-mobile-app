@@ -281,20 +281,26 @@ export function sdkDriverFactory(): any {
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export const sunbirdSdkFactory =
   () => {
     return async () => {
-      const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-        document.addEventListener('deviceready', () => {
-          sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
-            resolve(v);
-          }, (err) => {
-            reject(err);
-          });
-        }, false);
+      await sleep(2000);
+      // const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
+      //   document.addEventListener('deviceready', () => {
+      //     sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
+      //       resolve(v);
+      //     }, (err) => {
+      //       reject(err);
+      //     });
+      //   }, false);
 
-      }));
+      // }));
+      const buildConfigValues = JSON.parse('{"DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER":true,"TOU_BASE_URL":"https:\/\/static.preprod.ntp.net.in","APPLICATION_ID":"staging.diksha.app","MERGE_ACCOUNT_BASE_URL":"https:\/\/merge.staging.sunbirded.org","OAUTH_REDIRECT_URL":"staging.diksha.app:\/\/mobile","TRACK_USER_TELEMETRY":true,"PRODUCER_ID":"staging.diksha.app","DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER":true,"OAUTH_SESSION":"org.genie.KeycloakOAuthSessionService","SUPPORT_EMAIL":"support@teamdiksha.org","DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE":true,"REAL_VERSION_NAME":"3.6.local.0-debug","MOBILE_APP_CONSUMER":"mobile_device","DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT":false,"MOBILE_APP_SECRET":"c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx","CONTENT_STREAMING_ENABLED":true,"FLAVOR":"staging","USE_CRASHLYTICS":false,"CHANNEL_ID":"505c7c48ac6dc1edc9b08f21db5a571d","DISPLAY_ONBOARDING_CATEGORY_PAGE":true,"MOBILE_APP_KEY":"sunbird-0.1","BUILD_TYPE":"debug","DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT":false,"MAX_COMPATIBILITY_LEVEL":4,"VERSION_CODE":90,"DEBUG":true,"OPEN_RAPDISCOVERY_ENABLED":true,"VERSION_NAME":"3.6.local","BASE_URL":"https:\/\/staging.sunbirded.org","DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER":true}');
+      console.log(buildConfigValues);
 
       await SunbirdSdk.instance.init({
         platform: 'cordova',
