@@ -38,6 +38,9 @@ Node JS Version - above 8
 
 
 
+
+---------------------------------------
+
 # IOS Development setup
 
 ## Prerequisites
@@ -61,17 +64,20 @@ Node JS Version - above 8
     4. RUN npm i <sunbird-sdk repo local path>/dist
     5. RUN npm i
     6. RUN ./build-ios.sh
+    7. RUN cordova emulate ios
 
 
+## Possible Errors 
 
-error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird')
+1. error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird') or Duplicate GoogleService-Info.plist file error
 
-open platforms/ios/Sunbird.xcworkspace 
+### Solution
+    open platforms/ios/Sunbird.xcworkspace 
 
-Select Sunbird 
-Build setting Project, targets
-update Swift language version to 4 
-Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
-and close Xcode
+    Select Sunbird 
+    Build setting Project, targets
+    update Swift language version to 4 
+    Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
+    and close Xcode then rerun the **cordova emulate ios**
 
 
