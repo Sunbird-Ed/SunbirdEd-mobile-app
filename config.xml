@@ -149,9 +149,9 @@
     </plugin>
     <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0" />
+    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
-    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0" />
+    <plugin name="sb-cordova-plugin-db" spec="https://github.com/shikshalokam/sb-cordova-plugin-db.git" />
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />

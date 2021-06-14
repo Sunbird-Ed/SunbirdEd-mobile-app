@@ -153,9 +153,9 @@
     "pouchdb-find": "^7.2.2",
     "rxjs": "^6.6.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
-    "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
+    "sb-cordova-plugin-db": "git+https://github.com/shikshalokam/sb-cordova-plugin-db.git",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
-    "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.9.0",
+    "sb-cordova-plugin-utility": "git+https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios",
     "sb-svg2pdf": "0.0.10",
     "sb-tag-manager": "^3.9.19",
     "tslib": "^2.1.0",
@@ -223,7 +223,6 @@
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-media": {},
       "cordova-plugin-android-downloadmanager": {},
-      "sb-cordova-plugin-db": {},
       "sb-cordova-plugin-customtabs": {
         "URL_SCHEME": "@string/custom_scheme_url",
         "URL_HOST": "mobile"
@@ -245,7 +244,6 @@
       },
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
-      "sb-cordova-plugin-utility": {},
       "cordova-plugin-printer": {},
       "cordova-plugin-fcm-with-dependecy-updated": {},
       "com.telerik.plugins.nativepagetransitions": {},
@@ -265,7 +263,11 @@
       "cordova-plugin-photo-library": {},
       "cordova-plugin-filechooser": {},
       "cordova-plugin-inappupdatemanager": {},
-      "cordova-plugin-sunbirdsplash": {}
+      "cordova-plugin-sunbirdsplash": {},
+      "sb-cordova-plugin-db": {
+        "USESWIFTLANGUAGEVERSION": "4"
+      },
+      "sb-cordova-plugin-utility": {}
     },
     "platforms": [
       "android",
