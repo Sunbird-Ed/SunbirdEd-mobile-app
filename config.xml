@@ -33,6 +33,14 @@
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <queries>
+                <intent>
+                    <action android:name="android.media.action.IMAGE_CAPTURE" />
+                </intent>
+                <intent>
+                    <action android:name="android.intent.action.GET_CONTENT" />
+                </intent>
+            </queries>
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
@@ -158,5 +166,4 @@
     <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
     </plugin>
-    <engine name="android" spec="^9.0.0" />
 </widget>
