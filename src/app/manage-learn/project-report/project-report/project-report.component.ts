@@ -21,7 +21,7 @@ export class ProjectReportComponent implements OnInit {
   showFilter: boolean = false;
   filterType: { label: string; value: number }[];
   filter = { type: 1, entity: undefined, program: undefined };
-  @ViewChild('mySelect', { static: false }) selectRef: IonSelect;
+  @ViewChild('mySelect') selectRef: IonSelect;
   texts: any;
   constructor(
     private translate: TranslateService,

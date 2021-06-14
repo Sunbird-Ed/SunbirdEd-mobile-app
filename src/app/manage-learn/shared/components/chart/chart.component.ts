@@ -7,7 +7,7 @@ import { Chart } from 'chart.js';
 })
 export class ChartComponent implements OnInit {
   // @ViewChild('doughnutCanvas', {static: false}) private doughnutCanvas: ElementRef;
-  @ViewChild('doughnutCanvas', { static: false }) private doughnutCanvas: ElementRef;
+  @ViewChild('doughnutCanvas') private doughnutCanvas: ElementRef;
   private doughnutChart: any;
   constructor() {
   }

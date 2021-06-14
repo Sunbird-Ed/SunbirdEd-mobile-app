@@ -49,8 +49,8 @@ export class AddMemberToGroupPage {
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
-  @ViewChild('cap', { static: false }) cap: RecaptchaComponent;
-  @ViewChild('addMemberInfoPopupRef', { static: false }) addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
+  @ViewChild('cap') cap: RecaptchaComponent;
+  @ViewChild('addMemberInfoPopupRef') addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,

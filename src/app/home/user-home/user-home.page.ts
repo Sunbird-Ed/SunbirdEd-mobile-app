@@ -75,7 +75,7 @@ import { SegmentationTagService } from '@app/services/segmentation-tag/segmentat
 export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
 
-  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
+  @ViewChild('refresher') refresher: IonRefresher;
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
@@ -94,7 +94,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   pillsViewType = PillsViewType;
   selectMode = SelectMode;
   pillShape = PillShape;
-  @ViewChild('contentView', { static: false }) contentView: ContentView;
+  @ViewChild('contentView') contentView: ContentView;
   showPreferenceInfo = false;
 
   LibraryCardTypes = LibraryCardTypes;

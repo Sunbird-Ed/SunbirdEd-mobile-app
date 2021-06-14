@@ -79,7 +79,7 @@ import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmen
 })
 export class ProfilePage implements OnInit {
 
-  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
+  @ViewChild('refresher') refresher: IonRefresher;
 
   profile: any = {};
   userId = '';

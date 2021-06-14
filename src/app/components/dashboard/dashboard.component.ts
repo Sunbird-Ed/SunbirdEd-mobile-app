@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   columnConfig = { columnConfig: [] };
   
 
-  @ViewChild('lib', { static: false }) lib: any;
+  @ViewChild('lib') lib: any;
 
   constructor(
     private storagePermissionHandlerService: StoragePermissionHandlerService,

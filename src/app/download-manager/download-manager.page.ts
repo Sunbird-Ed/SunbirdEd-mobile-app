@@ -54,7 +54,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
   storageDestination: any;
   private deletedContentListTitle$?: BehaviorSubject<string>;
-  @ViewChild('downloadsTab', { static: false }) downloadsTab: DownloadsTabComponent;
+  @ViewChild('downloadsTab') downloadsTab: DownloadsTabComponent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,

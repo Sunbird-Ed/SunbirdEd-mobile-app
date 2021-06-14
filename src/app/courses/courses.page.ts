@@ -55,7 +55,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class CoursesPage implements OnInit, OnDestroy {
 
-  @ViewChild('courseRefresher', { static: false }) refresher: IonRefresher;
+  @ViewChild('courseRefresher') refresher: IonRefresher;
 
   /**
    * Contains enrolled course

@@ -83,7 +83,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 export class ExploreBooksPage implements OnInit, OnDestroy {
   public pageId = 'ExploreBooksPage';
 
-  @ViewChild('searchInput', { static: false }) public searchInputRef: ElementRef;
+  @ViewChild('searchInput') public searchInputRef: ElementRef;
   @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
   LibraryCardTypes = LibraryCardTypes;

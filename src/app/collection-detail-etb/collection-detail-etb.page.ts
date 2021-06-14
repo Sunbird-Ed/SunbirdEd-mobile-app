@@ -242,9 +242,9 @@ export class CollectionDetailEtbPage implements OnInit {
   currentFilter = 'ALL';
   localImage = '';
   appName: any;
-  @ViewChild(iContent, { static: false }) ionContent: iContent;
-  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
-  @ViewChild('collectionChildComp', { static: false }) collectionChildComp: CollectionChildComponent;
+  @ViewChild(iContent) ionContent: iContent;
+  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  @ViewChild('collectionChildComp') collectionChildComp: CollectionChildComponent;
   private eventSubscription: Subscription;
 
   showDownload: boolean;

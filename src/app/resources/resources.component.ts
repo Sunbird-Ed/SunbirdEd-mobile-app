@@ -119,7 +119,7 @@ import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate, OnTabViewWillEnter {
-  @ViewChild('libraryRefresher', { static: false }) refresher: IonRefresher;
+  @ViewChild('libraryRefresher') refresher: IonRefresher;
 
   pageLoadedSuccess = false;
   storyAndWorksheets: Array<any>;
@@ -183,7 +183,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   pageApiLoader = true;
   dynamicResponse: any;
   courseCardType = CourseCardGridTypes;
-  @ViewChild('contentView', { static: false }) contentView: ContentView;
+  @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;

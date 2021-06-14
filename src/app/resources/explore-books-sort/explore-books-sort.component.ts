@@ -11,8 +11,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
   styleUrls: ['./explore-books-sort.component.scss'],
 })
 export class ExploreBooksSortComponent implements OnInit {
-  @ViewChild('boardSelect', { static: false }) boardSelect;
-  @ViewChild('mediumSelect', { static: false }) mediumSelect;
+  @ViewChild('boardSelect') boardSelect;
+  @ViewChild('mediumSelect') mediumSelect;
 
   categories;
   backButtonFunc = undefined;

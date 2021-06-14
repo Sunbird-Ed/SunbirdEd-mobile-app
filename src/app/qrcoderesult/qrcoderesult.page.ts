@@ -69,7 +69,7 @@ declare const cordova;
   styleUrls: ['./qrcoderesult.page.scss'],
 })
 export class QrcoderesultPage implements OnDestroy {
-  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   unregisterBackButton: any;
   /**
    * To hold identifier
@@ -133,7 +133,7 @@ export class QrcoderesultPage implements OnDestroy {
   stckyindex: string;
   chapterFirstChildId: string;
   showSheenAnimation = true;
-  @ViewChild(iContent, { static: false }) ionContent: iContent;
+  @ViewChild(iContent) ionContent: iContent;
   onboarding = false;
   dialCode: string;
 

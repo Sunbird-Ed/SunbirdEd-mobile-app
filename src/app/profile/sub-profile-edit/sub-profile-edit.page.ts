@@ -40,7 +40,7 @@ export class SubProfileEditPage {
 
   formInitilized = false;
 
-  @ViewChild('commonForms', { static: false }) commonForms: CommonFormsComponent;
+  @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
   managedUserFormList: any = [];
 

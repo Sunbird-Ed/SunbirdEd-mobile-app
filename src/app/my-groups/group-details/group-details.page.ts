@@ -78,7 +78,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     username: '',
     identifier: ''
   };
-  @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
+  @ViewChild(AccessDiscussionComponent) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,

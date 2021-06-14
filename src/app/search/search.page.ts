@@ -89,14 +89,14 @@ declare const cordova;
 })
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWillEnter {
 
-  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
-  @ViewChild(DiscoverComponent, { static: false }) discoverCmp: DiscoverComponent;
+  @ViewChild('refresher') refresher: IonRefresher;
+  @ViewChild(DiscoverComponent) discoverCmp: DiscoverComponent;
 
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;
   showLoading: boolean;
   downloadProgress: any;
-  @ViewChild('searchInput', { static: false }) searchBar;
+  @ViewChild('searchInput') searchBar;
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
@@ -155,7 +155,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchInfolVisibility = 'show';
   refresh: boolean = false;
 
-  @ViewChild('contentView', { static: false }) contentView: IonContent;
+  @ViewChild('contentView') contentView: IonContent;
   headerObservable: Subscription;
   primaryCategoryFilters;
   PillsViewType = PillsViewType;

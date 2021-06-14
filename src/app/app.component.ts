@@ -73,7 +73,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appName: string;
   appVersion: string;
-  @ViewChild('mainContent', { read: IonRouterOutlet, static: false }) routerOutlet: IonRouterOutlet;
+  @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
   isForeground: boolean;
   isPlannedMaintenanceStarted = false;
   isUnplannedMaintenanceStarted = false;

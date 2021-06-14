@@ -45,9 +45,9 @@ import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmen
 })
 export class CategoriesEditPage implements OnInit, OnDestroy {
 
-  @ViewChild('boardSelect', { static: false }) boardSelect: IonSelect;
-  @ViewChild('mediumSelect', { static: false }) mediumSelect: IonSelect;
-  @ViewChild('gradeSelect', { static: false }) gradeSelect: IonSelect;
+  @ViewChild('boardSelect') boardSelect: IonSelect;
+  @ViewChild('mediumSelect') mediumSelect: IonSelect;
+  @ViewChild('gradeSelect') gradeSelect: IonSelect;
 
   private framework: Framework;
   private formControlSubscriptions: Subscription;

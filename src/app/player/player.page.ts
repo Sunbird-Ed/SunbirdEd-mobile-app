@@ -56,7 +56,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   playerType;  
 
 
-  @ViewChild('preview', { static: false }) previewElement: ElementRef;
+  @ViewChild('preview') previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,

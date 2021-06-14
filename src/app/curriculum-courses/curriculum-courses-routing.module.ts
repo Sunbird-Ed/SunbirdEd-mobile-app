@@ -10,7 +10,7 @@ const routes: Routes = [
     },
     {
         path: RouterLinks.CHAPTER_DETAILS,
-        loadChildren: './chapter-details/chapter-details.module#ChapterDetailsPageModule'
+        loadChildren: () => import('./chapter-details/chapter-details.module').then(m => m.ChapterDetailsPageModule)
     },
 ];
 

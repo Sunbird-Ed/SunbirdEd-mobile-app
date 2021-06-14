@@ -7,7 +7,7 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./remarks-modal.component.scss'],
 })
 export class RemarksModalComponent implements OnInit {
-  @ViewChild('remarkInput',  {static: false}) remarkInput;
+  @ViewChild('remarkInput') remarkInput;
   hideBack;
   @Input() data: any;
   @Input() button: string;

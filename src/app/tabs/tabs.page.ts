@@ -21,7 +21,7 @@ import { ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
 export class TabsPage implements OnInit, AfterViewInit {
 
   configData: any;
-  @ViewChild('tabRef', { static: false }) tabRef: IonTabs;
+  @ViewChild('tabRef') tabRef: IonTabs;
   tabIndex = 0;
   tabs = [];
   headerConfig = {

@@ -15,7 +15,7 @@ import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterCompone
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
-    @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
+    @ViewChild('sbSearchFilterComponent') searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
     @Input('resetData') resetData: boolean;
 

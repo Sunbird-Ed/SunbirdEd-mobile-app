@@ -27,7 +27,7 @@ var environment = {
 })
 export class TaskViewPage implements OnInit {
   parameters;
-  @ViewChild("dateTime", { static: false }) sTime;
+  @ViewChild("dateTime") sTime;
   editField;
   task;
   project;

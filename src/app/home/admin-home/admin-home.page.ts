@@ -46,7 +46,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-  @ViewChild('contentView', { static: false }) contentView: ContentView;
+  @ViewChild('contentView') contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,

@@ -50,7 +50,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   otherImageUri = 'assets/imgs/ic_other.svg';
   selectCardImageUri = 'assets/imgs/ic_check.svg';
   private navParams: any;
-  @ViewChild(IonRouterOutlet, { static: false }) routerOutlet: IonRouterOutlet;
+  @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   appName = '';
   public hideBackButton = true;
   ProfileType = ProfileType;
