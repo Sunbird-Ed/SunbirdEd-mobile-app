@@ -216,7 +216,7 @@
   "CRS_TRK_FRMELEMNTS_LBL_LEAVE_TRAINING_HEADING": "Leave the course?",
   "CRS_TRK_FRMELEMNTS_LBL_LOGIN_TO_JOIN_TRAINING": "Log in to join a course",
   "CRS_TRK_FRMELEMNTS_LBL_NO_COURSES": "No courses",
-  "CRS_TRK_FRMELEMNTS_LBL_NO_DOWNLOADS_INFO": "Download content from Courses, or Library",
+  "CRS_TRK_FRMELEMNTS_LBL_NO_DOWNLOADS_INFO": "Download content from Courses or Library",
   "CRS_TRK_FRMELEMNTS_LBL_NUMBER_OF_COURSES": "Courses ({{%s}})",
   "CRS_TRK_FRMELEMNTS_LBL_NUMBER_OF_COURSE_1": "Course ({{%s}})",
   "CRS_TRK_FRMELEMNTS_LBL_OVERLAY_LABEL_TAKE_COURSE": "Log in to join this course",
