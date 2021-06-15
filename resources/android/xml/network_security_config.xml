@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" >
+ 	<trust-anchors>
+        <certificates src="system" />
+    	</trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="true">educationportal.mp.gov.in</domain>
+    <domain includeSubdomains="true">ehrms.upsdc.gov.in</domain>
+    <domain includeSubdomains="true">apekx.ap.gov.in:8080</domain>
+ </domain-config>
+</network-security-config>
