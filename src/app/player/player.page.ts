@@ -53,7 +53,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private content: Content;
   public objRollup: Rollup;
   nextContentToBePlayed: Content;
-  playerType;  
+  playerType: string = 'sunbird-old-player';
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -118,9 +118,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
-    } else {
-        this.playerType = 'sunbird-old-player';
-    }
+    } 
     this.config['context'].dispatcher = {
       dispatch: function (event) {
         SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
