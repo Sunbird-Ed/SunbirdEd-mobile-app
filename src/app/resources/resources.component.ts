@@ -626,19 +626,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         this.appGlobalService.showNewTabsSwitchPopup();
        }, 2000);
     }
-    // utilityConfigFields.forEach((config) => {
-    //   if (config.code === 'experienceSwitchPopupConfig') {
-    //     if (config.config.isEnabled) {
-    //         this.coachTimeout = setTimeout(() => {
-    //         this.appGlobalService.showNewTabsSwitchPopup();
-    //        }, 2000);
-    //     }
-    //   }
-    // });
-    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.coachTimeout = setTimeout(() => {
-    //   this.appGlobalService.showNewTabsSwitchPopup();
-    // }, 2000);
   }
 
   subscribeSdkEvent() {
