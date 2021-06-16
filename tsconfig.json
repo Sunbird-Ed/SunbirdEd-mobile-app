@@ -1,6 +1,9 @@
 {
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
+  "angularCompilerOptions": {
+    "enableIvy": false
+  },
   "compilerOptions": {
     "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
