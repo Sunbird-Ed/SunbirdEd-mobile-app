@@ -72,6 +72,7 @@
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "chartjs-plugin-stacked100": "^0.7.1",
+    "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
     "common-form-elements": "^3.9.16",
@@ -108,7 +109,6 @@
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
-    "cordova-plugin-photo-library": "^2.3.1",
     "cordova-plugin-printer": "^0.8.0",
     "cordova-plugin-proguard": "git+https://github.com/greybax/cordova-plugin-proguard.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0",
@@ -133,7 +133,7 @@
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
     "hammerjs": "^2.0.8",
-    "ionic-plugin-keyboard": "2.2.1",
+    "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.0.0",
@@ -259,19 +259,20 @@
       "cordova-plugin-document-viewer": {},
       "com-sarriaroman-photoviewer": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-telerik-imagepicker": {},
-      "cordova-plugin-photo-library": {},
+      "cordova-plugin-telerik-imagepicker": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
+      },
       "cordova-plugin-filechooser": {},
       "cordova-plugin-inappupdatemanager": {},
       "cordova-plugin-sunbirdsplash": {},
       "sb-cordova-plugin-db": {
         "USESWIFTLANGUAGEVERSION": "4"
       },
-      "sb-cordova-plugin-utility": {}
+      "sb-cordova-plugin-utility": {},
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   },
   "jest": {
