@@ -107,8 +107,6 @@ export class ExternalIdVerificationService {
         const source = await this.preferences.getString(PreferenceKey.NAVIGATION_SOURCE).toPromise();
         if (source === 'courses') {
             this.router.navigateByUrl('tabs/courses');
-        } else if (source === 'profile' || source === PageId.MENU) {
-            this.router.navigateByUrl('tabs/profile');
         }
         await this.resetNavigationSource();
     }

@@ -129,7 +129,9 @@ export class SignInPage implements OnInit {
     }
 
     private navigateBack(skipNavigation) {
-        if (skipNavigation.navigateToCourse) {
+        if ((skipNavigation && skipNavigation.navigateToCourse) ||
+            (skipNavigation && (skipNavigation.source === 'user' ||
+                skipNavigation.source === 'resources'))) {
             this.location.back();
         }
     }
