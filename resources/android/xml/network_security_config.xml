@@ -9,5 +9,6 @@
     <domain includeSubdomains="true">educationportal.mp.gov.in</domain>
     <domain includeSubdomains="true">ehrms.upsdc.gov.in</domain>
     <domain includeSubdomains="true">apekx.ap.gov.in:8080</domain>
+    <domain includeSubdomains="true">ops.ntp.net.in</domain>
  </domain-config>
 </network-security-config>
