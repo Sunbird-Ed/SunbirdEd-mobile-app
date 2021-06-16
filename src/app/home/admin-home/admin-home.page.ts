@@ -157,15 +157,11 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async ionViewDidEnter() {
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
-    utilityConfigFields.forEach((config) => {
-      if (config.code === 'experienceSwitchPopupConfig') {
-        if (config.config.isEnabled) {
-            this.newThemeTimeout = setTimeout(() => {
-            this.appGlobalService.showNewTabsSwitchPopup();
-           }, 2000);
-        }
-      }
-    });
+    if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
+      this.newThemeTimeout = setTimeout(() => {
+        this.appGlobalService.showNewTabsSwitchPopup();
+       }, 2000);
+    }
   }
 
   getFrameworkDetails(): void {
