@@ -269,7 +269,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = displayItems;
-    this.isBannerDisplayed();
+    this.showorHideBanners();
     this.refresh = false;
     refresher ? refresher.target.complete() : null;
   }
@@ -666,7 +666,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  isBannerDisplayed() {
+  showorHideBanners() {
     this.bannerSegment = this.segmentationTagService.exeCommands.find((cmd) => {
       if (cmd.controlFunction === 'BANNER_CONFIG') {
         return cmd;
