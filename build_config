@@ -30,7 +30,6 @@ cordova-plugin=cordova-plugin-filepath
 cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
-cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-db.git
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage@5.1.0
@@ -43,6 +42,6 @@ sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.9.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
-sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0
+sunbird-cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-sync.git#release-3.9.0-ios
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0
 cordova-plugin=cordova-plugin-add-swift-support@2.0.2
