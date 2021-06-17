@@ -525,12 +525,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
       .then(updatedProfile => {
          // ******* Segmentation
-         Object.keys(updatedProfile.framework).forEach((key) => {
-          if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x .toLowerCase());
+         let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
+         Object.keys(segmentDetails).forEach((key) => {
+          if (key !== 'id' && Array.isArray(segmentDetails[key])) {
+            segmentDetails[key] = segmentDetails[key].map( x => x.replace(/\s/g, '').toLowerCase());
           }
          });
-         window['segmentation'].SBTagService.pushTag(updatedProfile.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+         window['segmentation'].SBTagService.pushTag(segmentDetails, TagPrefixConstants.USER_ATRIBUTE, true);
          let userLocation = [];
          (updatedProfile['userLocations'] || []).forEach(element => {
            userLocation.push({ name: element.name, code: element.code });
