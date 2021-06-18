@@ -59,13 +59,13 @@ Node JS Version - above 8
 
     1. Checkout sunbird-sdk repo from https://github.com/shikshalokam/sunbird-mobile-sdk with branch release-3.9.0-ios
     2. cd to <sunbird-mobile-sdk> && npm i && npm run build:prod
-    2. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
-    3. Add `GoogleService-Info.plist` file
-    3. cd to <sunbird-mobile-app> local path
-    4. RUN npm i <sunbird-sdk repo local path>/dist
-    5. RUN npm i
-    6. RUN ./build-ios.sh
-    7. RUN cordova emulate ios
+    3. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
+    4. Add `GoogleService-Info.plist` file
+    5. cd to <sunbird-mobile-app> local path
+    6. RUN npm i <sunbird-sdk repo local path>/dist
+    7. RUN npm i
+    8. RUN ./build-ios.sh
+    9. RUN cordova emulate ios
 
 
 ## Possible Errors 
