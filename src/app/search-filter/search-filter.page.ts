@@ -17,7 +17,6 @@ export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
-    @Input('resetData') resetData: boolean;
 
     public config: FieldConfig<any>[];
 
@@ -124,12 +123,6 @@ export class SearchFilterPage implements OnInit {
         }
         if (this.isPageLoadedFirstTime) {
             this.isPageLoadedFirstTime = false;
-            if (this.resetData) {
-                setTimeout(() => {
-                    this.resetFilter();
-                }, 500);
-                this.resetData = false;
-            }
             return;
         }
 
