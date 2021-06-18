@@ -58,6 +58,7 @@ Node JS Version - above 8
 ## Steps
 
     1. Checkout sunbird-sdk repo from https://github.com/shikshalokam/sunbird-mobile-sdk with branch release-3.9.0-ios
+    2. cd to <sunbird-mobile-sdk> && npm i && npm run build:prod
     2. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
     3. Add `GoogleService-Info.plist` file
     3. cd to <sunbird-mobile-app> local path
