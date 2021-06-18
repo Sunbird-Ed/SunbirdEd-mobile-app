@@ -137,21 +137,41 @@ export class AttachmentService {
   }
 
   async openFile() {
-    new Promise((resolve) => {
-      if (this.platform.is("ios")) {
-        // resolve(this.filePickerIOS.pickFile());
-      } else {
-        resolve(this.chooser.getFileMetadata());
-      }
-    })
-      .then((res: any) => {
-        return this.filePath.resolveNativePath(res.uri);
-      })
-      .then((filePath) => {
-        this.copyFile(filePath);
-      })
+    try {
+      const file = await this.chooser.getFile();
+      const pathToWrite = this.directoryPath();
+      const newFileName = this.createFileName(file.name)
+      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+      if (writtenFile.isFile) {
+        const data = {
+          name: newFileName,
+          type: this.mimeType(newFileName),
+          isUploaded: false,
+          url: "",
+        };
 
-      .catch((err) => { });
+        this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+        this.actionSheetController.dismiss(data);
+      }
+    } catch (error) {
+       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+    }
+
+    // non working code for sdk30-android 11
+    // new Promise((resolve) => {
+    //   if (this.platform.is('ios')) {
+    //     // resolve(this.filePickerIOS.pickFile());
+    //   } else {
+    //     resolve(this.chooser.getFileMetadata());
+    //   }
+    // })
+    //   .then((res: any) => {
+    //     return this.filePath.resolveNativePath(res.uri);
+    //   })
+    //   .then((filePath) => {
+    //     this.copyFile(filePath);
+    //   })
+    //   .catch((err) => {});
   }
 
   copyFile(filePath) {
