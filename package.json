@@ -174,7 +174,7 @@
     "ionic_enable_lint": false
   },
   "devDependencies": {
-    "@angular-devkit/architect": "^0.1200.4",
+    "@angular-devkit/architect": "^0.901.15",
     "@angular-devkit/build-angular": "~0.901.15",
     "@angular/cli": "~9.1.15",
     "@angular/compiler": "~9.1.13",
