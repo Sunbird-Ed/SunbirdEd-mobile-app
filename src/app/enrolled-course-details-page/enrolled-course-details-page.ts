@@ -11,7 +11,6 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { UtilityService } from '@app/services/utility-service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { DatePipe, Location } from '@angular/common';
-import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
   AuditState, AuthService,
   Batch,
@@ -1335,7 +1334,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
       return;
     }
-    
+
     this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,

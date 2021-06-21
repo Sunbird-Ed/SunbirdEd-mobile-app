@@ -11,6 +11,7 @@ import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
 import {AuthService} from '../../../../sunbird-mobile-sdk/tmp';
 import {SystemSettingsService} from '@project-sunbird/sunbird-sdk';
+import {Location} from '@angular/common';
 
 describe('SignInPage', () => {
     let signInPage: SignInPage;
@@ -30,6 +31,7 @@ describe('SignInPage', () => {
     const mockSbProgressLoaderService: Partial<SbProgressLoader> = {};
     const mockLoginNavigationHandlerService: Partial<LoginNavigationHandlerService> = {};
     const mockGooglePlusLogin: Partial<GooglePlus> = {};
+    const mockLocation: Partial<Location> = {};
 
     beforeAll(() => {
         signInPage = new SignInPage(
@@ -42,7 +44,8 @@ describe('SignInPage', () => {
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockSbProgressLoaderService as SbProgressLoader,
             mockLoginNavigationHandlerService as LoginNavigationHandlerService,
-            mockGooglePlusLogin as GooglePlus
+            mockGooglePlusLogin as GooglePlus,
+            mockLocation as Location
         );
     });
 

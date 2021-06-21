@@ -155,11 +155,13 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  ionViewDidEnter() {
-    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.newThemeTimeout = setTimeout(() => {
-    //   this.appGlobalService.showNewTabsSwitchPopup();
-    // }, 2000);
+  async ionViewDidEnter() {
+    const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+    if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
+      this.newThemeTimeout = setTimeout(() => {
+        this.appGlobalService.showNewTabsSwitchPopup();
+       }, 2000);
+    }
   }
 
   getFrameworkDetails(): void {

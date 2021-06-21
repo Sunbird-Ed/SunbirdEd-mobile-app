@@ -101,7 +101,6 @@ table.dataTable.no-footer {
   border-bottom: 0px !important;
   background: transparent;
   border: 1px solid #ddd;
-  text-transform: capitalize;
   background-color: $white !important;
 }
 
@@ -121,7 +120,7 @@ table thead.sorting {
 }
 
 table.dataTable tbody td {
-  padding: 8px 24px;
+  padding: 8px 40px;
 }
 
 table.dataTable thead tr th {
