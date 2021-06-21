@@ -293,12 +293,13 @@ export class ProfilePage implements OnInit {
                 that.resetProfile();
                 that.profile = profileData;
                 // ******* Segmentation
-                Object.keys(profileData.framework).forEach((key) => {
-                  if (key !== 'id' && Array.isArray(profileData.framework[key])) {
-                    profileData.framework[key] = profileData.framework[key].map( x => x .toLowerCase());
+                let segmentDetails = JSON.parse(JSON.stringify(profileData.framework));
+                Object.keys(segmentDetails).forEach((key) => {
+                  if (key !== 'id' && Array.isArray(segmentDetails[key])) {
+                  segmentDetails[key] = segmentDetails[key].map( x => x.replace(/\s/g, '').toLowerCase());
                   }
-                 });
-                window['segmentation'].SBTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+                });
+                window['segmentation'].SBTagService.pushTag(segmentDetails, TagPrefixConstants.USER_ATRIBUTE, true);
                 let userLocation = [];
                 (profileData['userLocations'] || []).forEach(element => {
                   userLocation.push({ name: element.name, code: element.code });

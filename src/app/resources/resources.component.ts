@@ -75,6 +75,7 @@ import {
 } from '../profile/framework-selection/framework-selection.page';
 import { PageFilterCallback } from './../page-filter/page-filter.page';
 import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
+import { FormConstants } from '../form.constants';
 
 @Component({
   selector: 'app-resources',
@@ -617,12 +618,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
   }
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
     this.refresher.disabled = false;
-    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.coachTimeout = setTimeout(() => {
-    //   this.appGlobalService.showNewTabsSwitchPopup();
-    // }, 2000);
+    const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+    if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
+      this.coachTimeout = setTimeout(() => {
+        this.appGlobalService.showNewTabsSwitchPopup();
+       }, 2000);
+    }
   }
 
   subscribeSdkEvent() {

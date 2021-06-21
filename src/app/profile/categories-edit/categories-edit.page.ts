@@ -527,7 +527,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
          // ******* Segmentation
          Object.keys(updatedProfile.framework).forEach((key) => {
           if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x .toLowerCase());
+            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase());
           }
          });
          window['segmentation'].SBTagService.pushTag(updatedProfile.framework, TagPrefixConstants.USER_ATRIBUTE, true);
