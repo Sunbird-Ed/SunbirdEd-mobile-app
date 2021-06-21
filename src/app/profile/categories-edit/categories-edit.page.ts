@@ -479,6 +479,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                       this.appGlobalService.showYearOfBirthPopup(updatedProfile);
                     }
                     this.router.navigate([RouterLinks.TABS]);
+                    this.events.publish('update_header');
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
                     const navigationExtras: NavigationExtras = {
@@ -496,6 +497,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                   this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
                 }
                 this.router.navigate([RouterLinks.TABS]);
+                this.events.publish('update_header');
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 const navigationExtras: NavigationExtras = {
@@ -527,7 +529,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
          // ******* Segmentation
          Object.keys(updatedProfile.framework).forEach((key) => {
           if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x .toLowerCase());
+            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase());
           }
          });
          window['segmentation'].SBTagService.pushTag(updatedProfile.framework, TagPrefixConstants.USER_ATRIBUTE, true);

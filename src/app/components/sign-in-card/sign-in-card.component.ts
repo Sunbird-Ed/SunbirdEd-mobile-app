@@ -13,7 +13,6 @@ export class SignInCardComponent {
   @Input() source = '';
   @Input() title = 'OVERLAY_LABEL_COMMON';
   @Input() description = 'OVERLAY_INFO_TEXT_COMMON';
-  @Input() fromEnrol: boolean;
   @Output() valueChange = new EventEmitter();
   appName = '';
 
@@ -31,9 +30,6 @@ export class SignInCardComponent {
   async signIn(skipNavigation?) {
     if (this.source) {
       skipNavigation['source'] = this.source;
-    }
-    if (this.fromEnrol) {
-      skipNavigation['fromEnrol'] = this.fromEnrol;
     }
     this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
   }

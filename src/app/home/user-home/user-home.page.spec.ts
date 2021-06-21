@@ -141,6 +141,12 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                values: [{expiry: 111111}]
+            }
+        }];
         // act
         userHomePage.ngOnInit();
         // assert
@@ -198,6 +204,12 @@ describe('UserHomePage', () => {
             controlFunction: 'BANNER_CONFIG',
             controlFunctionPayload: {
                 showBanner: true
+            }
+        }];
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                values: [{expiry: 111111}]
             }
         }];
         // act
@@ -415,7 +427,8 @@ describe('UserHomePage', () => {
         mockSegmentationTagService.exeCommands = [{
             controlFunction: 'BANNER_CONFIG',
             controlFunctionPayload: {
-                showBanner: true
+                showBanner: true,
+                values: [{expiry: 111111}]
             }
         }];
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();

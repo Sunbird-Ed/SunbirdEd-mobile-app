@@ -13,6 +13,7 @@ import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';
 import { LocalCourseService } from './local-course.service';
+import {PageId} from '@app/services/telemetry-constants';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -106,8 +107,6 @@ export class ExternalIdVerificationService {
         const source = await this.preferences.getString(PreferenceKey.NAVIGATION_SOURCE).toPromise();
         if (source === 'courses') {
             this.router.navigateByUrl('tabs/courses');
-        } else if (source === 'profile') {
-            this.router.navigateByUrl('tabs/profile');
         }
         await this.resetNavigationSource();
     }
