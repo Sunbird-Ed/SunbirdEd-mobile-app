@@ -8,10 +8,8 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
 
-    window.cordova.plugins = {
-        InAppUpdateManager: {
-            checkForImmediateUpdate: jest.fn()
-        }
+    window['sbutility'] = {
+        checkForImmediateUpdate: jest.fn(() => { })
     };
 
     const mockUtilityService: Partial<UtilityService> = {

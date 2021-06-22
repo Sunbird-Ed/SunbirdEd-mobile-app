@@ -175,7 +175,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                 }
               } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
                   || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
-                cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                  (<any>window).sbutility.checkForImmediateUpdate(
                     () => {},
                     () => {}
                 );

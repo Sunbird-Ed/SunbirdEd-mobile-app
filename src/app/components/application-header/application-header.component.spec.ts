@@ -21,10 +21,8 @@ import {of} from 'rxjs';
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
 
-    window.cordova.plugins = {
-        InAppUpdateManager: {
-            isUpdateAvailable: jest.fn((fn) => fn(Promise.resolve('22')))
-        }
+    window['sbutility'] = {
+        isUpdateAvailable: jest.fn(() => { })
     };
 
     const param = {selectedLanguage: 'en'};

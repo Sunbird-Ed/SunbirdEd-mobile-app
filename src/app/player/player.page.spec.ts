@@ -24,6 +24,10 @@ import { IterableDiffers } from '@angular/core';
 
 declare const cordova;
 
+window['sbutility'] = {
+    checkForImmediateUpdate: jest.fn((_, __, fn) => fn())
+};
+
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
     const mockAlertCtrl: Partial<AlertController> = {
@@ -914,7 +918,7 @@ describe('PlayerPage', () => {
             global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => { });
             playerPage.playerEvents(event);
             setTimeout(() => {
-                expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+                expect(window.sbutility.checkForImmediateUpdate).toHaveBeenCalled();
                 done();
             }, 50);
         });

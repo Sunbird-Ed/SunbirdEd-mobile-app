@@ -98,7 +98,7 @@ export class UpgradePopoverComponent {
 
   upgradeApp(link) {
     // for in app update
-    cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+    (<any>window).sbutility.checkForImmediateUpdate(
         () => {},
         () => {}
     );
