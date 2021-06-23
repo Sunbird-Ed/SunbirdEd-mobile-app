@@ -296,8 +296,6 @@ export const sunbirdSdkFactory =
 
       }));
 
-      try {
-
         await SunbirdSdk.instance.init({
         platform: 'cordova',
         fileConfig: {
@@ -412,12 +410,6 @@ export const sunbirdSdkFactory =
           faqConfigDirPath: '/data/faq'
         }
       });
-        
-      } catch (error) {
-        console.log(error)
-      }
-
-      
 
       window['sunbird'] = SunbirdSdk.instance;
     };

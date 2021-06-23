@@ -80,7 +80,7 @@
     "cordova-ios": "^5.1.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^2.5.1",
-    "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
+    "cordova-plugin-android-downloadmanager": "git+https://github.com/shikshalokam/sb-cordova-plugin-downloadmanager.git#release-3.9.0-ios",
     "cordova-plugin-android-permissions": "^1.1.2",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-app-version": "^0.1.12",
@@ -104,7 +104,7 @@
     "cordova-plugin-inappbrowser": "^3.2.0",
     "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-ionic-webview": "^4.2.1",
+    "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
@@ -116,7 +116,7 @@
     "cordova-plugin-secure-storage-echo": "^5.1.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-streaming-media": "^2.3.0",
-    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.9.0",
+    "cordova-plugin-sunbirdsplash": "git+https://github.com/shikshalokam/cordova-plugin-sunbirdsplash.git#release-3.9.0-ios",
     "cordova-plugin-telerik-imagepicker": "2.3.3",
     "cordova-plugin-webview-checker": "^1.0.1",
     "cordova-plugin-whitelist": "^1.3.4",
@@ -154,7 +154,7 @@
     "rxjs": "^6.6.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/shikshalokam/sb-cordova-plugin-db.git",
-    "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
+    "sb-cordova-plugin-sync": "git+https://github.com/shikshalokam/sb-cordova-plugin-sync.git#release-3.9.0-ios",
     "sb-cordova-plugin-utility": "git+https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios",
     "sb-svg2pdf": "0.0.10",
     "sb-tag-manager": "^3.9.19",
@@ -187,6 +187,7 @@
     "@babel/preset-typescript": "^7.9.0",
     "@ionic/angular-toolkit": "^2.3.1",
     "@ionic/v4-migration-tslint": "^1.7.1",
+    "@project-sunbird/sb-themes": "0.0.6",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@types/jest": "^25.2.1",
     "@types/node": "12.11.5",
@@ -194,7 +195,6 @@
     "babel-polyfill": "^6.26.0",
     "fs-extra": "^8.1.0",
     "jest": "^25.4.0",
-    "@project-sunbird/sb-themes": "0.0.6",
     "sonarqube-scanner": "^2.5.0",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
@@ -208,7 +208,6 @@
     "plugins": {
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-ionic-webview": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-device": {},
@@ -222,7 +221,6 @@
       "cordova-plugin-advanced-http": {},
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-media": {},
-      "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-customtabs": {
         "URL_SCHEME": "@string/custom_scheme_url",
         "URL_HOST": "mobile"
@@ -247,7 +245,6 @@
       "cordova-plugin-printer": {},
       "cordova-plugin-fcm-with-dependecy-updated": {},
       "com.telerik.plugins.nativepagetransitions": {},
-      "sb-cordova-plugin-sync": {},
       "cordova-plugin-proguard": {},
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-secure-storage-echo": {},
@@ -259,20 +256,22 @@
       "cordova-plugin-document-viewer": {},
       "com-sarriaroman-photoviewer": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-telerik-imagepicker": {
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
-      },
+      "cordova-plugin-telerik-imagepicker": {},
       "cordova-plugin-filechooser": {},
       "cordova-plugin-inappupdatemanager": {},
-      "cordova-plugin-sunbirdsplash": {},
       "sb-cordova-plugin-db": {
         "USESWIFTLANGUAGEVERSION": "4"
       },
+      "cordova-plugin-add-swift-support": {},
+      "sb-cordova-plugin-sync": {},
+      "cordova-plugin-sunbirdsplash": {},
+      "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-utility": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-ionic-webview": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   },
   "jest": {

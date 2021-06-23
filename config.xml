@@ -126,7 +126,6 @@
     <plugin name="cordova-plugin-printer" spec="^0.8.0" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^4.2.1" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.2" />
     <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.3" />
@@ -149,7 +148,6 @@
     </plugin>
     <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
     <plugin name="sb-cordova-plugin-db" spec="https://github.com/shikshalokam/sb-cordova-plugin-db.git" />
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />

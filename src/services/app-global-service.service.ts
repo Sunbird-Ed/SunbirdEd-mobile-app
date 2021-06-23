@@ -348,10 +348,10 @@ export class AppGlobalService implements OnDestroy {
             });
         this.utilityService.getBuildConfigValue(GenericAppConfig.CONTENT_STREAMING_ENABLED)
             .then(response => {
-                this.CONTENT_STREAMING_ENABLED = response === 'true' ? true : false;
+                this.CONTENT_STREAMING_ENABLED =  true
             })
             .catch(error => {
-                this.CONTENT_STREAMING_ENABLED = false;
+                this.CONTENT_STREAMING_ENABLED = true;
             });
 
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)

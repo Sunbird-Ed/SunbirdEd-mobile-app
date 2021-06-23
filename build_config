@@ -29,7 +29,7 @@ cordova-plugin=com-sarriaroman-photoviewer
 cordova-plugin=cordova-plugin-filepath
 cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios
-cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
+cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-downloadmanager.git#release-3.9.0-ios
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage@5.1.0
