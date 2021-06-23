@@ -21,7 +21,7 @@ import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { VideoConfig } from './faq-help-data';
@@ -152,6 +152,7 @@ export class FaqHelpPage implements OnInit {
       .then((res: SystemSettings) => {
         faqRequest.faqUrl = res.value;
       }).catch(err => {
+        console.error(err)
       });
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
@@ -291,8 +292,8 @@ export class FaqHelpPage implements OnInit {
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
       PageId.FAQ,
-      undefined,
       undefined);
+
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;

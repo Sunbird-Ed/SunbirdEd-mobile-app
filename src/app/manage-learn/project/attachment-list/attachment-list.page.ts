@@ -101,7 +101,6 @@ export class AttachmentListPage implements OnInit {
           if (!task.isDeleted) {
             if (task.attachments && task.attachments.length) {
               for (const element of task.attachments) {
-                // if (element.type === tab.type) {
                 if (compare(element.type, tab.type)) {
                   element.localUrl = this.win.Ionic.WebView.convertFileSrc(
                     this.platform.is("ios")
@@ -122,7 +121,7 @@ export class AttachmentListPage implements OnInit {
 
             }
           }
-        };
+        }
       }
       function compare(fileType, tabType): boolean {
         tabType = tabType.substr(0, tabType.indexOf("/"));
@@ -130,6 +129,7 @@ export class AttachmentListPage implements OnInit {
         return tabType == fileType;
       }
     }, error => {
+      console.error(error)
     })
   }
 
@@ -149,6 +149,7 @@ export class AttachmentListPage implements OnInit {
     fileTransfer.download(attachment.url, this.path + '/' + attachment.name).then(success => {
       this.openFile(attachment)
     }).catch(error => {
+      console.error(error)
     });
   }
   openImage(attachment) {

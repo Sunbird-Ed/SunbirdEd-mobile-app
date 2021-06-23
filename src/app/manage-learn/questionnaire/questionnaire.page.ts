@@ -9,7 +9,6 @@ import { QuestionMapModalComponent } from './question-map-modal/question-map-mod
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Network } from '@ionic-native/network/ngx';
-// import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-questionnaire',
@@ -72,11 +71,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private router: Router,
     private commonUtilService:CommonUtilService
   ) {
-    // this.routerParam.params.subscribe((parameters) => {
-    //   this.submissionId = parameters.submisssionId;
-    //   this.selectedEvidenceIndex = parameters.evidenceIndex;
-    //   this.selectedSectionIndex = parameters.sectionIndex;
-    // });
 
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
@@ -102,7 +96,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.loader.startLoader();
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((data) => {
@@ -135,10 +128,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
           document.getElementById('stop').style.pointerEvents = 'none';
         }
-        // this.loader.stopLoader();
       })
       .catch((error) => {
-        // this.loader.stopLoader();
+        console.error(error)
       });
   }
 
@@ -211,7 +203,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.next('completed');
     }
     this.updateCompletedQuestionCount();
-    // this.calculateCompletedQuestion();
   }
 
   getSectionStatus(): string {
@@ -258,7 +249,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           this.location.back();
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.error(error)
+      });
   }
 
   async openActionSheet() {
@@ -289,7 +282,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
                 selectedEvidenceIndex: this.selectedEvidenceIndex,
               },
             });
-            // this.navCtrl.push(PreviewPage, payload);
           },
         },
         {
@@ -349,7 +341,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   goToImageListing() {
-    // if (this.networkAvailable) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.router.navigate([RouterLinks.IMAGE_LISTING], {
         queryParams: {
@@ -358,34 +349,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           selectedEvidenceIndex: this.selectedEvidenceIndex,
         },
       });
-      // TODO:Remove gps check
-      // this.diagnostic
-      //   .isLocationAuthorized()
-      //   .then((authorized) => {
-      //     if (!AppConfigs.enableGps) {
-      //       return true;
-      //     }
-      //     if (authorized) {
-      //       return this.diagnostic.isLocationEnabled();
-      //     } else {
-      //       this.toast.openToast("Please enable location permission to continue.");
-      //     }
-      //   })
-      //   .then((success) => {
-      //     if (success) {
-      //       const params = {
-      //         _id: this.submissionId,
-      //         name: this.schoolName,
-      //         selectedEvidence: this.selectedEvidenceIndex,
-      //       };
-      //       this.navCtrl.push(ImageListingPage, params);
-      //     } else {
-      //       this.ngps.checkForLocationPermissions();
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     this.ngps.checkForLocationPermissions();
-      //   });
     } else {
       this.translate.get('FRMELEMNTS_MSG_CONNECT_TO_INTERNET').subscribe((translations) => {
         this.toast.openToast(translations);
