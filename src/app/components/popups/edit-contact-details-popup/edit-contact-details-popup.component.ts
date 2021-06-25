@@ -20,7 +20,7 @@ import { Keyboard } from "@ionic-native/keyboard/ngx";
   templateUrl: "./edit-contact-details-popup.component.html",
   styleUrls: ["./edit-contact-details-popup.component.scss"],
 })
-export class EditContactDetailsPopupComponent {
+export class EditContactDetailsPopupComponent implements OnInit  {
   // Data passed in by componentProps
   @Input() userId: string;
   @Input() title: string;
@@ -52,6 +52,8 @@ export class EditContactDetailsPopupComponent {
 
     this.initEditForm();
   }
+
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
