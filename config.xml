@@ -17,14 +17,14 @@
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
     <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-    <hook src="scripts/copyGradleFiles.js" type="before_build" />
-    <hook src="scripts/copyBundledData.js" type="before_build" />
-    <hook src="scripts/application/add_application.js" type="before_run" />
-    <hook src="scripts/copyGradleFiles.js" type="before_run" />
-    <hook src="scripts/copyBundledData.js" type="before_run" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
     <platform name="android">
+        <hook src="scripts/copyGradleFiles.js" type="before_build" />
+        <hook src="scripts/copyBundledData.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_run" />
+        <hook src="scripts/copyBundledData.js" type="before_run" />
+        <hook src="scripts/application/add_application.js" type="before_run" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />

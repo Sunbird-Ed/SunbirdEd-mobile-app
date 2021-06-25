@@ -47,10 +47,7 @@ do
 done
 
 rm -rf platforms
-
-NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@9.0.0
-
-NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android
+mkdir platforms
 
 ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 
