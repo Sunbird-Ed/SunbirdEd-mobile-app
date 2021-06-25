@@ -50,7 +50,6 @@ export class AccessDiscussionComponent implements OnInit {
       PageId.GROUP_DETAIL,
       undefined,
       undefined,
-      undefined,
       undefined
     );
     this.headerService.hideHeader();

@@ -31,7 +31,7 @@ import {
 import {
   BatchConstants, ContentCard,
   ContentFilterConfig, EventTopics,
-  MimeType, PreferenceKey, PrimaryCategory, ProfileConstants,
+  MimeType, PreferenceKey, ProfileConstants,
   ProgressPopupContext, RouterLinks, ViewMore
 } from '../../app/app.constant';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -41,7 +41,7 @@ import { CourseUtilService } from '../../services/course-util.service';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
-import { CorReleationDataType, Environment, ID, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { applyProfileFilter, updateFilterInSearchQuery } from '../../util/filter.util';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
@@ -984,7 +984,6 @@ export class CoursesPage implements OnInit, OnDestroy {
               contentSearchCriteria.grade, 'gradeLevel');
           }
         }
-        // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };
@@ -1033,15 +1032,6 @@ export class CoursesPage implements OnInit, OnDestroy {
     corRelationList.push({
       id: this.profile.medium && this.profile.medium.length ? this.profile.medium.join(',') : '',
       type: CorReleationDataType.MEDIUM });
-
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
-    //   '',
-    //   Environment.COURSE,
-    //   PageId.COURSES,
-    //   undefined,
-    //   undefined, undefined, corRelationList,
-    //   ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
 
   async getCategoryData(frameworkId, categoryName, currentCategory): Promise<any> {

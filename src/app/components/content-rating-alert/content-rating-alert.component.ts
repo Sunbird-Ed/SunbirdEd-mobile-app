@@ -233,6 +233,7 @@ export class ContentRatingAlertComponent {
         const data = res.form.data.fields;
         this.populateComments(data);
       }).catch((error: any) => {
+        console.error(error)
       });
   }
 

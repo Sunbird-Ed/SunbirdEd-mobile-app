@@ -1,18 +1,26 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
-import { Platform, NavParams, PopoverController, MenuController } from '@ionic/angular';
-import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
-import { ProfileConstants } from '@app/app/app.constant';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Component, OnInit, Inject, Input } from "@angular/core";
+import {
+  Platform,
+  NavParams,
+  PopoverController,
+  MenuController,
+} from "@ionic/angular";
+import {
+  GenerateOtpRequest,
+  IsProfileAlreadyInUseRequest,
+  ProfileService,
+} from "sunbird-sdk";
+import { ProfileConstants } from "@app/app/app.constant";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { CommonUtilService } from "../../../../services/common-util.service";
+import { Keyboard } from "@ionic-native/keyboard/ngx";
 
 @Component({
-  selector: 'app-edit-contact-details-popup',
-  templateUrl: './edit-contact-details-popup.component.html',
-  styleUrls: ['./edit-contact-details-popup.component.scss'],
+  selector: "app-edit-contact-details-popup",
+  templateUrl: "./edit-contact-details-popup.component.html",
+  styleUrls: ["./edit-contact-details-popup.component.scss"],
 })
-export class EditContactDetailsPopupComponent implements OnInit {
-
+export class EditContactDetailsPopupComponent {
   // Data passed in by componentProps
   @Input() userId: string;
   @Input() title: string;
@@ -28,7 +36,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
   loader: any;
 
   constructor(
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject("PROFILE_SERVICE") private profileService: ProfileService,
     private navParams: NavParams,
     public platform: Platform,
     private commonUtilService: CommonUtilService,
@@ -37,36 +45,49 @@ export class EditContactDetailsPopupComponent implements OnInit {
     private keyboard: Keyboard,
     private menuCtrl: MenuController
   ) {
-
-    this.userId = this.navParams.get('userId');
-    this.title = this.navParams.get('title');
-    this.description = this.navParams.get('description');
-    this.type = this.navParams.get('type');
+    this.userId = this.navParams.get("userId");
+    this.title = this.navParams.get("title");
+    this.description = this.navParams.get("description");
+    this.type = this.navParams.get("type");
 
     this.initEditForm();
   }
 
-  ngOnInit() { }
-
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
-    });
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(
+      11,
+      () => {
+        this.popOverCtrl.dismiss();
+      }
+    );
   }
 
   initEditForm() {
     if (this.type === ProfileConstants.CONTACT_TYPE_EMAIL) {
       this.personEditForm = this.fb.group({
-        email: ['', Validators.compose([Validators.required, Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$')])],
+        email: [
+          "",
+          Validators.compose([
+            Validators.required,
+            Validators.pattern(
+              "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$"
+            ),
+          ]),
+        ],
       });
     } else {
       this.personEditForm = this.fb.group({
-        phone: ['', Validators.compose([Validators.required, Validators.pattern('^[6-9]\\d{9}$')])],
+        phone: [
+          "",
+          Validators.compose([
+            Validators.required,
+            Validators.pattern("^[6-9]\\d{9}$"),
+          ]),
+        ],
       });
     }
   }
-
 
   async validate() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -77,43 +98,52 @@ export class EditContactDetailsPopupComponent implements OnInit {
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
         req = {
           key: formVal.phone,
-          type: ProfileConstants.CONTACT_TYPE_PHONE
+          type: ProfileConstants.CONTACT_TYPE_PHONE,
         };
       } else {
         req = {
           key: formVal.email,
-          type: ProfileConstants.CONTACT_TYPE_EMAIL
+          type: ProfileConstants.CONTACT_TYPE_EMAIL,
         };
       }
 
-      this.profileService.isProfileAlreadyInUse(req).subscribe(async (success: any) => {
-        await this.loader.dismiss();
-        this.loader = undefined;
-        if (success && success.response) {
-          if (success.response.id === this.userId) {
-            this.updateErr = true;
+      this.profileService.isProfileAlreadyInUse(req).subscribe(
+        async (success: any) => {
+          await this.loader.dismiss();
+          this.loader = undefined;
+          if (success && success.response) {
+            if (success.response.id === this.userId) {
+              this.updateErr = true;
+            } else {
+              this.err = true;
+            }
+          }
+        },
+        async (error) => {
+          if (
+            error.response &&
+            error.response.body.params.err === "USER_NOT_FOUND"
+          ) {
+            this.generateOTP();
+          } else if (
+            error.response &&
+            error.response.body.params.err === "USER_ACCOUNT_BLOCKED"
+          ) {
+            this.blockedAccount = true;
+            if (this.loader) {
+              await this.loader.dismiss();
+              this.loader = undefined;
+            }
           } else {
-            this.err = true;
+            if (this.loader) {
+              await this.loader.dismiss();
+              this.loader = undefined;
+            }
           }
         }
-      }, async (error) => {
-        if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
-          this.generateOTP();
-        } else if (error.response && error.response.body.params.err === 'USER_ACCOUNT_BLOCKED') {
-          this.blockedAccount = true;
-          if (this.loader) {
-            await this.loader.dismiss();
-            this.loader = undefined;
-          }
-        } else {
-          if (this.loader) {
-            await this.loader.dismiss();
-            this.loader = undefined;
-          }
-        }
-      });
+      );
     } else {
-      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+      this.commonUtilService.showToast("INTERNET_CONNECTIVITY_NEEDED");
     }
   }
 
@@ -130,25 +160,33 @@ export class EditContactDetailsPopupComponent implements OnInit {
     if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
       req = {
         key: this.personEditForm.value.phone,
-        type: ProfileConstants.CONTACT_TYPE_PHONE
+        type: ProfileConstants.CONTACT_TYPE_PHONE,
       };
     } else {
       req = {
         key: this.personEditForm.value.email,
-        type: ProfileConstants.CONTACT_TYPE_EMAIL
+        type: ProfileConstants.CONTACT_TYPE_EMAIL,
       };
     }
 
-    this.profileService.generateOTP(req).toPromise()
+    this.profileService
+      .generateOTP(req)
+      .toPromise()
       .then(async () => {
         if (this.loader) {
           await this.loader.dismiss();
           this.loader = undefined;
         }
         if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
-          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.phone });
+          this.popOverCtrl.dismiss({
+            isEdited: true,
+            value: this.personEditForm.value.phone,
+          });
         } else {
-          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.email });
+          this.popOverCtrl.dismiss({
+            isEdited: true,
+            value: this.personEditForm.value.email,
+          });
         }
       })
       .catch(async (err) => {
@@ -157,8 +195,10 @@ export class EditContactDetailsPopupComponent implements OnInit {
           this.loader = undefined;
         }
         this.popOverCtrl.dismiss({ isEdited: false });
-        if (err.hasOwnProperty(err) === 'ERROR_RATE_LIMIT_EXCEEDED') {
-          this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');
+        if (err.hasOwnProperty(err) === "ERROR_RATE_LIMIT_EXCEEDED") {
+          this.commonUtilService.showToast(
+            "You have exceeded the maximum limit for OTP, Please try after some time"
+          );
         }
       });
   }
@@ -177,5 +217,4 @@ export class EditContactDetailsPopupComponent implements OnInit {
       this.unregisterBackButton.unsubscribe();
     }
   }
-
 }

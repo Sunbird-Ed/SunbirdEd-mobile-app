@@ -32,7 +32,6 @@ import {
   ObjectType,
   SharedPreferences,
   EventNamespace,
-  ContentEvent,
   ContentUpdate,
   CourseService
 } from 'sunbird-sdk';
@@ -43,7 +42,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, PreferenceKey, AssessmentConstant, MaxAttempt
+  ShareItemType, PreferenceKey, MaxAttempt
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
@@ -74,13 +73,11 @@ import { ContentUtil } from '@app/util/content-util';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map, filter, take, tap } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
-import { AddActivityToGroup } from '../my-groups/group.interface';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {FormConstants} from '@app/app/form.constants';

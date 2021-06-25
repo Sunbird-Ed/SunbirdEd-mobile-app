@@ -1,20 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-pb-horizontal',
-  templateUrl: './pb-horizontal.component.html',
-  styleUrls: ['./pb-horizontal.component.scss'],
+  selector: "app-pb-horizontal",
+  templateUrl: "./pb-horizontal.component.html",
+  styleUrls: ["./pb-horizontal.component.scss"],
 })
-export class PbHorizontalComponent implements OnInit {
+export class PbHorizontalComponent {
   // tslint:disable-next-line:no-input-rename
-  @Input('progress') progress;
+  @Input("progress") progress;
   // tslint:disable-next-line:no-input-rename
-  @Input('isOnBoardCard') isOnBoardCard;
-  @Input ('isCourseProgress') isCourseProgress;
+  @Input("isOnBoardCard") isOnBoardCard;
+  @Input("isCourseProgress") isCourseProgress;
 
-  constructor() {
-  }
-
-  ngOnInit() {}
-
+  constructor() {}
 }

@@ -9,7 +9,7 @@ import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest }
   templateUrl: './edit-contact-verify-popup.component.html',
   styleUrls: ['./edit-contact-verify-popup.component.scss'],
 })
-export class EditContactVerifyPopupComponent implements OnInit {
+export class EditContactVerifyPopupComponent {
   /**
    * Key may be phone or email depending on the verification flow from which it is called
    */
@@ -39,8 +39,6 @@ export class EditContactVerifyPopupComponent implements OnInit {
     this.type = this.navParams.get('type');
 
   }
-
-  ngOnInit() { }
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
