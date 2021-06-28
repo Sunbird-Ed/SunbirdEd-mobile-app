@@ -11,7 +11,6 @@ export class DbService {
   pdb: any;
 
   constructor(private appGlobalService: AppGlobalService) {
-    // this.createDb();
   }
 
   async createDb() {
@@ -37,7 +36,6 @@ export class DbService {
     }
     this.appGlobalService.getActiveProfileUid().then((userId) => {
       let dbName= userId + 'projects';
-      // let dbName=  'projects';
       this.pdb = new PouchDB(dbName, {
         adapter: 'cordova-sqlite',
         location: 'default',
@@ -61,7 +59,6 @@ export class DbService {
         reject(error)
       })
     })
-    // return this.pdb.post(entry);
   }
 
   update(data): Promise<any> {
@@ -90,7 +87,6 @@ export class DbService {
         reject(error)
       })
     })
-    // return this.pdb.post(entry);
   }
 
   read(limit: number = 20): Promise<any> {
@@ -171,6 +167,7 @@ export class DbService {
       this.pdb.destroy().then(success => {
         success.ok ? resolve(success) : reject()
       }).catch(error => {
+        console.log(error)
       })
     })
   }

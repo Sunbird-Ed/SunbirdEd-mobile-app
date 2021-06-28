@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
 import { FilePath } from "@ionic-native/file-path/ngx";
-// import { IOSFilePicker } from "@ionic-native/file-picker/ngx";
 import { File } from "@ionic-native/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
@@ -94,7 +93,7 @@ export class AttachmentService {
             .then((filePath) => {
               this.copyFile(filePath);
             })
-            .catch((err) => { });
+            .catch((err) => { console.log(err) });
         } else {
           this.copyFile(imagePath);
         }

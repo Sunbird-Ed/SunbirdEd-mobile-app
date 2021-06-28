@@ -1,4 +1,4 @@
-import {  Component, Inject, Input, OnInit, ElementRef, Output, EventEmitter } from '@angular/core';
+import {  Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
