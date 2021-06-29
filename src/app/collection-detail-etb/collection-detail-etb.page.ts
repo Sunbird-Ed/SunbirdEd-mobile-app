@@ -514,6 +514,7 @@ export class CollectionDetailEtbPage implements OnInit {
   async setContentDetails(identifier, refreshContentDetails: boolean) {
     const option: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.cardData.objectType,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
@@ -1226,7 +1227,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
     this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-      { childrenData: this.childrenData, parentId: this.identifier })
+      { childrenData: this.childrenData, parentId: this.identifier });
     // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], // **** check needed ****
     //   { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();

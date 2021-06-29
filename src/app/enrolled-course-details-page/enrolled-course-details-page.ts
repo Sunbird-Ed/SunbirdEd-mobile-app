@@ -674,6 +674,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   setContentDetails(identifier): void {
     const option: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.courseCardData.objectType,
       attachFeedback: true,
       emitUpdateIfAny: true,
       attachContentAccess: true
