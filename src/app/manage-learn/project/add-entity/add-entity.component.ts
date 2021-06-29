@@ -51,7 +51,6 @@ export class AddEntityComponent implements OnInit {
    }
    getEntities(entityType) {
       if (this.networkService.isNetworkAvailable) {
-         // this.loader.startLoader();
          const config = {
             url:
                urlConstants.API_URLS.GET_ENTITY_LIST +
@@ -67,7 +66,6 @@ export class AddEntityComponent implements OnInit {
          };
          this.kendraApiService.get(config).subscribe(
             (data) => {
-               // this.loader.stopLoader();
                if (data.result.data && data.result.data.length) {
                   this.entities = this.entities.concat(data.result.data);
                   this.entityCount = data.result.count;
@@ -77,7 +75,6 @@ export class AddEntityComponent implements OnInit {
                }
             },
             (error) => {
-               // this.loader.stopLoader();
             }
          );
       } else {
@@ -85,19 +82,13 @@ export class AddEntityComponent implements OnInit {
       }
    }
    checkUserMapping() {
-      // this.storage.getLocalStorage("profileData").then((data) => {
-      //    this.profileData = data;
-      //    this.stateId = this.profileData.state._id;
-      //    this.title = this.profileData.state.name;
-      //    this.getSubEntities(this.profileData.state._id);
-      // });
 
       this.utils.getProfileData().then(profileData => {
          this.profileData = profileData;
          this.stateId = this.profileData.state;
          this.getSubEntities(this.stateId);
       }).catch(error => {
-
+       console.log(error)
       })
 
    }
@@ -107,7 +98,6 @@ export class AddEntityComponent implements OnInit {
       this.getEntities(this.childEntity);
    }
    getSubEntities(stateId) {
-      // to select entityType if already provided
       if (this.entityType) {
          let selist = [];
          let entity = {
@@ -116,7 +106,6 @@ export class AddEntityComponent implements OnInit {
          };
          selist.push(entity);
          this.subEntities = selist.reverse();
-         // this.selectedEntity = this.subEntities[0];
          this.childEntity = this.subEntities[0].value;
          this.getEntities(this.subEntities[0].value);
 
@@ -124,13 +113,11 @@ export class AddEntityComponent implements OnInit {
       }
 
       if (this.networkService.isNetworkAvailable) {
-         // this.loader.startLoader();
          const config = {
             url:urlConstants.API_URLS.GET_SUB_ENITIES_FOR_ROLES+stateId+`?role=${this.profileData.role}`
          };
          this.kendraApiService.get(config).subscribe(
             (data) => {
-               // this.loader.stopLoader();
                if (data.result) {
                   let selist = [];
                   data.result.forEach((se) => {
@@ -141,13 +128,11 @@ export class AddEntityComponent implements OnInit {
                      selist.push(entity);
                   });
                   this.subEntities = selist.reverse();
-                  // this.selectedEntity = this.subEntities[0];
                   this.childEntity = this.subEntities[0].value;
                   this.getEntities(this.subEntities[0].value);
                }
             },
             (error) => {
-               // this.loader.stopLoader();
             }
          );
       } else {
