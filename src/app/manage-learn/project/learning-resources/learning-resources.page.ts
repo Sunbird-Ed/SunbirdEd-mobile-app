@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { AppHeaderService, CommonUtilService } from "@app/services";
 import { TranslateService } from "@ngx-translate/core";
 import { LoaderService, ToastService } from "../../core";
@@ -96,17 +96,14 @@ export class LearningResourcesPage implements OnInit {
     });
   }
   getProjectFromLocal(projectId) {
-    // this.loader.startLoader();
     this.db.query({ _id: projectId }).then(
       (success) => {
-        // this.loader.stopLoader();
         this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
       },
       (error) => {
-        // this.loader.stopLoader();
       }
     );
   }
@@ -115,7 +112,6 @@ export class LearningResourcesPage implements OnInit {
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
       return
     }
-    // let identifier = link.split("/").pop();
     const req: ContentDetailRequest = {
       contentId: id,
       attachFeedback: false,
