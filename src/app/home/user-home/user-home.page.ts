@@ -652,13 +652,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             }
             break;
       case 'banner_search':
-          const payload = {
-            data: {
-              request: event.data.action.params.filter
-            },
-            action: 'ACTION_SEARCH'
+          const extras = {
+            state: {
+              source: PageId.SPLASH_SCREEN,
+              preAppliedFilter: {
+                query: event.data.action.params.query || '',
+                filters: {
+                  status: ['Live'],
+                  objectType: ['Content'],
+                  ...event.data.action.params.filters
+                }
+              }
+            }
           };
-          this.splaschreenDeeplinkActionHandlerDelegate.handleVendorAppAction(payload, event.data.code);
+          this.router.navigate(['search'], extras);
           break;
       case 'banner_content':
            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
