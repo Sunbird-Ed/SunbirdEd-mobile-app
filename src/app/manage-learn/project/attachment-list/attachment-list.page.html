@@ -20,7 +20,6 @@
                 <ion-col size="6" *ngFor="let attachment of task.attachments">
                   <img [src]="getImgContent(attachment?.localUrl)"
                     *ngIf="attachment.type.includes('image') && !attachment.url" />
-                    <!-- *ngIf="attachment.type == 'image/jpeg' && !attachment.url" /> -->
                   <ion-icon name="image-outline" *ngIf="attachment.url" style="display: contents;"
                     (click)="openImage(attachment.url)"></ion-icon>
                 </ion-col>
