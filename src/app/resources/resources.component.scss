@@ -167,9 +167,14 @@
 }
 
 .section-header-style{
-  margin-left: 10px;
+  margin-left: 1rem;
   font-weight: 700;
-  font-size: 18px;
-  padding-top: 14px;
+  font-size: 1rem;
+  padding-top: 1.5rem;
   padding-bottom: 4px;
+}
+
+.sb-recenlty-viewed-title{
+  padding-left: 0 1rem !important;
+  font-size: 1rem !important;
 }
