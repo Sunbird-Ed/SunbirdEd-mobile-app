@@ -1,0 +1,40 @@
+<ion-card-content class="ion-no-padding">
+    <div class="ion-padding">
+        <div class="certificate-container"
+            *ngIf="isAlreadyEnrolled && ((isCertifiedCourse && certificateDescription) || !isCertifiedCourse)">
+            <div class="certificate-icon">
+                <img class="certificate-icon" src="assets/imgs/Certificate icon.svg" alt="certificate-icon">
+            </div>
+            <div class="certificate-text" *ngIf="isCertifiedCourse && certificateDescription">
+                <ion-card-title class="font-10 certified-section-color font-weight-900">
+                    {{'CERTIFIED_TRAINING' | translate}}
+                </ion-card-title>
+            </div>
+            <div class="certificate-text" *ngIf="!isCertifiedCourse">
+                <ion-card-title class="font-10 certified-section-color font-weight-900">
+                    {{'FRMELEMNTS_MSG_COURSE_NO_CERTIFICATE_MESSAGE' | categoryKeyTranslate : contentData }}
+                </ion-card-title>
+            </div>
+        </div>
+        <label
+            *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</label>
+        <div class="ion-margin-bottom mt-8">
+            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                <strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : contentData }}</strong>
+            </ion-card-title>
+            <p *ngIf="contentData?.gradeLevel">{{'CLASS' | translate}} : {{contentData?.gradeLevel}}</p>
+            <p *ngIf="contentData?.subject">{{'SUBJECT' | translate}}: {{contentData?.subject}}</p>
+            <p *ngIf="contentData?.medium">{{'MEDIUM' | translate}} : {{contentData?.medium}}</p>
+        </div>
+        <div class="ion-margin-bottom">
+            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                <strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : contentData }}</strong>
+            </ion-card-title>
+            <p *ngIf="batchEndDate">{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : contentData }} : {{
+                batchEndDate | date: 'dd/MM/yyyy'}}</p>
+        </div>
+        <div>
+            <p>{{contentData?.description}}</p>
+        </div>
+    </div>
+</ion-card-content>

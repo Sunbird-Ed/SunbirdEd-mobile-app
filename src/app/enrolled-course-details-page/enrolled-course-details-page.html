@@ -1,17 +1,9 @@
 <ion-content>
 	<div class="p-8" *ngIf="!showOfflineSection">
-		<ion-card class="card-box-shadow">
-			<ion-card-header class="custom-card-header">
-				<ion-card-title class="font-18 font-weight-900">
-					{{course?.name || courseCardData?.courseName}}
-				</ion-card-title>
-				<ion-card-subtitle *ngIf="courseCardData?.organisation || course" class="font-14 subtitle-color">
-					{{'CONTENT_CREATED_BY' | translate}}
-					{{!course?.organisation ? courseCardData?.content?.organisation?.join(', ') : course?.organisation}}
-				</ion-card-subtitle>
-				<div class="hr-border-bottom"></div>
-			</ion-card-header>
-			<ion-card-content>
+		<ion-card class="sb-dt-card">
+	        <app-toc-header [contentData]="course || courseCardData?.content"></app-toc-header>
+			  <div class="hr-border-bottom"></div>
+			<ion-card-content class="sb-content-info">
 				<div *ngIf="isFromGroupFlow">
 					<add-activity-to-group [identifier]="identifier" [pageId]="pageId"></add-activity-to-group>
 					<div class="enrollment-info"
@@ -79,7 +71,7 @@
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group"
+								<div class="wrapper"
 								    *ngIf="!isFromGroupFlow">
 									<div *ngIf="trackDownloads$ | async; let downloads">
 										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
@@ -275,7 +267,7 @@
 
 		</div>
 		<div *ngIf="(isGuestUser &&!showSheenAnimation) || (!isGuestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
-			<ion-card *ngSwitchCase="'info'">
+			<!-- <ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
 						<div class="certificate-container" *ngIf="isAlreadyEnrolled && ((isCertifiedCourse && certificateDescription) || !isCertifiedCourse)">
@@ -314,6 +306,10 @@
 						</div>
 					</div>
 				</ion-card-content>
+			</ion-card> -->
+			<ion-card *ngSwitchCase="'info'">
+				<app-relevant-content-card [contentData]="course"
+				[isAlreadyEnrolled]="isAlreadyEnrolled" [isCertifiedCourse]="isCertifiedCourse" [certificateDescription]="certificateDescription"></app-relevant-content-card>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">

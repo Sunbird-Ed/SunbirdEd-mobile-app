@@ -282,6 +282,7 @@ export class CollectionDetailEtbPage implements OnInit {
     expandMode: ExpandMode.SINGLE,
     expandBehavior: ExpandBehavior.EXPAND_FIRST
   };
+  showContentDetails = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -1427,4 +1428,7 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
+  contentInfo() {
+    this.showContentDetails = !this.showContentDetails;
+  }
 }

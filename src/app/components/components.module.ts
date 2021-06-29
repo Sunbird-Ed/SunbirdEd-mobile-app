@@ -71,6 +71,8 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet'
+import { TocHeaderComponent } from './toc-header/toc-header.component';
+import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +133,9 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
-    DashboardComponent
+    DashboardComponent,
+    TocHeaderComponent,
+    RelevantContentCardComponent
   ],
   imports: [
     CommonModule,
@@ -249,7 +253,9 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
-    DashboardComponent
+    DashboardComponent,
+    TocHeaderComponent,
+    RelevantContentCardComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
 })

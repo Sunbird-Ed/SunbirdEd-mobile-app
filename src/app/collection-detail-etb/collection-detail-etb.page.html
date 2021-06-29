@@ -69,11 +69,20 @@
   <div *ngIf="contentDetail?.contentData?.author || contentDetail?.contentData?.organisation 
         ||contentDetail?.contentData?.license || licenseDetails || contentDetail?.contentData?.copyright">
     <div class="ion-padding-end">
-      <app-license-card-component [content]="contentDetail?.contentData"
-                                  [licenseDetails]="licenseDetails"
-                                  [appName]="appName" [objRollup]="objRollup"
-                                  [corRelationList]="corRelationList"
-                                  [pageId]="pageId"></app-license-card-component>
+      <div class="collection-etb-filter" style="margin-left: 10px;">
+        <div class="sb-chapter-dd" (click)="contentInfo()">
+          <span class="pull-left">Content details</span>
+          <span class="pull-right">
+            <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
+          </span>
+        </div>
+      </div>
+          <ion-card *ngIf="content && showContentDetails" class="book-details-card">
+            <app-relevant-content-card [contentData]="contentDetail?.contentData"
+            [isAlreadyEnrolled]="isAlreadyEnrolled"></app-relevant-content-card>
+          </ion-card>
+          <app-license-card-component [content]="contentDetail?.contentData" [licenseDetails]="licenseDetails" [appName]="appName"
+            [objRollup]="objRollup" [corRelationList]="corRelationList" [pageId]="pageId"></app-license-card-component>
     </div>
   </div>
 </ion-content>
