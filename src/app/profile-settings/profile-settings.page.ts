@@ -608,6 +608,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
         }
+        this.createSegmentTags(profile);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
         await this.commonUtilService.handleToTopicBasedNotification();
@@ -655,6 +656,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
+  }
+  
+  createSegmentTags(res) {
+    const tagObj = {
+      board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
+      grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
+      medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
+    };
+    window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+    this.segmentationTagService.evalCriteria();
   }
 
   private refreshSegmentTags(profile) {
