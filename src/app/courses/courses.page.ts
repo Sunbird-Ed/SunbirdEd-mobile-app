@@ -579,6 +579,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     ];
     const request = {
       contentId: identifier,
+      objectType: content.objectType,
       emitUpdateIfAny: false
     };
     this.contentService.getContentDetails(request).toPromise()
