@@ -121,11 +121,6 @@ table thead.sorting {
 
 table.dataTable tbody td {
   padding: 8px 40px;
-  text-align: center;
-  &:first-child{
-    text-align: left;
-    padding-left: 10px;
-  }
 }
 
 table.dataTable thead tr th {
