@@ -13,6 +13,7 @@ export class TagPrefixConstants {
     static readonly USER_LOCATION = 'USERLOCATION_';
     static readonly CONTENT_ID = 'CONTENT_';
     static readonly USER_LANG = 'USERLANG_';
+    static readonly ALL = 'ALL_';
 }
 
 export class CommandFunctions {
