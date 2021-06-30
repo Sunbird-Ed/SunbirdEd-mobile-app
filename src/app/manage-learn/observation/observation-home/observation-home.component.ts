@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService,CommonUtilService } from '@app/services';
 import { Router } from '@angular/router';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { Storage } from '@ionic/storage';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-observation-home',
@@ -22,21 +24,43 @@ export class ObservationHomeComponent implements OnInit {
   limit = 10;
   count: any;
   searchText: string = '';
-
+  generatedKey;
+  profileInfo:any;
+  networkFlag;
+  private _networkSubscription?: Subscription;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
     private utils: UtilsService,
     private kendra: KendraApiService,
-    private loader: LoaderService
-  ) {}
+    private loader: LoaderService,
+    private storage : Storage,
+    public commonUtilService: CommonUtilService,
+  ) {
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.networkFlag = available;
+      console.log('changed', this.networkFlag);
+  });
+  }
 
   ngOnInit() {
     this.solutionList = [];
-    this.getPrograms();
+
+  this.getProfileInfo();
+  // this.getPrograms();
+  }
+ 
+  async getProfileInfo() {
+    // let payload = await this.utils.getProfileInfo();
+    this.profileInfo =  await this.utils.setProfileData('Observations');
+    this.generatedKey = this.profileInfo.generatedKey;
+   this.networkFlag ?
+    this.getPrograms() : this.getLocalData();
   }
   async getPrograms() {
-    let payload = await this.utils.getProfileInfo();
+    // let payload = await this.utils.getProfileInfo();
+    // let profileInfo: any =  await this.utils.setProfileData();
+    let payload = this.profileInfo.userData;
     if (payload) {
       this.loader.startLoader();
       const config = {
@@ -53,6 +77,11 @@ export class ObservationHomeComponent implements OnInit {
             this.count = success.result.count;
 
             this.solutionList = [...this.solutionList, ...success.result.data];
+            this.storage.set(this.generatedKey, this.solutionList).then(data =>{
+              console.log(data,'stored in local');
+            },error =>{
+              console.log(error,"failed to store");
+            })
           }
         },
         (error) => {
@@ -63,12 +92,23 @@ export class ObservationHomeComponent implements OnInit {
     }
   }
 
+  getLocalData(){
+    console.log(this.generatedKey,"this.generatedKey");
+    this.storage.get(this.generatedKey).then(data =>{
+      console.log(data,'fetched in local');
+      this.solutionList = data;
+    },error =>{
+      console.log(error,"failed to fetch");
+    })
+  }
+
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
   }
 
   observationDetails(solution) {
