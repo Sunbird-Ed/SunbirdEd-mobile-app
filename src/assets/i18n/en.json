@@ -1468,5 +1468,7 @@
   "STATE_LOGIN": "Login with state system",
   "GOOGLE_LOGIN": "Sign in with Google",
   "LOGIN_WITH": "Login with {{appName}}",
-  "LOGIN_TO": "Login to {{appName}}"
+  "LOGIN_TO": "Login to {{appName}}",
+  "YOB_TITLE": "Year of birth",
+  "SELECT_YOB": "Select year of birth"
 }
