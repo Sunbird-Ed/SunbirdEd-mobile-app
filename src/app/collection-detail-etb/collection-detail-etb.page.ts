@@ -1,40 +1,20 @@
-import { Location } from "@angular/common";
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Inject,
-  NgZone,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
-import { Router } from "@angular/router";
-import { FileSizePipe } from "@app/pipes/file-size/file-size";
-import { ContentDeleteHandler } from "@app/services/content/content-delete-handler";
-import { ContentInfo } from "@app/services/content/content-info";
-import { ContentPlayerHandler } from "@app/services/content/player/content-player-handler";
-import { NavigationService } from "@app/services/navigation-handler.service";
-import { ContentUtil } from "@app/util/content-util";
-import {
-  IonContent as iContent,
-  Platform,
-  PopoverController,
-} from "@ionic/angular";
-import { Events } from "@app/util/events";
-import { CsPrimaryCategory } from "@project-sunbird/client-services/services/content";
-import {
-  ExpandBehavior,
-  ExpandMode,
-  IAccordianConfig,
-  IButtonConfig,
-  TocCardType,
-} from "@project-sunbird/common-consumption-v8";
-import isObject from "lodash/isObject";
-import { Observable, Subscription } from "rxjs";
-import { share } from "rxjs/operators";
-import {
-  Content,
+import { Location } from '@angular/common';
+import {ChangeDetectorRef,Component,ElementRef,Inject,NgZone,OnInit,ViewChild,ViewEncapsulation} from '@angular/core';
+import { Router } from '@angular/router';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
+import {IonContent as iContent,Platform,PopoverController} from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import {ExpandBehavior,ExpandMode,IAccordianConfig,IButtonConfig,TocCardType} from '@project-sunbird/common-consumption-v8';
+import isObject from 'lodash/isObject';
+import { Observable, Subscription } from 'rxjs';
+import { share } from 'rxjs/operators';
+import {Content,
   ContentAccess,
   ContentAccessStatus,
   ContentDetailRequest,
@@ -60,20 +40,20 @@ import {
   Rollup,
   StorageService,
   TelemetryErrorCode,
-  TelemetryObject,
-} from "sunbird-sdk";
+  TelemetryObject
+} from 'sunbird-sdk';
 import {
   EventTopics,
   RouterLinks,
-  ShareItemType,
-} from "../../app/app.constant";
+  ShareItemType
+} from '../../app/app.constant';
 import {
   AppGlobalService,
   AppHeaderService,
   CommonUtilService,
-  TelemetryGeneratorService,
-} from "../../services";
-import { SbProgressLoader } from "../../services/sb-progress-loader.service";
+  TelemetryGeneratorService
+} from '../../services';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import {
   CorReleationDataType,
   Environment,
@@ -82,64 +62,52 @@ import {
   InteractSubtype,
   InteractType,
   Mode,
-  PageId,
-} from "../../services/telemetry-constants";
-import { CollectionChildComponent, ConfirmAlertComponent } from "../components";
-import { SbSharePopupComponent } from "../components/popups/sb-share-popup/sb-share-popup.component";
-import { TextbookTocService } from "./textbook-toc-service";
-import { TagPrefixConstants } from "@app/services/segmentation-tag/segmentation-tag.service";
+  PageId
+} from '../../services/telemetry-constants';
+import { CollectionChildComponent, ConfirmAlertComponent } from '../components';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { TextbookTocService } from './textbook-toc-service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
-  selector: "app-collection-detail-etb",
-  templateUrl: "./collection-detail-etb.page.html",
-  styleUrls: ["./collection-detail-etb.page.scss"],
+  selector: 'app-collection-detail-etb',
+  templateUrl: './collection-detail-etb.page.html',
+  styleUrls: ['./collection-detail-etb.page.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class CollectionDetailEtbPage implements OnInit {
+
   facets: any;
   selected: boolean;
   isSelected: boolean;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: [],
+    actionButtons: []
   };
 
   contentDetail?: Content;
   childrenData?: Array<any>;
   mimeTypes = [
     {
-      name: "ALL",
-      selected: true,
-      value: ["all"],
-      iconNormal: "",
-      iconActive: "",
+      name: 'ALL',selected: true,value: ['all'],iconNormal: '',iconActive: ''},
+    {
+      name: 'VIDEO',value: ['video/mp4', 'video/x-youtube', 'video/webm'],iconNormal: './assets/imgs/play.svg',
+      iconActive: './assets/imgs/play-active.svg'
     },
     {
-      name: "VIDEO",
-      value: ["video/mp4", "video/x-youtube", "video/webm"],
-      iconNormal: "./assets/imgs/play.svg",
-      iconActive: "./assets/imgs/play-active.svg",
+      name: 'DOC',value: ['application/pdf', 'application/epub', 'application/msword'],iconNormal: './assets/imgs/doc.svg',
+      iconActive: './assets/imgs/doc-active.svg'
     },
     {
-      name: "DOC",
-      value: ["application/pdf", "application/epub", "application/msword"],
-      iconNormal: "./assets/imgs/doc.svg",
-      iconActive: "./assets/imgs/doc-active.svg",
-    },
-    {
-      name: "INTERACTION",
-      value: [
-        "application/vnd.ekstep.ecml-archive",
-        "application/vnd.ekstep.h5p-archive",
-        "application/vnd.ekstep.html-archive",
+      name: 'INTERACTION',
+      value: ['application/vnd.ekstep.ecml-archive','application/vnd.ekstep.h5p-archive','application/vnd.ekstep.html-archive'
       ],
-      iconNormal: "./assets/imgs/touch.svg",
-      iconActive: "./assets/imgs/touch-active.svg",
+      iconNormal: './assets/imgs/touch.svg',iconActive: './assets/imgs/touch-active.svg'
     },
     // { name: 'AUDIOS', value: MimeType.AUDIO, iconNormal: './assets/imgs/audio.svg', iconActive: './assets/imgs/audio-active.svg'},
   ];
-  activeMimeTypeFilter = ["all"];
+  activeMimeTypeFilter = ['all'];
   /**
    * Show loader while importing content
    */
@@ -183,7 +151,7 @@ export class CollectionDetailEtbPage implements OnInit {
   /**
    * Contains current course depth
    */
-  depth = "1";
+  depth = '1';
 
   /**
    * Its get true when child is collection.
@@ -251,7 +219,7 @@ export class CollectionDetailEtbPage implements OnInit {
   /**
    * Rating comment
    */
-  ratingComment = "";
+  ratingComment = '';
   // defaultIcon
   defaultAppIcon: string;
 
@@ -262,10 +230,10 @@ export class CollectionDetailEtbPage implements OnInit {
   public objRollup: Rollup;
   public didViewLoad: boolean;
   public backButtonFunc: Subscription;
-  public baseUrl = "";
+  public baseUrl = '';
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
-  public source = "";
+  public source = '';
   isChildClickable = false;
   hiddenGroups = new Set();
   shownGroups = undefined;
@@ -278,12 +246,12 @@ export class CollectionDetailEtbPage implements OnInit {
   headerObservable: any;
   breadCrumb = new Map();
   scrollPosition = 0;
-  currentFilter = "ALL";
-  localImage = "";
+  currentFilter = 'ALL';
+  localImage = '';
   appName: any;
   @ViewChild(iContent, { static: false }) ionContent: iContent;
-  @ViewChild("stickyPillsRef", { static: false }) stickyPillsRef: ElementRef;
-  @ViewChild("collectionChildComp", { static: false })
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild('collectionChildComp', { static: false })
   collectionChildComp: CollectionChildComponent;
   private eventSubscription: Subscription;
 
@@ -320,15 +288,15 @@ export class CollectionDetailEtbPage implements OnInit {
   playBtnConfig: IButtonConfig;
   accordianConfig: IAccordianConfig = {
     expandMode: ExpandMode.SINGLE,
-    expandBehavior: ExpandBehavior.EXPAND_FIRST,
+    expandBehavior: ExpandBehavior.EXPAND_FIRST
   };
 
   constructor(
-    @Inject("CONTENT_SERVICE") private contentService: ContentService,
-    @Inject("EVENTS_BUS_SERVICE") private eventBusService: EventsBusService,
-    @Inject("PROFILE_SERVICE") private profileService: ProfileService,
-    @Inject("STORAGE_SERVICE") private storageService: StorageService,
-    @Inject("DOWNLOAD_SERVICE") private downloadService: DownloadService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('STORAGE_SERVICE') private storageService: StorageService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -348,7 +316,7 @@ export class CollectionDetailEtbPage implements OnInit {
     private sbProgressLoader: SbProgressLoader
   ) {
     this.objRollup = new Rollup();
-    this.defaultAppIcon = "assets/imgs/ic_launcher.png";
+    this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     const extras = this.router.getCurrentNavigation().extras.state;
 
     if (extras) {
@@ -379,12 +347,12 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
-    window["segmentation"].SBTagService.pushTag(
-      window["segmentation"].SBTagService.getTags(TagPrefixConstants.CONTENT_ID)
+    window['segmentation'].SBTagService.pushTag(
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID)
         ? this.identifier
         : [this.identifier],
       TagPrefixConstants.CONTENT_ID,
-      window["segmentation"].SBTagService.getTags(TagPrefixConstants.CONTENT_ID)
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID)
         ? false
         : true
     );
@@ -392,32 +360,26 @@ export class CollectionDetailEtbPage implements OnInit {
 
   ngOnInit() {
     this.playBtnConfig = {
-      label: this.commonUtilService.translateMessage("PLAY"),
-      show: true,
+      label: this.commonUtilService.translateMessage('PLAY'),
+      show: true
     };
 
-    this.commonUtilService.getAppName().then((res) => {
-      this.appName = res;
-    });
-    window["scrollWindow"] = this.ionContent;
-    this.trackDownloads$ = this.downloadService
-      .trackDownloads({
-        groupBy: { fieldPath: "rollUp.l1", value: this.identifier },
-      })
-      .pipe(share());
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    window['scrollWindow'] = this.ionContent;
+    this.trackDownloads$ = this.downloadService.trackDownloads({groupBy: { fieldPath: 'rollUp.l1', value: this.identifier },}).pipe(
+      share());
   }
 
   ionViewWillEnter() {
     this.headerService.showStatusBar();
     this.registerDeviceBackButton();
     this.zone.run(() => {
-      this.headerObservable = this.headerService.headerEventEmitted$.subscribe(
-        (eventName) => {
+      this.headerObservable = this.headerService.headerEventEmitted$.subscribe((eventName) => {
           this.handleHeaderEvents(eventName);
         }
       );
       this.headerConfig = this.headerService.getDefaultPageConfig();
-      this.headerConfig.actionButtons = ["download"];
+      this.headerConfig.actionButtons = ['download'];
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
@@ -524,7 +486,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.hiddenGroups.delete(group);
     }
     const values = new Map();
-    values["isCollapsed"] = isCollapsed;
+    values['isCollapsed'] = isCollapsed;
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -540,7 +502,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   // to check whether the card is toggled or not
   isGroupShown(group) {
-    if (this.activeMimeTypeFilter.indexOf("all") === 0) {
+    if (this.activeMimeTypeFilter.indexOf('all') === 0) {
       return this.shownGroups === group;
     } else {
       return !this.hiddenGroups.has(group);
@@ -612,7 +574,7 @@ export class CollectionDetailEtbPage implements OnInit {
           ) {
             data.contentData.attributions = data.contentData.attributions
               .sort()
-              .join(", ");
+              .join(', ');
           }
           if (!data.isAvailableLocally) {
             this.contentDetail = data;
@@ -651,9 +613,9 @@ export class CollectionDetailEtbPage implements OnInit {
         }
       })
       .catch((error) => {
-        console.log("error while loading content details", error);
+        console.log('error while loading content details', error);
         this.showSheenAnimation = false;
-        this.commonUtilService.showToast("ERROR_CONTENT_NOT_AVAILABLE");
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         this.location.back();
       });
   }
@@ -706,7 +668,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
     if (this.contentDetail.contentData.me_totalDownloads) {
       this.contentDetail.contentData.me_totalDownloads =
-        this.contentDetail.contentData.me_totalDownloads.split(".")[0];
+        this.contentDetail.contentData.me_totalDownloads.split('.')[0];
     }
     this.setCollectionStructure();
   }
@@ -771,8 +733,8 @@ export class CollectionDetailEtbPage implements OnInit {
         identifiers,
         isChild
       ),
-      contentStatusArray: ["Live"],
-      fields: ["appIcon", "name", "subject", "size", "gradeLevel"],
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
     };
     // Call content service
     this.contentService
@@ -817,7 +779,7 @@ export class CollectionDetailEtbPage implements OnInit {
                 PageId.COLLECTION_DETAIL,
                 JSON.stringify(stackTrace)
               );
-              this.commonUtilService.showToast("UNABLE_TO_FETCH_CONTENT");
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
@@ -839,12 +801,12 @@ export class CollectionDetailEtbPage implements OnInit {
           } else {
             if (
               error &&
-              (error.error === "NETWORK_ERROR" ||
-                error.error === "CONNECTION_ERROR")
+              (error.error === 'NETWORK_ERROR' ||
+                error.error === 'CONNECTION_ERROR')
             ) {
-              this.commonUtilService.showToast("NEED_INTERNET_TO_CHANGE");
+              this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
             } else {
-              this.commonUtilService.showToast("UNABLE_TO_FETCH_CONTENT");
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
             this.showChildrenLoader = false;
             this.location.back();
@@ -871,7 +833,7 @@ export class CollectionDetailEtbPage implements OnInit {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (
               this.textbookTocService.textbookIds.rootUnitId &&
-              this.activeMimeTypeFilter !== ["all"]
+              this.activeMimeTypeFilter !== ['all']
             ) {
               this.onFilterMimeTypeChange(
                 this.mimeTypes[0].value,
@@ -896,11 +858,11 @@ export class CollectionDetailEtbPage implements OnInit {
             setTimeout(() => {
               (
                 this.stickyPillsRef.nativeElement as HTMLDivElement
-              ).classList.add("sticky");
-              window["scrollWindow"].getScrollElement().then(() => {
+              ).classList.add('sticky');
+              window['scrollWindow'].getScrollElement().then(() => {
                 document
                   .getElementById(this.textbookTocService.textbookIds.contentId)
-                  .scrollIntoView({ behavior: "smooth" });
+                  .scrollIntoView({ behavior: 'smooth' });
                 this.textbookTocService.resetTextbookIds();
               });
             }, 0);
@@ -993,7 +955,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.showLoading = false;
     this.refreshHeader();
     this.downloadProgress = 0;
-    this.cardData = "";
+    this.cardData = '';
     this.contentDetail = undefined;
     this.showDownload = false;
     this.showDownloadBtn = false;
@@ -1107,14 +1069,14 @@ export class CollectionDetailEtbPage implements OnInit {
               Math.floor(
                 (event.payload.currentCount / event.payload.totalCount) * 100
               ) +
-              "% (" +
+              '% (' +
               event.payload.currentCount +
-              " / " +
+              ' / ' +
               event.payload.totalCount +
-              ")";
+              ')';
             this.importProgressMessage =
               this.commonUtilService.translateMessage(
-                "EXTRACTING_CONTENT",
+                'EXTRACTING_CONTENT',
                 totalCountMsg
               );
             if (event.payload.currentCount === event.payload.totalCount) {
@@ -1158,7 +1120,7 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   updateSavedResources() {
-    this.events.publish("savedResources:update", {
+    this.events.publish('savedResources:update', {
       update: true,
     });
   }
@@ -1173,7 +1135,7 @@ export class CollectionDetailEtbPage implements OnInit {
         pageId: PageId.COLLECTION_DETAIL,
         shareItemType: ShareItemType.ROOT_COLECTION,
       },
-      cssClass: "sb-popover",
+      cssClass: 'sb-popover',
     });
     await popover.present();
   }
@@ -1194,7 +1156,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateImpressionEvent(objectId, objectType, objectVersion) {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.DETAIL,
-      "",
+      '',
       PageId.COLLECTION_DETAIL,
       Environment.HOME,
       objectId,
@@ -1238,9 +1200,9 @@ export class CollectionDetailEtbPage implements OnInit {
 
   generateQRSessionEndEvent(pageId: string, qrData: string) {
     if (pageId !== undefined) {
-      const telemetryObject = new TelemetryObject(qrData, "qr", "");
+      const telemetryObject = new TelemetryObject(qrData, 'qr', '');
       this.telemetryGeneratorService.generateEndTelemetry(
-        "qr",
+        'qr',
         Mode.PLAY,
         pageId,
         Environment.HOME,
@@ -1265,31 +1227,31 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       const contentTypeCount = this.downloadIdentifiers.size
         ? this.downloadIdentifiers.size
-        : "";
+        : '';
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
         componentProps: {
-          sbPopoverHeading: this.commonUtilService.translateMessage("DOWNLOAD"),
+          sbPopoverHeading: this.commonUtilService.translateMessage('DOWNLOAD'),
           sbPopoverMainTitle: this.contentDetail.contentData.name,
           actionsButtons: [
             {
-              btntext: this.commonUtilService.translateMessage("DOWNLOAD"),
-              btnClass: "popover-color",
+              btntext: this.commonUtilService.translateMessage('DOWNLOAD'),
+              btnClass: 'popover-color',
             },
           ],
           icon: null,
           metaInfo:
-            this.commonUtilService.translateMessage("ITEMS", contentTypeCount) +
-            " (" +
+            this.commonUtilService.translateMessage('ITEMS', contentTypeCount) +
+            ' (' +
             this.fileSizePipe.transform(this.downloadSize, 2) +
-            ")",
+            ')',
         },
-        cssClass: "sb-popover info",
+        cssClass: 'sb-popover info',
       });
       await popover.present();
       this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW,
-        "",
+        '',
         PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
         Environment.HOME,
         this.contentDetail.identifier,
@@ -1312,12 +1274,12 @@ export class CollectionDetailEtbPage implements OnInit {
           this.corRelationList
         );
         this.downloadAllContent();
-        this.events.publish("header:decreasezIndex");
+        this.events.publish('header:decreasezIndex');
       } else {
         this.generateCancelDownloadTelemetry();
       }
     } else {
-      this.commonUtilService.showToast("ERROR_NO_INTERNET_MESSAGE");
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
   }
 
@@ -1365,7 +1327,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.downloadProgress = 0;
     this.headerObservable.unsubscribe();
     this.events.unsubscribe(EventTopics.CONTENT_TO_PLAY);
-    this.events.publish("header:setzIndexToNormal");
+    this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
@@ -1395,16 +1357,16 @@ export class CollectionDetailEtbPage implements OnInit {
 
   refreshHeader() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
-    this.headerConfig.actionButtons = ["download"];
+    this.headerConfig.actionButtons = ['download'];
     this.headerConfig.showBurgerMenu = false;
     this.headerConfig.showHeader = true;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.events.publish("header:setzIndexToNormal");
+    this.events.publish('header:setzIndexToNormal');
   }
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case "back":
+      case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(
           PageId.COLLECTION_DETAIL,
           Environment.HOME,
@@ -1414,7 +1376,7 @@ export class CollectionDetailEtbPage implements OnInit {
         );
         this.handleBackButton();
         break;
-      case "download":
+      case 'download':
         this.redirectToActivedownloads();
         break;
     }
@@ -1436,7 +1398,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   async onFilterMimeTypeChange(val, idx, currentFilter?) {
     const values = new Map();
-    values["filter"] = currentFilter;
+    values['filter'] = currentFilter;
     this.activeMimeTypeFilter = val;
     this.currentFilter = this.commonUtilService.translateMessage(currentFilter);
     this.mimeTypes.forEach((type) => {
@@ -1463,7 +1425,7 @@ export class CollectionDetailEtbPage implements OnInit {
       { childrenData: this.childrenData, parentId: this.identifier }
     );
     const values = new Map();
-    values["selectChapterVisible"] = this.isChapterVisible;
+    values['selectChapterVisible'] = this.isChapterVisible;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DROPDOWN_CLICKED,
@@ -1479,11 +1441,11 @@ export class CollectionDetailEtbPage implements OnInit {
   onScroll(event) {
     if (event.detail.scrollTop >= 205) {
       (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add(
-        "sticky"
+        'sticky'
       );
 
       const boxes: HTMLElement[] = Array.from(
-        document.getElementsByClassName("sticky-header-title-box")
+        document.getElementsByClassName('sticky-header-title-box')
       ) as HTMLElement[];
 
       let headerBottomOffset = (
@@ -1503,8 +1465,8 @@ export class CollectionDetailEtbPage implements OnInit {
       const boxesData = boxes.map((b) => {
         return {
           elem: b,
-          text: b.dataset["text"],
-          renderLevel: parseInt(b.dataset["renderLevel"], 10),
+          text: b.dataset['text'],
+          renderLevel: parseInt(b.dataset['renderLevel'], 10),
           offsetTop: b.getBoundingClientRect().top,
         };
       });
@@ -1536,7 +1498,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
     (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove(
-      "sticky"
+      'sticky'
     );
   }
 
@@ -1549,8 +1511,8 @@ export class CollectionDetailEtbPage implements OnInit {
         identifiers,
         isChild
       ),
-      contentStatusArray: ["Live"],
-      fields: ["appIcon", "name", "subject", "size", "gradeLevel"],
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
     };
     // Call content service
     this.contentService
@@ -1593,12 +1555,12 @@ export class CollectionDetailEtbPage implements OnInit {
           this.showLoading = false;
           if (
             error &&
-            (error.error === "NETWORK_ERROR" ||
-              error.error === "CONNECTION_ERROR")
+            (error.error === 'NETWORK_ERROR' ||
+              error.error === 'CONNECTION_ERROR')
           ) {
-            this.commonUtilService.showToast("NEED_INTERNET_TO_CHANGE");
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {
-            this.commonUtilService.showToast("UNABLE_TO_FETCH_CONTENT");
+            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
           }
           this.showChildrenLoader = false;
           this.location.back();

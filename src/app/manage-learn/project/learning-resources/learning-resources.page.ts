@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { AppHeaderService, CommonUtilService } from "@app/services";
-import { TranslateService } from "@ngx-translate/core";
-import { LoaderService, ToastService } from "../../core";
-import { DbService } from "../../core/services/db.service";
-import { UtilsService } from "../../core/services/utils.service";
+import { Component, OnInit, Inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AppHeaderService, CommonUtilService } from '@app/services';
+import { TranslateService } from '@ngx-translate/core';
+import { LoaderService, ToastService } from '../../core';
+import { DbService } from '../../core/services/db.service';
+import { UtilsService } from '../../core/services/utils.service';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Location } from '@angular/common';
@@ -13,15 +13,15 @@ import { Platform } from '@ionic/angular';
 
 var environment = {
   db: {
-    projects: "project.db",
-    categories: "categories.db",
+    projects: 'project.db',
+    categories: 'categories.db',
   },
   deepLinkAppsUrl: ''
 };
 
 @Component({
-  selector: "app-learning-resources",
-  templateUrl: "./learning-resources.page.html",
+  selector: 'app-learning-resources',
+  templateUrl: './learning-resources.page.html',
   styleUrls: ["./learning-resources.page.scss"],
 })
 export class LearningResourcesPage implements OnInit {
@@ -77,14 +77,14 @@ export class LearningResourcesPage implements OnInit {
 
   ionViewWillEnter() {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_LEARNING_RESOURCES"]).subscribe((text) => {
+    this.translate.get(['FRMELEMNTS_LBL_LEARNING_RESOURCES']).subscribe((text) => {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
     this._headerConfig.actionButtons = [];
     this._headerConfig.showHeader = true;
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
+    this._headerConfig.pageTitle = data['FRMELEMNTS_LBL_LEARNING_RESOURCES'];
     this.headerService.updatePageConfig(this._headerConfig);
     this.handleBackButton();
   }
