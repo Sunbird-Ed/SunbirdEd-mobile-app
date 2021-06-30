@@ -1394,7 +1394,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   checkParent(parent, child) {
     const identifier = parent.identifier;
     const contentRequest: ContentDetailRequest = {
-      contentId: identifier
+      contentId: identifier,
+      objectType: parent.objectType
     };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {

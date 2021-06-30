@@ -71,7 +71,7 @@
     "sb-tag-manager": "^3.9.19",
     "@project-sunbird/sunbird-player-sdk-v8": "4.0.6",
     "@project-sunbird/sunbird-quml-player-v8": "4.0.12",
-    "@project-sunbird/sunbird-sdk": "4.0.8",
+    "@project-sunbird/sunbird-sdk": "4.1.1",
     "@project-sunbird/sunbird-video-player-v8": "4.0.8",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
