@@ -106,6 +106,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   refresh: boolean;
   homeDataAvailable = false;
   displayBanner: boolean;
+  bannerSegment: any;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -155,7 +156,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.isBannerDisplayed();
     this.getUserProfileDetails();
   }
 
@@ -269,6 +269,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = displayItems;
+    this.showorHideBanners();
     this.refresh = false;
     refresher ? refresher.target.complete() : null;
   }
@@ -634,7 +635,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   tabViewWillEnter() {
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.isBannerDisplayed();
     this.getUserProfileDetails();
   }
 
@@ -652,13 +652,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             }
             break;
       case 'banner_search':
-          const payload = {
-            data: {
-              request: event.data.action.params.filter
-            },
-            action: 'ACTION_SEARCH'
+          const extras = {
+            state: {
+              source: PageId.SPLASH_SCREEN,
+              preAppliedFilter: {
+                query: event.data.action.params.query || '',
+                filters: {
+                  status: ['Live'],
+                  objectType: ['Content'],
+                  ...event.data.action.params.filters
+                }
+              }
+            }
           };
-          this.splaschreenDeeplinkActionHandlerDelegate.handleVendorAppAction(payload, event.data.code);
+          this.router.navigate(['search'], extras);
           break;
       case 'banner_content':
            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
@@ -666,12 +673,24 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  isBannerDisplayed() {
-    const command = this.segmentationTagService.exeCommands.find((cmd) => {
+  showorHideBanners() {
+    this.bannerSegment = this.segmentationTagService.exeCommands.find((cmd) => {
       if (cmd.controlFunction === 'BANNER_CONFIG') {
         return cmd;
       }
     });
-    this.displayBanner = (command && command.controlFunctionPayload.showBanner) ? true : false;
+    this.displayBanner = (this.bannerSegment && this.bannerSegment.controlFunctionPayload.values.length) ? true : false;
+    if (this.bannerSegment ) {
+      this.setBannerConfig();
+    }
+  }
+
+  setBannerConfig() {
+    this.displaySections.forEach((section, index) => {
+      if (section.dataSrc.type === 'CONTENT_DISCOVERY_BANNER') {
+        this.displaySections[index]['data'] = this.bannerSegment.controlFunctionPayload.values.filter((value) =>
+         Number(value.expiry) > Math.floor(Date.now() / 1000));
+      }
+    });
   }
 }
