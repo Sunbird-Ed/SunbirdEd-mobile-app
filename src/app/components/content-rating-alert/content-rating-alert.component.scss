@@ -39,7 +39,7 @@
       border-bottom: 1px solid map-get($colors, light_gray_8c);
       margin-left: 16px;
       .rating-label{
-        color: $gray-300;
+        color: map-get($colors, primary_black);
         font-size: 14px;
         margin: 0;
         flex: 1 1 0;
