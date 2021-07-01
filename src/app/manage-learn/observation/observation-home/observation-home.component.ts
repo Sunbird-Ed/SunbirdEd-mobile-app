@@ -55,6 +55,7 @@ export class ObservationHomeComponent implements OnInit {
     // let payload = await this.utils.getProfileInfo();
     this.profileInfo =  await this.utils.setProfileData(storageKeys.observations);
     this.generatedKey = this.profileInfo.generatedKey;
+    this.solutionList =[];
    this.networkFlag ?
     this.getPrograms() : this.getLocalData();
   }
@@ -73,16 +74,11 @@ export class ObservationHomeComponent implements OnInit {
       this.kendra.post(config).subscribe(
         (success) => {
           this.loader.stopLoader();
-          console.log(success);
           if (success && success.result && success.result.data) {
             this.count = success.result.count;
 
             this.solutionList = [...this.solutionList, ...success.result.data];
-            this.storage.set(this.generatedKey, this.solutionList).then(data =>{
-              console.log(data,'stored in local');
-            },error =>{
-              console.log(error,"failed to store");
-            })
+            this.storage.set(this.generatedKey, this.solutionList);
           }
         },
         (error) => {
@@ -94,12 +90,9 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   getLocalData(){
-    console.log(this.generatedKey,"this.generatedKey");
     this.storage.get(this.generatedKey).then(data =>{
-      console.log(data,'fetched in local');
       this.solutionList = data;
     },error =>{
-      console.log(error,"failed to fetch");
     })
   }
 

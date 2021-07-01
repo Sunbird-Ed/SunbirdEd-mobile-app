@@ -77,7 +77,6 @@ export class ObservationDetailComponent implements OnInit {
       async (available: boolean) => {
         this.networkFlag = available;
         this.networkFlag ? this.getObservationEntities() : this.getLocalData();
-        console.log("changed", this.networkFlag);
       }
     );
   }
@@ -325,7 +324,6 @@ export class ObservationDetailComponent implements OnInit {
           }
         })
         .catch(error => {
-          console.log(error);
         });
     }
   }

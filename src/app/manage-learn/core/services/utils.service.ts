@@ -32,6 +32,7 @@ export class UtilsService {
   requiredFields;
   profileAlert;
   userId;
+  mandatoryFields ={};
   constructor(
     private utility: UtilityService,
     @Inject("PROFILE_SERVICE") private profileService: ProfileService,
@@ -42,7 +43,11 @@ export class UtilsService {
     private aleryCtrl: AlertController,
     private router: Router,
     private storage: Storage
-  ) {}
+  ) {
+    this.storage.get(storageKeys.mandatoryFields).then(data =>{
+      this.mandatoryFields = data;
+    })
+  }
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -431,12 +436,10 @@ export class UtilsService {
         data => {
           if (data.result && data.result.length) {
             this.requiredFields = data.result;
-            console.log(this.requiredFields, " this.requiredFields");
-            let role = {};
-            role[this.profile.state] = {
+            this.mandatoryFields[this.profile.state] = {
               [this.profile.role]: this.requiredFields
             };
-            this.storage.set(storageKeys.mandatoryFields, role);
+            this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
             let allFieldsPresent = true;
             for (const field of this.requiredFields) {
               if (!this.profile[field]) {
@@ -532,18 +535,15 @@ export class UtilsService {
 
   async getProfileInfo(): Promise<any> {
     //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    // console.log(profile)
     return new Promise(async (resolve, reject) => {
       this.profile = await this.getProfileData();
       let mandatoryFields;
       this.storage.get(storageKeys.mandatoryFields).then( data => {
         if (data) {
           mandatoryFields = data;
-          console.log(mandatoryFields, "mandatoryFields in if");
           mandatoryFields ? resolve(this.profile) : resolve(null);
         } else {
           mandatoryFields = this.getMandatoryEntities();
-          console.log(mandatoryFields, "mandatoryFields in else");
           mandatoryFields ? resolve(this.profile) : resolve(null);
         }
       });
@@ -579,7 +579,6 @@ export class UtilsService {
       // };
       // if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       userData = await this.getProfileInfo();
-      console.log(userData, "userData");
       let data = {
         userData: userData,
         generatedKey: this.getUniqueKey(userData, type)
@@ -647,10 +646,8 @@ export class UtilsService {
               .toPromise()
               .then(profileData => {
                 this.zone.run(async () => {
-                  console.log(profileData);
                   this.userId = profileData.userId;
                   this.profile = profileData;
-                  console.log(this.profile, "this.profile");
                   const obj = {};
                   for (const location of profileData["userLocations"]) {
                     obj[location.type] = location.id;
@@ -666,8 +663,6 @@ export class UtilsService {
                     profileData["profileUserType"]["subType"]
                       ? profileData["profileUserType"]["subType"].toUpperCase()
                       : null;
-                  console.log(this.profile, "this.profile 631");
-
                   resolve(obj);
                 });
               })
