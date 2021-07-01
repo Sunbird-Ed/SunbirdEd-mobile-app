@@ -1,12 +1,12 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { Content, DownloadTracking } from "sunbird-sdk";
-import { CommonUtilService } from "@app/services";
-import { Observable } from "rxjs";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Content, DownloadTracking } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: "app-detail-card",
-  templateUrl: "./detail-card.component.html",
-  styleUrls: ["./detail-card.component.scss"],
+  selector: 'app-detail-card',
+  templateUrl: './detail-card.component.html',
+  styleUrls: ['./detail-card.component.scss'],
 })
 export class DetailCardComponent {
   @Input() contentDetail: Content;
@@ -25,7 +25,7 @@ export class DetailCardComponent {
 
   downloadAllContents() {
     this.downloadAllContent.emit();
-    console.log("emited!");
+    console.log('emited!');
   }
 
   showOverflowMenu() {

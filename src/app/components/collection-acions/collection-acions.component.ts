@@ -1,12 +1,12 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
-import { Content, DownloadTracking } from "sunbird-sdk";
-import { CommonUtilService } from "@app/services";
-import { Observable } from "rxjs";
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Content, DownloadTracking } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: "collection-acions",
-  templateUrl: "./collection-acions.component.html",
-  styleUrls: ["../detail-card/detail-card.component.scss"],
+  selector: 'collection-acions',
+  templateUrl: './collection-acions.component.html',
+  styleUrls: ['../detail-card/detail-card.component.scss'],
 })
 export class CollectionActionsComponent {
   @Input() contentDetail: Content;

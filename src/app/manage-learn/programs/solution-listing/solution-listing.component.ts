@@ -1,21 +1,21 @@
-import { Location } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { KendraApiService } from "../../core/services/kendra-api.service";
-import { urlConstants } from "../../core/constants/urlConstants";
-import { ToastService, UtilsService } from "../../core";
-import { LoaderService } from "../../core";
-import { RouterLinks } from "@app/app/app.constant";
-import { SurveyProviderService } from "../../core/services/survey-provider.service";
-import { Subscription } from "rxjs";
-import { AppHeaderService } from "@app/services";
-import { Platform } from "@ionic/angular";
-import { UpdateLocalSchoolDataService } from "../../core/services/update-local-school-data.service";
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { ToastService, UtilsService } from '../../core';
+import { LoaderService } from '../../core';
+import { RouterLinks } from '@app/app/app.constant';
+import { SurveyProviderService } from '../../core/services/survey-provider.service';
+import { Subscription } from 'rxjs';
+import { AppHeaderService } from '@app/services';
+import { Platform } from '@ionic/angular';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 
 @Component({
-  selector: "app-solution-listing",
-  templateUrl: "./solution-listing.component.html",
-  styleUrls: ["./solution-listing.component.scss"],
+  selector: 'app-solution-listing',
+  templateUrl: './solution-listing.component.html',
+  styleUrls: ['./solution-listing.component.scss'],
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
@@ -47,7 +47,7 @@ export class SolutionListingComponent implements OnInit {
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
-      this.solutions = [];
+      this.solutions=[];
       this.getSolutions();
     });
   }
@@ -70,23 +70,20 @@ export class SolutionListingComponent implements OnInit {
   }
 
   private handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(
-      11,
-      () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
         this.location.back();
-      }
-    );
+      });
   }
 
   selectedSolution(data) {
     switch (data.type) {
-      case "observation":
+      case 'observation':
         this.redirectObservaiton(data);
         break;
-      case "improvementProject":
+      case 'improvementProject':
         this.redirectProject(data);
         break;
-      case "survey":
+      case 'survey':
         this.surveyRedirect(data);
 
       default:
@@ -95,16 +92,16 @@ export class SolutionListingComponent implements OnInit {
   }
 
   surveyRedirect(data) {
-    let surveyId = "";
+    let surveyId = '';
     if (data.surveyId) {
       surveyId = data.surveyId;
     }
     this.surveyProvider
       .getDetailsById(surveyId, data._id)
       .then((res) => {
-        if (res.result && res.result.status == "completed") {
+        if (res.result && res.result.status == 'completed') {
           // this.toast.openToast(res.message)
-          this.surveyProvider.showMsg("surveyCompleted");
+          this.surveyProvider.showMsg('surveyCompleted');
           return;
         }
         const survey = res.result;
@@ -133,7 +130,7 @@ export class SolutionListingComponent implements OnInit {
   }
 
   redirectProject(data) {
-    let projectId = "";
+    let projectId = '';
     if (data.projectId) {
       projectId = data.projectId;
     }
@@ -142,12 +139,12 @@ export class SolutionListingComponent implements OnInit {
         projectId: projectId,
         programId: this.programId,
         solutionId: data._id,
-        type: "assignedToMe",
+        type: 'assignedToMe',
       },
     });
   }
   redirectObservaiton(data) {
-    let observationId = "";
+    let observationId = '';
     if (data.observationId) {
       observationId = data.observationId;
     }
@@ -172,11 +169,11 @@ export class SolutionListingComponent implements OnInit {
         url:
           urlConstants.API_URLS.SOLUTIONS_LISTING +
           this.programId +
-          "?page=" +
+          '?page=' +
           this.page +
-          "&limit=" +
+          '&limit=' +
           this.limit +
-          "&search=",
+          '&search=',
         payload: payload,
       };
       this.kendraService.post(config).subscribe(

@@ -1,8 +1,6 @@
 <ion-header class="sb-popover-header">
   <ion-toolbar class="sb-popover-toolbar">
-    <ion-title class="sb-popover-title" style="text-align: center"
-      >Year of birth</ion-title
-    >
+    <ion-title class="sb-popover-title" style="text-align: center">Year of birth</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,22 +15,14 @@
         width: 50%;
         border-radius: 18px;
         margin-left: 24%;
-        height: 2.5rem;
-      "
-    >
+        height: 2.5rem;">
       <ion-select
         placeholder="Year"
         interface="popover"
-        style="padding: 6px 20px"
-        [(ngModel)]="selectedYearOfBirth"
-        mode="ios"
-      >
+        style="padding: 6px 20px" [(ngModel)]="selectedYearOfBirth"
+        mode="ios">
         <ion-select-option
-          *ngFor="let year of birthYearOptions"
-          value="{{ year }}"
-        >
-          {{ year }}</ion-select-option
-        >
+          *ngFor="let year of birthYearOptions" value="{{ year }}">{{ year }}</ion-select-option>
       </ion-select>
     </div>
   </div>
@@ -42,9 +32,6 @@
       class="submit-btn"
       [disabled]="!selectedYearOfBirth"
       (click)="submit()"
-      [ngClass]="!selectedYearOfBirth ? 'submit-disibled' : null"
-    >
-      submit
-    </button>
+      [ngClass]="!selectedYearOfBirth ? 'submit-disibled' : null">submit</button>
   </div>
 </div>

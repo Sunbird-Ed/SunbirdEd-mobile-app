@@ -12,23 +12,17 @@
     </ion-item>
   </ion-list>
 
-  <app-item-list-card
-    [title]="data?.name"
+  <app-item-list-card [title]="data?.name"
     [subTitle]="data?.description"
     [id]="data?.id"
     (click)="selectedSolution(data)"
-    *ngFor="let data of solutions"
-  >
+    *ngFor="let data of solutions">
     <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
   </app-item-list-card>
   <app-no-data *ngIf="!solutions?.length"></app-no-data>
 </ion-content>
 <div class="px-5">
-  <ion-button
-    expand="block"
-    (click)="loadMore()"
-    *ngIf="solutions?.length && count > solutions?.length"
-  >
-    {{ "FRMELEMNTS_BTN_VIEW_MORE" | translate }}
+  <ion-button expand="block" 
+  (click)="loadMore()" *ngIf="solutions?.length && count > solutions?.length">{{ "FRMELEMNTS_BTN_VIEW_MORE" | translate }}
   </ion-button>
 </div>

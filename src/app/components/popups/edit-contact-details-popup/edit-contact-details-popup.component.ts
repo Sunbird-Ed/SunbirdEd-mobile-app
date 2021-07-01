@@ -1,24 +1,24 @@
-import { Component, OnInit, Inject, Input } from "@angular/core";
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import {
   Platform,
   NavParams,
   PopoverController,
   MenuController,
-} from "@ionic/angular";
+} from '@ionic/angular';
 import {
   GenerateOtpRequest,
   IsProfileAlreadyInUseRequest,
   ProfileService,
-} from "sunbird-sdk";
-import { ProfileConstants } from "@app/app/app.constant";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { CommonUtilService } from "../../../../services/common-util.service";
-import { Keyboard } from "@ionic-native/keyboard/ngx";
+} from 'sunbird-sdk';
+import { ProfileConstants } from '@app/app/app.constant';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
-  selector: "app-edit-contact-details-popup",
-  templateUrl: "./edit-contact-details-popup.component.html",
-  styleUrls: ["./edit-contact-details-popup.component.scss"],
+  selector: 'app-edit-contact-details-popup',
+  templateUrl: './edit-contact-details-popup.component.html',
+  styleUrls: ['./edit-contact-details-popup.component.scss'],
 })
 export class EditContactDetailsPopupComponent implements OnInit  {
   // Data passed in by componentProps
@@ -36,7 +36,7 @@ export class EditContactDetailsPopupComponent implements OnInit  {
   loader: any;
 
   constructor(
-    @Inject("PROFILE_SERVICE") private profileService: ProfileService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private navParams: NavParams,
     public platform: Platform,
     private commonUtilService: CommonUtilService,
@@ -45,10 +45,10 @@ export class EditContactDetailsPopupComponent implements OnInit  {
     private keyboard: Keyboard,
     private menuCtrl: MenuController
   ) {
-    this.userId = this.navParams.get("userId");
-    this.title = this.navParams.get("title");
-    this.description = this.navParams.get("description");
-    this.type = this.navParams.get("type");
+    this.userId = this.navParams.get('userId');
+    this.title = this.navParams.get('title');
+    this.description = this.navParams.get('description');
+    this.type = this.navParams.get('type');
 
     this.initEditForm();
   }
@@ -69,11 +69,11 @@ export class EditContactDetailsPopupComponent implements OnInit  {
     if (this.type === ProfileConstants.CONTACT_TYPE_EMAIL) {
       this.personEditForm = this.fb.group({
         email: [
-          "",
+          '',
           Validators.compose([
             Validators.required,
             Validators.pattern(
-              "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$"
+              '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$'
             ),
           ]),
         ],
@@ -81,10 +81,10 @@ export class EditContactDetailsPopupComponent implements OnInit  {
     } else {
       this.personEditForm = this.fb.group({
         phone: [
-          "",
+          '',
           Validators.compose([
             Validators.required,
-            Validators.pattern("^[6-9]\\d{9}$"),
+            Validators.pattern('^[6-9]\\d{9}$'),
           ]),
         ],
       });
@@ -124,12 +124,12 @@ export class EditContactDetailsPopupComponent implements OnInit  {
         async (error) => {
           if (
             error.response &&
-            error.response.body.params.err === "USER_NOT_FOUND"
+            error.response.body.params.err === 'USER_NOT_FOUND'
           ) {
             this.generateOTP();
           } else if (
             error.response &&
-            error.response.body.params.err === "USER_ACCOUNT_BLOCKED"
+            error.response.body.params.err === 'USER_ACCOUNT_BLOCKED'
           ) {
             this.blockedAccount = true;
             if (this.loader) {
@@ -145,7 +145,7 @@ export class EditContactDetailsPopupComponent implements OnInit  {
         }
       );
     } else {
-      this.commonUtilService.showToast("INTERNET_CONNECTIVITY_NEEDED");
+      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }
   }
 
@@ -197,9 +197,9 @@ export class EditContactDetailsPopupComponent implements OnInit  {
           this.loader = undefined;
         }
         this.popOverCtrl.dismiss({ isEdited: false });
-        if (err.hasOwnProperty(err) === "ERROR_RATE_LIMIT_EXCEEDED") {
+        if (err.hasOwnProperty(err) === 'ERROR_RATE_LIMIT_EXCEEDED') {
           this.commonUtilService.showToast(
-            "You have exceeded the maximum limit for OTP, Please try after some time"
+            'You have exceeded the maximum limit for OTP, Please try after some time'
           );
         }
       });

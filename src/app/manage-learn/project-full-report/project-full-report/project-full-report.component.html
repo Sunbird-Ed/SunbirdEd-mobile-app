@@ -1,28 +1,18 @@
 <ion-content class="ion-padding">
   <div *ngIf="reports && reports.length">
-    <download-share
-      [name]="fileName()"
+    <download-share [name]="fileName()"
       [extension]="'.pdf'"
       [config]="config()"
-      [interface]="'fab'"
-    >
+      [interface]="'fab'">
     </download-share>
 
     <div style="width: 75%; min-height: 25px">
-      <h5>
-        {{ filter?.entity?.name }}
-      </h5>
+      <h5>{{ filter?.entity?.name }}</h5>
     </div>
 
-    <h5 *ngIf="filter?.type == 0">
-      {{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_WEEK" | translate }}
-    </h5>
-    <h5 *ngIf="filter?.type == 1">
-      {{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_MONTH" | translate }}
-    </h5>
-    <h5 *ngIf="filter?.type == 3">
-      {{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER" | translate }}
-    </h5>
+    <h5 *ngIf="filter?.type == 0">{{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_WEEK" | translate }}</h5>
+    <h5 *ngIf="filter?.type == 1">{{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_MONTH" | translate }}</h5>
+    <h5 *ngIf="filter?.type == 3">{{ "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER" | translate }}</h5>
     <div style="display: block" *ngFor="let g of graph">
       <canvas
         baseChart
@@ -30,8 +20,7 @@
         [datasets]="g.chartData.datasets"
         [options]="g.options"
         [labels]="g.labels"
-        [plugins]="barChartPlugins"
-      >
+        [plugins]="barChartPlugins">
       </canvas>
     </div>
   </div>
