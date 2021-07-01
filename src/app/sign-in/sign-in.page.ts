@@ -3,6 +3,8 @@ import {
     AppHeaderService,
     CommonUtilService,
     FormAndFrameworkUtilService,
+    InteractSubtype,
+    InteractType,
     LoginHandlerService
 } from '@app/services';
 import {
@@ -63,6 +65,8 @@ export class SignInPage implements OnInit {
     }
 
     async loginWithStateSystem() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewStateSessionProviderConfig: WebviewStateSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -87,6 +91,8 @@ export class SignInPage implements OnInit {
     }
 
     async signInWithGoogle() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
         this.googlePlusLogin.login({
             webClientId: clientId.value
