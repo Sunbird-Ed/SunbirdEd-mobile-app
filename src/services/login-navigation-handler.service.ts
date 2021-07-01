@@ -184,7 +184,7 @@ export class LoginNavigationHandlerService {
         };
     }
 
-    private generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
+    generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
         const valuesMap = new Map();
         valuesMap['UID'] = uid;
         this.telemetryGeneratorService.generateInteractTelemetry(
