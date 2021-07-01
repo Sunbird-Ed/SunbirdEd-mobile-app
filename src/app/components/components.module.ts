@@ -67,7 +67,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet'
