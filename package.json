@@ -60,7 +60,7 @@
     "@ionic/angular": "^5.5.5",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "4.0.5",
+    "@project-sunbird/client-services": "4.0.6",
     "@project-sunbird/common-consumption-v8": "4.0.5",
     "@project-sunbird/content-player": "3.7.1",
     "@project-sunbird/discussions-ui-v8": "2.2.0-beta.1",
