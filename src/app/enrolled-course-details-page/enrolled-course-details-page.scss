@@ -79,7 +79,7 @@
       padding-top: 0px !important;
   }
     .subtitle-color{
-        color: map-get($colors, granite_gray);
+        color: var(--app-gray)
     }
     .enrolled-course-container {
       &.sticky {
@@ -461,6 +461,7 @@ ion-segment-button{
 
 .card-box-shadow {
   box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
+  margin: 0 0 1rem 0 !important
 }
 
 .animation-card{
@@ -593,4 +594,13 @@ margin-top: -13px; opacity: 1;
   float: right
 }
 
-
+.course-details{
+  ion-card-title{
+    strong{
+      color: var(--app-medium-gray);
+    }
+  }
+  p{
+    color: var(--app-gray);
+  }
+}

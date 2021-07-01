@@ -57,7 +57,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
 import {NavigationService} from '@app/services/navigation-handler.service';
-import {IonContent as ContentView, IonRefresher, PopoverController} from '@ionic/angular';
+import {IonContent as ContentView, IonRefresher, ModalController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {Subscription} from 'rxjs';
 import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -122,7 +122,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private headerService: AppHeaderService,
     private events: Events,
     private qrScanner: SunbirdQRScanner,
-    private popoverCtrl: PopoverController,
+    private ModalCtrl: ModalController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
@@ -427,7 +427,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME
     );
-    const subjectListPopover = await this.popoverCtrl.create({
+    const subjectListPopover = await this.ModalCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
