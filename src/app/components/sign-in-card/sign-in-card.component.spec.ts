@@ -38,11 +38,15 @@ describe('SignInCardComponent', () => {
         getAppName: jest.fn(() => Promise.resolve('Sunbird'))
     };
     const mockRouter: Partial<Router> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
 
     beforeAll(() => {
         signInCardComponent = new SignInCardComponent(
             mockAppVersion as AppVersion,
             mockRouter as Router,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 

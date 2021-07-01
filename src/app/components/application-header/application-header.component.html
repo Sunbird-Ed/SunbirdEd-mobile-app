@@ -1,7 +1,7 @@
 <ion-header class="sb-header" [hidden]="!headerConfig?.showHeader" [ngClass]="{'z-index-0': decreaseZindex}">
   <ion-toolbar class="sb-header-toolbar">
 
-    <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
+    <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
         <img src="./assets/imgs/ic_burger_menu.svg" class="tool-icon" alt="burger menu">
       </ion-button>
@@ -12,7 +12,7 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
-    <ion-buttons class="sb-header-btn-group" slot="end">
+    <ion-buttons class="sb-header-btn-group pr-12" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
         <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" height="25"

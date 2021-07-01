@@ -235,6 +235,7 @@ export class PreferenceKey {
     public static readonly SELECTED_SWITCHABLE_TABS_CONFIG = 'selected_switchable_tabs_config';
     public static readonly IS_NEW_USER = 'is_new_user';
     public static readonly NAVIGATION_SOURCE = 'navigation_source';
+    public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
 }
 
 export enum SwitchableTabsConfig {
