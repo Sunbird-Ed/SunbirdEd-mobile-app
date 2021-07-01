@@ -877,7 +877,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN)) {
+          if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN).toPromise()) {
             try {
               await this.googlePlusLogin.disconnect();
             } catch (e) {
