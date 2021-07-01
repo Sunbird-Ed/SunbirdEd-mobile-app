@@ -40,7 +40,7 @@
               },
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v9/assets",
                 "output": "./assets/common-consumption"
               },
               {
@@ -64,7 +64,6 @@
                 "output": "/assets/"
               }
             ],
-
             "sourceMap": {
               "scripts": true,
               "styles": true,

@@ -19,7 +19,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption-v8';
+import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 import isObject from 'lodash/isObject';
 import { Observable, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';

@@ -182,6 +182,13 @@
       *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
       <div class="sb-content-info-title">{{'ABOUT' | translate}}</div>
 
+      <div class="audience-info" *ngIf="content?.contentData.audience">
+        <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+          <strong>{{'CONTENT_RELEVANT_MSG' | translate }}</strong>
+          <span class="sb-content-title-data">{{content?.contentData?.audience}}</span>
+        </ion-card-title>
+      </div>
+
       <ion-card class="sb-content-info-card"
         *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
         <div class="sb-content-info-heading"
