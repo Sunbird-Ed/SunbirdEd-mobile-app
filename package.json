@@ -77,7 +77,6 @@
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
     "common-form-elements": "^3.9.16",
     "cordova-android": "^9.0.0",
-    "cordova-ios": "^5.1.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/shikshalokam/sb-cordova-plugin-downloadmanager.git#release-3.9.0-ios",
@@ -93,7 +92,6 @@
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-document-viewer": "^0.9.13",
-    "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-file-opener2": "^2.2.1",
     "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git",
@@ -243,7 +241,6 @@
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
       "cordova-plugin-printer": {},
-      "cordova-plugin-fcm-with-dependecy-updated": {},
       "com.telerik.plugins.nativepagetransitions": {},
       "cordova-plugin-proguard": {},
       "cordova-plugin-androidx-adapter": {},
@@ -267,7 +264,14 @@
       "cordova-plugin-sunbirdsplash": {},
       "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-utility": {},
-      "cordova-plugin-ionic-webview": {}
+      "cordova-plugin-ionic-webview": {},
+      "cordova-plugin-fcm-with-dependecy-updated": {
+        "FCM_CORE_VERSION": "16.0.9",
+        "FCM_VERSION": "18.0.0",
+        "GRADLE_TOOLS_VERSION": "3.5.0",
+        "GOOGLE_SERVICES_VERSION": "4.2.0",
+        "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
+      }
     },
     "platforms": [
       "android",
