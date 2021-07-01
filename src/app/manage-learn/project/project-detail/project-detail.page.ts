@@ -5,39 +5,39 @@ import {
   OnInit,
   Inject,
   NgZone,
-} from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   PopoverController,
   AlertController,
   Platform,
   ModalController,
-} from "@ionic/angular";
-import * as _ from "underscore";
-import { TranslateService } from "@ngx-translate/core";
-import { statuses } from "@app/app/manage-learn/core/constants/statuses.constant";
-import { UtilsService } from "@app/app/manage-learn/core/services/utils.service";
-import * as moment from "moment";
-import { AppHeaderService, CommonUtilService } from "@app/services";
-import { menuConstants } from "../../core/constants/menuConstants";
-import { PopoverComponent } from "../../shared/components/popover/popover.component";
-import { Subscription } from "rxjs";
-import { DbService } from "../../core/services/db.service";
-import { LoaderService, ToastService, NetworkService } from "../../core";
-import { SyncService } from "../../core/services/sync.service";
-import { UnnatiDataService } from "../../core/services/unnati-data.service";
-import { urlConstants } from "../../core/constants/urlConstants";
-import { RouterLinks } from "@app/app/app.constant";
-import { ContentDetailRequest, Content, ContentService } from "sunbird-sdk";
-import { NavigationService } from "@app/services/navigation-handler.service";
-import { CreateTaskFormComponent } from "../../shared";
-import { SharingFeatureService } from "../../core/services/sharing-feature.service";
-import { Location } from "@angular/common";
+} from '@ionic/angular';
+import * as _ from 'underscore';
+import { TranslateService } from '@ngx-translate/core';
+import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
+import * as moment from 'moment';
+import { AppHeaderService, CommonUtilService } from '@app/services';
+import { menuConstants } from '../../core/constants/menuConstants';
+import { PopoverComponent } from '../../shared/components/popover/popover.component';
+import { Subscription } from 'rxjs';
+import { DbService } from '../../core/services/db.service';
+import { LoaderService, ToastService, NetworkService } from '../../core';
+import { SyncService } from '../../core/services/sync.service';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { RouterLinks } from '@app/app/app.constant';
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CreateTaskFormComponent } from '../../shared';
+import { SharingFeatureService } from '../../core/services/sharing-feature.service';
+import { Location } from '@angular/common';
 
 @Component({
-  selector: "app-project-detail",
-  templateUrl: "./project-detail.page.html",
-  styleUrls: ["./project-detail.page.scss"],
+  selector: 'app-project-detail',
+  templateUrl: './project-detail.page.html',
+  styleUrls: ['./project-detail.page.scss'],
 })
 export class ProjectDetailPage implements OnInit, OnDestroy {
   showDetails: boolean = true;
@@ -50,28 +50,28 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   filters: any = {};
   schedules = [
     {
-      title: "FRMELEMNTS_LBL_PAST",
-      value: "past",
+      title: 'FRMELEMNTS_LBL_PAST',
+      value: 'past',
     },
     {
-      title: "FRMELEMNTS_LBL_TODAY",
-      value: "today",
+      title: 'FRMELEMNTS_LBL_TODAY',
+      value: 'today',
     },
     {
-      title: "FRMELEMNTS_LBL_THIS_WEEK",
-      value: "thisWeek",
+      title: 'FRMELEMNTS_LBL_THIS_WEEK',
+      value: 'thisWeek',
     },
     {
-      title: "FRMELEMNTS_LBL_THIS_MONTH",
-      value: "thisMonth",
+      title: 'FRMELEMNTS_LBL_THIS_MONTH',
+      value: 'thisMonth',
     },
     {
-      title: "FRMELEMNTS_LBL_THIS_QUARTER",
-      value: "thisQuarter",
+      title: 'FRMELEMNTS_LBL_THIS_QUARTER',
+      value: 'thisQuarter',
     },
     {
-      title: "FRMELEMNTS_LBL_UPCOMING",
-      value: "upcoming",
+      title: 'FRMELEMNTS_LBL_UPCOMING',
+      value: 'upcoming',
     },
   ];
   sortedTasks;
@@ -83,7 +83,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   private _headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    pageTitle: "",
+    pageTitle: '',
     actionButtons: [] as string[],
   };
   isNotSynced: boolean;
@@ -122,7 +122,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private location: Location,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
-    @Inject("CONTENT_SERVICE") private contentService: ContentService
+    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription =
@@ -135,26 +135,26 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
-      this.projectType = parameters.type ? parameters.type : "";
+      this.projectType = parameters.type ? parameters.type : '';
       this.viewOnlyMode = parameters.viewOnlyMode;
       this.templateId = parameters.templateId;
       this.viewOnlyMode ? this.getTemplateDetails() : this.getProject();
       this.templateDetailsPayload =
         this.router.getCurrentNavigation().extras.state;
       this.fromImportProject =
-        parameters.fromImportPage && parameters.fromImportPage == "true"
+        parameters.fromImportPage && parameters.fromImportPage == 'true'
           ? true
           : false;
     });
     this.translate
       .get([
-        "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG",
-        "FRMELEMNTS_MSG_NO_ENTITY_MAPPED",
-        "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS",
-        "FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE",
-        "YES",
-        "NO",
-        "FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS",
+        'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG',
+        'FRMELEMNTS_MSG_NO_ENTITY_MAPPED',
+        'FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS',
+        'FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE',
+        'YES',
+        'NO',
+        'FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS',
       ])
       .subscribe((texts) => {
         this.allStrings = texts;
@@ -197,24 +197,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           if (success.docs.length) {
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
-            this.isNotSynced = this.project
-              ? this.project.isNew || this.project.isEdit
-              : false;
-            !this.viewOnlyMode
-              ? this._headerConfig.actionButtons.push("more")
-              : null;
-            this._headerConfig.actionButtons.push(
-              this.isNotSynced ? "sync-offline" : "sync-done"
-            );
+            this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+            !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
+            this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
             this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
-              category.label
-                ? this.categories.push(category.label)
-                : this.categories.push(category.name);
+              category.label ? this.categories.push(category.label) : this.categories.push(category.name);
             });
-            this.project.tasks && this.project.tasks.length
-              ? this.sortTasks()
-              : "";
+              this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
             this.getProjectTaskStatus();
           } else {
             this.getProjectsApi();
@@ -232,25 +222,23 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload =
-      this.projectType == "assignedToMe"
+      this.projectType == 'assignedToMe'
         ? await this.utils.getProfileInfo()
-        : "";
-    const url = `${this.projectId ? "/" + this.projectId : ""}?${
-      this.templateId ? "templateId=" + this.templateId : ""
-    }${this.solutionId ? "&&solutionId=" + this.solutionId : ""}`;
+        : '';
+    const url = `${this.projectId ? '/' + this.projectId : ''}?${
+      this.templateId ? 'templateId=' + this.templateId : ''
+    }${this.solutionId ? '&&solutionId=' + this.solutionId : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
-      payload: this.projectType == "assignedToMe" ? payload : {},
+      payload: this.projectType == 'assignedToMe' ? payload : {},
     };
-    this.templateDetailsPayload
-      ? (config.payload = this.templateDetailsPayload)
-      : null;
+    this.templateDetailsPayload ? config.payload = this.templateDetailsPayload : null;
     this.unnatiService.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
         if (this.templateId) {
           this.toast.openToast(
-            this.allStrings["FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS"]
+            this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS']
           );
         }
         // this.projectId = success.result._id;
@@ -272,7 +260,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         if (data.tasks) {
           data.tasks.map((t) => {
             if (
-              (t.type == "observation" || t.type == "assessment") &&
+              (t.type == 'observation' || t.type == 'assessment') &&
               t.submissionDetails &&
               t.submissionDetails.status
             ) {
@@ -338,11 +326,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this._appHeaderSubscription =
         this.headerService.headerEventEmitted$.subscribe((eventName) => {
-          if (eventName.name === "more") {
+          if (eventName.name === 'more') {
             this.openPopover(eventName.event);
-          } else if (eventName.name === "sync") {
+          } else if (eventName.name === 'sync') {
             this.action(eventName.name);
-          } else if (eventName.name === "back") {
+          } else if (eventName.name === 'back') {
             if (this.fromImportProject) {
               setTimeout(() => {
                 this.router.navigate([
@@ -361,13 +349,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
 
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+    this.translate.get(['FRMELEMNTS_LBL_PROJECT_VIEW']).subscribe((text) => {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
     this._headerConfig.actionButtons = [];
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+    this._headerConfig.pageTitle = data['FRMELEMNTS_LBL_PROJECT_VIEW'];
     this.headerService.updatePageConfig(this._headerConfig);
   }
 
@@ -391,9 +379,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   getDateFilters() {
     let currentDate = moment();
-    this.filters.today = moment(currentDate).format("YYYY-MM-DD");
-    this.filters.thisWeek = currentDate.endOf("week").format("YYYY-MM-DD");
-    this.filters.thisMonth = currentDate.endOf("month").format("YYYY-MM-DD");
+    this.filters.today = moment(currentDate).format('YYYY-MM-DD');
+    this.filters.thisWeek = currentDate.endOf('week').format('YYYY-MM-DD');
+    this.filters.thisMonth = currentDate.endOf('month').format('YYYY-MM-DD');
     const quarter = Math.floor(new Date().getMonth() / 3);
     let startFullQuarter: any = new Date(
       new Date().getFullYear(),
@@ -405,7 +393,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       startFullQuarter.getMonth() + 3,
       0
     );
-    this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
+    this.filters.thisQuarter = moment(endFullQuarter).format('YYYY-MM-DD');
   }
   sortTasks() {
     this.taskCount = 0;
@@ -416,26 +404,26 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       if (!task.isDeleted && task.endDate) {
         this.taskCount = this.taskCount + 1;
         let ed = JSON.parse(JSON.stringify(task.endDate));
-        ed = moment(ed).format("YYYY-MM-DD");
+        ed = moment(ed).format('YYYY-MM-DD');
 
         if (ed < this.filters.today) {
-          this.sortedTasks["past"].tasks.push(task);
+          this.sortedTasks['past'].tasks.push(task);
         } else if (ed == this.filters.today) {
-          this.sortedTasks["today"].tasks.push(task);
+          this.sortedTasks['today'].tasks.push(task);
         } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
-          this.sortedTasks["thisWeek"].tasks.push(task);
+          this.sortedTasks['thisWeek'].tasks.push(task);
         } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
-          this.sortedTasks["thisMonth"].tasks.push(task);
+          this.sortedTasks['thisMonth'].tasks.push(task);
         } else if (
           ed > this.filters.thisMonth &&
           ed <= this.filters.thisQuarter
         ) {
-          this.sortedTasks["thisQuarter"].tasks.push(task);
+          this.sortedTasks['thisQuarter'].tasks.push(task);
         } else {
-          this.sortedTasks["upcoming"].tasks.push(task);
+          this.sortedTasks['upcoming'].tasks.push(task);
         }
       } else if (!task.isDeleted && !task.endDate) {
-        this.sortedTasks["upcoming"].tasks.push(task);
+        this.sortedTasks['upcoming'].tasks.push(task);
         this.taskCount = this.taskCount + 1;
       }
       if (!task.isDeleted) {
@@ -459,9 +447,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       menu = JSON.parse(JSON.stringify(menuConstants.TASK));
       if (task.isDeletable) {
         let deleteOption = {
-          TITLE: "DELETE",
-          VALUE: "deleteTask",
-          ICON: "trash",
+          TITLE: 'DELETE',
+          VALUE: 'deleteTask',
+          ICON: 'trash',
         };
         menu.push(deleteOption);
       }
@@ -484,7 +472,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   action(event, task?) {
     switch (event) {
-      case "sync": {
+      case 'sync': {
         if (this.network.isNetworkAvailable) {
           this.project.isNew
             ? this.createNewProject()
@@ -493,11 +481,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
                 { queryParams: { projectId: this.projectId } }
               );
         } else {
-          this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE_SYNC", "danger");
+          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SYNC', 'danger');
         }
         break;
       }
-      case "editTask": {
+      case 'editTask': {
         this.router.navigate([
           `${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`,
           this.project._id,
@@ -505,43 +493,43 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         ]);
         break;
       }
-      case "deleteTask": {
-        this.askPermissionToDelete("task", task._id);
+      case 'deleteTask': {
+        this.askPermissionToDelete('task', task._id);
         break;
       }
-      case "fileProject": {
+      case 'fileProject': {
         this.router.navigate([
           `${RouterLinks.ATTACHMENTS_LIST}`,
           this.project._id,
         ]);
         break;
       }
-      case "editProject": {
+      case 'editProject': {
         this.router.navigate([
           `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`,
           this.project._id,
         ]);
         break;
       }
-      case "deleteProject": {
-        this.askPermissionToDelete("Project");
+      case 'deleteProject': {
+        this.askPermissionToDelete('Project');
         break;
       }
-      case "shareTask": {
+      case 'shareTask': {
         this.network.isNetworkAvailable
-          ? this.openSyncSharePopup("shareTask", task.name, task._id)
+          ? this.openSyncSharePopup('shareTask', task.name, task._id)
           : this.toast.showMessage(
-              "FRMELEMNTS_MSG_OFFLINE_SHARE_TASK",
-              "danger"
+              'FRMELEMNTS_MSG_OFFLINE_SHARE_TASK',
+              'danger'
             );
         break;
       }
-      case "shareProject": {
+      case 'shareProject': {
         this.network.isNetworkAvailable
-          ? this.openSyncSharePopup("shareProject", this.project.title)
+          ? this.openSyncSharePopup('shareProject', this.project.title)
           : this.toast.showMessage(
-              "FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT",
-              "danger"
+              'FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT',
+              'danger'
             );
         break;
       }
@@ -552,27 +540,27 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     let data;
     this.translate
       .get([
-        "FRMELEMNTS_LBL_SHARE_MSG",
-        "FRMELEMNTS_BTN_DNTSYNC",
-        "FRMELEMNTS_BTN_SYNCANDSHARE",
+        'FRMELEMNTS_LBL_SHARE_MSG',
+        'FRMELEMNTS_BTN_DNTSYNC',
+        'FRMELEMNTS_BTN_SYNCANDSHARE',
       ])
       .subscribe((text) => {
         data = text;
       });
     this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_LBL_SHARE_MSG"],
+      message: data['FRMELEMNTS_LBL_SHARE_MSG'],
       buttons: [
         {
-          text: data["FRMELEMNTS_BTN_DNTSYNC"],
-          role: "cancel",
-          cssClass: "secondary",
+          text: data['FRMELEMNTS_BTN_DNTSYNC'],
+          role: 'cancel',
+          cssClass: 'secondary',
           handler: (blah) => {
-            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+            this.toast.showMessage('FRMELEMNTS_MSG_FILE_NOT_SHARED', 'danger');
           },
         },
         {
-          text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
+          text: data['FRMELEMNTS_BTN_SYNCANDSHARE'],
           handler: () => {
             if (this.project.isEdit || this.project.isNew) {
               this.project.isNew
@@ -589,7 +577,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
                     }
                   );
             } else {
-              type == "shareTask"
+              type == 'shareTask'
                 ? this.getPdfUrl(name, taskId)
                 : this.getPdfUrl(this.project.title);
             }
@@ -601,12 +589,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   getPdfUrl(fileName, taskId?) {
-    let task_id = taskId ? taskId : "";
+    let task_id = taskId ? taskId : '';
     const config = {
       url:
         urlConstants.API_URLS.GET_SHARABLE_PDF +
         this.project._id +
-        "?tasks=" +
+        '?tasks=' +
         task_id,
     };
     this.share.getFileUrl(config, fileName);
@@ -615,23 +603,23 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async askPermissionToDelete(type, id?) {
     let data;
     this.translate
-      .get(["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION", "CANCEL", "BTN_SUBMIT"])
+      .get(['FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION', 'CANCEL', 'BTN_SUBMIT'])
       .subscribe((text) => {
         data = text;
       });
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
+      message: data['FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION'],
       buttons: [
         {
-          text: data["CANCEL"],
-          role: "cancel",
-          cssClass: "secondary",
+          text: data['CANCEL'],
+          role: 'cancel',
+          cssClass: 'secondary',
           handler: (blah) => {},
         },
         {
-          text: data["BTN_SUBMIT"],
+          text: data['BTN_SUBMIT'],
           handler: () => {
-            type == "task" ? this.deleteTask(id) : this.deleteProject();
+            type == 'task' ? this.deleteTask(id) : this.deleteProject();
           },
         },
       ],
@@ -645,12 +633,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
     this.project.tasks[index].isDeleted = true;
     this.project.tasks[index].isEdit = true;
-    this.update("taskDelete");
+    this.update('taskDelete');
   }
   deleteProject() {
     // actions
     this.project.isDeleted = true;
-    this.update("ProjectDelete");
+    this.update('ProjectDelete');
   }
   openResources(task = null) {
     if (task && task.learningResources && task.learningResources.length === 1) {
@@ -675,13 +663,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   openBodh(link) {
     if (!this.networkFlag) {
       this.toast.showMessage(
-        "FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN",
-        "danger"
+        'FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN',
+        'danger'
       );
       return;
     }
     this.loader.startLoader();
-    let identifier = link.split("/").pop();
+    let identifier = link.split('/').pop();
     const req: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: false,
@@ -716,26 +704,26 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           : false;
         this._headerConfig.actionButtons.pop();
         this._headerConfig.actionButtons.push(
-          this.isNotSynced ? "sync-offline" : "sync-done"
+          this.isNotSynced ? 'sync-offline' : 'sync-done'
         );
         this.headerService.updatePageConfig(this._headerConfig);
         this.ref.detectChanges();
-        if (type == "newTask") {
+        if (type == 'newTask') {
           this.toast.showMessage(
-            "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL",
-            "success"
+            'FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL',
+            'success'
           );
-        } else if (type == "ProjectDelete") {
+        } else if (type == 'ProjectDelete') {
           this.toast.showMessage(
-            "FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL",
-            "success"
+            'FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL',
+            'success'
           );
           //TODO: add location service
           // this.location.back();
-        } else if (type == "taskDelete") {
+        } else if (type == 'taskDelete') {
           this.toast.showMessage(
-            "FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL",
-            "success"
+            'FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL',
+            'success'
           );
         }
         this.sortTasks();
@@ -769,7 +757,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
                     taskId: this.shareTaskId,
                   };
                   if (isShare) {
-                    queryParam["share"] = true;
+                    queryParam['share'] = true;
                   }
                   this.router.navigate(
                     [`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`],
@@ -797,8 +785,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       })
       .catch((error) => {
         this.toast.showMessage(
-          this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"],
-          "danger"
+          this.allStrings['FRMELEMNTS_MSG_SOMETHING_WENT_WRONG'],
+          'danger'
         );
         this.loader.stopLoader();
       });
@@ -807,7 +795,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   doDbActions(projectDetails) {
     const _rev = this.project._rev;
     delete projectDetails._rev;
-    const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
+    const newObj = this.syncServ.removeKeys(projectDetails, ['isNew']);
     this.db
       .create(newObj)
       .then((success) => {
@@ -835,16 +823,16 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           })
           .catch((deletError) => {
             this.toast.showMessage(
-              this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"],
-              "danger"
+              this.allStrings['FRMELEMNTS_MSG_SOMETHING_WENT_WRONG'],
+              'danger'
             );
             this.loader.stopLoader();
           });
       })
       .catch((error) => {
         this.toast.showMessage(
-          this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"],
-          "danger"
+          this.allStrings['FRMELEMNTS_MSG_SOMETHING_WENT_WRONG'],
+          'danger'
         );
         this.loader.stopLoader();
       });
@@ -853,13 +841,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async addTask() {
     const modal = await this.modal.create({
       component: CreateTaskFormComponent,
-      cssClass: "create-task-modal",
+      cssClass: 'create-task-modal',
     });
     modal.onDidDismiss().then((data) => {
       if (data.data) {
-        !this.project.tasks ? (this.project.tasks = []) : "";
+        !this.project.tasks ? (this.project.tasks = []) : '';
         this.project.tasks.push(data.data);
-        this.update("newTask");
+        this.update('newTask');
       }
     });
     return await modal.present();
@@ -868,8 +856,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   startAssessment(task) {
     if (!this.networkFlag) {
       this.toast.showMessage(
-        "FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN",
-        "danger"
+        'FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN',
+        'danger'
       );
       return;
     }
@@ -883,8 +871,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         (success) => {
           if (!success.result) {
             this.toast.showMessage(
-              this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"],
-              "danger"
+              this.allStrings['FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS'],
+              'danger'
             );
             return;
           }
@@ -909,15 +897,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(
-            this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"],
-            "danger"
+            this.allStrings['FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS'],
+            'danger'
           );
         }
       );
     } else {
       this.toast.showMessage(
-        this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"],
-        "danger"
+        this.allStrings['FRMELEMNTS_MSG_NO_ENTITY_MAPPED'],
+        'danger'
       );
     }
   }
@@ -955,7 +943,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     let isChnaged = false;
     this.project.tasks.map((t) => {
       data.map((d) => {
-        if (d.type == "assessment" || d.type == "observation") {
+        if (d.type == 'assessment' || d.type == 'observation') {
           //check if type is observation or assessment
           if (d._id == t._id && d.submissionDetails.status) {
             // check id matches and task details has submissionDetails
@@ -973,16 +961,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         }
       });
     });
-    isChnaged ? this.update("taskStatusUpdated") : null; // if any assessment/observatiom task status is changed then only update
+    isChnaged ? this.update('taskStatusUpdated') : null; // if any assessment/observatiom task status is changed then only update
     this.ref.detectChanges();
   }
 
   getAssessmentTypeTaskId() {
     const assessmentTypeTaskIds = [];
     for (const task of this.project.tasks) {
-      task.type === "assessment" || task.type === "observation"
-        ? assessmentTypeTaskIds.push(task._id)
-        : null;
+      task.type === 'assessment' || task.type === 'observation' ? assessmentTypeTaskIds.push(task._id) : null;
     }
     return assessmentTypeTaskIds;
   }
@@ -990,8 +976,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async checkReport(task) {
     if (!this.networkFlag) {
       this.toast.showMessage(
-        "FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN",
-        "danger"
+        'FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN',
+        'danger'
       );
       return;
     }
@@ -1007,8 +993,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         (success) => {
           if (!success.result) {
             this.toast.showMessage(
-              this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"],
-              "danger"
+              this.allStrings['FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS'],
+              'danger'
             );
             return;
           }
@@ -1024,15 +1010,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(
-            this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"],
-            "danger"
+            this.allStrings['FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS'],
+            'danger'
           );
         }
       );
     } else {
       this.toast.showMessage(
-        this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"],
-        "danger"
+        this.allStrings['FRMELEMNTS_MSG_NO_ENTITY_MAPPED'],
+        'danger'
       );
     }
   }
@@ -1043,21 +1029,21 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   async importProjectConfirm() {
     const alert = await this.alertController.create({
-      subHeader: this.allStrings["FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE"],
+      subHeader: this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE'],
       backdropDismiss: false,
       buttons: [
         {
-          text: this.allStrings["YES"],
-          cssClass: "primary",
+          text: this.allStrings['YES'],
+          cssClass: 'primary',
           handler: (blah) => {
             this.importProjectClicked = true;
             this.importProject();
           },
         },
         {
-          text: this.allStrings["NO"],
-          role: "cancel",
-          cssClass: "cancelBtn",
+          text: this.allStrings['NO'],
+          role: 'cancel',
+          cssClass: 'cancelBtn',
           handler: () => {},
         },
       ],
