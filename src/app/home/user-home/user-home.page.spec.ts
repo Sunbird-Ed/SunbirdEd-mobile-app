@@ -1,7 +1,7 @@
 import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {AppGlobalService, PageId, TelemetryGeneratorService} from '@app/services';
 import {CommonUtilService} from '../../services/common-util.service';
@@ -47,7 +47,7 @@ describe('UserHomePage', () => {
     };
     const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
     const mockSunbirdQRScanner: Partial<SunbirdQRScanner> = {};
-    const mockPopoverController: Partial<PopoverController> = {};
+    const mockModalController: Partial<ModalController> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
@@ -72,7 +72,7 @@ describe('UserHomePage', () => {
             mockHeaderService as AppHeaderService,
             mockEvents as Events,
             mockSunbirdQRScanner as SunbirdQRScanner,
-            mockPopoverController as PopoverController,
+            mockModalController as ModalController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
@@ -384,7 +384,7 @@ describe('UserHomePage', () => {
 
     it('should get data and open popover', () => {
         // arrange
-        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+        mockModalController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
             onDidDismiss: jest.fn(() => Promise.resolve({})),
         } as any)));

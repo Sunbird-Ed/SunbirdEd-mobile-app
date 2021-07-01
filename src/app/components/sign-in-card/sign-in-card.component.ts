@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import {RouterLinks} from '@app/app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import {Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -18,7 +19,8 @@ export class SignInCardComponent {
 
   constructor(
     private appVersion: AppVersion,
-    private router: Router
+    private router: Router,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
 
     this.appVersion.getAppName()
@@ -31,6 +33,13 @@ export class SignInCardComponent {
     if (this.source) {
       skipNavigation['source'] = this.source;
     }
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SIGNIN_OVERLAY_CLICKED,
+        Environment.HOME,
+        this.source, null
+    );
+
     this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
   }
 }

@@ -44,6 +44,7 @@ import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -126,7 +127,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private location: Location,
     private splashScreenService: SplashScreenService,
     private activatedRoute: ActivatedRoute,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private segmentationTagService: SegmentationTagService
   ) {
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([]),
@@ -600,11 +602,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
+        this.refreshSegmentTags(profile);
         if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
         }
+        this.createSegmentTags(profile);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
         await this.commonUtilService.handleToTopicBasedNotification();
@@ -653,6 +657,27 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
   }
+  
+  createSegmentTags(res) {
+    const tagObj = {
+      board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
+      grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
+      medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
+    };
+    window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+    this.segmentationTagService.evalCriteria();
+  }
+
+  private refreshSegmentTags(profile) {
+    const tagObj = {
+        board: profile.board,
+        grade: profile.grade,
+        syllabus: profile.syllabus,
+        medium: profile.medium,
+      };
+    window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+    this.segmentationTagService.evalCriteria();
+}
 
 
   private populateCData(formControllerValues, correlationType): Array<CorrelationData> {

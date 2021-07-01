@@ -246,9 +246,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.handleHeaderEvents(eventName);
     });
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
@@ -1759,7 +1759,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchOnFocus() {
     this.enableSearch = true;
     this.searchInfolVisibility = 'hide';
-    this.headerService.showHeaderWithBackButton();
+    this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     this.appGlobalService.isDiscoverBackEnabled = true;
   }
 
@@ -1771,13 +1771,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         } else if(this.enableSearch) {
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
-          this.headerService.showHeaderWithHomeButton();
+          this.headerService.showHeaderWithHomeButton(['download', 'notification']);
           this.appGlobalService.isDiscoverBackEnabled = false; 
         } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
           break;
         } else {
           this.location.back()
         }
+        break;
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
@@ -1822,11 +1825,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
+  redirectToNotifications() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.NOTIFICATION_CLICKED,
+      Environment.HOME,
+      PageId.SEARCH);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
+
   tabViewWillEnter() {
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
   }
 

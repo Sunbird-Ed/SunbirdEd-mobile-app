@@ -2,7 +2,6 @@
 @import "src/assets/styles/_variables.scss";
 
 .view-credits{
-  margin-bottom: 8px;
   margin-left: 0;
   span{
     color: $blue;
@@ -19,5 +18,10 @@
 .showLicensce{
   p{
     margin-bottom: 16px;
+  }
+  ion-card-title{
+    strong{
+      font-size: .75rem;
+    }
   }
 }
