@@ -15,9 +15,9 @@
       <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
       <div class="user-preference">
         <div class="preference-data">
-          <div>
+          <div (click)="viewPreferenceInfo()">
             <span>{{'YOUR_PREFERENCES' | translate}}</span>
-            <img (click)="viewPreferenceInfo()" class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+            <img class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
           </div>
           <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
         </div>

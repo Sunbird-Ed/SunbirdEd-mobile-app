@@ -27,7 +27,7 @@
         </div>
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -61,7 +61,7 @@
         <div class="sb-common-player-group sb-play-title-group"
           *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(true)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -104,7 +104,7 @@
 
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -272,13 +272,11 @@
         <div class="read-more" *ngIf="content && content.contentData.description &&
          content.contentData.description.length > 10 || content.contentData.gradeLevel ||
          content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
-          <div *ngIf="showMoreFlag" style="padding-left: 8px; padding-right: 8px;" class="padding-top-10"
-            (click)="readLessorReadMore('read-less-clicked')">
+          <div *ngIf="showMoreFlag" (click)="readLessorReadMore('read-less-clicked')">
             {{ 'READ_LESS' | translate }}
             <ion-icon name="arrow-up"></ion-icon>
           </div>
-          <div *ngIf="!showMoreFlag" style="padding-left: 8px; padding-right: 8px;"
-            (click)="readLessorReadMore('read-more-clicked')">
+          <div *ngIf="!showMoreFlag" (click)="readLessorReadMore('read-more-clicked')">
             {{ 'READ_MORE' | translate }}
           </div>
         </div>
