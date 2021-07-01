@@ -9,7 +9,7 @@ import Foundation
 import SSZipArchive
 
 
-@objc(JJZipPlugin) class JJZipPlugin : CDVPlugin {
+@objc(ZipPlugin) class ZipPlugin : CDVPlugin {
   
     //zip Method.
     func zip(_ command: CDVInvokedUrlCommand?) {
@@ -85,4 +85,7 @@ func dictionary(toJSONString toCast: [AnyHashable : Any]?) -> String? {
         }
         return nil
     }
+}
+
+
 }
