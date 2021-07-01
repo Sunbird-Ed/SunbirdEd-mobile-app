@@ -194,19 +194,39 @@
         <div class="sb-content-info-heading"
           *ngIf="content?.contentData?.description && content?.contentData?.description?.length">
           {{content?.description}}</div>
-        <div class="sb-info" *ngIf="content?.contentData?.board">
+        <div class="sb-info" *ngIf="content?.contentData?.se_boards; else previousBoard">
           <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
-          <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
+          <div class="sb-content-title-data">{{content?.contentData?.se_boards | aliased}}</div>
         </div>
+        <ng-template #previousBoard>
+          <div class="sb-info">
+            <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
+          </div>
+        </ng-template>
+
         <div *ngIf="showMoreFlag">
-          <div class="sb-info" *ngIf="content?.contentData?.medium">
+          <div class="sb-info" *ngIf="content?.contentData?.se_mediums; else previousMedium">
             <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.medium | csa}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.se_mediums | csa}}</div>
           </div>
-          <div class="sb-info" *ngIf="content?.contentData?.gradeLevel && content?.contentData?.gradeLevel?.length">
+          <ng-template #previousMedium>
+            <div class="sb-info">
+              <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.medium | csa}}</div>
+            </div>
+          </ng-template>
+
+          <div class="sb-info" *ngIf="content?.contentData?.se_gradeLevels && content?.contentData?.se_gradeLevels?.length; else previousGradeLevel">
             <div class="sb-content-title">{{'CLASS' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.gradeLevel?.join(', ')}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.se_gradeLevels?.join(', ')}}</div>
           </div>
+          <ng-template #previousGradeLevel>
+            <div class="sb-info">
+              <div class="sb-content-title">{{'CLASS' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.gradeLevel?.join(', ')}}</div>
+            </div>
+          </ng-template>
           <div class="sb-info" *ngIf="content?.contentData?.subject">
             <div class="sb-content-title">{{'SUBJECT' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
