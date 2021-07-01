@@ -287,22 +287,24 @@
 							</div>
 						</div>
 						<label *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</label>
-						<div class="ion-margin-bottom mt-8">
-							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>
-							</ion-card-title>
-							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
-							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
-							<p *ngIf="course?.medium">{{'MEDIUM' | translate}} : {{course?.medium}}</p>
-						</div>
-						<div class="ion-margin-bottom">
-							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</strong>
-							</ion-card-title>
-							<p *ngIf="batchEndDate">{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : {{ batchEndDate | date: 'dd/MM/yyyy'}}</p>
-						</div>
-						<div>
-							<p>{{course?.description}}</p>
+						<div class="course-details">
+							<div class="ion-margin-bottom mt-8">
+								<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+									<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>
+								</ion-card-title>
+								<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
+								<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
+								<p *ngIf="course?.medium">{{'MEDIUM' | translate}} : {{course?.medium}}</p>
+							</div>
+							<div class="ion-margin-bottom">
+								<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+									<strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</strong>
+								</ion-card-title>
+								<p>{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : </p>
+							</div>
+							<div>
+								<p>{{course?.description}}</p>
+							</div>
 						</div>
 					</div>
 				</ion-card-content>

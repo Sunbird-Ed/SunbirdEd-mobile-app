@@ -842,30 +842,25 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             return;
           }
           let data = success.result;
-          let entityType = data.entityType
-          let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
-          // let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
-          // this.iab.create(link, "_system");
-          this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-            queryParams: {
-              // entityId: data.entityId,
-              entityType: entityType,
-              // observationId: data.observationId,
-              submissionId: data._id
-            },
+
+          let state = {
+            scores: false,
+            observation: true,
+            entityId: data.entityId,
+            entityType: data.entityType,
+            observationId: data.observationId,
+          };
+          if (data.solutionDetails && data.solutionDetails.isRubricDriven) {
+            state.scores = true;
+          }
+          if (data.solutionDetails && !data.solutionDetails.criteriaLevelReport) {
+            state['filter'] = { questionId: [] };
+            state['criteriaWise'] = false;
+          }
+          this.router.navigate([RouterLinks.GENERIC_REPORT], {
+            state: state,
           });
 
-          // this.router.navigate([RouterLinks.GENERIC_REPORT], {
-          //   state: {
-          //     scores: true,
-          //     observation: true,
-          //     pdf: false,
-          //     entityId: data.entityId,
-          //     entityType: data.entityType,
-          //     observationId: data.observationId,
-          //     submissionId: data._id,
-          //   },
-          // });
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");

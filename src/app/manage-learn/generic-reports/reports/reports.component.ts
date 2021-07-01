@@ -7,6 +7,7 @@ import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { ModalController } from '@ionic/angular';
 import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 import { RouterLinks } from '@app/app/app.constant';
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: 'app-reports',
@@ -24,12 +25,14 @@ export class ReportsComponent implements OnInit {
   filteredData: any;
   modalFilterData: any;
   reportSections: any;
+  _headerConfig
   constructor(
     private router: Router,
     private toast: ToastService,
     private loader: LoaderService,
     private dhiti: DhitiApiService,
-    private modal: ModalController
+    private modal: ModalController,
+    private headerService: AppHeaderService,
   ) {
     console.log(this.router.getCurrentNavigation().extras.state);
     this.state = this.router.getCurrentNavigation().extras.state;
@@ -39,6 +42,12 @@ export class ReportsComponent implements OnInit {
     this.segmentValue = 'questionwise';
     this.state['pdf'] = false;
     this.getReport();
+    this._headerConfig = this.headerService.getDefaultPageConfig();
+    this._headerConfig.actionButtons = [];
+    this._headerConfig.showHeader = true;
+    this._headerConfig.showBurgerMenu = false;
+    this._headerConfig.pageTitle = ""
+    this.headerService.updatePageConfig(this._headerConfig);
   }
   getReport() {
     // remove null and undefined
