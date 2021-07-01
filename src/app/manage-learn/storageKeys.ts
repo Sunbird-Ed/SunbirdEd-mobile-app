@@ -14,4 +14,9 @@ export const storageKeys = {
   libraryDraft: "libraryDraft", //draft(library) in localStorage
   libraryCategories: "libraryCategories",
   pollDraft: "pollDraft",
+  observations:'observations',
+  downloadedObservations:'downloadedObservations',
+  mandatoryFields:'mandatoryFields',
+  solutions:'solutions',
+  entities:'entities'
 };

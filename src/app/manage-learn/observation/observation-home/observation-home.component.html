@@ -21,7 +21,8 @@
     class="view-more"
     expand="block"
     (click)="loadMore()"
-    *ngIf="networkFlag && solutionList?.length && count > solutionList?.length"
+    [disabled]="!networkFlag"
+    *ngIf="solutionList?.length && count > solutionList?.length"
   >
     {{ 'VIEW_MORE' | translate }}
   </ion-button>

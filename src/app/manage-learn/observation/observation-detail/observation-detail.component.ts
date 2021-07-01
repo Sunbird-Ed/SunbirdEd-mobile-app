@@ -1,27 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { AppHeaderService } from '@app/services';
-import { AlertController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
-import { RouterLinks } from '@app/app/app.constant';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
-import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
-import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
-import { DhitiApiService } from '../../core/services/dhiti-api.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ObservationService } from '../observation.service';
-import { storageKeys } from '../../storageKeys';
+import { Component, OnInit } from "@angular/core";
+import { AppHeaderService, CommonUtilService } from "@app/services";
+import {
+  AlertController,
+  ModalController,
+  Platform,
+  PopoverController,
+  ToastController
+} from "@ionic/angular";
+import { RouterLinks } from "@app/app/app.constant";
+import { ActivatedRoute, Router } from "@angular/router";
+import { EntityfilterComponent } from "../../shared/components/entityfilter/entityfilter.component";
+import {
+  LoaderService,
+  LocalStorageService,
+  ToastService,
+  UtilsService
+} from "../../core";
+import { urlConstants } from "../../core/constants/urlConstants";
+import { AssessmentApiService } from "../../core/services/assessment-api.service";
+import { DhitiApiService } from "../../core/services/dhiti-api.service";
+import { TranslateService } from "@ngx-translate/core";
+import { ObservationService } from "../observation.service";
+import { storageKeys } from "../../storageKeys";
+import { Subscription } from "rxjs";
+import { Storage } from "@ionic/storage";
 
 @Component({
-  selector: 'app-observation-detail',
-  templateUrl: './observation-detail.component.html',
-  styleUrls: ['./observation-detail.component.scss'],
+  selector: "app-observation-detail",
+  templateUrl: "./observation-detail.component.html",
+  styleUrls: ["./observation-detail.component.scss"]
 })
 export class ObservationDetailComponent implements OnInit {
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: [],
+    actionButtons: []
   };
   observationId: any;
   solutionId: any;
@@ -33,6 +46,9 @@ export class ObservationDetailComponent implements OnInit {
   solutionData: any;
   submissionId: unknown;
   submissionIdArr: any;
+  generatedKey;
+  private _networkSubscription?: Subscription;
+  networkFlag;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -46,34 +62,50 @@ export class ObservationDetailComponent implements OnInit {
     private alertCntrl: AlertController,
     private toast: ToastService,
     private observationService: ObservationService,
-    private localStorage: LocalStorageService
+    private localStorage: LocalStorageService,
+    public commonUtilService: CommonUtilService,
+    public storage: Storage
   ) {
-    this.routerParam.queryParams.subscribe((params) => {
+    this.routerParam.queryParams.subscribe(params => {
       this.observationId = params.observationId;
       this.solutionId = params.solutionId;
       this.programId = params.programId;
       this.solutionName = params.solutionName;
+      this.generatedKey = this.utils.getUniqueKey(params, storageKeys.entities);
     });
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+        this.networkFlag ? this.getObservationEntities() : this.getLocalData();
+        console.log("changed", this.networkFlag);
+      }
+    );
   }
 
   ionViewWillEnter() {
-    this.getObservationEntities();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.networkFlag ? this.getObservationEntities() : this.getLocalData();
   }
 
   ngOnInit() {
     this.localStorage
       .getLocalStorage(storageKeys.observationSubmissionIdArr)
-      .then((ids) => {
+      .then(ids => {
         this.submissionIdArr = ids;
       })
-      .catch((error) => {
+      .catch(error => {
         this.submissionIdArr = [];
       });
+  }
+  getLocalData() {
+    this.storage.get(this.generatedKey).then(data => {
+      this.entities = data;
+    });
   }
 
   async getObservationEntities() {
@@ -86,15 +118,18 @@ export class ObservationDetailComponent implements OnInit {
     if (payload) {
       const config = {
         url: url,
-        payload: payload,
+        payload: payload
       };
       this.loader.startLoader();
       this.assessmentService.post(config).subscribe(
-        (success) => {
+        success => {
           this.loader.stopLoader();
           if (success && success.result && success.result.entities) {
             this.solutionData = success.result;
             this.entities = success.result.entities;
+            this.storage.set(this.generatedKey,this.entities).then(data => {
+              this.entities = data;
+            });
             this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
@@ -107,7 +142,7 @@ export class ObservationDetailComponent implements OnInit {
             }
           }
         },
-        (error) => {
+        error => {
           this.entities = [];
           this.loader.stopLoader();
         }
@@ -121,27 +156,30 @@ export class ObservationDetailComponent implements OnInit {
     let url = urlConstants.API_URLS.GET_OBSERVATION_SUBMISSION_COUNT;
     const config = {
       url: url,
-      payload: payload,
+      payload: payload
     };
     this.dhiti.post(config).subscribe(
-      (success) => {
+      success => {
         this.submissionCount = success.data.noOfSubmissions;
       },
-      (error) => {}
+      error => {}
     );
   }
 
   goToObservationSubmission(entity) {
     // TODO : Changed logic to call 1st submission in the submission page only .
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
-      queryParams: {
-        programId: this.programId,
-        solutionId: this.solutionId,
-        observationId: this.observationId,
-        entityId: entity._id,
-        entityName: entity.name,
-      },
-    });
+    this.router.navigate(
+      [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`],
+      {
+        queryParams: {
+          programId: this.programId,
+          solutionId: this.solutionId,
+          observationId: this.observationId,
+          entityId: entity._id,
+          entityName: entity.name
+        }
+      }
+    );
     // TODO:till here
   }
 
@@ -152,19 +190,19 @@ export class ObservationDetailComponent implements OnInit {
       component: EntityfilterComponent,
       componentProps: {
         data: this.observationId,
-        solutionId: this.solutionId,
-      },
+        solutionId: this.solutionId
+      }
     });
     await entityListModal.present();
 
-    await entityListModal.onDidDismiss().then(async (entityList) => {
+    await entityListModal.onDidDismiss().then(async entityList => {
       if (entityList.data) {
         let payload = await this.utils.getProfileInfo();
 
         payload.data = [];
-        entityList.data.forEach((element) => {
+        entityList.data.forEach(element => {
           //if coming from state list page
-          if (type == 'state') {
+          if (type == "state") {
             element.selected ? payload.data.push(element._id) : null;
             return;
           }
@@ -173,16 +211,18 @@ export class ObservationDetailComponent implements OnInit {
         });
 
         const config = {
-          url: urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES + `${this.observationId}`,
-          payload: payload,
+          url:
+            urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
+            `${this.observationId}`,
+          payload: payload
         };
         this.assessmentService.post(config).subscribe(
-          (success) => {
+          success => {
             if (success) {
               this.getObservationEntities();
             }
           },
-          (error) => {}
+          error => {}
         );
       }
     });
@@ -191,26 +231,31 @@ export class ObservationDetailComponent implements OnInit {
     let entityId = entity._id;
     let translateObject;
     this.translate
-      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_DELETE_ENTITY', 'FRMELEMNTS_LBL_NO', 'FRMELEMNTS_LBL_YES'])
-      .subscribe((translations) => {
+      .get([
+        "FRMELEMNTS_LBL_CONFIRM",
+        "FRMELEMNTS_LBL_DELETE_ENTITY",
+        "FRMELEMNTS_LBL_NO",
+        "FRMELEMNTS_LBL_YES"
+      ])
+      .subscribe(translations => {
         translateObject = translations;
       });
     let alert = await this.alertCntrl.create({
-      header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
-      message: translateObject['FRMELEMNTS_LBL_DELETE_ENTITY'],
+      header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+      message: translateObject["FRMELEMNTS_LBL_DELETE_ENTITY"],
       buttons: [
         {
-          text: translateObject['FRMELEMNTS_LBL_NO'],
-          role: 'cancel',
-          handler: () => {},
+          text: translateObject["FRMELEMNTS_LBL_NO"],
+          role: "cancel",
+          handler: () => {}
         },
         {
-          text: translateObject['FRMELEMNTS_LBL_YES'],
+          text: translateObject["FRMELEMNTS_LBL_YES"],
           handler: () => {
             this.deleteEntity(entityId);
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     alert.present();
   }
@@ -221,13 +266,15 @@ export class ObservationDetailComponent implements OnInit {
     payload.data = [entityId];
 
     const config = {
-      url: urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES + `${this.observationId}`,
-      payload: payload,
+      url:
+        urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
+        `${this.observationId}`,
+      payload: payload
     };
     this.assessmentService.delete(config).subscribe(
-      (success) => {
+      success => {
         let okMessage;
-        this.translate.get('FRMELEMNTS_LBL_OK').subscribe((translations) => {
+        this.translate.get("FRMELEMNTS_LBL_OK").subscribe(translations => {
           okMessage = translations;
         });
         this.toast.openToast(success.message);
@@ -235,7 +282,7 @@ export class ObservationDetailComponent implements OnInit {
         this.loader.stopLoader();
         this.getObservationEntities();
       },
-      (error) => {
+      error => {
         this.loader.stopLoader();
       }
     );
@@ -247,7 +294,7 @@ export class ObservationDetailComponent implements OnInit {
       return;
     }
 
-    let presentLocally = this.submissionIdArr.find((id) => id == e.submissionId);
+    let presentLocally = this.submissionIdArr.find(id => id == e.submissionId);
 
     if (e.submissionId && presentLocally) {
       this.goToEcm(e.submissionId, e.name);
@@ -259,23 +306,25 @@ export class ObservationDetailComponent implements OnInit {
         entityId: e._id,
         observationId: this.solutionData._id,
         submission: {
-          submissionNumber: 1,
-        },
+          submissionNumber: 1
+        }
       };
       this.observationService
         .getAssessmentDetailsForObservation(event)
-        .then((subId) => {
+        .then(subId => {
           this.submissionId = subId;
-          return this.localStorage.getLocalStorage(storageKeys.observationSubmissionIdArr);
+          return this.localStorage.getLocalStorage(
+            storageKeys.observationSubmissionIdArr
+          );
         })
-        .then((ids) => {
+        .then(ids => {
           this.submissionIdArr = ids;
-          let sId = ids.find((id) => id == this.submissionId);
+          let sId = ids.find(id => id == this.submissionId);
           if (sId) {
             this.goToEcm(sId, e.name);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     }
@@ -285,8 +334,13 @@ export class ObservationDetailComponent implements OnInit {
     this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
       queryParams: {
         submisssionId: submissionId,
-        schoolName: entityName,
-      },
+        schoolName: entityName
+      }
     });
+  }
+  ionViewWillLeave() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }

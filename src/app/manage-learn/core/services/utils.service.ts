@@ -16,6 +16,7 @@ import { urlConstants } from "../constants/urlConstants";
 import { AlertController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
+import { storageKeys } from "../../storageKeys";
 
 @Injectable({
   providedIn: "root"
@@ -425,10 +426,17 @@ export class UtilsService {
           urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES +
           `${this.profile.state}?role=${this.profile.role}`
       };
+
       this.kendra.get(config).subscribe(
         data => {
           if (data.result && data.result.length) {
             this.requiredFields = data.result;
+            console.log(this.requiredFields, " this.requiredFields");
+            let role = {};
+            role[this.profile.state] = {
+              [this.profile.role]: this.requiredFields
+            };
+            this.storage.set(storageKeys.mandatoryFields, role);
             let allFieldsPresent = true;
             for (const field of this.requiredFields) {
               if (!this.profile[field]) {
@@ -527,9 +535,19 @@ export class UtilsService {
     // console.log(profile)
     return new Promise(async (resolve, reject) => {
       this.profile = await this.getProfileData();
-
-      const mandatoryFields = await this.getMandatoryEntities();
-      mandatoryFields ? resolve(this.profile) : resolve(null);
+      let mandatoryFields;
+      this.storage.get(storageKeys.mandatoryFields).then( data => {
+        if (data) {
+          mandatoryFields = data;
+          console.log(mandatoryFields, "mandatoryFields in if");
+          mandatoryFields ? resolve(this.profile) : resolve(null);
+        } else {
+          mandatoryFields = this.getMandatoryEntities();
+          console.log(mandatoryFields, "mandatoryFields in else");
+          mandatoryFields ? resolve(this.profile) : resolve(null);
+        }
+      });
+      // mandatoryFields = await this.getMandatoryEntities();
       // resolve(this.profile)
       // resolve({
       //   "state" :  "5f33c3d85f637784791cd831",
@@ -560,12 +578,13 @@ export class UtilsService {
       //   role: "DEO"
       // };
       // if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-        userData = await this.getProfileInfo();
-          let data = {
-            userData: userData,
-            generatedKey: this.getUniqueKey(userData,type)
-          };
-          resolve(data);
+      userData = await this.getProfileInfo();
+      console.log(userData, "userData");
+      let data = {
+        userData: userData,
+        generatedKey: this.getUniqueKey(userData, type)
+      };
+      resolve(data);
       // } else {
       //   this.storage.get("userData").then(userData => {
       //     let data = {
@@ -580,7 +599,7 @@ export class UtilsService {
 
   // Generating unique for local storage
 
-  getUniqueKey(userData,type) {
+  getUniqueKey(userData, type) {
     let generateKey = "";
     Object.keys(userData)
       .sort()

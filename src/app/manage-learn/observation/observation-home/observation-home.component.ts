@@ -7,6 +7,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Storage } from '@ionic/storage';
 import { Subscription } from 'rxjs';
+import { storageKeys } from '../../storageKeys';
 
 @Component({
   selector: 'app-observation-home',
@@ -39,7 +40,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       this.networkFlag = available;
-      console.log('changed', this.networkFlag);
+     this.getProfileInfo();
   });
   }
 
@@ -52,7 +53,7 @@ export class ObservationHomeComponent implements OnInit {
  
   async getProfileInfo() {
     // let payload = await this.utils.getProfileInfo();
-    this.profileInfo =  await this.utils.setProfileData('Observations');
+    this.profileInfo =  await this.utils.setProfileData(storageKeys.observations);
     this.generatedKey = this.profileInfo.generatedKey;
    this.networkFlag ?
     this.getPrograms() : this.getLocalData();
@@ -134,5 +135,9 @@ export class ObservationHomeComponent implements OnInit {
 
   ionViewWillLeave() {
     this.utils.closeProfileAlert();
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
+
 }
