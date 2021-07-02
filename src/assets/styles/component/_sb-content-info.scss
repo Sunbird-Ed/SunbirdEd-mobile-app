@@ -39,13 +39,13 @@
       @include padding(($base-block-space * 1), ($base-block-space *1));
     }
     .sb-content-title{
-        color: $gray-200;
+        color: var(--app-medium-gray);
         font-size: ($font-size-base  - 2);
         font-weight: bold;
     }
     .sb-content-title-data{
-        color: $gray-800;
-        font-size: ($font-size-base);
-        line-height: 17px;
+      color: var(--app-medium-gray);
+      font-size: ($font-size-base);
+      line-height: 17px;
      }
   }
