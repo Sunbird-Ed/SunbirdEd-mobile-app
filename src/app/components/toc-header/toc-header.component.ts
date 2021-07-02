@@ -12,7 +12,10 @@ import { Observable } from 'rxjs';
 export class TocHeaderComponent implements OnInit {
   @Input() contentData: ContentData;
 
+  // defaultIcon
+  defaultAppIcon: string;
   constructor(public commonUtil: CommonUtilService) {
+    this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
   }
 
   ngOnInit() {
