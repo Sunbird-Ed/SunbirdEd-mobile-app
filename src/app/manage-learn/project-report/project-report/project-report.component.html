@@ -6,21 +6,18 @@
           item-start
           name="funnel"
           color="primary"
-          class="icon"
-        ></ion-icon>
+          class="icon"></ion-icon>
       </div>
       <div>{{ "FRMELEMNTS_BTN_FILTER" | translate }}</div>
       <div class="filter-icon">
         <ion-icon
           name="chevron-forward-outline"
           color="primary"
-          *ngIf="!showFilter"
-        ></ion-icon>
+          *ngIf="!showFilter"></ion-icon>
         <ion-icon
           name="chevron-down-outline"
           color="primary"
-          *ngIf="showFilter"
-        ></ion-icon>
+          *ngIf="showFilter"></ion-icon>
       </div>
     </div>
     <div *ngIf="showFilter">
@@ -43,14 +40,10 @@
                 [(ngModel)]="filter.type"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false
-                }"
-              >
+                  animated: false}">
                 <ion-select-option
                   [value]="t.value"
-                  *ngFor="let t of filterType"
-                  >{{ t.label }}</ion-select-option
-                >
+                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
@@ -91,22 +84,17 @@
                 (ionChange)="reportTypeChange()"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false
-                }"
-              >
+                  animated: false}">
                 <ion-select-option
                   [value]="t.value"
-                  *ngFor="let t of filterType"
-                  >{{ t.label }}</ion-select-option
-                >
+                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
               [name]="fileName()"
               [extension]="'.pdf'"
               [config]="config()"
-              [interface]="'simple'"
-            ></download-share>
+              [interface]="'simple'"></download-share>
           </div>
         </div>
 
@@ -133,22 +121,17 @@
                 [(ngModel)]="filter.type"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false
-                }"
-              >
+                  animated: false}">
                 <ion-select-option
                   [value]="t.value"
-                  *ngFor="let t of filterType"
-                  >{{ t.label }}</ion-select-option
-                >
+                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
               [name]="fileName()"
               [extension]="'.pdf'"
               [config]="config()"
-              [interface]="'simple'"
-            ></download-share>
+              [interface]="'simple'"></download-share>
           </div>
         </div>
         <div class="task-overview-body">

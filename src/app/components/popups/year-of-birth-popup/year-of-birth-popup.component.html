@@ -19,19 +19,12 @@
       <ion-select
         placeholder="Year"
         interface="popover"
-        style="padding: 6px 20px" [(ngModel)]="selectedYearOfBirth"
-        mode="ios">
-        <ion-select-option
-          *ngFor="let year of birthYearOptions" value="{{ year }}">{{ year }}</ion-select-option>
+        style="padding: 6px 20px" [(ngModel)]="selectedYearOfBirth" mode="ios">
+        <ion-select-option *ngFor="let year of birthYearOptions" value="{{ year }}">{{ year }}</ion-select-option>
       </ion-select>
     </div>
   </div>
   <div style="text-align: center; margin-top: 10%">
-    <button
-      type="submit"
-      class="submit-btn"
-      [disabled]="!selectedYearOfBirth"
-      (click)="submit()"
-      [ngClass]="!selectedYearOfBirth ? 'submit-disibled' : null">submit</button>
+    <button type="submit" class="submit-btn" [disabled]="!selectedYearOfBirth" (click)="submit()" [ngClass]="!selectedYearOfBirth ? 'submit-disibled' : null">submit</button>
   </div>
 </div>

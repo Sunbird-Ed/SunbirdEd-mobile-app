@@ -22,7 +22,7 @@ var environment = {
 @Component({
   selector: 'app-learning-resources',
   templateUrl: './learning-resources.page.html',
-  styleUrls: ["./learning-resources.page.scss"],
+  styleUrls: ['./learning-resources.page.scss'],
 })
 export class LearningResourcesPage implements OnInit {
   projectId;
