@@ -10,7 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RouterModule, Routes } from '@angular/router';
 import { ObservationSolutionListingComponent } from './observation-solution-listing/observation-solution-listing.component';
 import { RouterLinks } from '@app/app/app.constant';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ObservationSolutionEntityListingComponent } from './observation-solution-entity-listing/observation-solution-entity-listing.component';
 
 const routes: Routes = [
