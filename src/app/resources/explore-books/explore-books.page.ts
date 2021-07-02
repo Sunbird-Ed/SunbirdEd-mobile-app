@@ -24,7 +24,7 @@ import {
   FilterValue,
   SearchType
 } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';

@@ -46,7 +46,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
