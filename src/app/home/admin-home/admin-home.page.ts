@@ -12,7 +12,7 @@ import {
   SunbirdQRScanner,
   TelemetryGeneratorService,
 } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {

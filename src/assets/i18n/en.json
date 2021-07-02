@@ -1474,5 +1474,7 @@
   "LOGIN_WITH": "Login with {{appName}}",
   "LOGIN_TO": "Login to {{appName}}",
   "YOB_TITLE": "Year of birth",
-  "SELECT_YOB": "Select year of birth"
+  "SELECT_YOB": "Select year of birth",
+  "DETAILS": "Content Details",
+  "CONTENT_RELEVANT_MSG": "This content is relevant for: "
 }

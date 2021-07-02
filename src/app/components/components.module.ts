@@ -42,7 +42,7 @@ import { ImportPopoverComponent } from './popups/import-popover/import-popover.c
 import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
@@ -67,7 +67,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet'

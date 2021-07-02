@@ -9,7 +9,7 @@ import { LoaderService, UtilsService, ToastService } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { Platform } from '@ionic/angular';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { PopoverController, ToastController } from '@ionic/angular';
