@@ -28,6 +28,15 @@
     (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
   >
     <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
+        <div arrow *ngIf="!submission?.downloaded" class="d-flex flex-dc  margin-r-10"
+      (click)="$event.stopPropagation(); getAssessmentDetails(project)">
+      <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
+      <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
+    </div>
+    <div arrow *ngIf="submission?.downloaded" class="d-flex flex-dc margin-r-10">
+      <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark"></ion-icon>
+      <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
+    </div>
       <ion-icon
         class="mg-popup-btn-icon"
         name="ellipsis-vertical-outline"
@@ -50,6 +59,7 @@
         *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
         (click)="$event.stopPropagation(); openInfo(submission)"
       ></ion-icon>
+    
     </app-item-list-card>
   </div>
   <app-no-data *ngIf="!submissions?.length"></app-no-data>

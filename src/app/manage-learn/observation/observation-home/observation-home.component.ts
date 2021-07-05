@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService,CommonUtilService } from '@app/services';
 import { Router } from '@angular/router';
-import { LoaderService, UtilsService } from '../../core';
+import { LoaderService, UtilsService, ToastService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Storage } from '@ionic/storage';
 import { Subscription } from 'rxjs';
 import { storageKeys } from '../../storageKeys';
-
 @Component({
   selector: 'app-observation-home',
   templateUrl: './observation-home.component.html',
@@ -37,6 +36,7 @@ export class ObservationHomeComponent implements OnInit {
     private loader: LoaderService,
     private storage : Storage,
     public commonUtilService: CommonUtilService,
+    public toast : ToastService
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       this.networkFlag = available;
@@ -114,13 +114,22 @@ export class ObservationHomeComponent implements OnInit {
     });
   }
   loadMore() {
+    if(this.networkFlag){
     this.page = this.page + 1;
     this.getPrograms();
+    } else{
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    }
   }
   onSearch(e) {
-    this.page=1
-    this.solutionList = [];
-    this.getPrograms();
+    if(this.networkFlag){
+      this.page=1
+      this.solutionList = [];
+      this.getPrograms();
+    }else{
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    }
+    
   }
 
   ionViewWillLeave() {

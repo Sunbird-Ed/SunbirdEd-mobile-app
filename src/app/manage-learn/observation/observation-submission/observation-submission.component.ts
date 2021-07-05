@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
 import { RouterLinks } from '@app/app/app.constant';
-import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, UtilsService,ToastService } from '../../core';
 import { storageKeys } from '../../storageKeys';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { ScroreReportMenusComponent } from '../../shared/components/scrore-report-menus/scrore-report-menus.component';
@@ -59,7 +59,8 @@ export class ObservationSubmissionComponent implements OnInit {
     private assessmentService: AssessmentApiService,
     private modalCtrl: ModalController,
     public commonUtilService: CommonUtilService,
-    public storage : Storage
+    public storage : Storage,
+    public toast : ToastService
 
   ) {
     this.routerParam.queryParams.subscribe((params) => {
@@ -209,21 +210,26 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   getAssessmentDetails(submission) {
-    this.showActionsheet = false;
-    this.showEntityActionsheet = false;
-
-    this.localStorage
-      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
-      .then((data) => {
-        if (!data) {
+    if(this.networkFlag){
+      this.showActionsheet = false;
+      this.showEntityActionsheet = false;
+  
+      this.localStorage
+        .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
+        .then((data) => {
+          if (!data) {
+            this.getAssessmentDetailsApi(submission);
+          } else {
+            this.goToEcm(submission);
+          }
+        })
+        .catch((error) => {
           this.getAssessmentDetailsApi(submission);
-        } else {
-          this.goToEcm(submission);
-        }
-      })
-      .catch((error) => {
-        this.getAssessmentDetailsApi(submission);
-      });
+        });
+    }else{
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    }
+   
   }
 
   getAssessmentDetailsApi(submission) {
@@ -343,6 +349,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
   //  entity actions
   entityActions(e) {
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+  }else{
     let submission = this.submissions[0];
     // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
     if (submission.criteriaLevelReport && submission.isRubricDriven) {
@@ -369,6 +378,7 @@ export class ObservationSubmissionComponent implements OnInit {
     } else {
       this.openEntityReportMenu(e);
     }
+  }
   }
 
   // Menu for Entity reports
@@ -493,6 +503,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async observeAgain() {
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+  }else{
     this.loader.startLoader('Creating an Observation');
 
     const entityId = this.entityId;
@@ -516,6 +529,7 @@ export class ObservationSubmissionComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
+  }
   }
 
   //open info menu
