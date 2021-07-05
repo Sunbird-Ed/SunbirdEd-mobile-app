@@ -44,6 +44,7 @@ export class ObservationDetailComponent implements OnInit {
   entityType: any;
   entities: any[];
   solutionData: any;
+  solutionDataKey;
   submissionId: unknown;
   submissionIdArr: any;
   generatedKey;
@@ -72,6 +73,7 @@ export class ObservationDetailComponent implements OnInit {
       this.programId = params.programId;
       this.solutionName = params.solutionName;
       this.generatedKey = this.utils.getUniqueKey(params, storageKeys.entities);
+      this.solutionDataKey= this.utils.getUniqueKey(params, storageKeys.solutionData);
     });
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
@@ -105,6 +107,9 @@ export class ObservationDetailComponent implements OnInit {
     this.storage.get(this.generatedKey).then(data => {
       this.entities = data;
     });
+    this.storage.get(this.solutionDataKey).then(data => {
+      this.solutionData = data;
+    });
   }
 
   async getObservationEntities() {
@@ -129,6 +134,7 @@ export class ObservationDetailComponent implements OnInit {
             this.storage.set(this.generatedKey,this.entities).then(data => {
               this.entities = data;
             });
+            this.storage.set(this.solutionDataKey,this.solutionData);
             this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
@@ -183,48 +189,52 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   async addEntity() {
-    const type = this.entityType;
-    let entityListModal;
-    entityListModal = await this.modalCtrl.create({
-      component: EntityfilterComponent,
-      componentProps: {
-        data: this.observationId,
-        solutionId: this.solutionId
-      }
-    });
-    await entityListModal.present();
-
-    await entityListModal.onDidDismiss().then(async entityList => {
-      if (entityList.data) {
-        let payload = await this.utils.getProfileInfo();
-
-        payload.data = [];
-        entityList.data.forEach(element => {
-          //if coming from state list page
-          if (type == "state") {
-            element.selected ? payload.data.push(element._id) : null;
-            return;
-          }
-
-          payload.data.push(element._id); // if coming from EntityListPage
-        });
-
-        const config = {
-          url:
-            urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
-            `${this.observationId}`,
-          payload: payload
-        };
-        this.assessmentService.post(config).subscribe(
-          success => {
-            if (success) {
-              this.getObservationEntities();
+    if(this.networkFlag){
+      const type = this.entityType;
+      let entityListModal;
+      entityListModal = await this.modalCtrl.create({
+        component: EntityfilterComponent,
+        componentProps: {
+          data: this.observationId,
+          solutionId: this.solutionId
+        }
+      });
+      await entityListModal.present();
+  
+      await entityListModal.onDidDismiss().then(async entityList => {
+        if (entityList.data) {
+          let payload = await this.utils.getProfileInfo();
+  
+          payload.data = [];
+          entityList.data.forEach(element => {
+            //if coming from state list page
+            if (type == "state") {
+              element.selected ? payload.data.push(element._id) : null;
+              return;
             }
-          },
-          error => {}
-        );
-      }
-    });
+  
+            payload.data.push(element._id); // if coming from EntityListPage
+          });
+  
+          const config = {
+            url:
+              urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
+              `${this.observationId}`,
+            payload: payload
+          };
+          this.assessmentService.post(config).subscribe(
+            success => {
+              if (success) {
+                this.getObservationEntities();
+              }
+            },
+            error => {}
+          );
+        }
+      });
+    }else{
+      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    }
   }
   async removeEntity(entity) {
     let entityId = entity._id;
@@ -289,7 +299,7 @@ export class ObservationDetailComponent implements OnInit {
 
   entityClickAction(e): void {
     if (this.solutionData.allowMultipleAssessemts) {
-      this.goToObservationSubmission(e);
+      this.goToObservationSubmission(e);  
       return;
     }
 

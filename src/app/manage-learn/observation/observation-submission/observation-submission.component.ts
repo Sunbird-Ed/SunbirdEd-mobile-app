@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
 import { RouterLinks } from '@app/app/app.constant';
@@ -13,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { ViewDetailComponent } from '../../shared/components/view-detail/view-detail.component';
+import { Subscription } from "rxjs";
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-observation-submission',
@@ -39,7 +41,9 @@ export class ObservationSubmissionComponent implements OnInit {
   entityId: any;
   entityName: any;
   disableObserveAgain: boolean = false;
-
+  private _networkSubscription?: Subscription;
+  networkFlag;
+  generatedKey;
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -53,7 +57,10 @@ export class ObservationSubmissionComponent implements OnInit {
     private alertCntrl: AlertController,
     private routerParam: ActivatedRoute,
     private assessmentService: AssessmentApiService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    public commonUtilService: CommonUtilService,
+    public storage : Storage
+
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -62,11 +69,43 @@ export class ObservationSubmissionComponent implements OnInit {
       this.entityId = params.entityId;
       this.entityName = params.entityName;
       this.disableObserveAgain = params.disableObserveAgain;
+      let data ={
+        observationId : params.observationId,
+        entityId : params.entityId
+      }
+      this.generatedKey = this.utils.getUniqueKey(data, storageKeys.submissionsList);
     });
+
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+         this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
+      }
+    );
   }
 
   ngOnInit() {
-    this.getProgramFromStorage();
+    this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
+  }
+  getLocalData(){
+    this.localStorage
+    .getLocalStorage(storageKeys.observationSubmissionIdArr)
+    .then((ids) => {
+      this.submissionIdArr = ids;
+    })
+    .catch((err) => {
+      this.submissionIdArr = [];
+    })
+    .finally(() => {
+      this.loader.stopLoader();
+      this.storage.get(this.generatedKey).then(data => {
+        this.submissionList = data;
+        this.applyDownloadedflag();
+        this.splitCompletedAndInprogressObservations();
+        this.tabChange(this.currentTab ? this.currentTab : 'all');
+      });
+    });
+  
   }
 
   ionViewWillEnter() {
@@ -75,7 +114,9 @@ export class ObservationSubmissionComponent implements OnInit {
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.getProgramFromStorage();
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
+
   }
 
   async getProgramFromStorage(isDeleted = false) {
@@ -103,7 +144,6 @@ export class ObservationSubmissionComponent implements OnInit {
           this.observationService.getAssessmentDetailsForObservation(event).then(
             (res) => {
               this.loader.stopLoader();
-
               this.getProgramFromStorage();
             },
             (err) => {
@@ -122,10 +162,9 @@ export class ObservationSubmissionComponent implements OnInit {
           .finally(() => {
             this.loader.stopLoader();
             this.submissionList = success.result;
+            this.storage.set(this.generatedKey,this.submissionList);
             this.applyDownloadedflag();
-
             this.splitCompletedAndInprogressObservations();
-
             this.tabChange(this.currentTab ? this.currentTab : 'all');
           });
       },
@@ -167,7 +206,6 @@ export class ObservationSubmissionComponent implements OnInit {
         break;
       default:
         this.submissions = this.submissions.concat(this.inProgressObservations, this.completedObservations);
-        console.log(this.submissions);
     }
   }
   getAssessmentDetails(submission) {
@@ -251,7 +289,6 @@ export class ObservationSubmissionComponent implements OnInit {
       entityDetails: aseessmemtData,
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
-    console.log(JSON.stringify(options));
     let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
     if (action) {
       this.router.navigate([RouterLinks.QUESTIONNAIRE], {
@@ -447,7 +484,6 @@ export class ObservationSubmissionComponent implements OnInit {
     };
     this.assessmentService.post(config).subscribe(
       (success) => {
-        console.log(success);
         if (success && success.status == 200) {
           this.getProgramFromStorage();
         }
@@ -472,7 +508,6 @@ export class ObservationSubmissionComponent implements OnInit {
       (success) => {
         this.loader.stopLoader();
 
-        console.log(success);
         if (success && success.status == 200) {
           this.getProgramFromStorage();
         }

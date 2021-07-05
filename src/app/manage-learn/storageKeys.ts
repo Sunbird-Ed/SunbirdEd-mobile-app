@@ -18,5 +18,7 @@ export const storageKeys = {
   downloadedObservations:'downloadedObservations',
   mandatoryFields:'mandatoryFields',
   solutions:'solutions',
-  entities:'entities'
+  entities:'entities',
+  submissionsList:'submissionsList',
+  solutionData:'solutionData'
 };

@@ -45,8 +45,10 @@ export class UtilsService {
     private storage: Storage
   ) {
     this.storage.get(storageKeys.mandatoryFields).then(data =>{
-      this.mandatoryFields = data;
-    })
+      if (data) {
+        this.mandatoryFields = data;
+      }
+    });
   }
 
   generateFileName(name: string[] = []) {
@@ -440,19 +442,9 @@ export class UtilsService {
               [this.profile.role]: this.requiredFields
             };
             this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
-            let allFieldsPresent = true;
-            for (const field of this.requiredFields) {
-              if (!this.profile[field]) {
-                allFieldsPresent = false;
-                break;
-              }
-            }
-            if (!allFieldsPresent) {
-              this.openProfileUpdateAlert();
-              resolve(false);
-            } else {
-              resolve(true);
-            }
+            this.checkMandatoryFields(
+              this.mandatoryFields[this.profile.state][this.profile.role]
+            );
           } else {
             this.openProfileUpdateAlert();
             resolve(false);
@@ -466,8 +458,23 @@ export class UtilsService {
     });
   }
 
+  checkMandatoryFields(requiredFields) {
+    let allFieldsPresent = true;
+    for (const field of requiredFields) {
+      if (!this.profile[field]) {
+        allFieldsPresent = false;
+        break;
+      }
+    }
+    if (!allFieldsPresent) {
+      this.openProfileUpdateAlert();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   async getMandatoryEntitiesList(): Promise<any> {
-    // const profile = await this.getProfileData();
     return new Promise((resolve, reject) => {
       const config = {
         url:
@@ -478,22 +485,8 @@ export class UtilsService {
         data => {
           if (data.result && data.result.length) {
             this.requiredFields = data.result;
-            // let allFieldsPresent = true;
             resolve(data.result);
-            // for (const field of this.requiredFields) {
-            //   if (!this.profile[field]) {
-            //     allFieldsPresent = false;
-            //     break
-            //   }
-            // }
-            // if (!allFieldsPresent) {
-            //   this.openProfileUpdateAlert()
-            //   resolve(false)
-            // } else {
-            //   resolve(true);
-            // }
           } else {
-            // this.openProfileUpdateAlert();
             resolve(false);
           }
         },
@@ -533,20 +526,38 @@ export class UtilsService {
     this.profileAlert ? await this.profileAlert.dismiss() : null;
   }
 
-  async getProfileInfo(): Promise<any> {
+  async getProfileInfo(callMandatory?): Promise<any> {
     //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     return new Promise(async (resolve, reject) => {
       this.profile = await this.getProfileData();
+      let allFieldsPresent = true;
       let mandatoryFields;
-      this.storage.get(storageKeys.mandatoryFields).then( data => {
-        if (data) {
-          mandatoryFields = data;
-          mandatoryFields ? resolve(this.profile) : resolve(null);
-        } else {
+      if (!callMandatory) {
+        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
           mandatoryFields = this.getMandatoryEntities();
           mandatoryFields ? resolve(this.profile) : resolve(null);
+        } else {
+          this.storage.get(storageKeys.mandatoryFields).then(data => {
+            if (data[this.profile.state]) {
+              allFieldsPresent = this.checkMandatoryFields(
+                data[this.profile.state][this.profile.role]
+              );
+              if (!allFieldsPresent) {
+                mandatoryFields = this.getMandatoryEntities();
+                mandatoryFields ? resolve(this.profile) : resolve(null);
+              } else {
+                resolve(this.profile);
+              }
+            } else {
+              this.openProfileUpdateAlert();
+            }
+          });
         }
-      });
+      } else {
+        mandatoryFields = this.getMandatoryEntities();
+        mandatoryFields ? resolve(this.profile) : resolve(null);
+      }
+
       // mandatoryFields = await this.getMandatoryEntities();
       // resolve(this.profile)
       // resolve({
@@ -570,29 +581,12 @@ export class UtilsService {
   async setProfileData(type) {
     return new Promise(async (resolve, reject) => {
       let userData;
-      // let userData = {
-      //   state: "5f33c3d85f637784791cd831",
-      //   district: "5f33c56fb451f58478b36997",
-      //   block: "5f33c63ece438a849b4a17f4",
-      //   school: "5f33c6dcc1352f84a29f547a",
-      //   role: "DEO"
-      // };
-      // if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       userData = await this.getProfileInfo();
       let data = {
         userData: userData,
         generatedKey: this.getUniqueKey(userData, type)
       };
       resolve(data);
-      // } else {
-      //   this.storage.get("userData").then(userData => {
-      //     let data = {
-      //       userData: userData,
-      //       generatedKey: this.getUniqueKey(userData,type)
-      //     };
-      //     resolve(data);
-      //   });
-      // }
     });
   }
 

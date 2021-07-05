@@ -52,16 +52,13 @@ export class ObservationHomeComponent implements OnInit {
   }
  
   async getProfileInfo() {
-    // let payload = await this.utils.getProfileInfo();
     this.profileInfo =  await this.utils.setProfileData(storageKeys.observations);
     this.generatedKey = this.profileInfo.generatedKey;
     this.solutionList =[];
-   this.networkFlag ?
+    this.networkFlag ?
     this.getPrograms() : this.getLocalData();
   }
   async getPrograms() {
-    // let payload = await this.utils.getProfileInfo();
-    // let profileInfo: any =  await this.utils.setProfileData();
     let payload = this.profileInfo.userData;
     if (payload) {
       this.loader.startLoader();
@@ -132,5 +129,5 @@ export class ObservationHomeComponent implements OnInit {
       this._networkSubscription.unsubscribe();
     }
   }
-
+  
 }

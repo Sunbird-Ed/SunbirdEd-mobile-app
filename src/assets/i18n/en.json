@@ -1468,5 +1468,6 @@
   "STATE_LOGIN": "Login with state system",
   "GOOGLE_LOGIN": "Sign in with Google",
   "LOGIN_WITH": "Login with {{appName}}",
-  "LOGIN_TO": "Login to {{appName}}"
+  "LOGIN_TO": "Login to {{appName}}",
+  "FRMELEMENTS_MSG_FEATURE_USING_OFFLINE":"Dear user, please go online to use this feature"
 }
