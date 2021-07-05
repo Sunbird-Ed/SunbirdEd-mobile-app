@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  OnInit,
   Inject,
   NgZone,
 } from '@angular/core';
@@ -39,7 +38,7 @@ import { Location } from '@angular/common';
   templateUrl: './project-detail.page.html',
   styleUrls: ['./project-detail.page.scss'],
 })
-export class ProjectDetailPage implements OnInit, OnDestroy {
+export class ProjectDetailPage implements OnDestroy {
   showDetails: boolean = true;
   statuses = statuses;
   project: any;
@@ -314,7 +313,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit() {}
+
 
   ionViewWillEnter() {
     this.initApp();
