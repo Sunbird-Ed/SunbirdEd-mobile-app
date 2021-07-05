@@ -1124,8 +1124,9 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
 
 sb-course-cards-hlist > .layout-course > .header > .title{
   color: var(--app-gray) !important;
-  font-size: 16px !important;
   height: auto !important;
+  margin-left: 7px;
+  font-size: 1rem !important;
 }
 
 app-courses{
@@ -1183,6 +1184,14 @@ sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox > .sb--c
   padding-right: 8px;
 }
 
+sb-library-cards-stack{
+  .header{
+    padding: 0 !important;
+    .title{
+      font-size: 14px !important;
+    }
+  }
+}
 app-resources{
 
   .fixed-container{
@@ -1204,10 +1213,12 @@ app-resources{
   }
 
   sb-library-cards-stack{
-    .title{
-      font-size: 18px !important;
-      font-weight: bold;
-      padding-left: 1rem;
+    .header{
+      padding: 0 !important;
+      .title{
+        font-size: 14px !important;
+        padding-left: 0.5rem;
+      }
     }
 
     .sbbtn{
@@ -1229,7 +1240,9 @@ app-resources{
 
   sb-library-card{
     .sb--card__meta1{
-      padding-top: 8px;
+      .sb--card__title{
+        font-weight: bold;
+      }
     }
 
     .sb--card{
@@ -1688,10 +1701,15 @@ sb-pills-grid{
   }
 
   .sb-box-grid{
-    .img{
-      width: 3.5rem;
-      img {
-        margin-right: 0 !important;
+    .item{
+      border-radius: 0.5rem !important;
+      .img{
+        width: 3.5rem;
+        border-radius: 0.5rem !important;
+        box-shadow: -0.125em 0.5em 1.3125em -0.125em rgba(0,0,0,.1) !important;
+        img {
+          margin-right: 0 !important;
+        }
       }
     }
   }
@@ -1743,11 +1761,9 @@ app-user-home{
 }
 
 .subject-list-popup{
-  .popover-content{
-    height: 90%;
-    width: 90%;
-    top: 5%;
-    left: 5%;
+  .modal-wrapper{
+    width: 100%;
+    height: 100%;
     border-radius: 2rem;
   }
 }
@@ -1767,17 +1783,6 @@ app-user-home{
     }
   }
 }
-
-.subject-list-popup{
-  .popover-content{
-    height: 90%;
-    width: 90%;
-    top: 5%;
-    left: 5%;
-    border-radius: 2rem;
-  }
-}
-
 
 ._progressIcon {
   font-size: 2rem;
@@ -1873,6 +1878,7 @@ sb-library-card-v3 {
   sb-pills-grid{
     .sb-label-grid{
       margin: 0 !important;
+      padding-left: 0 !important;
       .item{
         text-align: center;
         min-width: 5rem;
@@ -1898,7 +1904,7 @@ sb-library-card-v3 {
 .year-of-birth-popup{
   .popover-content {
     width: 80vw !important;
-    height: 26vh !important;
+    height: 35vh !important;
     left: 5% !important;
     border-radius: 16px;
     position: initial
@@ -1909,6 +1915,7 @@ app-search {
   .pills-filter{
     sb-pills-grid{
       .sb-label-grid{
+        margin: .5rem 0 0 !important;
         .item{
           text-align: center;
           min-width: 5rem;
@@ -1964,4 +1971,24 @@ sb-carousel{
 
 .popover-ratings rating ion-icon{
   color: #444242;
+}
+
+app-category-list-page{
+  sb-library-cards-stack{
+    .header{
+      padding: 0 1rem !important;
+    }
+  }
+}
+
+app-courses, app-resources {
+  .sb--card{
+    border-radius: 0.5rem !important;
+  }
+}
+
+app-user-home, app-discover {
+  .sb--card{
+    border-radius: 1rem !important;
+  }
 }

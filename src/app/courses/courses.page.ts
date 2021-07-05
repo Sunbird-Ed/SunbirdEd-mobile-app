@@ -10,7 +10,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { IonRefresher, PopoverController, ToastController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import forEach from 'lodash/forEach';
 import { Subscription } from 'rxjs';
 import {
@@ -579,6 +579,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     ];
     const request = {
       contentId: identifier,
+      objectType: content.objectType,
       emitUpdateIfAny: false
     };
     this.contentService.getContentDetails(request).toPromise()
