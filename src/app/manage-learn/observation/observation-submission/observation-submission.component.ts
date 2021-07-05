@@ -44,6 +44,7 @@ export class ObservationSubmissionComponent implements OnInit {
   private _networkSubscription?: Subscription;
   networkFlag;
   generatedKey;
+  downloadedSubmissionList: any={};
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -87,6 +88,7 @@ export class ObservationSubmissionComponent implements OnInit {
 
   ngOnInit() {
     this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
+    this.fetchDownloaded()
   }
   getLocalData(){
     this.localStorage
@@ -175,6 +177,25 @@ export class ObservationSubmissionComponent implements OnInit {
     );
   }
 
+  async fetchDownloaded() {
+    const key = storageKeys.downloadedObservations
+    let downloadedObs 
+    try {
+      downloadedObs = await this.localStorage.getLocalStorage(key) 
+      let currentObs = downloadedObs.filter(
+        (d) => d.programId === this.observationService.obsTraceObj.programId && d.solutionId === this.observationService.obsTraceObj.solutionId
+      )[0];
+      if (currentObs) {
+        const submission = currentObs.downloadedSubmission
+        this.downloadedSubmissionList=submission.reduce((obj, item) => (obj[item._id] = item.showDownloadedIcon, obj) ,{});
+        console.log(this.downloadedSubmissionList)
+      }
+    } catch (error) {
+      console.log('some error')
+      this.localStorage.setLocalStorage(key,[])
+    }
+  }
+
   applyDownloadedflag() {
     this.submissionList.map((s) => {
       this.submissionIdArr.includes(s._id) ? (s.downloaded = true) : null;
@@ -247,8 +268,22 @@ export class ObservationSubmissionComponent implements OnInit {
       .catch((error) => {});
   }
 
+   pushToLocal(submission) {
+    let event = {
+      submission: submission,
+      entityId: this.entityId,
+      observationId: this.observationId,
+    };
+    this.observationService
+      .getAssessmentDetailsForObservation(event)
+      .then(async (submissionId) => {
+        await this.observationService.pushToDownloads(submissionId)
+        this.fetchDownloaded()
+      })
+      .catch((error) => {});
+  }
+
   goToEcm(submission) {
-    // TODO: Remove
     let submissionId = submission._id;
     let heading = this.entityName;
 
