@@ -662,7 +662,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
                   objectType: ['Content'],
                   ...event.data.action.params.filters
                 }
-              }
+              },
+              hideSearchOption: true,
+              searchWithBackButton: true
             }
           };
           this.router.navigate(['search'], extras);
