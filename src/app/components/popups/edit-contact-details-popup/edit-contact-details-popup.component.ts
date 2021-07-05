@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import {
   Platform,
   NavParams,
@@ -20,7 +20,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
   templateUrl: './edit-contact-details-popup.component.html',
   styleUrls: ['./edit-contact-details-popup.component.scss'],
 })
-export class EditContactDetailsPopupComponent implements OnInit  {
+export class EditContactDetailsPopupComponent  {
   // Data passed in by componentProps
   @Input() userId: string;
   @Input() title: string;
@@ -53,7 +53,7 @@ export class EditContactDetailsPopupComponent implements OnInit  {
     this.initEditForm();
   }
 
-  ngOnInit() { }
+
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
