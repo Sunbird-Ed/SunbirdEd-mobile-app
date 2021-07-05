@@ -95,7 +95,7 @@ export class NavigationService {
     }
 
     navigateToLastUrl(){
-        this.router.navigate([this.previousNavigationUrl], {replaceUrl: false});
+        this.router.navigate([this.previousNavigationUrl], {replaceUrl: true});
     }
 
 }
