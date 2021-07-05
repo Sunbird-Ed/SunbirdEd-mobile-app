@@ -22,7 +22,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
 import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
@@ -343,7 +343,9 @@ export const sunbirdSdkFactory =
         contentServiceConfig: {
           apiPath: '/api/content/v1',
           searchApiPath: '/api/content/v1',
-          contentHeirarchyAPIPath: '/api/course/v1'
+          contentHeirarchyAPIPath: '/api/course/v1',
+          questionSetReadApiPath: '/api/questionset/v1',
+          questionReadApiPath: '/api/question/v1/'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'

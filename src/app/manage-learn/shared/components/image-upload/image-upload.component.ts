@@ -14,6 +14,7 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../TC-generic.popupService';
+import { Chooser } from '@ionic-native/chooser/ngx';
 
 @Component({
   selector: 'app-image-upload',
@@ -76,6 +77,7 @@ export class ImageUploadComponent implements OnInit {
     // private iosFilePicker: IOSFilePicker,
     private fileOpener: FileOpener,
     private fileChooser: FileChooser,
+    private chooser: Chooser,
     private androidPermissions: AndroidPermissions,
     private diagnostic: Diagnostic,
     private media: Media,
@@ -184,18 +186,34 @@ export class ImageUploadComponent implements OnInit {
   }
 
   // For android
-  openFilePicker() {
-    this.fileChooser
-      .open()
-      .then((filePath) => {
-        this.filePath
-          .resolveNativePath(filePath)
-          .then((data) => {
-            this.checkForLocalFolder(data);
-          })
-          .catch((err) => { });
-      })
-      .catch((e) => console.log(e));
+  async openFilePicker() {
+    
+    try {
+      const file = await this.chooser.getFile();
+      const pathToWrite = this.appFolderPath;
+      const newFileName = this.createFileName(file.name)
+      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+      if (writtenFile.isFile) {
+        this.pushToFileList(newFileName);
+
+        
+      }
+    } catch (error) {
+       
+    }
+
+	  //non working in sdk30 -adnroid 11
+    // this.fileChooser
+    //   .open()
+    //   .then((filePath) => {
+    //     this.filePath
+    //       .resolveNativePath(filePath)
+    //       .then((data) => {
+    //         this.checkForLocalFolder(data);
+    //       })
+    //       .catch((err) => { });
+    //   })
+    //   .catch((e) => console.log(e));
   }
 
   openCamera(): void {
@@ -210,7 +228,7 @@ export class ImageUploadComponent implements OnInit {
       .getPicture(options)
       .then((imagePath) => {
         this.checkForLocalFolder(imagePath);
-        this.saveToLibrary(imagePath);
+        // this.saveToLibrary(imagePath);
       })
       .catch((error) => { });
   }

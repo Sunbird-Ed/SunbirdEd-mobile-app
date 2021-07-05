@@ -1,6 +1,6 @@
-<ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
-  class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-
+<ion-content hide-header-footer overflow-scroll="true"
+  class="main-container avoid-bottom-tabs-space ui-container" scrollEvents="true">
+  <div class="ui-content">
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
@@ -86,6 +86,7 @@
       <strong class="ion-text-uppercase" color="primary"
         (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
     </ion-text>
+  </div>
   </div>
 </ion-content>
 <ion-backdrop class="loading-backdrop ion-text-center" *ngIf="showOverlay">

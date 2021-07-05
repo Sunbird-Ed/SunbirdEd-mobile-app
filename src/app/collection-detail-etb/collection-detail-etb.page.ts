@@ -10,7 +10,7 @@ import { ContentUtil } from '@app/util/content-util';
 import {IonContent as iContent,Platform,PopoverController} from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import {ExpandBehavior,ExpandMode,IAccordianConfig,IButtonConfig,TocCardType} from '@project-sunbird/common-consumption-v8';
+import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 import isObject from 'lodash/isObject';
 import { Observable, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
@@ -290,6 +290,7 @@ export class CollectionDetailEtbPage implements OnInit {
     expandMode: ExpandMode.SINGLE,
     expandBehavior: ExpandBehavior.EXPAND_FIRST
   };
+  showContentDetails = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -557,6 +558,7 @@ export class CollectionDetailEtbPage implements OnInit {
   async setContentDetails(identifier, refreshContentDetails: boolean) {
     const option: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.cardData.objectType,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails,
@@ -1659,5 +1661,9 @@ export class CollectionDetailEtbPage implements OnInit {
       this.objRollup,
       corRelationList
     );
+  }
+
+  contentInfo() {
+    this.showContentDetails = !this.showContentDetails;
   }
 }

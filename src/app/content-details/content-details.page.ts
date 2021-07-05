@@ -437,6 +437,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
     const req: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.cardData.objectType,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails

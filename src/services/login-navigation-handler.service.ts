@@ -73,7 +73,8 @@ export class LoginNavigationHandlerService {
             })
             .then(async () => {
                 this.ngZone.run(() => {
-                    this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE, skipNavigation && skipNavigation.source).toPromise();
+                    this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
+                        (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
                     this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
                     this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
                     this.sbProgressLoader.hide({id: 'login'});
@@ -183,7 +184,7 @@ export class LoginNavigationHandlerService {
         };
     }
 
-    private generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
+    generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
         const valuesMap = new Map();
         valuesMap['UID'] = uid;
         this.telemetryGeneratorService.generateInteractTelemetry(

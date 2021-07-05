@@ -479,6 +479,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                       this.appGlobalService.showYearOfBirthPopup(updatedProfile);
                     }
                     this.router.navigate([RouterLinks.TABS]);
+                    this.events.publish('update_header');
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
                     const navigationExtras: NavigationExtras = {
@@ -496,6 +497,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                   this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
                 }
                 this.router.navigate([RouterLinks.TABS]);
+                this.events.publish('update_header');
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 const navigationExtras: NavigationExtras = {
@@ -525,12 +527,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
       .then(updatedProfile => {
          // ******* Segmentation
+         var frameworkData = [];
          Object.keys(updatedProfile.framework).forEach((key) => {
           if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x .toLowerCase());
+            frameworkData.push(updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase()));
           }
          });
-         window['segmentation'].SBTagService.pushTag(updatedProfile.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+         window['segmentation'].SBTagService.pushTag(frameworkData, TagPrefixConstants.USER_ATRIBUTE, true);
          let userLocation = [];
          (updatedProfile['userLocations'] || []).forEach(element => {
            userLocation.push({ name: element.name, code: element.code });

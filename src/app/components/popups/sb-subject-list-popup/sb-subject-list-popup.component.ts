@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize, PillTextElipsis} from '@project-sunbird/common-consumption';
 import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 import {CorrelationData} from 'sunbird-sdk';
@@ -23,7 +23,7 @@ export class SbSubjectListPopupComponent implements OnInit {
     PillSize = PillSize;
 
     constructor(
-        private popoverCtrl: PopoverController,
+        private modalCtrl: ModalController,
         private telemetryGeneratorService: TelemetryGeneratorService
     ) {
     }
@@ -32,11 +32,11 @@ export class SbSubjectListPopupComponent implements OnInit {
         if (!event || !event.data || !event.data.length) {
           return;
         }
-        this.popoverCtrl.dismiss(event);
+        this.modalCtrl.dismiss(event);
     }
 
     closePopover() {
-        this.popoverCtrl.dismiss();
+        this.modalCtrl.dismiss();
     }
 
     ngOnInit(): void {

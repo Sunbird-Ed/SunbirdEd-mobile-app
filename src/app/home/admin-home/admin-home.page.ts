@@ -3,7 +3,7 @@ import {
   AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
   FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService
 } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
@@ -155,11 +155,13 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  ionViewDidEnter() {
-    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.newThemeTimeout = setTimeout(() => {
-    //   this.appGlobalService.showNewTabsSwitchPopup();
-    // }, 2000);
+  async ionViewDidEnter() {
+    const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+    if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
+      this.newThemeTimeout = setTimeout(() => {
+        this.appGlobalService.showNewTabsSwitchPopup();
+       }, 2000);
+    }
   }
 
   getFrameworkDetails(): void {

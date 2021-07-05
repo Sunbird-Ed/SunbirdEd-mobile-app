@@ -3,6 +3,8 @@ import {
     AppHeaderService,
     CommonUtilService,
     FormAndFrameworkUtilService,
+    InteractSubtype,
+    InteractType,
     LoginHandlerService
 } from '@app/services';
 import {
@@ -14,13 +16,15 @@ import {
     NativeGoogleSessionProvider,
     AuthService,
     SystemSettingsService,
-    SignInError
+    SignInError,
+    SharedPreferences
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
-import {SystemSettingsIds} from '@app/app/app.constant';
+import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
+import {Location} from '@angular/common';
 
 @Component({
     selector: 'app-sign-in',
@@ -35,6 +39,7 @@ export class SignInPage implements OnInit {
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private appHeaderService: AppHeaderService,
         private commonUtilService: CommonUtilService,
         private loginHandlerService: LoginHandlerService,
@@ -42,7 +47,8 @@ export class SignInPage implements OnInit {
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private sbProgressLoader: SbProgressLoader,
         private loginNavigationHandlerService: LoginNavigationHandlerService,
-        private googlePlusLogin: GooglePlus
+        private googlePlusLogin: GooglePlus,
+        private location: Location
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
@@ -53,10 +59,14 @@ export class SignInPage implements OnInit {
     }
 
     loginWithKeyCloak() {
-        this.loginHandlerService.signIn(this.skipNavigation);
+        this.loginHandlerService.signIn(this.skipNavigation).then(() => {
+            this.navigateBack(this.skipNavigation);
+        });
     }
 
     async loginWithStateSystem() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewStateSessionProviderConfig: WebviewStateSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -75,19 +85,26 @@ export class SignInPage implements OnInit {
             webviewStateSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewStateSession, this.skipNavigation);
+        await this.loginNavigationHandlerService.setSession(webViewStateSession, this.skipNavigation).then(() => {
+            this.navigateBack(this.skipNavigation);
+        });
     }
 
     async signInWithGoogle() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
         this.googlePlusLogin.login({
             webClientId: clientId.value
         }).then(async (result) => {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
-            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation);
+            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true);
+            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation).then(() => {
+                this.navigateBack(this.skipNavigation);
+            });
         }).catch(async (err) => {
-            this.sbProgressLoader.hide({id: 'login'});
+            await this.sbProgressLoader.hide({id: 'login'});
             if (err instanceof SignInError) {
                 this.commonUtilService.showToast(err.message);
             } else {
@@ -115,7 +132,16 @@ export class SignInPage implements OnInit {
             webviewRegisterSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, this.skipNavigation);
+        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, this.skipNavigation).then(() => {
+            this.navigateBack(this.skipNavigation);
+        });
     }
 
+    private navigateBack(skipNavigation) {
+        if ((skipNavigation && skipNavigation.navigateToCourse) ||
+            (skipNavigation && (skipNavigation.source === 'user' ||
+                skipNavigation.source === 'resources'))) {
+            this.location.back();
+        }
+    }
 }
