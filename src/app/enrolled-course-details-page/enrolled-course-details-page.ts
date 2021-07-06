@@ -1482,7 +1482,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.corRelationList = [];
     }
     this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
-    this.corRelationList.push({ id: this.identifier, type: CorReleationDataType.ROOT_ID });
+    this.corRelationList.push({ id: this.identifier || '', type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
   }
 
