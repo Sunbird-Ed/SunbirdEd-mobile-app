@@ -367,6 +367,7 @@ export const sunbirdSdkFactory =
           profileApiPath_V2: '/api/user/v2',
           profileApiPath_V3: '/api/user/v3',
           profileApiPath_V4: '/api/user/v4',
+          profileApiPath_V5: '/api/user/v5',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
           searchLocationApiPath: '/api/data/v1',
