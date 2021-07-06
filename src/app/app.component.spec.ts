@@ -26,13 +26,14 @@ import {
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY, Observable } from 'rxjs';
-import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
+import {PreferenceKey, EventTopics, RouterLinks, SystemSettingsIds} from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 declare const supportfile;
 declare const plugins;
@@ -182,6 +183,7 @@ describe('AppComponent', () => {
        stopLoader: jest.fn(),
        startLoader: jest.fn()
     };
+    const mockGooglePlusLogin: Partial<GooglePlus> = {};
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -224,7 +226,8 @@ describe('AppComponent', () => {
             mockDbService as DbService,
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
-            mockMlLoader as LoaderService
+            mockMlLoader as LoaderService,
+            mockGooglePlusLogin as GooglePlus,
         );
     });
 
@@ -1873,7 +1876,7 @@ describe('AppComponent', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
 
-        it('should handle logout', () => {
+        it('should handle logout', (done) => {
             // arrange
             const menuName = {
                 menuItem: 'LOGOUT'
@@ -1881,13 +1884,28 @@ describe('AppComponent', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockPreferences.putBoolean = jest.fn(() => of(false));
+            mockGooglePlusLogin.disconnect = jest.fn(() => Promise.reject(undefined));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
+                id: 'googleClientId',
+                field: 'googleClientId',
+                value: 'sample_random_value'
+            }));
+            mockGooglePlusLogin.trySilentLogin = jest.fn(() => Promise.resolve());
             mockLocalStorageService.deleteAllStorage = jest.fn(() => Promise.resolve({}));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.menuItemAction(menuName);
             // assert
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
-            expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
+                expect(mockGooglePlusLogin.disconnect).toHaveBeenCalled();
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalledWith({id: SystemSettingsIds.GOOGLE_CLIENT_ID});
+                expect(mockGooglePlusLogin.trySilentLogin).toHaveBeenCalledWith({webClientId: 'sample_random_value'});
+                done();
+            }, 0);
         });
 
         it('should handle inappupdate', () => {

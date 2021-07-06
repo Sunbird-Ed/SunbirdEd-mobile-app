@@ -42,7 +42,7 @@ import { IonContent as ContentView, IonRefresher, MenuController, PopoverControl
 import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { CourseCardGridTypes, LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes, LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import forEach from 'lodash/forEach';
 import has from 'lodash/has';
 import { Subscription } from 'rxjs';

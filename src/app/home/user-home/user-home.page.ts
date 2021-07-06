@@ -22,7 +22,7 @@ import {
   PillsViewType,
   SelectMode,
   ShowMoreViewType
-} from '@project-sunbird/common-consumption-v8';
+} from '@project-sunbird/common-consumption';
 import {NavigationExtras, Router} from '@angular/router';
 import {
   CachedItemRequestSourceFrom,
@@ -57,7 +57,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
 import {NavigationService} from '@app/services/navigation-handler.service';
-import {IonContent as ContentView, IonRefresher, PopoverController} from '@ionic/angular';
+import {IonContent as ContentView, IonRefresher, ModalController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {Subscription} from 'rxjs';
 import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -122,7 +122,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private headerService: AppHeaderService,
     private events: Events,
     private qrScanner: SunbirdQRScanner,
-    private popoverCtrl: PopoverController,
+    private ModalCtrl: ModalController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
@@ -427,7 +427,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME
     );
-    const subjectListPopover = await this.popoverCtrl.create({
+    const subjectListPopover = await this.ModalCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
@@ -652,13 +652,22 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             }
             break;
       case 'banner_search':
-          const payload = {
-            data: {
-              request: event.data.action.params.filter
-            },
-            action: 'ACTION_SEARCH'
+          const extras = {
+            state: {
+              source: PageId.SPLASH_SCREEN,
+              preAppliedFilter: {
+                query: event.data.action.params.query || '',
+                filters: {
+                  status: ['Live'],
+                  objectType: ['Content'],
+                  ...event.data.action.params.filters
+                }
+              },
+              hideSearchOption: true,
+              searchWithBackButton: true
+            }
           };
-          this.splaschreenDeeplinkActionHandlerDelegate.handleVendorAppAction(payload, event.data.code);
+          this.router.navigate(['search'], extras);
           break;
       case 'banner_content':
            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);

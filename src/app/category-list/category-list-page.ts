@@ -34,7 +34,7 @@ import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { PillBorder } from '@project-sunbird/common-consumption-v8';
+import { PillBorder } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '@app/util/object.util';
 
 

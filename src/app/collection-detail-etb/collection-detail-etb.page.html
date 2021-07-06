@@ -24,7 +24,7 @@
     </div>
     <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length"
       class="collection-etb-filter">
-      <div class="sb-chapter-dd" (click)="openTextbookToc()">
+      <div class="sb-chapter-dd pl-16" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
         <span class="pull-right">
           <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
@@ -48,8 +48,9 @@
       </div>
     </div>
 
-    <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
-
+  </div>
+  <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
+  <div>
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
@@ -71,7 +72,7 @@
     <div class="ion-padding-end">
       <div class="collection-etb-filter" style="margin-left: 10px;">
         <div class="sb-chapter-dd" (click)="contentInfo()">
-          <span class="pull-left">Content details</span>
+          <span class="pull-left">{{'DETAILS' | translate}}</span>
           <span class="pull-right">
             <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
           </span>
