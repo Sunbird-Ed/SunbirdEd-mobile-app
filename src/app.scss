@@ -1758,6 +1758,14 @@ app-user-home{
       }
     }
   }
+  app-truncated-ellipsis {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--app-gray);
+    .dot-divider {
+      background-color: var(--app-gray) !important;
+    }
+  }
 }
 
 .subject-list-popup{

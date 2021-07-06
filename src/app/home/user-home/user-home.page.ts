@@ -81,9 +81,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
   concatProfileFilter: Array<string> = [];
-  boards: string;
-  medium: string;
-  grade: string;
   profile: Profile;
   guestUser: boolean;
   appLabel: string;
@@ -107,6 +104,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   homeDataAvailable = false;
   displayBanner: boolean;
   bannerSegment: any;
+  preferenceList = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -217,16 +215,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           acc[category.code] = category;
           return acc;
         }, {});
-
-        if (this.profile.board && this.profile.board.length) {
-          this.boards = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.board, 'board'));
-        }
-        if (this.profile.medium && this.profile.medium.length) {
-          this.medium = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.medium, 'medium'));
-        }
-        if (this.profile.grade && this.profile.grade.length) {
-          this.grade = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
-        }
+        this.preferenceList = [];
+        setTimeout(() => {
+          this.preferenceList.push(this.profile.board);
+          this.preferenceList.push(this.profile.medium);
+          this.preferenceList.push(this.profile.grade);
+        }, 0);
       });
   }
 
