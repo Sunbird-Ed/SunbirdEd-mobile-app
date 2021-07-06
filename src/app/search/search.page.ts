@@ -165,6 +165,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   selectedPrimaryCategoryFilter: any;
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
+  hideSearchOption = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -206,6 +207,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       this.searchWithBackButton = extras.searchWithBackButton;
+      this.hideSearchOption = extras.hideSearchOption;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
         this.searchOnFocus();
