@@ -167,7 +167,7 @@ export class DbService {
       this.pdb.destroy().then(success => {
         success.ok ? resolve(success) : reject()
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       })
     })
   }

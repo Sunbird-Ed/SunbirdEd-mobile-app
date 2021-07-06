@@ -93,13 +93,13 @@ export class AttachmentService {
             .then((filePath) => {
               this.copyFile(filePath);
             })
-            .catch((err) => { console.log(err) });
+            .catch((err) => { console.error(err) });
         } else {
           this.copyFile(imagePath);
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         if(err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }

@@ -88,7 +88,7 @@ export class AddEntityComponent implements OnInit {
          this.stateId = this.profileData.state;
          this.getSubEntities(this.stateId);
       }).catch(error => {
-       console.log(error)
+       console.error(error)
       })
 
    }
