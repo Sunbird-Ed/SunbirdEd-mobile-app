@@ -8,6 +8,7 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Storage } from '@ionic/storage';
 import { Subscription } from 'rxjs';
 import { storageKeys } from '../../storageKeys';
+import { ObservationService } from '../observation.service';
 @Component({
   selector: 'app-observation-home',
   templateUrl: './observation-home.component.html',
@@ -36,7 +37,8 @@ export class ObservationHomeComponent implements OnInit {
     private loader: LoaderService,
     private storage : Storage,
     public commonUtilService: CommonUtilService,
-    public toast : ToastService
+    public toast: ToastService,
+    public obsService:ObservationService
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       this.networkFlag = available;
@@ -103,7 +105,7 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   observationDetails(solution) {
-    let { programId, solutionId, _id: observationId, name: solutionName } = solution;
+    let { programId, solutionId, _id: observationId, name: solutionName,programName } = solution;
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {
         programId: programId,
@@ -111,6 +113,12 @@ export class ObservationHomeComponent implements OnInit {
         observationId: observationId,
         solutionName: solutionName,
       },
+    }).then(success => {
+      this.obsService.obsTraceObj.programId = programId
+      this.obsService.obsTraceObj.solutionId = solutionId
+      this.obsService.obsTraceObj.name = solutionName
+      this.obsService.obsTraceObj.programName = programName
+      console.log(this.obsService.obsTraceObj)
     });
   }
   loadMore() {

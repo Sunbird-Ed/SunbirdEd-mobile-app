@@ -4,6 +4,7 @@ import { LocalStorageService, UtilsService } from '../core';
 import { urlConstants } from '../core/constants/urlConstants';
 import { AssessmentApiService } from '../core/services/assessment-api.service';
 import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
+import { storageKeys } from '../storageKeys';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,12 @@ export class ObservationService {
   private programIndex;
   private solutionIndex;
   private entityIndex;
+  public obsTraceObj = {
+    programId: '',
+    programName: '',
+    solutionId: '',
+    name: '',
+  };
 
   constructor(
     private httpClient: HttpClient,
@@ -21,16 +28,12 @@ export class ObservationService {
     private assessmentService: AssessmentApiService
   ) {}
 
-
- 
   getAssessmentDetailsForObservation(event) {
     return new Promise(async (resolve, reject) => {
       let entityId = event.entityId;
       let submissionNumber = event.submission.submissionNumber;
       let observationId = event.observationId;
 
-      // this.utils.startLoader();
-      // TODO:---------------------
       let payload = await this.utils.getProfileInfo();
       const config = {
         url:
@@ -62,10 +65,35 @@ export class ObservationService {
           );
           resolve(success.result.assessment.submissionId);
         },
-        (error) => {
-          // this.utils.stopLoader();
-        }
+        (error) => {}
       );
     });
+  }
+
+  async pushToDownloads(submissionId) {
+    const key = storageKeys.downloadedObservations
+    try {
+      let downloadedObs: any = await this.localStorage.getLocalStorage(key);
+      let currentObs = downloadedObs.filter(
+        (d) => d.programId === this.obsTraceObj.programId && d.solutionId === this.obsTraceObj.solutionId
+      )[0];
+
+      if (currentObs) {
+        currentObs.downloadedSubmission.push({ _id: submissionId, showDownloadedIcon: true });
+        await this.localStorage.setLocalStorage(key, downloadedObs);
+        return
+      }
+      let obj = {
+        programId: this.obsTraceObj.programId,
+        programName: this.obsTraceObj.programName,
+        solutionId: this.obsTraceObj.solutionId,
+        name: this.obsTraceObj.name,
+        downloadedSubmission: [{ _id: submissionId, showDownloadedIcon: true }],
+      };
+      downloadedObs.push(obj);
+      await this.localStorage.setLocalStorage(key, downloadedObs);
+    } catch (error) {
+      console.log('error while storing');
+    }
   }
 }
