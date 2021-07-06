@@ -949,7 +949,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
-    this.corRelationList = [];
+    if (!this.corRelationList) {
+      this.corRelationList = [];
+    }
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
