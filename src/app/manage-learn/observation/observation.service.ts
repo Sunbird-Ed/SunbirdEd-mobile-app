@@ -30,6 +30,10 @@ export class ObservationService {
 
   getAssessmentDetailsForObservation(event) {
     return new Promise(async (resolve, reject) => {
+      if (await this.localStorage.hasKey(this.utils.getAssessmentLocalStorageKey(event.submission._id))) {
+        resolve(event.submission._id)
+        return
+      }
       let entityId = event.entityId;
       let submissionNumber = event.submission.submissionNumber;
       let observationId = event.observationId;
@@ -57,8 +61,6 @@ export class ObservationService {
             generalQuestions
           );
 
-          this.ulsdp.storeObsevationSubmissionId(success.result['assessment']['submissionId']);
-
           await this.localStorage.setLocalStorage(
             this.utils.getAssessmentLocalStorageKey(success.result.assessment.submissionId),
             success.result
@@ -79,7 +81,7 @@ export class ObservationService {
       )[0];
 
       if (currentObs) {
-        currentObs.downloadedSubmission.push({ _id: submissionId, showDownloadedIcon: true });
+        currentObs.downloadedSubmission.push(submissionId)
         await this.localStorage.setLocalStorage(key, downloadedObs);
         return
       }
@@ -88,7 +90,7 @@ export class ObservationService {
         programName: this.obsTraceObj.programName,
         solutionId: this.obsTraceObj.solutionId,
         name: this.obsTraceObj.name,
-        downloadedSubmission: [{ _id: submissionId, showDownloadedIcon: true }],
+        downloadedSubmission: [submissionId],
       };
       downloadedObs.push(obj);
       await this.localStorage.setLocalStorage(key, downloadedObs);
