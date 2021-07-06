@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { storageKeys } from '@app/app/manage-learn/storageKeys';
 import { UtilsService } from '@app/app/manage-learn/core';
-
+import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
@@ -29,7 +29,6 @@ export class DownloadsTabComponent implements OnInit {
   @Output() deleteContents = new EventEmitter();
   @Output() deleteObservation = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
-  observations;
   showLoader = false;
   selectedContents: ContentDelete[] = [];
   showDeleteButton = true;
@@ -52,6 +51,7 @@ export class DownloadsTabComponent implements OnInit {
     private headerService: AppHeaderService,
     private storage : Storage,
     private utils : UtilsService,
+    public obsService: ObservationService,
     private router:Router) {
   }
 
@@ -61,10 +61,10 @@ export class DownloadsTabComponent implements OnInit {
         await this.deleteAllConfirm.dismiss();
       }
     });
-    this.getDownloadedObservations();
   }
 
   async showDeletePopup(identifier?,type?) {
+    console.log(identifier,"identifier", type);
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.DELETE_CLICKED,
@@ -74,8 +74,9 @@ export class DownloadsTabComponent implements OnInit {
         contentId: identifier,
         isChildContent: false
       };
-      type=='project' ? contentDelete['type']=type:null
+      type=='project'||  type=='observation' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
+      console.log(this.selectedContents,"this.selectedContents");
     }
 
     this.telemetryGeneratorService.generatePageViewTelemetry(
@@ -307,7 +308,7 @@ export class DownloadsTabComponent implements OnInit {
       this.navigateToProjectDetails(content)
       return
     } else if(content.type == 'observation'){
-      this.navigateToSubmissionDetails(content)
+      this.navigateToObservationDetails(content)
       return
     }
     const corRelationList: Array<CorrelationData> = [{
@@ -339,13 +340,7 @@ export class DownloadsTabComponent implements OnInit {
      });
   }
 
-  getDownloadedObservations(){
-    this.storage.get(storageKeys.downloadedObservations+this.utils.userId).then(resp =>{
-      this.observations = resp;
-      console.log(this.observations,"this.observations");
-    })
-  }
-  navigateToSubmissionDetails(solution) {
+  navigateToObservationDetails(solution) {
     let { programId, solutionId, _id: observationId, name: solutionName } = solution;
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {
@@ -354,6 +349,11 @@ export class DownloadsTabComponent implements OnInit {
         observationId: observationId,
         solutionName: solutionName,
       },
+    }).then(success => {
+      this.obsService.obsTraceObj.programId = programId;
+      this.obsService.obsTraceObj.solutionId = solutionId;
+      this.obsService.obsTraceObj.name = solutionName;
+      // this.obsService.obsTraceObj.programName = programName;
     });
  }
 

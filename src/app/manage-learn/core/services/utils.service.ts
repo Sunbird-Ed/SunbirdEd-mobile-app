@@ -599,7 +599,7 @@ export class UtilsService {
       .forEach(function(v, i) {
         generateKey = generateKey + userData[v];
       });
-    generateKey = generateKey + type + this.userId;
+    generateKey = generateKey + type;
     return generateKey;
   }
 

@@ -44,36 +44,6 @@
       </div>
     </div>
   </div>
-
-  <div class="sb-card" *ngFor="let content of observations; let i = index;"
-    [ngClass]="{'sb-card-active': content.isSelected}">
-    <div class="check-container">
-      <ion-label>
-        <ion-checkbox (ionChange)="toggleContentSelect($event, i)" [checked]="content.isSelected">
-        </ion-checkbox>
-      </ion-label>
-    </div>
-    <div class="img-container">
-      <img alt="content-logo"
-        [src]="commonUtilService.convertFileSrc(content?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg" />
-    </div>
-    <div class="sb-card-details">
-      <div (click)="!content.isSelected && navigateToSubmissionDetails(content)">
-        <div class="title">{{content?.name}}</div>
-        <div class="info grade_ellipsis">
-          <span class="class">{{content?.programName}}</span>
-          <span class="separator-dot"></span>
-          <!-- <span class="subject">{{content?.contentData?.gradeLevel | csa}}</span> -->
-        </div>
-      </div>
-      <div class="sb-card-actions">
-        <button *ngIf="showDeleteButton" class="action-btn float-end delete mr-8"
-          (click)="showObsDeletePopup(content.obsDetails)">
-          {{'DELETE' | translate}}
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
 
 

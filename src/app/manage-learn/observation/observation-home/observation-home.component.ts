@@ -1,32 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService,CommonUtilService } from '@app/services';
-import { Router } from '@angular/router';
-import { LoaderService, UtilsService, ToastService } from '../../core';
-import { urlConstants } from '../../core/constants/urlConstants';
-import { KendraApiService } from '../../core/services/kendra-api.service';
-import { Storage } from '@ionic/storage';
-import { Subscription } from 'rxjs';
-import { storageKeys } from '../../storageKeys';
-
+import { Component, OnInit } from "@angular/core";
+import { RouterLinks } from "@app/app/app.constant";
+import { AppHeaderService, CommonUtilService } from "@app/services";
+import { Router } from "@angular/router";
+import {
+  LoaderService,
+  UtilsService,
+  ToastService,
+  LocalStorageService
+} from "../../core";
+import { urlConstants } from "../../core/constants/urlConstants";
+import { KendraApiService } from "../../core/services/kendra-api.service";
+import { Subscription } from "rxjs";
+import { storageKeys } from "../../storageKeys";
+import { ObservationService } from "../observation.service";
 @Component({
-  selector: 'app-observation-home',
-  templateUrl: './observation-home.component.html',
-  styleUrls: ['./observation-home.component.scss'],
+  selector: "app-observation-home",
+  templateUrl: "./observation-home.component.html",
+  styleUrls: ["./observation-home.component.scss"]
 })
 export class ObservationHomeComponent implements OnInit {
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: [],
+    actionButtons: []
   };
   solutionList: any;
+  downloadedSolutions: any;
   page = 1;
   limit = 10;
   count: any;
-  searchText: string = '';
+  searchText: string = "";
   generatedKey;
-  profileInfo:any;
+  profileInfo: any;
   networkFlag;
   private _networkSubscription?: Subscription;
   constructor(
@@ -35,28 +40,31 @@ export class ObservationHomeComponent implements OnInit {
     private utils: UtilsService,
     private kendra: KendraApiService,
     private loader: LoaderService,
-    private storage : Storage,
+    private storage: LocalStorageService,
     public commonUtilService: CommonUtilService,
-    public toast : ToastService
+    public toast: ToastService,
+    public obsService: ObservationService
   ) {
-    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-      this.networkFlag = available;
-     this.getProfileInfo();
-  });
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+        this.getProfileInfo();
+      }
+    );
   }
 
   ngOnInit() {
     this.solutionList = [];
-  this.getProfileInfo();
-  // this.getPrograms();
+    // this.getPrograms();
   }
- 
+
   async getProfileInfo() {
-    this.profileInfo =  await this.utils.setProfileData(storageKeys.observations);
+    this.profileInfo = await this.utils.setProfileData(
+      storageKeys.observations
+    );
     this.generatedKey = this.profileInfo.generatedKey;
-    this.solutionList =[];
-    this.networkFlag ?
-    this.getPrograms() : this.getLocalData();
+    this.solutionList = [];
+    this.networkFlag ? this.getPrograms() : this.getLocalData();
   }
   async getPrograms() {
     let payload = this.profileInfo.userData;
@@ -66,19 +74,19 @@ export class ObservationHomeComponent implements OnInit {
         url:
           urlConstants.API_URLS.GET_TARGETED_SOLUTIONS +
           `?type=observation&page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
-        payload: payload,
+        payload: payload
       };
       this.kendra.post(config).subscribe(
-        (success) => {
+        success => {
           this.loader.stopLoader();
           if (success && success.result && success.result.data) {
             this.count = success.result.count;
-
             this.solutionList = [...this.solutionList, ...success.result.data];
-            this.storage.set(this.generatedKey, this.solutionList);
+            console.log(this.solutionList,"this.solutionList");
+            this.storage.setLocalStorage(this.generatedKey, this.solutionList);
           }
         },
-        (error) => {
+        error => {
           this.solutionList = [];
           this.loader.stopLoader();
         }
@@ -86,11 +94,34 @@ export class ObservationHomeComponent implements OnInit {
     }
   }
 
-  getLocalData(){
-    this.storage.get(this.generatedKey).then(data =>{
-      this.solutionList = data;
-    },error =>{
-    })
+  getLocalData() {
+    debugger;
+    this.storage.getLocalStorage(this.generatedKey).then(
+      data => {
+        this.solutionList = data;
+      },
+      error => {}
+    );
+    this.storage.getLocalStorage(storageKeys.downloadedObservations).then(
+      data => {
+        this.downloadedSolutions = data;
+        console.log(
+          data,
+          "data  this.downloadedSolutions  ",
+          this.downloadedSolutions
+        );
+        if (this.downloadedSolutions) {
+          this.checkLocalDownloadedSolutions();
+        }
+      },
+      error => {
+        console.log(
+          error,
+          "data  this.downloadedSolutions  ",
+          this.downloadedSolutions
+        );
+      }
+    );
   }
 
   ionViewWillEnter() {
@@ -104,43 +135,48 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   observationDetails(solution) {
-    let obj = [{
-      programId: solution.programId,
-      programName:'ffdd',
-      solutionId: solution.solutionId,
-      name: solution.name,
-      type:'observation',
-      downloadedSubmission: [{ _id: solution.solutionId, showDownloadIcon: true }],
-    }];
-    this.storage.set(storageKeys.downloadedObservations+this.utils.userId,obj);
-
-    let { programId, solutionId, _id: observationId, name: solutionName } = solution;
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-      queryParams: {
-        programId: programId,
-        solutionId: solutionId,
-        observationId: observationId,
-        solutionName: solutionName,
-      },
-    });
+    let {
+      programId,
+      solutionId,
+      _id: observationId,
+      name: solutionName,
+ programName
+    } = solution;
+    this.router
+      .navigate(
+        [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+        {
+          queryParams: {
+            programId: programId,
+            solutionId: solutionId,
+            observationId: observationId,
+            solutionName: solutionName
+          }
+        }
+      )
+      .then(success => {
+        this.obsService.obsTraceObj.programId = programId;
+        this.obsService.obsTraceObj.solutionId = solutionId;
+        this.obsService.obsTraceObj.name = solutionName;
+        this.obsService.obsTraceObj.programName = programName;
+      });
   }
   loadMore() {
-    if(this.networkFlag){
-    this.page = this.page + 1;
-    this.getPrograms();
-    } else{
-      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    if (this.networkFlag) {
+      this.page = this.page + 1;
+      this.getPrograms();
+    } else {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     }
   }
   onSearch(e) {
-    if(this.networkFlag){
-      this.page=1
+    if (this.networkFlag) {
+      this.page = 1;
       this.solutionList = [];
       this.getPrograms();
-    }else{
-      this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
+    } else {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     }
-    
   }
 
   ionViewWillLeave() {
@@ -149,5 +185,21 @@ export class ObservationHomeComponent implements OnInit {
       this._networkSubscription.unsubscribe();
     }
   }
-  
+
+  checkLocalDownloadedSolutions() {
+    console.log( this.solutionList,"inside checkLocalDownloadedSolutions", this.downloadedSolutions);
+    this.downloadedSolutions.forEach(ds => {
+      console.log(ds, "ds");
+      // this.solutionList.forEach(sol => {
+        if (
+          !this.solutionList.some(
+            item =>
+              item.solutionId == ds.solutionId && item.programId == ds.programId
+          )
+        ) {
+          this.solutionList.push(ds);
+        }
+      // });
+    });
+  }
 }
