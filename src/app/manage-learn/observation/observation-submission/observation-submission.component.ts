@@ -15,6 +15,7 @@ import { AssessmentApiService } from '../../core/services/assessment-api.service
 import { ViewDetailComponent } from '../../shared/components/view-detail/view-detail.component';
 import { Subscription } from "rxjs";
 import { Storage } from '@ionic/storage';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-observation-submission',
@@ -61,7 +62,8 @@ export class ObservationSubmissionComponent implements OnInit {
     private modalCtrl: ModalController,
     public commonUtilService: CommonUtilService,
     public storage: Storage,
-    public toast: ToastService
+    public toast: ToastService,
+    public genericPopup:GenericPopUpService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -149,26 +151,7 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async fetchDownloaded() {
-    const key = storageKeys.downloadedObservations;
-    let downloadedObs;
-    try {
-      downloadedObs = await this.localStorage.getLocalStorage(key);
-    } catch (error) {
-      this.localStorage.setLocalStorage(key, []);
-    }
-    try {
-      let currentObs = downloadedObs.filter(
-        (d) =>
-          d.programId === this.observationService.obsTraceObj.programId &&
-          d.solutionId === this.observationService.obsTraceObj.solutionId
-      )[0];
-      if (currentObs) {
-        this.downloadedSubmissionList = currentObs.downloadedSubmission;
-        console.log(this.downloadedSubmissionList);
-      }
-    } catch (error) {
-      console.log('error while fetching local downloaded obs');
-    }
+    this.downloadedSubmissionList=await this.observationService.fetchDownloaded()
   }
 
   splitCompletedAndInprogressObservations() {
@@ -237,7 +220,14 @@ export class ObservationSubmissionComponent implements OnInit {
       .catch((error) => {});
   }
 
-  pushToLocal(submission) {
+  async pushToLocal(submission) {
+    let args = {
+      title: 'DOWNLOAD_FORM',
+      yes: 'YES',
+      no:'NO'
+    }
+    const confirmed = await this.genericPopup.confirmBox(args)
+    if(!confirmed) return
     let event = {
       submission: submission,
       entityId: this.entityId,
@@ -248,6 +238,12 @@ export class ObservationSubmissionComponent implements OnInit {
       .then(async (submissionId) => {
         await this.observationService.pushToDownloads(submissionId);
         this.fetchDownloaded();
+        let args = {
+          title: 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED',
+          yes: 'OKAY',
+          autoDissmiss:true
+        };
+        await this.genericPopup.confirmBox(args);
       })
       .catch((error) => {});
   }
