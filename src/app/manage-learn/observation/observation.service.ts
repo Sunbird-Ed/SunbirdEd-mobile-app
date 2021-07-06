@@ -123,14 +123,13 @@ export class ObservationService {
     }
   }
 
-  updateLastViewed() {
+  async updateLastViewed() {
     const key = storageKeys.downloadedObservations;
     let downloadedObs: any
     try {
-      downloadedObs =  this.localStorage.getLocalStorage(key);
-    } catch (error) {
-      console.log(error)
-      this.localStorage.setLocalStorage(key, []);
+      downloadedObs =  await this.localStorage.getLocalStorage(key);
+    } catch {
+      await this.localStorage.setLocalStorage(key, []);
       return
     }
     try {
