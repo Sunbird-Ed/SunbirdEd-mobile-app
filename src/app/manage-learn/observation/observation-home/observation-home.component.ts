@@ -82,7 +82,6 @@ export class ObservationHomeComponent implements OnInit {
           if (success && success.result && success.result.data) {
             this.count = success.result.count;
             this.solutionList = [...this.solutionList, ...success.result.data];
-            console.log(this.solutionList,"this.solutionList");
             this.storage.setLocalStorage(this.generatedKey, this.solutionList);
           }
         },
@@ -95,7 +94,6 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   getLocalData() {
-    debugger;
     this.storage.getLocalStorage(this.generatedKey).then(
       data => {
         this.solutionList = data;
@@ -105,21 +103,11 @@ export class ObservationHomeComponent implements OnInit {
     this.storage.getLocalStorage(storageKeys.downloadedObservations).then(
       data => {
         this.downloadedSolutions = data;
-        console.log(
-          data,
-          "data  this.downloadedSolutions  ",
-          this.downloadedSolutions
-        );
         if (this.downloadedSolutions) {
           this.checkLocalDownloadedSolutions();
         }
       },
       error => {
-        console.log(
-          error,
-          "data  this.downloadedSolutions  ",
-          this.downloadedSolutions
-        );
       }
     );
   }
@@ -187,10 +175,7 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   checkLocalDownloadedSolutions() {
-    console.log( this.solutionList,"inside checkLocalDownloadedSolutions", this.downloadedSolutions);
     this.downloadedSolutions.forEach(ds => {
-      console.log(ds, "ds");
-      // this.solutionList.forEach(sol => {
         if (
           !this.solutionList.some(
             item =>
@@ -199,7 +184,6 @@ export class ObservationHomeComponent implements OnInit {
         ) {
           this.solutionList.push(ds);
         }
-      // });
     });
   }
 }

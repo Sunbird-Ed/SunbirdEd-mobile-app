@@ -64,7 +64,6 @@ export class DownloadsTabComponent implements OnInit {
   }
 
   async showDeletePopup(identifier?,type?) {
-    console.log(identifier,"identifier", type);
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.DELETE_CLICKED,
@@ -76,7 +75,6 @@ export class DownloadsTabComponent implements OnInit {
       };
       type=='project'||  type=='observation' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
-      console.log(this.selectedContents,"this.selectedContents");
     }
 
     this.telemetryGeneratorService.generatePageViewTelemetry(

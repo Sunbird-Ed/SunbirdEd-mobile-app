@@ -298,7 +298,6 @@ export class ObservationDetailComponent implements OnInit {
     try {
       presentLocally = await this.localStorage.hasKey(this.utils.getAssessmentLocalStorageKey(e.submissionId))
     } catch (error) {
-      console.log(error)
       presentLocally = false
     }
     if (e.submissionId && presentLocally) {

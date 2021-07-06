@@ -210,26 +210,24 @@ export class DownloadManagerPage
           }
         }
 
+        await this.storage
+        .getLocalStorage(storageKeys.downloadedObservations)
+        .then(resp => {
+          resp.sort(function(a, b) {
+            return (
+              new Date(b.lastViewedAt).valueOf() -
+              new Date(a.lastViewedAt).valueOf()
+            );
+          });
+          resp.map(res => {
+            res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name };
+            res.type = "observation";
+            res.identifier = res.programId + res.solutionId;
+            data.push(res);
+          });
+        });
         this.ngZone.run(async () => {
-          this.storage
-            .getLocalStorage(storageKeys.downloadedObservations)
-            .then(resp => {
-              resp.sort(function(a, b) {
-                return (
-                  new Date(b.lastViewedAt).valueOf() -
-                  new Date(a.lastViewedAt).valueOf()
-                );
-              });
-              console.log(resp,"resp sort");
-              resp.map(res => {
-                res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name };
-                res.type = "observation";
-                res.identifier = res.programId + res.solutionId;
-                data.push(res);
-              });
-            });
           this.downloadedContents = data;
-          console.log(this.downloadedContents, " this.downloadedContents");
         });
       })
       .catch(e => {});
@@ -255,14 +253,12 @@ export class DownloadManagerPage
   }
 
   async deleteContents(emitedContents: EmitedContents) {
-    console.log(emitedContents, "emitedContents");
     const projectContents = emitedContents.selectedContents.filter(
       content => content["type"] == "project"
     );
     const observationContents = emitedContents.selectedContents.filter(
       content => content["type"] == "observation"
     );
-    console.log(observationContents, "observationContents");
     emitedContents.selectedContents = emitedContents.selectedContents.filter(
       content =>
         !content["type"] ||
