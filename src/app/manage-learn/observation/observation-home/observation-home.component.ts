@@ -8,6 +8,7 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Storage } from '@ionic/storage';
 import { Subscription } from 'rxjs';
 import { storageKeys } from '../../storageKeys';
+
 @Component({
   selector: 'app-observation-home',
   templateUrl: './observation-home.component.html',
@@ -46,7 +47,6 @@ export class ObservationHomeComponent implements OnInit {
 
   ngOnInit() {
     this.solutionList = [];
-
   this.getProfileInfo();
   // this.getPrograms();
   }
@@ -100,9 +100,20 @@ export class ObservationHomeComponent implements OnInit {
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.getProfileInfo();
   }
 
   observationDetails(solution) {
+    let obj = [{
+      programId: solution.programId,
+      programName:'ffdd',
+      solutionId: solution.solutionId,
+      name: solution.name,
+      type:'observation',
+      downloadedSubmission: [{ _id: solution.solutionId, showDownloadIcon: true }],
+    }];
+    this.storage.set(storageKeys.downloadedObservations+this.utils.userId,obj);
+
     let { programId, solutionId, _id: observationId, name: solutionName } = solution;
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {

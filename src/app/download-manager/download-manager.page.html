@@ -7,5 +7,8 @@
     <app-downloads-tab #downloadsTab *ngIf="downloadedContents.length" [downloadedContents]="downloadedContents"
       (deleteContents)="deleteContents($event)" (sortCriteriaChanged)="onSortCriteriaChange($event)">
     </app-downloads-tab>
+    <!-- <app-downloads-tab #downloadsTab *ngIf="observations?.length" [downloadedObservations]="observations"
+    (deleteObservation)="deleteObservation($event)" (sortCriteriaChanged)="onSortCriteriaChange($event)">
+  </app-downloads-tab> -->
   </div>
 </ion-content>

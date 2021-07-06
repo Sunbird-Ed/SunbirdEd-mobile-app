@@ -36,6 +36,9 @@ import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
 import { DbService } from '../manage-learn/core/services/db.service';
+import { Storage } from '@ionic/storage';
+import { UtilsService } from '../manage-learn/core';
+import { storageKeys } from '../manage-learn/storageKeys';
 
 @Component({
   selector: 'app-download-manager',
@@ -47,6 +50,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   _toast: any;
   storageInfo: AppStorageInfo;
   downloadedContents: Content[] = [];
+  observations;
   defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   loader: any;
   deleteAllConfirm;
@@ -69,7 +73,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private db: DbService
+    private db: DbService,
+    private storage : Storage,
+    private utils: UtilsService,
   ) { }
 
   async ngOnInit() {
@@ -96,6 +102,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     this.events.subscribe(EventTopics.HAMBURGER_MENU_CLICKED, () => {
       this.closeSelectAllPopup();
     });
+
   }
 
   private async getAppName() {
@@ -407,6 +414,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
     });
   }
-
-
+  getDownloadedObservations(){
+    this.storage.get(storageKeys.downloadedObservations+this.utils.userId).then(resp =>{
+      this.observations = resp;
+      console.log(this.observations,"this.observations");
+    })
+  }
 }

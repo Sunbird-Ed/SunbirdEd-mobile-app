@@ -14,6 +14,9 @@ import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, P
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
+import { storageKeys } from '@app/app/manage-learn/storageKeys';
+import { UtilsService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-downloads-tab',
@@ -24,7 +27,9 @@ export class DownloadsTabComponent implements OnInit {
 
   @Input() downloadedContents: Content[] = [];
   @Output() deleteContents = new EventEmitter();
+  @Output() deleteObservation = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
+  observations;
   showLoader = false;
   selectedContents: ContentDelete[] = [];
   showDeleteButton = true;
@@ -45,6 +50,8 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
     private headerService: AppHeaderService,
+    private storage : Storage,
+    private utils : UtilsService,
     private router:Router) {
   }
 
@@ -54,6 +61,7 @@ export class DownloadsTabComponent implements OnInit {
         await this.deleteAllConfirm.dismiss();
       }
     });
+    this.getDownloadedObservations();
   }
 
   async showDeletePopup(identifier?,type?) {
@@ -69,6 +77,7 @@ export class DownloadsTabComponent implements OnInit {
       type=='project' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
     }
+
     this.telemetryGeneratorService.generatePageViewTelemetry(
       identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP, Environment.DOWNLOADS);
     const deleteConfirm = await this.popoverCtrl.create({
@@ -297,6 +306,9 @@ export class DownloadsTabComponent implements OnInit {
     if (content.type == 'project') {
       this.navigateToProjectDetails(content)
       return
+    } else if(content.type == 'observation'){
+      this.navigateToSubmissionDetails(content)
+      return
     }
     const corRelationList: Array<CorrelationData> = [{
         id: CorReleationDataType.DOWNLOADS,
@@ -326,4 +338,46 @@ export class DownloadsTabComponent implements OnInit {
        },
      });
   }
+
+  getDownloadedObservations(){
+    this.storage.get(storageKeys.downloadedObservations+this.utils.userId).then(resp =>{
+      this.observations = resp;
+      console.log(this.observations,"this.observations");
+    })
+  }
+  navigateToSubmissionDetails(solution) {
+    let { programId, solutionId, _id: observationId, name: solutionName } = solution;
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+      queryParams: {
+        programId: programId,
+        solutionId: solutionId,
+        observationId: observationId,
+        solutionName: solutionName,
+      },
+    });
+ }
+
+ async showObsDeletePopup(identifier){
+  this.telemetryGeneratorService.generatePageViewTelemetry(
+    identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP, Environment.DOWNLOADS);
+  const deleteConfirm = await this.popoverCtrl.create({
+    component: SbPopoverComponent,
+    componentProps: {
+      sbPopoverHeading: this.commonUtilService.translateMessage('DELETE_CONTENT'),
+      actionsButtons: [
+        {
+          btntext: this.commonUtilService.translateMessage('REMOVE'),
+          btnClass: 'popover-color'
+        },
+      ],
+      icon: null,
+      // sbPopoverContent: identifier ? this.commonUtilService.translateMessage('DELETE_CONTENT_WARNING')
+      //   : this.commonUtilService.translateMessage('DELETE_ALL_CONTENT_WARNING')
+    },
+    cssClass: 'sb-popover danger',
+  });
+  await deleteConfirm.present();
+  const { data } = await deleteConfirm.onDidDismiss();
+
+ }
 }
