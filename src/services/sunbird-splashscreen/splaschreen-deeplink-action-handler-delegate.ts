@@ -649,7 +649,7 @@ private async upgradeAppPopover(requiredVersionCode) {
               {
                 state: {
                   content,
-                  corRelation: this.getCorrelationList(payloadUrl)
+                  corRelation: this.getCorrelationList(payloadUrl, coreRelationList)
                 }
               });
           }
