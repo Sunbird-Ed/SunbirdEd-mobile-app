@@ -217,9 +217,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }, {});
         this.preferenceList = [];
         setTimeout(() => {
-          this.preferenceList.push(this.profile.board);
-          this.preferenceList.push(this.profile.medium);
-          this.preferenceList.push(this.profile.grade);
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.board, 'board'));
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.medium, 'medium'));
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
         }, 0);
       });
   }
@@ -234,9 +234,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
         if (lowerCase) {
-          element.name = element.name.toLowerCase();
+          displayValues.push(element.name.toLowerCase());
+        } else {
+          displayValues.push(element.name);
         }
-        displayValues.push(element.name);
       }
     });
 
