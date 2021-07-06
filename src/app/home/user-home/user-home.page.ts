@@ -664,14 +664,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             state: {
               source: PageId.HOME,
               corRelation: corRelationList,
-              preAppliedFilter: {
-                query: event.data.action.params.query || '',
-                filters: {
-                  status: ['Live'],
-                  objectType: ['Content'],
-                  ...event.data.action.params.filters
-                }
-              },
+              preAppliedFilter: event.data.action.params.filter,
               hideSearchOption: true,
               searchWithBackButton: true
             }
@@ -693,11 +686,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     this.displayBanner = !!(this.bannerSegment && this.bannerSegment.length);
     this.bannerSegment = this.bannerSegment.reduce((accumulator, cmd) => {
-      var bannerConfig = cmd.controlFunctionPayload.values.filter((value) =>
+      const bannerConfig = cmd.controlFunctionPayload.values.filter((value) =>
         Number(value.expiry) > Math.floor(Date.now() / 1000));
       accumulator = accumulator.concat(bannerConfig);
       return accumulator;
-    },[]);
+    }, []);
     if (this.bannerSegment ) {
       this.setBannerConfig();
     }
