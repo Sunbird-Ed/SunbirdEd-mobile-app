@@ -214,8 +214,15 @@ export class DownloadManagerPage
           this.storage
             .getLocalStorage(storageKeys.downloadedObservations)
             .then(resp => {
+              resp.sort(function(a, b) {
+                return (
+                  new Date(b.lastViewedAt).valueOf() -
+                  new Date(a.lastViewedAt).valueOf()
+                );
+              });
+              console.log(resp,"resp sort");
               resp.map(res => {
-                res.contentData = { lastUpdatedOn: "", name: res.name };
+                res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name };
                 res.type = "observation";
                 res.identifier = res.programId + res.solutionId;
                 data.push(res);

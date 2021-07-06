@@ -25,15 +25,15 @@
 
   <div
     *ngFor="let submission of submissions"
-    (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
+    (click)="goToEcm(submission)"
   >
     <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
-        <div arrow *ngIf="!downloadedSubmissionList[submission._id]" class="d-flex flex-dc  margin-r-10"
+        <div arrow *ngIf="!downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc  margin-r-10"
       (click)="$event.stopPropagation(); pushToLocal(submission)">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
     </div>
-    <div arrow *ngIf="downloadedSubmissionList[submission._id]" class="d-flex flex-dc margin-r-10">
+    <div arrow *ngIf="downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc margin-r-10">
       <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
     </div>
