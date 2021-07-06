@@ -65,7 +65,6 @@ export class TaskViewPage implements OnInit {
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
     this.saveSubTaskChanges = _.debounce(this.saveSubTaskChanges, 800);
-    // this.db.createPouchDB(environment.db.projects);
     params.params.subscribe((parameters) => {
       this.parameters = parameters;
       this.getTask();
@@ -93,7 +92,6 @@ export class TaskViewPage implements OnInit {
       (success) => {
         this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
-        // this.copyOfProject = { ...this.project };
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
           return item._id == this.parameters.taskId;
         });
@@ -179,7 +177,7 @@ export class TaskViewPage implements OnInit {
           this.toast.showMessage('FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED', 'success');
           goBack ? this.location.back() : "";
         })
-        .catch((error) => { });
+        .catch((error) => { console.error(error) });
     } else {
       this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
@@ -311,7 +309,6 @@ export class TaskViewPage implements OnInit {
 
   async edit(what, placeholder = "", subtask?, subTaskIndex?) {
     let name;
-    // what == "task" || what == "assignName" ? (name = "Edit Task") : (name = "Edit Subtask");
     switch (what) {
       case 'task':
         name = "Edit Task"
