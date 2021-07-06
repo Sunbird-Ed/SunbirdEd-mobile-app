@@ -31,13 +31,10 @@
 }
 
 .preference-container {
-  background-color: var(--app-primary-header);
   margin: 0 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0 .5rem;
   font-size: 12px;
   color: var(--app-gray);
-  box-shadow: 0 0 50px 0 rgba(0,0,0,0.1);
-  border-radius: 1rem;
   .user-preference {
     display: flex;
     align-items: center;
@@ -48,7 +45,9 @@
       width: 30%;
       text-align: center;
       button{
+        float: right;
         color: var(--app-primary);
+        height: 24px !important;
       }
     }
   }

@@ -1399,7 +1399,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color txt-uppercase',
                                     btntext: 'sample-message',
 
                                 },
@@ -1475,7 +1475,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color txt-uppercase',
                                     btntext: 'sample-message',
 
                                 },
