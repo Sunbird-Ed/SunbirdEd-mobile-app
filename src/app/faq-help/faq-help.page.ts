@@ -182,7 +182,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   async ionViewDidLeave() {
-    (<any>window).supportfile.removeFile(
+    (<any>window).sbutility.removeFile(
       result => ({}),
       error => {
         console.error('error' + error);

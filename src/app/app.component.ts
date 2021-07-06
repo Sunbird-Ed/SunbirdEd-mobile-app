@@ -136,6 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!window['segmentation'].isInitialised) {
         window['segmentation'].init();
       }
+      window['segmentation'].SBTagService.pushTag(['android'], TagPrefixConstants.ALL, true);
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
@@ -701,7 +702,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async makeEntryInSupportFolder() {
     return new Promise((resolve => {
-      (window as any).supportfile.makeEntryInSunbirdSupportFile((result) => {
+      (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
       }, () => {
@@ -898,7 +899,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
       case 'UPDATE':
-        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        (<any>window).sbutility.checkForImmediateUpdate(
           () => { },
           () => { }
         );

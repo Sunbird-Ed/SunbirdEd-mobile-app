@@ -40,6 +40,23 @@ declare const plugins;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window['sbutility'] = {
+        getBuildConfigValue: jest.fn(() => { }),
+        openPlayStore: jest.fn(() => { }),
+        getDeviceAPILevel: jest.fn(() => { }),
+        checkAppAvailability: jest.fn(() => { }),
+        getDownloadDirectoryPath: jest.fn(() => { }),
+        exportApk: jest.fn(() => { }),
+        getDeviceSpec: jest.fn(() => { }),
+        getUtmInfo: jest.fn(() => { }),
+        clearUtmInfo: jest.fn(() => { }),
+        readFromAssets: jest.fn(() => { }),
+        rm: jest.fn(() => { }),
+        getApkSize: jest.fn(() => { }),
+        getMetaData: jest.fn(() => { }),
+        makeEntryInSunbirdSupportFile: jest.fn(() => { }),
+        checkForImmediateUpdate: jest.fn(() => { })
+    };
     window.cordova.plugins = {
         notification: {
             local: {
@@ -48,9 +65,6 @@ describe('AppComponent', () => {
                 },
                 on: jest.fn()
             }
-        },
-        InAppUpdateManager: {
-            checkForImmediateUpdate: jest.fn()
         }
     };
     const mockActivePageService: Partial<ActivePageService> = {
@@ -1902,7 +1916,7 @@ describe('AppComponent', () => {
             // act
             appComponent.menuItemAction(menuName);
             // assert
-            expect(cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+            expect(window.sbutility.checkForImmediateUpdate).toHaveBeenCalled();
         });
     });
 
