@@ -46,7 +46,6 @@ export class ObservationDetailComponent implements OnInit {
   solutionData: any;
   solutionDataKey;
   submissionId: unknown;
-  submissionIdArr: any;
   generatedKey;
   private _networkSubscription?: Subscription;
   networkFlag;
@@ -94,14 +93,6 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.localStorage
-      .getLocalStorage(storageKeys.observationSubmissionIdArr)
-      .then(ids => {
-        this.submissionIdArr = ids;
-      })
-      .catch(error => {
-        this.submissionIdArr = [];
-      });
   }
   getLocalData() {
     this.storage.get(this.generatedKey).then(data => {
@@ -297,14 +288,18 @@ export class ObservationDetailComponent implements OnInit {
     );
   }
 
-  entityClickAction(e): void {
+  async entityClickAction(e):Promise<any>{
     if (this.solutionData.allowMultipleAssessemts) {
       this.goToObservationSubmission(e);  
       return;
     }
-
-    let presentLocally = this.submissionIdArr.find(id => id == e.submissionId);
-
+    let presentLocally
+    try {
+      presentLocally = await this.localStorage.hasKey(this.utils.getAssessmentLocalStorageKey(e.submissionId))
+    } catch (error) {
+      console.log(error)
+      presentLocally = false
+    }
     if (e.submissionId && presentLocally) {
       this.goToEcm(e.submissionId, e.name);
       return;
@@ -322,15 +317,8 @@ export class ObservationDetailComponent implements OnInit {
         .getAssessmentDetailsForObservation(event)
         .then(subId => {
           this.submissionId = subId;
-          return this.localStorage.getLocalStorage(
-            storageKeys.observationSubmissionIdArr
-          );
-        })
-        .then(ids => {
-          this.submissionIdArr = ids;
-          let sId = ids.find(id => id == this.submissionId);
-          if (sId) {
-            this.goToEcm(sId, e.name);
+          if (subId) {
+            this.goToEcm(subId, e.name);
           }
         })
         .catch(error => {

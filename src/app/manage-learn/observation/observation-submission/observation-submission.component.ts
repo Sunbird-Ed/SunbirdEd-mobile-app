@@ -44,7 +44,7 @@ export class ObservationSubmissionComponent implements OnInit {
   private _networkSubscription?: Subscription;
   networkFlag;
   generatedKey;
-  downloadedSubmissionList: any={};
+  downloadedSubmissionList: any = [];
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -60,9 +60,8 @@ export class ObservationSubmissionComponent implements OnInit {
     private assessmentService: AssessmentApiService,
     private modalCtrl: ModalController,
     public commonUtilService: CommonUtilService,
-    public storage : Storage,
-    public toast : ToastService
-
+    public storage: Storage,
+    public toast: ToastService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -71,44 +70,27 @@ export class ObservationSubmissionComponent implements OnInit {
       this.entityId = params.entityId;
       this.entityName = params.entityName;
       this.disableObserveAgain = params.disableObserveAgain;
-      let data ={
-        observationId : params.observationId,
-        entityId : params.entityId
-      }
-      this.generatedKey = this.utils.getUniqueKey(data, storageKeys.submissionsList);
     });
-
-    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
-      async (available: boolean) => {
-        this.networkFlag = available;
-         this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
-      }
-    );
   }
 
   ngOnInit() {
-    this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
-    this.fetchDownloaded()
-  }
-  getLocalData(){
-    this.localStorage
-    .getLocalStorage(storageKeys.observationSubmissionIdArr)
-    .then((ids) => {
-      this.submissionIdArr = ids;
-    })
-    .catch((err) => {
-      this.submissionIdArr = [];
-    })
-    .finally(() => {
-      this.loader.stopLoader();
-      this.storage.get(this.generatedKey).then(data => {
-        this.submissionList = data;
-        this.applyDownloadedflag();
-        this.splitCompletedAndInprogressObservations();
-        this.tabChange(this.currentTab ? this.currentTab : 'all');
-      });
+    let data = {
+      observationId: this.observationId,
+      entityId: this.entityId,
+    };
+    this.generatedKey = this.utils.getUniqueKey(data, storageKeys.submissionsList);
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.networkFlag = available;
+      this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
     });
-  
+    this.fetchDownloaded();
+  }
+  getLocalData() {
+    this.storage.get(this.generatedKey).then((data) => {
+      this.submissionList = data;
+      this.splitCompletedAndInprogressObservations();
+      this.tabChange(this.currentTab ? this.currentTab : 'all');
+    });
   }
 
   ionViewWillEnter() {
@@ -119,7 +101,6 @@ export class ObservationSubmissionComponent implements OnInit {
     this.headerService.updatePageConfig(this.headerConfig);
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
-
   }
 
   async getProgramFromStorage(isDeleted = false) {
@@ -130,7 +111,7 @@ export class ObservationSubmissionComponent implements OnInit {
     };
     this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
-      (success) => {
+      async (success) => {
         if (success.result && success.result.length == 0) {
           if (isDeleted) {
             this.loader.stopLoader();
@@ -144,7 +125,7 @@ export class ObservationSubmissionComponent implements OnInit {
               submissionNumber: 1,
             },
           };
-          this.observationService.getAssessmentDetailsForObservation(event).then(
+          await this.observationService.getAssessmentDetailsForObservation(event).then(
             (res) => {
               this.loader.stopLoader();
               this.getProgramFromStorage();
@@ -154,22 +135,12 @@ export class ObservationSubmissionComponent implements OnInit {
             }
           );
         }
-        this.localStorage
-          .getLocalStorage(storageKeys.observationSubmissionIdArr)
-          .then((ids) => {
-            this.submissionIdArr = ids;
-          })
-          .catch((err) => {
-            this.submissionIdArr = [];
-          })
-          .finally(() => {
-            this.loader.stopLoader();
-            this.submissionList = success.result;
-            this.storage.set(this.generatedKey,this.submissionList);
-            this.applyDownloadedflag();
-            this.splitCompletedAndInprogressObservations();
-            this.tabChange(this.currentTab ? this.currentTab : 'all');
-          });
+ 
+        this.loader.stopLoader();
+        this.submissionList = success.result;
+        this.storage.set(this.generatedKey, this.submissionList);
+        this.splitCompletedAndInprogressObservations();
+        this.tabChange(this.currentTab ? this.currentTab : 'all');
       },
       (error) => {
         console.log(error);
@@ -178,29 +149,28 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async fetchDownloaded() {
-    const key = storageKeys.downloadedObservations
-    let downloadedObs 
+    const key = storageKeys.downloadedObservations;
+    let downloadedObs;
     try {
-      downloadedObs = await this.localStorage.getLocalStorage(key) 
+      downloadedObs = await this.localStorage.getLocalStorage(key);
+    } catch (error) {
+      this.localStorage.setLocalStorage(key, []);
+    }
+    try {
       let currentObs = downloadedObs.filter(
-        (d) => d.programId === this.observationService.obsTraceObj.programId && d.solutionId === this.observationService.obsTraceObj.solutionId
+        (d) =>
+          d.programId === this.observationService.obsTraceObj.programId &&
+          d.solutionId === this.observationService.obsTraceObj.solutionId
       )[0];
       if (currentObs) {
-        const submission = currentObs.downloadedSubmission
-        this.downloadedSubmissionList=submission.reduce((obj, item) => (obj[item._id] = item.showDownloadedIcon, obj) ,{});
-        console.log(this.downloadedSubmissionList)
+        this.downloadedSubmissionList = currentObs.downloadedSubmission;
+        console.log(this.downloadedSubmissionList);
       }
     } catch (error) {
-      console.log('some error')
-      this.localStorage.setLocalStorage(key,[])
+      console.log('error while fetching local downloaded obs');
     }
   }
 
-  applyDownloadedflag() {
-    this.submissionList.map((s) => {
-      this.submissionIdArr.includes(s._id) ? (s.downloaded = true) : null;
-    });
-  }
   splitCompletedAndInprogressObservations() {
     this.completedObservations = [];
     this.inProgressObservations = [];
@@ -231,10 +201,10 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   getAssessmentDetails(submission) {
-    if(this.networkFlag){
+    if (this.networkFlag) {
       this.showActionsheet = false;
       this.showEntityActionsheet = false;
-  
+
       this.localStorage
         .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
         .then((data) => {
@@ -247,10 +217,9 @@ export class ObservationSubmissionComponent implements OnInit {
         .catch((error) => {
           this.getAssessmentDetailsApi(submission);
         });
-    }else{
+    } else {
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
     }
-   
   }
 
   getAssessmentDetailsApi(submission) {
@@ -268,7 +237,7 @@ export class ObservationSubmissionComponent implements OnInit {
       .catch((error) => {});
   }
 
-   pushToLocal(submission) {
+  pushToLocal(submission) {
     let event = {
       submission: submission,
       entityId: this.entityId,
@@ -277,8 +246,8 @@ export class ObservationSubmissionComponent implements OnInit {
     this.observationService
       .getAssessmentDetailsForObservation(event)
       .then(async (submissionId) => {
-        await this.observationService.pushToDownloads(submissionId)
-        this.fetchDownloaded()
+        await this.observationService.pushToDownloads(submissionId);
+        this.fetchDownloaded();
       })
       .catch((error) => {});
   }
@@ -319,7 +288,9 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        this.getAssessmentDetailsApi(submission);
+      });
   }
   async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
@@ -386,34 +357,34 @@ export class ObservationSubmissionComponent implements OnInit {
   entityActions(e) {
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
-  }else{
-    let submission = this.submissions[0];
-    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
-    if (submission.criteriaLevelReport && submission.isRubricDriven) {
-      this.router.navigate([RouterLinks.GENERIC_REPORT], {
-        state: {
-          scores: true,
-          observation: true,
-          entityId: submission.entityId,
-          entityType: submission.entityType,
-          observationId: submission.observationId,
-        },
-      });
-      return;
-    }
-    let noScore: boolean = true;
-    this.submissions.forEach((submission) => {
-      submission.showActionsheet = false;
-      if (submission.ratingCompletedAt) {
-        noScore = false;
-      }
-    });
-    if (noScore) {
-      this.viewEntityReports();
     } else {
-      this.openEntityReportMenu(e);
+      let submission = this.submissions[0];
+      // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+      if (submission.criteriaLevelReport && submission.isRubricDriven) {
+        this.router.navigate([RouterLinks.GENERIC_REPORT], {
+          state: {
+            scores: true,
+            observation: true,
+            entityId: submission.entityId,
+            entityType: submission.entityType,
+            observationId: submission.observationId,
+          },
+        });
+        return;
+      }
+      let noScore: boolean = true;
+      this.submissions.forEach((submission) => {
+        submission.showActionsheet = false;
+        if (submission.ratingCompletedAt) {
+          noScore = false;
+        }
+      });
+      if (noScore) {
+        this.viewEntityReports();
+      } else {
+        this.openEntityReportMenu(e);
+      }
     }
-  }
   }
 
   // Menu for Entity reports
@@ -540,31 +511,31 @@ export class ObservationSubmissionComponent implements OnInit {
   async observeAgain() {
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
-  }else{
-    this.loader.startLoader('Creating an Observation');
+    } else {
+      this.loader.startLoader('Creating an Observation');
 
-    const entityId = this.entityId;
-    const observationId = this.observationId;
+      const entityId = this.entityId;
+      const observationId = this.observationId;
 
-    let payload = await this.utils.getProfileInfo();
+      let payload = await this.utils.getProfileInfo();
 
-    const config = {
-      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_CREATE + `${observationId}?entityId=${entityId}`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
+      const config = {
+        url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_CREATE + `${observationId}?entityId=${entityId}`,
+        payload: payload,
+      };
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          this.loader.stopLoader();
 
-        if (success && success.status == 200) {
-          this.getProgramFromStorage();
+          if (success && success.status == 200) {
+            this.getProgramFromStorage();
+          }
+        },
+        (error) => {
+          this.loader.stopLoader();
         }
-      },
-      (error) => {
-        this.loader.stopLoader();
-      }
-    );
-  }
+      );
+    }
   }
 
   //open info menu
@@ -577,5 +548,11 @@ export class ObservationSubmissionComponent implements OnInit {
       },
     });
     await modal.present();
+  }
+
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }
