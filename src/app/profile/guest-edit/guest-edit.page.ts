@@ -531,6 +531,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
           medium: res.medium,
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        window['segmentation'].SBTagService.pushTag(res.profileType, TagPrefixConstants.USER_ROLE, true);
         this.segmentationTagService.evalCriteria();
       });
 }
