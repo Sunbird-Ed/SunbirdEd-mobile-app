@@ -962,9 +962,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       }
       searchQuery.request.searchType = SearchType.FILTER;
       const profileFilters = {
-        board: contentSearchRequest.board || [],
-        medium: contentSearchRequest.medium || [],
-        gradeLevel: contentSearchRequest.grade || []
+        board: contentSearchRequest.board || null,
+        medium: contentSearchRequest.medium || null,
+        gradeLevel: contentSearchRequest.grade || null
       };
       searchQuery.request.filters = {
         ...searchQuery.request.filters,

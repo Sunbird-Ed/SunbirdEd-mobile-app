@@ -660,7 +660,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
                 filters: {
                   status: ['Live'],
                   objectType: ['Content'],
-                  ...event.data.action.params.filters
+                  ...event.data.action.params.filter
                 }
               },
               hideSearchOption: true,
@@ -676,12 +676,18 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   showorHideBanners() {
-    this.bannerSegment = this.segmentationTagService.exeCommands.find((cmd) => {
+    this.bannerSegment = this.segmentationTagService.exeCommands.filter((cmd) => {
       if (cmd.controlFunction === 'BANNER_CONFIG') {
         return cmd;
       }
     });
-    this.displayBanner = (this.bannerSegment && this.bannerSegment.controlFunctionPayload.values.length) ? true : false;
+    this.displayBanner = !!(this.bannerSegment && this.bannerSegment.length);
+    this.bannerSegment = this.bannerSegment.reduce((accumulator, cmd) => {
+      var bannerConfig = cmd.controlFunctionPayload.values.filter((value) =>
+        Number(value.expiry) > Math.floor(Date.now() / 1000));
+      accumulator = accumulator.concat(bannerConfig);
+      return accumulator;
+    },[]);
     if (this.bannerSegment ) {
       this.setBannerConfig();
     }
@@ -690,8 +696,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   setBannerConfig() {
     this.displaySections.forEach((section, index) => {
       if (section.dataSrc.type === 'CONTENT_DISCOVERY_BANNER') {
-        this.displaySections[index]['data'] = this.bannerSegment.controlFunctionPayload.values.filter((value) =>
-         Number(value.expiry) > Math.floor(Date.now() / 1000));
+        this.displaySections[index]['data'] = this.bannerSegment;
       }
     });
   }

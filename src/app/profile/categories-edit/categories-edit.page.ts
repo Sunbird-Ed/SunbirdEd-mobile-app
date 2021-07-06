@@ -539,6 +539,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
            userLocation.push({ name: element.name, code: element.code });
          });
          window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
          this.segmentationTagService.evalCriteria();
       });
   }
