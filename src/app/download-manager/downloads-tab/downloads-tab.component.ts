@@ -353,7 +353,7 @@ export class DownloadsTabComponent implements OnInit {
       this.obsService.obsTraceObj.programId = programId;
       this.obsService.obsTraceObj.solutionId = solutionId;
       this.obsService.obsTraceObj.name = solutionName;
-      // this.obsService.obsTraceObj.programName = programName;
+      this.obsService.obsTraceObj.programName = solution.programName;
     });
  }
 
