@@ -114,7 +114,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     return this.contentService.getContentSpaceUsageSummary(req).toPromise()
       .then((res: ContentSpaceUsageSummaryResponse[]) => {
         return this.deviceInfo.getAvailableInternalMemorySize().toPromise()
-        .then((size) => {
+          .then((size) => {
             this.storageInfo = {
               usedSpace: res[0].sizeOnDevice,
               availableSpace: parseInt(size, 10)
@@ -156,7 +156,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             selector: {
            downloaded: true,
           },
-        };
+        }; 
         if(this.db.pdb){
           let projectData: any = await this.db.customQuery(query);
           if (projectData.docs) {
@@ -201,8 +201,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async deleteContents(emitedContents: EmitedContents) {
-    const projectContents = emitedContents.selectedContents.filter(content => content['type'] == 'project');
-    const observationContents = emitedContents.selectedContents.filter( content => content['type'] == 'observation');
+    const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
+    const observationContents = emitedContents.selectedContents.filter( content => (content['type'] == 'observation'));
     emitedContents.selectedContents = emitedContents.selectedContents.filter(content => !content['type'] ||content['type'] != 'project' || content['type'] != 'observation');
 
     if (!emitedContents.selectedContents.length) {
@@ -238,8 +238,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             });
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
           }
-        })
-        .catch(async (error: any) => {
+        }).catch(async (error: any) => {
           await this.loader.dismiss();
           this.loader = undefined;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('CONTENT_DELETE_FAILED'));
@@ -271,7 +270,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
             btnClass: 'sb-btn sb-btn-sm sb-btn-outline-info cancel-delete'
-          }
+          },
         ],
         icon: null,
         metaInfo: this.commonUtilService.translateMessage('FILES_DELETED'),
@@ -303,7 +302,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       .subscribe((list) => {
         this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length - list.length}/${contentDeleteRequest.contentDeleteList.length}`);
-        });
+      });
   }
 
   onSortCriteriaChange(sortAttribute): void {
