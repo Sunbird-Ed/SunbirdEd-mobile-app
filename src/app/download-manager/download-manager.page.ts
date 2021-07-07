@@ -114,7 +114,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     return this.contentService.getContentSpaceUsageSummary(req).toPromise()
       .then((res: ContentSpaceUsageSummaryResponse[]) => {
         return this.deviceInfo.getAvailableInternalMemorySize().toPromise()
-        .then(size => {
+        .then((size) => {
             this.storageInfo = {
               usedSpace: res[0].sizeOnDevice,
               availableSpace: parseInt(size, 10)
@@ -157,19 +157,19 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
            downloaded: true,
           },
         };
-        if (this.db.pdb) {
+        if(this.db.pdb){
           let projectData: any = await this.db.customQuery(query);
           if (projectData.docs) {
-            projectData.docs.sort(function(a, b) {
-              return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
-            });
-            projectData.docs.map(doc => {
-              doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-              doc.type = 'project'
-              doc.identifier=doc._id;
-              data.push(doc)
-
-            })
+            projectData.docs.sort(function (a, b) {
+                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+              });
+                projectData.docs.map(doc => {
+                  doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                  doc.type = 'project'
+                  doc.identifier=doc._id;
+                  data.push(doc)
+                  
+              })
           }
         }
         await this.storage
@@ -255,12 +255,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.DELETE_CLICKED,
       Environment.DOWNLOADS,
-      PageId.BULK_DELETE_CONFIRMATION_POPUP,
-      undefined,
+      PageId.BULK_DELETE_CONFIRMATION_POPUP, undefined,
       valuesMap,
       undefined,
-      featureIdMap.downloadManager.DOWNLOADS_DELETE
-    );
+      featureIdMap.downloadManager.DOWNLOADS_DELETE);
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents
     };
@@ -279,39 +277,33 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         metaInfo: this.commonUtilService.translateMessage('FILES_DELETED'),
         sbPopoverDynamicMainTitle: this.deletedContentListTitle$
       },
-      cssClass: 'sb-popover danger sb-popover-cancel-delete'
+      cssClass: 'sb-popover danger sb-popover-cancel-delete',
     });
     await this.deleteAllConfirm.present();
 
-    this.deleteAllConfirm.onDidDismiss().then(response => {
+    this.deleteAllConfirm.onDidDismiss().then((response) => {
       if (response) {
         this.contentService.clearContentDeleteQueue().toPromise();
       }
     });
     this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
-    this.contentService
-      .getContentDeleteQueue()
-      .pipe(
-        skip(1),
-        takeWhile(list => !!list.length),
-        finalize(async () => {
-          this.deletedContentListTitle$.next(
-            `${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`
-          );
+    this.contentService.getContentDeleteQueue().pipe(
+      skip(1),
+      takeWhile((list) => !!list.length),
+      finalize(async () => {
+        this.deletedContentListTitle$
+          .next(`${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`);
 
-          this.deleteAllConfirm.dismiss();
-          this.events.publish('savedResources:update', {
-            update: true
-          });
-        })
-      )
-      .subscribe(list => {
-        this.deletedContentListTitle$.next(
-          `${contentDeleteRequest.contentDeleteList.length - list.length}/${
-            contentDeleteRequest.contentDeleteList.length
-          }`
-        );
-      });
+        this.deleteAllConfirm.dismiss();
+        this.events.publish('savedResources:update', {
+          update: true
+        });
+      })
+    )
+      .subscribe((list) => {
+        this.deletedContentListTitle$
+          .next(`${contentDeleteRequest.contentDeleteList.length - list.length}/${contentDeleteRequest.contentDeleteList.length}`);
+        });
   }
 
   onSortCriteriaChange(sortAttribute): void {
@@ -347,7 +339,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private subscribeContentUpdateEvents() {
-    this.events.subscribe('savedResources:update', async res => {
+    this.events.subscribe('savedResources:update', async (res) => {
       if (res && res.update) {
         this.getDownloadedContents(false, true);
         await this.getAppStorageInfo();
@@ -371,8 +363,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.DOWNLOADS,
-      PageId.DOWNLOADS
-    );
+      PageId.DOWNLOADS);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
@@ -381,8 +372,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.SETTINGS_CLICKED,
       Environment.DOWNLOADS,
-      PageId.DOWNLOADS
-    );
+      PageId.DOWNLOADS);
     this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
@@ -406,7 +396,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     await this._toast.present();
   }
 
-
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
       tap((volumeInfo) => {
@@ -425,7 +414,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     }
   }
 
-  
   deleteProjects(contents) {
 
     contents.forEach(async (element) => {
