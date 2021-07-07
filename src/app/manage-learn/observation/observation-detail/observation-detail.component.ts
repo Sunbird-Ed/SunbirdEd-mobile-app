@@ -44,7 +44,6 @@ export class ObservationDetailComponent implements OnInit {
   entityType: any;
   entities: any[];
   solutionData: any;
-  solutionDataKey;
   submissionId: unknown;
   generatedKey;
   private _networkSubscription?: Subscription;
@@ -71,8 +70,11 @@ export class ObservationDetailComponent implements OnInit {
       this.solutionId = params.solutionId;
       this.programId = params.programId;
       this.solutionName = params.solutionName;
-      this.generatedKey = this.utils.getUniqueKey(params, storageKeys.entities);
-      this.solutionDataKey= this.utils.getUniqueKey(params, storageKeys.solutionData);
+      let parameters = {
+        solutionId: this.solutionId,
+        programId: this.programId,
+      };
+      this.generatedKey = this.utils.getUniqueKey(parameters, storageKeys.entities);
     });
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
@@ -97,10 +99,8 @@ export class ObservationDetailComponent implements OnInit {
   }
   getLocalData() {
     this.storage.get(this.generatedKey).then(data => {
-      this.entities = data;
-    });
-    this.storage.get(this.solutionDataKey).then(data => {
       this.solutionData = data;
+      this.entities = data.entities;
     });
   }
 
@@ -123,14 +123,12 @@ export class ObservationDetailComponent implements OnInit {
           if (success && success.result && success.result.entities) {
             this.solutionData = success.result;
             this.entities = success.result.entities;
-            this.storage.set(this.generatedKey,this.entities).then(data => {
-              this.entities = data;
-            });
-            this.storage.set(this.solutionDataKey,this.solutionData);
             this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
+            this.storage.set(this.generatedKey,success.result);
+
             //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {
             this.entities = [];
@@ -138,6 +136,7 @@ export class ObservationDetailComponent implements OnInit {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
           }
+          this.observationService.obsTraceObj.observationId = this.observationId;
         },
         error => {
           this.entities = [];
@@ -164,6 +163,9 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   goToObservationSubmission(entity) {
+    if (!this.observationId) {
+      this.observationId = this.solutionData._id; // for autotargeted if get observationId
+    }
     // TODO : Changed logic to call 1st submission in the submission page only .
     this.router.navigate(
       [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`],
@@ -192,7 +194,6 @@ export class ObservationDetailComponent implements OnInit {
         }
       });
       await entityListModal.present();
-  
       await entityListModal.onDidDismiss().then(async entityList => {
         if (entityList.data) {
           let payload = await this.utils.getProfileInfo();

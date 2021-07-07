@@ -18,6 +18,7 @@ export class ObservationService {
     programName: '',
     solutionId: '',
     name: '',
+    observationId:''
   };
 
   constructor(
@@ -89,6 +90,7 @@ export class ObservationService {
         programName: this.obsTraceObj.programName,
         solutionId: this.obsTraceObj.solutionId,
         name: this.obsTraceObj.name,
+        observationId:this.obsTraceObj.observationId,
         lastViewedAt: Date.now(),
         downloadedSubmission: [submissionId],
       };

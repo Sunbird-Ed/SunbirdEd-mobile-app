@@ -203,7 +203,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async deleteContents(emitedContents: EmitedContents) {
     const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
     const observationContents = emitedContents.selectedContents.filter( content => (content['type'] == 'observation'));
-    emitedContents.selectedContents = emitedContents.selectedContents.filter(content => !content['type'] ||content['type'] != 'project' || content['type'] != 'observation');
+    emitedContents.selectedContents = emitedContents.selectedContents.filter(content => !content['type'] || (content['type'] != 'project' && content['type'] != 'observation'));
 
     if (!emitedContents.selectedContents.length) {
       this.deleteProjects(projectContents);

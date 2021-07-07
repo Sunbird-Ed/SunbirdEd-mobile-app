@@ -81,18 +81,16 @@ export class ObservationSubmissionComponent implements OnInit {
       this.entityId = params.entityId;
       this.entityName = params.entityName;
       this.disableObserveAgain = params.disableObserveAgain;
+      let data = {
+        observationId: this.observationId,
+        entityId: this.entityId
+      };
+      this.generatedKey = this.utils.getUniqueKey(data,storageKeys.submissionsList);
     });
   }
 
   ngOnInit() {
-    let data = {
-      observationId: this.observationId,
-      entityId: this.entityId
-    };
-    this.generatedKey = this.utils.getUniqueKey(
-      data,
-      storageKeys.submissionsList
-    );
+   
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
         this.networkFlag = available;
@@ -110,6 +108,7 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+  
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
