@@ -127,6 +127,7 @@ export class GuestProfilePage implements OnInit {
     const deviceLocationInfo = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
     if (deviceLocationInfo) {
       this.deviceLocation = JSON.parse(deviceLocationInfo);
+      window['segmentation'].SBTagService.pushTag(this.deviceLocation, TagPrefixConstants.USER_LOCATION, true);
     }
 
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
@@ -139,6 +140,7 @@ export class GuestProfilePage implements OnInit {
           medium: res.medium,
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        window['segmentation'].SBTagService.pushTag([res.profileType], TagPrefixConstants.USER_ROLE, true);
         this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
         this.refreshSignInCard();
