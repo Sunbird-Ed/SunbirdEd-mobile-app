@@ -1114,7 +1114,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming,
-        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent);
+        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent, this.maxAttemptAssessment);
       this.downloadAndPlay = false;
     }
   }
