@@ -12,8 +12,6 @@ export class ReportModalFilter implements OnInit {
   filteredData: any;
   data: any;
   dataType: any;
-  // allQuestions;
-  // filteredQuestions;
 
   constructor(
     public navCtrl: NavController,
@@ -27,8 +25,6 @@ export class ReportModalFilter implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.allQuestions = this.navParams.get('allQuestions');
-    // this.filteredQuestions = this.navParams.get('filteredQuestions');
     this.data = this.navParams.get('data');
     this.filteredData = this.navParams.get('filteredData');
     this.dataType = this.navParams.get('dataType');
