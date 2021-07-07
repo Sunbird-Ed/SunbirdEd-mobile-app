@@ -64,6 +64,7 @@ export class ObservationHomeComponent implements OnInit {
     );
     this.generatedKey = this.profileInfo.generatedKey;
     this.solutionList = [];
+    this.page =1;
     this.networkFlag ? this.getPrograms() : this.getLocalData();
   }
   async getPrograms() {
@@ -176,6 +177,8 @@ export class ObservationHomeComponent implements OnInit {
 
   checkLocalDownloadedSolutions() {
     this.downloadedSolutions.forEach(ds => {
+      console.log(this.solutionList,"kkk")
+      if(this.solutionList){
         if (
           !this.solutionList.some(
             item =>
@@ -184,6 +187,11 @@ export class ObservationHomeComponent implements OnInit {
         ) {
           this.solutionList.push(ds);
         }
+      }else{
+        this.solutionList= this.downloadedSolutions;
+        console.log(this.solutionList,"this.solutionList")
+      }
+        
     });
   }
 }
