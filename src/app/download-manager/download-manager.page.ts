@@ -56,8 +56,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
   storageDestination: any;
   private deletedContentListTitle$?: BehaviorSubject<string>;
-  @ViewChild('downloadsTab', { static: false })
-  downloadsTab: DownloadsTabComponent;
+  @ViewChild('downloadsTab', { static: false }) downloadsTab: DownloadsTabComponent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -114,10 +113,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     const req: ContentSpaceUsageSummaryRequest = { paths: [this.storageService.getStorageDestinationDirectoryPath()] };
     return this.contentService.getContentSpaceUsageSummary(req).toPromise()
       .then((res: ContentSpaceUsageSummaryResponse[]) => {
-        return this.deviceInfo
-          .getAvailableInternalMemorySize()
-          .toPromise()
-          .then(size => {
+        return this.deviceInfo.getAvailableInternalMemorySize().toPromise()
+        .then(size => {
             this.storageInfo = {
               usedSpace: res[0].sizeOnDevice,
               availableSpace: parseInt(size, 10)
@@ -168,18 +165,17 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             });
             projectData.docs.map(doc => {
               doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-              doc.type = 'project';
-              doc.identifier = doc._id;
-              data.push(doc);
+              doc.type = 'project'
+              doc.identifier=doc._id;
+              data.push(doc)
 
-            });
+            })
           }
         }
         await this.storage
         .getLocalStorage(storageKeys.downloadedObservations)
         .then(resp => {
           resp.sort(function(a, b) {
-            console.log(new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf(),"new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf()")
             return ( new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf());
           });
           resp.map(res => {
@@ -214,9 +210,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       this.deleteObservations(observationContents);
       return;
     }
-    this.deleteProjects(projectContents);
+    this.deleteProjects(projectContents)
     const contentDeleteRequest: ContentDeleteRequest = {
-      contentDeleteList: emitedContents.selectedContents
+      contentDeleteList: emitedContents.selectedContents,
     };
 
     this.deleteObservations(observationContents);
@@ -229,9 +225,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
 
-      this.contentService
-        .deleteContent(contentDeleteRequest)
-        .toPromise()
+      this.contentService.deleteContent(contentDeleteRequest).toPromise()
         .then(async (data: ContentDeleteResponse[]) => {
           await this.loader.dismiss();
           this.loader = undefined;
