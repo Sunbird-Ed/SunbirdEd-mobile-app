@@ -54,7 +54,7 @@ export class GenericPopUpService {
     });
     await alert.present();
     setTimeout(() => {
-      args.autoDissmiss?alert.dismiss():''
+      args.autoDissmiss?alert.dismiss({ isLeftButtonClicked: true }):''
     },1000);
     const { data } = await alert.onDidDismiss();
     return data.isLeftButtonClicked;

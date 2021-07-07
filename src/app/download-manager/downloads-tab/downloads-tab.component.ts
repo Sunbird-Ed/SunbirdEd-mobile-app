@@ -231,7 +231,7 @@ export class DownloadsTabComponent implements OnInit {
           contentId: element.identifier,
           isChildContent: false
         };
-        element['type']=='project'?contentDelete['type']=element['type']:null
+        element['type']=='project'||element['type']=='observation'?contentDelete['type']=element['type']:null
         this.selectedContentsInfo.totalSize += element.sizeOnDevice;
         this.selectedContents.push(contentDelete);
       }

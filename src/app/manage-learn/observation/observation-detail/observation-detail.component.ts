@@ -90,10 +90,10 @@ export class ObservationDetailComponent implements OnInit {
     this.headerService.updatePageConfig(this.headerConfig);
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this.networkFlag ? this.getObservationEntities() : this.getLocalData();
-    this.observationService.updateLastViewed()
   }
 
   ngOnInit() {
+    this.observationService.updateLastViewed()
   }
   getLocalData() {
     this.storage.get(this.generatedKey).then(data => {

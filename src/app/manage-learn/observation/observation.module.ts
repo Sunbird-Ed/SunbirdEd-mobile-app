@@ -24,6 +24,6 @@ import { CoreModule } from '../core/core.module';
     IonicModule,
     FormsModule,
   ],
-  providers: [ObservationService],
+  providers: [],
 })
 export class ObservationModule {}
