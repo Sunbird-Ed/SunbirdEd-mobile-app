@@ -259,17 +259,12 @@ export class DownloadManagerPage
     const observationContents = emitedContents.selectedContents.filter(
       content => content["type"] == "observation"
     );
-    emitedContents.selectedContents = emitedContents.selectedContents.filter(
-      content =>
-        !content["type"] ||
-        content["type"] != "project" ||
-        content["type"] != "observation"
+    emitedContents.selectedContents = emitedContents.selectedContents.filter(content =>!content["type"] || (content["type"] != "project" && content["type"] != "observation")
     );
 
     if (!emitedContents.selectedContents.length) {
       this.deleteProjects(projectContents);
       this.deleteObservations(observationContents);
-
       return;
     }
     this.deleteProjects(projectContents);
@@ -527,24 +522,14 @@ export class DownloadManagerPage
       );
     });
   }
-  deleteObservations(content) {
-    let resp;
-    this.storage
-    .getLocalStorage(storageKeys.downloadedObservations)
-    .then(resp => {
-      resp = resp;
-      resp.forEach((ds, index) => {
-        let identifier = ds.programId + ds.solutionId;
-        content.forEach(cnt => {
-          if (cnt.contentId == identifier) {
-            resp.splice(index, 1);
-            this.storage.setLocalStorage(storageKeys.downloadedObservations,resp);
-            this.events.publish("savedResources:update", {
-              update: true
-            });
-          }
-        });
-      });
-    });
+  async deleteObservations(content) {
+    let resp = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
+    let contentIds = content.map(c => c.contentId)
+    resp=resp.filter(r=>!contentIds.includes(r.programId+r.solutionId))
+    await this.storage.setLocalStorage(storageKeys.downloadedObservations,resp);
+    this.events.publish("savedResources:update", {update: true});
+      this.commonUtilService.showToast(
+        this.commonUtilService.translateMessage("MSG_RESOURCE_DELETED")
+      );
   }
 }
