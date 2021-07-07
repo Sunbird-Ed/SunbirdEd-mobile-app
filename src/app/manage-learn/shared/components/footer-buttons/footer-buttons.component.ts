@@ -3,7 +3,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnInit,
   OnChanges,
 } from "@angular/core";
 import { UtilsService } from '@app/app/manage-learn/core';
@@ -61,14 +60,11 @@ export class FooterButtonsComponent implements OnChanges {
   }
 
   gpsFlowChecks(action, status) {
-    // console.log("GPS: "+this.enableGps)
-    // console.log(JSON.stringify(this.data))
     if (this.updatedData.responseType.toLowerCase() === "slider") {
       if (
         !this.updatedData.gpsLocation ||
         JSON.stringify(this._data.value) !== JSON.stringify(this.updatedData.value)
       ) {
-        // this.getGpsLocation(action, status);
       } else if (JSON.stringify(this._data.value) === JSON.stringify(this.updatedData.value)) {
         if (action === "next") {
           this.next(status);
@@ -82,7 +78,6 @@ export class FooterButtonsComponent implements OnChanges {
         // &&
         // this.utils.isPageQuestionComplete(this.updatedData)
       ) {
-        // this.getGpsLocation(action, status);
       } else {
         if (action === "next") {
           this.next(status);
@@ -91,7 +86,6 @@ export class FooterButtonsComponent implements OnChanges {
         }
       }
     } else if (JSON.stringify(this._data.value) !== JSON.stringify(this.updatedData.value)) {
-      // this.getGpsLocation(action, status);
     } else {
       if (action === "next") {
         this.next(status);

@@ -6,7 +6,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
-// import { IOSFilePicker } from "@ionic-native/file-picker";
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -177,12 +176,6 @@ export class ImageUploadComponent implements OnInit {
   }
 
   filePickerForIOS() {
-    // this.iosFilePicker
-    //   .pickFile()
-    //   .then((data) => {
-    //     this.checkForLocalFolder("file://" + data);
-    //   })
-    //   .catch((error) => { });
   }
 
   // For android
@@ -228,16 +221,19 @@ export class ImageUploadComponent implements OnInit {
       .getPicture(options)
       .then((imagePath) => {
         this.checkForLocalFolder(imagePath);
-        // this.saveToLibrary(imagePath);
       })
-      .catch((error) => { });
+      .catch((error) => {
+        console.error(error)
+       });
   }
 
   saveToLibrary(url): void {
     this.photoLibrary
       .saveImage(url, "samiksha")
       .then((data) => { })
-      .catch((error) => { });
+      .catch((error) => { 
+        console.error(error)
+      });
   }
 
   checkForLocalFolder(imagePath) {
@@ -315,7 +311,9 @@ export class ImageUploadComponent implements OnInit {
         this.setLocalDatas(fileName);
 
       })
-      .catch((error) => { });
+      .catch((error) => { 
+        console.error(error)
+      });
   }
 
   setLocalDatas(fileName) {
@@ -404,25 +402,6 @@ export class ImageUploadComponent implements OnInit {
   }
 
   updateLocalImageList() {
-    // this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //   data = JSON.parse(data);
-    //   if(!this.generalQuestion)
-    //   data[this.submissionId][this.evidenceId] = [...data[this.submissionId][this.evidenceId], ...this.allLocalImageList][this.submissionId][this.evidenceId] ;
-    //   else
-    //   data[this.submissionId] = [ ... data[this.submissionId] , ... this.allLocalImageList][this.submissionId] ;
-    //   this.localStorage.setLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList' , JSON.stringify(data))
-    //   // this.utils.setLocalImages(this.allLocalImageList, this.generalQuestion);
-    //   this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //     console.log(data   + " updating");
-    //     this.allLocalImageList = JSON.parse(data)
-    // }).catch(error =>{});
-    // }).catch( data =>{
-    //   this.localStorage.setLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList' , JSON.stringify(this.allLocalImageList));
-    //   this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //     console.log(data + " setting");
-    //     this.allLocalImageList = JSON.parse(data)
-    // }).catch(error =>{});
-    // })
   }
 
   previewFile(fileName, extension) {
@@ -433,7 +412,6 @@ export class ImageUploadComponent implements OnInit {
       )
       .then(() => console.log("File is opened"))
       .catch((e) => {
-        // this.utils.openToast();
         this.toast.openToast("No file readers available")
       });
   }
@@ -491,8 +469,6 @@ export class ImageUploadComponent implements OnInit {
                   this.fileName
                 );
                 this.mediaObject.startRecord();
-                // this.audio = this.media.create(this.filesPath);
-                // this.audio.startRecord();
                 this.startTimer();
               },
               (error) => { }
@@ -597,17 +573,8 @@ export class ImageUploadComponent implements OnInit {
           });
       })
       .catch((error) => {
+        console.error(error)
       });
-    // const permissionsArray = [
-    //   this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
-    //   this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
-    //   this.androidPermissions.PERMISSION.RECORD_AUDIO
-    // ]
-    // this.androidPermissions.requestPermissions(permissionsArray).then(success => {
-    //   success.hasPermission ? this.startRecord() : this.utils.openToast("Please accept the permissions to use this feature")
-    // }).catch(error => {
-    //   this.utils.openToast("Please accept the permissions to use this feature")
-    // })
   }
 
   stopRecord() {
