@@ -442,6 +442,11 @@ export class UtilsService {
               [this.profile.role]: this.requiredFields
             };
             this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
+            this.storage.get(storageKeys.mandatoryFields).then(ggg =>{
+              console.log(ggg,"hhhh");
+             console.log(this.profile,"fatadaad");
+            })
+            console.log( this.mandatoryFields[this.profile.state][this.profile.role]," this.mandatoryFields[this.profile.state][this.profile.role]");
             this.checkMandatoryFields(
               this.mandatoryFields[this.profile.state][this.profile.role]
             );
@@ -459,19 +464,26 @@ export class UtilsService {
   }
 
   checkMandatoryFields(requiredFields) {
-    let allFieldsPresent = true;
-    for (const field of requiredFields) {
-      if (!this.profile[field]) {
-        allFieldsPresent = false;
-        break;
+    console.log(requiredFields,"requiredFields");
+    if(requiredFields){
+      let allFieldsPresent = true;
+      for (const field of requiredFields) {
+        if (!this.profile[field]) {
+          allFieldsPresent = false;
+          break;
+        }
       }
-    }
-    if (!allFieldsPresent) {
+      if (!allFieldsPresent) {
+        this.openProfileUpdateAlert();
+        return false;
+      } else {
+        return true;
+      }
+    }else{
       this.openProfileUpdateAlert();
       return false;
-    } else {
-      return true;
     }
+  
   }
 
   async getMandatoryEntitiesList(): Promise<any> {
@@ -538,16 +550,17 @@ export class UtilsService {
           mandatoryFields ? resolve(this.profile) : resolve(null);
         } else {
           this.storage.get(storageKeys.mandatoryFields).then(data => {
-            if (data[this.profile.state]) {
-              allFieldsPresent = this.checkMandatoryFields(
+            if (data && data[this.profile.state]) {
+              console.log(  data[this.profile.state][this.profile.role],"  data[this.profile.state][this.profile.role]");
+            this.checkMandatoryFields(
                 data[this.profile.state][this.profile.role]
               );
-              if (!allFieldsPresent) {
-                mandatoryFields = this.getMandatoryEntities();
-                mandatoryFields ? resolve(this.profile) : resolve(null);
-              } else {
-                resolve(this.profile);
-              }
+              // if (!allFieldsPresent) {
+              //   // mandatoryFields = this.getMandatoryEntities();
+              //   mandatoryFields ? resolve(this.profile) : resolve(null);
+              // } else {
+              //   resolve(this.profile);
+              // }
             } else {
               this.openProfileUpdateAlert();
             }
@@ -599,7 +612,7 @@ export class UtilsService {
       .forEach(function(v, i) {
         generateKey = generateKey + userData[v];
       });
-    generateKey = generateKey + type + this.userId;
+    generateKey = generateKey + type;
     return generateKey;
   }
 

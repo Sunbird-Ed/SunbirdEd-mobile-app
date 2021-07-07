@@ -14,7 +14,10 @@ import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, P
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-
+import { Storage } from '@ionic/storage';
+import { storageKeys } from '@app/app/manage-learn/storageKeys';
+import { UtilsService } from '@app/app/manage-learn/core';
+import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
@@ -24,6 +27,7 @@ export class DownloadsTabComponent implements OnInit {
 
   @Input() downloadedContents: Content[] = [];
   @Output() deleteContents = new EventEmitter();
+  @Output() deleteObservation = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
   showLoader = false;
   selectedContents: ContentDelete[] = [];
@@ -45,6 +49,9 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
     private headerService: AppHeaderService,
+    private storage : Storage,
+    private utils : UtilsService,
+    public obsService: ObservationService,
     private router:Router) {
   }
 
@@ -66,9 +73,10 @@ export class DownloadsTabComponent implements OnInit {
         contentId: identifier,
         isChildContent: false
       };
-      type=='project' ? contentDelete['type']=type:null
+      type=='project'||  type=='observation' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
     }
+
     this.telemetryGeneratorService.generatePageViewTelemetry(
       identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP, Environment.DOWNLOADS);
     const deleteConfirm = await this.popoverCtrl.create({
@@ -297,6 +305,9 @@ export class DownloadsTabComponent implements OnInit {
     if (content.type == 'project') {
       this.navigateToProjectDetails(content)
       return
+    } else if(content.type == 'observation'){
+      this.navigateToObservationDetails(content)
+      return
     }
     const corRelationList: Array<CorrelationData> = [{
         id: CorReleationDataType.DOWNLOADS,
@@ -326,4 +337,45 @@ export class DownloadsTabComponent implements OnInit {
        },
      });
   }
+
+  navigateToObservationDetails(solution) {
+    let { programId, solutionId, _id: observationId, name: solutionName } = solution;
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+      queryParams: {
+        programId: programId,
+        solutionId: solutionId,
+        observationId: observationId,
+        solutionName: solutionName,
+      },
+    }).then(success => {
+      this.obsService.obsTraceObj.programId = programId;
+      this.obsService.obsTraceObj.solutionId = solutionId;
+      this.obsService.obsTraceObj.name = solutionName;
+      this.obsService.obsTraceObj.programName = solution.programName;
+    });
+ }
+
+ async showObsDeletePopup(identifier){
+  this.telemetryGeneratorService.generatePageViewTelemetry(
+    identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP, Environment.DOWNLOADS);
+  const deleteConfirm = await this.popoverCtrl.create({
+    component: SbPopoverComponent,
+    componentProps: {
+      sbPopoverHeading: this.commonUtilService.translateMessage('DELETE_CONTENT'),
+      actionsButtons: [
+        {
+          btntext: this.commonUtilService.translateMessage('REMOVE'),
+          btnClass: 'popover-color'
+        },
+      ],
+      icon: null,
+      // sbPopoverContent: identifier ? this.commonUtilService.translateMessage('DELETE_CONTENT_WARNING')
+      //   : this.commonUtilService.translateMessage('DELETE_ALL_CONTENT_WARNING')
+    },
+    cssClass: 'sb-popover danger',
+  });
+  await deleteConfirm.present();
+  const { data } = await deleteConfirm.onDidDismiss();
+
+ }
 }

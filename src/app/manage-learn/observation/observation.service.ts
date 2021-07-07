@@ -47,7 +47,6 @@ export class ObservationService {
       };
       this.assessmentService.post(config).subscribe(
         async (success) => {
-          console.log(success);
           this.ulsdp.mapSubmissionDataToQuestion(success.result, true);
           const generalQuestions = success.result['assessment']['generalQuestions']
             ? success.result['assessment']['generalQuestions']
@@ -114,7 +113,6 @@ export class ObservationService {
       )[0];
       if (currentObs) {
         let downloadedSubmissionList = currentObs.downloadedSubmission;
-        console.log(downloadedSubmissionList);
         return downloadedSubmissionList;
       }
     } catch (error) {
