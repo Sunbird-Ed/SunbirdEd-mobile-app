@@ -357,6 +357,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         break;
     }
   }
+  
   private redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

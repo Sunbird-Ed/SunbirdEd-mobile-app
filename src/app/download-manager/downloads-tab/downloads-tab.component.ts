@@ -14,9 +14,6 @@ import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, P
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-import { Storage } from '@ionic/storage';
-import { storageKeys } from '@app/app/manage-learn/storageKeys';
-import { UtilsService } from '@app/app/manage-learn/core';
 import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
@@ -27,7 +24,6 @@ export class DownloadsTabComponent implements OnInit {
 
   @Input() downloadedContents: Content[] = [];
   @Output() deleteContents = new EventEmitter();
-  @Output() deleteObservation = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
   showLoader = false;
   selectedContents: ContentDelete[] = [];
@@ -49,8 +45,6 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    private storage : Storage,
-    private utils : UtilsService,
     public obsService: ObservationService,
     private router:Router) {
   }
