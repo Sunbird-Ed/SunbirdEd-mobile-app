@@ -81,9 +81,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
   concatProfileFilter: Array<string> = [];
-  boards: string;
-  medium: string;
-  grade: string;
   profile: Profile;
   guestUser: boolean;
   appLabel: string;
@@ -107,6 +104,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   homeDataAvailable = false;
   displayBanner: boolean;
   bannerSegment: any;
+  preferenceList = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -217,16 +215,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           acc[category.code] = category;
           return acc;
         }, {});
-
-        if (this.profile.board && this.profile.board.length) {
-          this.boards = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.board, 'board'));
-        }
-        if (this.profile.medium && this.profile.medium.length) {
-          this.medium = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.medium, 'medium'));
-        }
-        if (this.profile.grade && this.profile.grade.length) {
-          this.grade = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
-        }
+        this.preferenceList = [];
+        setTimeout(() => {
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.board, 'board'));
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.medium, 'medium'));
+          this.preferenceList.push(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
+        }, 0);
       });
   }
 
@@ -240,9 +234,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
         if (lowerCase) {
-          element.name = element.name.toLowerCase();
+          displayValues.push(element.name.toLowerCase());
+        } else {
+          displayValues.push(element.name);
         }
-        displayValues.push(element.name);
       }
     });
 
@@ -662,7 +657,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
                   objectType: ['Content'],
                   ...event.data.action.params.filters
                 }
-              }
+              },
+              hideSearchOption: true,
+              searchWithBackButton: true
             }
           };
           this.router.navigate(['search'], extras);
