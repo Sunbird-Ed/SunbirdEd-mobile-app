@@ -893,7 +893,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       id: courseDetails.sectionName,
       type: CorReleationDataType.SECTION
     }, {
-      id: identifier,
+      id: identifier || '',
       type: CorReleationDataType.ROOT_ID
     }];
     if (courseDetails.isFilterApplied) {

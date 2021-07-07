@@ -634,7 +634,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   navigateToSpecificLocation(event) {
-    console.log('banner', event);
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({ id: event.data.code || '', type: 'BannerType' });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_BANNER,
+      '',
+      Environment.HOME,
+      PageId.HOME, undefined, undefined, undefined,
+      corRelationList
+     );
     switch (event.data.code) {
       case 'banner_external_url':
            this.commonUtilService.openLink(event.data.action.params.route);
@@ -649,15 +657,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'banner_search':
           const extras = {
             state: {
-              source: PageId.SPLASH_SCREEN,
-              preAppliedFilter: {
-                query: event.data.action.params.query || '',
-                filters: {
-                  status: ['Live'],
-                  objectType: ['Content'],
-                  ...event.data.action.params.filters
-                }
-              },
+              source: PageId.HOME,
+              corRelation: corRelationList,
+              preAppliedFilter: event.data.action.params.filter,
               hideSearchOption: true,
               searchWithBackButton: true
             }
@@ -665,18 +667,25 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           this.router.navigate(['search'], extras);
           break;
       case 'banner_content':
-           this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
-           break;
+        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier,
+          undefined, undefined, undefined, undefined, corRelationList);
+        break;
     }
   }
 
   showorHideBanners() {
-    this.bannerSegment = this.segmentationTagService.exeCommands.find((cmd) => {
+    this.bannerSegment = this.segmentationTagService.exeCommands.filter((cmd) => {
       if (cmd.controlFunction === 'BANNER_CONFIG') {
         return cmd;
       }
     });
-    this.displayBanner = (this.bannerSegment && this.bannerSegment.controlFunctionPayload.values.length) ? true : false;
+    this.displayBanner = !!(this.bannerSegment && this.bannerSegment.length);
+    this.bannerSegment = this.bannerSegment.reduce((accumulator, cmd) => {
+      const bannerConfig = cmd.controlFunctionPayload.values.filter((value) =>
+        Number(value.expiry) > Math.floor(Date.now() / 1000));
+      accumulator = accumulator.concat(bannerConfig);
+      return accumulator;
+    }, []);
     if (this.bannerSegment ) {
       this.setBannerConfig();
     }
@@ -685,8 +694,23 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   setBannerConfig() {
     this.displaySections.forEach((section, index) => {
       if (section.dataSrc.type === 'CONTENT_DISCOVERY_BANNER') {
-        this.displaySections[index]['data'] = this.bannerSegment.controlFunctionPayload.values.filter((value) =>
-         Number(value.expiry) > Math.floor(Date.now() / 1000));
+        const corRelationList: Array<CorrelationData> = [];
+        // corRelationList.push({ id: this.boards || '', type: CorReleationDataType.BOARD });
+        // corRelationList.push({ id: this.grade || '', type: CorReleationDataType.CLASS });
+        // corRelationList.push({ id: this.medium || '', type: CorReleationDataType.MEDIUM });
+        corRelationList.push({ id: (this.profile && this.profile.profileType)
+          ? this.profile.profileType : '', type: CorReleationDataType.USERTYPE });
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW, ImpressionSubtype.BANNER,
+          PageId.HOME,
+          Environment.HOME,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+         );
+        this.displaySections[index]['data'] = this.bannerSegment;
       }
     });
   }

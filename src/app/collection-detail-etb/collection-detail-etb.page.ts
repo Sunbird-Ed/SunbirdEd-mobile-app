@@ -1384,7 +1384,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
     const corRelationData = {
-      id: event.rollup[0],
+      id: (event && event.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 
@@ -1395,7 +1395,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   playButtonClick(event) {
     const corRelationData = {
-      id: event.rollup[0],
+      id: (event && event.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 

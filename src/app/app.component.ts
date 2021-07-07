@@ -136,6 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!window['segmentation'].isInitialised) {
         window['segmentation'].init();
       }
+      window['segmentation'].SBTagService.pushTag(['android'], TagPrefixConstants.ALL, true);
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
