@@ -360,10 +360,14 @@ export class ProfilePage implements OnInit {
   formatRoles() {
     this.roles = [];
     if (this.profile && this.profile.roleList) {
-      if (this.profile.organisations && this.profile.organisations.length) {
-        for (let i = 0, len = this.profile.organisations[0].roles.length; i < len; i++) {
-          const roleKey = this.profile.organisations[0].roles[i];
-          const val = this.profile.roleList.find(role => role.id === roleKey);
+      const roles = {};
+      this.profile.roleList.forEach((r) => {
+        roles[r.id] = r;
+      });
+      if (this.profile.roles && this.profile.roles.length) {
+        for (let i = 0, len = this.profile.roles.length; i < len; i++) {
+          const roleKey = this.profile.roles[i].role;
+          const val = roles[roleKey];
           if (val && val.name.toLowerCase() !== 'public') {
             this.roles.push(val.name);
           }
