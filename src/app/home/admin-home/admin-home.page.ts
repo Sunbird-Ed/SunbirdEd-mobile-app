@@ -85,14 +85,11 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private db: DbService,
     private utilsService: UtilsService
   ) {
-    this.events.subscribe("loggedInProfile:update", framework => {
-      this.getProfileData();
-    });
+  
   }
 
   ngOnInit() {
     this.getUserProfileDetails();
-    this.getProfileData();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.getUserProfileDetails();
     });
@@ -366,8 +363,5 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-  }
-  getProfileData() {
-    this.utilsService.getProfileInfo(true);
   }
 }

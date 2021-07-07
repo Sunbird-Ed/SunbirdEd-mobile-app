@@ -17,6 +17,7 @@ import { AlertController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { storageKeys } from "../../storageKeys";
+import { Events } from '@app/util/events';
 
 @Injectable({
   providedIn: "root"
@@ -42,12 +43,18 @@ export class UtilsService {
     private kendra: KendraApiService,
     private aleryCtrl: AlertController,
     private router: Router,
-    private storage: Storage
+    private storage: Storage,
+    private events: Events,
+
   ) {
     this.storage.get(storageKeys.mandatoryFields).then(data =>{
       if (data) {
         this.mandatoryFields = data;
       }
+    });
+
+      this.events.subscribe("loggedInProfile:update", framework => {
+      this.getProfileInfo(true);
     });
   }
 
@@ -426,7 +433,7 @@ export class UtilsService {
   }
 
   async getMandatoryEntities(): Promise<any> {
-    // const profile = await this.getProfileData();
+  this.profile = await this.getProfileData('SERVER');
     return new Promise((resolve, reject) => {
       const config = {
         url:
@@ -438,18 +445,9 @@ export class UtilsService {
         data => {
           if (data.result && data.result.length) {
             this.requiredFields = data.result;
-            this.mandatoryFields[this.profile.state] = {
-              [this.profile.role]: this.requiredFields
-            };
+            this.mandatoryFields[this.profile.state] = { [this.profile.role]: this.requiredFields};
             this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
-            this.storage.get(storageKeys.mandatoryFields).then(ggg =>{
-              console.log(ggg,"hhhh");
-             console.log(this.profile,"fatadaad");
-            })
-            console.log( this.mandatoryFields[this.profile.state][this.profile.role]," this.mandatoryFields[this.profile.state][this.profile.role]");
-            this.checkMandatoryFields(
-              this.mandatoryFields[this.profile.state][this.profile.role]
-            );
+            this.checkMandatoryFields(this.mandatoryFields[this.profile.state][this.profile.role]);
           } else {
             this.openProfileUpdateAlert();
             resolve(false);
@@ -541,7 +539,8 @@ export class UtilsService {
   async getProfileInfo(callMandatory?): Promise<any> {
     //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     return new Promise(async (resolve, reject) => {
-      this.profile = await this.getProfileData();
+      let param = callMandatory ? 'SERVER' :'CACHE'
+      this.profile = await this.getProfileData(param);
       let allFieldsPresent = true;
       let mandatoryFields;
       if (!callMandatory) {
@@ -551,16 +550,15 @@ export class UtilsService {
         } else {
           this.storage.get(storageKeys.mandatoryFields).then(data => {
             if (data && data[this.profile.state]) {
-              console.log(  data[this.profile.state][this.profile.role],"  data[this.profile.state][this.profile.role]");
             this.checkMandatoryFields(
                 data[this.profile.state][this.profile.role]
               );
-              // if (!allFieldsPresent) {
-              //   // mandatoryFields = this.getMandatoryEntities();
-              //   mandatoryFields ? resolve(this.profile) : resolve(null);
-              // } else {
-              //   resolve(this.profile);
-              // }
+              if (!allFieldsPresent) {
+                // mandatoryFields = this.getMandatoryEntities();
+                mandatoryFields ? resolve(this.profile) : resolve(null);
+              } else {
+                resolve(this.profile);
+              }
             } else {
               this.openProfileUpdateAlert();
             }
@@ -568,6 +566,7 @@ export class UtilsService {
         }
       } else {
         mandatoryFields = this.getMandatoryEntities();
+        this.profile = await this.getProfileData('SERVER');
         mandatoryFields ? resolve(this.profile) : resolve(null);
       }
 
@@ -634,7 +633,7 @@ export class UtilsService {
     }
   }
 
-  getProfileData(): Promise<any> {
+  getProfileData(fromData = 'CACHE'): Promise<any> {
     return new Promise((resolve, reject) => {
       this.authService
         .getSession()
@@ -646,7 +645,7 @@ export class UtilsService {
             const serverProfileDetailsRequest = {
               userId: session.userToken,
               requiredFields: ProfileConstants.REQUIRED_FIELDS,
-              from: CachedItemRequestSourceFrom.CACHE
+              from: CachedItemRequestSourceFrom[fromData]
             };
             this.profileService
               .getServerProfilesDetails(serverProfileDetailsRequest)
