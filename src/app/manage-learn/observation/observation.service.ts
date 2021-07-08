@@ -5,7 +5,7 @@ import { urlConstants } from '../core/constants/urlConstants';
 import { AssessmentApiService } from '../core/services/assessment-api.service';
 import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
 import { storageKeys } from '../storageKeys';
-
+//?info: Dont initialise in any modules, obsTraceObj will not work.
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +18,7 @@ export class ObservationService {
     programName: '',
     solutionId: '',
     name: '',
-    observationId:''
+    observationId: '',
   };
 
   constructor(
@@ -27,7 +27,7 @@ export class ObservationService {
     private ulsdp: UpdateLocalSchoolDataService,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService
-  ) { }
+  ) {}
 
   getAssessmentDetailsForObservation(event) {
     return new Promise(async (resolve, reject) => {
@@ -67,7 +67,7 @@ export class ObservationService {
           );
           resolve(success.result.assessment.submissionId);
         },
-        (error) => { }
+        (error) => {}
       );
     });
   }
@@ -90,7 +90,7 @@ export class ObservationService {
         programName: this.obsTraceObj.programName,
         solutionId: this.obsTraceObj.solutionId,
         name: this.obsTraceObj.name,
-        observationId:this.obsTraceObj.observationId,
+        _id: this.obsTraceObj.observationId,
         lastViewedAt: Date.now(),
         downloadedSubmission: [submissionId],
       };
@@ -125,12 +125,12 @@ export class ObservationService {
 
   async updateLastViewed() {
     const key = storageKeys.downloadedObservations;
-    let downloadedObs: any
+    let downloadedObs: any;
     try {
-      downloadedObs =  await this.localStorage.getLocalStorage(key);
+      downloadedObs = await this.localStorage.getLocalStorage(key);
     } catch {
       await this.localStorage.setLocalStorage(key, []);
-      return
+      return;
     }
     try {
       let currentObs = downloadedObs.filter(
@@ -138,12 +138,12 @@ export class ObservationService {
       )[0];
 
       if (currentObs) {
-        currentObs.lastViewedAt = Date.now()
+        currentObs.lastViewedAt = Date.now();
         this.localStorage.setLocalStorage(key, downloadedObs);
         return;
       }
     } catch {
-      console.log('error in last viewed')
+      console.log('error in last viewed');
     }
-}
+  }
 }

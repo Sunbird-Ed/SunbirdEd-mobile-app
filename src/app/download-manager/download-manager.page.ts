@@ -429,10 +429,18 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     });
   }
   async deleteObservations(content) {
-    let resp = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
-    let contentIds = content.map(c => c.contentId)
-    resp=resp.filter(r=>!contentIds.includes(r.programId+r.solutionId))
-    await this.storage.setLocalStorage(storageKeys.downloadedObservations,resp);
+    let downloadedObs = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
+    const contentIds = content.map(c => c.contentId)
+    downloadedObs = downloadedObs.filter(obs => {
+      const shouldDelete = contentIds.includes(obs.programId + obs.solutionId)
+      if (shouldDelete) {
+        obs.downloadedSubmission.forEach(async submission => {
+          await this.storage.deleteOneStorage(this.utils.getAssessmentLocalStorageKey(submission));
+        });
+      } 
+      return !shouldDelete
+    })
+    await this.storage.setLocalStorage(storageKeys.downloadedObservations,downloadedObs);
     this.events.publish("savedResources:update", {update: true});
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage("MSG_RESOURCE_DELETED")

@@ -124,13 +124,7 @@ export class ObservationHomeComponent implements OnInit {
   }
 
   observationDetails(solution) {
-    let {
-      programId,
-      solutionId,
-      _id: observationId,
-      name: solutionName,
- programName
-    } = solution;
+    let { programId, solutionId, _id: observationId, name: solutionName, programName } = solution;
     this.router
       .navigate(
         [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
@@ -143,7 +137,7 @@ export class ObservationHomeComponent implements OnInit {
           }
         }
       )
-      .then(success => {
+      .then(() => {
         this.obsService.obsTraceObj.programId = programId;
         this.obsService.obsTraceObj.solutionId = solutionId;
         this.obsService.obsTraceObj.name = solutionName;
