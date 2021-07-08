@@ -121,7 +121,7 @@ export class AttachmentListPage implements OnInit {
 
             }
           }
-        }
+        };
       }
       function compare(fileType, tabType): boolean {
         tabType = tabType.substr(0, tabType.indexOf("/"));
@@ -129,7 +129,6 @@ export class AttachmentListPage implements OnInit {
         return tabType == fileType;
       }
     }, error => {
-      console.error(error)
     })
   }
 
@@ -148,9 +147,7 @@ export class AttachmentListPage implements OnInit {
     const fileTransfer: FileTransferObject = this.transfer.create();
     fileTransfer.download(attachment.url, this.path + '/' + attachment.name).then(success => {
       this.openFile(attachment)
-    }).catch(error => {
-      console.error(error)
-    });
+    })
   }
   openImage(attachment) {
     this.photoViewer.show(attachment)
