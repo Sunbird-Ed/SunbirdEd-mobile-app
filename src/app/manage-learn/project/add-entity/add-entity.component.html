@@ -1,64 +1,48 @@
 <ion-toolbar class="_bottomBorder">
   <ion-title>
-    {{ title | translate }}
+    {{title | translate}}
   </ion-title>
   <ion-buttons (click)="close()" slot="start" class="padding">
-    <ion-icon
-      name="arrow-back"
-      slot="icon-only"
-      style="padding-left: 10px"></ion-icon>
+    <ion-icon name="arrow-back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
 <ion-content>
-  <div *ngIf="subEntities">
-    <ion-searchbar
-      debounce="1000"
-      (ionInput)="onSearch($event)"
-      search-icon="search"></ion-searchbar>
+  <div *ngIf="subEntities ">
+    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)" search-icon="search"></ion-searchbar>
     <div class="ion-padding">
-      <ion-icon name="funnel" color="primary"></ion-icon>
-      {{ "FRMELEMNTS_LBL_FILTER" | translate }}
-      <ion-row>
-        <ion-col>
-          <ion-item>
-            <ion-label>{{ "FRMELEMNTS_BTN_ENTITY" | translate }}</ion-label>
-            <ion-select
-              interface="popover"
-              value="{{ childEntity }}"
-              (ionChange)="selectSubEntity($event)">
-              <ion-select-option
-                style="text-transform: capitalize !important"
-                *ngFor="let subEntity of subEntities"
-                value="{{ subEntity.value }}">{{ subEntity.name | titlecase }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-      <h5 class="entity-name">{{ childEntity }}</h5>
+      <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTER' | translate}}
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>{{'FRMELEMNTS_BTN_ENTITY' | translate}}</ion-label>
+              <ion-select interface="popover" value={{childEntity}} (ionChange)="selectSubEntity($event)">
+                <ion-select-option style="text-transform: capitalize !important;"  *ngFor="let subEntity of subEntities" value="{{subEntity.value}}">{{subEntity.name | titlecase}}</ion-select-option>
+                
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+      <h5 class="entity-name"> {{childEntity}}</h5>
       <ion-radio-group>
         <ion-card class="enitity-list" *ngFor="let entity of entities">
           <ion-item lines="none">
-            <ion-label>{{ entity.name }}</ion-label>
-            <ion-radio
-              slot="start"
-              (click)="selectEntity(entity)"
-              value="{{ entity.value }}">
+            <ion-label>{{entity.name}}</ion-label>
+            <ion-radio slot="start" (click)="selectEntity(entity)" value="{{entity.value}}">
             </ion-radio>
           </ion-item>
         </ion-card>
       </ion-radio-group>
-      <div
-        class="loadmore-btn"
-        *ngIf="entities.length && entityCount > entities.length">
+      <div class="loadmore-btn" *ngIf="entities.length && entityCount > entities.length">
         <ion-button (click)="loadMoreEntities()">
-          {{ "FRMELEMNTS_BTN_LOAD_MORE" | translate }}</ion-button>
+          {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
       </div>
+
       <app-no-data *ngIf="noSubEntity"></app-no-data>
     </div>
   </div>
 </ion-content>
 <ion-footer>
-  <div class="footer-btn" (click)="addEntity()">
-    {{ "FRMELEMNTS_LBL_ADD_ENTITY" | translate }}
+  <div class="footer-btn" (click)="addEntity()">{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}
   </div>
 </ion-footer>
