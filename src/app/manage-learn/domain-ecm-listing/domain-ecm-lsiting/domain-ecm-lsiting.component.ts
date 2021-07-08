@@ -54,9 +54,7 @@ export class DomainEcmLsitingComponent {
           .then((successData) => {
             this.generalQuestions = successData;
           })
-          .catch((error) => {console.error(error)});
       })
-      .catch((error) => {console.error(error)});
   }
 
   mapCompletedAndTotalQuestions() {
