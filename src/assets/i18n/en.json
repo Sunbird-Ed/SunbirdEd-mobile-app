@@ -1478,5 +1478,6 @@
   "SELECT_YOB": "Select year of birth",
   "DETAILS": "Content Details",
   "CONTENT_RELEVANT_MSG": "This content is relevant for: ",
-  "DOWNLOAD_FORM":"Do you want to download this form?"
+  "DOWNLOAD_FORM":"Do you want to download this form?",
+  "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded! You can now use it offline"
 }

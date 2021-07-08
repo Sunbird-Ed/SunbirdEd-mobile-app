@@ -265,7 +265,7 @@ export class ObservationSubmissionComponent implements OnInit {
           await this.observationService.pushToDownloads(submissionId);
           this.fetchDownloaded();
           let args = {
-            title: "FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED",
+            title: "FRMELEMENTS_MSG_FORM_DOWNLOADED",
             yes: "OKAY",
             autoDissmiss: true
           };
@@ -349,6 +349,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
   async openMenu(event, submission, index) {
     // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+      if (!this.networkFlag) {
+        this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      } else {
     if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
@@ -386,6 +389,7 @@ export class ObservationSubmissionComponent implements OnInit {
         }
       });
     }
+  }
   }
   //  entity actions
   entityActions(e) {

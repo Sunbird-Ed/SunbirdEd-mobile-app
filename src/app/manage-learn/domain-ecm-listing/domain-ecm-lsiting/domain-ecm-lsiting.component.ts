@@ -144,7 +144,6 @@ export class DomainEcmLsitingComponent implements OnInit {
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
       let action = await this.openAction(entity, evidenceIndex);
-      console.log(action);
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -228,7 +227,7 @@ export class DomainEcmLsitingComponent implements OnInit {
     await this.observationService.pushToDownloads(this.submissionId);
     this.fetchDownloaded();
     let successArgs = {
-      title: 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED',
+      title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
       yes: 'OKAY',
       autoDissmiss: true,
     };
