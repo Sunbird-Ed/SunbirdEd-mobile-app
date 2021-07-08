@@ -27,7 +27,7 @@
     *ngFor="let submission of submissions"
     (click)="goToEcm(submission)"
   >
-    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
+    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}" [ellipsis]="true">
         <div arrow *ngIf="!downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc  margin-r-10"
       (click)="$event.stopPropagation(); pushToLocal(submission)">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
@@ -38,7 +38,7 @@
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
     </div>
       <ion-icon
-        class="mg-popup-btn-icon"
+        class="mg-popup-btn-icon fs-1-143"
         name="ellipsis-vertical-outline"
         arrow
         *ngIf="submission.status !== 'completed' && submission?.status !== 'ratingPending'"

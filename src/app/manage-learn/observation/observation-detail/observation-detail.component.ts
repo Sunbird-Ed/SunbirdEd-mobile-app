@@ -77,7 +77,7 @@ export class ObservationDetailComponent implements OnInit {
       this.generatedKey = this.utils.getUniqueKey(parameters, storageKeys.entities);
     });
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
-      async (available: boolean) => {
+       (available: boolean) => {
         this.networkFlag = available;
         this.networkFlag ? this.getObservationEntities() : this.getLocalData();
       }
@@ -162,10 +162,7 @@ export class ObservationDetailComponent implements OnInit {
     );
   }
 
-  goToObservationSubmission(entity) {
-    if (!this.observationId) {
-      this.observationId = this.solutionData._id; // for autotargeted if get observationId
-    }
+  goToObservationSubmission(entity) { 
     // TODO : Changed logic to call 1st submission in the submission page only .
     this.router.navigate(
       [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`],
