@@ -129,9 +129,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           document.getElementById('stop').style.pointerEvents = 'none';
         }
       })
-      .catch((error) => {
-        console.error(error)
-      });
   }
 
   ionViewWillEnter() {
@@ -249,9 +246,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           this.location.back();
         }
       })
-      .catch((error) => {
-        console.error(error)
-      });
   }
 
   async openActionSheet() {
@@ -317,7 +311,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
             text: translateObject['NO'],
             role: 'cancel',
             handler: () => {
-              //console.log('Cancel clicked');
             },
           },
           {
@@ -349,6 +342,34 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           selectedEvidenceIndex: this.selectedEvidenceIndex,
         },
       });
+      // TODO:Remove gps check
+      // this.diagnostic
+      //   .isLocationAuthorized()
+      //   .then((authorized) => {
+      //     if (!AppConfigs.enableGps) {
+      //       return true;
+      //     }
+      //     if (authorized) {
+      //       return this.diagnostic.isLocationEnabled();
+      //     } else {
+      //       this.toast.openToast("Please enable location permission to continue.");
+      //     }
+      //   })
+      //   .then((success) => {
+      //     if (success) {
+      //       const params = {
+      //         _id: this.submissionId,
+      //         name: this.schoolName,
+      //         selectedEvidence: this.selectedEvidenceIndex,
+      //       };
+      //       this.navCtrl.push(ImageListingPage, params);
+      //     } else {
+      //       this.ngps.checkForLocationPermissions();
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     this.ngps.checkForLocationPermissions();
+      //   });
     } else {
       this.translate.get('FRMELEMNTS_MSG_CONNECT_TO_INTERNET').subscribe((translations) => {
         this.toast.openToast(translations);
