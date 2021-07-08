@@ -222,18 +222,12 @@ export class ImageUploadComponent implements OnInit {
       .then((imagePath) => {
         this.checkForLocalFolder(imagePath);
       })
-      .catch((error) => {
-        console.error(error)
-       });
   }
 
   saveToLibrary(url): void {
     this.photoLibrary
       .saveImage(url, "samiksha")
       .then((data) => { })
-      .catch((error) => { 
-        console.error(error)
-      });
   }
 
   checkForLocalFolder(imagePath) {
@@ -311,9 +305,6 @@ export class ImageUploadComponent implements OnInit {
         this.setLocalDatas(fileName);
 
       })
-      .catch((error) => { 
-        console.error(error)
-      });
   }
 
   setLocalDatas(fileName) {
@@ -572,9 +563,7 @@ export class ImageUploadComponent implements OnInit {
             console.log("Please accept the permissions to use this feature");
           });
       })
-      .catch((error) => {
-        console.error(error)
-      });
+
   }
 
   stopRecord() {
