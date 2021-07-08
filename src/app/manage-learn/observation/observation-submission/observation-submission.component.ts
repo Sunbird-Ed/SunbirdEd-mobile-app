@@ -198,7 +198,6 @@ export class ObservationSubmissionComponent implements OnInit {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
-      .catch((error) => {console.error(error)});
   }
 
   goToEcm(submission) {
@@ -238,7 +237,6 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => {console.error(error)});
   }
   async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
