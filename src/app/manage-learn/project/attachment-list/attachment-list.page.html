@@ -8,7 +8,7 @@
     <div [ngSwitch]="type">
       <div *ngSwitchCase="'images'">
         <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
             <ion-card-header class="project-card _capitalize">
               {{task.taskName}}
             </ion-card-header>
@@ -30,7 +30,7 @@
       </div>
       <div *ngSwitchCase="'files'">
         <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
             <ion-card-header class="project-card _capitalize">
               {{task.taskName}}
             </ion-card-header>
