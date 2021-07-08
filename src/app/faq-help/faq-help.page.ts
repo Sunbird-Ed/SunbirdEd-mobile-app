@@ -151,9 +151,7 @@ export class FaqHelpPage implements OnInit {
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
         faqRequest.faqUrl = res.value;
-      }).catch(err => {
-        console.error(err)
-      });
+      })
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
     if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -292,8 +290,8 @@ export class FaqHelpPage implements OnInit {
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
       PageId.FAQ,
+      undefined,
       undefined);
-
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;
