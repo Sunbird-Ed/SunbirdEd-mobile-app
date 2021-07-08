@@ -1,4 +1,4 @@
-import {Animation, AnimationBuilder, createAnimation} from '@ionic/core';
+import { createAnimation } from '@ionic/core';
 
 export const animationGrowInFromEvent = (event) => {
     return (baseEl: HTMLElement) => {

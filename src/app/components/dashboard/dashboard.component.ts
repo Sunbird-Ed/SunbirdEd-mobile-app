@@ -50,12 +50,6 @@ export class DashboardComponent implements OnInit {
     const appName = await this.appVersion.getAppName();
     await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
       if (result) {
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.TOUCH,
-        //   InteractSubtype.DOWNLOAD_CLICKED,
-        //   Environment.USER,
-        //   PageId.ACTIVITY_DETAIL, undefined,
-        // );
         const expTime = new Date().getTime();
         const filename = this.collectionName.trim() + '_' + expTime + '.csv';
         const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;

@@ -103,7 +103,6 @@ export class GraphCircleComponent implements OnInit {
       this.data.series_new.color.map((c, i) => {
         this.extraColor.splice(c.pos, 0, c.color);
       });
-      // this.data.series_new.color = [...this.data.series_new.color, ...this.extraColor];
       this.data.series_new.color = this.extraColor;
       this.chartColors = [{ backgroundColor: this.data.series_new.color }];
     } else {

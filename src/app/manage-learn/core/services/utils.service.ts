@@ -154,9 +154,6 @@ export class UtilsService {
         if (!task.submissionDetails && !task.children.length) {
           task.status = statusType.notStarted;
         }
-        /*  if (!task.submissionDetails  && task.children.length) {
-           task.status = statusType.inProgress;
-         } */
       }
     }
     projectData.status = this.calculateStatus(projectData.tasks);
@@ -172,9 +169,6 @@ export class UtilsService {
     });
     const inProgressList = _.filter(items, function (el) {
       return !el.isDeleted && el.status === statusType.inProgress;
-    });
-    const notStartedList = _.filter(items, function (el) {
-      return el.status === statusType.notStarted;
     });
     const validchildArray = _.filter(items, function (el) {
       return !el.isDeleted;
@@ -406,23 +400,8 @@ export class UtilsService {
       this.kendra.get(config).subscribe(data => {
         if (data.result && data.result.length) {
           this.requiredFields = data.result;
-          // let allFieldsPresent = true;
           resolve(data.result);
-          // for (const field of this.requiredFields) {
-          //   if (!this.profile[field]) {
-          //     allFieldsPresent = false;
-          //     break
-          //   }
-          // }
-          // if (!allFieldsPresent) {
-          //   this.openProfileUpdateAlert()
-          //   resolve(false)
-          // } else {
-          //   resolve(true);
-          // }
-        }
         else {
-          // this.openProfileUpdateAlert();
           resolve(false)
         }
       }, error => {

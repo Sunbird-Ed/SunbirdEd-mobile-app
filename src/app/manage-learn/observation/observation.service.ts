@@ -63,7 +63,6 @@ export class ObservationService {
           resolve(success.result.assessment.submissionId);
         },
         (error) => {
-          // this.utils.stopLoader();
         }
       );
     });

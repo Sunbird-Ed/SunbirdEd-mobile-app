@@ -21,7 +21,7 @@ import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { VideoConfig } from './faq-help-data';
@@ -151,8 +151,7 @@ export class FaqHelpPage implements OnInit {
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
         faqRequest.faqUrl = res.value;
-      }).catch(err => {
-      });
+      })
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
     if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {

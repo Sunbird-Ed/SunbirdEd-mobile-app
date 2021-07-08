@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
@@ -11,7 +11,7 @@ import { UpdateTrackerService } from '../../core/services/update-tracker.service
   templateUrl: './domain-ecm-lsiting.component.html',
   styleUrls: ['./domain-ecm-lsiting.component.scss'],
 })
-export class DomainEcmLsitingComponent implements OnInit {
+export class DomainEcmLsitingComponent {
   entityName: any;
   entityData: any;
   entityEvidences: any;
@@ -32,13 +32,11 @@ export class DomainEcmLsitingComponent implements OnInit {
     private router: Router
   ) {
     this.routerParam.queryParams.subscribe((params) => {
-      // this.entityId = params.submisssionId;
       this.submissionId = params.submisssionId;
       this.entityName = params.schoolName;
     });
   }
 
-  ngOnInit() {}
 
   ionViewWillEnter() {
     this.localStorage
@@ -56,9 +54,9 @@ export class DomainEcmLsitingComponent implements OnInit {
           .then((successData) => {
             this.generalQuestions = successData;
           })
-          .catch((error) => {});
+          .catch((error) => {console.error(error)});
       })
-      .catch((error) => {});
+      .catch((error) => {console.error(error)});
   }
 
   mapCompletedAndTotalQuestions() {
@@ -123,7 +121,6 @@ export class DomainEcmLsitingComponent implements OnInit {
 
   async openEvidence(evidenceIndex) {
     this.utils.setCurrentimageFolderName(this.entityEvidences[evidenceIndex].externalId, this.submissionId);
-    // this.selectedEvidenceIndex = evidenceIndex;
     this.currentEvidence = this.entityData['assessment']['evidences'][evidenceIndex];
     this.evidenceSections = this.currentEvidence['sections'];
     this.checkForEvidenceCompletion();
