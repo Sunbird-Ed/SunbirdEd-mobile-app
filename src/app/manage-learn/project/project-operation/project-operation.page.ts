@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, AlertController, Platform } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
@@ -10,6 +10,7 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
@@ -18,13 +19,12 @@ import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
 import cloneDeep from 'lodash/cloneDeep';
 
-
 @Component({
   selector: 'app-project-operation',
   templateUrl: './project-operation.page.html',
   styleUrls: ['./project-operation.page.scss'],
 })
-export class ProjectOperationPage implements OnInit {
+export class ProjectOperationPage  {
   button = 'FRMELEMNTS_BTN_IMPORT_PROJECT';
   private _appHeaderSubscription?: Subscription;
 
@@ -88,7 +88,6 @@ export class ProjectOperationPage implements OnInit {
 
   }
 
-  ngOnInit() { }
   ionViewWillEnter() {
     this.initApp();
     let data;
@@ -287,8 +286,6 @@ export class ProjectOperationPage implements OnInit {
     this.template.isDeleted = false;
     this.db.update(this.template).then(success => {
       newProject ? this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) : this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
-    }).catch(error => {
-      console.error(error)
     })
   }
 
@@ -352,4 +349,3 @@ export class ProjectOperationPage implements OnInit {
     }
    }
 }
-
