@@ -87,8 +87,6 @@ export class AddEntityComponent implements OnInit {
          this.profileData = profileData;
          this.stateId = this.profileData.state;
          this.getSubEntities(this.stateId);
-      }).catch(error => {
-       console.error(error)
       })
 
    }
@@ -98,6 +96,7 @@ export class AddEntityComponent implements OnInit {
       this.getEntities(this.childEntity);
    }
    getSubEntities(stateId) {
+      // to select entityType if already provided
       if (this.entityType) {
          let selist = [];
          let entity = {
