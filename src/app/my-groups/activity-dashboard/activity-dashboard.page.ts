@@ -54,10 +54,6 @@ export class ActivityDashboardPage {
         });
         this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
-        // this.selectedId = this.appGlobalService.selectedActivityCourseId;
-        // this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-        //     '', PageId.ACTIVITY_TOC, Environment.GROUP,
-        //     undefined, undefined, undefined, undefined, this.corRelationList);
         this.groupService.activityService.getDataForDashlets(this.hierarchyData.children, this.aggData).subscribe((data) => {
             console.log('getDataForDashlets data', data);
             this.dashletData = data;

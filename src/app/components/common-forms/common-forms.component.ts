@@ -17,7 +17,7 @@ import { ValueComparator } from './value-comparator';
   templateUrl: './common-forms.component.html',
   styleUrls: ['./common-forms.component.scss'],
 })
-export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit {
   @Output() initialize = new EventEmitter();
   @Output() finalize = new EventEmitter();
   @Output() valueChanges = new EventEmitter();
@@ -55,8 +55,7 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
-  ngOnInit() {
-  }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config']) {

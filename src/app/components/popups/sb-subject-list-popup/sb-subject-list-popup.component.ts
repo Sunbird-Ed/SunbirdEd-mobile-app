@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize, PillTextElipsis} from '@project-sunbird/common-consumption';
-import {CorReleationDataType, Environment, ImpressionType, InteractType, PageId, TelemetryGeneratorService} from '@app/services';
+import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 import {CorrelationData} from 'sunbird-sdk';
 
 @Component({

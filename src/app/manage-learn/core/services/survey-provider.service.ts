@@ -62,19 +62,6 @@ export class SurveyProviderService {
         }
       );
     });
-    // TODO:Remove
-    // const url = AppConfigs.surveyFeedback.getDetailsByLink + link;
-    // return new Promise((resolve, reject) => {
-    //   this.apiProvider.httpGet(
-    //     url,
-    //     (success) => {
-    //       resolve(success);
-    //     },
-    //     (err) => {
-    //       reject(err);
-    //     }
-    //   );
-    // });
   }
 
   async getDetailsById(surveyId, solutionId): Promise<any> {
@@ -100,19 +87,6 @@ export class SurveyProviderService {
       );
     });
 
-    // return this.httpClient.get('assets/dummy/surveydetails.json').toPromise();
-    //  const url = AppConfigs.surveyFeedback.getDetailsById + surveyId;
-    //  return new Promise((resolve, reject) => {
-    //    this.apiProvider.httpGet(
-    //      url,
-    //      (success) => {
-    //        resolve(success);
-    //      },
-    //      (err) => {
-    //        reject(err);
-    //      }
-    //    );
-    //  });
   }
 
   storeSurvey(submissionId, survey) {
@@ -140,7 +114,6 @@ export class SurveyProviderService {
   }
 
   async showMsg(option, popToRoot = false) {
-    // popToRoot ? this.app.getRootNav().popToRoot() : null;
     popToRoot ? this.router.navigate(['']) : null;
     const modal =await  this.modalCtrl.create({
       component: SurveyMsgComponent,

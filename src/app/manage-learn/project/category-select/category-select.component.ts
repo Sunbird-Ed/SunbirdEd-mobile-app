@@ -73,18 +73,7 @@ export class CategorySelectComponent implements OnInit {
   }
   validateOptions() {
 
-    // this.categoryData.forEach(cd => {
-    //   if (cd.input == 'select') {
-    //     cd.options.forEach(element => {
-    //       let index = _.findIndex(this.selectedCategories, (item) => {
-    //         return item.label == element.label;
-    //       });
-    //       if (index > -1) {
-    //         cd.options[index].isChecked = true;
-    //       }
-    //     });
-    //   }
-    // });
+   
 
     for (const cd of this.categoryData) {
       if (cd.input == 'select') {
@@ -149,7 +138,6 @@ export class CategorySelectComponent implements OnInit {
     valid ? this.modal.dismiss(this.selectedCategories) : this.toast.showMessage('FRMELEMNTS_LBL_PLEASE_ADD_OTHERCATEGORIES', 'danger')
   }
   close() {
-    // this.onSubmit.emit();
     this.modal.dismiss()
   }
 }

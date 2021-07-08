@@ -15,8 +15,6 @@
         <div *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable"
           class="_completed _flex-box progressWidth ion-float-right">
           <progress-bar [progress]="100" class="_full-width"></progress-bar>
-          <!-- {{'labels.completed'|translate}} <ion-icon name="checkmark-circle" class="_progressIcon" margin-left>
-          </ion-icon> -->
         </div>
         <div *ngIf="!evidence.progressStatus && !evidence?.notApplicable && !isIos" class="_flex-box">
           <ion-icon name="arrow-forward" class="_progressIcon ion-float-right ion-margin-right"></ion-icon>
@@ -24,7 +22,6 @@
         <div *ngIf="evidence.progressStatus === 'inProgress' && !evidence?.notApplicable"
           class="_inProgress _flex-box progressWidth ion-float-right">
           <progress-bar [progress]="evidence?.completePercentage" class=" _full-width"></progress-bar>
-          <!-- {{'labels.inprogress'|translate}} <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon> -->
         </div>
         <div *ngIf="evidence.progressStatus === 'submitted' && !evidence?.notApplicable"
           class="_submitted _flex-box ion-float-right">
@@ -36,21 +33,5 @@
       </div>
     </button>
 
-    <!-- <ion-button ion-item (click)="goToGeneralQuestionList()" *ngIf="generalQuestions && generalQuestions?.length">
-      <ion-icon name="albums" class="ion-margin-right"></ion-icon> {{'ionLabel.generalQuestions' | translate}}
-    </ion-button> -->
   </ion-item-group>
 </ion-content>
-
-<!-- <ion-footer no-shadow *ngIf="canShowManualRating">
-  <ion-toolbar class="_toolbar-background-md" position="bottom">
-    <ion-row>
-      <ion-col>
-        <ion-button full (click)="goToManualRating(evidence)" class="btnText">
-          <ion-icon name="stats" class="ion-margin-right"></ion-icon>
-          {{'ionLabel.manualRating' | translate}}
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-toolbar>
-</ion-footer> -->
