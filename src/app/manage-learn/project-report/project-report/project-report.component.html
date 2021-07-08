@@ -2,28 +2,18 @@
   <div class="ion-margin">
     <div class="filter-container" (click)="showFilter = !showFilter">
       <div class="filter-icon">
-        <ion-icon
-          item-start
-          name="funnel"
-          color="primary"
-          class="icon"></ion-icon>
+        <ion-icon item-start name="funnel" color="primary" class="icon"></ion-icon>
       </div>
-      <div>{{ "FRMELEMNTS_BTN_FILTER" | translate }}</div>
+      <div>{{ 'FRMELEMNTS_BTN_FILTER' | translate }}</div>
       <div class="filter-icon">
-        <ion-icon
-          name="chevron-forward-outline"
-          color="primary"
-          *ngIf="!showFilter"></ion-icon>
-        <ion-icon
-          name="chevron-down-outline"
-          color="primary"
-          *ngIf="showFilter"></ion-icon>
+        <ion-icon name="chevron-forward-outline" color="primary" *ngIf="!showFilter"></ion-icon>
+        <ion-icon name="chevron-down-outline" color="primary" *ngIf="showFilter"></ion-icon>
       </div>
     </div>
     <div *ngIf="showFilter">
       <ion-item>
         <div (click)="openFilterModal('program')">
-          <p>{{ filter?.program?.name || "Select Program" }}</p>
+          <p>{{ filter?.program?.name || 'Select Program' }}</p>
         </div>
       </ion-item>
     </div>
@@ -32,7 +22,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ "FRMELEMNTS_LBL_PROJECT_OVERVIEW" | translate }}</h5>
+            <h5>{{ 'FRMELEMNTS_LBL_PROJECT_OVERVIEW' | translate }}</h5>
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
@@ -40,10 +30,10 @@
                 [(ngModel)]="filter.type"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false}">
-                <ion-select-option
-                  [value]="t.value"
-                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
@@ -66,6 +56,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -75,7 +66,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ "FRMELEMNTS_LBL_TASK_OVERVIEW" | translate }}</h5>
+            <h5>{{ 'FRMELEMNTS_LBL_TASK_OVERVIEW' | translate }}</h5>
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
@@ -84,17 +75,18 @@
                 (ionChange)="reportTypeChange()"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false}">
-                <ion-select-option
-                  [value]="t.value"
-                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
               [name]="fileName()"
               [extension]="'.pdf'"
               [config]="config()"
-              [interface]="'simple'"></download-share>
+              [interface]="'simple'"
+            ></download-share>
           </div>
         </div>
 
@@ -103,6 +95,7 @@
             <graph-circle [data]="reportData?.tasks"></graph-circle>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -112,7 +105,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ "FRMELEMNTS_LBL_CATEGORY_OVERVIEW" | translate }}</h5>
+            <h5>{{ 'FRMELEMNTS_LBL_CATEGORY_OVERVIEW' | translate }}</h5>
           </div>
 
           <div class="filter-download-container">
@@ -121,17 +114,18 @@
                 [(ngModel)]="filter.type"
                 [interfaceOptions]="{
                   cssClass: 'select-box',
-                  animated: false}">
-                <ion-select-option
-                  [value]="t.value"
-                  *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
             <download-share
               [name]="fileName()"
               [extension]="'.pdf'"
               [config]="config()"
-              [interface]="'simple'"></download-share>
+              [interface]="'simple'"
+            ></download-share>
           </div>
         </div>
         <div class="task-overview-body">
@@ -139,6 +133,7 @@
             <graph-circle [data]="reportData?.categories"></graph-circle>
           </div>
         </div>
+
       </div>
     </section>
 
