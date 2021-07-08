@@ -177,7 +177,6 @@ export class TaskViewPage implements OnInit {
           this.toast.showMessage('FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED', 'success');
           goBack ? this.location.back() : "";
         })
-        .catch((error) => { console.error(error) });
     } else {
       this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
