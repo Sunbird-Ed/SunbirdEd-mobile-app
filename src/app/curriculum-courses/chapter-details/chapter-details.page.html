@@ -11,7 +11,7 @@
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
           *ngIf="batches && courseContentData?.contentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
-          <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
+          <button class="enrolled-course-card-button label-uppercase label-bold-font" (click)="navigateToBatchListPage();">
             {{'FRMELEMNTS_LBL_JOIN_TRAINING' | categoryKeyTranslate : courseContentData }}
           </button>
         </div>
