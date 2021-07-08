@@ -166,8 +166,6 @@ export class DbService {
     return new Promise((resolve, reject) => {
       this.pdb.destroy().then(success => {
         success.ok ? resolve(success) : reject()
-      }).catch(error => {
-        console.error(error)
       })
     })
   }
