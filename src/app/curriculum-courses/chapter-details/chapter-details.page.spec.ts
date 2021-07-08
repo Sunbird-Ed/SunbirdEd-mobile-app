@@ -1797,7 +1797,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color txt-uppercase'
                             })
                         ])
                     })
@@ -1849,7 +1849,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color txt-uppercase'
                             })
                         ])
                     })

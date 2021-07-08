@@ -42,7 +42,7 @@
                       [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
                       [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
                       (cardClick)="navigateToDetailPage($event, result?.name);"
-                      [cardImg]="content?.appIcon || defaultAppIcon">
+                      [cardImg]="content?.cardImg || content?.appIcon || defaultAppIcon">
                     </sb-library-card>
                   </div>
                 </div>

@@ -606,7 +606,14 @@ ion-card .card .card-md {
   }
 }
 
-.book-details-card {
-  margin-left: .5rem;
+.collection-etb-details{
+  border-radius: 1rem;
+  background-color: var(--app-white);
   margin-bottom: 1rem;
+  padding: 0 0 1rem;
+  box-shadow: var(--button-style-shadow) !important;
+  .title{
+    color: var(--app-primary);
+    padding: 1rem;
+  }
 }

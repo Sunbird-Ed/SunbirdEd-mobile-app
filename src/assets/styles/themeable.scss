@@ -34,6 +34,7 @@ html[data-theme="JOYFUL"]{
 
   --app-shadow:rgba(0,0,0,0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
   ion-toolbar {
@@ -695,6 +696,18 @@ html[data-theme="JOYFUL"]{
           background-color: var(--app-secondary-background) !important;
           box-shadow: var(--block-style-shadow) !important;
         }
+        .expansion-indicator {
+          width: 1.5rem;
+          height: 1.5rem;
+          background-color: var(--app-white);
+          border-radius: 5rem;
+          text-align: center;
+          box-shadow: var(--button-sm-style-shadow);
+          svg {
+            width: 80%;
+            fill: var(--app-gray);
+          }
+        }
       }
       .accordion-item-header-expanded{
         .sbaccordion__panel-header{
@@ -741,6 +754,9 @@ html[data-theme="JOYFUL"]{
       sb-accordion-item{
         .sbaccordion{
           box-shadow: none !important;
+          .sbaccordion__panel{
+            margin-bottom: 1rem !important;
+          }
         }
       }
       .sbchapter__play__btn{
