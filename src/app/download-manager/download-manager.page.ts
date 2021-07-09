@@ -174,8 +174,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           this.downloadedContents = data;
         });
       })
-      .catch((e) => {
-      });
   }
 
   private generateInteractTelemetry(contentCount: number, usedSpace: number, availableSpace: number) {
@@ -208,7 +206,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         .then(async (data: ContentDeleteResponse[]) => {
           await this.loader.dismiss();
           this.loader = undefined;
-          // this.getDownloadedContents();
           if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('CONTENT_DELETE_FAILED'));
           } else {

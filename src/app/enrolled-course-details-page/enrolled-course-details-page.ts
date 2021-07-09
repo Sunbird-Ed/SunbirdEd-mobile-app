@@ -328,8 +328,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       .then(response => {
         this.baseUrl = response;
       })
-      .catch((error) => {
-      });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
       this.reloadPageAfterEnrollment(res);
@@ -343,7 +341,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         delete this.courseCardData.batchId;
       }
       delete this.batchDetails;
-      // delete this.batchDetails; // to show 'Enroll in Course' button courseCardData should be undefined/null
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
       this.isBatchNotStarted = false; // this is needed to change behaviour onclick of individual content
     });
@@ -854,8 +851,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
                 this.batchExp = false;
               }
             })
-            .catch((error) => {
-            });
+
 
           this.getBatchCreatorName();
         });
@@ -903,8 +899,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
           this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
         }
-      }).catch(() => {
-      });
+      })
   }
 
   /**
@@ -1064,9 +1059,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           PageId.COURSE_DETAIL,
           undefined,
           undefined,
-          // todo
-          // this.objRollup,
-          // this.corRelationList
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);

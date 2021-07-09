@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppHeaderService } from '@app/services';
-import { AlertController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
@@ -99,7 +99,6 @@ export class ObservationDetailComponent implements OnInit {
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
-            //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {
             this.entities = [];
             if (!this.observationId) {
@@ -275,9 +274,6 @@ export class ObservationDetailComponent implements OnInit {
             this.goToEcm(sId, e.name);
           }
         })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   }
 

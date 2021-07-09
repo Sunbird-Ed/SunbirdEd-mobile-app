@@ -5,11 +5,11 @@ import {
 } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
   FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
   Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType, InteractType, FormService, FormRequest
+  CachedItemRequestSourceFrom, SearchType, InteractType, FormService
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
@@ -19,7 +19,6 @@ import { Subscription } from 'rxjs';
 import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
 import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
@@ -237,12 +236,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
         this.generateTelemetry('COURSE_TILE_CLICKED');
 
-      // this.router.navigate([RouterLinks.SEARCH], {
-      //   state: {
-      //     source: PageId.ADMIN_HOME,
-      //     preAppliedFilter: event.data[0].value.search
-      //   }
-      // });
     }
 
     
@@ -283,20 +276,10 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   redirectToActivedownloads() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   redirectToNotifications() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.NOTIFICATION_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
