@@ -179,7 +179,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             return ( new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf());
           });
           resp.map(res => {
-            res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name };
+            res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name, subject:res.programName };
             res.type = 'observation';
             res.identifier = res.programId + res.solutionId;
             data.push(res);

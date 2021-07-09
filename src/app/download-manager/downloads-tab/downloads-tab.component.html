@@ -28,9 +28,9 @@
     </div>
     <div class="sb-card-details">
       <div (click)="!content.isSelected && navigateToDetailsPage(content)">
-        <div class="title">{{content.contentData?.name || content?.name}}</div>
+        <div class="title">{{content.contentData?.name}}</div>
         <div class="info grade_ellipsis">
-          <span class="class">{{content?.contentData?.subject || content?.programName}}</span>
+          <span class="class">{{content?.contentData?.subject}}</span>
           <span class="separator-dot"></span>
           <span class="subject">{{content?.contentData?.gradeLevel | csa}}</span>
         </div>

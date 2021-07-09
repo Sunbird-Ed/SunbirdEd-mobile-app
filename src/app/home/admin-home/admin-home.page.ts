@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AppGlobalService,
   AppHeaderService,
@@ -35,18 +35,17 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { IonContent as ContentView } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
-import { DbService, LocalStorageService, UtilsService } from '@app/app/manage-learn/core';
+import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
 import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 
 @Component({
-  selector: "app-admin-home",
-  templateUrl: "./admin-home.page.html",
-  styleUrls: ["./admin-home.page.scss"]
+  selector: 'app-admin-home',
+  templateUrl: './admin-home.page.html',
+  styleUrls: ['./admin-home.page.scss']
 })
 export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   aggregatorResponse = [];
@@ -64,12 +63,12 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-  @ViewChild("contentView", { static: false }) contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
 
   constructor(
-    @Inject("FRAMEWORK_SERVICE") private frameworkService: FrameworkService,
-    @Inject("PROFILE_SERVICE") private profileService: ProfileService,
-    @Inject("FORM_SERVICE") private formService: FormService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -83,7 +82,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
     private db: DbService,
-    private utilsService: UtilsService
   ) {
   
   }
@@ -95,9 +93,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       if (data === '') {
-        this.qrScanner.startScanner(
-          this.appGlobalService.getPageIdForTelemetry()
-        );
+        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
     this.db.createDb();
