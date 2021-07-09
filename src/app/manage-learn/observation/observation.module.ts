@@ -23,7 +23,6 @@ import { CoreModule } from '../core/core.module';
     SharedModule,
     IonicModule,
     FormsModule,
-  ],
-  providers: [],
+  ]
 })
 export class ObservationModule {}
