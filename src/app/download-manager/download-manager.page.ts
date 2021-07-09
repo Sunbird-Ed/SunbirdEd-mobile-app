@@ -163,16 +163,15 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             projectData.docs.sort(function (a, b) {
                 return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
               });
-                projectData.docs.map(doc => {
-                  doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-                  doc.type = 'project'
-                  doc.identifier=doc._id;
-                  data.push(doc)
-                  
-              })
+              projectData.docs.map(doc => {
+                doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                doc.type = 'project'
+                doc.identifier=doc._id;
+                data.push(doc)
+            })
           }
         }
-        await this.storage
+        this.storage
         .getLocalStorage(storageKeys.downloadedObservations)
         .then(resp => {
           resp.sort(function(a, b) {
@@ -184,7 +183,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             res.identifier = res.programId + res.solutionId;
             data.push(res);
           });
-        });
+        }).catch(err=>{});
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
@@ -211,14 +210,12 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       return;
     }
     this.deleteProjects(projectContents)
+    this.deleteObservations(observationContents);
+
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents,
     };
 
-    this.deleteObservations(observationContents);
-    const observationDeleteRequest: ContentDeleteRequest = {
-      contentDeleteList: emitedContents.selectedContents
-    };
     if (emitedContents.selectedContents.length > 1) {
       await this.deleteAllContents(emitedContents);
     } else {
