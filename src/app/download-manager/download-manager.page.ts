@@ -173,7 +173,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
-      })
+      });
   }
 
   private generateInteractTelemetry(contentCount: number, usedSpace: number, availableSpace: number) {

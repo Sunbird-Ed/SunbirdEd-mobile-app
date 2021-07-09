@@ -273,7 +273,7 @@ export class ObservationDetailComponent implements OnInit {
           if (sId) {
             this.goToEcm(sId, e.name);
           }
-        })
+        });
     }
   }
 

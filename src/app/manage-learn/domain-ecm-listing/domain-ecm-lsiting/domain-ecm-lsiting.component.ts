@@ -53,8 +53,8 @@ export class DomainEcmLsitingComponent {
           .getLocalStorage('generalQuestions_' + this.submissionId)
           .then((successData) => {
             this.generalQuestions = successData;
-          })
-      })
+          });
+      });
   }
 
   mapCompletedAndTotalQuestions() {

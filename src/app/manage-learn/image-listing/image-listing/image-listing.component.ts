@@ -57,7 +57,7 @@ export class ImageListingComponent implements OnInit {
         this.evidenceSections = this.currentEvidence['sections'];
         this.selectedEvidenceName = this.currentEvidence['name'];
         this.getAllImages();
-      })
+      });
   }
   uploadImages: any;
   imageList = [];
@@ -210,14 +210,14 @@ export class ImageListingComponent implements OnInit {
         .then((success) => {
           this.fileTransfer.create();
           this.cloudImageUpload();
-        })
+        });
     } else {
       this.file
         .checkDir(this.file.externalDataDirectory, 'images')
         .then((success) => {
           this.cloudImageUpload();
           this.fileTransfer.create();
-        })
+        });
     }
   }
 
