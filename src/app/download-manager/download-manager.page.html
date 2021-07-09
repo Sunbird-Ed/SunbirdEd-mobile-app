@@ -4,7 +4,7 @@
 
     <app-no-downloads *ngIf="!downloadedContents.length"></app-no-downloads>
 
-    <app-downloads-tab #downloadsTab *ngIf="downloadedContents.length"  [downloadedContents]="downloadedContents"
+    <app-downloads-tab #downloadsTab *ngIf="downloadedContents.length" [downloadedContents]="downloadedContents"
       (deleteContents)="deleteContents($event)" (sortCriteriaChanged)="onSortCriteriaChange($event)">
     </app-downloads-tab>
   </div>
