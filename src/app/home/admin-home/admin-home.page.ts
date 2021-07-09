@@ -45,7 +45,7 @@ import { FormConstants } from '@app/app/form.constants';
 @Component({
   selector: 'app-admin-home',
   templateUrl: './admin-home.page.html',
-  styleUrls: ['./admin-home.page.scss']
+  styleUrls: ['./admin-home.page.scss'],
 })
 export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   aggregatorResponse = [];
@@ -82,9 +82,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
     private db: DbService,
-  ) {
-  
-  }
+  ) {}
 
   ngOnInit() {
     this.getUserProfileDetails();
