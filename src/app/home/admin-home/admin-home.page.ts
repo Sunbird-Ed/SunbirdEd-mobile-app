@@ -81,7 +81,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private qrScanner: SunbirdQRScanner,
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
-    private db: DbService,
+    private db: DbService
   ) {}
 
   ngOnInit() {
