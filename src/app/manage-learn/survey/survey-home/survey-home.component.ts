@@ -152,7 +152,6 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   redirect(submissionId: any): void {
-    // const navParams = { _id: submissionId, selectedEvidence: 0, selectedSection: 0 };
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
       replaceUrl: this.link ? true : false,
       queryParams: {

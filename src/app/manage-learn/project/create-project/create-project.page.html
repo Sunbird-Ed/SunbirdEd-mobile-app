@@ -41,15 +41,7 @@
         </div>
 
       </div>
-      <!-- <div *ngIf="tasks?.length && showTask">
-        <ion-card *ngFor="let task of tasks" class="data-list">
-          <ion-item lines="none">
-            {{task.name}}
-            <ion-icon name="close-outline" slot="end" class="remove-icon" (click)="confirmToDelete(task,'task')">
-            </ion-icon>
-          </ion-item>
-        </ion-card>
-      </div> -->
+      
       <div *ngIf="showTask">
         <ion-label class="task-board">
           <h5>{{'DFLT_NONTRK_FRMELEMNTS_LBL_TEXTBOOK' | translate}} </h5>
@@ -68,11 +60,7 @@
       </div>
     </form>
   </div>
-  <!-- <div *ngIf="showCategories">
-    <app-category-select [categories]="categories" [selectedCategories]="selectedCategories"
-      (onSubmit)="selectCategories($event)">
-    </app-category-select>
-  </div> -->
+
 </ion-content>
 <ion-footer>
   <ion-button (click)="next()" expand="block"

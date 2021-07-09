@@ -336,14 +336,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
-    const identifier = item.contentId || item.identifier;
-    // const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
     const values = {};
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); // TODO
-      // this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
+      this.navService.navigateToDetailPage(item, { content: item }); 
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }

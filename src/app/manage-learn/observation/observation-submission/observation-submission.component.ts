@@ -7,7 +7,6 @@ import { RouterLinks } from '@app/app/app.constant';
 import { LoaderService, LocalStorageService, UtilsService } from '../../core';
 import { storageKeys } from '../../storageKeys';
 import { EvidenceService } from '../../core/services/evidence.service';
-import { ScroreReportMenusComponent } from '../../shared/components/scrore-report-menus/scrore-report-menus.component';
 import { SubmissionActionsComponent } from '../../shared/components/submission-actions/submission-actions.component';
 import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -151,7 +150,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   tabChange(value) {
-    // this.height = 100;
     this.submissions = [];
     this.currentTab = value;
     switch (value) {
@@ -200,7 +198,6 @@ export class ObservationSubmissionComponent implements OnInit {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
-      .catch((error) => {});
   }
 
   goToEcm(submission) {
@@ -240,7 +237,6 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => {});
   }
   async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
@@ -265,7 +261,6 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   async openMenu(event, submission, index) {
-    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
     if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
@@ -307,7 +302,6 @@ export class ObservationSubmissionComponent implements OnInit {
   //  entity actions
   entityActions(e) {
     let submission = this.submissions[0];
-    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
     if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {

@@ -869,16 +869,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       if (response && response.data) {
         this.isDownloadStarted = true;
         this.showCollapsedPopup = false;
-        // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        //   'download-all-button-clicked',
-        //   Environment.HOME,
-        //   PageId.COURSE_DETAIL,
-        //   undefined,
-        //   undefined,
-        //   // todo
-        //   // this.objRollup,
-        //   // this.corRelationList
-        // );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
@@ -931,7 +921,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             });
 
             if (this.queuedIdentifiers.length === 0) {
-              // this.restoreDownloadState();
             }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
@@ -991,12 +980,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               }
             } else {
               this.courseContentData.isAvailableLocally = true;
-              // this.setContentDetails(this.identifier);
             }
           }
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
-            // this.licenseDetails = event.payload.licenseDetails;
             if (event.payload.size) {
               this.courseContent.contentData.size = event.payload.size;
             }

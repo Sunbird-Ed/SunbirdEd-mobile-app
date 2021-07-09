@@ -20,11 +20,6 @@ export class RemarksComponent implements OnInit {
       component: RemarksModalComponent,
       componentProps: { data: JSON.parse(JSON.stringify(this.data)) }
     });
-    // remarks.onDidDismiss(updatedRemark => {
-    // if (updatedRemark) {
-    //   this.data.remarks = updatedRemark;
-    // }
-    // })
     await remarks.present();
     const { data } = await remarks.onDidDismiss();
     if (data) {
