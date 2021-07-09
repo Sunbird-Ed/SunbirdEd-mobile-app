@@ -396,19 +396,19 @@ export class UtilsService {
     return new Promise((resolve, reject) => {
       const config = {
         url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
-      }
+      };
       this.kendra.get(config).subscribe(data => {
         if (data.result && data.result.length) {
           this.requiredFields = data.result;
           resolve(data.result);
-        else {
-          resolve(false)
+      } else {
+          resolve(false);
         }
       }, error => {
-        resolve(false)
+        resolve(false);
         // reject()
-      })
-    })
+      });
+    });
   }
 
   async openProfileUpdateAlert() {

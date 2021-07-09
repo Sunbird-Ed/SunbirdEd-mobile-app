@@ -694,7 +694,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color txt-uppercase'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },
@@ -753,7 +753,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.courseContent),
-            btnClass: 'popover-color txt-uppercase'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ],
         // handler : this.handleEnrollCoursePopup.bind(this)

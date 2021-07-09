@@ -1207,7 +1207,7 @@ app-resources{
         border-radius: 18px !important;
       }
       .sb-pills-container{
-        padding: 10px !important;
+        padding: 10px 1rem !important;
       }
     }
   }
@@ -1998,4 +1998,12 @@ app-user-home, app-discover {
   .sb--card{
     border-radius: 1rem !important;
   }
+}
+
+.label-uppercase {
+  text-transform: uppercase !important;
+}
+
+.label-bold-font{
+  font-weight: bold !important;
 }
