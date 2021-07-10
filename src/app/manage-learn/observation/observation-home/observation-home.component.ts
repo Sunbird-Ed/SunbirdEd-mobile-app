@@ -55,7 +55,6 @@ export class ObservationHomeComponent implements OnInit {
 
   ngOnInit() {
     this.solutionList = [];
-    // this.getPrograms();
   }
 
   async getProfileInfo() {
@@ -171,7 +170,6 @@ export class ObservationHomeComponent implements OnInit {
 
   checkLocalDownloadedSolutions() {
     this.downloadedSolutions.forEach(ds => {
-      console.log(this.solutionList,"kkk")
       if(this.solutionList){
         if (
           !this.solutionList.some(
@@ -183,7 +181,6 @@ export class ObservationHomeComponent implements OnInit {
         }
       }else{
         this.solutionList= this.downloadedSolutions;
-        console.log(this.solutionList,"this.solutionList")
       }
         
     });
