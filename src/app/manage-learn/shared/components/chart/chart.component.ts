@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
 import { Chart } from 'chart.js';
 @Component({
   selector: 'app-chart',

@@ -5,17 +5,6 @@
   <div *ngIf="data?.schoolName">
     <h4 style="padding: 10px">{{ questionNumber }}. {{ data?.schoolName }}</h4>
   </div>
-  <!-- <highcharts-chart
-    [(update)]="updateFlag"
-    [Highcharts]="Highcharts"
-    [options]="chartObj"
-    class="chart-setup"
-    [constructorType]="chartConstructor"
-    [oneToOne]="oneToOneFlag"
-    [runOutsideAngular]="runOutsideAngularFlag"
-    *ngIf="data?.chart?.data"
-  >
-  </highcharts-chart> -->
   <div *ngIf="data?.chart?.data">
     <div id="{{ 'container' + questionNumber }}"></div>
   </div>

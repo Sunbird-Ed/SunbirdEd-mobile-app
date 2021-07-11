@@ -1,34 +1,6 @@
 <ion-header>
   <!-- TODO:remove add entity heading in the page -->
-  <!-- <ion-list>
-    <ion-item lines="none">
-      <div style="margin-top: 15px">
-        <ion-label>
-          <div class="title">{{ 'FRMELEMENTS_LBL_SELECT_ENTITY' | translate }}</div>
-        </ion-label>
-      </div>
-    </ion-item>
-  </ion-list> -->
   <ion-toolbar>
-    <!-- <div class="" *ngIf="!isProfileAssignedWithState"> -->
-    <!-- <div>
-      <ion-item>
-        <ion-label>{{ 'FRMELEMENTS_LBL_SELECTED_STATE' | translate }}</ion-label>
-        <ion-select
-          [(ngModel)]="selectedState"
-          color="primary"
-          (ionChange)="searchQuery = ''; search(); onStateChange($event)"
-          #selectStateRef
-          interface="action-sheet"
-          [disabled]="true"
-        >
-          <ion-select-option *ngFor="let state of allStates" [value]="state._id">
-            <b>{{ state?.name }}</b>
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-    </div> -->
-    <!-- <div class="_flex-box searchCard" *ngIf="selectedState || profileMappedState"> -->
     <div class="_flex-box searchCard">
       <ion-searchbar
         debounce="500"
@@ -42,41 +14,6 @@
       </ion-button>
     </div>
   </ion-toolbar>
-
-  <!-- <header [title]="'headings.addSchools'|translate" [hideBack]="false" [showMenu]="false" [showClose]="true"
-    [disableNetwork]="true" [hideNotification]="true">
-  </header> -->
-  <!-- <ion-toolbar style="background-color: white !important">
-    <div class="_flex-box searchCard" *ngIf="!isProfileAssignedWithState">
-      <ion-item>
-        <ion-label>{{ 'labels.selectState' | translate }}</ion-label>
-        <ion-select
-          [(ngModel)]="selectedState"
-          class="whiteSelection"
-          (ionChange)="searchQuery = ''; search(); onStateChange($event)"
-          #selectStateRef
-          interface="action-sheet"
-        >
-          <ion-option *ngFor="let state of allStates" [value]="state._id">
-            <b>{{ state?.name }}</b>
-          </ion-option>
-        </ion-select>
-      </ion-item>
-    </div>
-    <div class="_flex-box searchCard" *ngIf="selectedState || profileMappedState">
-      <ion-searchbar
-        debounce="500"
-        class="serachBar"
-        (keyup.enter)="searchEntity()"
-        [(ngModel)]="searchQuery"
-        placeholder="{{ 'message.startSearchEntity' | translate }}"
-        (ionClear)="searchQuery = ''; searchEntity()"
-      ></ion-searchbar>
-      <button ion-button icon-only (click)="searchEntity()" class="serachBtn">
-        <ion-icon name="search" class="searchIcon"></ion-icon>
-      </button>
-    </div>
-  </ion-toolbar> -->
 </ion-header>
 <ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
   <div>

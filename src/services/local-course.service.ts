@@ -348,13 +348,16 @@ export class LocalCourseService {
     if (!maxAttempts) {
       maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
     }
-    const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
+    const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number } = {
       isLastAttempt: false,
-      isContentDisabled: false
+      isContentDisabled: false,
+      currentAttempt: 0,
+      maxAttempts
     };
     if (contentStatusData && contentStatusData.contentList) {
       contentStatusData.contentList.forEach((item) => {
         if (item.contentId === content.identifier && item.score) {
+          assesmentsStatus.currentAttempt = item.score.length;
           if (maxAttempts - item.score.length === 1) {
             assesmentsStatus.isLastAttempt = true;
           }
