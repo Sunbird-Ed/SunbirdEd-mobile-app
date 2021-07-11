@@ -12,6 +12,7 @@ export class ItemListCardComponent implements OnInit {
   @Input() subTitle: any;
   @Input() id: any;
   @Output() cardSelect = new EventEmitter();
+  @Input() ellipsis:Boolean =false
 
   constructor(private commonUtilService: CommonUtilService) {}
 

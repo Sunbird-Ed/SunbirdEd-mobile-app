@@ -8,6 +8,16 @@
     color: #{$blue};
 }
 
+
+.ellipsis{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 1em;
+    height: 1.2em;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
 ion-card-header {
     padding-bottom: 2px;
 }
