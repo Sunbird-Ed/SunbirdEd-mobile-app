@@ -5,6 +5,8 @@ import { Platform } from '@ionic/angular';
 import { UtilsService, LocalStorageService } from '../../core';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { UpdateTrackerService } from '../../core/services/update-tracker.service';
+import { ObservationService } from '../../observation/observation.service';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-domain-ecm-lsiting',
@@ -22,6 +24,7 @@ export class DomainEcmLsitingComponent {
   evidenceSections: any;
   allAnsweredForEvidence: boolean;
   submissionId: any;
+  downloadedSubmissionList: any;
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
@@ -29,7 +32,9 @@ export class DomainEcmLsitingComponent {
     private evdnsServ: EvidenceService,
     private platform: Platform,
     private routerParam: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private observationService: ObservationService,
+    public genericPopup: GenericPopUpService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
@@ -56,7 +61,9 @@ export class DomainEcmLsitingComponent {
           })
           .catch((error) => {console.error(error)});
       })
-      .catch((error) => {console.error(error)});
+      .catch((error) => {});
+
+    this.fetchDownloaded();
   }
 
   mapCompletedAndTotalQuestions() {
@@ -134,7 +141,6 @@ export class DomainEcmLsitingComponent {
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
       let action = await this.openAction(entity, evidenceIndex);
-      console.log(action)
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -201,5 +207,27 @@ export class DomainEcmLsitingComponent {
         schoolName: this.entityName,
       },
     });
+  }
+
+  async fetchDownloaded() {
+    this.downloadedSubmissionList = await this.observationService.fetchDownloaded();
+  }
+
+  async pushToLocal() {
+    let args = {
+      title: 'DOWNLOAD_FORM',
+      yes: 'YES',
+      no: 'NO',
+    };
+    const confirmed = await this.genericPopup.confirmBox(args);
+    if (!confirmed) return;
+    await this.observationService.pushToDownloads(this.submissionId);
+    this.fetchDownloaded();
+    let successArgs = {
+      title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+      yes: 'OKAY',
+      autoDissmiss: true,
+    };
+    await this.genericPopup.confirmBox(successArgs);
   }
 }

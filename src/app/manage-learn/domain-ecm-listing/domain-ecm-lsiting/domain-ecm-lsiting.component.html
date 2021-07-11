@@ -1,10 +1,26 @@
 <ion-content>
-  <ion-text>
-    <h4 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
-      {{ entityData?.assessment?.pageHeading }}
-    </h4>
-    <h4 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h4>
-  </ion-text>
+  <div class="d-flex flex-ai-center flex-jc-space-between">
+    <ion-text>
+      <h4 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
+        {{ entityData?.assessment?.pageHeading }}
+      </h4>
+      <h4 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h4>
+    </ion-text>
+    <div
+      arrow
+      *ngIf="!downloadedSubmissionList?.includes(submissionId)"
+      class="d-flex flex-ai-center flex-dc mr-15"
+      (click)="$event.stopPropagation(); pushToLocal(submission)"
+    >
+      <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
+      <span>{{ 'FRMELEMNTS_LBL_DOWNLOAD' | translate }}</span>
+    </div>
+    <div arrow *ngIf="downloadedSubmissionList?.includes(submissionId)" class="d-flex flex-ai-center flex-dc mr-15">
+      <ion-icon class="mg-popup-btn-icon" style="color: green" name="checkmark"></ion-icon>
+      <span>{{ 'FRMELEMNTS_LBL_DOWNLOADED' | translate }}</span>
+    </div>
+  </div>
+
   <!-- for Domain/ecm -->
   <div
     *ngFor="let evidence of entityEvidences; let arrIndex = index"

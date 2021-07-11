@@ -78,4 +78,22 @@ export class LocalStorageService {
         });
     });
   }
+
+  hasKey(key): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.appGlobalService
+        .getActiveProfileUid()
+        .then((userId) => {
+          key = userId + key;
+        })
+        .then(() => {
+          this.storage.keys().then((data) => {
+            data.find((d) => d == key) ? resolve(true) : resolve(false);
+          });
+        })
+        .catch((error) => {
+          reject();
+        });
+    });
+  }
 }
