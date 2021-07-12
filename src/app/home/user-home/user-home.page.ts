@@ -105,6 +105,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   displayBanner: boolean;
   bannerSegment: any;
   preferenceList = [];
+  boardList = [];
+  mediumList = [];
+  gradeLevelList = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -217,9 +220,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }, {});
         this.preferenceList = [];
         setTimeout(() => {
-          this.preferenceList.push(this.getFieldDisplayValues(this.profile.board, 'board'));
-          this.preferenceList.push(this.getFieldDisplayValues(this.profile.medium, 'medium'));
-          this.preferenceList.push(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
+          this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
+          this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
+          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
+          this.preferenceList.push(this.boardList);
+          this.preferenceList.push(this.mediumList);
+          this.preferenceList.push(this.gradeLevelList);
         }, 0);
       });
   }
@@ -692,9 +698,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections.forEach((section, index) => {
       if (section.dataSrc.type === 'CONTENT_DISCOVERY_BANNER') {
         const corRelationList: Array<CorrelationData> = [];
-        // corRelationList.push({ id: this.boards || '', type: CorReleationDataType.BOARD });
-        // corRelationList.push({ id: this.grade || '', type: CorReleationDataType.CLASS });
-        // corRelationList.push({ id: this.medium || '', type: CorReleationDataType.MEDIUM });
+        corRelationList.push({ id: this.boardList.join(',') || '', type: CorReleationDataType.BOARD });
+        corRelationList.push({ id: this.gradeLevelList.join(',') || '', type: CorReleationDataType.CLASS });
+        corRelationList.push({ id: this.mediumList.join(',') || '', type: CorReleationDataType.MEDIUM });
         corRelationList.push({ id: (this.profile && this.profile.profileType)
           ? this.profile.profileType : '', type: CorReleationDataType.USERTYPE });
         this.telemetryGeneratorService.generateImpressionTelemetry(
