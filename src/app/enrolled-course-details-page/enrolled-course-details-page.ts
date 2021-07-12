@@ -1498,6 +1498,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
             this.courseCardData = course;
+            this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
+            this.fetchForumIdReq.type = 'batch';
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
           }
