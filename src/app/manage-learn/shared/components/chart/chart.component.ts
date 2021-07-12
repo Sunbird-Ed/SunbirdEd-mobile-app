@@ -1,20 +1,17 @@
-import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Chart } from 'chart.js';
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss'],
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent {
   // @ViewChild('doughnutCanvas', {static: false}) private doughnutCanvas: ElementRef;
   @ViewChild('doughnutCanvas', { static: false }) private doughnutCanvas: ElementRef;
   private doughnutChart: any;
   constructor() {
   }
 
-  ngOnInit() {
-
-  }
   ngAfterViewInit() {
     this.setup();
   }

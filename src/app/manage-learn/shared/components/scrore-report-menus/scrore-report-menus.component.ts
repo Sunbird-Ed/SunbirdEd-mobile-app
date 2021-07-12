@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavParams, NavController, PopoverController } from '@ionic/angular';
@@ -8,7 +8,7 @@ import { NavParams, NavController, PopoverController } from '@ionic/angular';
   templateUrl: './scrore-report-menus.component.html',
   styleUrls: ['./scrore-report-menus.component.scss'],
 })
-export class ScroreReportMenusComponent implements OnInit {
+export class ScroreReportMenusComponent {
   submission;
   navigateToobservationReport: boolean = false;
   showEntityActionsheet;
@@ -35,7 +35,6 @@ export class ScroreReportMenusComponent implements OnInit {
     this.entityType = this.navParams.get('entityType');
   }
 
-  ngOnInit() {}
 
   viewObservationReportsWithoutScore() {
     this.popover.dismiss();

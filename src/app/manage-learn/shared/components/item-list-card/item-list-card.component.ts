@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonUtilService } from '@app/services';
 
 @Component({
@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services';
   templateUrl: './item-list-card.component.html',
   styleUrls: ['./item-list-card.component.scss'],
 })
-export class ItemListCardComponent implements OnInit {
+export class ItemListCardComponent {
   @Input() title: any;
   @Input() subTitle: any;
   @Input() id: any;
@@ -14,7 +14,6 @@ export class ItemListCardComponent implements OnInit {
 
   constructor(private commonUtilService: CommonUtilService) {}
 
-  ngOnInit() {}
   isNumber(val): boolean {
     return typeof val === 'number';
   }
