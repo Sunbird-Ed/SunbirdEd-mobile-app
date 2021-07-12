@@ -7,6 +7,7 @@
   .sb-grade-pills-container {
     .pill {
       min-height: 35px;
+      border-radius: 50px;
     }
   }
 }
@@ -602,5 +603,17 @@ ion-card .card .card-md {
   padding-top: 8px;
   img{
     height: 8px;
+  }
+}
+
+.collection-etb-details{
+  border-radius: 1rem;
+  background-color: var(--app-white);
+  margin-bottom: 1rem;
+  padding: 0 0 1rem;
+  box-shadow: var(--button-style-shadow) !important;
+  .title{
+    color: var(--app-primary);
+    padding: 1rem;
   }
 }

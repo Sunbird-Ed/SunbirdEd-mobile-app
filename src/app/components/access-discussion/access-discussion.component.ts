@@ -1,4 +1,4 @@
-import {  Component, Inject, Input, OnInit, ElementRef, Output, EventEmitter } from '@angular/core';
+import {  Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
@@ -48,7 +48,6 @@ export class AccessDiscussionComponent implements OnInit {
       InteractSubtype.FORUM_ICON_CLICKED,
       Environment.DISCUSSION,
       PageId.GROUP_DETAIL,
-      undefined,
       undefined,
       undefined,
       undefined

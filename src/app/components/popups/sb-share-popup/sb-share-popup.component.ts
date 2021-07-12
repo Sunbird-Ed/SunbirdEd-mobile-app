@@ -115,6 +115,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     if (content.identifier !== rootContentIdentifier) {
       const contentDetailRequest: ContentDetailRequest = {
         contentId: rootContentIdentifier,
+        objectType: this.content.objectType,
         attachFeedback: false,
         attachContentAccess: false,
         emitUpdateIfAny: false

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonUtilService } from '@app/services';
-import { Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-item-list-card',

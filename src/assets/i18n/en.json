@@ -294,6 +294,8 @@
   "DFLT_NONTRK_STUDENT_ROLE_DESC_1": "Browse for digital content",
   "DFLT_NONTRK_TEACHER_ROLE_DESC_1": "Browse for digital content",
   "DFLT_NONTRK_TUTORIAL_HEADING": "Videos, interactive content, eTextbooks and more...",
+  "DFLT_NONTRK_FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS": "This book is relevant for:",
+  "DFLT_NONTRK_FRMELEMNTS_LBL_TRAINING_DETAILS": "Textbook details",
   "DFLT_TRK_BATCHEND_MAIN_HEADING": "You have joined the batch of a learning task that is completed on {{%s}}",
   "DFLT_TRK_BATCHEND_SUB_HEADING": "You may continue learning, but your progress will not be updated",
   "DFLT_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this learning activity",
@@ -981,6 +983,8 @@
   "TBK_NONTRK_STUDENT_ROLE_DESC_1": "Browse textbooks and digital content",
   "TBK_NONTRK_TEACHER_ROLE_DESC_1": "Browse textbooks and digital content",
   "TBK_NONTRK_TUTORIAL_HEADING": "Videos, interactive content, eTextbooks and more...",
+  "TBK_NONTRK_FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS": "This book is relevant for:",
+  "TBK_NONTRK_FRMELEMNTS_LBL_TRAINING_DETAILS": "Textbook details",
   "TBK_TRK_BATCHEND_MAIN_HEADING": "You have joined the batch of a textbook reading that is completed on {{%s}}",
   "TBK_TRK_BATCHEND_SUB_HEADING": "You may continue learning, but your progress will not be updated",
   "TBK_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this chapter",
@@ -1468,5 +1472,9 @@
   "STATE_LOGIN": "Login with state system",
   "GOOGLE_LOGIN": "Sign in with Google",
   "LOGIN_WITH": "Login with {{appName}}",
-  "LOGIN_TO": "Login to {{appName}}"
+  "LOGIN_TO": "Login to {{appName}}",
+  "YOB_TITLE": "Year of birth",
+  "SELECT_YOB": "Select year of birth",
+  "DETAILS": "Content Details",
+  "CONTENT_RELEVANT_MSG": "This content is relevant for: "
 }

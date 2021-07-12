@@ -46,7 +46,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -165,6 +165,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   selectedPrimaryCategoryFilter: any;
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
+  hideSearchOption = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -206,6 +207,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       this.searchWithBackButton = extras.searchWithBackButton;
+      this.hideSearchOption = extras.hideSearchOption;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
         this.searchOnFocus();
@@ -246,9 +248,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.handleHeaderEvents(eventName);
     });
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
@@ -1394,7 +1396,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   checkParent(parent, child) {
     const identifier = parent.identifier;
     const contentRequest: ContentDetailRequest = {
-      contentId: identifier
+      contentId: identifier,
+      objectType: parent.objectType
     };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
@@ -1759,7 +1762,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchOnFocus() {
     this.enableSearch = true;
     this.searchInfolVisibility = 'hide';
-    this.headerService.showHeaderWithBackButton();
+    this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     this.appGlobalService.isDiscoverBackEnabled = true;
   }
 
@@ -1771,13 +1774,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         } else if(this.enableSearch) {
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
-          this.headerService.showHeaderWithHomeButton();
+          this.headerService.showHeaderWithHomeButton(['download', 'notification']);
           this.appGlobalService.isDiscoverBackEnabled = false; 
         } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
           break;
         } else {
           this.location.back()
         }
+        break;
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
@@ -1822,11 +1828,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
+  redirectToNotifications() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.NOTIFICATION_CLICKED,
+      Environment.HOME,
+      PageId.SEARCH);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
+
   tabViewWillEnter() {
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
   }
 

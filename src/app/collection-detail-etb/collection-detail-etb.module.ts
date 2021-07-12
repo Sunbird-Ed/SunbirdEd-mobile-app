@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '../../directives/directives.module';
 import { PipesModule } from '../../pipes/pipes.module';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import { RouterLinks } from '../app.constant';

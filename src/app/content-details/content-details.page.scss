@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/component/sb-offline-toast";
+@import "src/assets/styles/_variables.scss";
 
 .text-font {
   .button-inner {
@@ -12,8 +13,8 @@
   padding-top: 3px;
 }
 .sb-url {
-  color: #87d8f6;
-  font-size: 13px;
+  color: var(--app-primary);
+  font-size: 14px;
 }
 
 .scroll-content {
@@ -53,7 +54,8 @@
 .sb-content-info-container .sb-content-info-items {
   background: transparent;
   .sb-content-info-title {
-    color: $blue;
+    color: var(--app-gray);
+    margin: 0;
   }
   .sb-content-info-card {
     box-shadow: none;
@@ -67,7 +69,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   font-weight: bold;
-  font-size: ($font-size-base + 11);
+  font-size: 1rem;
   color: $gray-0;
   margin-right: 15px;
 }
@@ -77,9 +79,9 @@
 }
 .play-text {
   color: $gray-0;
-  font-size: 18px;
+  font-size: 14px;
   margin-top: 0;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 .sb-rating-star {
   color: $yellow;
@@ -97,7 +99,7 @@
 }
 .sb-dt-content.sb-dt-content-main {
   text-align: left;
-  margin-left: 10%;
+  margin-left: 1.5rem;
 }
 .disable-ripple ion-button-effect {
   display: none;
@@ -121,6 +123,12 @@
   top: 40%;
 }
 
+.sb-common-player-group{
+  .play-circle{
+    width: 4rem;
+  }
+}
+
 .sb-btn-tile-group  button[disabled]{
   opacity: 0.5 !important;
   pointer-events: none !important;
@@ -132,3 +140,34 @@
   cursor: default;
 }
 
+.sb-arrow-back{
+  font-size: 1.5rem;
+}
+
+.sb-btn-footer-text{
+  color: var(--app-medium-gray);
+}
+
+.read-more{
+  color: $blue;
+  font-weight: bold;
+  font-size: 12px;
+  padding-left: 0.5rem;
+}
+
+.sb-detail-card-info{
+  .sb-dt-card-actions{
+    padding-left: 1rem !important;
+  }
+}
+
+.audience-info {
+  margin-left: 1.4rem;
+  margin-top: 1rem;
+}
+.font-12 {
+  font-size: 12px !important;
+}
+.subtitle-color{
+  color: map-get($colors, granite_gray);
+}

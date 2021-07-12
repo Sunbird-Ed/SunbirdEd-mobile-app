@@ -101,7 +101,6 @@ export class AttachmentListPage implements OnInit {
           if (!task.isDeleted) {
             if (task.attachments && task.attachments.length) {
               for (const element of task.attachments) {
-                // if (element.type === tab.type) {
                 if (compare(element.type, tab.type)) {
                   element.localUrl = this.win.Ionic.WebView.convertFileSrc(
                     this.platform.is("ios")
@@ -148,8 +147,7 @@ export class AttachmentListPage implements OnInit {
     const fileTransfer: FileTransferObject = this.transfer.create();
     fileTransfer.download(attachment.url, this.path + '/' + attachment.name).then(success => {
       this.openFile(attachment)
-    }).catch(error => {
-    });
+    })
   }
   openImage(attachment) {
     this.photoViewer.show(attachment)

@@ -19,7 +19,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption-v8';
+import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 import isObject from 'lodash/isObject';
 import { Observable, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
@@ -282,6 +282,7 @@ export class CollectionDetailEtbPage implements OnInit {
     expandMode: ExpandMode.SINGLE,
     expandBehavior: ExpandBehavior.EXPAND_FIRST
   };
+  showContentDetails = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -514,6 +515,7 @@ export class CollectionDetailEtbPage implements OnInit {
   async setContentDetails(identifier, refreshContentDetails: boolean) {
     const option: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.cardData.objectType,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
@@ -737,7 +739,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
-          // console.log('data setChildContents', data);
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
@@ -783,7 +784,6 @@ export class CollectionDetailEtbPage implements OnInit {
           this.showChildrenLoader = false;
         });
       });
-    // this.ionContent.scrollTo(0, this.scrollPosition);
   }
 
   private setTocData(content) {
@@ -1226,9 +1226,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
     this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-      { childrenData: this.childrenData, parentId: this.identifier })
-    // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], // **** check needed ****
-    //   { state: { childrenData: this.childrenData, parentId: this.identifier } });
+      { childrenData: this.childrenData, parentId: this.identifier });
     const values = new Map();
     values['selectChapterVisible'] = this.isChapterVisible;
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -1328,7 +1326,6 @@ export class CollectionDetailEtbPage implements OnInit {
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
-            // this.refreshHeader();
             this.showChildrenLoader = false;
             this.childrenData.length = 0;
           }
@@ -1426,4 +1423,7 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
+  contentInfo() {
+    this.showContentDetails = !this.showContentDetails;
+  }
 }

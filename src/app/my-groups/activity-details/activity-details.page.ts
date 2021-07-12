@@ -93,7 +93,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.handleDeviceBackButton();
     this.courseList = [];
     try {
-      this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier);
+      this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier, this.activity.objectType);
       console.log('this.courseData', this.courseData);
       this.getNestedCourses(this.courseData.children);
       if (this.courseList.length) {

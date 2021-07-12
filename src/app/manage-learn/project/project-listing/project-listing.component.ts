@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService } from '@app/services';
@@ -9,7 +9,7 @@ import { LoaderService, UtilsService, ToastService } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { Platform } from '@ionic/angular';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { PopoverController, ToastController } from '@ionic/angular';
@@ -21,7 +21,7 @@ import { GenericPopUpService } from '../../shared';
     templateUrl: './project-listing.component.html',
     styleUrls: ['./project-listing.component.scss'],
 })
-export class ProjectListingComponent implements OnInit {
+export class ProjectListingComponent {
     private backButtonFunc: Subscription;
     page = 1;
     offlineProjectPage = 1;
@@ -78,7 +78,6 @@ export class ProjectListingComponent implements OnInit {
         });
     }
 
-    ngOnInit() { }
     async getDownloadedProjects(fields?: any[]): Promise<[]> {
         let isAprivateProgramQuery;
         this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
@@ -166,7 +165,6 @@ export class ProjectListingComponent implements OnInit {
         this.projects = [];
         this.page = 1;
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-        // this.initNetworkDetection();
         this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();
         this.headerConfig.actionButtons = [];
@@ -322,10 +320,6 @@ export class ProjectListingComponent implements OnInit {
         return query
     }
     async createProject(data) {
-        // if (!this.networkFlag) {
-        //     this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT'));
-        //     return;
-        // }
         this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
             queryParams: { hasAcceptedTAndC: data },
         });

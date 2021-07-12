@@ -24,7 +24,7 @@
     </div>
     <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length"
       class="collection-etb-filter">
-      <div class="sb-chapter-dd" (click)="openTextbookToc()">
+      <div class="sb-chapter-dd pl-16" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
         <span class="pull-right">
           <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
@@ -48,8 +48,9 @@
       </div>
     </div>
 
-    <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
-
+  </div>
+  <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
+  <div>
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
@@ -68,12 +69,29 @@
   </div>
   <div *ngIf="contentDetail?.contentData?.author || contentDetail?.contentData?.organisation 
         ||contentDetail?.contentData?.license || licenseDetails || contentDetail?.contentData?.copyright">
-    <div class="ion-padding-end">
-      <app-license-card-component [content]="contentDetail?.contentData"
-                                  [licenseDetails]="licenseDetails"
-                                  [appName]="appName" [objRollup]="objRollup"
-                                  [corRelationList]="corRelationList"
-                                  [pageId]="pageId"></app-license-card-component>
+    <div class="m-8">
+      <div class="collection-etb-details">
+        <div class="title" (click)="contentInfo()">
+          <strong class="pull-left">{{'DETAILS' | translate}}</strong>
+          <span class="pull-right">
+            <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
+          </span>
+        </div>
+        <div *ngIf="content && showContentDetails">
+          <app-relevant-content-card 
+            [contentData]="contentDetail?.contentData" 
+            [isAlreadyEnrolled]="isAlreadyEnrolled">
+          </app-relevant-content-card>
+        </div>
+      </div>
+      <app-license-card-component 
+        [content]="contentDetail?.contentData" 
+        [licenseDetails]="licenseDetails" 
+        [appName]="appName"
+        [objRollup]="objRollup" 
+        [corRelationList]="corRelationList" 
+        [pageId]="pageId">
+      </app-license-card-component>
     </div>
   </div>
 </ion-content>

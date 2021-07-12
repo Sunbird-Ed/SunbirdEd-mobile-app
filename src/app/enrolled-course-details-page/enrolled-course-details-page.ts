@@ -483,7 +483,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         actionsButtons: [
           {
             btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ],
       },
@@ -679,6 +679,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   setContentDetails(identifier): void {
     const option: ContentDetailRequest = {
       contentId: identifier,
+      objectType: this.courseCardData.objectType,
       attachFeedback: true,
       emitUpdateIfAny: true,
       attachContentAccess: true
@@ -1974,7 +1975,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },
@@ -2351,7 +2352,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.fetchForumIdReq.type = 'course';
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
-      this.createUserReq.username = p.serverProfile['userName'];
+      this.createUserReq.username = (p.serverProfile && p.serverProfile['userName']) || p.handle;
       this.isMinor = p.serverProfile.isMinor;
     });
     this.appGlobalService.getActiveProfileUid()

@@ -6,7 +6,6 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { CoreModule } from '../core/core.module';
-import { SurveyMsgComponent } from '../shared/components/survey-msg/survey-msg.component';
 const routes: Routes = [
   {
     path: '',

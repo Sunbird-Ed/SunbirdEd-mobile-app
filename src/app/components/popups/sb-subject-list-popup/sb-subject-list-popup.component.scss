@@ -1,5 +1,18 @@
 @import "src/assets/styles/_variables.scss";
 
+::ng-deep {
+  .subject-list{
+    sb-pills-grid{
+      .sb-pills-grid{
+        .item{
+          background-color: var(--app-secondary-background) !important;
+          height: auto !important;
+        }
+      }
+    }
+  }
+}
+
 .title-section{
   border-bottom: 1px solid var(--app-primary-header);
   position: sticky;
@@ -14,4 +27,9 @@
   .subject-title{
     font-size: 1rem;
   }
+}
+
+.subject-list{
+  height: 87vh;
+  overflow-y: scroll;
 }
