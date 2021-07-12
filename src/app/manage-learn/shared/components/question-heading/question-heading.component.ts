@@ -58,9 +58,6 @@ export class QuestionHeadingComponent implements OnInit {
   }
 
   pauseQuestion() {
-    // this.textToSpeech.stopSpeech();
-    // this.play = false;
-
   }
 
   async openHint(hint) {

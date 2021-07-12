@@ -7,38 +7,13 @@
   </ion-buttons>
 </ion-toolbar>
 <ion-content *ngIf="resources">
-  <!-- <ion-item class="search-bar-custom">
-    <ion-icon name="search" item-left color="dark"></ion-icon>
-    <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}" (ionInput)="search($event)">
-    </ion-input>
-  </ion-item> -->
   <ion-searchbar debounce="1000" (ionInput)="search($event)" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}">
   </ion-searchbar>
   <div class="ion-padding">
-    <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}} <ion-icon
-      name="chevron-forward" color="primary"></ion-icon>
+    <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}} <ion-icon name="chevron-forward" color="primary"></ion-icon>
     <div class="filters">
-      <ion-button *ngFor="let filter of filters" shape="round" [color]="filter.isActive ? 'primary' : 'light'"
-        (click)="setFilter(filter);">
-        <!-- <span class="material-icons" *ngIf="filter.icon">
-          {{filter.icon}}
-        </span>  -->
-        {{filter.name}}
-      </ion-button>
+      <ion-button *ngFor="let filter of filters" shape="round" [color]="filter.isActive ? 'primary' : 'light'"(click)="setFilter(filter);">{{filter.name}} </ion-button>
     </div>
-    <!-- <ion-row *ngFor="let data of resources" class="data-list">
-      <ion-col size="2">
-        <ion-item lines="none">
-          <ion-checkbox slot="start" ([ngModel])="data.isChecked" [checked]="data.isChecked"
-            (ionChange)="selectData(data)"></ion-checkbox>
-        </ion-item>
-      </ion-col>
-      <ion-col size="10" (ionChange)="selectData(data)">
-        <ion-item>
-          <ion-label>{{data.name}}</ion-label>
-        </ion-item>
-      </ion-col>
-    </ion-row> -->
 
 
     <ion-item lines="none" *ngFor="let data of resources" class="data-list">
@@ -48,13 +23,10 @@
     </ion-item>
 
     <div class="loadmore-btn" *ngIf="dataCount">
-      <ion-button (click)="loadMoreData()" expand="block">
-        {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
+      <ion-button (click)="loadMoreData()" expand="block">{{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
     </div>
   </div>
 </ion-content>
 <ion-footer *ngIf="resources">
-  <ion-button expand="block" (click)="addResources()" color="primary">
-    {{'FRMELEMNTS_BTN_ATTACH' | translate}}
-  </ion-button>
+  <ion-button expand="block" (click)="addResources()" color="primary">{{'FRMELEMNTS_BTN_ATTACH' | translate}}</ion-button>
 </ion-footer>

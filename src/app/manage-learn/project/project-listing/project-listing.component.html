@@ -5,11 +5,6 @@
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
   <div class="container">
-    <!-- <div class="scroll_chip" scrollX="true">
-      <ion-chip outline="true" *ngFor="let filter of filters" [color]="filter.selected ? 'primary' : ''">
-        <ion-label (click)="getDataByFilter(filter)">{{filter.name | translate}}</ion-label>
-      </ion-chip>
-    </div> -->
     <sb-library-filters [list]="filters" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"
       (selectedFilter)="getDataByFilter($event);" *ngIf="filters?.length">
     </sb-library-filters>

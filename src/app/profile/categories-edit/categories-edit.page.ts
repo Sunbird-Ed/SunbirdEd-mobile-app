@@ -610,4 +610,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     });
     return subscriptionArray;
   }
+
+  goBack() {
+    this.location.back();
+  }
 }

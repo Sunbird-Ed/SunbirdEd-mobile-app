@@ -179,7 +179,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color txt-uppercase'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },

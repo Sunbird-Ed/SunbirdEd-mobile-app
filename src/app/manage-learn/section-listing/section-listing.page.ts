@@ -7,7 +7,6 @@ import { CommonUtilService } from '@app/services';
 import { Network } from '@ionic-native/network/ngx';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-// import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 
 @Component({
   selector: 'app-section-listing',
@@ -27,7 +26,6 @@ export class SectionListingPage implements OnInit {
   allAnsweredForEvidence: boolean;
   networkAvailable: boolean;
   constructor(
-    // private observationSrvc: ObservationService,
     private localStorage: LocalStorageService,
     private utils: UtilsService,
     private updateTracker: UpdateTrackerService,
@@ -140,7 +138,6 @@ export class SectionListingPage implements OnInit {
             text: translateObject['FRMELEMNTS_LBL_NO'],
             role: 'cancel',
             handler: () => {
-              //console.log('Cancel clicked');
             },
           },
           {
@@ -163,7 +160,6 @@ export class SectionListingPage implements OnInit {
         name: this.entityName,
         selectedEvidenceIndex: this.selectedEvidenceIndex,
       };
-      // this.navCtrl.push(ImageListingPage, params);
       this.router.navigate([RouterLinks.IMAGE_LISTING], { queryParams: params });
     } else {
       this.translate.get('toastMessage.connectToInternet').subscribe((translations) => {
@@ -182,10 +178,6 @@ export class SectionListingPage implements OnInit {
   }
 
   previewSubmission() {
-    // this.submissionId = this.navParams.get('_id');
-    // this.entityName = this.navParams.get('name');
-    // this.selectedEvidenceIndex = this.navParams.get('selectedEvidence');
-    // this.navCtrl.push(PreviewPage, { _id: this.submissionId, name: this.entityName, selectedEvidence: this.selectedEvidenceIndex })
 
     this.router.navigate([RouterLinks.SUBMISSION_PREVIEW], {
       queryParams: {

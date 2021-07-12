@@ -969,8 +969,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.HOME,
           PageId.HOME,
           undefined,
-          utmTelemetry,
-          undefined);
+          utmTelemetry);
         this.utilityService.clearUtmInfo();
       }
     })

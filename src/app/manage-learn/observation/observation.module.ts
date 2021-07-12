@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ObservationRoutingModule } from "./observation-routing.module";
 import { ObservationHomeComponent } from "./observation-home/observation-home.component";
-import { HttpClientModule } from "@angular/common/http";
 import { SharedModule } from "../shared/shared.module";
 import { ObservationDetailComponent } from "./observation-detail/observation-detail.component";
 import { TranslateModule } from "@ngx-translate/core";
