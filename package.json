@@ -206,6 +206,9 @@
     "plugins": {
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-device": {},
@@ -216,7 +219,9 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-streaming-media": {},
       "cordova-plugin-awesome-shared-preferences": {},
-      "cordova-plugin-advanced-http": {},
+      "cordova-plugin-advanced-http": {
+        "OKHTTP_VERSION": "3.10.0"
+      },
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-media": {},
       "sb-cordova-plugin-customtabs": {
@@ -240,13 +245,25 @@
       },
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
-      "cordova-plugin-printer": {},
+      "cordova-plugin-printer": {
+        "ANDROID_SUPPORT_V4_VERSION": "28.+"
+      },
+      "cordova-plugin-fcm-with-dependecy-updated": {
+        "FCM_CORE_VERSION": "16.0.9",
+        "FCM_VERSION": "18.0.0",
+        "GRADLE_TOOLS_VERSION": "3.5.0",
+        "GOOGLE_SERVICES_VERSION": "4.2.0",
+        "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
+      },
+
       "com.telerik.plugins.nativepagetransitions": {},
       "cordova-plugin-proguard": {},
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-secure-storage-echo": {},
       "cordova-plugin-appavailability": {},
-      "cordova-plugin-camera": {},
+      "cordova-plugin-camera": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
       "cordova-plugin-filepath": {},
       "cordova-plugin-chooser": {},
       "cordova-plugin-filepicker": {},
