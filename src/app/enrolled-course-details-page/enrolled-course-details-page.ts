@@ -72,6 +72,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 declare const cordova;
 
@@ -197,6 +198,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   forumId?: string;
 
   @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
   public objRollup: Rollup;
   pageName = '';
   contentId: string;
@@ -398,7 +400,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         });
       }
+      this.fetchForumIdReq.identifier = [this.batchId];
+      this.fetchForumIdReq.type = 'batch';
     }
+    this.accessDiscussionComponent.fetchForumIds();
   }
 
   private checkUserLoggedIn() {
