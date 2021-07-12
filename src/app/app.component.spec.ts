@@ -13,7 +13,8 @@ import {
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
     TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from 'sunbird-sdk';
-import { Platform, Events, MenuController } from '@ionic/angular';
+import { Platform, MenuController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { NgZone, EventEmitter } from '@angular/core';
@@ -30,6 +31,7 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
+import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 
 declare const supportfile;
 declare const plugins;
@@ -41,7 +43,8 @@ describe('AppComponent', () => {
             local: {
                 launchDetails: {
                     action: 'click'
-                }
+                },
+                on: jest.fn()
             }
         },
         InAppUpdateManager: {
@@ -148,6 +151,10 @@ describe('AppComponent', () => {
     };
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        getPersistedSegmentaion: jest.fn(),
+        persistSegmentation: jest.fn()
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -183,12 +190,14 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockSegmentationTagService as SegmentationTagService,
         );
     });
 
     beforeEach(() => {
         jest.clearAllMocks();
+        global.window.segmentation = null;
     });
 
     it('should be create a instance of appComponent', () => {
@@ -243,7 +252,14 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
-            mockHeaderService.showStatusBar = jest.fn();
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(false);
+                }
+            });
+            mockPreferences.putBoolean = jest.fn(() => of(false));
+            mockHeaderService.showStatusBar = jest.fn(() => Promise.resolve());
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -258,6 +274,7 @@ describe('AppComponent', () => {
         it('should subscribe and set header config', (done) => {
             // arrange
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             const mockConfig = {
                 showHeader: true,
                 showBurgerMenu: true,
@@ -282,6 +299,7 @@ describe('AppComponent', () => {
         it('should generate interact telemetry internet-connected in network availability is true', (done) => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.networkAvailability$ = of(true);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
@@ -305,6 +323,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
@@ -327,6 +346,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.addListener = jest.fn(() => 'some_trace_id');
             // act
@@ -353,6 +373,7 @@ describe('AppComponent', () => {
             });
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             mockEventsBusService.events = jest.fn(() => EMPTY);
             mockNotificationSrc.setupLocalNotification = jest.fn();
@@ -378,6 +399,12 @@ describe('AppComponent', () => {
                         return of('DEFAULT');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -529,6 +556,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -647,6 +680,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -757,6 +796,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -855,6 +900,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockHeaderService.hideStatusBar = jest.fn();
             FCMPlugin.getToken = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
@@ -904,6 +955,12 @@ describe('AppComponent', () => {
                         return of('DEFAULT');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -960,6 +1017,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockHeaderService.showStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
@@ -999,14 +1062,17 @@ describe('AppComponent', () => {
                 success({});
                 error('');
             });
+            mockNotificationSrc.handleNotification = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
             mockNotificationSrc.setNotificationParams = jest.fn();
-
+            mockCommonUtilService.populateGlobalCData = jest.fn(() => Promise.resolve());
+            mockHeaderService.hideHeader = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
+                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.FCM,
@@ -1052,6 +1118,12 @@ describe('AppComponent', () => {
                         return of('DEFAULT');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -1292,6 +1364,12 @@ describe('AppComponent', () => {
                         return of('DEFAULT');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -1926,6 +2004,12 @@ describe('AppComponent', () => {
                         return of(ProfileType.ADMIN);
                 }
             });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
+                }
+            });
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -2105,6 +2189,12 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -2386,6 +2476,12 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
+                }
+            });
+            mockPreferences.getBoolean = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.COACH_MARK_SEEN:
+                    return of(true);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);

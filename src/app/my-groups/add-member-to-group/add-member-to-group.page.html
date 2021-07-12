@@ -8,7 +8,7 @@
                 </span>
                 <span (click)="openInfoPopup($event)" class="pull-right" #addMemberInfoPopupRef>
                     <span>
-                        <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                        <ion-icon class="au-info-icon" name="information-circle-outline"></ion-icon>
                     </span>
                 </span>
             </div>
@@ -25,12 +25,12 @@
             <div class="au-ip-info clearfix">
                 <span class="pull-left">{{'MEMBER_ID' | translate: {'app_name': appName} }}</span>
                 <span (click)="openInfoPopup($event)" class="pull-right">
-                    <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                    <ion-icon class="au-info-icon" name="information-circle-outline"></ion-icon>
                 </span>
             </div>
             <input type="text" placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}"
                 [(ngModel)]="username" disabled>
-            <ion-icon class="au-clear-icon" ios="ios-close" md="md-close" (click)="onClearUser()">
+            <ion-icon class="au-clear-icon" name="close" (click)="onClearUser()">
             </ion-icon>
         </div>
         <div class="au-avatar">

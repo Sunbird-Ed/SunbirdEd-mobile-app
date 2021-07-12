@@ -9,7 +9,7 @@ import {
   HttpServerError
 } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
@@ -119,10 +119,10 @@ describe('LocalCourseService', () => {
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
-          expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-          expect(mockCourseService.enrollCourse).toHaveBeenCalled();
-          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-          done();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
+        done();
       });
     });
 
@@ -794,6 +794,18 @@ describe('LocalCourseService', () => {
       expect(data).toBeFalsy();
     });
 
+    it('should show toast message if batches is empty', (done) => {
+          // arrnge
+          mockCommonUtilService.showToast = jest.fn();
+          // act
+          const data = localCourseService.isEnrollable([], {});
+          // assert
+          setTimeout(() => {
+              expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+              done();
+          }, 0);
+      });
+
     it('should return is enrolled', () => {
       const batches = [{
         enrollmentEndDate: undefined,
@@ -843,10 +855,10 @@ describe('LocalCourseService', () => {
     it('return assessment status isLastAttempt as true if its the final attempt', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', contentData: { maxAttempts: 3 } });
       // assert
       expect(data.isLastAttempt).toEqual(true);
       expect(data.isContentDisabled).toEqual(false);
@@ -855,15 +867,14 @@ describe('LocalCourseService', () => {
     it('return assessment status isContentDisabled as true if the user has exceeded the number of attempts', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2,3] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2, 3] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', maxAttempts: 2 });
       // assert
       expect(data.isLastAttempt).toEqual(false);
       expect(data.isContentDisabled).toEqual(true);
     });
-
   });
 
 });

@@ -1,0 +1,79 @@
+<ion-content>
+  <div padding>
+    <ion-segment [(ngModel)]="selectedTab">
+      <ion-segment-button value="evidence" (click)="onTabChange('evidence')">
+        {{ 'FRMELEMNTS_LBL_EVIDENCES' | translate }}
+      </ion-segment-button>
+      <ion-segment-button value="remarks" (click)="onTabChange('remarks')">
+        {{ 'FRMELEMNTS_LBL_REMARKS' | translate }}
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div [ngSwitch]="selectedTab">
+    <div *ngSwitchCase="'evidence'">
+      <!-- //for images -->
+      <div *ngIf="images?.length">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <h5>{{ 'FRMELEMNTS_LBL_IMAGES' | translate }}</h5>
+            </ion-col>
+            <ion-col size="4" *ngFor="let i of images">
+              <attachments [url]="i.url" [extension]="i.extension"></attachments>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- //for VIDEOS-->
+      <div *ngIf="videos?.length">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h5>{{ 'FRMELEMNTS_LBL_VIDEOS' | translate }}</h5>
+            </ion-col>
+            <ion-col size="4" *ngFor="let v of videos">
+              <attachments [url]="v.url" [extension]="v.extension"></attachments>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- //for DOCUMENT -->
+      <div *ngIf="documents?.length">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <h5>{{ 'FRMELEMNTS_LBL_DOCUMENTS' | translate }}</h5>
+            </ion-col>
+            <ion-col size="4" *ngFor="let d of documents">
+              <attachments [url]="d.url" [extension]="d.extension"></attachments>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <!-- //for Audio -->
+      <div *ngIf="audios?.length">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <h5>{{ 'FRMELEMNTS_LBL_AUDIOS' | translate }}</h5>
+            </ion-col>
+            <ion-col size="4" *ngFor="let a of audios">
+              <attachments [url]="a.url" [extension]="a.extension"></attachments>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'remarks'">
+      <div *ngIf="remarks?.length">
+        <ion-item text-wrap text-justify *ngFor="let r of remarks">
+          {{ r }}
+        </ion-item>
+      </div>
+    </div>
+  </div>
+</ion-content>

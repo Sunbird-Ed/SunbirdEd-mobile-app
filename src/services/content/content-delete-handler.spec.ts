@@ -4,7 +4,8 @@ import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } fr
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { of, throwError } from 'rxjs';
 import { ContentService, Content, TelemetryObject } from 'sunbird-sdk';
-import { PopoverController, Events } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ContentInfo } from './content-info';
 describe('ContentDeleteHandler', () => {
     let contentDeleteHandler: ContentDeleteHandler;

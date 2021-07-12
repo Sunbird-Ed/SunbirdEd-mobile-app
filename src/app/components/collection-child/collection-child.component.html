@@ -30,7 +30,7 @@
                    [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) ||
                commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
               <span class="icon-position" *ngIf="childData?.isAvailableLocally">
-              <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
+              <ion-icon class="sb-checkmark-icon" name="checkmark-circle"></ion-icon>
             </span>
             </div>
             <span class="content-name">{{childData?.contentData?.name}}</span>
@@ -51,7 +51,7 @@
           <div class="pull-left">
             {{childData?.contentData?.name}}
             <span *ngIf="childData?.isAvailableLocally">
-            <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
+            <ion-icon class="sb-checkmark-icon" name="checkmark-circle"></ion-icon>
           </span>
           </div>
 
@@ -92,7 +92,7 @@
   <div class="row sb-topic-item"(click)="showComingSoonPopup(childData)"
     *ngIf="isTextbookTocPage && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !childData?.children">
     <div class="sb-accordian-grey-text">{{childData?.contentData?.name}}</div>
-    <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
+    <ion-icon name="alert" class="grey-icon mt-4"></ion-icon>
   </div>
 
   <ng-container *ngIf="!(childData?.contentData?.trackable?.enabled === 'Yes')">

@@ -1,0 +1,19 @@
+@import 'src/assets/styles/_variables.scss';
+@import 'src/assets/styles/_custom-mixins';
+@import 'src/assets/styles/base/_variables.scss';
+
+.top-back-button {
+  font-size: 20px;
+  @include rtl() {
+    float: right;
+  }
+}
+img {
+  width: 70%;
+}
+
+.lightMessage {
+  font-weight: 200;
+  color: $gray-400;
+  text-align: center;
+}

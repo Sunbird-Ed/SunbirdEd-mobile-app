@@ -1,9 +1,15 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, QueryList, ViewChildren, AfterViewInit} from '@angular/core';
-import { FieldConfig, FieldConfigInputType, FieldConfigValidationType, FieldConfigOption, FieldConfigOptionsBuilder } from './field-config';
-import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
-import {Subject, Subscription, Observable} from 'rxjs';
-import {distinctUntilChanged, map, scan, tap} from 'rxjs/operators';
+import {
+  AfterViewInit, Component, EventEmitter, Input,
+  OnChanges, OnDestroy, OnInit, Output, QueryList, SimpleChanges, ViewChildren
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, map, scan, tap } from 'rxjs/operators';
+import {
+  FieldConfig, FieldConfigInputType, FieldConfigOption,
+  FieldConfigOptionsBuilder, FieldConfigValidationType
+} from './field-config';
 import { ValueComparator } from './value-comparator';
 
 @Component({
@@ -24,16 +30,18 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
   formGroup: FormGroup;
   FieldConfigInputType = FieldConfigInputType;
   ValueComparator = ValueComparator;
-  optionsMap$: {[code: string]: Observable<FieldConfigOption<any>[]>} = {};
-  requiredFieldsMap: {[code: string]: boolean} = {};
+  optionsMap$: { [code: string]: Observable<FieldConfigOption<any>[]> } = {};
+  requiredFieldsMap: { [code: string]: boolean } = {};
 
   private statusChangesSubscription: Subscription;
   private valueChangesSubscription: Subscription;
   private dataLoadStatusSinkSubscription: Subscription;
+
   constructor(
     private formBuilder: FormBuilder,
     private commonUtilService: CommonUtilService
   ) { }
+
   ngOnDestroy(): void {
     this.finalize.emit();
     if (this.statusChangesSubscription) {
@@ -46,8 +54,10 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
       this.dataLoadStatusSinkSubscription.unsubscribe();
     }
   }
+
   ngOnInit() {
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config']) {
       if ((changes['config'].currentValue && changes['config'].firstChange) || changes['config'].previousValue !== changes['config'].currentValue) {
@@ -87,11 +97,11 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
       scan<'LOADING' | 'LOADED', { loadingCount: 0, loadedCount: 0 }>((acc, event) => {
         if (event === 'LOADED') {
           acc.loadedCount++;
-          return acc;
+        } else {
+          acc.loadingCount++;
         }
-        acc.loadingCount++;
         return acc;
-      }, {loadingCount: 0, loadedCount: 0}),
+      }, { loadingCount: 0, loadedCount: 0 }),
       map<{ loadingCount: 0, loadedCount: 0 }, 'LOADING' | 'LOADED'>((aggregates) => {
         if (aggregates.loadingCount !== aggregates.loadedCount) {
           return 'LOADING';
@@ -126,7 +136,7 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
 
   ngAfterViewInit() {
     this.config.forEach(element => {
-      if ( element.asyncValidation && element.asyncValidation.asyncValidatorFactory && this.formGroup.get(element.code)) {
+      if (element.asyncValidation && element.asyncValidation.asyncValidatorFactory && this.formGroup.get(element.code)) {
         this.formGroup.get(element.code).setAsyncValidators(element.asyncValidation.asyncValidatorFactory(
           element.asyncValidation.marker,
           this.validationTriggers
@@ -233,4 +243,3 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
 }
-

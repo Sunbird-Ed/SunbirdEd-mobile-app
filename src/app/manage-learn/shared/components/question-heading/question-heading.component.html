@@ -1,0 +1,19 @@
+<div class="flexbox">
+  <div class="noWrap" *ngIf="data?.questionNumber">{{data?.questionNumber}} .</div>
+  <div style="flex: 1;" class="_flex-direction-column ion-padding-start">
+    <div *ngFor="let question of data.question;let first = first">
+      <div class=" _flex-box  _justify-content-space-between">
+        <div class="wrapText">{{question}}</div>
+      </div>
+    </div>
+
+  </div>
+  <div *ngIf="data?.hint">
+    <ion-icon name="bulb" class="noWrap ion-margin-start help" (click)="openHint(data?.hint)"></ion-icon>
+    <!-- <ion-icon *ngIf="!play"  class="noWrap ion-margin-start" name="volume-off"
+      (click)="playQuestion(data.question[0],data.options,data.responseType)"></ion-icon>
+    <ion-icon *ngIf="play" class="noWrap ion-margin-start" name="volume-up" (click)="pauseQuestion()">
+    </ion-icon> -->
+  </div>
+
+</div>

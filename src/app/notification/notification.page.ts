@@ -1,7 +1,9 @@
+import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
 import { Component, OnInit, Inject } from '@angular/core';
-import { Platform, Events } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
-import { NotificationService, Notification } from 'sunbird-sdk';
+import { NotificationService, Notification, CorrelationData } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -60,13 +62,21 @@ export class NotificationPage implements OnInit {
         }
       })
     );
+    const corRelationList: Array<CorrelationData> = [];
     this.unreadNotificationList$ = this.notificationList$.pipe(
-      map((notifications) => notifications.filter((n) => !n.isRead))
+      map((notifications) => notifications.filter((n) => !n.isRead)),
+        tap((notifications) => {
+          corRelationList.push(
+              {id: notifications.length.toString(),
+                type: CorReleationDataType.NEW_NOTIFICATION});
+        })
     );
     this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
+      ImpressionType.PAGE_LOADED,
+      ImpressionSubtype.HOME,
       PageId.NOTIFICATION,
-      Environment.NOTIFICATION, '', '', ''
+      Environment.HOME, '', '', '', undefined,
+      corRelationList
     );
   }
 

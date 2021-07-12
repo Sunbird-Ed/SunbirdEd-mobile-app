@@ -1,0 +1,34 @@
+<div *ngIf="pieChartData">
+  <div class="heading">
+    <h4>{{ questionNumber }}) {{ data?.question }}</h4>
+  </div>
+  <!-- <highcharts-chart
+    [(update)]="updateFlag"
+    [Highcharts]="Highcharts"
+    [options]="chartObj"
+    [constructorType]="chartConstructor"
+    [oneToOne]="oneToOneFlag"
+    [runOutsideAngular]="runOutsideAngularFlag"
+    *ngIf="data?.chart?.data"
+  >
+  </highcharts-chart> -->
+  <div *ngIf="data?.chart?.data">
+    <!-- <div id="{{'container'+ questionNumber }}"></div> -->
+    <div style="display: block" *ngIf="data?.chart?.data">
+      <canvas
+        baseChart
+        height="60vh"
+        width="80vw"
+        [data]="pieChartData"
+        [labels]="pieChartLabels"
+        [chartType]="pieChartType"
+        [options]="pieChartOptions"
+        [plugins]="pieChartPlugins"
+        [legend]="pieChartLegend"
+        [colors]="chartColors"
+      >
+      </canvas>
+    </div>
+  </div>
+  <div class="errorMsg" *ngIf="!data?.chart?.data">No data found</div>
+</div>

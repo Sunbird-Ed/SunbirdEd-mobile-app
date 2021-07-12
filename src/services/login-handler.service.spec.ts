@@ -1,6 +1,7 @@
 import {LoginHandlerService} from './login-handler.service';
 import {AppGlobalService} from './app-global-service.service';
-import {Events, NavController} from '@ionic/angular';
+import {NavController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {Router} from '@angular/router';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {AppVersion} from '@ionic-native/app-version/ngx';
@@ -86,7 +87,9 @@ describe('LoginHandlerService', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };
-    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {
+        hide: jest.fn()
+    };
 
     beforeAll(() => {
         loginHandlerService = new LoginHandlerService(
@@ -256,7 +259,9 @@ describe('LoginHandlerService', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.TEACHER,
                 source: ProfileSource.SERVER,
-                userType: 'Teacher',
+                profileUserType: {
+                    type: 'OTHER'
+                },
                 serverProfile: {
                     uid: 'sample_id',
                     handle: 'sample_name',

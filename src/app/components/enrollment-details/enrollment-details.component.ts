@@ -1,7 +1,8 @@
 import { Component, NgZone, Inject, OnInit } from '@angular/core';
 import {
-    NavController, Events, PopoverController, NavParams
+    NavController, PopoverController, NavParams
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     SharedPreferences, TelemetryObject, InteractType,
 } from 'sunbird-sdk';
@@ -145,7 +146,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.CONTENT_CLICKED,
             this.env,
-            this.pageName ? this.pageName : this.layoutName,
+            PageId.COURSE_BATCHES,
             telemetryObject,
             values
         );

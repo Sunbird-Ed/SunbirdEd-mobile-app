@@ -8,12 +8,12 @@
       </ion-row>
 
       <ion-row>
-        <ion-col offset="2" size="7" text-center class="msg">
+        <ion-col offset="2" size="7" class="msg ion-text-center">
           <p> {{ messageKey | translate }}</p>
         </ion-col>
       </ion-row>
 
-      <ion-row text-center *ngIf="showOnlyPrimaryBtn">
+      <ion-row class="ion-text-center" *ngIf="showOnlyPrimaryBtn">
         <ion-col size="12">
           <a block (click)="tryAgain()"> {{ tryAgainKey | translate }}</a>
         </ion-col>
@@ -22,7 +22,7 @@
   </ion-content>
   <ion-footer class="ion-padding">
     <ion-button expand="block" slot="end" (click)="cancel()"> {{ skipKey | translate }}
-      <ion-icon name="arrow-round-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
+      <ion-icon name="arrow-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
         aria-label="arrow round-forward" ng-reflect-name="arrow-round-forward"></ion-icon>
     </ion-button>
   </ion-footer>
@@ -37,12 +37,12 @@
       </ion-row>
 
       <ion-row>
-        <ion-col offset="2" size="8" text-center class="msg">
+        <ion-col offset="2" size="8" class="ion-text-center msg">
           <p><strong> {{ messageKey | translate }} </strong></p>
         </ion-col>
       </ion-row>
 
-      <ion-row text-center *ngIf="!showOnlyPrimaryBtn">
+      <ion-row class="ion-text-center" *ngIf="!showOnlyPrimaryBtn">
         <ion-col size="12">
           <a block (click)="tryAgain()"> {{ tryAgainKey | translate }}</a>
         </ion-col>
@@ -52,7 +52,7 @@
 
   <ion-footer class="ion-padding">
     <ion-button class="arrow-icon" expand="block" slot="end" (click)="cancel()"> {{ skipKey | translate }}
-      <ion-icon name="arrow-round-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
+      <ion-icon name="arrow-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
         aria-label="arrow round-forward" ng-reflect-name="arrow-round-forward"></ion-icon>
     </ion-button>
   </ion-footer>

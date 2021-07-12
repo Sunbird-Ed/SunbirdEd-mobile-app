@@ -10,7 +10,7 @@ import { ComponentsModule } from '../components/components.module';
 import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '../../directives/directives.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 
 
 const routes: Routes = [
@@ -33,7 +33,9 @@ const routes: Routes = [
     CommonConsumptionModule
   ],
   entryComponents: [],
-  declarations: [SearchPage],
+  declarations: [
+    SearchPage
+  ],
 
 })
 export class SearchPageModule {}

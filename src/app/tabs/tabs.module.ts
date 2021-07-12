@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { TabsPage } from './tabs.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterLinks } from '../app.constant';
+import { UserTypeSpecificTabGuard } from './usertype-specific-tab.guard';
 
 const routes: Routes = [
   {
@@ -24,16 +25,17 @@ const routes: Routes = [
         ]
       },
       {
-        path: RouterLinks.DISCOVER,
+        path: RouterLinks.SEARCH,
         children: [
           {
             path: '',
-            loadChildren: '../discover/discover.module#DiscoverPageModule'
+            loadChildren: '../search/search.module#SearchPageModule'
           }
         ]
       },
       {
         path: RouterLinks.RESOURCES,
+        canActivate: [UserTypeSpecificTabGuard],
         children: [
           {
             path: '',
@@ -76,11 +78,6 @@ const routes: Routes = [
             loadChildren: '../download-manager/download-manager.module#DownloadManagerPageModule'
           }
         ]
-      },
-      {
-        path: '',
-        redirectTo: RouterLinks.RESOURCES,
-        pathMatch: 'full'
       }
     ]
   }
@@ -94,6 +91,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild()
   ],
-  declarations: [TabsPage]
+  declarations: [TabsPage],
+  providers: [UserTypeSpecificTabGuard]
 })
 export class TabsPageModule { }

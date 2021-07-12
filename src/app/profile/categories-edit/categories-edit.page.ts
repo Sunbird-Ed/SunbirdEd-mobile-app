@@ -1,7 +1,8 @@
 import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { Events, IonSelect, Platform } from '@ionic/angular';
+import { IonSelect, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -43,9 +44,9 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class CategoriesEditPage implements OnInit, OnDestroy {
 
-  @ViewChild('boardSelect') boardSelect: IonSelect;
-  @ViewChild('mediumSelect') mediumSelect: IonSelect;
-  @ViewChild('gradeSelect') gradeSelect: IonSelect;
+  @ViewChild('boardSelect', { static: false }) boardSelect: IonSelect;
+  @ViewChild('mediumSelect', { static: false }) mediumSelect: IonSelect;
+  @ViewChild('gradeSelect', { static: false }) gradeSelect: IonSelect;
 
   private framework: Framework;
   private formControlSubscriptions: Subscription;
@@ -458,7 +459,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.disableSubmitButton = true;
         this.events.publish('loggedInProfile:update', req.framework);
-
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         if (this.showOnlyMandatoryFields) {
           const reqObj: ServerProfileDetailsRequest = {
             userId: this.profile.uid,
@@ -470,7 +471,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+                  if (this.hasFilledLocation || isSSOUser) {
+                    if (!isSSOUser) {
+                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
+                    }
                     this.router.navigate([RouterLinks.TABS]);
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
@@ -485,6 +489,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
+                if (!isSSOUser) {
+                  this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+                }
                 this.router.navigate([RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {

@@ -1,0 +1,133 @@
+// @import "../../theme/colors.scss";
+@import "src/assets/styles/_variables.scss";
+.project-box {
+  margin: 10px 8px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 6px 6px 0px,
+    rgba(0, 0, 0, 0.12) 0px 0px 0px 0px;
+
+  ion-card-header {
+    padding: 0px 15px;
+  }
+
+  .custom-filed {
+    margin: 10px 0px;
+
+    ion-label {
+      font-weight: 600;
+      color: #{$black-color};
+    }
+
+    ion-icon {
+      float: right;
+      font-size: 24px;
+      margin-top: -5px;
+    }
+
+    ion-col {
+      padding: 0px;
+    }
+  }
+
+  .status-bar {
+    text-align: center;
+
+    ion-progress-bar {
+      height: 8px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.tasks-box {
+  background: #{$white-color};
+  font-weight: 600;
+
+  .left-border {
+    max-width: 6px !important;
+    margin: 2% 10px;
+    margin-left: 0px;
+    padding: 0px;
+  }
+
+  h5 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .completed-task-left-border {
+    background: green;
+  }
+
+}
+
+ion-button, ion-fab-button {
+  --background: #{$blue};
+}
+
+.task-list {
+  padding: 5px 15px 0 15px;
+
+  .task-endDate {
+    color: #{$blue};
+    font-size: 16px;
+    margin-top: 5px;
+  }
+
+  ion-icon {
+    font-size: 24px;
+    margin-left: 20px;
+  }
+
+  .sec-row {
+    padding: 0px 0px 5px 0px;
+  }
+
+  .first-row {
+    padding: 10px 0px 0px 0px;
+  }
+
+  .date-label {
+    text-align: center;
+    color: #5a5b5d;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .date_button-container {
+    display: flex;
+    justify-content: space-between;
+
+  }
+}
+
+.viewBtn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  ion-button {
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+}
+
+.add-task-btn {
+  color: var(--ion-color-primary);
+  margin-top: -30px;
+}
+
+.file-container {
+  margin-left: 15px;
+  width: 5em;
+  height: 5em;
+  text-align: center;
+  border-radius: 8px;
+  padding: 5px;
+  margin-bottom: 2em;
+}
+
+ion-card {
+  background-color: map-get($colors, white);
+}

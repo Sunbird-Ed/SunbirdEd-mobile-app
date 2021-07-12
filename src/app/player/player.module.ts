@@ -8,7 +8,12 @@ import { IonicModule } from '@ionic/angular';
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player';
+import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player-v8';
+import { SunbirdEpubPlayerModule } from '@project-sunbird/sunbird-epub-player-v8';
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v8';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+
+
 
 
 
@@ -24,6 +29,9 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     SunbirdPdfPlayerModule,
+    SunbirdEpubPlayerModule,
+    SunbirdVideoPlayerModule,
+    QumlLibraryModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],

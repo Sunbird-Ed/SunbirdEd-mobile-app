@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { CommonFormElementsModule } from 'common-form-elements';
 import { ComponentsModule } from '../components/components.module';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 
 const routes: Routes = [
   {

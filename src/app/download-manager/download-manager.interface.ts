@@ -1,6 +1,5 @@
-import { LoadingController } from '@ionic/angular';
-import { Content, Profile, ContentDelete } from 'sunbird-sdk';
 import { OnInit } from '@angular/core';
+import { Content, ContentDelete } from 'sunbird-sdk';
 
 export interface AppStorageInfo {
     usedSpace: number;
@@ -11,7 +10,6 @@ export interface EmitedContents {
     selectedContentsInfo: any;
     selectedContents: ContentDelete[];
 }
-
 
 type SortAttribute = [keyof Content];
 

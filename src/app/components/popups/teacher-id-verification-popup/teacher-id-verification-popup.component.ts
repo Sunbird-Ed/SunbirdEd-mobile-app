@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { PopoverController, NavParams, Events } from '@ionic/angular';
+import { PopoverController, NavParams } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProfileService, UserMigrateRequest, HttpClientError } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';

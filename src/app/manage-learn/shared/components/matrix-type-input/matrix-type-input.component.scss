@@ -1,0 +1,22 @@
+ion-fab {
+    bottom: 80px !important;
+    position: fixed;
+    z-index: 1;
+}
+.deletOption {
+    color:  #808080;
+}
+.modified {
+    color:  #808080;
+    font-size: 13px;
+    margin-top: 5px;
+}
+.conatiner{
+    flex-direction: column; 
+    align-items:flex-start; 
+    flex:1
+}
+
+.alignBtn {
+    justify-content: flex-end;
+}

@@ -1,0 +1,120 @@
+<ion-content >
+  <h3 class="txt-capitalize">{{ data?.solutionName }}</h3>
+  <h6 class="grade_ellipsis txt-capitalize">{{ data?.entityName }}</h6>
+  <ion-grid *ngIf="data?.totalObservations">
+    <ion-row>
+      <ion-col style="margin-left: 15px">
+        {{ '"FRMELEMNTS_LBL_TOTAL_OBSERVATIONS"' | translate }} : {{ data?.totalObservations }}</ion-col
+      >
+    </ion-row>
+  </ion-grid>
+  <div *ngFor="let filter of filters">
+    <!-- for instance filter -->
+    <div *ngIf="filter.filter.type == 'dropdown'" class="d-flex flex-ai-center w-100">
+      <div>
+        <ion-select
+          okText="Select"
+          cancelText="Dismiss"
+          placeholder="Submission Filter"
+          [(ngModel)]="submissionId"
+          (ionChange)="instanceReport($event)"
+          [interfaceOptions]="{
+            cssClass: 'select-box',
+            animated: false
+          }"
+        >
+          <ion-select-option [value]="s._id" *ngFor="let s of filter.filter.data">{{
+            s.name
+          }}</ion-select-option></ion-select
+        >
+      </div>
+      <div>
+        <ion-icon name="close" class="sb-modal-close" (click)="submissionId = null" *ngIf="submisison"></ion-icon>
+      </div>
+    </div>
+
+    <!-- for question and criteria filter modal/ only show when report is present -->
+    <div *ngIf="filter.filter.type == 'modal' && !error" class="d-flex flex-jc-flex-end py-10">
+      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin>
+        <ion-icon name="options"></ion-icon>
+        {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
+      </ion-button>
+    </div>
+
+    <!-- for dropdown type  -->
+    <ion-segment
+      (ionChange)="segmentChanged(segmentValue)"
+      [(ngModel)]="segmentValue"
+      *ngIf="filter.filter.type == 'segment'"
+    >
+      <ion-segment-button value="questionwise">
+        <ion-label> {{ 'FRMELEMNTS_LBL_QUESTION_WISE' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="criteriawise">
+        <ion-label> {{ 'FRMELEMNTS_LBL_CRITERIA_WISE' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <!--  -->
+  </div>
+  <div *ngFor="let section of reportSections">
+    <ion-card-content *ngIf="section?.criteriaName">
+      <h3>{{ section.criteriaName }}</h3>
+    </ion-card-content>
+    <div *ngFor="let element of section?.questionArray; let i = index">
+      <ion-card [ngSwitch]="element?.responseType">
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'text'" [isFeedBackSurvey]="state?.survey" [solutionId]="state?.solutionId"></reports-text>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'number'"></reports-text>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'date'"></reports-text>
+        <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'multiselect'"></bar-chart>
+        <matrix-chart
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchCase="'matrix'"
+          (allEvidence)="allEvidence($event)"
+        ></matrix-chart>
+        <percentage-column-charts
+          [chartData]="element"
+          *ngSwitchCase="'horizontalBar'"
+          (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
+        ></percentage-column-charts>
+        <expansion-panel [datas]="element" *ngSwitchCase="'expansion'"></expansion-panel>
+        <expansion-table [datas]="element" *ngSwitchCase="'expansion-table'"></expansion-table>
+        <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'pie'"></pie-chart>
+        <scatter-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'scatter'"></scatter-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'column'"></bar-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'bar'"></bar-chart>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
+      </ion-card>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let e of element.evidences">
+            <attachments [url]="e.url" [extension]="e.extension"></attachments>
+          </ion-col>
+          <ion-col size="12" *ngIf="element.evidence_count > 3">
+            <small class="pull-right text-ios-danger" (click)="allEvidence(element)">{{
+              'FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES' | translate
+            }}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- observation -->
+
+    <!--  -->
+  </div>
+  <div *ngIf="error" class="_flex-box _justify-content-center">
+    {{ error?.message }}
+  </div>
+  <div class="_flex-box _justify-content-center" *ngIf="data?.improvementProjectSuggestions && data?.improvementProjectSuggestions.length ">
+    <ion-button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
+      {{'FRMELEMNTS_CLICK_TO_IMPROVE' | translate}}
+    </ion-button>
+  </div>
+  <!-- INFO: click to improve feature not threre as of now  -->
+</ion-content>
+<!-- dont show when error or when showing survey reports -->
+<ion-footer *ngIf="!error && !state.survey">
+  <download-share [extension]="'.pdf'" [interface]="'fab'" [config]="config()"> </download-share>
+</ion-footer>

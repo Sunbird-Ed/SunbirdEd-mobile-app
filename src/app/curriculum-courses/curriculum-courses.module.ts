@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { CurriculumCoursesPage } from './curriculum-courses.page';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurriculumCoursesRoutingModule } from './curriculum-courses-routing.module';
 import { PipesModule } from '@app/pipes/pipes.module';

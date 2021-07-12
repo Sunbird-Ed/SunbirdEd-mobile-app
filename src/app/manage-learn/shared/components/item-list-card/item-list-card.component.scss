@@ -1,0 +1,19 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+
+.title{
+    font-size: 16px;
+    font-weight: bold;
+    color: #{$blue};
+}
+
+ion-card-header {
+    padding-bottom: 2px;
+}
+
+.card-container{
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: #ffffff;
+}

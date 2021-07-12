@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
-import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
-import { GenerateOtpRequest, ProfileService, VerifyOtpRequest, HttpClientError, Response } from 'sunbird-sdk';
-
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { MenuController, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-edit-contact-verify-popup',

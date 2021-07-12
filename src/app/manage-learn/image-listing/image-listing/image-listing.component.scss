@@ -1,0 +1,61 @@
+@import 'src/assets/styles/base/_variables.scss';
+@import 'src/assets/styles/_custom-mixins.scss';
+@import 'src/assets/styles/_variables.scss';
+
+.question {
+  font-weight: 500;
+}
+
+.instanceQuest {
+  background: $gray-100;
+  border: 1px solid $gray-400;
+  padding: 10px;
+  margin: 2px 0;
+  border-radius: 2px;
+}
+.instacnce {
+  margin: 10px 0;
+  font-weight: 600 !important;
+}
+
+.matrixQuestion {
+  margin: 20px 0;
+}
+
+ion-spinner {
+  position: absolute;
+  top: 39%;
+  left: 39%;
+  z-index: 2;
+  background: $white;
+}
+
+.doneMark {
+  background: $white;
+  position: absolute;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  ion-icon {
+    color: $green;
+    font-size: 3rem;
+    font-weight: bold;
+  }
+}
+
+.fullContainer {
+  height: 85vh;
+}
+
+.uploadIcon {
+//   font-size: 30rem;
+  font-size: 19rem;
+  color: $blue
+}
+
+.uploadMsg {
+  font-size: 25px;
+  font-weight: 500;
+}

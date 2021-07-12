@@ -18,6 +18,10 @@ const routes: Routes = [
     {
         path: RouterLinks.FRAMEWORK_SELECTION,
         loadChildren: './framework-selection/framework-selection.module#FrameworkSelectionPageModule'
+    },
+    {
+        path: RouterLinks.CERTIFICATE_VIEW,
+        loadChildren: './certificate-view/certificate-view.module#CertificateViewPageModule'
     }
 ];
 

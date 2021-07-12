@@ -1,0 +1,10 @@
+<ion-content>
+  <div class="_flex-box fullContainer _justify-content-center _flex-direction-column" margin-top>
+    <ion-icon name="cloud-upload" margin class="uploadIcon"></ion-icon>
+    <div class="_flex-box uploadMsg">Uploading</div>
+    <div class="_flex-box uploadMsg" margin-top *ngIf="imageList?.length">
+      {{ uploadIndex + 1 }} {{ 'FRMELEMNTS_MSG_OF' | translate }} {{ imageList.length }} {{ 'FRMELEMNTS_MSG_IMAGES' | translate }}.
+    </div>
+    <div class="_flex-box" margin-top>{{ 'FRMELEMNTS_MSG_DONOT_CLOSE_APP' | translate }}</div>
+  </div>
+</ion-content>

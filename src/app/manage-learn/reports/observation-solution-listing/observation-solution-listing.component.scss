@@ -1,0 +1,22 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
+
+.fixed-container {
+    width: 100%;
+    margin-top: 56px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .scrollable-container {
+    padding-top:210px;
+    z-index: 1;
+    background-color: white;
+  }
+  
+  .main-container {
+    background: map-get($colors, white);
+    position: relative;
+  }

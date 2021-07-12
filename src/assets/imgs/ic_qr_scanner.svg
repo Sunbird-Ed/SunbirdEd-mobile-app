@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 53.1 (72631) - https://sketchapp.com -->
-    <title>221CA116-48EF-4BEF-8068-990514CCAED4@1.5x</title>
-    <desc>Created with sketchtool.</desc>
-    <g id="Library" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Library_single_textbook" transform="translate(-166.000000, -784.000000)" fill="#FFFFFF">
-            <g id="QR-code" transform="translate(166.000000, 784.000000)">
-                <g id="QR-Code-Copy">
-                    <polygon id="Path" points="2.24 9.0342 0 9.0342 0 0 9.0342 0 9.0342 2.24 2.24 2.24"></polygon>
-                    <polygon id="Path" points="28 28 18.9658 28 18.9658 25.76 25.76 25.76 25.76 18.9658 28 18.9658"></polygon>
-                    <polygon id="Path" points="28 9.0342 25.76 9.0342 25.76 2.24 18.9658 2.24 18.9658 0 28 0"></polygon>
-                    <polygon id="Path" points="9.0342 28 0 28 0 18.9658 2.24 18.9658 2.24 25.76 9.0342 25.76"></polygon>
-                    <polygon id="Path" points="23.52 23.52 12.88 23.52 12.88 15.12 4.48 15.12 4.48 12.88 15.12 12.88 15.12 21.28 23.52 21.28"></polygon>
-                    <polygon id="Path" points="23.52 19.09264 21.28 19.09264 21.28 15.12 19.09264 15.12 19.09264 19.09264 16.85264 19.09264 16.85264 12.88 23.52 12.88"></polygon>
-                    <path d="M11.14764,11.14764 L4.48,11.14764 L4.48,4.48 L11.14764,4.48 L11.14764,11.14764 Z M6.72,8.90764 L8.90764,8.90764 L8.90764,6.72 L6.72,6.72 L6.72,8.90764 Z" id="Shape" fill-rule="nonzero"></path>
-                    <path d="M23.52,11.14764 L16.85264,11.14764 L16.85264,4.48 L23.52,4.48 L23.52,11.14764 Z M19.09264,8.90764 L21.28,8.90764 L21.28,6.72 L19.09236,6.72 L19.09236,8.90764 L19.09264,8.90764 Z" id="Shape" fill-rule="nonzero"></path>
-                    <path d="M11.14764,23.52 L4.48,23.52 L4.48,16.85264 L11.14764,16.85264 L11.14764,23.52 Z M6.72,21.28 L8.90764,21.28 L8.90764,19.09236 L6.72,19.09236 L6.72,21.28 Z" id="Shape" fill-rule="nonzero"></path>
-                    <rect id="Rectangle" x="12.88" y="4.48" width="2.24" height="6.66764"></rect>
+<svg width="38px" height="38px" viewBox="0 0 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>53146F08-9AB7-4B38-9DCA-F9B7248172EB</title>
+    <g id="Final-layouts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home-page-01" transform="translate(-161.000000, -1000.000000)">
+            <g id="Group-5-Copy" transform="translate(0.000000, 985.000000)">
+                <g id="Group-5" transform="translate(162.000000, 16.000000)">
+                    <g id="Group-18" stroke="#333333" stroke-linecap="round" stroke-width="2">
+                        <path d="M10,-1.16351373e-13 L4,-1.16351373e-13 C1.790861,-1.15945561e-13 -2.705415e-16,1.790861 0,4 L0,9.54563174 L0,9.54563174" id="Path-4"></path>
+                        <path d="M10,26.0181468 L4,26.0181468 C1.790861,26.0181468 -2.705415e-16,27.8090078 0,30.0181468 L0,35.5637785 L0,35.5637785" id="Path-4-Copy-2" transform="translate(5.000000, 30.790963) scale(1, -1) translate(-5.000000, -30.790963) "></path>
+                        <path d="M36,-1.16351373e-13 L30,-1.16351373e-13 C27.790861,-1.15945561e-13 26,1.790861 26,4 L26,9.54563174 L26,9.54563174" id="Path-4-Copy" transform="translate(31.000000, 4.772816) scale(-1, 1) translate(-31.000000, -4.772816) "></path>
+                        <path d="M36,26.0181468 L30,26.0181468 C27.790861,26.0181468 26,27.8090078 26,30.0181468 L26,35.5637785 L26,35.5637785" id="Path-4-Copy-3" transform="translate(31.000000, 30.790963) scale(-1, -1) translate(-31.000000, -30.790963) "></path>
+                    </g>
+                    <g id="Group-6-Copy" transform="translate(6.000000, 6.000000)" fill-rule="nonzero">
+                        <polygon id="Shape" fill="#F7B500" points="23.25 23.25 10.2573529 23.25 10.2573529 13.1842105 0 13.1842105 0 10.5 12.9926471 10.5 12.9926471 20.5657895 23.25 20.5657895"></polygon>
+                        <polygon id="Shape" fill="#B620E0" points="24 18 20.9763145 18 20.9763145 12.7245809 18.0236855 12.7245809 18.0236855 18 15 18 15 9.75 24 9.75"></polygon>
+                        <path d="M9,9 L0,9 L0,0 L9,0 L9,9 Z M3.02355856,5.97644144 L5.97644144,5.97644144 L5.97644144,3.02355856 L3.02355856,3.02355856 L3.02355856,5.97644144 Z" id="Shape" fill="#FF7648"></path>
+                        <path d="M24,9 L15,9 L15,0 L24,0 L24,9 Z M18.0236855,5.97644144 L20.9763145,5.97644144 L20.9763145,3.02355856 L18.0233076,3.02355856 L18.0233076,5.97644144 L18.0236855,5.97644144 Z" id="Shape" fill="#737EFD"></path>
+                        <path d="M9,24 L0,24 L0,15 L9,15 L9,24 Z M3.02355856,20.9763145 L5.97644144,20.9763145 L5.97644144,18.0233076 L3.02355856,18.0233076 L3.02355856,20.9763145 Z" id="Shape" fill="#4E52E0"></path>
+                        <rect id="Rectangle-path" fill="#F27515" x="11.25" y="0" width="2.25" height="9"></rect>
+                    </g>
                 </g>
             </g>
         </g>

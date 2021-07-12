@@ -9,7 +9,7 @@
       <ion-col size="6" *ngFor="let facetValue of facets.values">
         <ion-item lines="none">
         <ion-checkbox type="checkbox" class="checkbox" [(ngModel)]="facetValue.apply"></ion-checkbox>
-        <ion-label class="filter-option-text" text-capitalize>
+        <ion-label class="filter-option-text ion-text-capitalize">
           {{ facetValue.translations ? facetValue.translations: facetValue.name  | translate | aliased }}
         </ion-label>
       </ion-item>

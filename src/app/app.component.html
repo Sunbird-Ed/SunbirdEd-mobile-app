@@ -23,7 +23,7 @@
   </div>
 
   <ion-split-pane contentId="mainContent">
-    <ion-router-outlet *ngIf="toggleRouterOutlet" id="mainContent" main
+    <ion-router-outlet #ionRouterOutlet id="mainContent" main
       [ngClass]="{'need-header-space':headerConfig?.showHeader, '':!headerConfig?.showHeader}"></ion-router-outlet>
   </ion-split-pane>
 

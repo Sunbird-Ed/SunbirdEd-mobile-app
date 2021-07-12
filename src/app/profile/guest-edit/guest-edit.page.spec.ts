@@ -9,7 +9,7 @@ import {
     SharedPreferences
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, AlertController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,
@@ -87,7 +87,6 @@ describe('GuestEditPage', () => {
     const mockProfileHandler: Partial<ProfileHandler> = {
         getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
-
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
 
     beforeAll(() => {
@@ -506,6 +505,8 @@ describe('GuestEditPage', () => {
     describe('ngOnInit', () => {
         it('should generate INTERACT and IMPRESSION telemetry for new User', (done) => {
             // arrange
+            mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
+                [{ code: 'teacher' }]));
             // act
             guestEditPage.ngOnInit().then(() => {
                 // assert
@@ -529,6 +530,8 @@ describe('GuestEditPage', () => {
         it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
             // arrange
             guestEditPage['isNewUser'] = false;
+            mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
+                [{ code: 'teacher' }]));
             // act
             guestEditPage.ngOnInit().then(() => {
                 // assert
@@ -557,6 +560,9 @@ describe('GuestEditPage', () => {
                     medium: 'medium',
                     gradeLevel: 'gradeLevel'
                 }));
+            mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
+                [{ code: 'teacher' }]));
+
             guestEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
             guestEditPage['onMediumChange'] = jest.fn(() => of({} as any));
             guestEditPage['onGradeChange'] = jest.fn(() => of({} as any));

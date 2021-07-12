@@ -8,7 +8,8 @@ import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
 import { of, Subscription } from 'rxjs';
 

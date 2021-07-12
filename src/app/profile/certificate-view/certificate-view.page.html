@@ -1,0 +1,28 @@
+<ion-content hide-header-footer
+             class="main-container avoid-bottom-tabs-space" scrollEvents="true">
+
+  <div class="cert-container">
+    <strong class="label">{{'CERTIFICATE' | translate}}</strong>
+    <div class="cert-details">
+      <div class="cert-info">
+        <p class="title">{{pageData?.certificate?.name}}</p>
+        <p class="date">{{pageData?.certificate?.lastIssuedOn | date}}</p>
+      </div>
+      <div class="download-btn">
+        <button class="cert-btn" [ngClass]="{'highlight-cert-btn': onPopupOpen, '': !onPopupOpen }" (click)="showCertificateMenu($event)">
+          <img src="assets/imgs/download-cloud-white.svg" alt="Download">
+          <span>{{'DOWNLOAD' | translate}}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div #scrollWrap
+       class="scroll-wrap"
+       (pan)="onGestureEvent($event)"
+       (pinch)="onGestureEvent($event)"
+       (panend)="onGestureEvent($event)"
+       (pinchend)="onGestureEvent($event)">
+    <div #certificateContainer></div>
+  </div>
+</ion-content>

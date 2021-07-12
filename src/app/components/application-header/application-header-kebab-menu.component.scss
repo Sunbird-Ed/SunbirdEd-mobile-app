@@ -1,0 +1,16 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+
+:host {
+  .item.item-block {
+    border-bottom: 2px solid map-get($colors, gray_light);
+    &:last-child {
+      border-bottom: 0px;
+    }
+  }
+
+  .list-md .item-block .item-inner {
+    border-bottom: 0px;
+  }
+}

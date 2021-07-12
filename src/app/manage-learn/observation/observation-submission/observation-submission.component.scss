@@ -1,0 +1,29 @@
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
+:host {
+  .card-content-bottom-0 {
+    padding-bottom: 0px !important;
+  }
+
+  .card-content-top-0 {
+    padding-top: 0px !important;
+  }
+
+  .font-12 {
+    font-size: 12px !important;
+  }
+  .text-transform-none {
+    text-transform: none !important;
+  }
+}
+
+.card-box-shadow {
+  box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #{$blue};
+}

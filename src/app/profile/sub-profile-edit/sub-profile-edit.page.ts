@@ -40,7 +40,7 @@ export class SubProfileEditPage {
 
   formInitilized = false;
 
-  @ViewChild('commonForms') commonForms: CommonFormsComponent;
+  @ViewChild('commonForms', { static: false }) commonForms: CommonFormsComponent;
 
   managedUserFormList: any = [];
 
@@ -164,12 +164,12 @@ export class SubProfileEditPage {
         managedBy: parentProfile.userId,
         framework: parentProfile['framework'] || undefined
       };
-      const locationCodes = (await this.locationHandler.getAvailableLocation(parentProfile)).map(i =>  i.code );
+      const profileLocation = (await this.locationHandler.getAvailableLocation(parentProfile));
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
       }
-      if (locationCodes && locationCodes.length) {
-        userDetails.locationCodes =  locationCodes;
+      if (profileLocation && profileLocation.length) {
+        userDetails.profileLocation =  profileLocation;
       }
       const response = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
       if (response) {

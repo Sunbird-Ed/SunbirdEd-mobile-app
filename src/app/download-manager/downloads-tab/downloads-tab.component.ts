@@ -1,18 +1,19 @@
-import { Component, Input, EventEmitter, Output, NgZone, OnInit } from '@angular/core';
-import { MenuOverflow } from '@app/app/app.constant';
-import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-import { CommonUtilService, } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MenuOverflow, RouterLinks } from '@app/app/app.constant';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { PopoverController, Events } from '@ionic/angular';
-import { InteractType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
-import { Content, ContentDelete } from 'sunbird-sdk';
-import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { InteractSubtype, Environment, PageId, ActionButtonType, CorReleationDataType } from '../../../services/telemetry-constants';
-import { EmitedContents } from '../download-manager.interface';
+import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import { AppHeaderService } from '@app/services';
-import { ContentUtil } from '@app/util/content-util';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from 'sunbird-sdk';
+import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
+import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
+import { EmitedContents } from '../download-manager.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-downloads-tab',
@@ -43,7 +44,8 @@ export class DownloadsTabComponent implements OnInit {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
-    private headerService: AppHeaderService) {
+    private headerService: AppHeaderService,
+    private router:Router) {
   }
 
   ngOnInit(): void {
@@ -54,7 +56,7 @@ export class DownloadsTabComponent implements OnInit {
     });
   }
 
-  async showDeletePopup(identifier?) {
+  async showDeletePopup(identifier?,type?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.DELETE_CLICKED,
@@ -64,6 +66,7 @@ export class DownloadsTabComponent implements OnInit {
         contentId: identifier,
         isChildContent: false
       };
+      type=='project' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
     }
     this.telemetryGeneratorService.generatePageViewTelemetry(
@@ -220,6 +223,7 @@ export class DownloadsTabComponent implements OnInit {
           contentId: element.identifier,
           isChildContent: false
         };
+        element['type']=='project'?contentDelete['type']=element['type']:null
         this.selectedContentsInfo.totalSize += element.sizeOnDevice;
         this.selectedContents.push(contentDelete);
       }
@@ -290,6 +294,10 @@ export class DownloadsTabComponent implements OnInit {
   }
 
   navigateToDetailsPage(content) {
+    if (content.type == 'project') {
+      this.navigateToProjectDetails(content)
+      return
+    }
     const corRelationList: Array<CorrelationData> = [{
         id: CorReleationDataType.DOWNLOADS,
         type: CorReleationDataType.SECTION
@@ -305,5 +313,17 @@ export class DownloadsTabComponent implements OnInit {
     this.navService.navigateToDetailPage(
       content, { content }
     );
+  }
+
+  navigateToProjectDetails(project) {
+     const selectedFilter = project.isAPrivateProgram==false ? 'assignedToMe' : 'createdByMe';
+     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+       queryParams: {
+         projectId: project._id,
+         programId: project.programId,
+         solutionId: project.solutionId,
+         type: selectedFilter,
+       },
+     });
   }
 }

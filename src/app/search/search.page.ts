@@ -1,6 +1,7 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Platform, PopoverController, IonContent, NavController, IonRefresher } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
@@ -43,7 +44,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -54,23 +55,50 @@ import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../form.constants';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DiscoverComponent } from '../components/discover/discover.page';
+import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 
 declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss']
+  styleUrls: ['./search.page.scss'],
+  animations: [
+    trigger('labelVisibility', [
+      state(
+        'show',
+        style({
+          maxHeight: '50vh',
+          overflow: 'hidden'
+        })
+      ),
+      state(
+        'hide',
+        style({
+          maxHeight: '0',
+          overflow: 'hidden'
+        })
+      ),
+      transition('* => show', [animate('500ms ease-out')]),
+      transition('show => hide', [animate('500ms ease-in')])
+    ])
+  ],
 })
-export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
+export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWillEnter {
+
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
+  @ViewChild(DiscoverComponent, { static: false }) discoverCmp: DiscoverComponent;
+
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;
   showLoading: boolean;
   downloadProgress: any;
-  @ViewChild('searchInput') searchBar;
+  @ViewChild('searchInput', { static: false }) searchBar;
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
-  activityTypeData: any = {};
+  activityTypeData: any;
   activityList: GroupActivity[] = [];
   isFromGroupFlow = false;
   dialCode: string;
@@ -121,8 +149,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   supportedUserTypesConfig: Array<any>;
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
+  enableSearch = false;
+  searchInfolVisibility = 'show';
+  refresh: boolean = false;
 
-  @ViewChild('contentView') contentView: IonContent;
+  @ViewChild('contentView', { static: false }) contentView: IonContent;
+  headerObservable: Subscription;
+  primaryCategoryFilters;
+  PillsViewType = PillsViewType;
+  PillBorder = PillBorder;
+  SelectMode = SelectMode;
+  appPrimaryColor: string;
+  selectedPrimaryCategoryFilter: any;
+  searchWithBackButton = false;
+
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -141,7 +181,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private appGlobalService: AppGlobalService,
     private platform: Platform,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private translate: TranslateService,
     private headerService: AppHeaderService,
@@ -162,8 +202,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.primaryCategories = extras.primaryCategories;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
+      this.searchWithBackButton = extras.searchWithBackButton;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
+        this.searchOnFocus();
       }
       this.groupId = extras.groupId;
       this.activityTypeData = extras.activityTypeData;
@@ -173,6 +215,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.userId = extras.userId;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.preAppliedFilter = extras.preAppliedFilter;
+      if (this.preAppliedFilter) {
+        this.enableSearch = true;
+        this.searchKeywords = this.preAppliedFilter.query;
+      }
     }
 
     this.checkUserSession();
@@ -186,10 +232,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
+    this.appPrimaryColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-medium');
   }
 
   async ionViewWillEnter() {
-    this.headerService.hideHeader();
+    if (this.dialCode) {
+      this.enableSearch = true;
+    }
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+    if(this.isFromGroupFlow || this.searchWithBackButton){
+      this.headerService.showHeaderWithBackButton();
+    } else {
+      this.headerService.showHeaderWithHomeButton();
+    }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
@@ -202,12 +259,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
-        this.searchBar.setFocus();
       }, 100);
     }
     this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
+    this.refresher ? this.refresher.disabled = false : null;
+  }
+
+  hideRefresher(hide) {
+    this.refresh = hide;
   }
 
   ngAfterViewInit() {
@@ -265,11 +326,18 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    this.refresher.disabled = true;
   }
 
   ngOnDestroy() {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
+    }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
     }
   }
 
@@ -746,7 +814,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source, undefined);
+      this.source || PageId.SEARCH, undefined);
     const filterCriteriaData = this.responseData.filterCriteria;
     filterCriteriaData.facetFilters.forEach(element => {
       this.searchFilterConfig.forEach(item => {
@@ -794,7 +862,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.zone.run(() => {
           this.responseData = responseData;
           if (responseData) {
-
             if (this.isDialCodeSearch) {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
@@ -805,6 +872,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               values.searchCount = this.responseData.length;
               values.searchCriteria = this.responseData.filterCriteria;
               this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
+            }
+            if (this.responseData.filterCriteria && this.responseData.filterCriteria.facetFilters) {
+              this.fetchPrimaryCategoryFilters(this.responseData.filterCriteria.facetFilters);
             }
             this.updateFilterIcon();
           } else {
@@ -877,18 +947,26 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
-      JSON.stringify({ request:  this.preAppliedFilter });
+        JSON.stringify({ request:  this.preAppliedFilter });
       searchQuery = updateFilterInSearchQuery(query, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
-      searchQuery.request.mode = contentSearchRequest.mode;
+      if (this.activityTypeData) {
+        searchQuery.request.mode = contentSearchRequest.mode;
+      }
       searchQuery.request.searchType = SearchType.FILTER;
       const profileFilters = {
         board: contentSearchRequest.board || [],
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = { ...searchQuery.request.filters, ...profileFilters }
+      searchQuery.request.filters = {
+        ...searchQuery.request.filters,
+        ...profileFilters,
+        board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
+        medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
+        gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
+      };
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
@@ -911,6 +989,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             values.searchCount = this.searchContentResult ? this.searchContentResult.length : 0;
             values.searchCriteria = response.request;
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
+            if (response.filterCriteria && response.filterCriteria.facetFilters) {
+              this.fetchPrimaryCategoryFilters(response.filterCriteria.facetFilters);
+            }
           } else {
             this.isEmptyResult = true;
           }
@@ -970,7 +1051,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   // TODO: SDK changes by Swayangjit
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -993,8 +1073,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 this.batches.forEach((batch) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -1005,7 +1083,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 const popover = await this.popoverCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatched,
                     content
@@ -1050,6 +1128,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.event.subscribe('search.applyFilter', (filterCriteria) => {
       this.responseData.filterCriteria = filterCriteria;
+      this.primaryCategoryFilters = undefined;
       this.applyFilter();
     });
   }
@@ -1635,7 +1714,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
-      this.activityTypeData.activityType,
+      (this.activityTypeData && this.activityTypeData.activityType) || {},
       PageId.SEARCH,
       this.corRelationList,
       -2);
@@ -1667,10 +1746,82 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           ...CsGroupAddableBloc.instance.state.params,
           corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
-          activityType: this.activityTypeData.activityType
+          activityType: (this.activityTypeData && this.activityTypeData.activityType) || {}
         }
       }
     );
+  }
+
+  searchOnFocus() {
+    this.enableSearch = true;
+    this.searchInfolVisibility = 'hide';
+    this.headerService.showHeaderWithBackButton();
+    this.appGlobalService.isDiscoverBackEnabled = true;
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        if (this.isFromGroupFlow) {
+          this.location.back()
+        } else if(this.enableSearch) {
+          this.enableSearch = false;
+          this.searchInfolVisibility = 'show';
+          this.headerService.showHeaderWithHomeButton();
+          this.appGlobalService.isDiscoverBackEnabled = false; 
+        } else {
+          this.location.back()
+        }
+        break;
+      default: console.warn('Use Proper Event name');
+    }
+  }
+
+  fetchPrimaryCategoryFilters(facetFilters) {
+    if (!this.primaryCategoryFilters) {
+      setTimeout(() => {
+        for (let index = 0; index < facetFilters.length; index++) {
+          if (facetFilters[index].name === 'primaryCategory') {
+            this.primaryCategoryFilters = facetFilters[index].values;
+            break;
+          }
+        }
+      });
+    }
+  }
+
+  handleFilterSelect(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    if (this.initialFilterCriteria) {
+      this.responseData.filterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+    }
+    let primaryCategoryFilter = (this.responseData.filterCriteria as ContentSearchCriteria).facetFilters.find(facet => {
+      return facet.name === 'primaryCategory'
+    });
+    if (!primaryCategoryFilter) {
+      return;
+    }
+    let primaryCategoryFilterValue = primaryCategoryFilter.values.find(f => {
+      return f.name ===  (event.data[0].value && event.data[0].value.name);
+    })
+    if (!primaryCategoryFilterValue) {
+      return
+    }
+    if (!primaryCategoryFilterValue.apply) {
+      this.selectedPrimaryCategoryFilter = primaryCategoryFilterValue;
+      primaryCategoryFilterValue.apply = true;
+      this.applyFilter();
+    }
+  }
+
+  tabViewWillEnter() {
+    if(this.isFromGroupFlow || this.searchWithBackButton){
+      this.headerService.showHeaderWithBackButton();
+    } else {
+      this.headerService.showHeaderWithHomeButton();
+    }
   }
 
 }

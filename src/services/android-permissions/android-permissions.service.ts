@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
-import { defer } from 'rxjs';
+import { defer, Observable } from 'rxjs';
 
 declare const cordova;
 

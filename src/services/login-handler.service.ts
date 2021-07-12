@@ -1,5 +1,6 @@
 import { Inject, NgZone, Injectable } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   ApiService,
@@ -119,6 +120,7 @@ export class LoginHandlerService {
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+            this.sbProgressLoader.hide({id: 'login'});
           });
         })
         .catch(async (err) => {
@@ -150,13 +152,13 @@ export class LoginHandlerService {
                   if (selectedUserType === ProfileType.ADMIN) {
                     return selectedUserType;
                   } else if (
-                    (success.userType === ProfileType.OTHER.toUpperCase()) ||
-                    (!success.userType)
+                    (success.profileUserType.type === ProfileType.OTHER.toUpperCase()) ||
+                    (!success.profileUserType.type)
                   ) {
                     return ProfileType.NONE;
                   }
 
-                  return success.userType.toLowerCase();
+                  return success.profileUserType.type.toLowerCase();
                 })();
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {

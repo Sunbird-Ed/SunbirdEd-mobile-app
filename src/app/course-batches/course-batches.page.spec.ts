@@ -6,7 +6,8 @@ import {
     InteractType, InteractSubtype,
     Environment, PageId, ImpressionType
 } from '../../services';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';

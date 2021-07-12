@@ -1,8 +1,9 @@
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Events, PopoverController, NavParams } from '@ionic/angular';
-import { Platform, ToastController } from '@ionic/angular';
 import { Component, Inject } from '@angular/core';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { ContentUtil } from '@app/util/content-util';
+import { NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { TranslateService } from '@ngx-translate/core';
 import {
   AuthService,
   ContentDeleteResponse,
@@ -10,15 +11,13 @@ import {
   ContentService,
   CorrelationData,
   OAuthSession,
-  Rollup,
-  TelemetryObject
+  Rollup
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { PageId } from './../../../services/telemetry-constants';
-import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-content-actions',
@@ -41,6 +40,7 @@ export class ContentActionsComponent {
   showChapterActions = false;
   public objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
+  showUnenrolledButton = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -72,6 +72,7 @@ export class ContentActionsComponent {
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
     this.getUserId();
+    this.isCourseCompleted();
   }
 
 
@@ -203,6 +204,20 @@ export class ContentActionsComponent {
       });
   }
 
+  async syncCourseProgress() {
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SYNC_PROGRESS_CLICKED,
+      Environment.HOME,
+      this.pageName,
+      ContentUtil.getTelemetryObject(this.content),
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+    this.popOverCtrl.dismiss({ syncProgress: true });
+  }
+
 
   async showToaster(message) {
     const toast = await this.toastCtrl.create({
@@ -221,5 +236,14 @@ export class ContentActionsComponent {
       }
     );
     return msg;
+  }
+
+  private isCourseCompleted() {
+    if (this.content && this.content.progress === 100) {
+      if (this.batchDetails && ((this.batchDetails.endDate &&
+        (new Date(this.batchDetails.endDate) >= new Date())) || !this.batchDetails.endDate)) {
+          this.showUnenrolledButton = true;
+      }
+    }
   }
 }

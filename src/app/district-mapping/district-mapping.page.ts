@@ -1,44 +1,37 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
-import {
-  ProfileService,
-  SharedPreferences,
-  Profile,
-  DeviceRegisterRequest,
-  DeviceRegisterService,
-  DeviceInfo,
-  LocationSearchResult,
-  CorrelationData,
-  FormRequest,
-  AuditState
-} from 'sunbird-sdk';
-import { PreferenceKey, RouterLinks, LocationConfig, RegexPatterns, ProfileConstants } from '../../app/app.constant';
-import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
-import { NavigationExtras, Router } from '@angular/router';
-import { Events, IonSelect } from '@ionic/angular';
-import { concat, defer, of, Subscription } from 'rxjs';
-import { Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import {
-  Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId,
-  ID,
-  CorReleationDataType,
-  AuditType
-} from '@app/services/telemetry-constants';
-import { featureIdMap } from '@app/feature-id-map';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
-import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
-import { FieldConfig } from 'common-form-elements';
-import { FormConstants } from '../form.constants';
-import { FormGroup } from '@angular/forms';
-import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { Location } from '@angular/common';
+import { Component, Inject, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { NavigationExtras, Router } from '@angular/router';
+import { featureIdMap } from '@app/feature-id-map';
+import { AppGlobalService, AppHeaderService, CommonUtilService, FormAndFrameworkUtilService } from '@app/services';
+import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
 import { LocationHandler } from '@app/services/location-handler';
 import { ProfileHandler } from '@app/services/profile-handler';
+import {
+  AuditType, CorReleationDataType, Environment,
+  ID, ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
+import { FieldConfig } from 'common-form-elements';
+import { concat, defer, of, Subscription } from 'rxjs';
+import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
+import {
+  AuditState, CorrelationData, DeviceInfo, DeviceRegisterRequest,
+  DeviceRegisterService,
+  FormRequest, LocationSearchResult, Profile, ProfileService,
+  SharedPreferences
+} from 'sunbird-sdk';
+import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
+import { FormConstants } from '../form.constants';
+import {ProfileType} from '@project-sunbird/sunbird-sdk';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -83,7 +76,8 @@ export class DistrictMappingPage implements OnDestroy {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
     private locationHandler: LocationHandler,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -180,8 +174,8 @@ export class DistrictMappingPage implements OnDestroy {
         }
       }
     }, {}));
-    const corReletionList: CorrelationData[] = locationCodes;
-    this.generateSubmitInteractEvent(corReletionList);
+    const corRelationList: CorrelationData[] =  locationCodes.map(r => ({ type: r.type, id: r.code || '' }));
+    this.generateSubmitInteractEvent(corRelationList);
     this.telemetryGeneratorService.generateInteractTelemetry(
       this.isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
       this.isStateorDistrictChanged(locationCodes),
@@ -201,15 +195,18 @@ export class DistrictMappingPage implements OnDestroy {
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
-        locationCodes,
+        profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
-        ...((this.formGroup.value.children['persona']['subPersona'] ?
-          { userSubType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        profileUserType: {
+          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
+          ...((this.formGroup.value.children['persona']['subPersona'] ?
+            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        }
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
+      const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
@@ -221,10 +218,15 @@ export class DistrictMappingPage implements OnDestroy {
           this.generateLocationCaptured(false);
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.events.publish('loggedInProfile:update', req);
-          if (this.profile && (this.source === PageId.PROFILE ||
-            this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
-            this.location.back();
+          if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+              this.location.back();
+          } else if (this.profile && this.source === PageId.PROFILE) {
+              this.location.back();
+              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+            }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
@@ -237,6 +239,9 @@ export class DistrictMappingPage implements OnDestroy {
           if (this.profile) {
             this.location.back();
           } else {
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+            }
             this.router.navigate([`/${RouterLinks.TABS}`]);
           }
         });
@@ -261,7 +266,7 @@ export class DistrictMappingPage implements OnDestroy {
         undefined,
         undefined,
         undefined,
-        corReletionList
+        corRelationList
       );
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
@@ -348,13 +353,16 @@ export class DistrictMappingPage implements OnDestroy {
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
-        config.default = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile.firstName : this.profile.handle;
+        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.firstName) ?
+        this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.profileType) ?
-        this.profile.profileType : ((this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType);
+        config.default = (this.profile && this.profile.serverProfile
+        && this.profile.serverProfile.profileUserType.type
+        && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
+        this.profile.serverProfile.profileUserType.type : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
@@ -381,7 +389,7 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.userSubType;
+                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
                 }
                 break;
               }
@@ -447,7 +455,7 @@ export class DistrictMappingPage implements OnDestroy {
       await this.loader.dismiss();
       const subPersonaFormControl = this.formGroup.get('children.persona.subPersona');
       if (subPersonaFormControl && !subPersonaFormControl.value) {
-        subPersonaFormControl.patchValue(this.profile.serverProfile.userSubType || null);
+        subPersonaFormControl.patchValue(this.profile.serverProfile.profileUserType.subType || null);
       }
       if (!this.stateChangeSubscription) {
         this.stateChangeSubscription = concat(
@@ -565,9 +573,11 @@ export class DistrictMappingPage implements OnDestroy {
   isStateorDistrictChanged(locationCodes) {
     let changeStatus;
     locationCodes.forEach((d) => {
-      if (!changeStatus && d.type === 'state' && (d.code !== this.presetLocation['state'].code)) {
+      if (!changeStatus && d.type === 'state' && this.presetLocation['state']
+      && (d.code !== this.presetLocation['state'].code)) {
         changeStatus = InteractSubtype.STATE_DIST_CHANGED;
-      } else if (!changeStatus && d.type === 'district' && (d.code !== this.presetLocation['district'].code)) {
+      } else if (!changeStatus && d.type === 'district' && this.presetLocation['district']
+      && (d.code !== this.presetLocation['district'].code)) {
         changeStatus = InteractSubtype.DIST_CHANGED;
       }
     });

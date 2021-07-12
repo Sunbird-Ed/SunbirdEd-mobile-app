@@ -1,16 +1,14 @@
-import { RouterLinks } from '@app/app/app.constant';
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { TelemetryObject } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
-import { Location } from '@angular/common';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-textbook-view-more',
@@ -22,6 +20,7 @@ export class TextbookViewMorePage {
   LibraryCardTypes = LibraryCardTypes;
   contentList: any;
   subjectName: any;
+  corRelationList: any;
   toast: any;
   // header
   private _appHeaderSubscription?: Subscription;
@@ -43,6 +42,7 @@ export class TextbookViewMorePage {
     if (extras) {
       this.contentList = extras.contentList;
       this.subjectName = extras.subjectName;
+      this.corRelationList = extras.corRelation;
     }
   }
 
@@ -86,7 +86,8 @@ export class TextbookViewMorePage {
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item , {
-        content: item
+        content: item,
+        corRelation: this.corRelationList
       });
     } else {
       this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI_1', false, 'toastHeader', 3000, 'top');

@@ -49,8 +49,8 @@ export class AddMemberToGroupPage {
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
-  @ViewChild('cap') cap: RecaptchaComponent;
-  @ViewChild('addMemberInfoPopupRef') addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
+  @ViewChild('cap', { static: false }) cap: RecaptchaComponent;
+  @ViewChild('addMemberInfoPopupRef', { static: false }) addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -153,11 +153,11 @@ export class AddMemberToGroupPage {
       });
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
+      InteractType.VERIFY_USER,
       InteractSubtype.VERIFY_CLICKED,
       Environment.GROUP,
       PageId.ADD_MEMBER,
-      undefined, undefined, undefined, this.corRelationList);
+      undefined, undefined, undefined, this.corRelationList, ID.VERIFY_USER);
 
     if (!this.username) {
       this.showErrorMsg = true;

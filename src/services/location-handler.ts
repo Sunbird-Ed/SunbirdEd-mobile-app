@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import {
     CachedItemRequestSourceFrom,
+    FrameworkService,
     LocationSearchCriteria,
     LocationSearchResult,
+    Organization,
     ProfileService,
     SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
@@ -12,7 +14,8 @@ import { Location, PreferenceKey } from '../app/app.constant';
 export class LocationHandler {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-        @Inject('PROFILE_SERVICE') private profileService: ProfileService
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService
     ) { }
 
     public async getAvailableLocation(profile?): Promise<LocationSearchResult[]> {
@@ -34,7 +37,7 @@ export class LocationHandler {
     private async getLocation(preferenceKey: string) {
         const locationResult: LocationSearchResult[] = [];
         const location = JSON.parse(await this.preferences.getString(preferenceKey).toPromise());
-        if (location.stateId && location.districtId) {
+        if (location && location.stateId && location.districtId) {
             locationResult.push({
                 name: location.state,
                 code: location.stateId,
@@ -106,12 +109,30 @@ export class LocationHandler {
             type: locationType,
             ...((parentLocationId) ? { parentId: parentLocationId } : {})
         };
-
-        const req: LocationSearchCriteria = {
-            from: CachedItemRequestSourceFrom.CACHE,
-            filters: locationFilter
-        };
-        const locations: LocationSearchResult[] = await this.profileService.searchLocation(req).toPromise();
+        let locations: LocationSearchResult[];
+        if (locationType === Location.TYPE_SCHOOL) {
+            const orgSearchRequest = {
+                filters: {
+                  'orgLocation.id': parentLocationId,
+                  isSchool: true
+                }
+              };
+            let schoolDetails = [];
+            await this.frameworkService.searchOrganization(orgSearchRequest).toPromise().then((data) => {
+                schoolDetails = data.content.map((org: Organization) => {
+                    if (org && org.externalId) {
+                        return {code: org.externalId, name: (org.orgName || locationValue), type: Location.TYPE_SCHOOL, id: org.externalId};
+                    }
+                });
+            });
+            locations = schoolDetails;
+        } else {
+            const req: LocationSearchCriteria = {
+                from: CachedItemRequestSourceFrom.CACHE,
+                filters: locationFilter
+            };
+            locations = await this.profileService.searchLocation(req).toPromise();
+        }
         if (!locations || !Object.keys(locations).length) {
             return undefined;
         }

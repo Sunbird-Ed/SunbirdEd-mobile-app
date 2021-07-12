@@ -14,13 +14,14 @@ import {
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
 import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService,
-    CourseUtilService,
+    CourseUtilService, FormAndFrameworkUtilService,
     TelemetryGeneratorService,
     UtilityService,
 } from '@app/services';
@@ -122,6 +123,17 @@ describe('ContentDetailsPage', () => {
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockCourseService: Partial<CourseService> = {};
+    const mockFormFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            getTags: jest.fn(() => undefined),
+            restoreTags: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -158,6 +170,7 @@ describe('ContentDetailsPage', () => {
             mockFileTransfer as FileTransfer,
             mockSbProgressLoader as SbProgressLoader,
             mockLocalCourseService as LocalCourseService,
+            mockFormFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
     beforeEach(() => {
@@ -179,13 +192,27 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
     });
 
-    it('should call subscribeEvents when ngOnInit() invoked', () => {
+    it('should call subscribeEvents when ngOnInit() invoked', (done) => {
         // arrange
         spyOn(contentDetailsPage, 'subscribeEvents').and.stub();
+        mockFormFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+            target: {
+                mimeType: [
+                    'application/pdf'
+                ],
+                primaryCategory: [
+                    'LearningResource'
+                ]
+            }
+        }]));
         // act
         contentDetailsPage.ngOnInit();
         // assert
-        expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+            expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
     describe('showSwitchUserAlert', () => {
@@ -2259,9 +2286,12 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.content = {
                 contentData: undefined
             };
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
             contentDetailsPage.handleContentPlay('');
             setTimeout(() => {
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2274,16 +2304,16 @@ describe('ContentDetailsPage', () => {
                     streamingUrl: 'streamingUrl'
                 }
             };
-            contentDetailsPage['isLastAttempt'] = true;
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
-            mockCommonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
             // act
             contentDetailsPage.handleContentPlay('');
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2291,9 +2321,12 @@ describe('ContentDetailsPage', () => {
         it('should invoked showSwitchUserAlert page', (done) => {
             contentDetailsPage.limitedShareContentFlag = false;
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             contentDetailsPage.handleContentPlay('');
             setTimeout(() => {
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2301,12 +2334,13 @@ describe('ContentDetailsPage', () => {
         it('should show a toast message with User has exceeded the number of atempts', (done) => {
             // arrange
             contentDetailsPage['isContentDisabled'] = true;
-            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             // act
             contentDetailsPage.handleContentPlay('');
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });

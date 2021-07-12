@@ -508,11 +508,11 @@ describe('MyGroupsPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         myGroupsPage.createClassroom();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
+            InteractType.SELECT_CREATE_GROUP,
             InteractSubtype.CREATE_GROUP_CLICKED,
             Environment.GROUP,
             PageId.MY_GROUP,
-            undefined, undefined, undefined, undefined, undefined
+            undefined, undefined, undefined, undefined, InteractType.SELECT_CREATE_GROUP
         );
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
     });
@@ -550,10 +550,11 @@ describe('MyGroupsPage', () => {
         // assert
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`],
             { state: { groupId: data.data.id } });
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
-            { id: 'sample-id', type: 'Group', version: undefined }
-        );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.SELECT_GROUP, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+                { id: 'sample-id', type: 'Group', version: undefined }, undefined, undefined, undefined,
+                InteractType.SELECT_GROUP
+            );
     });
 
     it('should open groupguidelines popup', () => {
@@ -573,8 +574,9 @@ describe('MyGroupsPage', () => {
 
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
-            { id: 'sample-id', type: 'Group', version: undefined }
+            InteractType.SELECT_GROUP, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+            { id: 'sample-id', type: 'Group', version: undefined }, undefined, undefined, undefined,
+            InteractType.SELECT_GROUP
         );
         expect(myGroupsPage.openAcceptGuidelinesPopup).toHaveBeenCalled();
     });

@@ -3,7 +3,8 @@ import { CollectionChildComponent } from './collection-child.component';
 import { NgZone } from '@angular/core';
 import { CommonUtilService, ComingSoonMessageService, TelemetryGeneratorService } from '../../../services';
 import { TextbookTocService } from '../../collection-detail-etb/textbook-toc-service';
-import { PopoverController, Events } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import {
   mockChildContentData,

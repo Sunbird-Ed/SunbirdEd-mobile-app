@@ -1,11 +1,8 @@
 import { Location } from '@angular/common';
-import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { AppHeaderService } from './../../../services/app-header.service';
-import { TextbookTocService } from './../textbook-toc-service';
-import { Component, ViewChild, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
-import { Platform, PopoverController, IonContent, Events } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
+import { EventTopics } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
     Environment,
     ImpressionSubtype,
@@ -14,9 +11,12 @@ import {
     InteractType,
     PageId
 } from '@app/services/telemetry-constants';
-import { Router } from '@angular/router';
-import { EventTopics } from '@app/app/app.constant';
-
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { IonContent, Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { AppHeaderService } from './../../../services/app-header.service';
+import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
+import { TextbookTocService } from './../textbook-toc-service';
 
 @Component({
     selector: 'textbook-toc',
@@ -37,7 +37,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     isDownloadStarted = false;
     isTextbookTocPage = false;
     stckyUnitTitle?: string;
-    @ViewChild(IonContent) content: IonContent;
+    @ViewChild(IonContent, { static: false }) content: IonContent;
     stckyindex: any;
     latestParentNodes: any;
     latestParentName: any;
@@ -68,8 +68,6 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // this.childrenData = this.navParams.get('childrenData');
-        // this.parentId = this.navParams.get('parentId');
         this.getChildDataIdScrollEvent();
     }
 
@@ -79,7 +77,6 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         });
         this.headerService.showHeaderWithBackButton();
         this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-            // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME, false);
             this.handleBackButton(false);
             this.backButtonFunc();
         });
@@ -148,7 +145,6 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         );
 
         this.textbookTocService.setTextbookIds({ rootUnitId: id, contentId: id, content });
-        // this.navCtrl.pop();
         this.location.back();
     }
 

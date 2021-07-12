@@ -5,7 +5,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService } from '@project-sunbird/sunbird-sdk';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;

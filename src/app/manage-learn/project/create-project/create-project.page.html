@@ -1,0 +1,82 @@
+<ion-toolbar class="ion-padding-start">
+  <ion-title></ion-title>
+  <ion-buttons (click)="confirmToClose() " slot="start" class="padding">
+    <ion-icon name="close" slot="icon-only"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content class="ion-padding">
+  <div *ngIf="projectForm" class="project-form">
+    <form [formGroup]="projectForm">
+      <div *ngFor="let data of projectFormData">
+        <div *ngIf="!data.taskData">
+          <ion-item *ngIf="data.input != 'select'">
+            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup *ngIf="data.validation.required" data>*</sup> </ion-label>
+            <ion-label position="floating" class="label-hint"> {{(data.hintTranslations? data.hintTranslations: data.hint)  | translateJson}} </ion-label>
+            <ion-input type="text" required="{{data.validation.required}}" *ngIf="data.input == 'text'"
+              [formControlName]="data.field" name="{{data.field}}" (ionInput)="onKeyPress($event,data)"> </ion-input>
+            <ion-textarea type="text" required="{{data.validation.required}}" *ngIf="data.input == 'textarea'"
+              name="{{data.field}}" [formControlName]="data.field">
+            </ion-textarea>
+          </ion-item>
+          <div *ngIf="data.input == 'select'" style="margin: 15px 10px;">
+            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup>*</sup> </ion-label>
+            <p class="label-hint"> {{(data.hintTranslations? data?.hintTranslations: data.hint)  | translateJson}} </p>
+            <ion-item (click)="openCategoryModal(data)" *ngIf="!selectedCategories?.length">
+              <ion-icon name="pricetag-outline" slot="start" style="margin: 0px 15px 0 -15px;"></ion-icon>
+              <div> {{'FRMELEMNTS_LBL_SELECT_CATEGORIES' | translate}} </div>
+            </ion-item>
+            <div *ngIf="selectedCategories?.length">
+              <ion-chip (click)="openCategoryModal(data)" color="primary">
+                <ion-icon name="add-circle"></ion-icon>
+                <ion-label>{{'FRMELEMNTS_LBL_SELECT_CATEGORIES' | translate}}</ion-label>
+              </ion-chip>
+              <ion-chip *ngFor="let category of selectedCategories">
+                <ion-label *ngIf="category.label != 'Others'">{{(category?.labelTranslations?category?.labelTranslations: category?.name || category?.label)| translateJson}}</ion-label>
+                <ion-label *ngIf="category.label == 'Others'">{{category.value}}</ion-label>
+                <ion-icon name="close-circle" (click)="confirmToDelete(category,'category')"></ion-icon>
+              </ion-chip>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- <div *ngIf="tasks?.length && showTask">
+        <ion-card *ngFor="let task of tasks" class="data-list">
+          <ion-item lines="none">
+            {{task.name}}
+            <ion-icon name="close-outline" slot="end" class="remove-icon" (click)="confirmToDelete(task,'task')">
+            </ion-icon>
+          </ion-item>
+        </ion-card>
+      </div> -->
+      <div *ngIf="showTask">
+        <ion-label class="task-board">
+          <h5>{{'DFLT_NONTRK_FRMELEMNTS_LBL_TEXTBOOK' | translate}} </h5>
+        </ion-label>
+        <ion-card *ngFor="let task of tasks">
+          <ion-item lines="none">
+            {{task.name}}
+            <ion-icon name="close" slot="start" class="remove-icon" (click)="confirmToDelete(task,'task')">
+            </ion-icon>
+          </ion-item>
+        </ion-card>
+        <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_TASKS_FOR_PROJECT' | translate}}" class="create_header"
+          (cardSelect)="openCreateTaskAction()">
+          <ion-icon class="mg-popup-btn-icon" ios="ios-add" md="md-add" add></ion-icon>
+        </app-item-list-card>
+      </div>
+    </form>
+  </div>
+  <!-- <div *ngIf="showCategories">
+    <app-category-select [categories]="categories" [selectedCategories]="selectedCategories"
+      (onSubmit)="selectCategories($event)">
+    </app-category-select>
+  </div> -->
+</ion-content>
+<ion-footer>
+  <ion-button (click)="next()" expand="block"
+    [disabled]="!this.projectForm?.value?.description || !this.projectForm?.value?.title || !this.selectedCategories?.length">
+    {{button | translate}}
+  </ion-button>
+</ion-footer>

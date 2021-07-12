@@ -1,0 +1,43 @@
+@import "src/assets/styles/_variables.scss";
+.custom-label{
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+.file-list{
+    margin: auto; 
+    font-size: 24px;
+}
+
+.attachments-box{
+    background: #a9a9a966;
+    margin-bottom: 35px;
+    height: auto;
+    padding: 5px 10px;
+    .file-box{
+        img{
+            margin: 5px 5px;
+            font-size: 23px;
+        }
+        .attach-label{
+        color: #{$blue}; 
+        text-align:right;
+        float: right;
+        margin: 10px 10px; 
+        }
+    }
+    .img{
+        margin: 5px 5px;
+        margin-bottom: -5px;
+        font-size: 23px;
+        transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+    p{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+}

@@ -1,0 +1,34 @@
+<div class="matrixContainer">
+  <div class="heading">
+    <h4>{{ questionNumber }}) {{ data?.question }}</h4>
+  </div>
+
+  <div *ngFor="let element of data?.instanceQuestions; let i = index">
+    <ion-card [ngSwitch]="element?.responseType">
+      <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'text'"></reports-text>
+      <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'number'"></reports-text>
+      <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'date'"></reports-text>
+      <div *ngSwitchCase="'radio'">
+        <pie-chart [data]="element" [questionNumber]="i + 1"></pie-chart>
+        <reports-text [data]="element"></reports-text>
+      </div>
+      <div *ngSwitchCase="'multiselect'">
+        <bar-chart [data]="element" [questionNumber]="i + 1"></bar-chart>
+        <reports-text [data]="element"></reports-text>
+      </div>
+      <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
+    </ion-card>
+     <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let e of element.evidences">
+            <attachments [url]="e.url" [extension]="e.extension"></attachments>
+          </ion-col>
+          <ion-col size="12" *ngIf="element.evidence_count > 3">
+            <small class="pull-right text-ios-danger" (click)="allEvidenceClick(element)">{{
+              'FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES' | translate
+            }}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+  </div>
+</div>

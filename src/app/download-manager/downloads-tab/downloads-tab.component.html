@@ -8,7 +8,7 @@
     <div class="pull-right">
       <span class="selector">{{selectedFilter | translate}}</span>
       <span><img src="./assets/imgs/sort.png" alt="sorting"></span>
-      <ion-icon name="ios-arrow-down" class="selector"></ion-icon>
+      <ion-icon name="arrow-down" class="selector"></ion-icon>
     </div>
   </div>
 </div>
@@ -38,7 +38,7 @@
       </div>
       <div class="sb-card-actions">
         <button *ngIf="showDeleteButton" class="action-btn float-end delete mr-8"
-          (click)="showDeletePopup(content.identifier)">
+          (click)="showDeletePopup(content.identifier,content.type)">
           {{'DELETE' | translate}}
         </button>
       </div>

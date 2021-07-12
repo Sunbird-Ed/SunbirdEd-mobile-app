@@ -1,0 +1,20 @@
+@import "src/assets/styles/_variables.scss";
+.card-icons{
+    margin-right: 10px;
+    position: relative;
+    top: 2px;
+}
+.card-text{
+    height: 18px;
+    width: 63px;
+    color: map-get($colors, granite_gray);
+    font-family: "Noto Sans", sans-serif;
+    font-size: 13px !important;
+    line-height: 20px;
+    text-align: center;
+}
+.card-button{
+    background-color: transparent !important;
+    outline: none;
+    font-size: 30px;
+}

@@ -1,10 +1,26 @@
-import { Subscription } from 'rxjs';
-import { Events, Platform, PopoverController } from '@ionic/angular';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
-import { Component, Inject, NgZone, OnInit, Input } from '@angular/core';
+import { Component, Inject, Input, NgZone, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { BatchConstants, ContentCard, PreferenceKey, RouterLinks, ViewMore } from '@app/app/app.constant';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
 import {
-  Content,
+  CorReleationDataType, Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Subscription } from 'rxjs';
+import {
+  Batch, Content,
   ContentEventType,
   ContentImportRequest,
   ContentImportResponse,
@@ -12,45 +28,17 @@ import {
   ContentSearchCriteria,
   ContentSearchResult,
   ContentService,
-  Course,
-  CourseService,
+  CorrelationData, Course,
+  CourseBatchesRequest, CourseBatchStatus, CourseEnrollmentType, CourseService,
   DownloadEventType,
   DownloadProgress,
   EventsBusEvent,
   EventsBusService,
-  SearchType,
-  TelemetryObject,
-  CorrelationData,
-  LogLevel,
-  CourseEnrollmentType,
-  CourseBatchStatus,
-  Batch,
-  CourseBatchesRequest,
-  FetchEnrolledCourseRequest,
+  FetchEnrolledCourseRequest, LogLevel, SearchType,
   SharedPreferences,
-  SortOrder,
+  SortOrder
 } from 'sunbird-sdk';
-
-import {
-  Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId,
-  CorReleationDataType
-} from '@app/services/telemetry-constants';
-import {
-  ViewMore, MimeType, RouterLinks,
-  ContentCard, BatchConstants, PreferenceKey
-} from '@app/app/app.constant';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService } from '@app/services/app-header.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ContentUtil } from '@app/util/content-util';
-import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -165,8 +153,6 @@ export class ViewMoreActivityComponent implements OnInit {
         }
 
         if (this.headerTitle !== this.title) {
-          console.log('inside header title if condition');
-          this.headerTitle = this.headerTitle;
           this.offset = 0;
           this.loadMoreBtn = true;
           this.mapper();
@@ -477,7 +463,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       this.env,
-      this.pageName ? this.pageName : this.layoutName,
+      PageId.VIEW_MORE,
       ContentUtil.getTelemetryObject(content),
       values);
     this.navService.navigateToDetailPage(content, { content });
@@ -526,7 +512,6 @@ export class ViewMoreActivityComponent implements OnInit {
 
   private async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatches?: any, payload?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -551,8 +536,6 @@ export class ViewMoreActivityComponent implements OnInit {
                 batches.forEach((batch, key) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -565,7 +548,7 @@ export class ViewMoreActivityComponent implements OnInit {
                 const popover = await this.popoverCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatches,
                     content

@@ -1,0 +1,762 @@
+{
+    "entityName": "28170300402-MPPS PULIPADU_SC",
+    "observationName": "School safety checklist -Officials",
+    "observationId": "5f990e16be0e60389529e33a",
+    "entityType": "school",
+    "entityId": "5e6b4ffd135b2d734252d21f",
+    "districtName": "GUNTUR",
+    "response": [{
+        "order": "462A01",
+        "question": "Let's start capturing your observation notes",
+        "responseType": "matrix",
+        "answers": [],
+        "chart": {},
+        "instanceQuestions": [{
+            "order": "462A02",
+            "question": "Name",
+            "responseType": "text",
+            "answers": ["test"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A03",
+            "question": "Designation",
+            "responseType": "text",
+            "answers": ["abc"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A04",
+            "question": "Date of visit",
+            "responseType": "date",
+            "answers": ["21 Dec 2020, 9:14:16 AM"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A05",
+            "question": "School ID",
+            "responseType": "number",
+            "answers": ["2"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A06",
+            "question": "Zone",
+            "responseType": "text",
+            "answers": ["test"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A07",
+            "question": "HoS Name",
+            "responseType": "text",
+            "answers": ["test"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A08",
+            "question": "HoS contact number",
+            "responseType": "number",
+            "answers": ["2"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A09",
+            "question": "Are there any open drains, potholes/ pits inside or outside the school?",
+            "responseType": "radio",
+            "answers": ["Yes"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Yes",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A10",
+            "question": "Can the entrance to school be monitored from the principal’s office?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A11",
+            "question": "Can visitors walk in directly into the school without supervision?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A12",
+            "question": "Are important phone numbers displayed?",
+            "responseType": "multiselect",
+            "answers": [
+                ["Child Line"]
+            ],
+            "chart": {
+                "type": "bar",
+                "data": [{
+                    "data": [100]
+                }],
+                "xAxis": {
+                    "categories": ["Child Line"],
+                    "title": {
+                        "text": "Responses"
+                    }
+                },
+                "yAxis": {
+                    "min": 0,
+                    "max": 100,
+                    "title": {
+                        "text": "Responses in percentage"
+                    }
+                }
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A13",
+            "question": "Are nursery classes (if applicable) situated on the ground floor?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A14",
+            "question": "Is the drinking water area clean?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A15",
+            "question": "Does the school have filtered drinking water facility?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A16",
+            "question": "Is the water tank clean? Ensure it does not  have mud, algae , dead insects.",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A17",
+            "question": "Are the toilets clean overall?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A18",
+            "question": "Is there a soap/ hand-wash in the toilet?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A19",
+            "question": "Is there running water supply in the toilet?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A20",
+            "question": "Are the cisterns/flush functional?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A21",
+            "question": "Is the first-aid box fully equipped? (Check expiry date)",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A22",
+            "question": "Does the school have a designated vehicle for emergency situations?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A23",
+            "question": "Are the corners of corridors and walls clean?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A24",
+            "question": "Are there abandoned objects lying in any corner of the school?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A25",
+            "question": "Does the MCD pick up garbage from school everyday?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A26",
+            "question": "Do you see students fighting or misbehaving during lunch break?",
+            "responseType": "radio",
+            "answers": ["No"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "No",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A27",
+            "question": "What do teachers do when such things happen?",
+            "responseType": "multiselect",
+            "answers": [
+                ["Talk to students fighting"]
+            ],
+            "chart": {
+                "type": "bar",
+                "data": [{
+                    "data": [100]
+                }],
+                "xAxis": {
+                    "categories": ["Talk to students fighting"],
+                    "title": {
+                        "text": "Responses"
+                    }
+                },
+                "yAxis": {
+                    "min": 0,
+                    "max": 100,
+                    "title": {
+                        "text": "Responses in percentage"
+                    }
+                }
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A28",
+            "question": "Do some students bully others in school?",
+            "responseType": "radio",
+            "answers": ["Partially"],
+            "chart": {
+                "type": "pie",
+                "plotOptions": {
+                    "pie": {
+                        "allowPointSelect": true,
+                        "cursor": "pointer",
+                        "dataLabels": {
+                            "enabled": false
+                        },
+                        "showInLegend": true
+                    }
+                },
+                "data": [{
+                    "data": [{
+                        "name": "Partially",
+                        "y": 100
+                    }]
+                }]
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A29",
+            "question": "What kinds of punishments are given to children who misbehave / don’t do homework etc?",
+            "responseType": "multiselect",
+            "answers": [
+                ["Standing inside/outside class"]
+            ],
+            "chart": {
+                "type": "bar",
+                "data": [{
+                    "data": [100]
+                }],
+                "xAxis": {
+                    "categories": ["Standing inside/outside class"],
+                    "title": {
+                        "text": "Responses"
+                    }
+                },
+                "yAxis": {
+                    "min": 0,
+                    "max": 100,
+                    "title": {
+                        "text": "Responses in percentage"
+                    }
+                }
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A30",
+            "question": "What happens when a child is hurt?",
+            "responseType": "multiselect",
+            "answers": [
+                ["Sent home/parents called"]
+            ],
+            "chart": {
+                "type": "bar",
+                "data": [{
+                    "data": [100]
+                }],
+                "xAxis": {
+                    "categories": ["Sent home/parents called"],
+                    "title": {
+                        "text": "Responses"
+                    }
+                },
+                "yAxis": {
+                    "min": 0,
+                    "max": 100,
+                    "title": {
+                        "text": "Responses in percentage"
+                    }
+                }
+            },
+            "instanceQuestions": []
+        }, {
+            "order": "462A31",
+            "question": "Call 5 students of class 3/4/5 (randomly). Ask them to read a text from their Hindi books and record the count of students who could read it.",
+            "responseType": "number",
+            "answers": ["2"],
+            "chart": {},
+            "instanceQuestions": []
+        }, {
+            "order": "462A32",
+            "question": "Please record your overall comments on the state of the following in the school: \n1. Corporal punishment \n2. Bullying \n3. Reading level in school",
+            "responseType": "text",
+            "answers": ["T"],
+            "chart": {},
+            "instanceQuestions": []
+        }]
+    }],
+    "allQuestions": [{
+        "questionName": "Name",
+        "questionExternalId": "462A02",
+        "questionId": "5d70f9af7afa105d7d66d922"
+    }, {
+        "questionName": "Designation",
+        "questionExternalId": "462A03",
+        "questionId": "5d70f9af7afa105d7d66d923"
+    }, {
+        "questionName": "Date of visit",
+        "questionExternalId": "462A04",
+        "questionId": "5d70f9af7afa105d7d66d924"
+    }, {
+        "questionName": "School ID",
+        "questionExternalId": "462A05",
+        "questionId": "5d70f9af7afa105d7d66d925"
+    }, {
+        "questionName": "Zone",
+        "questionExternalId": "462A06",
+        "questionId": "5d70f9af7afa105d7d66d926"
+    }, {
+        "questionName": "HoS Name",
+        "questionExternalId": "462A07",
+        "questionId": "5d70f9af7afa105d7d66d927"
+    }, {
+        "questionName": "HoS contact number",
+        "questionExternalId": "462A08",
+        "questionId": "5d70f9af7afa105d7d66d928"
+    }, {
+        "questionName": "Are there any open drains, potholes/ pits inside or outside the school?",
+        "questionExternalId": "462A09",
+        "questionId": "5d70f9af7afa105d7d66d929"
+    }, {
+        "questionName": "Can the entrance to school be monitored from the principal’s office?",
+        "questionExternalId": "462A10",
+        "questionId": "5d70f9af7afa105d7d66d92a"
+    }, {
+        "questionName": "Can visitors walk in directly into the school without supervision?",
+        "questionExternalId": "462A11",
+        "questionId": "5d70f9af7afa105d7d66d92b"
+    }, {
+        "questionName": "Are important phone numbers displayed?",
+        "questionExternalId": "462A12",
+        "questionId": "5d70f9af7afa105d7d66d92c"
+    }, {
+        "questionName": "Are nursery classes (if applicable) situated on the ground floor?",
+        "questionExternalId": "462A13",
+        "questionId": "5d70f9af7afa105d7d66d92d"
+    }, {
+        "questionName": "Is the drinking water area clean?",
+        "questionExternalId": "462A14",
+        "questionId": "5d70f9af7afa105d7d66d92e"
+    }, {
+        "questionName": "Does the school have filtered drinking water facility?",
+        "questionExternalId": "462A15",
+        "questionId": "5d70f9af7afa105d7d66d92f"
+    }, {
+        "questionName": "Is the water tank clean? Ensure it does not  have mud, algae , dead insects.",
+        "questionExternalId": "462A16",
+        "questionId": "5d70f9af7afa105d7d66d930"
+    }, {
+        "questionName": "Are the toilets clean overall?",
+        "questionExternalId": "462A17",
+        "questionId": "5d70f9af7afa105d7d66d931"
+    }, {
+        "questionName": "Is there a soap/ hand-wash in the toilet?",
+        "questionExternalId": "462A18",
+        "questionId": "5d70f9af7afa105d7d66d932"
+    }, {
+        "questionName": "Is there running water supply in the toilet?",
+        "questionExternalId": "462A19",
+        "questionId": "5d70f9af7afa105d7d66d933"
+    }, {
+        "questionName": "Are the cisterns/flush functional?",
+        "questionExternalId": "462A20",
+        "questionId": "5d70f9af7afa105d7d66d934"
+    }, {
+        "questionName": "Is the first-aid box fully equipped? (Check expiry date)",
+        "questionExternalId": "462A21",
+        "questionId": "5d70f9af7afa105d7d66d935"
+    }, {
+        "questionName": "Does the school have a designated vehicle for emergency situations?",
+        "questionExternalId": "462A22",
+        "questionId": "5d70f9af7afa105d7d66d936"
+    }, {
+        "questionName": "Are the corners of corridors and walls clean?",
+        "questionExternalId": "462A23",
+        "questionId": "5d70f9af7afa105d7d66d937"
+    }, {
+        "questionName": "Are there abandoned objects lying in any corner of the school?",
+        "questionExternalId": "462A24",
+        "questionId": "5d70f9af7afa105d7d66d938"
+    }, {
+        "questionName": "Does the MCD pick up garbage from school everyday?",
+        "questionExternalId": "462A25",
+        "questionId": "5d70f9af7afa105d7d66d939"
+    }, {
+        "questionName": "Do you see students fighting or misbehaving during lunch break?",
+        "questionExternalId": "462A26",
+        "questionId": "5d70f9af7afa105d7d66d93a"
+    }, {
+        "questionName": "What do teachers do when such things happen?",
+        "questionExternalId": "462A27",
+        "questionId": "5d70f9af7afa105d7d66d93b"
+    }, {
+        "questionName": "Do some students bully others in school?",
+        "questionExternalId": "462A28",
+        "questionId": "5d70f9af7afa105d7d66d93c"
+    }, {
+        "questionName": "What kinds of punishments are given to children who misbehave / don’t do homework etc?",
+        "questionExternalId": "462A29",
+        "questionId": "5d70f9af7afa105d7d66d93d"
+    }, {
+        "questionName": "What happens when a child is hurt?",
+        "questionExternalId": "462A30",
+        "questionId": "5d70f9af7afa105d7d66d93e"
+    }, {
+        "questionName": "Call 5 students of class 3/4/5 (randomly). Ask them to read a text from their Hindi books and record the count of students who could read it.",
+        "questionExternalId": "462A31",
+        "questionId": "5d70f9af7afa105d7d66d93f"
+    }, {
+        "questionName": "Please record your overall comments on the state of the following in the school: \n1. Corporal punishment \n2. Bullying \n3. Reading level in school",
+        "questionExternalId": "462A32",
+        "questionId": "5d70f9af7afa105d7d66d940"
+    }]
+}

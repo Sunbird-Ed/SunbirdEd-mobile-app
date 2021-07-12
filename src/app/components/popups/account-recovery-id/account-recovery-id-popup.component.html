@@ -68,10 +68,10 @@
             </form>
         </div>
         <ion-row class="custom-shadow">
-            <ion-col padding>
+            <ion-col class="ion-padding">
                 <ion-button expand="block" fill="outline" (click)="cancel()">{{ 'CANCEL' | translate }} </ion-button>
             </ion-col>
-            <ion-col padding>
+            <ion-col class="ion-padding">
                 <ion-button expand="block" type="submit" *ngIf="recoveryIdType === RecoveryType.EMAIL"
                     (click)="submitRecoveryId(RecoveryType.EMAIL)" [disabled]="!recoveryEmailForm.valid">
                     {{ 'BTN_SUBMIT' | translate }}</ion-button>

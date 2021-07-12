@@ -1,0 +1,37 @@
+.container {
+    margin-bottom: 60px;
+}
+
+.closeBtn {
+    color: white !important;
+    font-size: 24px;
+    padding-right: 10px
+}
+
+.customFooter {
+    padding: 0;
+}
+
+.hideElement {
+    border: red !important
+}
+
+.sectionHeader {
+    padding-top: 10px;
+}
+
+.flexbox {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
+}
+
+.noWrap {
+    white-space: nowrap;
+    width: fit-content;
+
+}
+
+.wrapText {
+    white-space: wrap;
+}

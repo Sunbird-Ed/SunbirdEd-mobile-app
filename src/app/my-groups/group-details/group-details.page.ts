@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
@@ -6,7 +6,7 @@ import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService
 } from '../../../services';
 import { Router } from '@angular/router';
-import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
+import { RouterLinks, MenuOverflow, ProfileConstants } from '@app/app/app.constant';
 import {
   InteractType,
   InteractSubtype,
@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, ActivateAndDeactivateByIdRequest
+  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService, FormService, FormRequest
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -41,6 +41,8 @@ import {
   ViewMoreActivityActionsDelegate
 } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 @Component({
   selector: 'app-group-details',
@@ -69,9 +71,20 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   flattenedActivityList = [];
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
+  forumDetails;
+  // createForumRequest;
+  fetchForumIdReq;
+  createUserReq = {
+    username: '',
+    identifier: ''
+  };
+  @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
+    @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
@@ -92,6 +105,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
         this.userId = uid;
+        this.createUserReq.identifier = uid;
       });
 
     this.corRelationList.push({ id: this.groupId, type: CorReleationDataType.GROUP_ID });
@@ -99,6 +113,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
+    this.generateDataForDF();
   }
 
   ngOnDestroy() {
@@ -143,7 +158,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   navigateToAddUserPage() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_MEMBER_CLICKED)
+    this.generateInteractTelemetry(InteractType.ADD_MEMBER, InteractSubtype.ADD_MEMBER_CLICKED, ID.ADD_MEMBER)
     this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
       groupId: this.groupId,
       memberList: this.memberList,
@@ -166,7 +181,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       this.isSuspended = this.groupDetails.status.toLowerCase() === 'suspended';
-      console.log(' this.isSuspended',  this.isSuspended);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
       this.activityList.forEach((a) => {
@@ -244,6 +258,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   
 
   async groupMenuClick(event) {
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.GROUP_KEBAB_MENU_CLICKED);
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
     if (this.groupDetails.status.toLowerCase() === 'suspended') {
       if (this.groupCreator.userId === this.userId) {
@@ -255,9 +270,18 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }
     } else {
       if (this.groupCreator.userId === this.userId) {
-        menuList = MenuOverflow.MENU_GROUP_CREATOR;
+        if(this.forumDetails){
+          menuList = MenuOverflow.MENU_GROUP_CREATOR_DISABLE_DF;
+        } else {
+          menuList = MenuOverflow.MENU_GROUP_CREATOR;
+        }
+        
       } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
-        menuList = MenuOverflow.MENU_GROUP_ADMIN;
+        if(this.forumDetails){
+          menuList = MenuOverflow.MENU_GROUP_ADMIN_DISABLE_DF
+        } else {
+          menuList = MenuOverflow.MENU_GROUP_ADMIN;
+        }
       }
     }
 
@@ -274,7 +298,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.EDIT_GROUP_CLICKED);
+        this.generateInteractTelemetry( InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
         this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
@@ -288,6 +312,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.showDeactivateGroupPopup();
       } else if (data.selectedItem === 'FRMELEMENTS_LBL_ACTIVATEGRP') {
         this.showReactivateGroupPopup();
+      } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM'){
+        this.enableDF();
+      } else if(data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
+        this.showDisableDFPopupPopup();
       }
     }
   }
@@ -341,7 +369,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeactivateGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DEACTIVATE_GROUP_CLICKED);
+    this.generateInteractTelemetry( InteractType.SELECT_DEACTIVATE, InteractSubtype.DEACTIVATE_GROUP_CLICKED, ID.SELECT_DEACTIVATE);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -373,7 +401,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       };
       try {
         const resp = await this.groupService.suspendById(deactivateByIdRequest).toPromise();
-        console.log('suspendById', resp);
         // await loader.dismiss();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
@@ -422,7 +449,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       try {
         // const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
         const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
-        console.log('reactivateById', resp);
         // await loader.dismiss();
         this.isGroupLoading = false;
         // if (updateMemberResponse) {
@@ -439,7 +465,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeleteGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DELETE_GROUP_CLICKED);  
+    this.generateInteractTelemetry( InteractType.SELECT_DELETE, InteractSubtype.DELETE_GROUP_CLICKED, ID.SELECT_DELETE);  
 
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -822,7 +848,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_ACTIVITY_CLICKED);  
+    this.generateInteractTelemetry(InteractType.ADD_ACTIVITY, InteractSubtype.ADD_ACTIVITY_CLICKED, ID.ADD_ACTIVITY);  
     try {
       const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
         = await this.groupService.getSupportedActivities().toPromise();
@@ -893,4 +919,93 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     );
   }
 
+  async enableDF(){
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.ENABLE_DISCUSSIONS_CLICKED);
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.ENABLE_DISCUSSIONS);
+    const request = {
+      context: {
+        type: 'group',
+        identifier: this.groupId
+      },
+      type: 'group'
+    }
+    this.discussionService.attachForum(request).toPromise()
+    .then(async (response) => {
+      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.ENABLE_DISCUSSIONS);
+      await loader.dismiss();
+      this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
+      this.accessDiscussionComponent.fetchForumIds();
+      }).catch(async (err) => {
+      console.log('enableDF err', err)
+        await loader.dismiss();
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+      });
+  }
+
+  async disableDF(){
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DISABLE_DISCUSSIONS);
+    const removeForumReq = {...this.forumDetails}
+    removeForumReq.cid = [removeForumReq.cid];
+    this.discussionService.removeForum(removeForumReq).toPromise()
+    .then(async res => {
+      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DISABLE_DISCUSSIONS);
+      await loader.dismiss();
+      this.forumDetails = '';
+      this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
+      this.accessDiscussionComponent.fetchForumIds();
+    }).catch(async err => {
+      console.log('disableDF err', err)
+      await loader.dismiss();
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+    });
+  }
+
+  private async showDisableDFPopupPopup() {
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DISABLE_DISCUSSIONS_CLICKED);
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DISCUSSION_FORUM_DISABLE_CONFIRM'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('DISABLE_DISCUSSION_FORUM'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DISCUSSION_FORUM_DISABLE_CONFIRM_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+      this.disableDF();
+    }
+  }
+
+  async generateDataForDF() {
+    this.fetchForumIdReq =  {
+      identifier: [this.groupId],
+      type: 'group'
+    };
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      this.createUserReq.username = p.serverProfile['userName'];
+    });
+  }
+
+  assignForumData(e){
+    console.log('assignForumData', e)
+    this.forumDetails = e;
+  }
+  
 }

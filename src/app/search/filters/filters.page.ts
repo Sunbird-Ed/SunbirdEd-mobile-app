@@ -1,5 +1,6 @@
-import { Component, Inject } from '@angular/core';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { Component, Inject, OnDestroy } from '@angular/core';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { ContentUtil } from '@app/util/content-util';
   templateUrl: './filters.page.html',
   styleUrls: ['./filters.page.scss']
 })
-export class FiltersPage {
+export class FiltersPage implements OnDestroy {
 
   filterCriteria: any;
   initialFilterCriteria: any;
@@ -51,7 +52,7 @@ export class FiltersPage {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
+    this.headerService.showHeaderWithBackButton([]);
   }
 
   ionViewWillLeave() {
@@ -75,7 +76,7 @@ export class FiltersPage {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,
-      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
+      (this.source && this.source.match('courses')) ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     await popUp.present();
@@ -100,11 +101,10 @@ export class FiltersPage {
       InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
-      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
+      (this.source && this.source.match('courses')) ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     this.events.publish('search.applyFilter', this.filterCriteria);
-
     this.location.back();
   }
 
@@ -228,6 +228,10 @@ export class FiltersPage {
         await loader.dismiss();
         this.shouldEnableFilter = true;
       });
+  }
+
+  ngOnDestroy() {
+    this.events.publish('update_back_header', true);
   }
 
 }

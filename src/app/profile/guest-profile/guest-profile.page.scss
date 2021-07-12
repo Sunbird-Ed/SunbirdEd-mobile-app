@@ -106,6 +106,12 @@
   .grid-container {
     display: grid;
     grid-template-columns: 50% 50%;
+    border-style: double;
+    margin-top: 8px;
+    border-radius: 1rem;
+    background-color: aliceblue;
+    border-color: aliceblue;
+    padding: 10px;
   }
   .grid-item {
     padding: 0 10px 14px;
@@ -127,6 +133,23 @@
         height: 14px;
         padding-left: 4px;
       }
+    }
+  }
+
+  .content-header-info {
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+
+  .content-preferences-info {
+    padding: 15px;
+    background-color: white;
+    text-align: center;
+    border-bottom: 0.3px solid map-get($colors, bright_blue_19);
+    border-top: 0.3px solid map-get($colors, bright_blue_19);
+    .container {
+      text-align: center;
+      @include margin(null, null, 10px, null);
     }
   }
 }

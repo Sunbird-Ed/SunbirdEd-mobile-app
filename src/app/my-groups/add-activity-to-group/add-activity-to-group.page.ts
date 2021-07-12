@@ -7,7 +7,7 @@ import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
     Environment, ImpressionType, InteractSubtype, InteractType,
-    PageId, CorReleationDataType
+    PageId, CorReleationDataType, ID
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -121,9 +121,9 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             this.corRelationList.push({ id: data.activityType, type: CorReleationDataType.ACTIVITY_TYPE });
         }
 
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SELECT_CATEGORY,
             InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
-            undefined, undefined, undefined, this.corRelationList);
+            undefined, undefined, undefined, this.corRelationList, ID.SELECT_CATEGORY);
 
         this.csGroupAddableBloc.updateState({
             pageIds: [],

@@ -1,0 +1,16 @@
+@import 'src/assets/styles/_variables.scss';
+
+.seacrhInput {
+  padding-left: 15px;
+  border: 1px solid $gray-100 !important;
+  // background-color: $white-color !important;
+}
+.toolbar-background-md {
+  background-color: $white-color;
+}
+.serachBar {
+  flex: 1;
+}
+.labelAdj {
+  color: $black-color !important;
+}

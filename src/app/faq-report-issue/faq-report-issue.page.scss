@@ -383,3 +383,16 @@ ion-item.item-label-stacked {
         }
       }
 }
+.invalid-btn{
+    background: map-get($colors, light_blue_f5) !important;
+}
+
+.report-info{
+    padding-top: 1rem;
+    font-size: 1rem;
+}
+
+.report-submit-info{
+    font-size: 0.8rem;
+    color: var(--app-gray);
+}

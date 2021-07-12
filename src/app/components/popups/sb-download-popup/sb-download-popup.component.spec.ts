@@ -1,5 +1,5 @@
 import { SbDownloadPopupComponent } from './sb-download-popup.component';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { FileSizePipe } from '../../../../pipes/file-size/file-size';
 import { SimpleChanges, SimpleChange } from '@angular/core';
 

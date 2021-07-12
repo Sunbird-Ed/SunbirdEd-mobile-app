@@ -11,7 +11,8 @@ import {
   CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Observable, EMPTY, combineLatest, Subscription } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';

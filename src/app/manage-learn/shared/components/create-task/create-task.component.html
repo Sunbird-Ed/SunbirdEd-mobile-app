@@ -1,0 +1,27 @@
+<ion-content class="P0">
+  <div class="ecd-header ion-text-center">
+    <!-- <h6 class="M0">{{title | titlecase}}</h6> -->
+  </div>
+  <ion-grid class="P0">
+    <ion-icon name="close" class="sb-modal-close close-popup" (click)="closePopover()"></ion-icon>
+    <ion-row class="P16">
+      <h5> {{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
+      <section class="W100 MT3V">
+        <p>{{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}</p>
+        <ion-col size="12" class="ion-no-padding">
+          <div class="W100 merged-input-container MT10">
+            <ion-textarea type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_DESCRIPTION_HERE' | translate}}" class="form-control custom task-desc" [(ngModel)]="newTask.name">
+            </ion-textarea>
+          </div>
+        </ion-col>
+      </section>
+    </ion-row>
+    <ion-row class="custom-shadow">
+      <ion-col padding size="12">
+        <ion-button expand="block" type="submit" (click)="addTask()">
+          {{ 'FRMELEMNTS_LBL_ADD_TASK' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

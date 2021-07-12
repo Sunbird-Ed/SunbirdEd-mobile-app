@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import {
-  AuthService, ProfileService, SharedPreferences,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, ProfileType
-} from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
-import { Router, NavigationExtras } from '@angular/router';
-import { CommonUtilService } from '../common-util.service';
-import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
-import { ExternalIdVerificationService } from '../externalid-verification.service';
-import { AppGlobalService } from '../app-global-service.service';
-import { ConsentService } from '../consent-service';
-import { SbProgressLoader } from '../sb-progress-loader.service';
+import { NavigationExtras, Router } from '@angular/router';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
+import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
+import { ModalController } from '@ionic/angular';
+import {
+  AuthService,
+  CachedItemRequestSourceFrom, Profile, ProfileService,
+  ProfileType, ServerProfile, ServerProfileDetailsRequest
+} from 'sunbird-sdk';
+import { AppGlobalService } from '../app-global-service.service';
+import { CommonUtilService } from '../common-util.service';
+import { ConsentService } from '../consent-service';
+import { ExternalIdVerificationService } from '../externalid-verification.service';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 
 @Injectable({
   providedIn: 'root'
@@ -84,7 +84,8 @@ export class TncUpdateHandlerService {
     }
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
-        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
+        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase()
+            || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       } else {
         this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
@@ -116,11 +117,14 @@ export class TncUpdateHandlerService {
         };
         if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
-          (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase())) {
+          (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()
+              || serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
-        } else if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
+        } else if (userprofile.profileType === ProfileType.NONE ||
+            userprofile.profileType === ProfileType.OTHER.toUpperCase()
+            || serverProfile.userType === ProfileType.OTHER.toUpperCase()) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] =
           this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig);
@@ -147,11 +151,14 @@ export class TncUpdateHandlerService {
 
   private checkDistrictMapping(profile, locationMappingConfig, userDetails) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
-      .then((custodianOrgId: string) => {
+      .then(async (custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
           this.navigateToDistrictMapping();
         } else {
+          if (!(await this.isSSOUser(userDetails))) {
+            this.appGlobalService.showYearOfBirthPopup(userDetails.serverProfile);
+          }
           this.externalIdVerificationService.showExternalIdVerificationPopup();
         }
       })

@@ -1,0 +1,408 @@
+{
+    "message": "Entities fetched successfull",
+    "status": 200,
+    "result": [{
+        "data": [{
+            "_id": "5bfe53ea1d0c350d61b78d0a",
+            "name": "Sachdeva Convent School, Street No.-5 Sangam Vihar (Wazirabad - Jagatpur Road), Delhi, North, 1207229",
+            "externalId": "1207229",
+            "addressLine1": "Street No.-5 Sangam Vihar (Wazirabad - Jagatpur Road)",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d0b",
+            "name": "SMS Public School, A/61 Kh. 13/1, 13/2 near Peeli Kothi Nathupura Delhi, North, 1207235",
+            "externalId": "1207235",
+            "addressLine1": "A/61 Kh. 13/1, 13/2 near Peeli Kothi Nathupura",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d0c",
+            "name": "Divyansh Public School, Kh.No.28/20 & 29/16/02 Sangam Vihar, Burari, Delhi, North, 1207250",
+            "externalId": "1207250",
+            "addressLine1": "Kh.No.28/20 & 29/16/02 Sangam Vihar, Burari",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d0d",
+            "name": "United English Medium School, 17-A, Raj Niwas Marg, Delhi, North, 1207253",
+            "externalId": "1207253",
+            "addressLine1": "17-A, Raj Niwas Marg,",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d0e",
+            "name": "A.P.J. International school, Main Jagatpur Road, Wazirabad, Delhi, North, 1207254",
+            "externalId": "1207254",
+            "addressLine1": "Main Jagatpur Road, Wazirabad",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d0f",
+            "name": "Shri Shiv Middle School, Shiv Kutti, Teliwara, Delhi, North, 1208138",
+            "externalId": "1208138",
+            "addressLine1": "Shiv Kutti, Teliwara",
+            "addressLine2": "",
+            "districtName": "North",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d10",
+            "name": "B.C.C Modern Public School, 467/C-1 Fly Over Ring Road Azadpur Vill Delhi, North West, 1309169",
+            "externalId": "1309169",
+            "addressLine1": "467/C-1 Fly Over Ring Road Azadpur Vill",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d11",
+            "name": "Sant Gyaneshwar Public School, 8, Khampur, Delhi, North West, 1309230",
+            "externalId": "1309230",
+            "addressLine1": "8, Khampur,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d12",
+            "name": "Tagore Modern Public School, BN(West ) ShalimarBagh, Delhi, North West, 1309236",
+            "externalId": "1309236",
+            "addressLine1": "BN(West ) ShalimarBagh",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d13",
+            "name": "Mata Ram Rakhi Sanatan Dharam Saraswati Bal Mandir, Mehendra Enclave, Gujranwala Town, Delhi, North West, 1309240",
+            "externalId": "1309240",
+            "addressLine1": "Mehendra Enclave, Gujranwala Town",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d14",
+            "name": "Silver Oak Public School, A-1 Swaroop Nagar, G.T.Karnal Road, Delhi, North West, 1309249",
+            "externalId": "1309249",
+            "addressLine1": "A-1 Swaroop Nagar, G.T.Karnal Road,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d15",
+            "name": "KAMS Convent School, 122 Main Road, Kushak, No. 2, Delhi, North West, 1309282",
+            "externalId": "1309282",
+            "addressLine1": "122 Main Road, Kushak, No. 2",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d16",
+            "name": "Rao Mehar Chand Saraswati Vidya Mandir, Guru Nanak Nagar, Burari Road, Bhalaswa Dairy, Delhi, North West, 1309284",
+            "externalId": "1309284",
+            "addressLine1": "Guru Nanak Nagar, Burari Road, Bhalaswa Dairy",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d17",
+            "name": "Navjeevan Convent School, G-Block, Shradha Nand Colony, Bhalaswa Dairy, Delhi, North West, 1309285",
+            "externalId": "1309285",
+            "addressLine1": "Shradha Nand Colony, Bhalaswa Dairy,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d18",
+            "name": "Rose Valley Public School, Main Rd, Near Balaji Mandir, Palla, Delhi, North West, 1309290",
+            "externalId": "1309290",
+            "addressLine1": "Main Rd, Near Balaji Mandir, Palla,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d19",
+            "name": "S S International School, Kh No. 489 & 500, Vill Hiranki, Delhi, North West, 1309291",
+            "externalId": "1309291",
+            "addressLine1": "Kh No. 489 & 500, Vill Hiranki",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1a",
+            "name": "Devraj Narayan Public School, Plot No.12, E-Block, Swami Shradha Nand Colony, Bhalswa Dairy, Delhi, North West, 1309293",
+            "externalId": "1309293",
+            "addressLine1": "Plot No.12, E-Block, Swami Shradha Nand Colony, Bhalswa Dairy",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1b",
+            "name": "Savanu International School, Mukhmelpur Road, Zind Pur, Delhi, North West, 1309298",
+            "externalId": "1309298",
+            "addressLine1": "Mukhmelpur Road, Zind Pur",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1c",
+            "name": "Shanti Vidya Mandir, Rajeev Nagar, Bhalswa Dairy, Behind MCD Primary School, Delhi, North West, 1309299",
+            "externalId": "1309299",
+            "addressLine1": "Rajeev Nagar, Bhalswa Dairy, Behind MCD Primary Schoo",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1d",
+            "name": "Chaudhari Chhoturam Memorial Public School, Bhagat Singh Park, Delhi, North West, 1310248",
+            "externalId": "1310248",
+            "addressLine1": "Bhagat Singh Park",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1e",
+            "name": "Maharishi Dayanand Public School, Ishwar Colony, Bawana, Delhi, North West, 1310266",
+            "externalId": "1310266",
+            "addressLine1": "Ishwar Colony, Bawana",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d1f",
+            "name": "Roop Krishna Public School, C- Block Shabad Dairy Delhi, North West, 1310268",
+            "externalId": "1310268",
+            "addressLine1": "C- Block Shabad Dairy",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d20",
+            "name": "Junior Model School, C-13 Suraj Park Badli , Delhi, North West, 1310274",
+            "externalId": "1310274",
+            "addressLine1": "C-13 Suraj Park Badli",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d21",
+            "name": "Orion Convent School, Shahbad Daulat Pur , Delhi, North West, 1310275",
+            "externalId": "1310275",
+            "addressLine1": "Shahbad Daulat Pur",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d22",
+            "name": "Rana Model School, New Sannoth Colony, Ghoga Mor, Delhi, North West, 1310286",
+            "externalId": "1310286",
+            "addressLine1": "New Sannoth Colony, Ghoga Mor",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d23",
+            "name": "DAV Public School, Ishwar Colony, Bawana, Delhi, North West, 1310423",
+            "externalId": "1310423",
+            "addressLine1": "Ishwar Colony, Bawana",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d24",
+            "name": "Mansa Vidhya Peeth, Village Bhor Garh Narela Delhi, North West, 1310432",
+            "externalId": "1310432",
+            "addressLine1": "Village Bhor Garh Narela",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d25",
+            "name": "Summerdales Public School, St. No-27 Swantantra Nagar, Narela, Delhi, North West, 1310433",
+            "externalId": "1310433",
+            "addressLine1": "St. No-27 Swantantra Nagar, Narela",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d26",
+            "name": "Herald Public School, Lampur Road, New Basti, Bankner, Delhi, North West, 1310434",
+            "externalId": "1310434",
+            "addressLine1": "Lampur Road, New Basti, Bankne",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d27",
+            "name": "Angiras Bharti Public School, Lampur Road Bakner Delhi, North West, 1310435",
+            "externalId": "1310435",
+            "addressLine1": "Lampur Road Bakner",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d28",
+            "name": "RAMA DEVI PUBLIC SCHOOL, Kh. No.134, Dariya Pur Road, Ghoga, Delhi, North West, 1310436",
+            "externalId": "1310436",
+            "addressLine1": "Kh. No.134, Dariya Pur Road, Ghoga,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d29",
+            "name": "Apolo Convent School, Holambi Kalan, Delhi, North West, 1310438",
+            "externalId": "1310438",
+            "addressLine1": "Holambi Kalan",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2a",
+            "name": "St.Ramjas Convent School, Plot No.342, Vill Bhalswa, Delhi, North West, 1310442",
+            "externalId": "1310442",
+            "addressLine1": "Plot No.342, Vill Bhalswa",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2b",
+            "name": "Rising Era Convent School, Kh.No. 96, Naya Bans, Vill. Khera Khurd, Delhi, North West, 1310449",
+            "externalId": "1310449",
+            "addressLine1": "Kh.No. 96, Naya Bans, Vill. Khera Khurd,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2c",
+            "name": "Happy Child Modern Public School, Kh. No.63/19, Siraspur Road, Khera Garhi, Delhi, North West, 1310451",
+            "externalId": "1310451",
+            "addressLine1": "Kh. No.63/19, Siraspur Road, Khera Garhi,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2d",
+            "name": "White Leaf Public School, Plot No.80, Gali No-23, Pooth Khurd, Delhi, North West, 1310452",
+            "externalId": "1310452",
+            "addressLine1": "Plot No.80, Gali No-23, Pooth Khurd",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2e",
+            "name": "Jai Hind International School, 48/20, Krishna Nagar Colony, Singhu Border Road, Narela, Delhi, North West, 1310454",
+            "externalId": "1310454",
+            "addressLine1": "48/20, Krishna Nagar Colony, Singhu Border Road, Narela",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d2f",
+            "name": "Gyanodaya Model Public School, Alipur, Delhi, North West, 1310455",
+            "externalId": "1310455",
+            "addressLine1": "Alipur",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d30",
+            "name": "New Ways Concept School, Plot No.-4, Behind CNG Station, Sect. B-2, Narela, Delhi, North West, 1310456",
+            "externalId": "1310456",
+            "addressLine1": "Plot No.-4, Behind CNG Station, Sect. B-2, Narela,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d31",
+            "name": "GR International School, 154/423, V & PO Pooth Khurd, Delhi, North West, 1310459",
+            "externalId": "1310459",
+            "addressLine1": "154/423, V & PO Pooth Khurd",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d32",
+            "name": "Spring Field School, F D-Block Pitam Pura Delhi, North West, 1411188",
+            "externalId": "1411188",
+            "addressLine1": "F D-Block Pitam Pura",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d33",
+            "name": "Mother Land Public School, CU-Block Pitam Pura Delhi, North West, 1411197",
+            "externalId": "1411197",
+            "addressLine1": "CU-Block Pitam Pura",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d34",
+            "name": "Bloom Era Public School, 285/23 Onkar Nagar B-Blk Tri Nagar Delhi, North West, 1411199",
+            "externalId": "1411199",
+            "addressLine1": "285/23 Onkar Nagar B-Blk Tri Nagar",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d35",
+            "name": "Mahavira International School, 1149 Deva Ram Park Tri Nagar Delhi, North West, 1411201",
+            "externalId": "1411201",
+            "addressLine1": "1149 Deva Ram Park Tri Nagar",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d36",
+            "name": "Sant Namdev Public School, M.G. Enclave Pirampura Delhi, North West, 1411203",
+            "externalId": "1411203",
+            "addressLine1": "M.G. Enclave Pirampura",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d37",
+            "name": "St. Micheal Academy, F 242, RISHI NAGAR, RANI BAGH, Delhi, North West, 1411230",
+            "externalId": "1411230",
+            "addressLine1": "RISHI NAGAR, RANI BAGH,",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d38",
+            "name": "J.N.Modern Public School, 1220 Rani Bagh Delhi, North West, 1411241",
+            "externalId": "1411241",
+            "addressLine1": "1220 Rani Bagh",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d39",
+            "name": "Himalaya Foundation School, NS 26, behind JP Block Market, Maurya Enclave, Pitampura, Delhi, North West, 1411256",
+            "externalId": "1411256",
+            "addressLine1": "NS 26, behind JP Block Market, Maurya Enclave, Pitampura",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d3a",
+            "name": "Sun Smile Public School, A1/155 Aman Vihar New Delhi, North West, 1412137",
+            "externalId": "1412137",
+            "addressLine1": "A1/155 Aman Vihar",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }, {
+            "_id": "5bfe53ea1d0c350d61b78d3b",
+            "name": "R.K.Memorial Public School, Karan Vihar Delhi, North West, 1412150",
+            "externalId": "1412150",
+            "addressLine1": "Karan Vihar",
+            "addressLine2": "",
+            "districtName": "North West",
+            "selected": false
+        }],
+        "count": 6219
+    }]
+}

@@ -1,0 +1,36 @@
+<ion-content>
+    <div>
+        <div class="filter-header px-16 pt-16">
+            <ion-button class="reset-button" fill="clear" (click)="resetFilter()">
+                <ion-icon name="refresh"></ion-icon>
+                {{'RESET' | translate}}
+            </ion-button>
+        </div>
+        <div class="p-16" *ngIf="searchResultFacets">
+            <sb-search-facet-filter [baseSearchFilter]="baseSearchFilter"
+                                    [searchResultFacets]="searchResultFacets"
+                                    [filterFormTemplateConfig]="filterFormTemplateConfig"
+                                    (searchFilterChange)="valueChanged($event)"
+                                    #sbSearchFilterComponent></sb-search-facet-filter>
+        </div>
+    </div>
+</ion-content>
+
+<div class="search-filter-footer">
+    <ion-row class="padding-12" style="--background: #FFFFFF !important;">
+
+        <ion-col>
+            <ion-button class= "cancel-button"
+                        class="ion-text-capitalize mb-16" expand="block" (click)="cancel()">
+                {{'CANCEL' | translate}}
+            </ion-button>
+        </ion-col>
+
+        <ion-col>
+            <ion-button class="ion-text-capitalize mb-16" expand="block"
+                        (click)="applyFilter()">{{'APPLY' | translate}}
+            </ion-button>
+        </ion-col>
+
+    </ion-row>
+</div>

@@ -1,0 +1,15 @@
+{
+    "message": "survey list fetched successfully",
+    "status": 200,
+    "result": [{
+        "name": "Survey and feedback ios test solution",
+        "status": "active",
+        "solutionId": "5f992882be0e60389529e345"
+    }, {
+        "solutionId": "5fe45212b4eacd03141f89d2",
+        "surveyId": "5fe45777c567d70331fc46b5",
+        "status": "started",
+        "submissionId": "5fe45777c567d70331fc46b6",
+        "name": "Survey of Diksha awareness - Test"
+    }]
+}

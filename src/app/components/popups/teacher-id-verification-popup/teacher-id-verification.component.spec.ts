@@ -1,5 +1,6 @@
 import { TeacherIdVerificationComponent } from './teacher-id-verification-popup.component';
-import { PopoverController, NavParams, Events } from '@ionic/angular';
+import { PopoverController, NavParams } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TelemetryGeneratorService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
 import { ProfileService, HttpClientError, Response, HttpServerError } from 'sunbird-sdk';

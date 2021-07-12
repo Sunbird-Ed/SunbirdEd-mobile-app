@@ -1,14 +1,51 @@
-import { PageFilterCallback } from './../page-filter/page-filter.page';
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
-import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
-import { TranslateService } from '@ngx-translate/core';
-import has from 'lodash/has';
-import forEach from 'lodash/forEach';
-import { Subscription } from 'rxjs';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import {
+  AudienceFilter,
+  ContentCard,
+  ContentFilterConfig,
+  EventTopics,
+  ExploreConstants,
+  PreferenceKey,
+  PrimaryCategory, ProfileConstants,
+  RouterLinks,
+  Search, ViewMore
+} from '@app/app/app.constant';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { NotificationService } from '@app/services/notification.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import {
+  CorReleationDataType,
+  Environment,
+  ID,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
+import { applyProfileFilter } from '@app/util/filter.util';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
+import { IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { TranslateService } from '@ngx-translate/core';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CourseCardGridTypes, LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import forEach from 'lodash/forEach';
+import has from 'lodash/has';
+import { Subscription } from 'rxjs';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
@@ -31,52 +68,13 @@ import {
   SharedPreferences,
   SortOrder
 } from 'sunbird-sdk';
-
-import {
-  AudienceFilter,
-  ContentCard,
-  ContentFilterConfig,
-  EventTopics,
-  ExploreConstants,
-  PreferenceKey,
-  ProfileConstants,
-  RouterLinks,
-  PrimaryCategory,
-  Search, ViewMore
-} from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import {
-  CorReleationDataType,
-  Environment,
-  ID,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { ContentUtil } from '@app/util/content-util';
-import { NotificationService } from '@app/services/notification.service';
-import { applyProfileFilter } from '@app/util/filter.util';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import {
-  FrameworkSelectionDelegateService,
-  FrameworkSelectionActionsDelegate
+  FrameworkSelectionActionsDelegate, FrameworkSelectionDelegateService
 } from '../profile/framework-selection/framework-selection.page';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
-import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { PageFilterCallback } from './../page-filter/page-filter.page';
+import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 
 @Component({
   selector: 'app-resources',
@@ -87,7 +85,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
       state('true', style({
         left: '{{left_indent}}',
       }), { params: { left_indent: 0 } }), // default parameters values required
-
+      
       transition('* => active', [
         style({ width: 5, opacity: 0 }),
         group([
@@ -120,8 +118,8 @@ import { ProfileHandler } from '@app/services/profile-handler';
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
-  @ViewChild('libraryRefresher') refresher: IonRefresher;
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate, OnTabViewWillEnter {
+  @ViewChild('libraryRefresher', { static: false }) refresher: IonRefresher;
 
   pageLoadedSuccess = false;
   storyAndWorksheets: Array<any>;
@@ -185,7 +183,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   pageApiLoader = true;
   dynamicResponse: any;
   courseCardType = CourseCardGridTypes;
-  @ViewChild('contentView') contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
@@ -475,6 +473,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
+      userPreferences: {
+        board: this.getGroupByPageReq.board,
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade,
+        subject: this.profile.subject,
+      },
       applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
         gradeLevel: this.getGroupByPageReq.grade
@@ -585,12 +589,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
 
     this.getCategoryData();
 
@@ -616,9 +620,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   ionViewDidEnter() {
     this.refresher.disabled = false;
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    this.coachTimeout = setTimeout(() => {
-      this.appGlobalService.showTutorialScreen();
-    }, 2000);
+    // this.coachTimeout = setTimeout(() => {
+    //   this.appGlobalService.showNewTabsSwitchPopup();
+    // }, 2000);
   }
 
   subscribeSdkEvent() {
@@ -661,7 +665,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
         primaryCategories,
-        source: PageId.LIBRARY
+        source: PageId.LIBRARY,
+        searchWithBackButton: true
       }
     });
   }
@@ -903,12 +908,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       case 'download':
         this.redirectToActivedownloads();
         break;
-      // case 'notification':
-      //   this.redirectToNotifications();
-      //   break;
-      case 'information':
-        this.appTutorialScreen();
+      case 'notification':
+        this.redirectToNotifications();
         break;
+      // case 'information':
+      //   this.appTutorialScreen();
+      //   break;
       default: console.warn('Use Proper Event name');
     }
   }
@@ -1024,9 +1029,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
               const content = this.storyAndWorksheets[i].contents[k];
               if (content.appIcon) {
                 if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-                  if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                    content.appIcon = content.appIcon;
-                  } else {
+                  if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
                     this.imageSrcMap.set(content.identifier, content.appIcon);
                     // this.imageSrcMap[content.identifier] = content.appIcon;
                     content.appIcon = this.defaultImg;
@@ -1133,14 +1136,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   navigateToViewMoreContentsPage(section) {
-    const params: NavigationExtras = {
-      state: {
+    let navState = {};
+    switch (section.dataSrc.type) {
+      case 'TRACKABLE_COLLECTIONS':
+        navState = {
+          enrolledCourses: section.data.sections[0].contents,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+          userId: this.appGlobalService.getUserId()
+        };
+        break;
+      case 'CONTENTS':
+      navState = {
         requestParams: {
           request: section.meta && section.meta.searchRequest
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         pageName: ViewMore.PAGE_TV_PROGRAMS
-      }
+      };
+      break;
+    }
+    const params: NavigationExtras = {
+      state: navState
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
@@ -1211,5 +1228,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       corRelation
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
+  }
+
+  tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
   }
 }

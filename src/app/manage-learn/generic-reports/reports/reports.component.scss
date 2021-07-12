@@ -1,0 +1,28 @@
+@import 'src/assets/styles/base/_variables.scss';
+@import 'src/assets/styles/_custom-mixins.scss';
+@import 'src/assets/styles/_variables.scss';
+.filterIcon {
+  font-size: 30px;
+  float: right;
+  margin: 10px 15px;
+  color: $primary-color;
+}
+.reportName {
+  text-transform: capitalize;
+  margin-bottom: 0;
+  padding: 0 15px;
+}
+.heading {
+  margin: 10px 15px;
+  color: $gray-300;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1rem;
+}
+:host ::ng-deep h4 {
+  font-size: 1rem;
+}

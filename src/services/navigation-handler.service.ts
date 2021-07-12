@@ -6,9 +6,10 @@ import { CsContentType } from '@project-sunbird/client-services/services/content
 import { CommonUtilService } from './common-util.service';
 import { Environment, InteractSubtype, InteractType } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-
 @Injectable()
 export class NavigationService {
+
+    previousNavigationUrl;
 
     constructor(
         private router: Router,
@@ -87,6 +88,14 @@ export class NavigationService {
         } else {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         }
+    }
+
+    setNavigationUrl(navigationUrl: string) {
+        this.previousNavigationUrl = navigationUrl;
+    }
+
+    navigateToLastUrl(){
+        this.router.navigate([this.previousNavigationUrl]);
     }
 
 }

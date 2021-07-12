@@ -182,7 +182,7 @@ export class ContentUtil {
         return -1;
       }
     } else {
-      if (content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
+      if (content.contentType && content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
         // Trackable
         return 1;
       } else if (content.mimeType === MimeType.COLLECTION) {

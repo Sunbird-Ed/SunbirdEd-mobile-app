@@ -1,27 +1,18 @@
-import { Component, OnInit, NgZone, Inject, ChangeDetectorRef } from '@angular/core';
+import { Location } from '@angular/common';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnInit } from '@angular/core';
 import {
-  TelemetryService,
-  TelemetryImpressionRequest,
-  TelemetryAutoSyncModes,
-  ArchiveService,
-  ArchiveObjectType,
-  ObjectNotFoundError
-} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services';
-import { TelemetryGeneratorService } from '@app/services';
-
-import {
-  PageId,
-  Environment,
+  CommonUtilService, Environment,
   ImpressionType,
-  InteractType,
-  InteractSubtype
+  InteractSubtype, InteractType, PageId, TelemetryGeneratorService
 } from '@app/services';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { Subscription, Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import {
+  ArchiveObjectType, ArchiveService,
+  ObjectNotFoundError, TelemetryAutoSyncModes, TelemetryImpressionRequest, TelemetryService
+} from 'sunbird-sdk';
 
 declare const cordova;
 

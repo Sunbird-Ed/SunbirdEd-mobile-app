@@ -84,6 +84,10 @@
     box-sizing: border-box;
   }
 
+  .disabled-button {
+    opacity: 0.8;
+  }
+
   .card-container {
     display: flex;
     flex-direction: column;
@@ -92,6 +96,7 @@
     background-color: map-get($colors, white);
     justify-content: center;
     align-items: center;
+    height: 17rem;
     &.selected {
       border:3px solid map-get($colors, vived_blue_fe);
     }
@@ -120,5 +125,8 @@
       transform: rotate(180deg);
       float: left !important;
     }
+  }
+  .app-text-heading-welcome {
+    padding-top: 1em;
   }
 }

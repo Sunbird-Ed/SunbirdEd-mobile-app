@@ -1,0 +1,9 @@
+<ion-list>
+  <ion-item *ngFor="let menu of menus" (click)="onEvent(menu)">
+    <ion-label class="menu-label">{{menu.TITLE | translate}}
+    </ion-label>
+    <ion-avatar slot="end" class="avatar-style" *ngIf="menu.ICON">
+      <ion-icon [name]="menu.ICON"></ion-icon>
+    </ion-avatar>
+  </ion-item>
+</ion-list>

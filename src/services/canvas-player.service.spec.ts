@@ -1,6 +1,6 @@
 import {CanvasPlayerService} from '@app/services/canvas-player.service';
 import {HttpClient} from '@angular/common/http';
-import {Events} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {of} from 'rxjs';
 import {ContentFeedbackService, ContentService, ProfileService, SunbirdSdk, TelemetryService} from 'sunbird-sdk';
 
