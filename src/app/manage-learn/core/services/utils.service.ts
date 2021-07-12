@@ -189,9 +189,6 @@ export class UtilsService {
         if (!task.submissionDetails && !task.children.length) {
           task.status = statusType.notStarted;
         }
-        /*  if (!task.submissionDetails  && task.children.length) {
-           task.status = statusType.inProgress;
-         } */
       }
     }
     projectData.status = this.calculateStatus(projectData.tasks);
@@ -208,10 +205,7 @@ export class UtilsService {
     const inProgressList = _.filter(items, function(el) {
       return !el.isDeleted && el.status === statusType.inProgress;
     });
-    const notStartedList = _.filter(items, function(el) {
-      return el.status === statusType.notStarted;
-    });
-    const validchildArray = _.filter(items, function(el) {
+    const validchildArray = _.filter(items, function (el) {
       return !el.isDeleted;
     });
     if (completedList.length === validchildArray.length) {

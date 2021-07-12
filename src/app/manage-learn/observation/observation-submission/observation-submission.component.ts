@@ -182,7 +182,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   tabChange(value) {
-    // this.height = 100;
     this.submissions = [];
     this.currentTab = value;
     switch (value) {

@@ -1207,7 +1207,7 @@ app-resources{
         border-radius: 18px !important;
       }
       .sb-pills-container{
-        padding: 10px !important;
+        padding: 10px 1rem !important;
       }
     }
   }
@@ -1758,13 +1758,21 @@ app-user-home{
       }
     }
   }
+  app-truncated-ellipsis {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--app-gray);
+    .dot-divider {
+      background-color: var(--app-gray) !important;
+    }
+  }
 }
 
 .subject-list-popup{
   .modal-wrapper{
     width: 100%;
     height: 100%;
-    border-radius: 2rem;
+    border-radius: 2rem 2rem 0 0;
   }
 }
 
@@ -1850,7 +1858,6 @@ sb-library-card-v3 {
   .sb--card__title {
     bdi {
       line-height: 1.3;
-      font-size: 1.2rem;
     }
   }
 }
@@ -1991,4 +1998,12 @@ app-user-home, app-discover {
   .sb--card{
     border-radius: 1rem !important;
   }
+}
+
+.label-uppercase {
+  text-transform: uppercase !important;
+}
+
+.label-bold-font{
+  font-weight: bold !important;
 }

@@ -23,17 +23,6 @@
           </ion-col>
         </ion-row>
 
-      <!-- <ion-radio-group value=selectedEntity.value>
-        <ion-row style="margin: 0px -18px;">
-          <ion-col size="4" *ngFor="let subEntity of subEntities">
-            <ion-item lines="none">
-              <ion-label style="text-transform: capitalize;">{{subEntity.name}}</ion-label>
-              <ion-radio slot="start" color="success" value="{{subEntity.value}}"></ion-radio>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-radio-group> -->
-
       <h5 class="entity-name"> {{childEntity}}</h5>
       <ion-radio-group>
         <ion-card class="enitity-list" *ngFor="let entity of entities">

@@ -4,8 +4,6 @@ import { LoaderService, LocalStorageService, UtilsService } from '@app/app/manag
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { AssessmentApiService } from '@app/app/manage-learn/core/services/assessment-api.service';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
-import { UtilityService } from '@app/services';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { IonInfiniteScroll, ModalController, NavParams } from '@ionic/angular';
 
 @Component({
@@ -137,7 +135,6 @@ export class EntityfilterComponent implements OnInit {
       url: apiUrl,
       payload: payload,
     };
-    // this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.loading = false;
@@ -156,32 +153,10 @@ export class EntityfilterComponent implements OnInit {
       }
     );
     //TODO:uncomment
-    // this.apiProviders.httpGet(
-    //   apiUrl,
-    //   (success) => {
-    //     this.loading = false;
-    //     this.selectableList = !event ? [] : this.selectableList;
-    //     for (let i = 0; i < success.result[0].data.length; i++) {
-    //       success.result[0].data[i].isSelected = success.result[0].data[i].selected;
-    //       success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
-    //     }
-    //     this.totalCount = success.result[0].count;
-    //     this.selectableList = [...this.selectableList, ...success.result[0].data];
-    //     !event ? this.utils.stopLoader() : event.complete();
-    //   },
-    //   (error) => {
-    //     this.loading = false;
-    //     !event ? this.utils.stopLoader() : event.complete();
-    //   },
-    //   { version: 'v2' }
-    // );
   }
 
   toggleInfiniteScroll(e) {
     e.target.complete()
-    // if (this.infiniteScroll) {
-    //   this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
-    // }
   }
 
   doInfinite(infiniteScroll) {

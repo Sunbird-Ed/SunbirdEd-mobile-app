@@ -19,7 +19,7 @@ import { UpdateLocalSchoolDataService } from '../../core/services/update-local-s
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
-  solutions 
+  solutions;
   description;
   count = 0;
   limit = 25;
@@ -28,10 +28,9 @@ export class SolutionListingComponent implements OnInit {
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: []
-};
-private backButtonFunc: Subscription;
-
+    actionButtons: [],
+  };
+  private backButtonFunc: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -43,18 +42,17 @@ private backButtonFunc: Subscription;
     private surveyProvider: SurveyProviderService,
     private headerService: AppHeaderService,
     private platform: Platform,
-    private toast:ToastService,
-    private ulsdp: UpdateLocalSchoolDataService,
+    private toast: ToastService,
+    private ulsdp: UpdateLocalSchoolDataService
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
-      this.solutions=[]
+      this.solutions=[];
       this.getSolutions();
     });
   }
 
   ngOnInit() {}
-
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -63,19 +61,19 @@ private backButtonFunc: Subscription;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
     this.handleBackButton();
-}
-
-ionViewWillLeave() {
-  if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
   }
-}
 
-private handleBackButton() {
-  this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.location.back();
-  });
-}
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+        this.location.back();
+      });
+  }
 
   selectedSolution(data) {
     switch (data.type) {
@@ -103,11 +101,11 @@ private handleBackButton() {
       .then((res) => {
         if (res.result && res.result.status == 'completed') {
           // this.toast.openToast(res.message)
-           this.surveyProvider.showMsg('surveyCompleted');
-          return
+          this.surveyProvider.showMsg('surveyCompleted');
+          return;
         }
         const survey = res.result;
-        this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
+        this.ulsdp.mapSubmissionDataToQuestion(survey, false, true);
         this.storeRedirect(survey);
       })
       .catch((err) => {
@@ -136,14 +134,13 @@ private handleBackButton() {
     if (data.projectId) {
       projectId = data.projectId;
     }
-    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, "", this.programId, data._id]);
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: projectId,
         programId: this.programId,
-        solutionId:  data._id,
-        type: 'assignedToMe'
-      }
+        solutionId: data._id,
+        type: 'assignedToMe',
+      },
     });
   }
   redirectObservaiton(data) {
@@ -151,14 +148,17 @@ private handleBackButton() {
     if (data.observationId) {
       observationId = data.observationId;
     }
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-      queryParams: {
-        programId: this.programId,
-        solutionId: data._id,
-        observationId: observationId,
-        solutionName: data.name,
-      },
-    });
+    this.router.navigate(
+      [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          observationId: observationId,
+          solutionName: data.name,
+        },
+      }
+    );
   }
 
   async getSolutions() {
@@ -183,7 +183,7 @@ private handleBackButton() {
             this.solutions = this.solutions.concat(success.result.data);
             this.count = success.result.count;
             this.description = success.result.description;
-            this.programName=success.result.programName
+            this.programName = success.result.programName;
           }
         },
         (error) => {

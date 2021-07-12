@@ -13,7 +13,6 @@ import {
 } from '@app/services';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { Subscription } from 'rxjs';
 import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
