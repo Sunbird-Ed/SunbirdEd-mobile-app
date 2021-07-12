@@ -1479,5 +1479,6 @@
   "DETAILS": "Content Details",
   "CONTENT_RELEVANT_MSG": "This content is relevant for: ",
   "DOWNLOAD_FORM":"Do you want to download this form?",
-  "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded! You can now use it offline"
+  "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded successfully!",
+  "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded"
 }

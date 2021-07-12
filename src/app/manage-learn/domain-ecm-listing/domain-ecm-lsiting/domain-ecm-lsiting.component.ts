@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services';
 import { Platform } from '@ionic/angular';
-import { UtilsService, LocalStorageService } from '../../core';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { UtilsService, LocalStorageService, LoaderService, ToastService } from '../../core';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { UpdateTrackerService } from '../../core/services/update-tracker.service';
 import { ObservationService } from '../../observation/observation.service';
@@ -25,6 +28,11 @@ export class DomainEcmLsitingComponent {
   allAnsweredForEvidence: boolean;
   submissionId: any;
   downloadedSubmissionList: any;
+  allowMultipleAssessemts: any;
+  private _networkSubscription?: Subscription;
+  networkFlag: boolean;
+  msgs:any
+
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
@@ -34,14 +42,31 @@ export class DomainEcmLsitingComponent {
     private routerParam: ActivatedRoute,
     private router: Router,
     private observationService: ObservationService,
-    public genericPopup: GenericPopUpService
+    public genericPopup: GenericPopUpService,
+    public loader: LoaderService,
+    public commonUtilService: CommonUtilService,
+    public toast: ToastService,
+    private translate: TranslateService,
+
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
       this.entityName = params.schoolName;
+      this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
   }
 
+  ngOnInit() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+      }
+    );
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
+  }
 
   ionViewWillEnter() {
     this.localStorage
@@ -214,20 +239,36 @@ export class DomainEcmLsitingComponent {
   }
 
   async pushToLocal() {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    }
     let args = {
       title: 'DOWNLOAD_FORM',
       yes: 'YES',
       no: 'NO',
     };
-    const confirmed = await this.genericPopup.confirmBox(args);
-    if (!confirmed) return;
-    await this.observationService.pushToDownloads(this.submissionId);
-    this.fetchDownloaded();
-    let successArgs = {
-      title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
-      yes: 'OKAY',
-      autoDissmiss: true,
-    };
-    await this.genericPopup.confirmBox(successArgs);
+    try {
+      const confirmed = await this.genericPopup.confirmBox(args);
+      if (!confirmed) return;
+      
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
+      await this.observationService.pushToDownloads(this.submissionId);
+      this.fetchDownloaded();
+      let successArgs = {
+        title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+        yes: 'OKAY',
+        autoDissmiss: true,
+      };
+      this.loader.stopLoader()
+      await this.genericPopup.confirmBox(successArgs);
+    } catch {
+      this.loader.stopLoader()
+    }
+  }
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }
