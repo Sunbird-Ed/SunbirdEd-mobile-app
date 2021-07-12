@@ -55,6 +55,7 @@ export class ObservationSubmissionComponent implements OnInit {
   networkFlag;
   generatedKey;
   downloadedSubmissionList: any = [];
+  msgs:any
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -98,6 +99,9 @@ export class ObservationSubmissionComponent implements OnInit {
       }
     );
     this.fetchDownloaded();
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
   }
   getLocalData() {
     this.storage.get(this.generatedKey).then(data => {
@@ -257,7 +261,7 @@ export class ObservationSubmissionComponent implements OnInit {
       };
       const confirmed = await this.genericPopup.confirmBox(args);
       if (!confirmed) return;
-      this.loader.startLoader()
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
       let event = {
         submission: submission,
         entityId: this.entityId,

@@ -91,6 +91,7 @@ export class DownloadsTabComponent implements OnInit {
     });
     await deleteConfirm.present();
     const { data } = await deleteConfirm.onDidDismiss();
+    this.showDeleteButton=true
 
     if (data === undefined) { // Backdrop clicked
       if (!identifier) { this.unSelectAllContents(); }

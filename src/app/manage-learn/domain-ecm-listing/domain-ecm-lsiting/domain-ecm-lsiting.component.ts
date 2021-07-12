@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
 import { Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { UtilsService, LocalStorageService, LoaderService, ToastService } from '../../core';
 import { EvidenceService } from '../../core/services/evidence.service';
@@ -30,6 +31,7 @@ export class DomainEcmLsitingComponent {
   allowMultipleAssessemts: any;
   private _networkSubscription?: Subscription;
   networkFlag: boolean;
+  msgs:any
 
   constructor(
     private updateTracker: UpdateTrackerService,
@@ -43,7 +45,8 @@ export class DomainEcmLsitingComponent {
     public genericPopup: GenericPopUpService,
     public loader: LoaderService,
     public commonUtilService: CommonUtilService,
-    public toast: ToastService
+    public toast: ToastService,
+    private translate: TranslateService,
 
   ) {
     this.routerParam.queryParams.subscribe((params) => {
@@ -54,11 +57,15 @@ export class DomainEcmLsitingComponent {
   }
 
   ngOnInit() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
         this.networkFlag = available;
       }
     );
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
   }
 
   ionViewWillEnter() {
@@ -244,7 +251,8 @@ export class DomainEcmLsitingComponent {
     try {
       const confirmed = await this.genericPopup.confirmBox(args);
       if (!confirmed) return;
-      this.loader.startLoader()
+      
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
       await this.observationService.pushToDownloads(this.submissionId);
       this.fetchDownloaded();
       let successArgs = {
