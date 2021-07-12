@@ -84,11 +84,11 @@ export class SearchFilterPage implements OnInit {
 
         searchCriteria.facetFilters.forEach((facetFilter) => {
             const selection = formValue[facetFilter.name];
-
-            facetFilter.values.forEach(f => {
-                f.apply = !(!selection || selection.indexOf(f.name) === -1);
-            });
-
+            if (selection) {
+                facetFilter.values.forEach(f => {
+                    f.apply = !!(selection.indexOf(f.name) !== -1);
+                });
+            }
         });
 
         this.formAndFrameworkUtilService.changeChannelNameToId(searchCriteria);
