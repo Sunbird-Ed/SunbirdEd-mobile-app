@@ -47,14 +47,15 @@ export class UtilsService {
     private events: Events,
 
   ) {
-    this.storage.get(storageKeys.mandatoryFields).then(data =>{
-      if (data) {
-        this.mandatoryFields = data;
-      }
-    });
-
+    // this.storage.get(storageKeys.mandatoryFields).then(data =>{
+    //   if (data) {
+    //     this.mandatoryFields = data;
+    //   }
+    // });
+      
       this.events.subscribe("loggedInProfile:update", framework => {
-      this.getProfileInfo(true);
+      // this.getProfileInfo(true);
+        this.storeMandatoryFields()
     });
   }
 
@@ -426,57 +427,105 @@ export class UtilsService {
     return imageArray;
   }
 
-  async getMandatoryEntities(): Promise<any> {
-  this.profile = await this.getProfileData('SERVER');
-    return new Promise((resolve, reject) => {
-      const config = {
-        url:
-          urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES +
-          `${this.profile.state}?role=${this.profile.role}`
-      };
-
-      this.kendra.get(config).subscribe(
-        data => {
-          if (data.result && data.result.length) {
-            this.requiredFields = data.result;
-            this.mandatoryFields[this.profile.state] = { [this.profile.role]: this.requiredFields};
-            this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
-            this.checkMandatoryFields(this.mandatoryFields[this.profile.state][this.profile.role]);
-          } else {
-            this.openProfileUpdateAlert();
-            resolve(false);
-          }
-        },
-        error => {
-          resolve(false);
-          // reject()
-        }
-      );
-    });
-  }
-
-  checkMandatoryFields(requiredFields) {
-    console.log(requiredFields,"requiredFields");
-    if(requiredFields){
-      let allFieldsPresent = true;
-      for (const field of requiredFields) {
-        if (!this.profile[field]) {
-          allFieldsPresent = false;
-          break;
-        }
-      }
-      if (!allFieldsPresent) {
-        this.openProfileUpdateAlert();
-        return false;
-      } else {
-        return true;
-      }
-    }else{
-      this.openProfileUpdateAlert();
-      return false;
+  async storeMandatoryFields() {
+    this.profile = await this.getProfileData('SERVER');
+    if (!this.profile.role) return;
+    let mandatoryFields;
+    try {
+      mandatoryFields = await this.storage.get(storageKeys.mandatoryFields)
+      if(!mandatoryFields) mandatoryFields = {}
+    } catch {
+      mandatoryFields={}
     }
-  
+    console.log(mandatoryFields)
+    if (mandatoryFields[this.profile.state] && mandatoryFields[this.profile.state][this.profile.role]) return;
+
+    try {
+      const mandatoryEntitiesList = await this.getMandatoryEntitiesList()
+      if (!mandatoryEntitiesList || !mandatoryEntitiesList.length) return
+      if(!mandatoryFields[this.profile.state]) mandatoryFields[this.profile.state]={}
+      mandatoryFields[this.profile.state][this.profile.role] = mandatoryEntitiesList
+      await this.storage.set(storageKeys.mandatoryFields, mandatoryFields)
+    } catch{
+      
+    }
+
+
+
   }
+
+  async getMandatoryEntities(): Promise<any> {
+    // const profile = await this.getProfileData();
+    const isNetworkAvailable = this.commonUtilService.networkInfo.isNetworkAvailable;
+    let data;
+    return new Promise(async (resolve, reject) => {
+      if (isNetworkAvailable) {
+        const config = {
+          url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+        };
+
+        data=await this.kendra.get(config).toPromise()
+      } else {
+          try {
+            const mandatoryFields = await this.storage.get(storageKeys.mandatoryFields)
+            data={result:mandatoryFields[this.profile.state][this.profile.role]}
+          } catch {
+          }
+      }
+      if (data.result && data.result.length) {
+          this.requiredFields = data.result;
+          let allFieldsPresent = true;
+          for (const field of this.requiredFields) {
+            if (!this.profile[field]) {
+              allFieldsPresent = false;
+              break
+            }
+          }
+          if (!allFieldsPresent) {
+            this.openProfileUpdateAlert()
+            resolve(false)
+          } else {
+            resolve(true);
+          }
+        } else {
+          this.openProfileUpdateAlert();
+          resolve(false)
+        }
+    }
+   
+
+    // return new Promise((resolve, reject) => {
+    //   const config = {
+    //     url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+    //   }
+    //   this.kendra.get(config).subscribe(data => {
+    //     if (data.result && data.result.length) {
+    //       this.requiredFields = data.result;
+    //       let allFieldsPresent = true;
+    //       for (const field of this.requiredFields) {
+    //         if (!this.profile[field]) {
+    //           allFieldsPresent = false;
+    //           break
+    //         }
+    //       }
+    //       if (!allFieldsPresent) {
+    //         this.openProfileUpdateAlert()
+    //         resolve(false)
+    //       } else {
+    //         resolve(true);
+    //       }
+    //     } else {
+    //       this.openProfileUpdateAlert();
+    //       resolve(false)
+    //     }
+    //   }, error => {
+    //     resolve(false)
+    //     // reject()
+    //   })
+      // }
+    )
+  }
+
 
   async getMandatoryEntitiesList(): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -530,39 +579,47 @@ export class UtilsService {
     this.profileAlert ? await this.profileAlert.dismiss() : null;
   }
 
-  async getProfileInfo(callMandatory?): Promise<any> {
+  async getProfileInfo(): Promise<any> {
+  // async getProfileInfo(callMandatory?): Promise<any> {
     //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     return new Promise(async (resolve, reject) => {
-      let param = callMandatory ? 'SERVER' :'CACHE'
-      this.profile = await this.getProfileData(param);
-      let allFieldsPresent = true;
-      let mandatoryFields;
-      if (!callMandatory) {
-        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-          mandatoryFields = this.getMandatoryEntities();
-          mandatoryFields ? resolve(this.profile) : resolve(null);
-        } else {
-          this.storage.get(storageKeys.mandatoryFields).then(data => {
-            if (data && data[this.profile.state]) {
-            this.checkMandatoryFields(
-                data[this.profile.state][this.profile.role]
-              );
-              if (!allFieldsPresent) {
-                // mandatoryFields = this.getMandatoryEntities();
-                mandatoryFields ? resolve(this.profile) : resolve(null);
-              } else {
-                resolve(this.profile);
-              }
-            } else {
-              this.openProfileUpdateAlert();
-            }
-          });
-        }
-      } else {
-        mandatoryFields = this.getMandatoryEntities();
-        this.profile = await this.getProfileData('SERVER');
-        mandatoryFields ? resolve(this.profile) : resolve(null);
-      }
+      // let param = callMandatory ? 'SERVER' :'CACHE'
+      // this.profile = await this.getProfileData(param);
+      this.profile = await this.getProfileData();
+      // console.log(this.profile)
+      // if (!this.profile.role) {
+      //    return
+      // }
+      // let allFieldsPresent = true;
+      // let mandatoryFields;
+      const mandatoryFields = await this.getMandatoryEntities();
+      mandatoryFields ? resolve(this.profile) : resolve(null);
+      // if (!callMandatory) {
+      //   if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      //     mandatoryFields = this.getMandatoryEntities();
+      //     mandatoryFields ? resolve(this.profile) : resolve(null);
+      //   } else {
+      //     this.storage.get(storageKeys.mandatoryFields).then(data => {
+      //       if (data && data[this.profile.state]) {
+      //       this.checkMandatoryFields(
+      //           data[this.profile.state][this.profile.role]
+      //         );
+      //         if (!allFieldsPresent) {
+      //           // mandatoryFields = this.getMandatoryEntities();
+      //           mandatoryFields ? resolve(this.profile) : resolve(null);
+      //         } else {
+      //           resolve(this.profile);
+      //         }
+      //       } else {
+      //         this.openProfileUpdateAlert();
+      //       }
+      //     });
+      //   }
+      // } else {
+      //   mandatoryFields = this.getMandatoryEntities();
+      //   this.profile = await this.getProfileData('SERVER');
+      //   mandatoryFields ? resolve(this.profile) : resolve(null);
+      // }
 
       // mandatoryFields = await this.getMandatoryEntities();
       // resolve(this.profile)
@@ -639,7 +696,7 @@ export class UtilsService {
             const serverProfileDetailsRequest = {
               userId: session.userToken,
               requiredFields: ProfileConstants.REQUIRED_FIELDS,
-              from: CachedItemRequestSourceFrom[fromData]
+              from: CachedItemRequestSourceFrom[fromData],
             };
             this.profileService
               .getServerProfilesDetails(serverProfileDetailsRequest)
