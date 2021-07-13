@@ -95,7 +95,6 @@ export class UpdateProfileService {
                                     this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                                     this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                                     this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                                    // this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
                                     if (data.board) {
                                         data.board = this.findCode(this.boardList, data.board[0], 'board');
                                     }

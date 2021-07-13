@@ -183,16 +183,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             res.identifier = res.programId + res.solutionId;
             data.push(res);
           });
-        }).catch(err=>{});
+        });
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
-<<<<<<< HEAD
       });
-=======
-      })
-      .catch(e => {});
->>>>>>> a500cac358dd51eb4aced76f0020d153878aadc4
   }
 
   private generateInteractTelemetry(contentCount: number, usedSpace: number, availableSpace: number) {

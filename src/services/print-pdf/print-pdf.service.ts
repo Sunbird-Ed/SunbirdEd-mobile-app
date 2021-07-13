@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { Content } from 'sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { Components } from '@ionic/core/dist/types/components';
-import { ContentUtil } from '@app/util/content-util';
 
 declare const window;
 @Injectable({
