@@ -11,6 +11,7 @@ export class ItemListCardComponent {
   @Input() subTitle: any;
   @Input() id: any;
   @Output() cardSelect = new EventEmitter();
+  @Input() ellipsis:Boolean =false
 
   constructor(private commonUtilService: CommonUtilService) {}
 

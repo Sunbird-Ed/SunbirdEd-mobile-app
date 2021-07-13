@@ -304,6 +304,7 @@ export class ProfilePage implements OnInit {
                   userLocation.push({ name: element.name, code: element.code });
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+                window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
                 this.segmentationTagService.evalCriteria();
                 // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();

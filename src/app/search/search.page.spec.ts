@@ -1642,6 +1642,7 @@ describe('SearchPage', () => {
                     Environment.HOME, false, undefined,
                     [{ id: '', type: 'API' },
                     { id: '', type: 'API' },
+                    { id: '', type: 'API' },
                     { id: 'SearchResult', type: 'Section' },
                     { id: 'filter', type: 'DiscoveryType' }]
                 );

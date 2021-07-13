@@ -541,7 +541,7 @@ export class QrcoderesultPage implements OnDestroy {
     if (paths && paths.length) {
       const rootId = paths[0].identifier ? paths[0].identifier : '';
       corRelationList.push({
-        id: rootId,
+        id: rootId || '',
         type: CorReleationDataType.ROOT_ID
       });
     }
