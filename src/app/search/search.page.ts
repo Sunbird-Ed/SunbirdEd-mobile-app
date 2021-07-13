@@ -652,14 +652,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.profile.syllabus = [data.framework];
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
       case 1:
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
@@ -699,7 +697,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                   this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                   this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                   this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
                   if (data.board) {
                     data.board = this.findCode(this.boardList, data, 'board');
                   }
@@ -1279,7 +1276,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           });
           dialCodeResultObj.dialCodeResult.push(collection);
         });
-        // displayDialCodeResult[searchResult.name] = dialCodeResult;
         displayDialCodeResult.push(dialCodeResultObj);
       }
 
@@ -1430,7 +1426,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1494,7 +1489,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
             if (this.downloadProgress === 100) {
-              // this.showLoading = false;
               this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
             }
           }

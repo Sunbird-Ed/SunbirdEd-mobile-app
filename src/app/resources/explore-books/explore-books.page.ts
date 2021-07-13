@@ -341,11 +341,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     };
 
     this.navService.navigateToDetailPage(content, navigationExtras.state);
-    // if (content.mimeType === MimeType.COLLECTION) {
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    // } else {
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    // }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
