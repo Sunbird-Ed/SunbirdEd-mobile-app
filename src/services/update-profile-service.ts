@@ -50,14 +50,12 @@ export class UpdateProfileService {
                 this.profile.syllabus = [data.framework];
                 this.profile.board = [data.board];
                 this.setMedium(true, data.medium);
-                // this.profile.subject = [data.subject];
                 this.profile.subject = [];
                 this.setGrade(true, data.gradeLevel);
                 break;
             case 1:
                 this.profile.board = [data.board];
                 this.setMedium(true, data.medium);
-                // this.profile.subject = [data.subject];
                 this.profile.subject = [];
                 this.setGrade(true, data.gradeLevel);
                 break;
