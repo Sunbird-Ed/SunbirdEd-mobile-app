@@ -1,15 +1,34 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
-  AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService
+  AppGlobalService,
+  AppHeaderService,
+  CommonUtilService,
+  ContentAggregatorHandler,
+  Environment,
+  FormAndFrameworkUtilService,
+  ImpressionType,
+  InteractSubtype,
+  PageId,
+  SunbirdQRScanner,
+  TelemetryGeneratorService,
 } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
-  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType, InteractType, FormService, FormRequest
+  FrameworkService,
+  FrameworkDetailsRequest,
+  FrameworkCategoryCodesGroup,
+  Framework,
+  Profile,
+  ProfileService,
+  ContentAggregatorRequest,
+  ContentSearchCriteria,
+  CachedItemRequestSourceFrom,
+  SearchType,
+  InteractType,
+  FormService,
+  FormRequest,
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
@@ -19,7 +38,6 @@ import { Subscription } from 'rxjs';
 import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
 import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
@@ -30,7 +48,6 @@ import { FormConstants } from '@app/app/form.constants';
   styleUrls: ['./admin-home.page.scss'],
 })
 export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
-
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
@@ -64,10 +81,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private qrScanner: SunbirdQRScanner,
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
-    private db: DbService,
-
-  ) {
-  }
+    private db: DbService
+  ) {}
 
   ngOnInit() {
     this.getUserProfileDetails();
@@ -85,6 +100,12 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.fetchDisplayElements();
       }
     });
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.PAGE_LOADED,
+      '',
+      PageId.ADMIN_HOME,
+      Environment.HOME
+    );
   }
 
   tabViewWillEnter() {
@@ -95,35 +116,44 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   getCreateProjectForm() {
-    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
-    }, async error => {
-      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.PROJECT_CREATE_META);
-      if(createProjectMeta.length){
-        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(
+      (resp) => {},
+      async (error) => {
+        const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+          FormConstants.PROJECT_CREATE_META
+        );
+        if (createProjectMeta.length) {
+          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+        }
+        this.getTaskForm();
       }
-      this.getTaskForm();
-    })
+    );
   }
 
   getTaskForm() {
-    this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(resp => {
-    },async error => {
-      const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.TASK_CREATE_META);
-      if(createTaskMeta.length){
-        this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta)
+    this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(
+      (resp) => {},
+      async (error) => {
+        const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+          FormConstants.TASK_CREATE_META
+        );
+        if (createTaskMeta.length) {
+          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta);
+        }
       }
-    })
+    );
   }
 
   async getUserProfileDetails() {
-    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+    this.profileService
+      .getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .subscribe((profile: Profile) => {
         this.profile = profile;
         this.getFrameworkDetails();
@@ -134,7 +164,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.appLabel = await this.commonUtilService.getAppName();
   }
 
-
   navigateToEditProfilePage() {
     if (!this.guestUser) {
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
@@ -142,8 +171,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       const navigationExtras: NavigationExtras = {
         state: {
           profile: this.profile,
-          isCurrentUser: true
-        }
+          isCurrentUser: true,
+        },
       };
       this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }
@@ -157,19 +186,21 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async ionViewDidEnter() {
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
-    if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
+    if (utilityConfigFields.find((field) => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
       this.newThemeTimeout = setTimeout(() => {
         this.appGlobalService.showNewTabsSwitchPopup();
-       }, 2000);
+      }, 2000);
     }
   }
 
   getFrameworkDetails(): void {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
-      frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      frameworkId: this.profile && this.profile.syllabus && this.profile.syllabus[0] ? this.profile.syllabus[0] : '',
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
     };
-    this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
+    this.frameworkService
+      .getFrameworkDetails(frameworkDetailsRequest)
+      .toPromise()
       .then(async (framework: Framework) => {
         this.categories = framework.categories;
 
@@ -187,7 +218,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   getFieldDisplayValues(field: Array<any>, index: number): string {
     const displayValues = [];
-    this.categories[index].terms.forEach(element => {
+    this.categories[index].terms.forEach((element) => {
       if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
@@ -204,7 +235,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         contentSearchCriteria.searchType = SearchType.SEARCH;
         contentSearchCriteria.mode = 'soft';
         return contentSearchCriteria;
-      }, from: CachedItemRequestSourceFrom.SERVER
+      },
+      from: CachedItemRequestSourceFrom.SERVER,
     };
 
     this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.ADMIN_HOME);
@@ -244,14 +276,11 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       //   }
       // });
     }
-
-    
   }
 
   generateTelemetry(interactiveSubtype) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      // InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       InteractSubtype[interactiveSubtype],
       Environment.HOME,
       PageId.ADMIN_HOME
@@ -264,8 +293,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         enrolledCourses: section.data.sections[0].contents,
         pageName: ViewMore.PAGE_COURSE_ENROLLED,
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        userId: this.appGlobalService.getUserId()
-      }
+        userId: this.appGlobalService.getUserId(),
+      },
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
@@ -278,7 +307,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'notification':
         this.redirectToNotifications();
         break;
-      default: console.warn('Use Proper Event name');
+      default:
+        console.warn('Use Proper Event name');
     }
   }
 
@@ -328,5 +358,4 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       this.headerObservable.unsubscribe();
     }
   }
-
 }

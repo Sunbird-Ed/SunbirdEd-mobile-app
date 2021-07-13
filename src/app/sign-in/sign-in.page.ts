@@ -99,7 +99,7 @@ export class SignInPage implements OnInit {
         }).then(async (result) => {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
-            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true);
+            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true).toPromise();
             await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation).then(() => {
                 this.navigateBack(this.skipNavigation);
             });

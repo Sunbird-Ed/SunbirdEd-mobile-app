@@ -326,8 +326,8 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.goToImageListing();
     } else if (this.network.type === 'none') {
       let noInternetMsg;
-      this.translate.get(['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION']).subscribe((translations) => {
-        noInternetMsg = translations['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION'];
+      this.translate.get(['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE']).subscribe((translations) => {
+        noInternetMsg = translations['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE'];
         this.toast.openToast(noInternetMsg);
       });
     }

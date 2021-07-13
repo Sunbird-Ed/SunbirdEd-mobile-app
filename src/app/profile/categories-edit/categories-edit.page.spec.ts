@@ -446,7 +446,10 @@ describe('CategoryEditPage', () => {
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 userId: 'user-id',
                 firstName: 'sample-user-name',
-                framework: formVal
+                framework: formVal,
+                profileUserType: {
+                    type: 'teacher'
+                }
             }));
             mockContainer.removeAllTabs = jest.fn();
             mockContainer.addTab = jest.fn();
@@ -515,7 +518,10 @@ describe('CategoryEditPage', () => {
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 userId: 'user-id',
                 firstName: 'sample-user-name',
-                framework: formVal
+                framework: formVal,
+                profileUserType: {
+                    type: 'teacher'
+                }
             }));
             mockContainer.removeAllTabs = jest.fn();
             mockContainer.addTab = jest.fn();
