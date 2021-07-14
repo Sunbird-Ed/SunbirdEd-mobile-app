@@ -2343,7 +2343,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.fetchForumIdReq.type = 'course';
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
-      this.createUserReq.username = p.serverProfile['userName'];
+      this.createUserReq.username = (p.serverProfile && p.serverProfile['userName']) || p.handle;
     });
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {

@@ -14,7 +14,7 @@ import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, NetworkService, ToastService } from '../../core';
+import { LoaderService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -70,9 +70,7 @@ export class ProjectOperationPage implements OnInit {
     private alertController: AlertController,
     private unnatiDataService: UnnatiDataService,
     private loaderService: LoaderService,
-    private syncServ: SyncService,
-    private networkService: NetworkService,
-    private toast: ToastService
+    private syncServ: SyncService
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -377,28 +375,5 @@ export class ProjectOperationPage implements OnInit {
      this.viewProjectAlert.dismiss();
     }
    }
-
-
-
-   checkNetwork(type?, url?) {
-    if (this.networkService.isNetworkAvailable) {
-      switch (type) {
-        case 'entity': {
-          this.addEntity();
-          break;
-        }
-        case 'programs': {
-          this.openSearchModel(type);
-          break;
-        }
-        case 'resources': {
-          this.addLearningResources();
-          break;
-        }
-      }
-    } else {
-      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-    }
-  }
 }
 
