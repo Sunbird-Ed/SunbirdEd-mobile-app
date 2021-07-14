@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService } from '@app/services';
@@ -13,7 +13,7 @@ import { DbService } from '../../core';
   templateUrl: './project-edit.page.html',
   styleUrls: ['./project-edit.page.scss'],
 })
-export class ProjectEditPage implements OnInit {
+export class ProjectEditPage {
   private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
@@ -39,8 +39,7 @@ export class ProjectEditPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+
   ionViewWillEnter() {
     let data;
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {

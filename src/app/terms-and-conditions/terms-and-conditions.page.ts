@@ -168,7 +168,7 @@ export class TermsAndConditionsPage implements OnInit {
                 if (await tncUpdateHandlerService.isSSOUser(profile)) {
                   await this.consentService.getConsent(profile, true);
                 }
-                categoriesProfileData['status'] = value['status'],
+                categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {

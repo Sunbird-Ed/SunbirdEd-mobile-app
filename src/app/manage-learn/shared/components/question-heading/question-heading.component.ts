@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Events } from '@app/util/events';
 import { ModalController } from '@ionic/angular';
 import { HintComponent } from '../hint/hint.component';
@@ -8,7 +8,7 @@ import { HintComponent } from '../hint/hint.component';
   templateUrl: './question-heading.component.html',
   styleUrls: ['./question-heading.component.scss'],
 })
-export class QuestionHeadingComponent implements OnInit {
+export class QuestionHeadingComponent {
 
   text: string;
   @Input() data;
@@ -24,7 +24,6 @@ export class QuestionHeadingComponent implements OnInit {
     })
   }
 
-  ngOnInit() { }
 
   playQuestion(question, options, type) {
     this.play = true;

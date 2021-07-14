@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype, UtilityService
+  InteractType, InteractSubtype, ImpressionType
 } from '@app/services';
 import { Router } from '@angular/router';
 import {

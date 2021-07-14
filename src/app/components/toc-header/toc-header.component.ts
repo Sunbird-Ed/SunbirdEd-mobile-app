@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import {ContentData, DownloadTracking} from 'sunbird-sdk';
+import { Component, Input } from '@angular/core';
+import {ContentData} from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
-import { Observable } from 'rxjs';
 
 
 @Component({
@@ -9,7 +8,7 @@ import { Observable } from 'rxjs';
   templateUrl: './toc-header.component.html',
   styleUrls: ['./toc-header.component.scss'],
 })
-export class TocHeaderComponent implements OnInit {
+export class TocHeaderComponent {
   @Input() contentData: ContentData;
 
   // defaultIcon
@@ -18,6 +17,4 @@ export class TocHeaderComponent implements OnInit {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
   }
 
-  ngOnInit() {
-  }
 }

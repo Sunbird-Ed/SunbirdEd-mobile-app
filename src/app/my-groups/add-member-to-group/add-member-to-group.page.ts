@@ -104,7 +104,6 @@ export class AddMemberToGroupPage {
       const addMemberInfoScreen = await this.preferences.getBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP).toPromise();
       if (!addMemberInfoScreen) {
         this.addMemberInfoPopupRef.nativeElement.click();
-        // this.openInfoPopup();
         this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
       }
     } catch (err) {
