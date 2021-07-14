@@ -1,9 +1,4 @@
 <ion-toolbar>
-  <!-- <ion-buttons slot="start">
-    <ion-button (click)="confirmToClose()">
-      <ion-icon slot="start" name="close"></ion-icon>
-    </ion-button>
-  </ion-buttons> -->
   <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
     <ion-button class="skip-icon">
       <ion-icon slot="end" name="play-skip-forward"></ion-icon>
@@ -88,12 +83,6 @@
       </ion-item>
     </ion-card>
   </div>
-  <!-- <div class="rating-block" *ngIf="showRatings">
-    <h5>{{'FRMELEMNTS_LBL_LIKED_PROJECT' | translate}} </h5>
-    <p> {{'FRMELEMNTS_MSG_RATING_LABEL_MESSAGE' | translate}} </p>
-    <app-star-ratings [ratingStar]="ratingStar" [userRating]="template.userRating" (onRate)="rating($event)">
-    </app-star-ratings>
-  </div> -->
   <div class="learningResources" *ngIf="showLearningResources">
     <h5>{{'FRMELEMNTS_LBL_LINK_LEARNING_RESOURCES' | translate}} </h5>
     <div *ngIf="selectedResources">

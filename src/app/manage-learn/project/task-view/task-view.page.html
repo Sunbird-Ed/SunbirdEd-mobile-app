@@ -42,7 +42,7 @@
           <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
             selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
         </ion-select>
-        
+
     </ion-col>
   </ion-row>
   <div class="subtask-form" *ngIf="task?.type !='observation' && task?.type != 'assessment'">
@@ -75,7 +75,6 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <!-- <ion-col size="1"> </ion-col> -->
         <ion-col size="6">
           <ion-item class="ion-date-time" lines="none">
             <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" />

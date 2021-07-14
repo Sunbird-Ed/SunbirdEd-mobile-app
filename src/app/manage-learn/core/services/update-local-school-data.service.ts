@@ -40,8 +40,6 @@ export class UpdateLocalSchoolDataService {
       this.utils.getAssessmentLocalStorageKey(schoolDetails.assessment.submissionId),
       mappedData
     );
-    // this.storage.set('schoolsDetails', JSON.stringify(schoolObj));
-    // this.events.publish("localDataUpdated");
   }
   updateSubmissionsOnLogin(schoolData) {
     const assessment = schoolData.assessment;

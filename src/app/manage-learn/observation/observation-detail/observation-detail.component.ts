@@ -23,7 +23,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { ObservationService } from "../observation.service";
 import { storageKeys } from "../../storageKeys";
 import { Subscription } from "rxjs";
-import { Storage } from "@ionic/storage";
 
 @Component({
   selector: "app-observation-detail",
@@ -63,7 +62,6 @@ export class ObservationDetailComponent implements OnInit {
     private observationService: ObservationService,
     private localStorage: LocalStorageService,
     public commonUtilService: CommonUtilService,
-    public storage: Storage
   ) {
     this.routerParam.queryParams.subscribe(params => {
       this.observationId = params.observationId;
@@ -98,7 +96,7 @@ export class ObservationDetailComponent implements OnInit {
     this.observationService.updateLastViewed()
   }
   getLocalData() {
-    this.storage.get(this.generatedKey).then(data => {
+    this.localStorage.getLocalStorage(this.generatedKey).then(data => {
       this.solutionData = data;
       this.entities = data.entities;
     });
@@ -127,7 +125,7 @@ export class ObservationDetailComponent implements OnInit {
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
-            this.storage.set(this.generatedKey,success.result);
+            this.localStorage.setLocalStorage(this.generatedKey,success.result);
 
             //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {

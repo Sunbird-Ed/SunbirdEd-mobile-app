@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
-import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { RemarksModalComponent } from '../../questionnaire/remarks-modal/remarks-modal.component';
 import { urlConstants } from '../constants/urlConstants';

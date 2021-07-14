@@ -55,6 +55,7 @@ export class ObservationSubmissionComponent implements OnInit {
   networkFlag;
   generatedKey;
   downloadedSubmissionList: any = [];
+  msgs:any
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -98,6 +99,9 @@ export class ObservationSubmissionComponent implements OnInit {
       }
     );
     this.fetchDownloaded();
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
   }
   getLocalData() {
     this.storage.get(this.generatedKey).then(data => {
@@ -182,7 +186,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   tabChange(value) {
-    // this.height = 100;
     this.submissions = [];
     this.currentTab = value;
     switch (value) {
@@ -246,35 +249,38 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async pushToLocal(submission) {
-    if (this.networkFlag) {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    }
+    try {
       let args = {
-        title: "DOWNLOAD_FORM",
-        yes: "YES",
-        no: "NO"
+        title: 'DOWNLOAD_FORM',
+        yes: 'YES',
+        no: 'NO',
       };
       const confirmed = await this.genericPopup.confirmBox(args);
       if (!confirmed) return;
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
       let event = {
         submission: submission,
         entityId: this.entityId,
-        observationId: this.observationId
+        observationId: this.observationId,
       };
-      this.observationService
-        .getAssessmentDetailsForObservation(event)
-        .then(async submissionId => {
-          await this.observationService.pushToDownloads(submissionId);
-          this.fetchDownloaded();
-          let args = {
-            title: "FRMELEMENTS_MSG_FORM_DOWNLOADED",
-            yes: "OKAY",
-            autoDissmiss: true
-          };
-          await this.genericPopup.confirmBox(args);
-        })
-        .catch(error => {});
-    } else {
-      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      let submissionId = await this.observationService.getAssessmentDetailsForObservation(event);
+      await this.observationService.pushToDownloads(submissionId);
+      this.fetchDownloaded();
+      let argsForSuccess = {
+        title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+        yes: 'OKAY',
+        autoDissmiss: true,
+      };
+      this.loader.stopLoader()
+      await this.genericPopup.confirmBox(argsForSuccess);
+    } catch {
+        this.loader.stopLoader()
     }
+    
   }
 
   goToEcm(submission) {
@@ -292,7 +298,9 @@ export class ObservationSubmissionComponent implements OnInit {
           this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
             queryParams: {
               submisssionId: submissionId,
-              schoolName: heading
+              schoolName: heading,
+              allowMultipleAssessemts:true
+
             }
           });
         } else {
@@ -483,6 +491,10 @@ export class ObservationSubmissionComponent implements OnInit {
     await popover.present();
   }
   async deleteSubmission(submissionId) {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    } 
     let translateObject;
     this.translate
       .get([

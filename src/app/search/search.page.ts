@@ -165,6 +165,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   selectedPrimaryCategoryFilter: any;
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
+  hideSearchOption = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -206,6 +207,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       this.searchWithBackButton = extras.searchWithBackButton;
+      this.hideSearchOption = extras.hideSearchOption;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
         this.searchOnFocus();
@@ -220,7 +222,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.preAppliedFilter = extras.preAppliedFilter;
       if (this.preAppliedFilter) {
         this.enableSearch = true;
-        this.searchKeywords = this.preAppliedFilter.query;
+        this.searchKeywords = this.preAppliedFilter.query || '';
       }
     }
 
@@ -947,7 +949,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
-    this.corRelationList = [];
+    if (!this.corRelationList) {
+      this.corRelationList = [];
+    }
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
@@ -964,13 +968,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = {
-        ...searchQuery.request.filters,
-        ...profileFilters,
-        board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
-        medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
-        gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
-      };
+      if (this.activityTypeData) {
+        searchQuery.request.filters = {
+          ...searchQuery.request.filters,
+          ...profileFilters,
+          board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
+          medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
+          gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
+        };
+      } else {
+        searchQuery.request.filters = {
+          ...searchQuery.request.filters
+        };
+      }
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
