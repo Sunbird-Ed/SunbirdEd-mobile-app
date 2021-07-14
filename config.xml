@@ -58,12 +58,12 @@
         <splash density="land-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
         <splash density="land-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
         <splash density="land-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
-        <splash density="port-ldpi" src="resources/android/splash/drawable-port-ldpi-screen.png" />
-        <splash density="port-mdpi" src="resources/android/splash/drawable-port-mdpi-screen.png" />
-        <splash density="port-hdpi" src="resources/android/splash/drawable-port-hdpi-screen.png" />
-        <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
-        <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
-        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
+        <splash density="port-ldpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="port-mdpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="port-hdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="port-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="port-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
         <resource-file src="resources/android/icon/mipmap-hdpi-icon.png" target="app/src/main/res/mipmap-hdpi/n_icon.png" />
     </platform>
     <platform name="ios">
@@ -124,18 +124,23 @@
         <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <content src="index.html" />
+     <content src="index.html" />
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
+    <plugin name="cordova-plugin-code-push" spec="^1.11.18" />
     <plugin name="cordova-plugin-file-opener2" spec="^2.2.0" />
     <plugin name="cordova-plugin-printer" spec="^0.8.0" />
+    <plugin name="com.jjdltc.cordova.plugin.zip" spec="https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git" />
+    <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^4.2.1" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.2" />
     <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.3" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^3.2.0" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
     <plugin name="cordova-plugin-webview-checker" spec="^1.0.1" />
@@ -143,20 +148,33 @@
     <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
+    <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0">
+        <variable name="FCM_CORE_VERSION" value="16.0.9" />
+        <variable name="FCM_VERSION" value="18.0.0" />
+        <variable name="GRADLE_TOOLS_VERSION" value="3.5.0" />
+        <variable name="GOOGLE_SERVICES_VERSION" value="4.2.0" />
+        <variable name="ANDROID_DEFAULT_NOTIFICATION_ICON" value="@mipmap/ic_launcher" />
+    </plugin>
     <plugin name="cordova-plugin-advanced-http" spec="^2.5.1" />
     <plugin name="cordova-plugin-android-permissions" spec="^1.1.2" />
     <plugin name="cordova-plugin-media" spec="^5.0.3" />
     <plugin name="cordova.plugins.diagnostic" spec="^5.0.2">
         <variable name="ANDROID_SUPPORT_VERSION" value="28.+" />
     </plugin>
+    <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
+    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0" />
+    <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
+    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0" />
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />
     </plugin>
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
+    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.4.0" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
+    <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
 </widget>
