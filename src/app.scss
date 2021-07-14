@@ -1992,3 +1992,29 @@ app-user-home, app-discover {
     border-radius: 1rem !important;
   }
 }
+
+// Dark theme css
+html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+  .pop-container, .dark-background , .alert-wrapper.sc-ion-alert-md{
+    background:var(--app-secondary-background) !important;
+    color:$white;
+  }
+  .background-theme-color{
+    background-color: var(--app-secondary-background) !important;
+}
+.message,.projects-labels {
+  color: $white;
+}
+  .searchbar-input {
+    background: var(--app-secondary-background) !important;
+    border: 1px solid var(--app-secondary-background);
+  }
+  .task-desc{
+    border:none;
+  }
+  .entity-block, .task-list, .footer-btn, .learningResources, .sb-popover-content-details, .heading-name, .task-board {
+    h4, h3, h5 {
+      color: $white;
+    }
+  }
+}
