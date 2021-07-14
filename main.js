@@ -36,8 +36,7 @@ var formRequestArray = [{
     {
         'type': 'user',
         'subType': 'externalIdVerification',
-        'action': 'onboarding',
-        'rootOrgId': '*'
+        'action': 'onboarding'
     },
     {
         'type':'contentfeedback',
@@ -98,13 +97,13 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library_v2',
+        'subType': 'library_v4',
         'action': 'get',
         'component': 'app'
     },
     {
         'type': 'config',
-        'subType': 'course',
+        'subType': 'course_v3',
         'action': 'get',
         'component': 'app'
     },
@@ -115,7 +114,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'userType',
+        'subType': 'userType_v2',
         'action': 'get',
         'component': 'app'
     },
@@ -123,9 +122,24 @@ var formRequestArray = [{
         'type': 'profileConfig',
         'subType': 'default',
         'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'adminHome',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'deeplink',
+        'action': 'get'
+    },
+    {
+        "type": "config",
+        "subType": "search",
+        "action": "filter_v3",
+        "component": "app"
     }
-
-
 ];
 
 var state_list_request_body = {
@@ -298,9 +312,12 @@ async function saveFrameworkResponse(apiKey, baseUrl, response, rootDir, apiFram
 async function saveFormResponse(apiKey, baseUrl, apiForm, rootDir) {
     for (var i = 0; i < formRequestArray.length; i++) {
         const formRequest = formRequestArray[i];
-        let fileName = formRequest.type + '_' + formRequest.subType + '_' + formRequest.action;;
+        let fileName = formRequest.type + '_' + formRequest.subType + '_' + formRequest.action;
         if (formRequest.rootOrgId) {
             fileName += ('_' + formRequest.rootOrgId);
+        }
+        if (formRequest.component) {
+            fileName += ('_' + formRequest.component);
         }
         await makeAPICallnSaveResponse({
             apiKey: apiKey,

@@ -1,7 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-// migration-TODO
-// import { ViewController } from '@ionic/angular';
-import { Platform, NavParams, PopoverController } from '@ionic/angular';
+import { Component, OnDestroy } from '@angular/core';
+import { NavParams, Platform, PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-confirm-alert',
@@ -32,7 +30,6 @@ export class ConfirmAlertComponent implements OnDestroy {
     this.contentSize = this.navParams.get('contentSize');
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
     this.popOverCtrl.dismiss();
-    // this.backButtonFunc.unsubscribe();
     });
   }
 

@@ -3,7 +3,7 @@
     <ion-tab-button [tab]="tab.root" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled"
       [ngClass]="{'disabled': tab.disabled}" (click)="tab.label === '' ? openScanner(tab) : onTabClick(tab)">
       <ion-icon [name]="tab.icon" [id] = "tab.label === '' ? 'qrScannerIcon' : ''"></ion-icon>
-      <ion-label>{{tab.label | translate}}</ion-label>
+      <!-- <ion-label>{{tab.label | translate}}</ion-label> -->
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

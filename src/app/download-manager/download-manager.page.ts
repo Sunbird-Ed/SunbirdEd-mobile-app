@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import {
   Content,
@@ -34,6 +35,7 @@ import {
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
+import { DbService } from '../manage-learn/core/services/db.service';
 
 @Component({
   selector: 'app-download-manager',
@@ -52,7 +54,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
   storageDestination: any;
   private deletedContentListTitle$?: BehaviorSubject<string>;
-  @ViewChild('downloadsTab') downloadsTab: DownloadsTabComponent;
+  @ViewChild('downloadsTab', { static: false }) downloadsTab: DownloadsTabComponent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -67,6 +69,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private db: DbService
   ) { }
 
   async ngOnInit() {
@@ -146,6 +149,27 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           value.contentData.appIcon = ContentUtil.getAppIcon(value.contentData.appIcon,
             value.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
         });
+        const query = {
+            selector: {
+           downloaded: true,
+          },
+        };  
+        if(this.db.pdb){
+          let projectData: any = await this.db.customQuery(query);
+          if (projectData.docs) {
+            projectData.docs.sort(function (a, b) {
+                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+              });
+                projectData.docs.map(doc => {
+                  doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                  doc.type = 'project'
+                  doc.identifier=doc._id;
+                  data.push(doc)
+                  
+              })
+          }
+        }
+
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
@@ -163,8 +187,16 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async deleteContents(emitedContents: EmitedContents) {
+    const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
+    emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
+
+    if (!emitedContents.selectedContents.length) {
+      this.deleteProjects(projectContents)
+      return
+    }
+    this.deleteProjects(projectContents)
     const contentDeleteRequest: ContentDeleteRequest = {
-      contentDeleteList: emitedContents.selectedContents
+      contentDeleteList: emitedContents.selectedContents,
     };
     if (emitedContents.selectedContents.length > 1) {
       await this.deleteAllContents(emitedContents);
@@ -360,5 +392,21 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       this.downloadsTab.unSelectAllContents();
     }
   }
+
+  deleteProjects(contents) {
+
+    contents.forEach(async (element) => {
+      let project = await this.db.getById(element.contentId)
+      project.downloaded = false
+      await this.db.delete(project._id, project._rev)
+      this.events.publish('savedResources:update', {
+        update: true,
+      });
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
+
+
+    });
+  }
+
 
 }

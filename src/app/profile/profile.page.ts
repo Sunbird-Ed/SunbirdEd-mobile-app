@@ -1,15 +1,16 @@
 import { Component, NgZone, OnInit, Inject, ViewChild } from '@angular/core';
 import {
-  Events,
   PopoverController,
   ToastController,
   IonRefresher,
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   ContentCard,
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
+  EventTopics,
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -38,7 +39,9 @@ import {
   FormRequest,
   FormService,
   FrameworkService,
-  ProfileType
+  ProfileType,
+  Batch,
+  GetLearnerCerificateRequest
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router, NavigationExtras } from '@angular/router';
@@ -66,6 +69,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile',
@@ -75,7 +79,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class ProfilePage implements OnInit {
 
-  @ViewChild('refresher') refresher: IonRefresher;
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
 
   profile: any = {};
   userId = '';
@@ -117,17 +121,21 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: {
     courseName: string,
+    batch: Batch,
     dateTime: string,
     courseId: string,
     certificate?: string,
     issuedCertificate?: string,
-    status: number
+    status: number,
+    style: string,
+    label: string
   }[] = [];
   isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
   selfDeclarationInfo: any;
   learnerPassbook: any[] = [];
+  learnerPassbookCount: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -154,7 +162,8 @@ export class ProfilePage implements OnInit {
     private toastController: ToastController,
     private translate: TranslateService,
     private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private segmentationTagService: SegmentationTagService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -177,6 +186,10 @@ export class ProfilePage implements OnInit {
       } else {
         this.doRefresh();
       }
+    });
+
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (data) => {
+      this.doRefresh();
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
@@ -279,13 +292,30 @@ export class ProfilePage implements OnInit {
               that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                // ******* Segmentation
+                let segmentDetails = JSON.parse(JSON.stringify(profileData.framework));
+                Object.keys(segmentDetails).forEach((key) => {
+                  if (key !== 'id' && Array.isArray(segmentDetails[key])) {
+                  segmentDetails[key] = segmentDetails[key].map( x => x.replace(/\s/g, '').toLowerCase());
+                  }
+                });
+                window['segmentation'].SBTagService.pushTag(segmentDetails, TagPrefixConstants.USER_ATRIBUTE, true);
+                let userLocation = [];
+                (profileData['userLocations'] || []).forEach(element => {
+                  userLocation.push({ name: element.name, code: element.code });
+                });
+                window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+                window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
+                this.segmentationTagService.evalCriteria();
+                // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
-                const role: string = (!that.profile.userType ||
-                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                const role: string = (!that.profile.profileUserType.type ||
+                  (that.profile.profileUserType.type
+                    && that.profile.profileUserType.type === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.profileUserType.type;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.profileUserType.subType,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
@@ -380,12 +410,13 @@ export class ProfilePage implements OnInit {
     this.badgesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
 
-  showMoreTrainings(listName): void {
+  async showMoreTrainings(listName): Promise<void> {
     switch (listName) {
       case 'myLearning':
         this.myLearningLimit = this.mappedTrainingCertificates.length;
         break;
       case 'learnerPassbook':
+        await this.getLearnerPassbook();
         this.learnerPassbookLimit = this.learnerPassbook.length;
         break;
     }
@@ -405,6 +436,8 @@ export class ProfilePage implements OnInit {
         break;
       case 'learnerPassbook':
         this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        this.learnerPassbookCount = null;
+        this.getLearnerPassbook();
         break;
     }
   }
@@ -417,7 +450,7 @@ export class ProfilePage implements OnInit {
   async getEnrolledCourses(refresher?, refreshCourseList?) {
     const loader = await this.commonUtilService.getLoader();
     if (refreshCourseList) {
-      loader.present();
+      await loader.present();
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.REFRESH_CLICKED,
@@ -431,11 +464,11 @@ export class ProfilePage implements OnInit {
     };
     this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then((res: Course[]) => {
+      .then(async (res: Course[]) => {
         if (res.length) {
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
-        refreshCourseList ? loader.dismiss() : false;
+        refreshCourseList ? await loader.dismiss() : false;
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
@@ -451,12 +484,23 @@ export class ProfilePage implements OnInit {
     return trainings.reduce((accumulator, course) => {
       const oneCert = {
         courseName: course.courseName,
+        batch: course.batch,
         dateTime: course.dateTime,
         courseId: course.courseId,
         certificate: undefined,
         issuedCertificate: undefined,
-        status: course.status
+        status: course.status,
+        style: 'completed-status-text',
+        label: 'COMPLETED'
       };
+      if(course.status === 0 || course.status === 1) {
+        oneCert.style = 'ongoing-status-text';
+        oneCert.label = 'ONGOING';
+        if(course.batch && course.batch.status === 2) {
+          oneCert.style = 'ongoing-status-text';
+          oneCert.label = 'BATCH_EXPIRED';
+        }
+      }
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
       }
@@ -470,33 +514,37 @@ export class ProfilePage implements OnInit {
 
   async getLearnerPassbook() {
     try {
-      const request = { userId: this.profile.userId || this.profile.id };
-      this.learnerPassbook = (await this.courseService.getLearnerCertificates(request).toPromise())
-        .filter((learnerCertificate: any) => (learnerCertificate &&
+      const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
+      this.learnerPassbookCount ? request.size = this.learnerPassbookCount : null;
+      await this.courseService.getLearnerCertificates(request).toPromise().then(response => {
+        this.learnerPassbookCount = response.count;
+
+        this.learnerPassbook = response.content.filter((learnerCertificate: any) => (learnerCertificate &&
           learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
-        .map((learnerCertificate: any) => {
-          const oneCert: any = {
-            issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
-            issuedOn: learnerCertificate._source.data.issuedOn,
-            courseName: learnerCertificate._source.data.badge.name,
-            courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
-          };
-          if (learnerCertificate._source.pdfUrl) {
-            oneCert.certificate = {
-              url: learnerCertificate._source.pdfUrl || undefined,
-              id: learnerCertificate._id || undefined,
+          .map((learnerCertificate: any) => {
+            const oneCert: any = {
+              issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
               issuedOn: learnerCertificate._source.data.issuedOn,
-              name: learnerCertificate._source.data.badge.issuer.name
+              courseName: learnerCertificate._source.data.badge.name,
+              courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
             };
-          } else {
-            oneCert.issuedCertificate = {
-              identifier: learnerCertificate._id,
-              name: learnerCertificate._source.data.badge.issuer.name,
-              issuedOn: learnerCertificate._source.data.issuedOn
-            };
-          }
-          return oneCert;
-        });
+            if (learnerCertificate._source.pdfUrl) {
+              oneCert.certificate = {
+                url: learnerCertificate._source.pdfUrl || undefined,
+                id: learnerCertificate._id || undefined,
+                issuedOn: learnerCertificate._source.data.issuedOn,
+                name: learnerCertificate._source.data.badge.issuer.name
+              };
+            } else {
+              oneCert.issuedCertificate = {
+                identifier: learnerCertificate._id,
+                name: learnerCertificate._source.data.badge.issuer.name,
+                issuedOn: learnerCertificate._source.data.issuedOn
+              };
+            }
+            return oneCert;
+          });
+      });
     } catch (error) {
       console.log('Learner Passbook API Error', error);
     }
@@ -510,49 +558,43 @@ export class ProfilePage implements OnInit {
     issuedCertificate?: CourseCertificate,
     status: number
   }) {
-    const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-    const toastOptions = {
-      message: downloadMessage || 'Certificate getting downloaded'
-    };
+    const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
 
+    const values = new Map();
+    values['courseId'] = course.courseId;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+      Environment.USER,
+      PageId.PROFILE,
+      telemetryObject,
+      values);
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
-
-        const values = new Map();
-        values['courseId'] = course.courseId;
-
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-          Environment.USER, // env
-          PageId.PROFILE, // page name
-          telemetryObject,
-          values);
-        let toast;
-        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-          toast = await this.toastController.create(toastOptions);
-          await toast.present();
-        }
         if (course.issuedCertificate) {
-          this.courseService.downloadCurrentProfileCourseCertificateV2(
-            { courseId: course.courseId, certificate: course.issuedCertificate },
-            (svgData, callback) => {
-              this.certificateDownloadAsPdfService.download(
-                svgData, (fileName, pdfData) => callback(pdfData as any)
-              );
-            }).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                await this.downloadLegacyCertificate(course, toast);
-              }
-              await this.handleCertificateDownloadIssue(toast, err);
-            });
+          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+              return;
+            }
+          }
+
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+            state: { request }
+          });
         } else {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+            this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+            return;
+          }
+          const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+          const toastOptions = {
+            message: downloadMessage || 'Certificate getting downloaded'
+          };
+          const toast = await this.toastController.create(toastOptions);
+          await toast.present();
+
           await this.downloadLegacyCertificate(course, toast);
         }
       } else {
@@ -584,7 +626,7 @@ export class ProfilePage implements OnInit {
     if (err instanceof CertificateAlreadyDownloaded) {
       this.openpdf(err.filePath);
     } else if (NetworkError.isInstance(err)) {
-      this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+      this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
     }
@@ -898,23 +940,16 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async openEnrolledCourse(coursecertificate) {
+  async openEnrolledCourse(training) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: coursecertificate.courseId }).toPromise();
-      const courseParams: NavigationExtras = {
-        state: {
-          content,
-          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
-        }
-      };
+      const content = await this.contentService.getContentDetails({ contentId: training.courseId }).toPromise();
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
           content,
-          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
+          resumeCourseFlag: (training.status === 1 || training.status === 0) && !(training.batch.status === 2)
         }
       );
-      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }

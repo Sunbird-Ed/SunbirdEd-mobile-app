@@ -1,0 +1,49 @@
+{
+    "solutionName": "Survey and feedback ios test solution",
+    "response": [{
+        "order": "TSF01_1603872876577",
+        "question": "is electrical wiring / boards closed and insulated?",
+        "responseType": "text",
+        "answers": ["Yes"],
+        "chart": {},
+        "instanceQuestions": []
+    }, {
+        "order": "TSF02_1603872876577",
+        "question": "Name of the school?",
+        "responseType": "text",
+        "answers": ["Check"],
+        "chart": {},
+        "instanceQuestions": []
+    }, {
+        "order": "TSF03_1603872876577",
+        "question": "Grade?",
+        "responseType": "slider",
+        "answers": ["2"],
+        "chart": {},
+        "instanceQuestions": []
+    }, {
+        "order": "TSF04_1603872876577",
+        "question": "Which of the following is functional in the toilets of the school?",
+        "responseType": "text",
+        "answers": ["Taps"],
+        "chart": {},
+        "instanceQuestions": []
+    }],
+    "allQuestions": [{
+        "questionName": "is electrical wiring / boards closed and insulated?",
+        "questionExternalId": "TSF01_1603872876577",
+        "questionId": "5f9928804c471038be63a6e0"
+    }, {
+        "questionName": "Name of the school?",
+        "questionExternalId": "TSF02_1603872876577",
+        "questionId": "5f9928804c471038be63a6e1"
+    }, {
+        "questionName": "Grade?",
+        "questionExternalId": "TSF03_1603872876577",
+        "questionId": "5f9928804c471038be63a6de"
+    }, {
+        "questionName": "Which of the following is functional in the toilets of the school?",
+        "questionExternalId": "TSF04_1603872876577",
+        "questionId": "5f9928804c471038be63a6df"
+    }]
+}

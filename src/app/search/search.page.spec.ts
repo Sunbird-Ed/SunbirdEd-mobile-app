@@ -14,7 +14,8 @@ import {
     ContentImportStatus
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, NavController, PopoverController } from '@ionic/angular';
+import { Platform, NavController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
@@ -70,7 +71,7 @@ describe('SearchPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {};
-    const mockRoterExtras = {
+    const mockRouterExtras = {
         extras: {
             state: {
                 primaryCategories: 'primaryCategories',
@@ -83,7 +84,7 @@ describe('SearchPage', () => {
         }
     };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockRoterExtras as any),
+        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -199,17 +200,6 @@ describe('SearchPage', () => {
             expect(searchPage.appName).toEqual('Sunbird');
             done();
         }, 0);
-    });
-    // });
-
-    it('should hide header on ionview will enter', () => {
-        // arrange
-        spyOn(searchPage, 'handleDeviceBackButton').and.stub();
-        // act
-        searchPage.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(searchPage.handleDeviceBackButton).toHaveBeenCalled();
     });
 
     it('should focus the search bar', (done) => {
@@ -965,8 +955,8 @@ describe('SearchPage', () => {
             // arrange
             searchPage.source = 'source';
             searchPage.initialFilterCriteria = {
-                    facetFilters: [{ name: 'name' }]
-                };
+                facetFilters: [{ name: 'name' }]
+            };
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [{ name: 'name' }]
@@ -977,6 +967,7 @@ describe('SearchPage', () => {
             ];
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
             mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
+            searchPage.searchFilterConfig = [];
             // act
             searchPage.showFilter();
             // assert
@@ -1033,6 +1024,57 @@ describe('SearchPage', () => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
+            const searchContentResp = {
+                contentDataList: {
+                    identifier: 'id'
+                },
+                filterCriteria: {}
+            };
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
+            window.cordova.plugins = {
+                Keyboard: { close: jest.fn() }
+            };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
+            searchPage.profile = {
+                grade: ['grade1']
+            };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockTelemetryGeneratorService.generateLogEvent = jest.fn();
+            // act
+            searchPage.handleSearch();
+            // assert
+            expect(searchPage.showLoader).toEqual(true);
+            expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(searchPage.searchContentResult).toEqual(searchContentResp.contentDataList);
+                expect(searchPage.isEmptyResult).toBe(false);
+                expect(searchPage.responseData).toEqual(searchContentResp);
+                expect(searchPage.updateFilterIcon).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateLogEvent).toHaveBeenCalledWith(
+                    LogLevel.INFO,
+                    expect.anything(),
+                    Environment.HOME,
+                    ImpressionType.SEARCH,
+                    expect.anything()
+                );
+                done();
+            }, 0);
+        });
+        it('should handle search for preAppliedFilter', (done) => {
+            // arange
+            jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
+            searchPage.preAppliedFilter = {
+                filters: {
+                    status: ['Live'],
+                    objectType: ['Content'],
+                    board: ['cbse'],
+                    medium: ['Hindi', 'English']
+                }
+            };
+            // searchPage.searchKeywords = 'abcd';
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'
@@ -1600,6 +1642,7 @@ describe('SearchPage', () => {
                     Environment.HOME, false, undefined,
                     [{ id: '', type: 'API' },
                     { id: '', type: 'API' },
+                    { id: '', type: 'API' },
                     { id: 'SearchResult', type: 'Section' },
                     { id: 'filter', type: 'DiscoveryType' }]
                 );
@@ -1678,6 +1721,316 @@ describe('SearchPage', () => {
                 undefined,
                 false
             );
+        });
+    });
+
+    describe('searchOnFocus()', ()=> {
+        it('should animate the screen and show the search page', () => {
+            // arrange
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            // act
+            searchPage.searchOnFocus();
+            // assert
+            expect(searchPage.enableSearch).toBeTruthy();
+        });
+    })
+
+    describe('handleHeaderEvents()', () => {
+        it('should animate the screen and show the discover page on heaser back button is clicked', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = false;
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(searchPage.enableSearch).toBeFalsy();
+        });
+
+        it('should navigate to previous screen if its from group flow', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = true;
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
+        });
+    });
+
+    describe('fetchPrimaryCategoryFilters()', () => {
+        it('should not assign any value to primaryCategoryFilters if the value is already assigned', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = [];
+            // act
+            searchPage.fetchPrimaryCategoryFilters([]);
+            // assert
+            expect(searchPage.primaryCategoryFilters).toEqual([]);
+        });
+
+        it('should not assign any value to primaryCategoryFilters if the value is not assigned and primary category is not present i facetfilters', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = [];
+            const facetFilters = [
+                {
+                    name: 'primaryCategory',
+                    value: [
+                        {
+                            name: 'category1'
+                        },
+                        {
+                            name: 'category2'
+                        },
+                        {
+                            name: 'category3'
+                        }
+                    ]
+                },
+                {
+                    name: 'medium',
+                    value: [
+                        {
+                            name: 'medium1'
+                        },
+                        {
+                            name: 'medium2'
+                        },
+                        {
+                            name: 'medium3'
+                        }
+                    ]
+                }
+            ]
+            // act
+            searchPage.fetchPrimaryCategoryFilters([]);
+            // assert
+            expect(searchPage.primaryCategoryFilters).toEqual([]);
+        });
+
+        it('should assign value to primaryCategoryFilters if the value is not assigned and primary category is present in facetfilters', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = undefined;
+            const facetFilters = [
+                {
+                    name: 'board',
+                    value: [
+                        {
+                            name: 'board1'
+                        },
+                        {
+                            name: 'board2'
+                        }
+                    ]
+                },
+                {
+                    name: 'primaryCategory',
+                    value: [
+                        {
+                            name: 'category1'
+                        },
+                        {
+                            name: 'category2'
+                        }
+                    ]
+                }
+            ]
+            // act
+            searchPage.fetchPrimaryCategoryFilters(facetFilters);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.primaryCategoryFilters).toEqual(facetFilters[1].value);
+            });
+        });
+    });
+
+    describe('handleFilterSelect', () => {
+        it('should terminate the flow if the event has no data', () => {
+            // arrange
+            const event = {};
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should terminate the flow if the initialFilterCriteria does not have the facet primaryCategory', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'value1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'medium'
+                    },
+                    {
+                        name: 'grade'
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should terminate the flow if the primaryCategory values does not have the value of the selected pill', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'value1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should not apply the filter if the primaryCategory values have the same value of the selected pill but its already applied is true', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'category 1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1',
+                                apply: true
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2',
+                                apply: false
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should apply the filter if the primaryCategory values have the same value of the selected pill', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'category 1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1',
+                                apply: false
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2',
+                                apply: false
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).toHaveBeenCalled();
         });
     });
 

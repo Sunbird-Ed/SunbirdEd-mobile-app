@@ -3,14 +3,14 @@
     [src]="tncLatestVersionUrl" style="border: 0"></iframe>
 </ion-content>
 
-<ion-footer class="ion-padding" tappable no-border>
-  <ion-grid class="ion-no-padding" class="ion-padding-vertical">
-    <ion-row nowrap align-items-center>
-      <ion-col size="auto" nowrap style="line-height: 0">
+<ion-footer class="ion-padding ion-tappable ion-no-border">
+  <ion-grid class="ion-padding-vertical ion-no-padding">
+    <ion-row class="ion-nowrap ion-align-items-center">
+      <ion-col size="auto" class="ion-nowrap" style="line-height: 0">
         <ion-checkbox class="ion-no-padding ion-no-margin" (ionChange)="onConfirmationChange($event)"></ion-checkbox>
       </ion-col>
-      <ion-col col>
-        <ion-label class="ion-no-padding ion-text-wrap ion-no-margin" padding-horizontal>
+      <ion-col>
+        <ion-label class="ion-no-padding ion-text-wrap ion-no-margin ion-padding-horizontal">
           {{"I_AGREE_TO_TNC" | translate}}
         </ion-label>
       </ion-col>

@@ -52,7 +52,8 @@ import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
-import { Platform, Events, NavController } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { map } from 'rxjs/operators';
@@ -68,7 +69,7 @@ declare const cordova;
   styleUrls: ['./qrcoderesult.page.scss'],
 })
 export class QrcoderesultPage implements OnDestroy {
-  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
   unregisterBackButton: any;
   /**
    * To hold identifier
@@ -132,7 +133,7 @@ export class QrcoderesultPage implements OnDestroy {
   stckyindex: string;
   chapterFirstChildId: string;
   showSheenAnimation = true;
-  @ViewChild(iContent) ionContent: iContent;
+  @ViewChild(iContent, { static: false }) ionContent: iContent;
   onboarding = false;
   dialCode: string;
 
@@ -542,8 +543,9 @@ export class QrcoderesultPage implements OnDestroy {
     }
     const corRelationList = [...this.corRelationList];
     if (paths && paths.length) {
+      const rootId = paths[0].identifier ? paths[0].identifier : '';
       corRelationList.push({
-        id: paths[0],
+        id: rootId || '',
         type: CorReleationDataType.ROOT_ID
       });
     }
@@ -713,18 +715,15 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   importContent(identifiers: Array<string>, isChild: boolean) {
-    const option: ContentImportRequest = {
+    const contentImportRequest: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
 
     // Call content service
-    this.contentService.importContent(option).toPromise()
+    this.contentService.importContent(contentImportRequest).toPromise()
       .then((data: ContentImportResponse[]) => {
-        this.zone.run(() => {
-          data = data;
-        });
       })
       .catch((error: any) => {
         this.zone.run(() => {
@@ -793,9 +792,7 @@ export class QrcoderesultPage implements OnDestroy {
         if (content.mimeType !== MimeType.COLLECTION || ContentUtil.isTrackable(content.contentData) === 1) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
-              if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                content.contentData.appIcon = content.contentData.appIcon;
-              } else {
+              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
                 content.contentData.appIcon = this.defaultImg;
               }
             } else if (content.basePath) {

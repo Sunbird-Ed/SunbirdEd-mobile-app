@@ -1,40 +1,29 @@
+import { Location } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import {
-  ProfileService,
-  SharedPreferences,
-  LocationSearchResult,
-  AuditState,
-  CorrelationData,
-  TelemetryObject,
-  ServerProfile,
-  Consent
-} from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormConstants } from '@app/app/form.constants';
 import {
   AppHeaderService,
-  CommonUtilService,
-  ID,
-  TelemetryGeneratorService,
-  InteractType,
-  Environment,
-  InteractSubtype,
-  PageId,
-  ImpressionType,
-  AuditType,
-  CorReleationDataType,
-  FormAndFrameworkUtilService
+  AuditType, CommonUtilService,
+  CorReleationDataType, Environment,
+  FormAndFrameworkUtilService, ID,
+  ImpressionType, InteractSubtype, InteractType,
+  PageId, TelemetryGeneratorService
 } from '@app/services';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Events, PopoverController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
-import { Platform } from '@ionic/angular';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { FieldConfig } from 'common-form-elements';
-import { FormConstants } from '@app/app/form.constants';
 import { ConsentService } from '@app/services/consent-service';
-import { ConsentStatus, Profile } from '@project-sunbird/client-services/models';
+import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { FieldConfig } from 'common-form-elements';
+import { Subscription } from 'rxjs';
+import {
+  AuditState,
+  Consent, CorrelationData, LocationSearchResult, ProfileService,
+  ServerProfile, SharedPreferences,
+  TelemetryObject
+} from 'sunbird-sdk';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',

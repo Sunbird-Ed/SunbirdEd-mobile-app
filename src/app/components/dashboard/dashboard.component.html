@@ -1,0 +1,12 @@
+<div class="dashlet-table-container">
+    <sb-dashlet [type]="'table'" [data]="DashletRowData" [config]="columnConfig" #lib>
+        <ng-template sbTemplateRef="header" let-config>
+            <div>
+                <span (click)="exportCsv()" class="ad-csv-btn float-end">
+                    <span class="ad-dw">{{'DOWNLOAD_CSV' | translate}}</span>
+                    <img src="assets/imgs/download-icon.svg" alt="">
+                </span>
+            </div>
+          </ng-template>
+    </sb-dashlet>
+</div>

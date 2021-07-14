@@ -1,0 +1,79 @@
+<ion-content fullscreen>
+  <ion-card class="card-box-shadow">
+    <ion-card-content class="card-content-bottom-0 card-content-top-0">
+      <ion-segment class="d-flex" [(ngModel)]="currentTab" (ionChange)="tabChange($event.detail.value)">
+        <ion-segment-button value="all" class="flex-5">
+          <ion-label class="font-12 text-transform-none title">{{ 'ALL' | translate }}</ion-label>
+        </ion-segment-button>
+        <div class="hr-div">
+          <hr class="hr-height" />
+        </div>
+        <ion-segment-button value="inProgress" class="flex-5">
+          <ion-label class="font-12 text-transform-none title">{{
+            'FRMELEMNTS_LBL_IN_PROGRESS' | translate
+          }}</ion-label>
+        </ion-segment-button>
+        <div class="hr-div">
+          <hr class="hr-height" />
+        </div>
+        <ion-segment-button value="completed" class="flex-5">
+          <ion-label class="font-12 text-transform-none title">{{ 'COMPLETED' | translate }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-card-content>
+  </ion-card>
+
+  <div
+    *ngFor="let submission of submissions"
+    (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
+  >
+    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
+      <ion-icon
+        class="mg-popup-btn-icon"
+        name="ellipsis-vertical-outline"
+        arrow
+        *ngIf="submission.status !== 'completed' && submission?.status !== 'ratingPending'"
+        (click)="$event.stopPropagation(); openActionMenu($event, submission, i)"
+      ></ion-icon>
+      <ion-button
+        report
+        round
+        *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
+        (click)="$event.stopPropagation(); openMenu($event, submission, i)"
+      >
+        {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
+      </ion-button>
+      <ion-icon
+        padding-left
+        info
+        name="information-circle"
+        *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
+        (click)="$event.stopPropagation(); openInfo(submission)"
+      ></ion-icon>
+    </app-item-list-card>
+  </div>
+  <app-no-data *ngIf="!submissions?.length"></app-no-data>
+</ion-content>
+
+<ion-footer no-shadow *ngIf="!disableObserveAgain">
+  <ion-toolbar position="bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button ion-button full (click)="observeAgain()" class="footerButton w-100">
+          {{ 'FRMELEMNTS_LBL_OBSERVE_AGAIN' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          ion-button
+          full
+          (click)="entityActions($event)"
+          class="footerButton w-100"
+          [disabled]="!submissions?.length"
+        >
+          {{ 'FRMELEMNTS_LBL_VIEW_ENTITY_REPORT' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

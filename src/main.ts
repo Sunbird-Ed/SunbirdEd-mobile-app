@@ -4,9 +4,11 @@ import { AppModule } from './app/app.module';
 import { configuration } from './configuration/configuration';
 import { hmrBootstrap } from './hmr';
 import 'reflect-metadata';
+import 'hammerjs';
 import * as dayjs from 'dayjs';
 
 window.dayjs = dayjs;
+window.dayjs.extend(require('dayjs/plugin/duration'));
 
 if (configuration.production) {
   enableProdMode();

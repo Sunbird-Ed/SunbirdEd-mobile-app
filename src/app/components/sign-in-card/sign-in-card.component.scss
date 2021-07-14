@@ -22,24 +22,25 @@
       font-family: "Noto Sans", sans-serif;
       color: map-get($colors, white);
       font-weight: bold;
+      font-size: 16px;
     }
     .sign-in-block{
       padding: 16px 12px 12px;
       text-align: center;
       margin: 8px;
       background-color: map-get($colors, white);
-      border-radius: 2px;
+      border-radius: 1rem;
       box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
       p{
         margin-bottom: 8px;
         font-family: "Noto Sans", sans-serif;
-        font-size: 12px;
         color: map-get($colors, primary_black);
       }
       ion-button{
         --background: #{$green};
         --background-hover: #{$green};
         --background-activated: #{$green};
+        font-size: 18px;
       }
     }
   }

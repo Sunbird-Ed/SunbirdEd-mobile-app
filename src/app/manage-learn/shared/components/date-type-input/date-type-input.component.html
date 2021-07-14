@@ -1,0 +1,48 @@
+<ion-card class="_cardBg ion-padding">
+  <ion-col class="_flex-box _justify-content-center _flex-direction-column">
+    <h4 [ngClass]="{'_validQuestion': data?.value}" class="flexbox">
+      <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
+      </app-question-heading>
+    </h4>
+  </ion-col>
+
+  <div class="_tip _flex-box">{{data?.tip}}</div>
+
+  <div class="ion-margin-top" style="position: relative;">
+    <ion-item>
+      <ion-label floating>{{'FRMELEMENTS_LBL_DATE'| translate}}</ion-label>
+      <ion-datetime [disabled]="data?.autoCapture || (data.isEditable!=undefined && !data.isEditable)"
+        displayFormat="{{data?.dateFormat}}" *ngIf="data?.validation.max && !data?.validation.min"
+        [max]='data?.validation.max ? data?.validation.max : ""' (ionCancel)="canceled()" [(ngModel)]="data.value"
+        (ngModelChange)="checkForValidation()"></ion-datetime>
+
+      <ion-datetime [disabled]="data?.autoCapture || (data.isEditable!=undefined && !data.isEditable)"
+        displayFormat="{{data?.dateFormat}}" *ngIf="data?.validation.min && !data?.validation.max"
+        [min]='(data?.validation.min) ? data?.validation.min : ""' [max]="futureDate" (ionCancel)="canceled()"
+        [(ngModel)]="data.value" (ngModelChange)="checkForValidation()"></ion-datetime>
+
+      <ion-datetime [disabled]="data?.autoCapture || (data.isEditable!=undefined && !data.isEditable)"
+        displayFormat="{{data?.dateFormat}}" *ngIf="data?.validation.min && data?.validation.max"
+        [min]='(data?.validation.min) ? data?.validation.min : ""' (ionCancel)="canceled()" [(ngModel)]="data.value"
+        (ngModelChange)="checkForValidation()"></ion-datetime>
+
+      <ion-datetime [disabled]="data?.autoCapture  || (data.isEditable!=undefined && !data.isEditable)"
+        displayFormat="{{data?.dateFormat}}" *ngIf="!data?.validation.min && !data?.validation.max"
+        (ionCancel)="canceled()" [(ngModel)]="data.value" [max]="futureDate" (ngModelChange)="checkForValidation()">
+      </ion-datetime>
+    </ion-item>
+    <ion-button icon-start clear class="capture ion-float-right" (click)="captureTime()"
+      *ngIf="!data?.value && data?.autoCapture">
+      {{'FRMELEMENTS_LBL_CAPTURE'| translate}}
+    </ion-button>
+    <!-- <ion-button icon-start clear class="capture ion-float-right" (click)="captureTime()"
+      *ngIf="!data?.autoCapture">
+      {{'FRMELEMENTS_LBL_TODAY'| translate}}
+    </ion-button> -->
+    <div style="width: 100%;">
+      <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
+    </div>
+    <app-image-upload [data]="data" [generalQuestion]="generalQuestion" [imageLocalCopyId]="imageLocalCopyId"
+      [evidenceId]="evidenceId" [submissionId]="submissionId"></app-image-upload>
+  </div>
+</ion-card>

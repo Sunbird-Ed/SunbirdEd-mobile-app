@@ -24,7 +24,7 @@ import {
   FilterValue,
   SearchType
 } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -83,7 +83,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 export class ExploreBooksPage implements OnInit, OnDestroy {
   public pageId = 'ExploreBooksPage';
 
-  @ViewChild('searchInput') public searchInputRef: ElementRef;
+  @ViewChild('searchInput', { static: false }) public searchInputRef: ElementRef;
   @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
   LibraryCardTypes = LibraryCardTypes;
@@ -300,7 +300,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
             this.fetchingBoardMediumList(facetFilters);
             this.showLoader = false;
-            const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'gradeLevel').values;
+            const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'se_gradeLevels').values;
             gradeLevel.sort((a, b) => b.count - a.count);
             this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
             const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
@@ -439,11 +439,11 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   fetchingBoardMediumList(facetFilters) {
     return facetFilters.filter(value => {
-      if (value.name === 'board') {
+      if (value.name === 'se_boards') {
         this.boardList = value.values;
       }
 
-      if (value.name === 'medium') {
+      if (value.name === 'se_mediums') {
         this.mediumList = value.values;
       }
     });

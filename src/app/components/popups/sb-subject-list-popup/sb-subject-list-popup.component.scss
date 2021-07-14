@@ -1,0 +1,22 @@
+@import "src/assets/styles/_variables.scss";
+
+.title-section{
+  border-bottom: 1px solid var(--app-primary-header);
+  position: sticky;
+  top: 0;
+  background-color: white;
+  .close-icon{
+    float: right;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .subject-title{
+    font-size: 1rem;
+  }
+}
+
+.subject-list{
+  height: 87vh;
+  overflow-y: scroll;
+}

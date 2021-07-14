@@ -9,7 +9,7 @@ import {
   HttpServerError
 } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
@@ -22,6 +22,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
@@ -50,6 +51,8 @@ describe('LocalCourseService', () => {
     transform: jest.fn(() => 'sample-message')
   };
 
+  const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
@@ -65,7 +68,8 @@ describe('LocalCourseService', () => {
       mockSbProgressLoader as SbProgressLoader,
       new DatePipe('en'),
       mockCategoryKeyTranslator as CategoryKeyTranslator,
-      mockConsentService as ConsentService
+      mockConsentService as ConsentService,
+      mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
     );
   });
 
@@ -116,13 +120,14 @@ describe('LocalCourseService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
-          expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-          expect(mockCourseService.enrollCourse).toHaveBeenCalled();
-          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-          done();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
+        done();
       });
     });
 
@@ -153,6 +158,8 @@ describe('LocalCourseService', () => {
         dismiss: dismissFn,
       }));
       mockCommonUtilService.showToast = jest.fn();
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
+      mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
@@ -439,7 +446,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockEvents.publish).toHaveBeenCalledWith(expect.any(String));
+        expect(mockEvents.publish).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, expect.any(String));
         done();
       }, 0);
@@ -794,6 +801,18 @@ describe('LocalCourseService', () => {
       expect(data).toBeFalsy();
     });
 
+    it('should show toast message if batches is empty', (done) => {
+          // arrnge
+          mockCommonUtilService.showToast = jest.fn();
+          // act
+          const data = localCourseService.isEnrollable([], {});
+          // assert
+          setTimeout(() => {
+              expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+              done();
+          }, 0);
+      });
+
     it('should return is enrolled', () => {
       const batches = [{
         enrollmentEndDate: undefined,
@@ -843,10 +862,10 @@ describe('LocalCourseService', () => {
     it('return assessment status isLastAttempt as true if its the final attempt', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', contentData: { maxAttempts: 3 } });
       // assert
       expect(data.isLastAttempt).toEqual(true);
       expect(data.isContentDisabled).toEqual(false);
@@ -855,15 +874,14 @@ describe('LocalCourseService', () => {
     it('return assessment status isContentDisabled as true if the user has exceeded the number of attempts', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2,3] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2, 3] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', maxAttempts: 2 });
       // assert
       expect(data.isLastAttempt).toEqual(false);
       expect(data.isContentDisabled).toEqual(true);
     });
-
   });
 
 });

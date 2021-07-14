@@ -2,10 +2,10 @@
 	<div class="p-8" *ngIf="!showOfflineSection">
 		<ion-card class="card-box-shadow">
 			<ion-card-header class="custom-card-header">
-				<ion-card-title class="font-18 font-weight-900">
+				<ion-card-title class="font-16 font-weight-900 subtitle-color">
 					{{course?.name || courseCardData?.courseName}}
 				</ion-card-title>
-				<ion-card-subtitle *ngIf="courseCardData?.organisation || course" class="font-14 subtitle-color">
+				<ion-card-subtitle *ngIf="courseCardData?.organisation || course" class="font-12 subtitle-color">
 					{{'CONTENT_CREATED_BY' | translate}}
 					{{!course?.organisation ? courseCardData?.content?.organisation?.join(', ') : course?.organisation}}
 				</ion-card-subtitle>
@@ -75,7 +75,7 @@
 										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
-											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
+											<ion-icon name="cloud-download"
 												[ngClass]="(downloads.queued.length)? 'card-icons-downloadStarted': 'card-icons'">
 											</ion-icon>
 											<p class="card-text">{{'DOWNLOAD' | translate}}
@@ -84,20 +84,16 @@
 										<button *ngIf="isDownloadComplete || course?.isAvailableLocally"
 												[disabled]="downloads.queued.length" (click)="showDeletePopup()"
 												slot="icon-only" class="card-button">
-											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
+											<ion-icon name="trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
 										</button>
 										<button slot="icon-only" (click)="share()" class="card-button">
-											<ion-icon ios="ios-share" md="md-share" class="card-icons"></ion-icon>
+											<ion-icon name="share" class="card-icons"></ion-icon>
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
-										<button (click)="openDiscussionForum()" *ngIf="forumIds"
-												class="card-button" slot="icon-only">
-											<ion-icon src="assets/imgs/ic_chat.svg" class="card-icons"></ion-icon>
-											<p class="card-text">{{'FORUM' | translate}}</p>
-										</button>
-										<div *ngIf="showUnenrollButton" class="PR16 pull-right">
+										<accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
+										<div *ngIf="showUnenrollButton || course?.progress >= 100" class="PR16 pull-right">
 											<img class="menu-icon" (click)="showOverflowMenu($event)"
 												 src="assets/imgs/menu.svg" alt="menu-icon">
 										</div>
@@ -145,6 +141,7 @@
 			<div #stickyPillsRef
 				*ngIf="!isFromGroupFlow && !showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
 				class="enrolled-course-container">
+				<div class="timer-info" *ngIf="batchRemaningTime && !batchExp"><div><span>{{ 'BATCH_ENDS_TEXT' | translate }}</span>&nbsp;<span>{{batchRemaningTime}}</span></div></div>
 				<ion-card class="enrolled-course-card">
 					<ion-card-content class="ion-padding-top">
 						<ion-card-title class="last-read-content padding-bottom-8">{{nextContent?.name}}
@@ -288,22 +285,24 @@
 							</div>
 						</div>
 						<label *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</label>
-						<div class="ion-margin-bottom mt-8">
-							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>:
-							</ion-card-title>
-							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
-							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
-							<p *ngIf="course?.medium">{{'MEDIUM' | translate}} : {{course?.medium}}</p>
-						</div>
-						<div class="ion-margin-bottom">
-							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</strong>
-							</ion-card-title>
-							<p *ngIf="batchEndDate">{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : {{ batchEndDate | date: 'dd/MM/yyyy'}}</p>
-						</div>
-						<div>
-							<p>{{course?.description}}</p>
+						<div class="course-details">
+							<div class="ion-margin-bottom mt-8">
+								<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+									<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>
+								</ion-card-title>
+								<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
+								<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
+								<p *ngIf="course?.medium">{{'MEDIUM' | translate}} : {{course?.medium}}</p>
+							</div>
+							<div class="ion-margin-bottom">
+								<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+									<strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</strong>
+								</ion-card-title>
+								<p>{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : </p>
+							</div>
+							<div>
+								<p>{{course?.description}}</p>
+							</div>
 						</div>
 					</div>
 				</ion-card-content>
@@ -314,11 +313,11 @@
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
 								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
-								<span *ngIf="isDataShare">
-									<ion-icon name="ios-arrow-up"></ion-icon>
+								<span *ngIf="isDataShare" class="consent-arrow">
+									<ion-icon name="arrow-up"></ion-icon>
 								</span>
-								<span *ngIf="!isDataShare">
-									<ion-icon name="ios-arrow-down"></ion-icon>
+								<span *ngIf="!isDataShare" class="consent-arrow">
+									<ion-icon name="arrow-down"></ion-icon>
 								</span>
 							</div>
 							<div *ngIf="isDataShare" class="showLicensce data-share-header">
@@ -338,16 +337,16 @@
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom" style="padding-top: 10px;">
 										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
-									<ion-list lines="none" style="margin-left: -4px;">
-										<ion-radio-group>
-										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
+									<ion-list lines="none" class="data-list">
+										<ion-radio-group [value]="dataSharingStatus">
+										  <ion-item class="ds-item" class="list-info" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" [value]="'REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
-										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
+										  <ion-item class="ds-item" class="list-info" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" [value]="'ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
 										</ion-radio-group>
 									  </ion-list>

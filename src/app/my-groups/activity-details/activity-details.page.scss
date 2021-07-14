@@ -43,11 +43,14 @@
 }
 .ad-timestamp-container{
     padding: 8px;
-    color: map-get($colors, primary);
+    // color: map-get($colors, primary);
+    .ad-dw-csv{
+        color: $blue;
+        font-weight: bold;
+    }
     .ad-timestamp{
         color: $gray-300;
-        float: right;
-        text-align: right;
+        float: left;
     }
 }
 .ad-mebers-container{
@@ -86,4 +89,11 @@
     span{
         color: map-get($colors, vivid_red);
     }
+}
+.dashboard-icon{
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    z-index: 9;
+    font-size: 24px;
 }

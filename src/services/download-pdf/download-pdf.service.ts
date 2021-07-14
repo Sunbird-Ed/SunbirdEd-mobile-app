@@ -8,7 +8,7 @@ import { Content } from '@project-sunbird/sunbird-sdk';
   providedIn: 'root'
 })
 export class DownloadPdfService {
-
+  
   constructor(
     private permissionService: AndroidPermissionsService,
   ) { }
@@ -25,8 +25,6 @@ export class DownloadPdfService {
       if (!checkedStatus.hasPermission) {
         const requestedStatus = await this.permissionService.requestPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise();
         if (requestedStatus.hasPermission) {
-          console.log('cam einside if');
-          // download
           const fileUri = content.contentData.downloadUrl;
           const fileName = content.name;
           const displayDescription = content.contentData.description;
@@ -39,7 +37,7 @@ export class DownloadPdfService {
             notificationVisibility: 1,
             destinationInExternalPublicDir: {
               dirType: 'Download',
-              subPath: `/${fileName}.pdf`
+              subPath: `/${fileName}`
             },
             headers: []
           };
