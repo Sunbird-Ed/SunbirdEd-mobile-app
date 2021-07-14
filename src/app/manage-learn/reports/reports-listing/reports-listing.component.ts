@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { RouterLinks } from '@app/app/app.constant';
   templateUrl: './reports-listing.component.html',
   styleUrls: ['./reports-listing.component.scss'],
 })
-export class ReportsListingComponent implements OnInit {
+export class ReportsListingComponent {
   private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
@@ -45,7 +45,6 @@ export class ReportsListingComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {}
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();

@@ -1,17 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'matrix-chart',
   templateUrl: './matrix-chart.component.html',
   styleUrls: ['./matrix-chart.component.scss'],
 })
-export class MatrixChartComponent implements OnInit {
+export class MatrixChartComponent {
   @Input() data;
   @Input() questionNumber;
   @Output() allEvidence = new EventEmitter();
   constructor() {}
 
-  ngOnInit() {}
 
   allEvidenceClick($event) {
     this.allEvidence.emit($event);

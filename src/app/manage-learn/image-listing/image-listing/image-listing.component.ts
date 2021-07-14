@@ -57,8 +57,7 @@ export class ImageListingComponent implements OnInit {
         this.evidenceSections = this.currentEvidence['sections'];
         this.selectedEvidenceName = this.currentEvidence['name'];
         this.getAllImages();
-      })
-      .catch((error) => {});
+      });
   }
   uploadImages: any;
   imageList = [];
@@ -211,16 +210,14 @@ export class ImageListingComponent implements OnInit {
         .then((success) => {
           this.fileTransfer.create();
           this.cloudImageUpload();
-        })
-        .catch((err) => {});
+        });
     } else {
       this.file
         .checkDir(this.file.externalDataDirectory, 'images')
         .then((success) => {
           this.cloudImageUpload();
           this.fileTransfer.create();
-        })
-        .catch((err) => {});
+        });
     }
   }
 
@@ -268,7 +265,6 @@ export class ImageListingComponent implements OnInit {
               });
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
             Details: ${JSON.stringify(err)}`;
-              // this.slack.pushException(errorObject);//TODO:implement
               history.go(-1);
             } else {
               this.cloudImageUpload();
@@ -318,7 +314,6 @@ export class ImageListingComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (response) => {
         if (this.schoolData.observation) {
-          // this.observetionProvider.markObservationAsCompleted(submissionId);//TODO:Not storing in local now
         }
         if (response && response.result && response.result.allowed==false) {
           this.toast.openToastWithClose(this.allStrings['FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED']);
@@ -353,7 +348,6 @@ export class ImageListingComponent implements OnInit {
       endTime: 0,
     };
     this.currentEvidence;
-    // const currentEvidence =   this.currentEvidence
     /*
     !deepclone to avoid structure change in the type:pageQuestion
     !using to take the tempevidnceSections and pullout page questions

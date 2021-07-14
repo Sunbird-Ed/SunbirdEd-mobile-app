@@ -14,7 +14,7 @@ import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
     OAuthSession, Profile, ProfileService, ProfileSession, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
-import { AppThemes, GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
+import { GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
