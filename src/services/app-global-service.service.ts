@@ -1,22 +1,25 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { Environment, ID, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
-import { Events, PopoverController } from '@ionic/angular';
-import { GenericAppConfig, PreferenceKey, EventTopics } from '../app/app.constant';
-import { TelemetryGeneratorService } from './telemetry-generator.service';
-import {
-    AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
-    OAuthSession, Profile, ProfileService, ProfileType, SharedPreferences, ProfileSession
-} from 'sunbird-sdk';
-import { UtilityService } from './utility-service';
-import { ProfileConstants } from '../app/app.constant';
-import { Observable, Observer } from 'rxjs';
-import { PermissionAsked } from './android-permissions/android-permission';
-import { UpgradePopoverComponent } from '@app/app/components/popups';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '@app/app/animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink-out-top-right';
+import { UpgradePopoverComponent } from '@app/app/components/popups';
+import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { NewExperiencePopupComponent } from '@app/app/components/popups/new-experience-popup/new-experience-popup.component';
+import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Observable, Observer } from 'rxjs';
+import {
+    AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
+    OAuthSession, Profile, ProfileService, ProfileSession, ProfileType, SharedPreferences
+} from 'sunbird-sdk';
+import { AppThemes, GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
+import { PermissionAsked } from './android-permissions/android-permission';
+import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { UtilityService } from './utility-service';
+import { YearOfBirthPopupComponent } from '@app/app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -87,6 +90,7 @@ export class AppGlobalService implements OnDestroy {
     private _selectedActivityCourseId: string;
     private _redirectUrlAfterLogin: string;
     private _isNativePopupVisible: boolean;
+    private _isDiscoverBackEnabled: boolean = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -805,6 +809,14 @@ export class AppGlobalService implements OnDestroy {
         this._isNativePopupVisible = value;
     }
 
+    get isDiscoverBackEnabled() {
+        return this._isDiscoverBackEnabled;
+    }
+
+    set isDiscoverBackEnabled(value) {
+        this._isDiscoverBackEnabled = value;
+    }
+
     setNativePopupVisible(value, timeOut?) {
         if (timeOut) {
             setTimeout(() => {
@@ -850,6 +862,42 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
+    async showJoyfulPopup() {
+        if (this.skipCoachScreenForDeeplink) {
+            this.skipCoachScreenForDeeplink = false;
+        } else {
+            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED).toPromise();
+            if (!isPopupDisplayed) {
+                const appLabel = await this.appVersion.getAppName();
+                const newThemePopover = await this.popoverCtrl.create({
+                    component: JoyfulThemePopupComponent,
+                    componentProps: { appLabel },
+                    backdropDismiss: false,
+                    showBackdrop: true,
+                    cssClass: 'sb-new-theme-popup'
+                });
+                newThemePopover.present();
+                this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+            }
+            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+        }
+    }
+
+    async showNewTabsSwitchPopup() {
+        const isPopupDisplayed = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+        if (!isPopupDisplayed) {
+            const appLabel = await this.appVersion.getAppName();
+            const newThemePopover = await this.popoverCtrl.create({
+                component: NewExperiencePopupComponent,
+                componentProps: { appLabel },
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'sb-switch-new-experience-popup'
+            });
+            newThemePopover.present();
+        }
+    }
+
     async getActiveProfileUid() {
         let userId = '';
         try {
@@ -864,6 +912,19 @@ export class AppGlobalService implements OnDestroy {
         }
 
         return userId;
+    }
+
+    async showYearOfBirthPopup(userProfile) {
+        if (userProfile && !userProfile.managedBy && !userProfile.dob) {
+            const newThemePopover = await this.popoverCtrl.create({
+                component: YearOfBirthPopupComponent,
+                componentProps: {   },
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'year-of-birth-popup'
+            });
+            newThemePopover.present();
+        }
     }
 
 }

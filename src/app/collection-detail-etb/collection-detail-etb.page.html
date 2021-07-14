@@ -24,10 +24,10 @@
     </div>
     <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length"
       class="collection-etb-filter">
-      <div class="sb-chapter-dd" (click)="openTextbookToc()">
+      <div class="sb-chapter-dd pl-16" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
         <span class="pull-right">
-          <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
+          <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
         </span>
       </div>
       <div class="sb-slider-pills-container">
@@ -48,8 +48,9 @@
       </div>
     </div>
 
-    <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
-
+  </div>
+  <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
+  <div>
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
@@ -68,7 +69,7 @@
   </div>
   <div *ngIf="contentDetail?.contentData?.author || contentDetail?.contentData?.organisation 
         ||contentDetail?.contentData?.license || licenseDetails || contentDetail?.contentData?.copyright">
-    <div class="ion-padding-end">
+    <div class="px-8">
       <app-license-card-component [content]="contentDetail?.contentData"
                                   [licenseDetails]="licenseDetails"
                                   [appName]="appName" [objRollup]="objRollup"

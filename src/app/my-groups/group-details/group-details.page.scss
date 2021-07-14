@@ -112,6 +112,7 @@
         left: 8px;
         font-size: 20px;
         color: map-get($colors, gray_96);
+        width: 18px;
     }
 
     input {
@@ -120,6 +121,7 @@
         padding: 0 8px 0 30px;
         border: 1px solid $blue;
         border-radius: 4px;
+        outline: none;
         &::placeholder{
             color: map-get($colors, gray_96);
         }

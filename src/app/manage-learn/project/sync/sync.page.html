@@ -1,0 +1,35 @@
+<ion-content>
+  <div class="container">
+    <ion-card class="innerContainer">
+      <ion-card-header>
+        <ion-card-title>{{"FRMELEMNTS_LBL_SYNCING_PROJECT" | translate}}</ion-card-title>
+      </ion-card-header>
+      <div class="flexBox">
+        <div style="flex:1" class="flexBox centerAlign">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+        </div>
+        <div style="flex:2">
+          <div class="middleSection">
+            {{"FRMELEMNTS_LBL_SYNCING_PROJECT" | translate}} <span *ngIf="progressPercentage"> ( {{progressPercentage}} % completed)</span>
+          </div>
+          <div *ngIf="allProjects?.length">
+            {{syncIndex+1}} out of {{allProjects?.length}} Syncing
+            <!-- 5 out of 10 Synching -->
+          </div>
+        </div>
+        <!-- <div>
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+        </div>
+        <div class="middleSection">
+          {{"MESSAGES.SYNCING_PROJECT" | translate}}
+        </div>
+        <div *ngIf="allProjects?.length">
+          {{syncIndex+1}} / {{allProjects?.length}}
+        </div> -->
+      </div>
+
+
+    </ion-card>
+  </div>
+
+</ion-content>

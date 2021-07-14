@@ -1,20 +1,21 @@
 import { Inject, Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Events } from '@app/util/events';
+import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '../container.services';
+import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import { ContainerService } from '../container.services';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { Observable } from 'rxjs';
-import { mergeMap, tap } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +29,8 @@ export class LogoutHandlerService {
     private appGlobalService: AppGlobalService,
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router
+    private router: Router,
+    private segmentationTagService: SegmentationTagService
   ) {
   }
 
@@ -36,6 +38,8 @@ export class LogoutHandlerService {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
+
+    this.segmentationTagService.persistSegmentation();
 
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.LOGOUT_INITIATE, '');
@@ -63,6 +67,7 @@ export class LogoutHandlerService {
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
+        this.segmentationTagService.getPersistedSegmentaion();
       })
     ).subscribe();
   }
@@ -72,22 +77,24 @@ export class LogoutHandlerService {
 
     await this.appGlobalService.getGuestUserInfo();
 
+    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
+      true : false;
+    if (selectedUserType === ProfileType.ADMIN && !isOnboardingCompleted) {
+      this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+    } else {
+      this.events.publish('UPDATE_TABS');
+    }
+
     if (selectedUserType === ProfileType.STUDENT) {
       initTabs(this.containerService, GUEST_STUDENT_TABS);
-    } else if (this.commonUtilService.isAccessibleForNonStudentRole(selectedUserType)) {
+    } else if (this.commonUtilService.isAccessibleForNonStudentRole(selectedUserType) && selectedUserType !== ProfileType.ADMIN) {
       initTabs(this.containerService, GUEST_TEACHER_TABS);
     }
 
-    this.events.publish('UPDATE_TABS');
-
-    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
-      true : false;
-    if (selectedUserType === ProfileType.ADMIN) {
-      this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN]);
-    } else if (isOnboardingCompleted) {
+    if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
-    } else {
+    } else if (selectedUserType !== ProfileType.ADMIN) {
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }

@@ -1,0 +1,13 @@
+<ion-content padding>
+  <div class="dm-header ion-padding">
+    <ion-icon
+      name="arrow-back"
+      (click)="close()"
+      class="top-back-button"
+    ></ion-icon>
+  </div>
+  <div class="_flex-box _flex-direction-column">
+    <img [src]="data?.img" alt="Thanks" />
+    <h2 class="lightMessage">{{ data?.msg }}</h2>
+  </div>
+</ion-content>

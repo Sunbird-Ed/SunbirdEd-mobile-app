@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
@@ -8,11 +8,12 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import {
     TeacherIdVerificationComponent
 } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import { ProfileConstants } from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';
 import { LocalCourseService } from './local-course.service';
+import {PageId} from '@app/services/telemetry-constants';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -20,6 +21,7 @@ export class ExternalIdVerificationService {
 
     constructor(
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private appGlobalService: AppGlobalService,
         private popoverCtrl: PopoverController,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
@@ -48,14 +50,17 @@ export class ExternalIdVerificationService {
             this.appGlobalService.redirectUrlAfterLogin = '';
         }
         if (await this.checkQuizContent()) {
+            await this.resetNavigationSource();
             return;
         }
         const profileSession = await this.profileService.getActiveProfileSession().toPromise();
         if (profileSession.managedSession) {
+            await this.resetNavigationSource();
             return;
         }
         const session = await this.appGlobalService.authService.getSession().toPromise();
         if (!this.commonUtilService.networkInfo.isNetworkAvailable || !session) {
+            await this.resetNavigationSource();
             return;
         }
         const isCustodianUser = await this.isCustodianUser$.toPromise();
@@ -96,8 +101,14 @@ export class ExternalIdVerificationService {
                 });
         }
         if (await this.checkJoinTraining()) {
+            await this.resetNavigationSource();
             return;
         }
+        const source = await this.preferences.getString(PreferenceKey.NAVIGATION_SOURCE).toPromise();
+        if (source === 'courses') {
+            this.router.navigateByUrl('tabs/courses');
+        }
+        await this.resetNavigationSource();
     }
 
     checkQuizContent(): Promise<boolean> {
@@ -122,5 +133,9 @@ export class ExternalIdVerificationService {
                 resolve(true);
             });
         }
+    }
+
+    private async resetNavigationSource() {
+        await this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE, '').toPromise();
     }
 }

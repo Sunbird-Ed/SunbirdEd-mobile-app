@@ -1,0 +1,32 @@
+<ion-content>
+    <div class="container-focus">
+        <div class="header">
+            <strong class="login-to">{{'LOGIN_TO' | translate:{'appName': appName} }}</strong>
+            <p class="text-overlay">{{'OVERLAY_INFO_TEXT_COMMON' | translate}}</p>
+        </div>
+    </div>
+    <div class="login-div">
+        <button class="sign-in-button" (click)="loginWithKeyCloak()">
+            <img class="icon-logo" src="../../assets/imgs/ic_launcher.png" alt="app-logo">
+            <p class="text-overlay">{{'LOGIN_WITH' | translate:{'appName': appName} }}</p>
+        </button>
+
+        <p>Don't have an account ? <span class="hyper-link" (click)="register()">Register here</span></p>
+
+        <div class="option-or">
+            <hr>
+            <span>{{'OR' | translate}}</span>
+            <hr>
+        </div>
+
+        <button class="sign-in-button" (click)="loginWithStateSystem()">
+            <p class="text-overlay"> {{'STATE_LOGIN' | translate}}</p>
+        </button>
+
+        <button class="sign-in-button" (click)="signInWithGoogle()">
+            <img class="icon-logo" src="assets/imgs/ic_google_icon.svg" alt="google-logo">
+            <p class="text-overlay">{{'GOOGLE_LOGIN' | translate}}</p>
+        </button>
+
+    </div>
+</ion-content>

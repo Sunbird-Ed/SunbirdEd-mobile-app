@@ -1,28 +1,26 @@
+import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { SbAppSharePopupComponent, SbPopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subscription } from 'rxjs';
+import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
+import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import {
-  ProfileService,
-  SharedPreferences,
+  ApiService, AuthService,
+  DebuggingService,
+  MergeServerProfilesRequest, ProfileService,
+  SdkConfig, SharedPreferences,
   TelemetryImpressionRequest,
-  AuthService,
-  SdkConfig,
-  ApiService,
-  MergeServerProfilesRequest,
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
-import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { Router, NavigationExtras } from '@angular/router';
-import { SbPopoverComponent, SbAppSharePopupComponent } from '@app/app/components/popups';
-import { PopoverController, ToastController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { Location } from '@angular/common';
-import { Platform } from '@ionic/angular';
-import { Observable, Subscription } from 'rxjs';
-import { map, mergeMap, catchError, finalize, tap } from 'rxjs/operators';
+import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-settings',
@@ -41,12 +39,14 @@ export class SettingsPage implements OnInit {
   public isUserLoggedIn$: Observable<boolean>;
   public isNotDefaultChannelProfile$: Observable<boolean>;
   backButtonFunc: Subscription;
+  debugmode: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
     @Inject('API_SERVICE') private apiService: ApiService,
+    @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
     private appVersion: AppVersion,
     private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
@@ -59,7 +59,8 @@ export class SettingsPage implements OnInit {
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private platform: Platform,
-    private location: Location
+    private location: Location,
+    private events: Events
   ) {
     this.isUserLoggedIn$ = this.authService.getSession().pipe(
       map((session) => !!session)
@@ -78,6 +79,8 @@ export class SettingsPage implements OnInit {
         this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
       });
     this.handleBackButton();
+    this.debugmode = this.debugginService.isDebugOn();
+    this.events.subscribe('debug_mode', (debugMode) => this.debugmode = debugMode);
   }
 
   ionViewWillLeave() {
@@ -185,7 +188,6 @@ export class SettingsPage implements OnInit {
       },
       cssClass: 'sb-popover primary',
     });
-
     await confirm.present();
   }
 
@@ -301,6 +303,89 @@ export class SettingsPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS, Environment.SETTINGS, false);
       this.location.back();
       this.backButtonFunc.unsubscribe();
+    });
+  }
+
+  async debugModeToggle() {
+      console.log('this.debugmode' ,this.debugmode);
+      if (this.debugmode) {
+        const confirm = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_ENABLE", { '%appName': this.appName }),
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('DISMISS'),
+                btnClass: 'popover-color popover-button-cancel'
+              },
+              {
+                btntext: this.commonUtilService.translateMessage('DEBUG_ON'),
+                btnClass: 'popover-color popover-button-allow'
+              },
+            ],
+            icon: null,
+            handler: (selectedButton: string) => {
+              console.log(selectedButton);
+              if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
+                this.debugmode = false;
+              } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
+                this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                this.enableDebugging();
+                this.commonUtilService.showToast('DEBUG_ON_MESSAGE');
+              }
+            }
+            // metaInfo: this.content.contentData.name,
+          },
+          cssClass: 'sb-popover dw-active-downloads-popover',
+        });
+
+        await confirm.present();
+      } else {
+        const confirm = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_DISABLE"),
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('DISMISS'),
+                btnClass: 'popover-color popover-button-cancel'
+              },
+              {
+                btntext: this.commonUtilService.translateMessage('DEBUG_OFF'),
+                btnClass: 'popover-color popover-button-allow'
+              },
+            ],
+            icon: null,
+            handler: (selectedButton: string) => {
+              console.log(selectedButton);
+              if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
+                this.debugmode = true;
+              } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_OFF')) {
+                this.debugginService.disableDebugging().subscribe((response) => {
+                  if (response) {
+                    this.commonUtilService.showToast('DEBUG_OFF_MESSAGE');
+                    this.debugmode = false
+                  }
+                });
+              }
+            }
+          },
+          cssClass: 'sb-popover dw-active-downloads-popover',
+        });
+        await confirm.present();
+      }
+  }
+
+  async enableDebugging() {
+    this.debugginService.enableDebugging().subscribe((isDebugMode) => {
+      console.log('Debug Mode', isDebugMode);
+      if (isDebugMode) {
+        this.debugmode = true
+      } else if (!isDebugMode) {
+        this.debugmode = false;
+      }
     });
   }
 }

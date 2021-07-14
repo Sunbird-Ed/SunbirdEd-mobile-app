@@ -21,7 +21,7 @@
 <div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="(results.length>1 || (results.length===1 && results[0].contentData.trackable.enabled === 'Yes'))">
   <span class="pull-left">{{stckyParent || ('SELECT_CHAPTER' | translate)}}</span>
   <span class="pull-right">
-    <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
+    <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
   </span>
 </div>
 <div class="m-n" *ngIf="showSheenAnimation" style="margin-top: 50px;">
@@ -82,7 +82,7 @@
             (click)="navigateToDetailsPage(content)">
             <button class="qr-result-btn download-info ion-no-padding ion-text-uppercase" expand="block" color="light"
               style="color:#0D7DFC; z-index: 100;" [ngClass]="!(content.contentData?.downloadUrl) ? 'download-disabled' : null">
-              <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;
+              <ion-icon class="downloadicon" name="arrow-down"></ion-icon>&nbsp;
               {{'DOWNLOAD'| translate}}
             </button>
           </ion-col>
@@ -106,7 +106,7 @@
       <div class="ion-no-padding" *ngIf="!content.contentData?.streamingUrl && !content.isAvailableLocally">
         <button class="qr-result-btn download-info ion-no-padding ion-text-uppercase" expand="block" color="light"
           style="color:#0D7DFC" (click)="navigateToDetailsPage(content)">
-          <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{'DOWNLOAD'| translate}}
+          <ion-icon class="downloadicon" name="arrow-down"></ion-icon>&nbsp;{{'DOWNLOAD'| translate}}
         </button>
       </div>
 
@@ -117,7 +117,7 @@
             class="ion-no-padding">
             <button class="qr-result-btn ion-text-uppercase ion-no-margin" expand="block" color="light"
               style="color:#0D7DFC; z-index: 100;">
-              <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{ 'UPDATE' | translate }}
+              <ion-icon class="downloadicon" name="arrow-down"></ion-icon>&nbsp;{{ 'UPDATE' | translate }}
             </button>
           </ion-col>
           <ion-col class="ion-no-padding" *ngIf="content.contentData?.streamingUrl">

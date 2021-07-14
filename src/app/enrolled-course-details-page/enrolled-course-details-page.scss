@@ -79,7 +79,7 @@
       padding-top: 0px !important;
   }
     .subtitle-color{
-        color: map-get($colors, granite_gray);
+        color: var(--app-gray)
     }
     .enrolled-course-container {
       &.sticky {
@@ -348,7 +348,7 @@
   }
   .card-text{
     height: 18px;
-    width: 63px;
+    width: auto;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
     font-size: 13px !important;
@@ -358,6 +358,7 @@
   .card-button{
       background-color: transparent !important;
       outline: none;
+      padding: 0px 16px;
   }
   .padding-bottom-6{
     padding-bottom: 6px;
@@ -460,6 +461,7 @@ ion-segment-button{
 
 .card-box-shadow {
   box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
+  margin: 0 0 1rem 0 !important
 }
 
 .animation-card{
@@ -574,5 +576,31 @@ ion-radio{
 .data-share-header{
   margin-left: 2px;
 }
+.timer-info{
+  text-align: center;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: indianred;
+  padding: 0 0 10px;
+}
+.data-list{
+  background: unset !important;
+}
+.list-info{
+margin-top: -13px; opacity: 1;
+}
+.consent-arrow{
+  float: right
+}
 
-
+.course-details{
+  ion-card-title{
+    strong{
+      color: var(--app-medium-gray);
+    }
+  }
+  p{
+    color: var(--app-gray);
+  }
+}

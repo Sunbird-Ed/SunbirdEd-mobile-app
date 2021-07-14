@@ -40,6 +40,9 @@ export const mockProfileData = {
     email: 'xyz@gmail.com',
     recoveryEmail: 'abc@gmail.com',
     recoveryPhone: '987654',
+    profileUserType: {
+        type: 'teacher'
+    },
     declarations: [{
         orgId: 'sample_org_id',
         persona: 'sample_persona',
@@ -50,7 +53,12 @@ export const mockProfileData = {
         errorType: 'sample_,error_type',
     }, {
         orgId: 'sample_org_id2'
-    }]
+    }],
+    userLocations: [ 'State', 'District', 'Block', 'Cluster' ],
+    framework: {
+        medium: ['English', 'Bengali'],
+        board: ['CBSE'],
+    }
 };
 
 export const mockFormData =  [

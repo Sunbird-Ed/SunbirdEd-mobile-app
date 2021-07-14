@@ -1,0 +1,31 @@
+<div *ngIf="interface == 'simple'">
+  <ion-icon
+    name="ellipsis-vertical-outline"
+    color="primary"
+    (click)="openPopupMenu($event)"
+    *ngIf="!showOptions"
+    style="font-size: 20px"
+  ></ion-icon>
+
+  <ion-list *ngIf="showOptions">
+    <ion-item button (click)="download(true)"> {{ 'FRMELEMNTS_LBL_SHARE' | translate }}</ion-item>
+    <ion-item button (click)="download()">{{ 'FRMELEMNTS_LBL_DOWNLOAD' | translate }}</ion-item>
+  </ion-list>
+</div>
+
+<!-- Fab button round UI ,pass interface= fab-->
+<div *ngIf="interface == 'fab'">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button color="medium" (click)="download('share')">
+        <ion-icon name="share"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="medium" (click)="download()">
+        <ion-icon name="download"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</div>

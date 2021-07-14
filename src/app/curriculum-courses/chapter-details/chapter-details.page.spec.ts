@@ -10,7 +10,8 @@ import {
     CourseService, DownloadService,
     EventsBusService, ContentService, TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -866,7 +867,6 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.subscribeUtilityEvents();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
                 expect(chapterDetailsPage.updatedCourseCardData).toStrictEqual(
@@ -1516,7 +1516,7 @@ describe('ChapterDetailsPage', () => {
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
                             telemetryObject: new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
-                            upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
+                            upcommingBatches: []
                         }
                     });
                 done();
@@ -1535,7 +1535,7 @@ describe('ChapterDetailsPage', () => {
                 isNetworkAvailable: true
             };
             chapterDetailsPage.batches = [];
-            mockCommonUtilService.showToast = jest.fn();
+            // mockCommonUtilService.showToast = jest.fn();
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
@@ -1543,7 +1543,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBe(0);
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
                 expect(dismissFn).toBeTruthy();
                 done();
             }, 0);
@@ -1782,8 +1782,7 @@ describe('ChapterDetailsPage', () => {
             });
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
-
+            mockRouter.navigate = jest.fn();
             // act
             chapterDetailsPage.promptToLogin(batchdetail);
 
@@ -1809,7 +1808,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
                     PreferenceKey.COURSE_DATA_KEY, JSON.stringify(chapterDetailsPage.courseContentData));
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });

@@ -290,6 +290,13 @@
 
   .training-2 {
     width: 20%;
+    .sb-btn-tile {
+      margin: 0.5rem 0 !important;
+    }
+  }
+
+  .batch-detail {
+    color: var(--app-primary);
   }
 
   .flex-nowrap {
@@ -405,6 +412,27 @@
     .declared-message{
       color: map-get($colors, black);
     }
+  }
+  .preference-info {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .framework-block {
+    border-style: double;
+    margin-top: 8px;
+    border-radius: 1rem;
+    background-color: aliceblue;
+    border-color: aliceblue;
+    padding-top: 12px;
+  }
+  .location-mapping-block {
+    border-style: double;
+    border-radius: 1rem;
+    background-color: aliceblue;
+    border-color: aliceblue;
+    padding-top: 12px;
   }
 
 }

@@ -1,10 +1,22 @@
 @import "src/assets/styles/_variables.scss";
+@import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile.scss';
+
 html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
+  --app-primary-medium:#007AFF;
+  --app-primary-light-2:#94CCF5;
+  --app-primary-light:#C6E7FF;
   --app-primary-background:#E9E8D9;
-  --app-secondary-background:#F2F2EA;
   --app-primary-header:#FFD954;
+  --app-primary-header-light:#FFE487;
+  --app-secondary-background:#F2F2EA;
+  --app-tertiary:#6236FF;
+  --app-tertiary-light:#E0E1FD;
+  --app-tertiary-background:#F3F7FB;
+  --app-quaternary-medium: #FF794A;
+  --app-quaternary-light: #FDF0E4;
+
   --joyful-light-yellow:#F9FFBE; // take it out
   --joyful-light-blue:#DAECFF; // take it out
 
@@ -12,14 +24,15 @@ html[data-theme="JOYFUL"]{
   --app-black:#000000; // remove
   --app-dark-gray:#222222;
   --app-gray:#333333;
+  --app-medium-gray:#666666;
   --app-light-gray:#999999;
-  --app-brown:#4F2C0D;
+  --app-lighter-gray:#cccccc;
 
+  --app-brown:#4F2C0D;
   --app-green:#008840;
   --app-light-green:#BFE1CF; // take it out
 
   --app-shadow:rgba(0,0,0,0.1);
-
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
@@ -57,6 +70,7 @@ html[data-theme="JOYFUL"]{
   button{
     border-radius: 20px !important;
     color: var(--app-white) !important;
+    // background-color: var(--app-primary) !important;
   }
 
   input, textarea, ion-input, ion-textarea {
@@ -112,6 +126,10 @@ html[data-theme="JOYFUL"]{
         background-color: var(--app-primary) !important;
       }
     }
+    button {
+      background-color: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
   }
 
   ion-card{
@@ -147,6 +165,7 @@ html[data-theme="JOYFUL"]{
     }
     .alert-tappable {
       box-shadow: none !important;
+      background-color: transparent !important;
     }
   }
 
@@ -163,17 +182,20 @@ html[data-theme="JOYFUL"]{
     border-radius: 20px !important;
     background-color: var(--app-primary) !important;
     color: var(--app-white) !important;
-
   }
 
-  .sb-btn-outline-secondary{  
+  .sb-btn-primary-outline{
+    color: var(--app-primary) !important;
+    background-color: var(--app-white) !important;
+  }
+
+  .sb-btn-outline-secondary{
     background-color: var(--app-white) !important;
     color: var(--app-primary) !important;
   }
 
   .sb--card{
     box-shadow: var(--block-style-shadow) !important;
-    border-radius: 1rem !important;
   }
 
   .sb--card__title{
@@ -185,7 +207,7 @@ html[data-theme="JOYFUL"]{
   }
 
   .sb--card--course{
-    margin: 0 0 1rem 0 !important;
+    border-radius: 1rem !important;
   }
 
   sb-course-cards-hlist, sb-library-cards-stack{
@@ -199,7 +221,7 @@ html[data-theme="JOYFUL"]{
       border: none !important;
     }
     .sb--card--container{
-      margin: 0 1rem 0 0 !important;
+      margin: 2px 1rem 10px 10px !important;
     }
   }
 
@@ -212,30 +234,16 @@ html[data-theme="JOYFUL"]{
     .body{
       box-shadow: none !important;
     }
-    sb-library-card:first-child {
-      .sb--card{
-        border-radius: 1rem 1rem 0 0 !important;
-      }
-    }
-    sb-library-card:last-child {
-      .sb--card{
-        border-radius: 0 0 1rem 1rem !important;
-      }
-    }
-    sb-library-card:first-child:last-child {
-      .sb--card{
-        border-radius: 1rem !important;
-      }
-    }
-    sb-library-card:not(:first-child):not(:last-child){
-      .sb--card{
-        border-radius: 0 !important;
-      }
-    }
     .sbbtn{
-      border-radius: 0 0 16px 16px !important;
-      background-color: var(--app-secondary-background) !important;
-      color: var(--app-gray) !important;
+      border-radius: 3rem !important;
+      background-color: transparent !important;
+      color: var(--app-primary) !important;
+      border: 1px solid var(--app-primary-light-2) !important;
+      margin: 2%;
+      margin-bottom: 0;
+      width: 96% !important;
+      padding: 0.75rem !important;
+      box-shadow: none !important;
     }
   }
 
@@ -320,7 +328,7 @@ html[data-theme="JOYFUL"]{
     }
 
     .qr-btn{
-      background-color: var(--app-primary) !important;
+      background-color: var(--app-white) !important;
     }
 
     .board-btn-text{
@@ -450,6 +458,7 @@ html[data-theme="JOYFUL"]{
       background: transparent !important;
       sb-course-cards-hlist > .layout-course > .header > .title{
         color: var(--app-gray) !important;
+        padding-left: 1rem !important;
       }
     }
   }
@@ -473,7 +482,9 @@ html[data-theme="JOYFUL"]{
     }
     .sign-in-block{
       box-shadow: 0 20px 40px -10px #D8D8D8 !important;
-      border-radius: 12px !important;
+      ion-button{
+        --border-radius: 100px !important;
+      }
     }
 
     ion-card{
@@ -489,6 +500,7 @@ html[data-theme="JOYFUL"]{
     .enrolled-course-card-button{
       background-color: var(--app-primary) !important;
       border-radius: 50px !important;
+      margin: 1rem 0 1rem !important;
     }
     .view-credits{
       strong{
@@ -515,6 +527,12 @@ html[data-theme="JOYFUL"]{
     }
     .sb-course-complete-container, .sb-batch-end-container{
       border-radius: 1rem;
+    }
+
+    .card-content-bottom-0 {
+      .segment-button-has-label-only {
+        color: var(--app-primary) !important;
+      }
     }
   }
 
@@ -648,10 +666,14 @@ html[data-theme="JOYFUL"]{
         background: var(--app-secondary-background) !important;
         .sb-pills-container{
           .pill{
+            min-width: 5rem;
             box-shadow: var(--button-style-shadow) !important;
             color: var(--app-dark-gray) !important;
             .img-align{
               margin-top: 0 !important;
+            }
+            .allign-middle{
+              width: 100%;
             }
           }
           .pill.active{
@@ -666,8 +688,10 @@ html[data-theme="JOYFUL"]{
 
     .textbook-accordian{
       background-color: transparent;
+      padding: 0 0.5rem;
       sb-accordion-header{
         .sbaccordion__panel-header{
+          border: none !important;
           background-color: var(--app-secondary-background) !important;
           box-shadow: var(--block-style-shadow) !important;
         }
@@ -684,18 +708,30 @@ html[data-theme="JOYFUL"]{
       }
       sb-accordion-body{
         .sbaccordion__panel-content{
+          border: none !important;
           background-color: var(--app-secondary-background) !important;
           border-radius: 0 0 1rem 1rem;
+          padding: 0.5rem !important;
+        }
+        .sbaccordion__panel-content > div{
+          background-color: var(--app-white);
+          padding: 0.5rem;
+          border-radius: 1rem;
+          box-shadow: var(--button-style-shadow);
         }
       }
       sb-toc-card{
         .sbchapter__item{
-          border-radius: 1rem;
-          border-color: var(--app-white);
-          box-shadow: var(--block-style-shadow);
+          border-radius: 5rem;
+          box-shadow: none;
+          border: 1px solid var(--app-primary-background);
           .d-inline-flex{
             align-items: center;
           }
+        }
+        .sbchapter__item.sbchapter__item--active{
+          background-color: var(--app-quaternary-light);
+          border-color: var(--app-quaternary-medium);
         }
         .sbchapter__img{
           border-radius: 0.5rem;
@@ -709,6 +745,7 @@ html[data-theme="JOYFUL"]{
       }
       .sbchapter__play__btn{
         color: var(--app-primary) !important;
+        margin-left: auto;
       }
     }
 
@@ -750,59 +787,29 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-  // tab
-  ion-tab-bar{
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-  }
-  ion-tab-button {
-    --color-selected: #{$blue};
-    background: transparent;
 
-    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/ic_courses1_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/ic_library_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/ic_profile_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/ic_download_joyful.svg);
-    }
-  }
-  ion-tab-button.tab-selected {
-    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/ic_courses_selected_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/ic_library_selected_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/ic_profile_selected_joyful.svg);
-    }
-    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/ic_download_selected_joyful.svg);
-    }
-  }
   // header
   ion-header::after{
     background-image: none;
   }
-  .ui-container::after {
-    content: '';
-    width: 100%;
-    height: 172px;
-    display: block;
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    border-bottom-left-radius: 20px;
-    background-color: var(--app-primary-header) !important;
-    background-image: url(/assets/imgs/header-background.svg);
-    background-repeat: no-repeat;
-    background-position: bottom center;
+  .ui-container {
+    &::part(scroll) {
+      z-index: auto;
+    }
+    &::after {
+      content: '';
+      width: 100%;
+      height: 172px;
+      display: block;
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      border-bottom-left-radius: 20px;
+      background-color: var(--app-primary-header) !important;
+      background-image: url(/assets/imgs/header-background.svg);
+      background-repeat: no-repeat;
+      background-position: bottom center;
+    }
   }
   .backgrond-div::after{
     top: -56px;
@@ -847,9 +854,6 @@ html[data-theme="JOYFUL"]{
   app-textbook-view-more{
     .sb-card-container{
       box-shadow: none !important;
-      .sb-card-loop{
-        margin-bottom: 8px;
-      }
     }
   }
 
@@ -864,9 +868,15 @@ html[data-theme="JOYFUL"]{
   }
 
   sb-toc-curriculum{
+
+    .sb-curiculum-responsive-grid{
+      padding: 0.5rem 0 1rem !important;
+    }
+
     .sb-curiculum__border{
       border-radius: 12px;
       box-shadow: var(--button-style-shadow);
+      margin: 0 0 1rem !important;
     }
     .sb-curiculum{
       border: none !important;
@@ -924,7 +934,7 @@ html[data-theme="JOYFUL"]{
         }
       }
       .multi-select-container{
-        sb-caret-down{
+        sb-caret-down, sb-caret-up{
           right: 0 !important;
         }
         ul{
@@ -935,6 +945,8 @@ html[data-theme="JOYFUL"]{
           }
         }
         .list-border{
+          position: relative;
+          padding: 0 !important;
           border: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
         }
@@ -1045,6 +1057,20 @@ html[data-theme="JOYFUL"]{
       .report-button{
         border-radius: 20px !important;
         box-shadow: var(--button-style-shadow) !important;
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        border: none !important;
+        min-width: 60vw !important;
+      }
+    }
+  }
+
+  app-user-home, app-search, app-category-list-page, app-faq-help, app-faq-report-issue {
+    ion-content:first-child {
+      --offset-top: calc(-36px) !important;
+
+      .container-focus {
+        padding-top: 20px;
       }
     }
   }
@@ -1052,11 +1078,14 @@ html[data-theme="JOYFUL"]{
   // faq-report-issue page
   app-faq-report-issue{
     .initiate-email-info-button{
-      background-color: transparent !important;
+      background-color: var(--app-white) !important;
       .submit-button{
         border-radius: 20px !important;
         background-color: var(--app-primary) !important;
         box-shadow: var(--button-style-shadow) !important;
+      }
+      .invalid-btn{
+        opacity: 0.7;
       }
     }
   }
@@ -1074,6 +1103,12 @@ html[data-theme="JOYFUL"]{
       background-color: var(--app-secondary-background);
       box-shadow: var(--block-style-shadow) !important;
     }
+  }
+  app-create-edit-group .cr-terms-container .cr-terms {
+    padding: 14px 0 !important;
+  }
+  app-group-details .gd-opts ion-icon{
+    padding: 0 !important;
   }
 
   // my-groups-popover component
@@ -1529,6 +1564,13 @@ html[data-theme="JOYFUL"]{
     }
     ion-item-sliding{
       box-shadow: var(--block-style-shadow) !important;
+      sb-notification-card{
+        .sb-notification-list{
+          box-shadow: none !important;
+          margin-bottom: 0 !important;
+          border: none !important;
+        }
+      }
     }
     .oval-wrapper{
       h4{
@@ -1538,9 +1580,135 @@ html[data-theme="JOYFUL"]{
   }
 
   .file-download__action-btns .cancel-btn{
-   color: var(--primary-color) !important;
-   font-size: .9rem !important;
-   padding: .75em 2.5rem !important;
+   padding: 0.73em 2.5em !important;
+  }
+
+  ion-picker {
+      button{
+        color: var(--app-primary) !important;
+        background-color:transparent !important;
+        box-shadow: none !important;
+      }
+  }
+  .action-sheet-container{
+    button{
+      color: var(--app-primary) !important;
+      background-color:transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  app-district-mapping{
+    .block-button-clear {
+      color: $blue !important;
+    }
+  }
+
+  // DiscussionForum
+
+  .discussion-forum {
+    .reply-btn {
+      background-color: var(--app-lighter-gray);
+    }
+    .df-reply-btn, .df-cancel-btn{
+      color:  map-get($colors, primary) !important;
+    }
+    .discussion-start-modal{
+      .discard-btn{
+        color: map-get($colors, primary) !important;
+      }
+    }
+    .openbtn{
+      color: map-get($colors, primary) !important;
+    }
+    .sb-btn-disabled{
+      background-color: map-get($colors, gray_ba) !important;
+    }
+    .sb-btn-outline-primary{
+      background: none !important;
+      border: 1px solid map-get($colors, gray_ba) !important;
+      color: map-get($colors, black) !important;
+    }
+  }
+  .df-btn-container{
+    .sb-left-icon{
+      color: map-get($colors, primary) !important;
+      background-color: map-get($colors, light_gray) !important;
+    }
+    .df-btn-close{
+      color: map-get($colors, black) !important;
+      background: var(--app-pink) !important;
+      padding: 0.5rem 1rem !important;
+    }
+  }
+  
+
+  app-search-filter{
+    sb-form{
+      sb-multiple-dropdown{
+        .input-label{
+          margin-bottom: 0.5rem;
+          font-weight: bold;
+        }
+        .multi-select-container{
+          border: 1px solid var(--app-primary-light-2);
+          border-radius: 3rem;
+          sb-caret-down{
+            right: 1rem !important;
+          }
+          ul{
+            padding-left: 1rem !important;
+          }
+          .list-border{
+            border: none !important;
+          }
+        }
+      }
+    }
+  }
+
+  app-category-list-page{
+    .filter-items{
+      --background: var(--app-white) !important;
+    }
+  }
+
+  sunbird-pdf-player .sunbird-pdf-palyer-container {
+    .sb-pdf-main-header{
+      .player-zoom-btns {
+        button{
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          color: var(--sbt-language-dropdown-bg) !important;
+        }
+      }
+    }
+  }
+
+  table.dataTable.no-footer {
+    border-radius: 1.5rem;
+  }
+
+  app-sign-in {
+    .sign-in-button {
+      margin: 1rem;
+      background-color: var(--app-white) !important;
+      width: 70%;
+      height: 3rem;
+      color: var(--app-gray) !important;
+      border-radius: 0.25rem !important;
+      position: relative;
+    }
+  }
+  ion-toolbar {
+    border-bottom-left-radius: 0 !important;
+  }
+
+  app-user-home, app-search, app-admin-home{
+    ion-content{
+      background-color: var(--app-tertiary-background);
+      --background: var(--app-tertiary-background);
+    }
   }
 
 }

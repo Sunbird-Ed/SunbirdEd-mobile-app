@@ -1,0 +1,16 @@
+@import "src/assets/styles/_variables.scss";
+
+.activity-dashboard-container{
+    padding: 8px;
+}
+.ad-timestamp-container{
+    padding: 8px;
+    color: map-get($colors, primary);
+    
+}
+.adb-timestamp{
+    color: $gray-300;
+    position: relative;
+    top: 20px;
+    padding-left: 8px;
+}

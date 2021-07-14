@@ -1,0 +1,41 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+
+.progress-outer {
+    flex: 1;
+    text-align: center;
+    color: $white;
+}
+
+.progress-inner {
+    min-height: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    // border-radius: 5px;
+}
+
+.completed {
+    border: 1px solid map-get($colors, secondary) !important;
+
+    div {
+        background-color: map-get($colors, secondary) !important;
+    }
+}
+
+.inProgress {
+    border: 1px solid $orange;
+    border-radius: 5px;
+    div {
+        background-color: $orange;
+    }
+}
+
+.textStyle {
+    font-size: 10px;
+    font-weight: 500;
+    margin-left: 5px;
+}
+.padding-top {
+    padding-top:12px; 
+}

@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
+import { ApplicationHeaderKebabMenuComponent } from './application-header/application-header-kebab-menu.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { PbHorizontalComponent } from './pb-horizontal/pb-horizontal.component';
@@ -41,7 +42,7 @@ import { ImportPopoverComponent } from './popups/import-popover/import-popover.c
 import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
@@ -58,10 +59,23 @@ import {
   ProfileNameConfirmationPopoverComponent
 } from './popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/copy-trace-id-popup.component';
+import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { DiscoverComponent } from './discover/discover.page';
+import { AccessDiscussionComponent } from './access-discussion/access-discussion.component';
+import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
+import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
+import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
+import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
+import { ContentViewerComponent } from './content-viewer/content-viewer.component';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import {DashletModule} from '@project-sunbird/sb-dashlet'
 
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
@@ -107,7 +121,17 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent,
+    AccessDiscussionComponent,
+    JoyfulThemePopupComponent,
+    ShowVendorAppsComponent,
+    JoyfulThemePopupComponent,
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent,
+    ContentViewerComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,
@@ -118,10 +142,13 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     PipesModule,
     CommonConsumptionModule,
     IonicRatingModule,
+    SunbirdVideoPlayerModule,
+    DashletModule,
     TranslateModule.forChild(),
   ],
   entryComponents: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
@@ -157,10 +184,18 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     ConsentPiiPopupComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent,
+    JoyfulThemePopupComponent,
+    ShowVendorAppsComponent,
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent,
+    ContentViewerComponent
   ],
   exports: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
@@ -205,8 +240,17 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent,
+    JoyfulThemePopupComponent,
+    AccessDiscussionComponent,
+    ShowVendorAppsComponent,
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent,
+    ContentViewerComponent,
+    DashboardComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
 })
 export class ComponentsModule { }

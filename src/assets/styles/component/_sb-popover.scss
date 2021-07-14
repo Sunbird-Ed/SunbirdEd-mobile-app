@@ -80,7 +80,7 @@
 
   //sb popover content
   .sb-popover-container {
-    text-align: center;
+    text-align: left;
 
     .sb-popover-items {
       padding: ($base-block-space * 2);
@@ -102,7 +102,7 @@
             color: $gray-200;
             font-size: ($font-size-base - 2);
             line-height: 20px;
-            text-align: center;
+            text-align: left;
             @include padding(($base-block-space * 2), 0, 0, 0);
           }
         }

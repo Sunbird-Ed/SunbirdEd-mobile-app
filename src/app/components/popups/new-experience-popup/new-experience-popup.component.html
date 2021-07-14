@@ -1,0 +1,20 @@
+<div>
+    <div class="header-info">
+        <div class="close-icon-info">
+            <img src="assets/imgs/close.png" alt="close-icon" (click)="closePopover()">
+        </div>
+        <h4 class="theme-header-info">{{'FRMELEMNTS_LBL_NEW_EXPERIENCE_POPUP_HEADING' | translate: {'app_name': appName} }}</h4>
+        <p class="learning-info">{{'FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT' | translate}}</p>
+        <img src="./assets/imgs/ic_switchNewExperience.svg">
+    </div>
+    <div>
+        <div>
+            <p class="chng-theme-text"><span class="sb-color-warning">*</span>{{'FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT' | translate: {'app_name': appName} }}</p>
+        </div>
+            <div class="btn-info">
+                <button class="cancel_info" (click)="closePopover()"><span>{{'CANCEL' | translate}}</span></button>
+                <button class="letsgo-info" (click)="switchToNewTheme()"><span>{{'FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE' | translate | uppercase}}</span>
+                </button>
+            </div>
+    </div>
+</div>

@@ -8,7 +8,8 @@ import {
     GetSuggestedFrameworksRequest
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, AlertController } from '@ionic/angular';
+import { Platform, AlertController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
@@ -26,6 +27,7 @@ import { Location } from '@angular/common';
 import { PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -74,6 +76,7 @@ describe('ProfileSettingsPage', () => {
     const mockProfileHandler: Partial<ProfileHandler> = {
         getSupportedProfileAttributes: jest.fn
     };
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {}
 
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
@@ -96,7 +99,8 @@ describe('ProfileSettingsPage', () => {
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 

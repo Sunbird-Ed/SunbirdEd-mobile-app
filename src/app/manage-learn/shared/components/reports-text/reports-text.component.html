@@ -1,0 +1,16 @@
+<ion-item-group class="text-container" text-wrap>
+  <ion-item-divider color="light">
+    <h4 *ngIf="questionNumber">{{ questionNumber+' )'}} {{data?.question}}</h4>
+    <h4 *ngIf="!questionNumber">Responses</h4>
+  </ion-item-divider>
+  <ion-item *ngFor="let answer of data?.answers"> {{ (data?.resposeType === 'date' && answer) ? (answer|
+    date:'medium':'IST') : answer}}</ion-item>
+
+  <!-- to show all answer in feedback survey report -->
+  <div *ngIf="isFeedBackSurvey">
+    <ion-col *ngIf="data?.count>10&& data?.answers?.length<data?.count">
+      <small padding class="pull-right sb-color-red-400" (click)="getAllResponse(data)">{{'FRMELEMNTS_BTN_VIEW_ALL_RESPONSES' |
+        translate}}</small>
+    </ion-col>
+  </div>
+</ion-item-group>

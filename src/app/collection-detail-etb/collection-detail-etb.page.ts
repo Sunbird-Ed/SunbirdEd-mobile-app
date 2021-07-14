@@ -1,4 +1,4 @@
-import { TextbookTocService } from './textbook-toc-service';
+import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -9,9 +9,20 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import isObject from 'lodash/isObject';
+import { Router } from '@angular/router';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { Events, IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
+import { IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption-v8';
+import isObject from 'lodash/isObject';
+import { Observable, Subscription } from 'rxjs';
+import { share } from 'rxjs/operators';
 import {
   Content,
   ContentAccess,
@@ -41,32 +52,17 @@ import {
   TelemetryErrorCode,
   TelemetryObject
 } from 'sunbird-sdk';
-import {
-  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID, CorReleationDataType
-} from '../../services/telemetry-constants';
-import { Subscription, Observable } from 'rxjs';
 import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
   TelemetryGeneratorService
 } from '../../services';
-import { Location } from '@angular/common';
-
-import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-
-import {
-  ConfirmAlertComponent, CollectionChildComponent
-} from '../components';
-import { Router } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
-import { share } from 'rxjs/operators';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { IButtonConfig, TocCardType, IAccordianConfig, ExpandMode, ExpandBehavior } from '@project-sunbird/common-consumption';
+import { CorReleationDataType, Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from '../../services/telemetry-constants';
+import { CollectionChildComponent, ConfirmAlertComponent } from '../components';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { TextbookTocService } from './textbook-toc-service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -246,9 +242,9 @@ export class CollectionDetailEtbPage implements OnInit {
   currentFilter = 'ALL';
   localImage = '';
   appName: any;
-  @ViewChild(iContent) ionContent: iContent;
-  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
-  @ViewChild('collectionChildComp') collectionChildComp: CollectionChildComponent;
+  @ViewChild(iContent, { static: false }) ionContent: iContent;
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild('collectionChildComp', { static: false }) collectionChildComp: CollectionChildComponent;
   private eventSubscription: Subscription;
 
   showDownload: boolean;
@@ -343,6 +339,11 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
+    window['segmentation'].SBTagService.pushTag(
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+      TagPrefixConstants.CONTENT_ID,
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+    );
   }
 
   ngOnInit() {
@@ -1381,7 +1382,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
     const corRelationData = {
-      id: event.rollup[0],
+      id: (event && event.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 
@@ -1392,7 +1393,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   playButtonClick(event) {
     const corRelationData = {
-      id: event.rollup[0],
+      id: (event && event.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 

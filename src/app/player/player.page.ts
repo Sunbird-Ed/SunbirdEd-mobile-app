@@ -3,11 +3,12 @@ import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
-import { Platform, AlertController, Events, PopoverController } from '@ionic/angular';
+import { Platform, AlertController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ShareItemType } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {
@@ -19,7 +20,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk
+  ErrorType, SunbirdSdk, ProfileService, ContentService
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -27,6 +28,7 @@ import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.serv
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 
 declare const cordova;
 
@@ -46,16 +48,19 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
-  loadPdfPlayer = false;
   playerConfig: any;
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
+  nextContentToBePlayed: Content;
+  playerType: string = 'sunbird-old-player';
 
 
-  @ViewChild('preview') previewElement: ElementRef;
+  @ViewChild('preview', { static: false }) previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -72,7 +77,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private downloadPdfService: DownloadPdfService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private printPdfService: PrintPdfService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -93,33 +99,34 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
-    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig &&
-      this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
-      this.loadPdfPlayer = true;
-      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
-      if (this.config['metadata'].isAvailableLocally) {
-        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
-      }
-      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
-      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
-      this.config['metadata'] = this.config['metadata'].contentData;
-      this.config['data'] = {};
-      this.config['config'] = {
-        sideMenu: {
-          showShare: true,
-          showDownload: true,
-          showReplay: false,
-          showExit: true,
-        }
-      };
-      this.config['context'].dispatcher = {
-        dispatch: function (event) {
-          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-            (res) => console.log('response after telemetry', res),
-          );
-        }
-      };
+    if(this.config['metadata'].hierarchyInfo) {
+      await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
+      this.config = await this.getNewPlayerConfiguration();
+      this.playerType = 'sunbird-pdf-player'
+    } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
+      this.config = await this.getNewPlayerConfiguration();
+      this.playerType = 'sunbird-epub-player'
+    } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
+      this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showDownload = false;
+      this.config['config'].sideMenu.showPrint = false;
+       this.playerType = 'sunbird-quml-player';
+    } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showPrint = false;
+       this.playerType = 'sunbird-video-player';
+    } 
+    this.config['context'].dispatcher = {
+      dispatch: function (event) {
+        SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+          (res) => console.log('response after telemetry', res),
+        );
+      }
+    };
+
     this.pauseSubscription = this.platform.pause.subscribe(() => {
       const iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
@@ -128,7 +135,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
-    if (!this.loadPdfPlayer) {
+    if (this.playerType === 'sunbird-old-player') {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
       this.config['uid'] = this.config['context'].actor.id;
@@ -192,12 +199,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
-      if (!activeAlert) {
-        this.showConfirm();
-      }
-      if (this.loadPdfPlayer) {
+      if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] !== "application/vnd.sunbird.questionset") {
         this.location.back();
-      }
+      } else if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+        this.showConfirm();
+      } else if (!activeAlert && this.playerType === 'sunbird-old-player' ) {
+        this.showConfirm();
+      } 
     });
 
     this.events.subscribe('endGenieCanvas', (res) => {
@@ -209,7 +217,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.statusBar.show();
     this.screenOrientation.unlock();
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
@@ -231,45 +239,105 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-  async pdfPlayerEvents(event) {
-    if (event.edata['type'] === 'EXIT') {
-      this.loadPdfPlayer = false;
-      this.location.back();
-    } else if (event.edata['type'] === 'SHARE') {
-      const popover = await this.popoverCtrl.create({
-        component: SbSharePopupComponent,
-        componentProps: {
-          content: this.content,
-          corRelationList: this.corRelationList,
-          pageId: PageId.PLAYER_PAGE,
-          shareFromPlayer: true,
-          shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
-        },
-        cssClass: 'sb-popover',
-      });
-      await popover.present();
-    } else if (event.edata['type'] === 'DOWNLOAD') {
-      if (this.content.contentData.downloadUrl) {
-        this.downloadPdfService.downloadPdf(this.content).then((res) => {
-          this.commonUtilService.showToast('PDF_DOWNLOADED');
-        }).catch((error) => {
-          if (error.reason === 'device-permission-denied') {
-            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-          } else if (error.reason === 'user-permission-denied') {
-            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-          } else if (error.reason === 'download-failed') {
-            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-          }
+  async playerEvents(event) {
+    if (event.edata) {
+      if (event.edata['type'] === 'EXIT') {
+        if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+          this.showConfirm()
+        } else {
+          this.location.back();
+        }
+      } else if (event.edata['type'] === 'SHARE') {
+        const popover = await this.popoverCtrl.create({
+          component: SbSharePopupComponent,
+          componentProps: {
+            content: this.content,
+            corRelationList: this.corRelationList,
+            pageId: PageId.PLAYER_PAGE,
+            shareFromPlayer: true,
+            shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+          },
+          cssClass: 'sb-popover',
         });
-      } else {
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        await popover.present();
+      } else if (event.edata['type'] === 'DOWNLOAD') {
+        if (this.content.contentData.downloadUrl) {
+          this.downloadPdfService.downloadPdf(this.content).then((res) => {
+            this.commonUtilService.showToast('CONTENT_DOWNLOADED');
+          }).catch((error) => {
+            if (error.reason === 'device-permission-denied') {
+              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+            } else if (error.reason === 'user-permission-denied') {
+              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+            } else if (error.reason === 'download-failed') {
+              this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+            }
+          });
+        } else {
+          this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        }
+      } else if (event.edata['type'] === 'PRINT') {
+        this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
+      } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
+           this.playNextContent();
+      } else if (event.edata.type === 'compatibility-error') {
+        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+          () => {},
+          () => {}
+        );
       }
-    } else if (event.edata.type === 'compatibility-error') {
-      cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-        () => {},
-        () => {}
-    );
     }
+  }
+
+  async getNewPlayerConfiguration() {
+      const nextContent = this.config['metadata'].hierarchyInfo ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+      if (this.config['metadata'].isAvailableLocally) {
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+      }
+      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
+      this.config['metadata'] = this.config['metadata'].contentData;
+      this.config['data'] = {};
+      this.config['config'] = {
+        nextContent,
+        sideMenu: {
+          showShare: true,
+          showDownload: true,
+          showReplay: false,
+          showExit: true,
+          showPrint: true
+        }
+      }
+
+      if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
+       const questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+      }
+      const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      this.config['context'].userData = {
+        firstName:  profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
+        lastName: ''
+      };
+      return this.config;
+  }
+
+  getNextContent(hierarchyInfo, identifier) {
+    return new Promise((resolve) => {
+      this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
+        this.nextContentToBePlayed = res;
+        resolve(res);
+      })
+    })
+  }
+
+  playNextContent(){
+    const content = this.nextContentToBePlayed;
+    this.events.publish(EventTopics.NEXT_CONTENT, {
+      content,
+      course: this.course
+    });
+    this.location.back();
   }
 
   /**
@@ -347,11 +415,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
    * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
    */
   async showConfirm() {
-    const type = (this.previewElement.nativeElement.contentWindow['Renderer']
-      && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
-    const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
-    this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-      'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    let type, stageId;
+    if (this.playerType === 'sunbird-old-player') {
+      type = (this.previewElement.nativeElement.contentWindow['Renderer']
+        && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
+      stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
+      this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+        'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    }
 
     const alert = await this.alertCtrl.create({
       header: this.commonUtilService.translateMessage('CONFIRM'),
@@ -367,13 +438,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         {
           text: this.commonUtilService.translateMessage('OKAY'),
-          handler: () => {
-            this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-              'END', 'ALERT_OK', 'EXIT', { type, stageId });
-            this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
-            this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
-
-            this.closeIframe();
+          handler: async() => {
+            if (this.playerType === 'sunbird-old-player') {
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+                'END', 'ALERT_OK', 'EXIT', { type, stageId });
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
+              this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
+              this.closeIframe();
+            }
+            if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+                this.location.back();
+            }
           }
         }
       ],
@@ -436,7 +511,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.courseService.updateContentState(updateContentStateRequest).subscribe();
   }
 
-  pdfTelemetryEvents(event) {}
+  playerTelemetryEvents(event) {
+    SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+      (res) => console.log('response after telemetry', res),
+    );
+  }
 
   private isJSON(input): boolean {
     try {
@@ -445,5 +524,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } catch (e) {
       return false;
     }
+  }
+
+  checkIsPlayerEnabled(config , playerType) {
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
   }
 }

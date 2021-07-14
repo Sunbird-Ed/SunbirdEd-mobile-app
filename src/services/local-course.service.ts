@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData, ProfileService
+  NetworkError, GetContentStateRequest, ContentStateResponse
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -14,7 +14,7 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
@@ -23,6 +23,8 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from './consent-service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { FormConstants } from '@app/app/form.constants';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;
@@ -33,6 +35,7 @@ export interface ConsentPopoverActionsDelegate {
 @Injectable()
 export class LocalCourseService {
   private userId: string;
+  private isConsentPopupDisplayed: boolean;
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -48,7 +51,8 @@ export class LocalCourseService {
     private sbProgressLoader: SbProgressLoader,
     private datePipe: DatePipe,
     private categoryKeyTranslator: CategoryKeyTranslator,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    public formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
   }
 
@@ -68,15 +72,20 @@ export class LocalCourseService {
             enrollCourse.corRelationList
           );
           if (enrollCourse.userConsent === UserConsent.YES) {
-          if (consentPopoverActionsDelegate) {
-            consentPopoverActionsDelegate.onConsentPopoverShow();
-          }
-          await this.sbProgressLoader.hide({id: 'login'});
-          await this.consentService.showConsentPopup(enrollCourse);
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverShow();
+            }
+            await this.sbProgressLoader.hide({ id: 'login' });
+            this.isConsentPopupDisplayed = true;
+            if (!this.isMinor()) {
+              await this.consentService.showConsentPopup(enrollCourse);
+            }
+           // this.preferences.putString(PreferenceKey.IS_CONSENT_POPUP_DISPLAY, 'true').toPromise();
 
-          if (consentPopoverActionsDelegate) {
-            consentPopoverActionsDelegate.onConsentPopoverDismiss();
-          }
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverDismiss();
+              this.isConsentPopupDisplayed = false;
+            }
           }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -101,8 +110,10 @@ export class LocalCourseService {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
             if (enrollCourse.userConsent === UserConsent.YES) {
-              await this.sbProgressLoader.hide({id: 'login'});
-              await this.consentService.getConsent(enrollCourse);
+              await this.sbProgressLoader.hide({ id: 'login' });
+              if (!this.isMinor()) {
+                await this.consentService.getConsent(enrollCourse);
+              }
             }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
@@ -152,10 +163,16 @@ export class LocalCourseService {
     if (batchDetails && courseDetail) {
       this.userId = await this.appGlobalService.getActiveProfileUid();
 
-      if (JSON.parse(courseDetail).createdBy !== this.userId && isLoggedInUser) {
-        this.enrollBatchAfterlogin(JSON.parse(batchDetails), JSON.parse(courseDetail));
+      const batch = JSON.parse(batchDetails);
+      const course = JSON.parse(courseDetail);
+      if (course.createdBy !== this.userId && isLoggedInUser) {
+        this.enrollBatchAfterlogin(batch, course);
       } else {
-        this.events.publish('return_course');
+        this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+          batchId: batch.id,
+          courseId: batch.courseId
+        });
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
       }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
     }
@@ -256,7 +273,7 @@ export class LocalCourseService {
         userId: this.appGlobalService.getUserId(),
         courseId: courseContext.courseId,
         contentIds: courseContext.leafNodeIds,
-        returnRefreshedContentStates: true,
+        returnRefreshedContentStates: false,
         batchId: courseContext.batchId,
         fields: ['progress', 'score']
       };
@@ -273,29 +290,31 @@ export class LocalCourseService {
           progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
 
         }
-        resolve({progress, contentStatusData});
+        resolve({ progress, contentStatusData });
       } catch (err) {
-        resolve({progress});
+        resolve({ progress });
       }
     });
   }
 
   isEnrollable(batches, course) {
+    if (!batches || !batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      return false;
+    }
+
     let latestBatch = batches[0];
     const showEnrollmentEndedMessage = () => {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
-        null,
-        null,
-        null,
-        null,
+        null, null, null, null,
         this.datePipe.transform(latestBatch.enrollmentEndDate)
       );
     };
     const showFutureBatchMessage = () => {
       this.commonUtilService.showToast(
         this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
-        {'batch_start_date': this.datePipe.transform(latestBatch.startDate)}
+          { 'batch_start_date': this.datePipe.transform(latestBatch.startDate) }
         )
       );
     };
@@ -305,7 +324,7 @@ export class LocalCourseService {
         return true;
       }
       if (batches[i].startDate &&
-          (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
+        (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
         latestBatch = batches[i];
       }
     }
@@ -324,24 +343,56 @@ export class LocalCourseService {
     return true;
   }
 
-  fetchAssessmentStatus(contentStatusData, identifier) {
+  fetchAssessmentStatus(contentStatusData, content) {
+    let maxAttempts = content.contentData ? content.contentData.maxAttempts : content.maxAttempts;
+    if (!maxAttempts) {
+      maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
+    }
     const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
       isLastAttempt: false,
       isContentDisabled: false
     };
     if (contentStatusData && contentStatusData.contentList) {
       contentStatusData.contentList.forEach((item) => {
-        if (item.contentId === identifier && item.score) {
-          if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
+        if (item.contentId === content.identifier && item.score) {
+          if (maxAttempts - item.score.length === 1) {
             assesmentsStatus.isLastAttempt = true;
           }
-          if (AssessmentConstant.MAX_ATTEMPTS <= item.score.length) {
+          if (maxAttempts <= item.score.length) {
             assesmentsStatus.isContentDisabled = true;
           }
         }
       });
     }
     return assesmentsStatus;
+  }
+
+  async getTimeRemaining(endDate) {
+    const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+    const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
+        .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
+    const today = window.dayjs();
+    const enrollmentEndDate = (window.dayjs(endDate)).add(1, 'days');
+    if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
+      return undefined;
+    }
+    if (today.diff(endDate) > 0) {
+      return undefined;
+    }
+    const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
+    return duration.format('D [day(s)] H [h] m [m]');
+  }
+
+  isConsentPopupVisible(): boolean {
+    return this.isConsentPopupDisplayed;
+  }
+
+  setConsentPopupVisibility(status: boolean) {
+    this.isConsentPopupDisplayed = status;
+  }
+
+  private isMinor(): boolean {
+    return this.appGlobalService.getCurrentUser().serverProfile.isMinor;
   }
 
 }

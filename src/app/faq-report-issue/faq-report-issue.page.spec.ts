@@ -66,7 +66,8 @@ describe('FaqReportIssuePage', () => {
     const mockTelemetryService: Partial<TelemetryService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
-        generateInteractTelemetry: jest.fn()
+        generateInteractTelemetry: jest.fn(),
+        generateLogEvent: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn(() => mockUserProfile),

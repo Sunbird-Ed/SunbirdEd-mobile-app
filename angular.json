@@ -40,12 +40,27 @@
               },
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
                 "output": "./assets/common-consumption"
               },
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-pdf-player/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-pdf-player-v8/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/discussions-ui-v8/assets",
+                "output": "./assets/discussion-ui"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-video-player-v8/lib/assets/",
                 "output": "/assets/"
               }
             ],
@@ -56,13 +71,22 @@
               "vendor": true
             },
             "styles": [
+              "src/assets/styles/quml-styles/quml-carousel.css",
+              "node_modules/katex/dist/katex.min.css",
+              "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
+              "node_modules/@project-sunbird/discussions-ui-v8/assets/styles/global.scss",
+              "node_modules/datatables.net-dt/css/jquery.dataTables.css",
               {
                 "input": "src/global.scss"
               }
             ],
             "scripts": [
-              "node_modules/@project-sunbird/telemetry-sdk/index.js"
+              "node_modules/@project-sunbird/telemetry-sdk/index.js",
+              "node_modules/epubjs/dist/epub.js",
+              "node_modules/katex/dist/katex.min.js",
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/datatables.net/js/jquery.dataTables.js"
             ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true
@@ -88,7 +112,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 }
               ]
             },

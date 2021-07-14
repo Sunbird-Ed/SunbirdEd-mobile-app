@@ -9,7 +9,7 @@
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines class="ion-no-padding">
-            <ion-label text-capitalize>{{ facetValue }}</ion-label>
+            <ion-label class="ion-text-capitalize">{{ facetValue }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
             </ion-checkbox>
           </ion-item>
@@ -20,7 +20,7 @@
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="12" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines class="ion-no-padding">
-            <ion-label text-capitalize>{{ facetValue }}</ion-label>
+            <ion-label class="ion-text-capitalize">{{ facetValue }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
             </ion-checkbox>
           </ion-item>
@@ -31,7 +31,7 @@
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines class="ion-no-padding">
-            <ion-label text-capitalize>{{ facetValue.orgName }}</ion-label>
+            <ion-label class="ion-text-capitalize">{{ facetValue.orgName }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue.hashTagId)"
               (ionChange)="changeValue(facetValue.hashTagId, index)"></ion-checkbox>
           </ion-item>

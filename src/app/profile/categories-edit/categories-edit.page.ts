@@ -1,7 +1,8 @@
 import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { Events, IonSelect, Platform } from '@ionic/angular';
+import { IonSelect, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -34,6 +35,7 @@ import { ExternalIdVerificationService } from '@app/services/externalid-verifica
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 
 @Component({
@@ -43,9 +45,9 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class CategoriesEditPage implements OnInit, OnDestroy {
 
-  @ViewChild('boardSelect') boardSelect: IonSelect;
-  @ViewChild('mediumSelect') mediumSelect: IonSelect;
-  @ViewChild('gradeSelect') gradeSelect: IonSelect;
+  @ViewChild('boardSelect', { static: false }) boardSelect: IonSelect;
+  @ViewChild('mediumSelect', { static: false }) mediumSelect: IonSelect;
+  @ViewChild('gradeSelect', { static: false }) gradeSelect: IonSelect;
 
   private framework: Framework;
   private formControlSubscriptions: Subscription;
@@ -138,7 +140,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private externalIdVerificationService: ExternalIdVerificationService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private sbProgressLoader: SbProgressLoader,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private segmentationTagService: SegmentationTagService
 
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -458,7 +461,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.disableSubmitButton = true;
         this.events.publish('loggedInProfile:update', req.framework);
-
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
+        await this.refreshSegmentTags();
         if (this.showOnlyMandatoryFields) {
           const reqObj: ServerProfileDetailsRequest = {
             userId: this.profile.uid,
@@ -467,10 +471,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           };
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(updatedProfile => {
-              this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
+               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+                  if (this.hasFilledLocation || isSSOUser) {
+                    if (!isSSOUser) {
+                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
+                    }
                     this.router.navigate([RouterLinks.TABS]);
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
@@ -485,6 +492,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
+                if (!isSSOUser) {
+                  this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+                }
                 this.router.navigate([RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
@@ -503,6 +513,32 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
         console.error('Unable to submit:', error);
+      });
+  }
+
+  refreshSegmentTags() {
+    const reqObj: ServerProfileDetailsRequest = {
+      userId: this.profile.uid,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER
+    };
+    this.profileService.getServerProfilesDetails(reqObj).toPromise()
+      .then(updatedProfile => {
+         // ******* Segmentation
+         var frameworkData = [];
+         Object.keys(updatedProfile.framework).forEach((key) => {
+          if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
+            frameworkData.push(updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase()));
+          }
+         });
+         window['segmentation'].SBTagService.pushTag(frameworkData, TagPrefixConstants.USER_ATRIBUTE, true);
+         let userLocation = [];
+         (updatedProfile['userLocations'] || []).forEach(element => {
+           userLocation.push({ name: element.name, code: element.code });
+         });
+         window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
+         this.segmentationTagService.evalCriteria();
       });
   }
 

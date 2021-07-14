@@ -1,0 +1,41 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.view-more {
+  margin: 20px 20px;
+}
+ion-searchbar ::ng-deep .searchbar-input{
+  border-radius: 10px;
+  border:1px solid $primary-300;
+}
+.create_header ::ng-deep .title.w-90 {
+  color:black;
+}
+.projects-labels{
+  padding-left: 25px;
+  font-weight: 600;
+  margin: 20px 0px;
+}
+
+.container {
+//   width: 100px;
+//   background-color: green;
+  overflow: hidden;
+  white-space: nowrap;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll_chip {
+    overflow: auto;
+    margin: 20px 0px;
+  }
+}
+.mg-popup-btn-icon{
+  font-size: 26px;
+  margin: auto;
+  color: $primary-800;
+}

@@ -6,7 +6,8 @@ import {
     InteractType, InteractSubtype,
     Environment, PageId, ImpressionType
 } from '../../services';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -15,7 +16,7 @@ import {
     Batch,
     EnrollCourseRequest
 } from 'sunbird-sdk';
-import { PreferenceKey, EventTopics } from '../app.constant';
+import {PreferenceKey, EventTopics, RouterLinks} from '../app.constant';
 import { of, throwError } from 'rxjs';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
@@ -24,7 +25,6 @@ describe('CourseBatchesPage', () => {
     const mockSharedPreferences: SharedPreferences = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockZone: Partial<NgZone> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockEvents: Partial<Events> = {};
@@ -59,7 +59,6 @@ describe('CourseBatchesPage', () => {
             mockSharedPreferences as SharedPreferences,
             mockAppGlobalService as AppGlobalService,
             mockPopoverCtrl as PopoverController,
-            mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockCommonUtilService as CommonUtilService,
             mockEvents as Events,
@@ -329,9 +328,8 @@ describe('CourseBatchesPage', () => {
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
-            mockLoginHandlerService.signIn = jest.fn();
             mockLocalCourseService.isEnrollable = jest.fn(() => true);
-
+            mockRouter.navigate = jest.fn();
             // act
             courseBatchesPage.enrollIntoBatch(batch);
             // assert
@@ -380,7 +378,7 @@ describe('CourseBatchesPage', () => {
                 expect(mockSharedPreferences.putString).toHaveBeenNthCalledWith(1, PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batch));
                 expect(mockSharedPreferences.putString).toHaveBeenNthCalledWith(2, PreferenceKey.COURSE_DATA_KEY, JSON.stringify({}));
                 expect(mockSharedPreferences.putString).toHaveBeenNthCalledWith(3, PreferenceKey.CDATA_KEY, JSON.stringify([]));
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });
