@@ -38,7 +38,6 @@ import {
   CorReleationDataType,
   Environment, ErrorType,
   ImpressionType, InteractSubtype, InteractType,
-  LogType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';

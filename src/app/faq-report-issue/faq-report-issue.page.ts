@@ -19,8 +19,7 @@ import {
   TelemetryService,
   TelemetrySyncStat,
   CorrelationData,
-  LogLevel,
-  LogType
+  LogLevel
 } from 'sunbird-sdk';
 import {
   Environment,
