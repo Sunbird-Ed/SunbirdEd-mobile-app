@@ -548,7 +548,6 @@ export class UtilsService {
                 data[this.profile.state][this.profile.role]
               );
               if (!allFieldsPresent) {
-                // mandatoryFields = this.getMandatoryEntities();
                 mandatoryFields ? resolve(this.profile) : resolve(null);
               } else {
                 resolve(this.profile);
