@@ -127,7 +127,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('header:setzIndexToNormal', () => {
       this.decreaseZindex = false;
     });
-    this.listenDownloads();
+    if(window['device'].platform.toLowerCase() !== "ios") {
+      this.listenDownloads();
+    }
     this.listenNotifications();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();

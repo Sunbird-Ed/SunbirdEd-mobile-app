@@ -33,7 +33,8 @@
       "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v9"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v9/*"]
+      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v9/*"],
+      "crypto": ["../node_modules/crypto-js"]
     }
   },
   "include": [

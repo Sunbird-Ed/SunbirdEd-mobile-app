@@ -198,10 +198,16 @@
     "babel-polyfill": "^6.26.0",
     "fs-extra": "^8.1.0",
     "jest": "^25.4.0",
+    "plist": "^3.0.2",
+    "properties-reader": "^2.2.0",
     "sonarqube-scanner": "^2.5.0",
+    "tiny-glob": "^0.2.9",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
     "typescript": "~3.8.3"
+  },
+  "browser": {
+    "crypto": false
   },
   "description": "An Ionic project",
   "cordova": {
