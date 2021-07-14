@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="1" id="org.sunbird.app" version="staging-2.4.0.01" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>@string/_app_name</name>
+<widget android-versionCode="1" id="staging.sunbird.app" ios-CFBundleVersion="1" version="staging-2.4.0.01" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Sunbird</name>
     <description>Sunbird mobile app</description>
     <author email="" href="">EkStep Team</author>
     <access origin="*" />
@@ -16,15 +16,15 @@
     <preference name="AndroidLaunchMode" value="singleInstance" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-    <hook src="scripts/copyGradleFiles.js" type="before_build" />
-    <hook src="scripts/copyBundledData.js" type="before_build" />
-    <hook src="scripts/application/add_application.js" type="before_run" />
-    <hook src="scripts/copyGradleFiles.js" type="before_run" />
-    <hook src="scripts/copyBundledData.js" type="before_run" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
     <platform name="android">
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
+        <hook src="scripts/copyGradleFiles.js" type="before_build" />
+        <hook src="scripts/copyBundledData.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_run" />
+        <hook src="scripts/copyBundledData.js" type="before_run" />
+        <hook src="scripts/application/add_application.js" type="before_run" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
@@ -66,6 +66,12 @@
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
     </platform>
     <platform name="ios">
+        <hook src="scripts/ios/ios.js" type="after_prepare" />
+        <preference name="WKWebViewOnly" value="true" />
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -87,18 +93,34 @@
         <icon height="58" src="resources/ios/icon/icon-small@2x.png" width="58" />
         <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87" />
         <icon height="1024" src="resources/ios/icon/icon-1024.png" width="1024" />
+        <icon height="20" src="resources/ios/icon/icon-20.png" width="20" />
+        <icon height="40" src="resources/ios/icon/icon-20@2x.png" width="40" />
+        <icon height="60" src="resources/ios/icon/icon-20@3x.png" width="60" />
+        <icon height="29" src="resources/ios/icon/icon-29.png" width="29" />
+        <icon height="58" src="resources/ios/icon/icon-29@2x.png" width="58" />
+        <icon height="87" src="resources/ios/icon/icon-29@3x.png" width="87" />
+        <icon height="48" src="resources/ios/icon/icon-24@2x.png" width="48" />
+        <icon height="55" src="resources/ios/icon/icon-27.5@2x.png" width="55" />
+        <icon height="88" src="resources/ios/icon/icon-44@2x.png" width="88" />
+        <icon height="172" src="resources/ios/icon/icon-86@2x.png" width="172" />
+        <icon height="196" src="resources/ios/icon/icon-98@2x.png" width="196" />
+        <icon height="216" src="resources/ios/icon/icon-108@2x.png" width="216" />
+        <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
+        <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
+        <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
+        <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
+        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
+        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
         <splash height="1136" src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" />
         <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
         <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
         <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
-        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
-        <splash height="2048" src="resources/ios/splash/Default-Landscape@~ipadpro.png" width="2732" />
-        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
-        <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
+        <preference name="UseSwiftLanguageVersion" value="5" />
+        <resource-file src="GoogleService-Info.plist" />
+        <splash height="2688" src="resources/ios/splash/Default-2688h~iphone.png" width="1242" />
+        <splash height="1792" src="resources/ios/splash/Default-1792h~iphone.png" width="828" />
+        <splash height="2436" src="resources/ios/splash/Default-2436h.png" width="1125" />
         <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
-        <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
-        <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
-        <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
     <content src="index.html" />

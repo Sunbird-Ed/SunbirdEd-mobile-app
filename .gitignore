@@ -42,6 +42,9 @@ UserInterfaceState.xcuserstate
 /src/assets/data/
 
 google-services.json
+GoogleService-Info.plist
 
 #sonarcloud
 .scannerwork
+
+sunbird-ios.properties

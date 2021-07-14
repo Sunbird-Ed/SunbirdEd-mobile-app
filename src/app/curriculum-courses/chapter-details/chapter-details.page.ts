@@ -168,8 +168,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.objRollup = ContentUtil.generateRollUp(this.chapter.hierarchyInfo, this.identifier);
     }
     this.generateImpressionEvent(this.chapter.identifier, this.chapter.contentType, this.chapter.contentData.pkgVersion);
-    this.trackDownloads$ = this.downloadService.trackDownloads(
-      { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
+    if(window['device'].platform.toLowerCase() !== "ios") {
+      this.trackDownloads$ = this.downloadService.trackDownloads(
+        { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
+    }
   }
 
   async ionViewWillEnter() {

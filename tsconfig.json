@@ -31,7 +31,8 @@
       "@project-sunbird/sunbird-player-sdk-v8": ["../node_modules/@project-sunbird/sunbird-video-player-v8/node_modules/@project-sunbird/sunbird-player-sdk-v8"],
       "@project-sunbird/sunbird-player-sdk-v8/*": ["../node_modules/@project-sunbird/sunbird-video-player-v8/node_modules/@project-sunbird/sunbird-player-sdk-v8/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v8"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"]
+      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"],
+      "crypto": ["../node_modules/crypto-js"]
     }
   },
   "include": [
