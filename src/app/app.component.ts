@@ -81,7 +81,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   eventSubscription: Subscription;
   isTimeAvailable = false;
   isOnBoardingCompleted: boolean;
-  // tagManagerInstance:any;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -184,8 +183,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.utils.initilizeML();
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
-      // this.tagManagerInstance = SBTagModule.instance;
-      // this.tagManagerInstance.init();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
