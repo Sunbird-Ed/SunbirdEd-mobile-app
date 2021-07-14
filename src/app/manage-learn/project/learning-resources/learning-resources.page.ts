@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,7 +24,7 @@ var environment = {
   templateUrl: './learning-resources.page.html',
   styleUrls: ['./learning-resources.page.scss'],
 })
-export class LearningResourcesPage implements OnInit {
+export class LearningResourcesPage {
   projectId;
   taskId: any;
   list;
@@ -67,7 +67,6 @@ export class LearningResourcesPage implements OnInit {
     })
   }
 
-  ngOnInit() { }
 
   ngOnDestroy() {
     if(this._networkSubscription){

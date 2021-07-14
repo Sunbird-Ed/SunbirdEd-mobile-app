@@ -83,10 +83,8 @@ export class DomainEcmLsitingComponent {
           .getLocalStorage('generalQuestions_' + this.submissionId)
           .then((successData) => {
             this.generalQuestions = successData;
-          })
-          .catch((error) => {console.error(error)});
-      })
-      .catch((error) => {});
+          });
+      });
 
     this.fetchDownloaded();
   }

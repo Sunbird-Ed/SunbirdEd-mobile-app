@@ -2,10 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AppHeaderService, CommonUtilService } from "@app/services";
 import {
   AlertController,
-  ModalController,
-  Platform,
-  PopoverController,
-  ToastController
+  ModalController
 } from "@ionic/angular";
 import { RouterLinks } from "@app/app/app.constant";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -316,8 +313,6 @@ export class ObservationDetailComponent implements OnInit {
           if (subId) {
             this.goToEcm(subId, e.name);
           }
-        })
-        .catch(error => {
         });
     }
   }

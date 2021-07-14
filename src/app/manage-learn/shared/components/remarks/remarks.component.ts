@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RemarksModalComponent } from '@app/app/manage-learn/questionnaire/remarks-modal/remarks-modal.component';
 import { ModalController } from '@ionic/angular';
 
@@ -7,13 +7,12 @@ import { ModalController } from '@ionic/angular';
   templateUrl: './remarks.component.html',
   styleUrls: ['./remarks.component.scss'],
 })
-export class RemarksComponent implements OnInit {
+export class RemarksComponent {
 
   @Input() data: any;
 
   constructor(private modal: ModalController) { }
 
-  ngOnInit() { }
 
   async openUpdateRemarks() {
     const remarks = await this.modal.create({

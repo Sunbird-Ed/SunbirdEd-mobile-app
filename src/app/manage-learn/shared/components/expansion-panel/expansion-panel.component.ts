@@ -1,16 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'expansion-panel',
   templateUrl: './expansion-panel.component.html',
   styleUrls: ['./expansion-panel.component.scss'],
 })
-export class ExpansionPanelComponent implements OnInit {
+export class ExpansionPanelComponent {
   text: string;
   @Input() datas;
   isOpenIndex;
 
   constructor() {}
 
-  ngOnInit() {}
 }

@@ -191,6 +191,7 @@ describe('DownloadManagerPage', () => {
             it('should navigate to Active downloads page and generate INTERACT Telemetry', (done) => {
                 // arrange
                 mockAppHeaderService.headerEventEmitted$ = of({ name: 'download' });
+                mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
                 // act
                 downloadManagerPage.ionViewWillEnter().then(() => {
                     // assert

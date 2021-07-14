@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
@@ -10,7 +10,6 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';

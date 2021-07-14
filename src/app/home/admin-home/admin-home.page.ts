@@ -14,7 +14,7 @@ import {
 } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
   FrameworkService,
   FrameworkDetailsRequest,
@@ -27,8 +27,7 @@ import {
   CachedItemRequestSourceFrom,
   SearchType,
   InteractType,
-  FormService,
-  FormRequest,
+  FormService
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
@@ -269,12 +268,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
         this.generateTelemetry('COURSE_TILE_CLICKED');
 
-      // this.router.navigate([RouterLinks.SEARCH], {
-      //   state: {
-      //     source: PageId.ADMIN_HOME,
-      //     preAppliedFilter: event.data[0].value.search
-      //   }
-      // });
     }
   }
 
@@ -313,20 +306,10 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   redirectToActivedownloads() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   redirectToNotifications() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.NOTIFICATION_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
