@@ -1,0 +1,13 @@
+@import "src/assets/styles/_variables.scss";
+
+.dashlet-table-container{
+    padding: 8px;
+}
+.ad-dw{
+    color: $blue;
+    font-weight: bold;
+}
+.ad-csv-btn{
+    position: relative;
+    bottom: 10px;
+}

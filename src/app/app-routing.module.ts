@@ -126,6 +126,7 @@ const routes: Routes = [
     path: RouterLinks.IMP_SUGGESTIONS,
     loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
   },
+  { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
 
 ];
 

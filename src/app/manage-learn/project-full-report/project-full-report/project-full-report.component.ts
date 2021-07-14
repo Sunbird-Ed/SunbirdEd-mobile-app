@@ -5,7 +5,7 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { ProjectReportService } from '../../core/services/project-report.service';
 import { HttpClient } from '@angular/common/http';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-full-report',
@@ -13,11 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./project-full-report.component.scss'],
 })
 export class ProjectFullReportComponent implements OnInit {
-  // reports: {
-  //   title: { text: string };
-  //   series: { name: string; data: { name: string; id: string; color: string; start: number; end: number }[] }[];
-  //   xAxis: { min: number; max: number };
-  // }[];
+ 
   reports: any;
   showCharts: boolean;
   idvalue = 'container';
@@ -37,7 +33,6 @@ export class ProjectFullReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.filter = this.reportService.filterForReport;
     try {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     } catch (error) {}
@@ -70,10 +65,6 @@ export class ProjectFullReportComponent implements OnInit {
         if (data.result) {
           this.reports = data.result;
           if (this.reports.length > 0) {
-            // setTimeout(() => {
-            //   this.showCharts = true;
-            //   this.setUpChart(this.reports[0]);
-            // }, 1000);
             this.reports.map((data) => {
               this.createChart(data);
             });

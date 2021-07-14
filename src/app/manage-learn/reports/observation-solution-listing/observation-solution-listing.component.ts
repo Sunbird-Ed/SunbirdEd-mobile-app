@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
@@ -30,19 +30,6 @@ export class ObservationSolutionListingComponent implements OnInit {
 
   ngOnInit() {
     this.getSolutions();
-    // this.router.navigate([RouterLinks.GENERIC_REPORT], {
-    //   state: {
-    //     scores: true,
-    //     observation: true,
-    //     pdf: false,
-    //     entityId: '',
-    //     entityType: '',
-    //     observationId: '',
-    //     submissionId: '',
-    //     null: null,
-    //     undefined: undefined,
-    //   },
-    // });
   }
 
   async getSolutions() {
@@ -74,30 +61,7 @@ export class ObservationSolutionListingComponent implements OnInit {
   }
 
   goToReports(solution) {
-    // if (solution.scoringSystem === 'pointsBasedScoring' || !solution.isRubricDriven) {
-    // if (!solution.criteriaLevelReport || !solution.isRubricDriven) {
-    //   const queryParams = {
-    //     queryParams: {
-    //       observationId: solution.observationId,
-    //       solutionId: solution.solutionId,
-    //       programId: solution.programId,
-    //       entityId: solution.entities[0]._id,
-    //       entityName: solution.entities[0].name,
-    //     },
-    //   };
-    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
-    // } else {
-    //   this.router.navigate([RouterLinks.GENERIC_REPORT], {
-    //     state: {
-    //       scores: true,
-    //       observation: true,
-    //       pdf: false,
-    //       entityId: solution.entities[0]._id,
-    //       entityType: solution.entityType,
-    //       observationId: solution.observationId,
-    //     },
-    //   });
-    // }
+ 
     let state = {
       scores: false,
       observation: true,

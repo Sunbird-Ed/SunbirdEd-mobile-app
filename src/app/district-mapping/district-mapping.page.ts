@@ -124,10 +124,6 @@ export class DistrictMappingPage implements OnDestroy {
     this.headerService.hideHeader();
     // await this.checkLocationAvailability();
     const correlationList: Array<CorrelationData> = [];
-    // if (this.stateName) {
-    //   correlationList.push({ id: this.stateName || '', type: CorReleationDataType.STATE });
-    //   correlationList.push({ id: this.districtName || '', type: CorReleationDataType.DISTRICT });
-    // }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
       this.getEnvironment(),
@@ -231,6 +227,7 @@ export class DistrictMappingPage implements OnDestroy {
               window.history.go(-2);
             } else {
               this.router.navigate([`/${RouterLinks.TABS}`]);
+              this.events.publish('update_header');
             }
           }
         }).catch(async () => {
@@ -243,6 +240,7 @@ export class DistrictMappingPage implements OnDestroy {
               this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.events.publish('update_header');
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
@@ -269,6 +267,7 @@ export class DistrictMappingPage implements OnDestroy {
         corRelationList
       );
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      this.events.publish('update_header');
     }
   }
 
@@ -317,6 +316,7 @@ export class DistrictMappingPage implements OnDestroy {
 
   private skipLocation() {
     this.router.navigate([`/${RouterLinks.TABS}`]);
+    this.events.publish('update_header');
   }
 
   private getEnvironment(): string {

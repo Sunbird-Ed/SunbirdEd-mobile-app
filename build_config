@@ -32,15 +32,17 @@ cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-utility.git#rel
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-downloadmanager.git#release-3.9.0-ios
 cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
-cordova-plugin=cordova-sqlite-storage@5.1.0
-cordova-plugin=cordova-plugin-camera@4.1.0
-cordova-plugin=cordova-plugin-telerik-imagepicker@2.3.3
+cordova-plugin=cordova-sqlite-storage
+cordova plugin=cordova-plugin-googleplus
+cordova-pligin=cordova-plugin-camera
+cordova-plugin=cordova-plugin-telerik-imagepicker
+cordova-plugin=cordova-plugin-photo-library
 cordova-plugin=cordova-plugin-filechooser
 cordova-plugin=cordova-plugin-media
 cordova-plugin=cordova.plugins.diagnostic
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
-sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0
-sunbird-cordova-plugin=https://github.com/shikshalokam/cordova-plugin-sunbirdsplash.git#release-3.9.0-ios
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
 sunbird-cordova-plugin=https://github.com/shikshalokam/sb-cordova-plugin-sync.git#release-3.9.0-ios
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0

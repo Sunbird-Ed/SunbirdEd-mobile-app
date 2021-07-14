@@ -1,7 +1,7 @@
 <ion-header class="sb-header" [hidden]="!headerConfig?.showHeader" [ngClass]="{'z-index-0': decreaseZindex}">
   <ion-toolbar class="sb-header-toolbar">
 
-    <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
+    <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
         <img src="./assets/imgs/ic_burger_menu.svg" class="tool-icon" alt="burger menu">
       </ion-button>
@@ -12,7 +12,7 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
-    <ion-buttons class="sb-header-btn-group" slot="end">
+    <ion-buttons class="sb-header-btn-group pr-12" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
         <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" height="25"
@@ -294,23 +294,9 @@
             <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
           </span>
           <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
-          <div class="new-feature-badge">
-            <div class="square-badge">New</div>
-            <div class="circle-badge"></div>
-          </div>
         </ion-item>
 
-        <!-- <ion-item (click)="switchTheme()">
-        <span class="sb-menu-icon">
-          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
-        </span>
-        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
-        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
-        <div class="new-feature-badge">
-          <div class="square-badge">New</div>
-          <div class="circle-badge"></div>
-        </div>
-      </ion-item> -->
+
         <ion-item (click)="switchTabs()">
           <div class="beta-info">
             <span class="sb-menu-icon">
@@ -349,10 +335,6 @@
             <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
           </span>
           <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
-          <div class="new-feature-badge">
-            <div class="square-badge">New</div>
-            <div class="circle-badge"></div>
-          </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
@@ -377,6 +359,13 @@
             <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
           </span>
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+        </ion-item>
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
+          <span class="sb-menu-icon">
+            <ion-icon name="log-in-outline"></ion-icon>
+          </span>
+          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">

@@ -36,6 +36,8 @@ import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
 import { DbService } from '../manage-learn/core/services/db.service';
+import { UtilsService, LocalStorageService } from '../manage-learn/core';
+import { storageKeys } from '../manage-learn/storageKeys';
 
 @Component({
   selector: 'app-download-manager',
@@ -69,8 +71,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private db: DbService
-  ) { }
+    private db: DbService,
+    private storage: LocalStorageService,
+    private utils: UtilsService
+  ) {}
 
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
@@ -118,7 +122,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             return this.storageInfo;
           });
       });
-
   }
 
   async getDownloadedContents(shouldGenerateTelemetry?, ignoreLoader?) {
@@ -150,30 +153,40 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             value.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
         });
         const query = {
-          selector: {
-            downloaded: true,
+            selector: {
+           downloaded: true,
           },
-        };
-        this.db.customQuery(query).then(projectData => {
-          if (projectData['docs']) {
-            projectData['docs'].sort(function (a, b) {
-              return new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf();
-            });
-            projectData['docs'].map(doc => {
-              doc.contentData = { lastUpdatedOn: doc.updatedAt, name: doc.title };
-              doc.type = 'project'
-              doc.identifier = doc._id;
-              data.push(doc)
+        }; 
+        if(this.db.pdb){
+          let projectData: any = await this.db.customQuery(query);
+          if (projectData.docs) {
+            projectData.docs.sort(function (a, b) {
+                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+              });
+              projectData.docs.map(doc => {
+                doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                doc.type = 'project'
+                doc.identifier=doc._id;
+                data.push(doc)
             })
           }
-        }).catch(error => {
-
-        })
+        }
+        this.storage
+        .getLocalStorage(storageKeys.downloadedObservations)
+        .then(resp => {
+          resp.sort(function(a, b) {
+            return ( new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf());
+          });
+          resp.map(res => {
+            res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name, subject:res.programName };
+            res.type = 'observation';
+            res.identifier = res.programId + res.solutionId;
+            data.push(res);
+          });
+        });
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
-      })
-      .catch((e) => {
       });
   }
 
@@ -187,16 +200,21 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   async deleteContents(emitedContents: EmitedContents) {
     const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
-    emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
+    const observationContents = emitedContents.selectedContents.filter( content => (content['type'] == 'observation'));
+    emitedContents.selectedContents = emitedContents.selectedContents.filter(content => !content['type'] || (content['type'] != 'project' && content['type'] != 'observation'));
 
     if (!emitedContents.selectedContents.length) {
-      this.deleteProjects(projectContents)
-      return
+      this.deleteProjects(projectContents);
+      this.deleteObservations(observationContents);
+      return;
     }
     this.deleteProjects(projectContents)
+    this.deleteObservations(observationContents);
+
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents,
     };
+
     if (emitedContents.selectedContents.length > 1) {
       await this.deleteAllContents(emitedContents);
     } else {
@@ -207,7 +225,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         .then(async (data: ContentDeleteResponse[]) => {
           await this.loader.dismiss();
           this.loader = undefined;
-          // this.getDownloadedContents();
           if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('CONTENT_DELETE_FAILED'));
           } else {
@@ -335,7 +352,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         break;
     }
   }
-
+  
   private redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -406,6 +423,22 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
     });
   }
-
-
+  async deleteObservations(content) {
+    let downloadedObs = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
+    const contentIds = content.map(c => c.contentId)
+    downloadedObs = downloadedObs.filter(obs => {
+      const shouldDelete = contentIds.includes(obs.programId + obs.solutionId)
+      if (shouldDelete) {
+        obs.downloadedSubmission.forEach(async submission => {
+          await this.storage.deleteOneStorage(this.utils.getAssessmentLocalStorageKey(submission));
+        });
+      } 
+      return !shouldDelete
+    })
+    await this.storage.setLocalStorage(storageKeys.downloadedObservations,downloadedObs);
+    this.events.publish("savedResources:update", {update: true});
+      this.commonUtilService.showToast(
+        this.commonUtilService.translateMessage("MSG_RESOURCE_DELETED")
+      );
+  }
 }

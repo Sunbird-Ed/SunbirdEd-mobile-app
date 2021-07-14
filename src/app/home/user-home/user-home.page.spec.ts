@@ -1,14 +1,14 @@
 import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {AppGlobalService, PageId, TelemetryGeneratorService} from '@app/services';
 import {CommonUtilService} from '../../services/common-util.service';
 import {Router} from '@angular/router';
 import {AppHeaderService} from '../../services/app-header.service';
 import {
-    FrameWorkService
+    FrameWorkService, SharedPreferences,
 } from 'sunbird-sdk';
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
@@ -19,6 +19,10 @@ import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
 import { FrameworkSelectionDelegateService } from '../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
+import {
+    SplaschreenDeeplinkActionHandlerDelegate
+} from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -43,18 +47,22 @@ describe('UserHomePage', () => {
     };
     const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
     const mockSunbirdQRScanner: Partial<SunbirdQRScanner> = {};
-    const mockPopoverController: Partial<PopoverController> = {};
+    const mockModalController: Partial<ModalController> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
             mockFrameworkService as FrameWorkService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
+            mockSharedPreferences as SharedPreferences,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
             mockAppGlobalService as AppGlobalService,
@@ -64,11 +72,13 @@ describe('UserHomePage', () => {
             mockHeaderService as AppHeaderService,
             mockEvents as Events,
             mockSunbirdQRScanner as SunbirdQRScanner,
-            mockPopoverController as PopoverController,
+            mockModalController as ModalController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
-            mockTranslateService as TranslateService
+            mockTranslateService as TranslateService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
@@ -131,6 +141,12 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                values: [{expiry: 111111}]
+            }
+        }];
         // act
         userHomePage.ngOnInit();
         // assert
@@ -184,6 +200,18 @@ describe('UserHomePage', () => {
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                showBanner: true
+            }
+        }];
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                values: [{expiry: 111111}]
+            }
+        }];
         // act
         userHomePage.ionViewWillEnter();
         // assert
@@ -356,7 +384,7 @@ describe('UserHomePage', () => {
 
     it('should get data and open popover', () => {
         // arrange
-        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+        mockModalController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
             onDidDismiss: jest.fn(() => Promise.resolve({})),
         } as any)));
@@ -396,6 +424,14 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                showBanner: true,
+                values: [{expiry: 111111}]
+            }
+        }];
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         // act
         userHomePage.tabViewWillEnter();
         // assert
@@ -403,6 +439,8 @@ describe('UserHomePage', () => {
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
             expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+            expect(mockSegmentationTagService.exeCommands).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
             done();
         }, 0);
     });

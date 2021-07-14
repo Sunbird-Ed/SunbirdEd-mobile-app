@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services';
 import { Platform } from '@ionic/angular';
-import { UtilsService, LocalStorageService } from '../../core';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { UtilsService, LocalStorageService, LoaderService, ToastService } from '../../core';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { UpdateTrackerService } from '../../core/services/update-tracker.service';
+import { ObservationService } from '../../observation/observation.service';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-domain-ecm-lsiting',
   templateUrl: './domain-ecm-lsiting.component.html',
   styleUrls: ['./domain-ecm-lsiting.component.scss'],
 })
-export class DomainEcmLsitingComponent implements OnInit {
+export class DomainEcmLsitingComponent {
   entityName: any;
   entityData: any;
   entityEvidences: any;
@@ -22,6 +27,12 @@ export class DomainEcmLsitingComponent implements OnInit {
   evidenceSections: any;
   allAnsweredForEvidence: boolean;
   submissionId: any;
+  downloadedSubmissionList: any;
+  allowMultipleAssessemts: any;
+  private _networkSubscription?: Subscription;
+  networkFlag: boolean;
+  msgs:any
+
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
@@ -29,16 +40,33 @@ export class DomainEcmLsitingComponent implements OnInit {
     private evdnsServ: EvidenceService,
     private platform: Platform,
     private routerParam: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private observationService: ObservationService,
+    public genericPopup: GenericPopUpService,
+    public loader: LoaderService,
+    public commonUtilService: CommonUtilService,
+    public toast: ToastService,
+    private translate: TranslateService,
+
   ) {
     this.routerParam.queryParams.subscribe((params) => {
-      // this.entityId = params.submisssionId;
       this.submissionId = params.submisssionId;
       this.entityName = params.schoolName;
+      this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+      }
+    );
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
+  }
 
   ionViewWillEnter() {
     this.localStorage
@@ -55,10 +83,10 @@ export class DomainEcmLsitingComponent implements OnInit {
           .getLocalStorage('generalQuestions_' + this.submissionId)
           .then((successData) => {
             this.generalQuestions = successData;
-          })
-          .catch((error) => {});
-      })
-      .catch((error) => {});
+          });
+      });
+
+    this.fetchDownloaded();
   }
 
   mapCompletedAndTotalQuestions() {
@@ -123,7 +151,6 @@ export class DomainEcmLsitingComponent implements OnInit {
 
   async openEvidence(evidenceIndex) {
     this.utils.setCurrentimageFolderName(this.entityEvidences[evidenceIndex].externalId, this.submissionId);
-    // this.selectedEvidenceIndex = evidenceIndex;
     this.currentEvidence = this.entityData['assessment']['evidences'][evidenceIndex];
     this.evidenceSections = this.currentEvidence['sections'];
     this.checkForEvidenceCompletion();
@@ -137,7 +164,6 @@ export class DomainEcmLsitingComponent implements OnInit {
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
       let action = await this.openAction(entity, evidenceIndex);
-      console.log(action)
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -204,5 +230,43 @@ export class DomainEcmLsitingComponent implements OnInit {
         schoolName: this.entityName,
       },
     });
+  }
+
+  async fetchDownloaded() {
+    this.downloadedSubmissionList = await this.observationService.fetchDownloaded();
+  }
+
+  async pushToLocal() {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    }
+    let args = {
+      title: 'DOWNLOAD_FORM',
+      yes: 'YES',
+      no: 'NO',
+    };
+    try {
+      const confirmed = await this.genericPopup.confirmBox(args);
+      if (!confirmed) return;
+      
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
+      await this.observationService.pushToDownloads(this.submissionId);
+      this.fetchDownloaded();
+      let successArgs = {
+        title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+        yes: 'OKAY',
+        autoDissmiss: true,
+      };
+      this.loader.stopLoader()
+      await this.genericPopup.confirmBox(successArgs);
+    } catch {
+      this.loader.stopLoader()
+    }
+  }
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }

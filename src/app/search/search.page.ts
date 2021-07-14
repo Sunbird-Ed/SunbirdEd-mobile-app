@@ -27,7 +27,9 @@ import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
   RouterLinks, Search, ContentCard,
-  ContentFilterConfig
+  ContentFilterConfig,
+  PreferenceKey,
+  SwitchableTabsConfig
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
@@ -44,7 +46,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -162,6 +164,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   appPrimaryColor: string;
   selectedPrimaryCategoryFilter: any;
   searchWithBackButton = false;
+  private selectedSwitchableTab: string;
+  hideSearchOption = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -203,6 +207,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       this.searchWithBackButton = extras.searchWithBackButton;
+      this.hideSearchOption = extras.hideSearchOption;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
         this.searchOnFocus();
@@ -217,7 +222,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.preAppliedFilter = extras.preAppliedFilter;
       if (this.preAppliedFilter) {
         this.enableSearch = true;
-        this.searchKeywords = this.preAppliedFilter.query;
+        this.searchKeywords = this.preAppliedFilter.query || '';
       }
     }
 
@@ -243,9 +248,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.handleHeaderEvents(eventName);
     });
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
@@ -253,6 +258,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.isFirstLaunch = false;
       this.handleSearch(true);
     }
+    this.selectedSwitchableTab = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise()
   }
 
   ionViewDidEnter() {
@@ -646,14 +652,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.profile.syllabus = [data.framework];
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
       case 1:
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
@@ -693,7 +697,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                   this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                   this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                   this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
                   if (data.board) {
                     data.board = this.findCode(this.boardList, data, 'board');
                   }
@@ -943,7 +946,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
-    this.corRelationList = [];
+    if (!this.corRelationList) {
+      this.corRelationList = [];
+    }
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
@@ -960,13 +965,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = {
-        ...searchQuery.request.filters,
-        ...profileFilters,
-        board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
-        medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
-        gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
-      };
+      if (this.activityTypeData) {
+        searchQuery.request.filters = {
+          ...searchQuery.request.filters,
+          ...profileFilters,
+          board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
+          medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
+          gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
+        };
+      } else {
+        searchQuery.request.filters = {
+          ...searchQuery.request.filters
+        };
+      }
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
@@ -1273,7 +1284,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           });
           dialCodeResultObj.dialCodeResult.push(collection);
         });
-        // displayDialCodeResult[searchResult.name] = dialCodeResult;
         displayDialCodeResult.push(dialCodeResultObj);
       }
 
@@ -1390,7 +1400,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   checkParent(parent, child) {
     const identifier = parent.identifier;
     const contentRequest: ContentDetailRequest = {
-      contentId: identifier
+      contentId: identifier,
+      objectType: parent.objectType
     };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
@@ -1423,7 +1434,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1487,7 +1497,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
             if (this.downloadProgress === 100) {
-              // this.showLoading = false;
               this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
             }
           }
@@ -1755,7 +1764,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchOnFocus() {
     this.enableSearch = true;
     this.searchInfolVisibility = 'hide';
-    this.headerService.showHeaderWithBackButton();
+    this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     this.appGlobalService.isDiscoverBackEnabled = true;
   }
 
@@ -1767,11 +1776,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         } else if(this.enableSearch) {
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
-          this.headerService.showHeaderWithHomeButton();
+          this.headerService.showHeaderWithHomeButton(['download', 'notification']);
           this.appGlobalService.isDiscoverBackEnabled = false; 
+        } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
+          break;
         } else {
           this.location.back()
         }
+        break;
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
@@ -1816,11 +1830,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
+  redirectToNotifications() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.NOTIFICATION_CLICKED,
+      Environment.HOME,
+      PageId.SEARCH);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
+
   tabViewWillEnter() {
     if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton();
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
   }
 

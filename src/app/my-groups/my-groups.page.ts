@@ -17,7 +17,6 @@ import {
   ServerProfileDetailsRequest,
   AcceptTermsConditionRequest
 } from '@project-sunbird/sunbird-sdk';
-import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
   CommonUtilService,
   AppGlobalService,
@@ -65,7 +64,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
-    private loginHandlerService: LoginHandlerService,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private sbProgressLoader: SbProgressLoader,
@@ -179,7 +177,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
 
   login() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_CLICKED);
-    this.loginHandlerService.signIn({ skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS });
+    this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
   }
 
   async fetchGroupList() {

@@ -25,6 +25,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { of, throwError } from 'rxjs';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app.constant';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 describe('CategoryEditPage', () => {
     let categoryEditPage: CategoriesEditPage;
@@ -94,6 +95,16 @@ describe('CategoryEditPage', () => {
         getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {};
+
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         categoryEditPage = new CategoriesEditPage(
@@ -116,8 +127,8 @@ describe('CategoryEditPage', () => {
             mockExternalIdVerificationService as ExternalIdVerificationService,
             mockTncUpdateHandler as TncUpdateHandlerService,
             mockProgressLoader as SbProgressLoader,
-
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
@@ -434,7 +445,11 @@ describe('CategoryEditPage', () => {
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false));
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 userId: 'user-id',
-                firstName: 'sample-user-name'
+                firstName: 'sample-user-name',
+                framework: formVal,
+                profileUserType: {
+                    type: 'teacher'
+                }
             }));
             mockContainer.removeAllTabs = jest.fn();
             mockContainer.addTab = jest.fn();
@@ -442,6 +457,7 @@ describe('CategoryEditPage', () => {
             categoryEditPage.hasFilledLocation = true;
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());
+            mockSegmentationTagService.evalCriteria = jest.fn();
             // act
             categoryEditPage.submitForm(formVal);
             // assert
@@ -463,6 +479,7 @@ describe('CategoryEditPage', () => {
                 expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                 expect(mockTncUpdateHandler.isSSOUser).toHaveBeenCalled();
                 expect(mockAppGlobalService.showYearOfBirthPopup).toHaveBeenCalled();
+                expect(mockSegmentationTagService.evalCriteria).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -500,7 +517,11 @@ describe('CategoryEditPage', () => {
             categoryEditPage.showOnlyMandatoryFields = true;
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 userId: 'user-id',
-                firstName: 'sample-user-name'
+                firstName: 'sample-user-name',
+                framework: formVal,
+                profileUserType: {
+                    type: 'teacher'
+                }
             }));
             mockContainer.removeAllTabs = jest.fn();
             mockContainer.addTab = jest.fn();
@@ -508,6 +529,7 @@ describe('CategoryEditPage', () => {
             categoryEditPage.hasFilledLocation = false;
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockSegmentationTagService.evalCriteria = jest.fn();
             // act
             categoryEditPage.submitForm(formVal);
             // assert
@@ -527,6 +549,7 @@ describe('CategoryEditPage', () => {
                 expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
                 expect(categoryEditPage.hasFilledLocation).toBeFalsy();
                 expect(mockRouter.navigate).toHaveBeenCalled();
+                expect(mockSegmentationTagService.evalCriteria).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -570,6 +593,9 @@ describe('CategoryEditPage', () => {
             mockAppGlobalService.showYearOfBirthPopup = jest.fn();
             categoryEditPage.isBoardAvailable = false;
             mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            jest.spyOn(categoryEditPage, 'refreshSegmentTags').mockImplementation(() => {
+                return;
+            });
             mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
             mockCommonUtilService.showToast = jest.fn();
             mockEvents.publish = jest.fn(() => []);

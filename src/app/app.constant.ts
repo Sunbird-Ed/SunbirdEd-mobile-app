@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
+    public static readonly BANNER = 'banner';
 }
 
 export class ShareUrl {
@@ -233,6 +234,8 @@ export class PreferenceKey {
     public static readonly IS_JOYFUL_THEME_POPUP_DISPLAYED = 'is_joyful_theme_popup_displayed';
     public static readonly SELECTED_SWITCHABLE_TABS_CONFIG = 'selected_switchable_tabs_config';
     public static readonly IS_NEW_USER = 'is_new_user';
+    public static readonly NAVIGATION_SOURCE = 'navigation_source';
+    public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
 }
 
 export enum SwitchableTabsConfig {
@@ -393,6 +396,7 @@ export class SystemSettingsIds {
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
+    public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
 }
 
 export class StoreRating {
@@ -555,6 +559,7 @@ export class RouterLinks {
     public static readonly ACTIVITY_TOC = 'activity-toc';
     public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
     public static readonly ACTIVITY_VIEW_MORE = 'activity-view-more';
+    public static readonly ACTIVITY_DASHBOARD = 'activity-dashboard';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
@@ -610,6 +615,10 @@ export class RouterLinks {
     public static readonly SEARCH_FILTER = 'search-filter';
     //assessment
     public static readonly GENERIC_REPORT = 'generic-report';
+    // sign-in page
+    public static readonly SIGN_IN = 'sign-in';
+    // my-playlist page
+    public static readonly MY_PLAYLIST = 'my-playlist';
 }
 
 export class ShareItemType {

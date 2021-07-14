@@ -91,7 +91,6 @@ describe('EditContactDetailsPopupComponent', () => {
 
         } as any;
         // act
-        editContactDetailsPopupComponent.ngOnInit();
         editContactDetailsPopupComponent.initEditForm();
         editContactDetailsPopupComponent.ionViewWillEnter();
         // assert

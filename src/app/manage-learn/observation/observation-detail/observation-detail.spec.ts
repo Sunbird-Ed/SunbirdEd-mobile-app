@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ModalController, Platform } from '@ionic/angular';
-import { AppHeaderService } from '../../../../services';
+import { AppHeaderService, CommonUtilService } from '../../../../services';
 import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { ObservationDetailComponent } from './observation-detail.component';
@@ -16,13 +16,30 @@ describe('ObservationHomeComponent', () => {
   const mockLocation: Partial<Location> = {};
   const mockHeaderService: Partial<AppHeaderService> = {};
   const mockPlatform: Partial<Platform> = {};
-  const mockUtils: Partial<UtilsService> = {};
+  const mockUtils: Partial<UtilsService> = {
+    setProfileData: jest.fn(() => Promise.resolve({ generatedKey: 'sa', userData: 'data' })),
+    closeProfileAlert: jest.fn(),
+    getProfileData: jest.fn(),
+    getProfileInfo: jest.fn(),
+    getUniqueKey: jest.fn(),
+  };
   const mockAssessmentApiService: Partial<AssessmentApiService> = {};
-  const mockObservationService: Partial<ObservationService> = {};
+  const mockObservationService: Partial<ObservationService> = {
+    obsTraceObj: {
+      programId: '12312',
+      programName: 'program',
+      solutionId: '21321',
+      name: 'solution',
+      observationId: '123',
+    },
+  };
   const mockDhiti: Partial<DhitiApiService> = {};
   const mockloader: Partial<LoaderService> = {};
   const mockModalCtrl: Partial<ModalController> = {};
-  const mockLocalStorage: Partial<LocalStorageService> = {};
+  const mockLocalStorage: Partial<LocalStorageService> = {
+    setLocalStorage: jest.fn(),
+  };
+
   mockModalCtrl.create = jest.fn(() =>
     Promise.resolve({
       present: jest.fn(() => Promise.resolve({})),
@@ -61,6 +78,11 @@ describe('ObservationHomeComponent', () => {
       },
     })) as any,
   };
+
+  const mockCommonUtils: Partial<CommonUtilService> = {
+    networkAvailability$: of(true),
+    networkInfo: { isNetworkAvailable: true },
+  };
   beforeAll(() => {
     observationDetailComponent = new ObservationDetailComponent(
       mockHeaderService as AppHeaderService,
@@ -75,13 +97,12 @@ describe('ObservationHomeComponent', () => {
       mockAlertCtrl as AlertController,
       mockToast as ToastService,
       mockObservationService as ObservationService,
-      mockLocalStorage as LocalStorageService
-
+      mockLocalStorage as LocalStorageService,
+      mockCommonUtils as CommonUtilService
     );
   });
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetAllMocks();
   });
 
   it('Should instanciate ObservationHomeComponent', () => {
@@ -325,7 +346,7 @@ describe('ObservationHomeComponent', () => {
       mockloader.startLoader = jest.fn(() => Promise.resolve());
       mockloader.stopLoader = jest.fn(() => Promise.resolve());
       mockTranslate.get = jest.fn(() => of(''));
-      mockToast.openToast =jest.fn(()=>Promise.resolve())
+      mockToast.openToast = jest.fn(() => Promise.resolve());
       mockAssessmentApiService.post = jest.fn(() =>
         of({
           result: {
@@ -340,8 +361,8 @@ describe('ObservationHomeComponent', () => {
       setTimeout(() => {
         // expect(mockAssessmentApiService.post).toHaveBeenCalled();
         // expect(mockToast.openToast).toHaveBeenCalled();
-        
-        done()
+
+        done();
       }, 200);
     });
   });

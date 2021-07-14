@@ -17,7 +17,6 @@ export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
-    @Input('resetData') resetData: boolean;
 
     public config: FieldConfig<any>[];
 
@@ -85,11 +84,11 @@ export class SearchFilterPage implements OnInit {
 
         searchCriteria.facetFilters.forEach((facetFilter) => {
             const selection = formValue[facetFilter.name];
-
-            facetFilter.values.forEach(f => {
-                f.apply = !(!selection || selection.indexOf(f.name) === -1);
-            });
-
+            if (selection) {
+                facetFilter.values.forEach(f => {
+                    f.apply = !!(selection.indexOf(f.name) !== -1);
+                });
+            }
         });
 
         this.formAndFrameworkUtilService.changeChannelNameToId(searchCriteria);
@@ -124,12 +123,6 @@ export class SearchFilterPage implements OnInit {
         }
         if (this.isPageLoadedFirstTime) {
             this.isPageLoadedFirstTime = false;
-            if (this.resetData) {
-                setTimeout(() => {
-                    this.resetFilter();
-                }, 500);
-                this.resetData = false;
-            }
             return;
         }
 

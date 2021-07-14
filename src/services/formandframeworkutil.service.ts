@@ -22,10 +22,9 @@ import {
     WebviewSessionProviderConfig,
     SignInError,
     FrameworkCategoryCode,
-    ProfileType
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
@@ -56,11 +55,11 @@ export class FormAndFrameworkUtilService {
         this.invokeUrlRegexFormApi();
     }
 
-    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
+    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate' | 'register' | 'state'): Promise<WebviewSessionProviderConfig> {
         const request: FormRequest = {
             from: CachedItemRequestSourceFrom.SERVER,
             type: 'config',
-            subType: 'login',
+            subType: 'login_v2',
             action: 'get'
         };
 
@@ -402,8 +401,6 @@ export class FormAndFrameworkUtilService {
             await this.invokeContentFilterConfigFormApi()
                 .then(fields => {
                     contentFilterConfig = fields;
-                })
-                .catch(error => {
                 });
         }
 

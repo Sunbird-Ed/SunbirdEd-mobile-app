@@ -10,6 +10,7 @@ import { Device } from '@ionic-native/device/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 // ionic cordova dependencies/plugins
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
@@ -21,7 +22,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
 import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
@@ -79,6 +80,8 @@ import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-a
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import { SbSearchFilterModule } from 'common-form-elements';
+import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -175,6 +178,10 @@ export const discussionService = () => {
 };
 export const segmentationService = () => {
   return SunbirdSdk.instance.segmentationService;
+};
+
+export const debuggingService = () => {
+  return SunbirdSdk.instance.debuggingService;
 };
 
 export function sdkDriverFactory(): any {
@@ -277,6 +284,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEGMENTATION_SERVICE',
     useFactory: segmentationService
+  }, {
+    provide: 'DEBUGGING_SERVICE',
+    useFactory: debuggingService
   }];
 }
 
@@ -333,7 +343,9 @@ export const sunbirdSdkFactory =
         contentServiceConfig: {
           apiPath: '/api/content/v1',
           searchApiPath: '/api/content/v1',
-          contentHeirarchyAPIPath: '/api/course/v1'
+          contentHeirarchyAPIPath: '/api/course/v1',
+          questionSetReadApiPath: '/api/questionset/v1',
+          questionReadApiPath: '/api/question/v1/'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'
@@ -355,6 +367,7 @@ export const sunbirdSdkFactory =
           profileApiPath_V2: '/api/user/v2',
           profileApiPath_V3: '/api/user/v3',
           profileApiPath_V4: '/api/user/v4',
+          profileApiPath_V5: '/api/user/v5',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
           searchLocationApiPath: '/api/data/v1',
@@ -481,7 +494,6 @@ declare const sbutility;
     Network,
     AndroidPermissionsService,
     ComingSoonMessageService,
-    NotificationService,
     ActivePageService,
     CanvasPlayerService,
     SplashcreenTelemetryActionHandlerDelegate,
@@ -501,6 +513,9 @@ declare const sbutility;
     DiscussionTelemetryService,
     UpdateProfileService,
     SegmentationTagService,
+    LoginNavigationHandlerService,
+    GooglePlus,
+    StoragePermissionHandlerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
@@ -510,7 +525,8 @@ declare const sbutility;
     Chooser,
     PhotoViewer,
     StreamingMedia,
-    { provide: QuestionCursor, useClass: QumlPlayerService }
+    { provide: QuestionCursor, useClass: QumlPlayerService },
+    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService }
   ],
   bootstrap: [AppComponent],
   schemas: [

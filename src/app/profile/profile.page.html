@@ -16,11 +16,7 @@
     <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
-            <!-- <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol ion-text-left" item-right
-                (click)="toggleTooltips($event, 'name')">
-                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
-                <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
-            </span> -->
+
         </p>
         <p class="MT0 MB15">
             <span class="app-name"> {{appName}} </span>
@@ -32,11 +28,7 @@
         </p>
         <div class="school-recent" *ngIf="organisationName">
             <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-                <!-- <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
-                    (click)="toggleTooltips($event, 'org')">
-                    <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
-                    <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
-                </span> -->
+
             </p>
         </div>
     </div>
@@ -138,7 +130,7 @@
         </div>
     </div>
    </div>
-    <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
+    <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && !profile?.isMinor && isCustodianOrgId">
         <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
             {{'SUBMIT_MY_DETAILS' | translate}}
         </ion-button>

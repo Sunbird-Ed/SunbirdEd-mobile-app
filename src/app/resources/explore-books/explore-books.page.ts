@@ -24,7 +24,7 @@ import {
   FilterValue,
   SearchType
 } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -341,11 +341,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     };
 
     this.navService.navigateToDetailPage(content, navigationExtras.state);
-    // if (content.mimeType === MimeType.COLLECTION) {
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    // } else {
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    // }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

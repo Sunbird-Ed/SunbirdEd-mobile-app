@@ -116,13 +116,13 @@
     </div>
   </div>
   <ion-fab horizontal="center" class="add-task-btn" *ngIf="taskCount < 2 && !viewOnlyMode">
-    <ion-fab-button (click)="addTask()">
+    <ion-fab-button (click)="addTask()" color="primary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
   <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1 && !viewOnlyMode" slot="fixed">
-    <ion-fab-button (click)="addTask()">
+    <ion-fab-button (click)="addTask()" color="primary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}

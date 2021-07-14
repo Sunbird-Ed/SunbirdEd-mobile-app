@@ -1782,8 +1782,7 @@ describe('ChapterDetailsPage', () => {
             });
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
-
+            mockRouter.navigate = jest.fn();
             // act
             chapterDetailsPage.promptToLogin(batchdetail);
 
@@ -1798,7 +1797,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color label-uppercase label-bold-font'
                             })
                         ])
                     })
@@ -1809,7 +1808,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
                     PreferenceKey.COURSE_DATA_KEY, JSON.stringify(chapterDetailsPage.courseContentData));
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });
@@ -1850,7 +1849,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color label-uppercase label-bold-font'
                             })
                         ])
                     })

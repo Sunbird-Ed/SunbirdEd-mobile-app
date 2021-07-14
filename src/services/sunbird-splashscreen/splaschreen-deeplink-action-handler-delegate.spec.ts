@@ -33,6 +33,7 @@ import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegat
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {jest} from '@jest/globals';
+import {LoginNavigationHandlerService} from '@app/services';
 
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
@@ -58,7 +59,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     const mockRouter: Partial<Router> = {};
     const mockAppVersion: Partial<AppVersion> = {};
     const mockUtilityService: Partial<UtilityService> = {};
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockLoginNavigationHandlerService: Partial<LoginHandlerService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
     const mockQRScannerResultHandler: Partial<QRScannerResultHandler> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -89,7 +90,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockRouter as Router,
             mockAppVersion as AppVersion,
             mockUtilityService as UtilityService,
-            mockLoginHandlerService as LoginHandlerService,
+            mockLoginNavigationHandlerService as LoginNavigationHandlerService,
             mockTranslateService as TranslateService,
             mockQRScannerResultHandler as QRScannerResultHandler,
             mockSbProgressLoader as SbProgressLoader,

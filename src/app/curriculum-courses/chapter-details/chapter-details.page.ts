@@ -7,7 +7,7 @@ import {
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { TocCardType } from '@project-sunbird/common-consumption-v8';
+import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -157,11 +157,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.getSubContentIds(this.chapter);
     if (this.chapter.children && this.chapter.children.length) {
       this.chapter.children.map((content) => {
-        if (content.contentData && content.contentData.displayScore){
-          content['displayScore'] = content.contentData.displayScore;
-        } else {
-          content['displayScore'] = false;
-        }
+        const displayScore = content && content.contentData && content.contentData.displayScore;
+        content['displayScore'] = displayScore === undefined ? true : displayScore;
       });
     }
     if (this.chapter.hierarchyInfo) {
@@ -699,7 +696,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },
@@ -711,7 +708,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
       this.appGlobalService.resetSavedQuizContent();
-      this.loginHandlerService.signIn({navigateToCourse: true});
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 
@@ -758,7 +755,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.courseContent),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ],
         // handler : this.handleEnrollCoursePopup.bind(this)
@@ -874,16 +871,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       if (response && response.data) {
         this.isDownloadStarted = true;
         this.showCollapsedPopup = false;
-        // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        //   'download-all-button-clicked',
-        //   Environment.HOME,
-        //   PageId.COURSE_DETAIL,
-        //   undefined,
-        //   undefined,
-        //   // todo
-        //   // this.objRollup,
-        //   // this.corRelationList
-        // );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
@@ -936,7 +923,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             });
 
             if (this.queuedIdentifiers.length === 0) {
-              // this.restoreDownloadState();
             }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
@@ -996,12 +982,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               }
             } else {
               this.courseContentData.isAvailableLocally = true;
-              // this.setContentDetails(this.identifier);
             }
           }
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
-            // this.licenseDetails = event.payload.licenseDetails;
             if (event.payload.size) {
               this.courseContent.contentData.size = event.payload.size;
             }

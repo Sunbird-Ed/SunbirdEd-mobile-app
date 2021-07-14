@@ -62,6 +62,7 @@ export class ContentActionsComponent {
     this.corRelationList = this.navParams.get('corRelationList');
     this.chapter = this.navParams.get('chapter');
     this.downloadIdentifiers = this.navParams.get('downloadIdentifiers');
+    this.showUnenrolledButton = this.navParams.get('showUnenrollButton');
 
     if (this.navParams.get('isChild')) {
       this.isChild = true;
@@ -72,7 +73,6 @@ export class ContentActionsComponent {
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
     this.getUserId();
-    this.isCourseCompleted();
   }
 
 
@@ -238,12 +238,4 @@ export class ContentActionsComponent {
     return msg;
   }
 
-  private isCourseCompleted() {
-    if (this.content && this.content.progress === 100) {
-      if (this.batchDetails && ((this.batchDetails.endDate &&
-        (new Date(this.batchDetails.endDate) >= new Date())) || !this.batchDetails.endDate)) {
-          this.showUnenrolledButton = true;
-      }
-    }
-  }
 }

@@ -166,6 +166,9 @@ export enum PageId {
     NEW_EXPERIENCE_POPUP = 'new-experience-popup',
     MENU = 'menu',
     CERTIFICATE_VIEW = 'certificate-view',
+    ACTIVITY_DASHBOARD = 'activity-dashboard',
+    USER = 'user',
+    RESOURCES = 'resources'
 }
 
 export enum LogType {
@@ -219,7 +222,8 @@ export enum ImpressionSubtype {
     OFFLINE_MODE = 'offline-mode',
     AUTO = 'auto',
     LOCATION = 'location',
-    HOME = 'home'
+    HOME = 'home',
+    BANNER = 'banner'
 }
 
 export enum InteractType {
@@ -289,7 +293,9 @@ export enum InteractType {
     UPDATE_GROUP = 'update-group',
     SELECT_DEACTIVATE = 'select-deactivate',
     SELECT_DELETE = 'select-delete',
-    DOWNLOAD_CLICKED = 'download-clicked'
+    DOWNLOAD_CLICKED = 'download-clicked',
+    SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
+    SELECT_BANNER = 'select-banner',
 }
 
 export enum InteractSubtype {
@@ -602,7 +608,9 @@ export enum ID {
     SELECT_ACTIVITY = 'select-activity',
     UPDATE_GROUP = 'update-group',
     SELECT_DEACTIVATE = 'select-deactivate',
-    SELECT_DELETE = 'select-delete'
+    SELECT_DELETE = 'select-delete',
+    SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
+    DOWNLOAD_CLICKED = 'download-clicked',
 }
 
 export enum ActionButtonType {

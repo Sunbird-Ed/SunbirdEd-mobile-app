@@ -126,37 +126,6 @@ export const LOGIN_ADMIN_TABS = [
     PROFILE_TAB
 ];
 
-// export const GUEST_STUDENT_TABS = [
-//     LIBRARY_TAB,
-//     COURSE_TAB_DISABLED,
-//     SCANNER_TAB,
-//     DOWNLOADS_TAB,
-//     GUEST_PROFILE_TAB
-// ];
-
-// export const GUEST_TEACHER_SWITCH_TABS = [
-//     LIBRARY_TAB,
-//     COURSE_TAB,
-//     SCANNER_TAB,
-//     DOWNLOADS_TAB,
-//     GUEST_PROFILE_SWITCH_TAB
-// ];
-
-// export const GUEST_STUDENT_SWITCH_TABS = [
-//     LIBRARY_TAB,
-//     COURSE_TAB,
-//     SCANNER_TAB,
-//     DOWNLOADS_TAB,
-//     GUEST_PROFILE_SWITCH_TAB
-// ];
-
-// export const GUEST_STUDENT_SWITCH_TABS = [
-//     LIBRARY_TAB,
-//     COURSE_TAB_DISABLED,
-//     SCANNER_TAB,
-//     DOWNLOADS_TAB,
-//     GUEST_PROFILE_SWITCH_TAB
-// ];
 
 export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
     container.removeAllTabs();

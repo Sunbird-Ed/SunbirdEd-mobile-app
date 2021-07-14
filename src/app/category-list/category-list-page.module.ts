@@ -6,7 +6,7 @@ import {Routes, RouterModule} from '@angular/router';
 import {IonicModule} from '@ionic/angular';
 
 import {CategoryListPage} from './category-list-page';
-import {CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
+import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '@app/app/components/components.module';
 import {CommonFormElementsModule, SbSearchFilterModule} from 'common-form-elements';

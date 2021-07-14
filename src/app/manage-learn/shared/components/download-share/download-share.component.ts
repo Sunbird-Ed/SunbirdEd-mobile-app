@@ -81,7 +81,6 @@ export class DownloadShareComponent implements OnInit {
       });
     }
     return new Promise(async (resolve, reject) => {
-      // let config = { url: this.downloadUrl };
 
       let res = await this.unnatiSrvc.get(this.config).toPromise();
 
@@ -95,17 +94,7 @@ export class DownloadShareComponent implements OnInit {
   }
 
   async download(share?) {
-    // this.loader.startLoader();
-
-    // let config = { url: this.downloadUrl };
-
-    // let res = await this.unnatiSrvc.get(config).toPromise();
-
-    // if (res.result && !res.result.data && !res.result.data.downloadUrl) {
-    //   this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-    //   this.loader.stopLoader();
-    //   return;
-    // }
+ 
 
     let fileName = this.utils.generateFileName(this.name);
     fileName = fileName + this.extension;

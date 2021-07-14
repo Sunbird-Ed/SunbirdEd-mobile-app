@@ -16,20 +16,9 @@
 
     <div class="content-preferences-info" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
       <div class="content-header-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
-      <!-- <h2 class="section-title padding-left-10 ion-no-padding">
-        {{'PROFILE_DETAILS_TITLE' | translate}}
-      </h2> -->
 
       <div class="grid-container">
         <!-- Name -->
-        <!-- <div *ngIf="profile?.handle" class="grid-item info-title text-align-start ion-text-uppercase">{{ 'NAME' | translate}}</div>
-        <div *ngIf="profile?.handle" class="grid-item text-align-end" (click)="editGuestProfile(false,'edit-profile')">
-          <div *ngIf="profile?.handle" class="align-content">
-            <div class="ellipsis text-align width-100">{{profile?.handle | aliased}}&lrm;</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
-            </ion-icon>
-          </div>
-        </div> -->
         <!-- Role -->
         <div *ngIf="profile?.profileType" class="grid-item info-title text-align-start ion-text-uppercase">{{'FRMELEMNTS_LBL_PERSONA' | translate}}</div>
         <div *ngIf="profile?.profileType" class="grid-item text-align-end" (click)="editGuestProfile(true,'change-role')">
@@ -113,9 +102,7 @@
         </div>
       </div>
 
-      <!-- <h2 class="section-title padding-left-10 ion-no-padding">
-        {{'DEVICE_LOCATION' | translate}}
-      </h2> -->
+
 
       <div class="grid-container">
         <div class="grid-item info-title text-align-start ion-text-uppercase">{{'DISTRICT' | translate}}</div>
@@ -136,32 +123,6 @@
           <div *ngIf="!deviceLocation?.state" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
-        <!-- <div *ngIf="deviceLocation && deviceLocation.block"class="grid-item info-title text-align-start ion-text-uppercase">{{'BLOCK' | translate}}</div>
-        <div *ngIf="deviceLocation && deviceLocation.block" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
-          <div *ngIf="deviceLocation" class="align-content">
-            <div class="ellipsis text-align width-100">{{deviceLocation?.block}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
-          </div>
-          <div *ngIf="!deviceLocation?.block" class="vertical-align">{{'ADD' | translate}}</div>
-        </div>
-
-        <div *ngIf="deviceLocation && deviceLocation.cluster" class="grid-item info-title text-align-start ion-text-uppercase">{{'CLUSTER' | translate}}</div>
-        <div *ngIf="deviceLocation && deviceLocation.cluster" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
-          <div *ngIf="deviceLocation" class="align-content">
-            <div class="ellipsis text-align width-100">{{deviceLocation?.cluster}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
-          </div>
-          <div *ngIf="!deviceLocation?.cluster" class="vertical-align">{{'ADD' | translate}}</div>
-        </div>
-
-        <div *ngIf="deviceLocation && deviceLocation.school" class="grid-item info-title text-align-start ion-text-uppercase">{{'SCHOOL' | translate}}</div>
-        <div *ngIf="deviceLocation && deviceLocation.school" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
-          <div *ngIf="deviceLocation" class="align-content">
-            <div class="ellipsis text-align width-100">{{deviceLocation?.school}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
-          </div>
-          <div *ngIf="!deviceLocation?.school" class="vertical-align">{{'ADD' | translate}}</div>
-        </div> -->
 
       </div>
 

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-    CachedItemRequestSourceFrom,
     ContentAggregatorResponse, ContentService, CourseService, FormRequest,
     FormService, ProfileService
 } from '@project-sunbird/sunbird-sdk';

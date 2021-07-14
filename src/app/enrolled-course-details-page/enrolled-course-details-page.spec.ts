@@ -28,7 +28,7 @@ import {
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants, EventTopics, BatchConstants } from '../app.constant';
+import {PreferenceKey, ProfileConstants, EventTopics, BatchConstants, RouterLinks} from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
@@ -65,9 +65,6 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
-    };
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {
-        signIn: jest.fn()
     };
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
@@ -147,7 +144,7 @@ describe('EnrolledCourseDetailsPage', () => {
             restoreTags: jest.fn()
         }
     };
-    
+
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -159,7 +156,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
             mockDiscussionService as DiscussionService,
-            mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
             mockFileSizePipe as FileSizePipe,
@@ -608,22 +604,6 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('subscribeUtilityEvents()', () => {
-        it('#subscribeUtilityEvents should handle error condition', (done) => {
-            // arrange
-            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
-            mockEvents.subscribe = jest.fn(() => ({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
-            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
-            // assert
-            enrolledCourseDetailsPage.subscribeUtilityEvents();
-            // act
-            setTimeout(() => {
-                expect(enrolledCourseDetailsPage.baseUrl).toBe('');
-                expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
 
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
             // arrange
@@ -1383,7 +1363,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+            mockRouter.navigate = jest.fn();
             // act
             enrolledCourseDetailsPage.promptToLogin({});
             // assert
@@ -1403,7 +1383,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
                                     btntext: 'sample-message',
 
                                 },
@@ -1440,7 +1420,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     undefined
                 );
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });
@@ -1479,7 +1459,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
                                     btntext: 'sample-message',
 
                                 },
@@ -2275,6 +2255,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('checkDataSharingStatus', () => {
         it('should return conset details', (done) => {
             // arrange
+            enrolledCourseDetailsPage.isMinor = false;
             enrolledCourseDetailsPage.courseCardData = {
                 userId: 'sample-userId',
                 content: {

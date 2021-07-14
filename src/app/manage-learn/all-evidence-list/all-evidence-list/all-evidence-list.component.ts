@@ -155,7 +155,7 @@ export class AllEvidenceListComponent implements OnInit {
     let url = urlConstants.API_URLS.SURVEY_FEEDBACK.LIST_ALL_EVIDENCES;
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    this.payload = { ...payload, ...payload };
+    payload = { ...this.payload, ...payload };
     const config = {
       url: url,
       payload: payload,
@@ -180,30 +180,5 @@ export class AllEvidenceListComponent implements OnInit {
       }
     );
 
-    //TODO:uncomment
-    //   const url = AppConfigs.surveyFeedback.listAllEvidences;
-    //   this.utils.startLoader();
-    //   this.apiService.httpPost(
-    //     url,
-    //     this.payload,
-    //     (success) => {
-    //       this.utils.stopLoader();
-    //       console.log(JSON.stringify(success));
-    //       if (success.result === true && success.data) {
-    //         this.images = success.data.images;
-    //         this.videos = success.data.videos;
-    //         this.documents = success.data.documents;
-    //         this.remarks = success.data.remarks;
-    //         this.audios = success.data.audios;
-    //       } else {
-    //         this.utils.openToast(success.data);
-    //       }
-    //     },
-    //     (error) => {
-    //       this.utils.openToast(error.message);
-    //       this.utils.stopLoader();
-    //     },
-    //     { baseUrl: 'dhiti', version: 'v1' }
-    //   );
   }
 }

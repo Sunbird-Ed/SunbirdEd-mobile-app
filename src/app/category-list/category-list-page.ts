@@ -34,7 +34,7 @@ import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { PillBorder } from '@project-sunbird/common-consumption-v8';
+import { PillBorder } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '@app/util/object.util';
 
 
@@ -70,7 +70,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
     };
     primaryFacetFilters: {
         code: string,
-        translations: string
+        translations: string,
+        sort: boolean
     }[];
     fromLibrary = false;
     sectionCode = '';
@@ -94,6 +95,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private fromPage: string = PageId.SEARCH;
     private env: string = Environment.SEARCH;
     private initialFilterCriteria: ContentSearchCriteria;
+    private resentFilterCriteria: ContentSearchCriteria;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -222,6 +224,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.primaryFacetFiltersFormGroup) {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
+                    if (p.sort) {
+                        this.initialFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                    }
                     acc[p.code] = this.facetFilters[p.code]
                         .filter(v => v.apply)
                         .map(v => {
@@ -374,18 +379,18 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
-        const resetData = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true
+        const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
             componentProps: {
-                initialFilterCriteria: resetData ? JSON.parse(JSON.stringify(this.initialFilterCriteria)) : JSON.parse(JSON.stringify(this.filterCriteria)),
-                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
-                resetData: resetData
+                initialFilterCriteria: (isDataEmpty && this.resentFilterCriteria) ? JSON.parse(JSON.stringify(this.resentFilterCriteria)) : JSON.parse(JSON.stringify(this.filterCriteria)),
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria))
             }
         });
         await openFiltersPage.present();
         openFiltersPage.onDidDismiss().then(async (result) => {
             if (result && result.data) {
+                this.resentFilterCriteria = result.data.appliedFilterCriteria;
                 await this.applyFilter(result.data.appliedFilterCriteria);
             }
         });

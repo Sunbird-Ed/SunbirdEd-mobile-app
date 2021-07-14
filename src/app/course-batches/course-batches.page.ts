@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PreferenceKey } from '@app/app/app.constant';
+import {PreferenceKey, RouterLinks} from '@app/app/app.constant';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { AppGlobalService } from '@app/services';
 import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
@@ -24,7 +24,6 @@ import {
 } from '../../services/telemetry-constants';
 import { SbPopoverComponent } from '../components/popups';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
-import { LoginHandlerService } from './../../services/login-handler.service';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 
 @Component({
@@ -57,7 +56,6 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
-    private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
     private events: Events,
@@ -181,7 +179,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },
@@ -201,7 +199,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         undefined,
         this.objRollup,
         this.corRelationList);
-      this.loginHandlerService.signIn({navigateToCourse: true});
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 

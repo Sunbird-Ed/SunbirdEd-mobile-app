@@ -11,15 +11,21 @@
       <div class="user-name-text">{{profile?.handle}}</div>
     </div> 
     
-    <div class="preference-container" *ngIf="boards">
+    <div class="preference-container" *ngIf="preferenceList && preferenceList.length">
       <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
       <div class="user-preference">
         <div class="preference-data">
-          <div>
+          <div (click)="viewPreferenceInfo()">
             <span>{{'YOUR_PREFERENCES' | translate}}</span>
-            <img (click)="viewPreferenceInfo()" class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+            <img class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
           </div>
-          <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
+          <div (click)="editProfileDetails()">
+            <app-truncated-ellipsis 
+              [arrayList]= "preferenceList"
+              [showCount]="1"
+              [separatorText]="', '">
+            </app-truncated-ellipsis>
+          </div>
         </div>
         <div class="change-btn">
           <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
@@ -61,6 +67,15 @@
             </sb-course-cards-hlist>
           </ng-container>
         </ng-container>
+      </ng-container>
+
+      <!--banner-->
+      <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
+        <span>{{section?.title | translateJson}}</span>
+        <hr>
+      </div>
+      <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
+        <sb-banner-card-hlist [bannerList]="section?.data" (cardClick)="navigateToSpecificLocation($event)"></sb-banner-card-hlist>
       </ng-container>
 
       <!-- Pills -->

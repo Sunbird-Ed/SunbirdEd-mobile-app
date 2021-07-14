@@ -229,11 +229,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         InteractType.TOUCH,
         InteractSubtype.MENU_CLICKED,
         Environment.HOME,
-        pageId, undefined
+        pageId
       );
     }
     this.events.publish(EventTopics.HAMBURGER_MENU_CLICKED);
-    // this.appTheme = document.querySelector('html').getAttribute('data-theme');
     this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
   }
 

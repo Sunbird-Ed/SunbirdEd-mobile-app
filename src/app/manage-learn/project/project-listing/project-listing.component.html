@@ -1,14 +1,10 @@
 <ion-content class="main-container">
-  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}"  subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESC' | translate }}"> </app-common-header>
+  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}"
+    subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESC' | translate }}"> </app-common-header>
   <ion-searchbar debounce="2000" placeholder="Search your projects here" [(ngModel)]="searchText"
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
   <div class="container">
-    <!-- <div class="scroll_chip" scrollX="true">
-      <ion-chip outline="true" *ngFor="let filter of filters" [color]="filter.selected ? 'primary' : ''">
-        <ion-label (click)="getDataByFilter(filter)">{{filter.name | translate}}</ion-label>
-      </ion-chip>
-    </div> -->
     <sb-library-filters [list]="filters" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"
       (selectedFilter)="getDataByFilter($event);" *ngIf="filters?.length">
     </sb-library-filters>
@@ -19,24 +15,26 @@
     (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
-  <h5 class="projects-labels"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
+  <h5 class="projects-labels sb--card__title"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
   <div>
-    <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
+    <h5 *ngIf="selectedFilter" class="sb--card__title projects-labels">{{selectedFilter}} </h5>
   </div>
-  <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
-    [id]="project?._id" (cardSelect)="doAction($event, project)">
+  <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title"
+    [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">
 
-    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc" (click)="$event.stopPropagation(); downloaded(project)">
-      <ion-icon class="mg-popup-btn-icon" name="arrow-down"  ></ion-icon>
+    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc"
+      (click)="$event.stopPropagation(); downloaded(project)">
+      <ion-icon class="mg-popup-btn-icon" name="arrow-down" color="primary"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
     </div>
-    <div arrow  *ngIf="project?.downloaded" class="d-flex flex-dc">
-      <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark" ></ion-icon>
+    <div arrow *ngIf="project?.downloaded" class="d-flex flex-dc">
+      <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
     </div>
   </app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
-<ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">
+<ion-button class="view-more" expand="block" (click)="loadMore()"
+  *ngIf="projects?.length && count > currentOnlineProjectLength">
   {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
 </ion-button>

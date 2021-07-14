@@ -9,7 +9,6 @@ import { QuestionMapModalComponent } from './question-map-modal/question-map-mod
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Network } from '@ionic-native/network/ngx';
-// import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-questionnaire',
@@ -72,11 +71,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private router: Router,
     private commonUtilService:CommonUtilService
   ) {
-    // this.routerParam.params.subscribe((parameters) => {
-    //   this.submissionId = parameters.submisssionId;
-    //   this.selectedEvidenceIndex = parameters.evidenceIndex;
-    //   this.selectedSectionIndex = parameters.sectionIndex;
-    // });
 
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
@@ -102,7 +96,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.loader.startLoader();
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((data) => {
@@ -135,11 +128,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
           document.getElementById('stop').style.pointerEvents = 'none';
         }
-        // this.loader.stopLoader();
       })
-      .catch((error) => {
-        // this.loader.stopLoader();
-      });
   }
 
   ionViewWillEnter() {
@@ -211,7 +200,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.next('completed');
     }
     this.updateCompletedQuestionCount();
-    // this.calculateCompletedQuestion();
   }
 
   getSectionStatus(): string {
@@ -258,7 +246,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           this.location.back();
         }
       })
-      .catch((error) => {});
   }
 
   async openActionSheet() {
@@ -289,7 +276,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
                 selectedEvidenceIndex: this.selectedEvidenceIndex,
               },
             });
-            // this.navCtrl.push(PreviewPage, payload);
           },
         },
         {
@@ -325,7 +311,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
             text: translateObject['NO'],
             role: 'cancel',
             handler: () => {
-              //console.log('Cancel clicked');
             },
           },
           {
@@ -341,15 +326,14 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.goToImageListing();
     } else if (this.network.type === 'none') {
       let noInternetMsg;
-      this.translate.get(['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION']).subscribe((translations) => {
-        noInternetMsg = translations['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION'];
+      this.translate.get(['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE']).subscribe((translations) => {
+        noInternetMsg = translations['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE'];
         this.toast.openToast(noInternetMsg);
       });
     }
   }
 
   goToImageListing() {
-    // if (this.networkAvailable) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.router.navigate([RouterLinks.IMAGE_LISTING], {
         queryParams: {
