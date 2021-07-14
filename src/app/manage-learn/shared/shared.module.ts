@@ -64,7 +64,7 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
-import { GenericPopUpService } from './TC-generic.popupService';
+import { GenericPopUpService } from './generic.popup';
 
 
 @NgModule({

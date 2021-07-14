@@ -12,7 +12,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
-import { GenericPopUpService } from '../../TC-generic.popupService';
+import { GenericPopUpService } from '../../generic.popup';
 import { Chooser } from '@ionic-native/chooser/ngx';
 
 @Component({

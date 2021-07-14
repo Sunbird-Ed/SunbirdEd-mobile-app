@@ -1,13 +1,13 @@
-<ion-content *ngIf="task" class="ion-padding">
+<ion-content *ngIf="task" class="ion-padding background-theme-color">
   <div class="heading-name" (click)="edit('task',task?.name)">
-    <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
+   <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
     <ion-icon name="create" color="primary" class="iconAdj"> </ion-icon>
   </div>
 
   <div style="margin-bottom: 15px">
     <div class="heading-name" (click)="edit('assignName',task?.assignee)">
 
-      <h5 style="font-weight: 500"> {{'FRMELEMNTS_LBL_ASSIGN_TASK' | translate}} <span class="assignee _capitalize">:
+        <h5 style="font-weight: 500"> {{'FRMELEMNTS_LBL_ASSIGN_TASK' | translate}} <span class="assignee _capitalize">:
           {{task.assignee}}</span> </h5>
       <div>
 
@@ -19,10 +19,10 @@
   </div>
   <ion-row>
     <ion-col size="3">
-      <img src="assets/imgs/timetable.png" (click)="setTaskEndDate()" />
+      <img src="assets/imgs/timetable.png" class="filter-icon" (click)="setTaskEndDate()" />
     </ion-col>
     <ion-col size="9">
-      <ion-datetime (ionChange)="setDate()" #dateTime value="{{task?.endDate}}" display-timezone="utc"
+        <ion-datetime (ionChange)="setDate()" #dateTime value="{{task?.endDate}}" display-timezone="utc"
         min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="task.endDate">
       </ion-datetime>
     </ion-col>
@@ -32,64 +32,64 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_STATUS' | translate}} </ion-label>
     </ion-col>
     <ion-col size="8">
-      
-      <ion-select [(ngModel)]="task.status" class="custom-select" [disabled]="checkDisabled()"
-      [interfaceOptions]="{
-        cssClass: 'select-box',
-        animated: false
-      }"
-        placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedTaskStatus($event)">
-        <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
-          selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
-      </ion-select>
+
+        <ion-select [(ngModel)]="task.status" class="custom-select" [disabled]="checkDisabled()"
+        [interfaceOptions]="{
+          cssClass: 'select-box',
+          animated: false
+        }"
+          placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedTaskStatus($event)">
+          <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
+            selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
+        </ion-select>
 
     </ion-col>
   </ion-row>
   <div class="subtask-form" *ngIf="task?.type !='observation' && task?.type != 'assessment'">
     <h4>{{'FRMELEMNTS_LBL_SUBTASKS' | translate}}</h4>
     <ion-row>
-      <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="arrow-image" /> </ion-col>
+      <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="filter-icon arrow-image" /> </ion-col>
       <ion-col size="9">
-        <ion-item>
-          <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_SUBTASK_PALCEHOLDER' | translate}}"
-            [(ngModel)]="newSubtask.name" autocapitalize='on'>
-          </ion-input>
-        </ion-item>
-        <ion-button (click)="addSubtask()"> {{'FRMELEMNTS_LBL_ADD_SUBTASK' | translate}} </ion-button>
+          <ion-item>
+              <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_SUBTASK_PALCEHOLDER' | translate}}"
+                [(ngModel)]="newSubtask.name" autocapitalize='on'>
+              </ion-input>
+            </ion-item>
+            <ion-button (click)="addSubtask()"> {{'FRMELEMNTS_LBL_ADD_SUBTASK' | translate}} </ion-button>
       </ion-col>
     </ion-row>
   </div>
 
   <div class="subtask-box " *ngFor="let subtask of task?.children; let subTaskIndex = index">
-    <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted">
+      <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted">
       <ion-row>
         <ion-col size="1">
           <ion-icon name="radio-button-off" color="primary"></ion-icon>
         </ion-col>
-        <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
+         <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
           *ngIf="editField != 'subtaskName'">
           {{subtask.name}}
         </ion-col>
         <ion-col size="1" style="margin: auto; text-align: center">
-          <img src="assets/imgs/Delete.png" style="width: 20px" (click)="askPermissionToDelete(subtask,'subtask')" />
+          <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px" (click)="askPermissionToDelete(subtask,'subtask')" />
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="6">
           <ion-item class="ion-date-time" lines="none">
-            <img src="assets/imgs/timetable.png" class="subtask-date-picker" />
+            <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" />
             <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate" displayFormat="DD/MM/YYYY"
               min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc"></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col size="6">
-          <ion-select [(ngModel)]="subtask.status" class="custom-select"
+            <ion-select [(ngModel)]="subtask.status" class="custom-select"
             placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)" [interfaceOptions]="{
                   cssClass: 'select-box',
                   animated: false
                 }">
-            <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
-              selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
+                <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
+                selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
           </ion-select>
         </ion-col>
       </ion-row>
@@ -97,18 +97,18 @@
   </div>
 
   <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="doAction()"
-    class="_capitalize" *ngIf="!task?.learningResources?.length">
+  class="_capitalize" *ngIf="!task?.learningResources?.length">
     {{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}
   </ion-button>
 
   <ion-row *ngIf="task?.learningResources?.length">
     <ion-col size="5">
-      <ion-button class="roundedButton" expand="block" shape="round" (click)="openResources(task)">
-        {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
-      </ion-button>
+        <ion-button class="roundedButton" expand="block" shape="round" (click)="openResources(task)">
+            {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
+          </ion-button>
     </ion-col>
     <ion-col size="7">
-      <ion-button class="roundedButton" [disabled]="!enableMarkButton" expand="block" shape="round"
+        <ion-button class="roundedButton" [disabled]="!enableMarkButton" expand="block" shape="round"
         (click)="doAction()">
         {{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}
       </ion-button>
@@ -119,14 +119,15 @@
   <div class="pop-container">
     <div class="pop-msg">
       <ion-item>
-        <ion-textarea placeholder="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}" [(ngModel)]="task.remarks"> </ion-textarea>
+          <ion-textarea placeholder="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}" [(ngModel)]="task.remarks"> </ion-textarea>
       </ion-item>
       <ion-item>
-        <ion-icon name="camera" slot="end" (click)="openAction()"></ion-icon>
+        <!-- <ion-icon name="attach" slot="end" (click)="openAction()"></ion-icon> -->
+        <ion-icon name="camera" slot="end" color="primary" (click)="openAction()"></ion-icon>
       </ion-item>
     </div>
     <div class="pop-btn">
-      <ion-button color="primary" expand="block" (click)="insertAttachment()">
+      <ion-button expand="block" (click)="insertAttachment()">
         {{'FRMELEMNTS_LBL_CONTINUE' | translate}}
       </ion-button>
     </div>

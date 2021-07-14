@@ -55,12 +55,11 @@
         </ion-card>
         <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_TASKS_FOR_PROJECT' | translate}}" class="create_header"
           (cardSelect)="openCreateTaskAction()">
-          <ion-icon class="mg-popup-btn-icon" ios="ios-add" md="md-add" add></ion-icon>
+          <ion-icon class="mg-popup-btn-icon" color="primary" ios="ios-add" md="md-add" add></ion-icon>
         </app-item-list-card>
       </div>
     </form>
   </div>
-
 </ion-content>
 <ion-footer>
   <ion-button (click)="next()" expand="block"
