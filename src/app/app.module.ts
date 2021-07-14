@@ -296,7 +296,7 @@ export const sunbirdSdkFactory =
 
       }));
 
-        await SunbirdSdk.instance.init({
+      await SunbirdSdk.instance.init({
         platform: 'cordova',
         fileConfig: {
         },
