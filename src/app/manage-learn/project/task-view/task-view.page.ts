@@ -215,6 +215,7 @@ export class TaskViewPage implements OnInit {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
+      cssClass: 'background-theme-color',
       buttons: [
         {
           text: data["CANCEL"],

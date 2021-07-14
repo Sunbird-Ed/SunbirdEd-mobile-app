@@ -61,14 +61,14 @@
 }
 
 ion-button, ion-fab-button {
-  --background: #{$blue};
+  --background: var(--ion-primary);
 }
 
 .task-list {
   padding: 5px 15px 0 15px;
 
   .task-endDate {
-    color: #{$blue};
+    color: var(--ion-primary);
     font-size: 16px;
     margin-top: 5px;
   }

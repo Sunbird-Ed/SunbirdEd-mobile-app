@@ -297,7 +297,7 @@ export class ProjectOperationPage  {
       texts = data;
     })
     this.viewProjectAlert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'dark-background',
       subHeader: texts[header],
       backdropDismiss: false,
       buttons: [
