@@ -58,7 +58,7 @@
     <ion-label position="stacked" class="font-bold"> {{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span></ion-label>
     <ion-item lines="none">
-      <ion-input (ionFocus)="checkNetwork('programs')" placeholder="{{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}}">
+      <ion-input (ionFocus)="openSearchModel('programs')" placeholder="{{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}}">
       </ion-input>
       <ion-icon name="caret-down" slot="end"></ion-icon>
     </ion-item>
@@ -76,7 +76,7 @@
     </ion-card>
   </div>
   <div class="entity-block">
-    <h5  (click)="checkNetwork('entity')">
+    <h5  (click)="addEntity()">
       <ion-icon name="location"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span>
     </h5>
@@ -107,7 +107,7 @@
     </div>
     <div class="text-center">
       <ion-icon name="link"></ion-icon>
-      <span (click)="checkNetwork('resources')" class="resources-link">
+      <span (click)="addLearningResources()" class="resources-link">
         {{'FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY' | translate}} </span>
     </div>
   </div>
