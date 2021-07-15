@@ -375,6 +375,7 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
+      undefined,
       undefined);
   }
 
@@ -393,6 +394,7 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
+      undefined,
       undefined);
   }
 
@@ -415,6 +417,7 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
+      undefined,
       undefined);
   }
 
