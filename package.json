@@ -119,7 +119,7 @@
     "cordova-plugin-webview-checker": "^1.0.1",
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^6.0.3",
-    "cordova-plugin-zip": "^3.1.0",
+    "cordova-plugin-zip": "3.1.0",
     "cordova-sqlite-storage": "^5.1.0",
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "cordova.plugins.diagnostic": "^5.0.2",
@@ -206,9 +206,7 @@
     "plugins": {
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-ionic-webview": {
-        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
-      },
+      "cordova-plugin-ionic-webview": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-device": {},
@@ -235,7 +233,6 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-screen-orientation": {},
-      "cordova-plugin-zip": {},
       "cordova-plugin-local-notification": {
         "ANDROID_SUPPORT_V4_VERSION": "26.+"
       },
@@ -255,7 +252,6 @@
         "GOOGLE_SERVICES_VERSION": "4.2.0",
         "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
       },
-
       "com.telerik.plugins.nativepagetransitions": {},
       "cordova-plugin-proguard": {},
       "cordova-plugin-androidx-adapter": {},
@@ -281,14 +277,7 @@
       "cordova-plugin-sunbirdsplash": {},
       "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-utility": {},
-      "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-fcm-with-dependecy-updated": {
-        "FCM_CORE_VERSION": "16.0.9",
-        "FCM_VERSION": "18.0.0",
-        "GRADLE_TOOLS_VERSION": "3.5.0",
-        "GOOGLE_SERVICES_VERSION": "4.2.0",
-        "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
-      }
+      "cordova-plugin-zip": {}
     },
     "platforms": [
       "android",
