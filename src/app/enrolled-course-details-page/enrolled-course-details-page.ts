@@ -400,8 +400,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         });
       }
-      this.fetchForumIdReq.identifier = [this.batchId];
-      this.fetchForumIdReq.type = 'batch';
     }
     this.accessDiscussionComponent.fetchForumIds();
   }
@@ -1503,6 +1501,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
             this.courseCardData = course;
+            this.fetchForumIdReq.identifier = [course.batchId];
+            this.fetchForumIdReq.type = 'batch';
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
           }
