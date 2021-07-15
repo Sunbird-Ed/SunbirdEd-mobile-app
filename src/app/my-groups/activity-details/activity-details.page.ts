@@ -285,7 +285,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
           InteractType.TOUCH,
           InteractSubtype.DOWNLOAD_CLICKED,
           Environment.USER,
-          PageId.ACTIVITY_DETAIL
+          PageId.ACTIVITY_DETAIL,
+          undefined
         );
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
