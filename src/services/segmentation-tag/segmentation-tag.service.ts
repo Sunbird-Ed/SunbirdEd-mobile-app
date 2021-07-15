@@ -6,13 +6,14 @@ import { NotificationService } from '@app/services/notification.service';
 import * as _ from "dayjs/locale/*";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 import { SplaschreenDeeplinkActionHandlerDelegate } from "../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate";
-import { Events } from "@app/util/events";
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
     static readonly USER_ATRIBUTE = 'USERFRAMEWORK_';
     static readonly USER_LOCATION = 'USERLOCATION_';
     static readonly CONTENT_ID = 'CONTENT_';
     static readonly USER_LANG = 'USERLANG_';
+    static readonly ALL = 'ALL_';
+    static readonly USER_ROLE = 'USERROLE_';
 }
 
 export class CommandFunctions {

@@ -37,8 +37,6 @@ export class MimeTypePipe implements PipeTransform {
   private flattenDeep(contents: Content[]): Content[] {
     return contents.reduce((acc, val) => {
       if (val.children) {
-        // const newVal = { ...val };
-        // delete newVal['children'];
         acc.push(val);
         return acc.concat(this.flattenDeep(val.children));
       } else {

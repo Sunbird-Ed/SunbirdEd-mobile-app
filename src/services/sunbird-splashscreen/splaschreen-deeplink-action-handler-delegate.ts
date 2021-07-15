@@ -36,7 +36,7 @@ import {
   ContentImport,
   Rollup,
   FetchEnrolledCourseRequest,
-  CourseService, GetSuggestedFrameworksRequest, Framework, FrameworkDetailsRequest
+  CourseService
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
@@ -46,7 +46,6 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
-import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
 import { ContentUtil } from '@app/util/content-util';
@@ -445,8 +444,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       }
     }
 
-    // initTabs(this.container, GUEST_TEACHER_TABS);
-    // this.events.publish('refresh:profile');
+
   }
 
   private async setAppLanguage(langCode: string) {
@@ -529,7 +527,6 @@ private async upgradeAppPopover(requiredVersionCode) {
 
       setTimeout(async () => {
         this.appGlobalServices.setOnBoardingCompleted();
-        // this.navigateToCourse(payload.courseId, payloadUrl);
         this.loginNavigationHandlerService.setDefaultProfileDetails();
       }, 1000);
 
@@ -649,7 +646,7 @@ private async upgradeAppPopover(requiredVersionCode) {
               {
                 state: {
                   content,
-                  corRelation: this.getCorrelationList(payloadUrl)
+                  corRelation: this.getCorrelationList(payloadUrl, coreRelationList)
                 }
               });
           }

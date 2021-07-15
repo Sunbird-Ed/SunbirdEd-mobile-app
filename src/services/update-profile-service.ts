@@ -50,14 +50,12 @@ export class UpdateProfileService {
                 this.profile.syllabus = [data.framework];
                 this.profile.board = [data.board];
                 this.setMedium(true, data.medium);
-                // this.profile.subject = [data.subject];
                 this.profile.subject = [];
                 this.setGrade(true, data.gradeLevel);
                 break;
             case 1:
                 this.profile.board = [data.board];
                 this.setMedium(true, data.medium);
-                // this.profile.subject = [data.subject];
                 this.profile.subject = [];
                 this.setGrade(true, data.gradeLevel);
                 break;
@@ -97,7 +95,6 @@ export class UpdateProfileService {
                                     this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                                     this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                                     this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                                    // this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
                                     if (data.board) {
                                         data.board = this.findCode(this.boardList, data.board[0], 'board');
                                     }

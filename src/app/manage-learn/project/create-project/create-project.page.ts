@@ -357,7 +357,7 @@ export class CreateProjectPage implements OnInit {
       texts = data;
     })
     this.createProjectAlert = await this.alert.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'background-theme-color',
       header: texts[header],
       message: texts[msg],
       backdropDismiss: false,

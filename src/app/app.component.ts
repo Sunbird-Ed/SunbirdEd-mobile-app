@@ -136,6 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!window['segmentation'].isInitialised) {
         window['segmentation'].init();
       }
+      window['segmentation'].SBTagService.pushTag(['android'], TagPrefixConstants.ALL, true);
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
@@ -893,7 +894,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false);
           }
           this.logoutHandlerService.onLogout();
-          this.localStorage.deleteAllStorage();
         }
         break;
 

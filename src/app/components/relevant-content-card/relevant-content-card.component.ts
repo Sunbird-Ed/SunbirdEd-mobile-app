@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import {ContentData, DownloadTracking} from 'sunbird-sdk';
+import { Component, Input } from '@angular/core';
+import {ContentData} from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
-import { Observable } from 'rxjs';
 
 
 @Component({
@@ -9,7 +8,7 @@ import { Observable } from 'rxjs';
   templateUrl: './relevant-content-card.component.html',
   styleUrls: ['./relevant-content-card.component.scss'],
 })
-export class RelevantContentCardComponent implements OnInit {
+export class RelevantContentCardComponent {
   @Input() contentData: ContentData;
   @Input() isAlreadyEnrolled: boolean;
   @Input() isCertifiedCourse: boolean;
@@ -18,6 +17,4 @@ export class RelevantContentCardComponent implements OnInit {
   constructor(public commonUtil: CommonUtilService) {
   }
 
-  ngOnInit() {
-  }
 }

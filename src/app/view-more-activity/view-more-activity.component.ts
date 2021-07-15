@@ -586,7 +586,7 @@ export class ViewMoreActivityComponent implements OnInit {
       id: this.sectionName,
       type: CorReleationDataType.SECTION
     }, {
-      id: identifier,
+      id: identifier || '',
       type: CorReleationDataType.ROOT_ID
     }];
 

@@ -22,10 +22,9 @@ import {
     WebviewSessionProviderConfig,
     SignInError,
     FrameworkCategoryCode,
-    ProfileType
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
@@ -402,8 +401,6 @@ export class FormAndFrameworkUtilService {
             await this.invokeContentFilterConfigFormApi()
                 .then(fields => {
                     contentFilterConfig = fields;
-                })
-                .catch(error => {
                 });
         }
 

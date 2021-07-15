@@ -104,7 +104,6 @@ export class SyncService {
     if(showLoader){
       this.loader.startLoader()
     }
-    // const project = JSON.parse(JSON.stringify(project));
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._rev;
     delete payload._id;

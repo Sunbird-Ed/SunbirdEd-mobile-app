@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
@@ -11,7 +11,7 @@ import { UpdateTrackerService } from '../core/services/update-tracker.service';
   templateUrl: './ecm-listing.page.html',
   styleUrls: ['./ecm-listing.page.scss'],
 })
-export class EcmListingPage implements OnInit {
+export class EcmListingPage {
 
   entityId: any;
   entityName: string;
@@ -39,15 +39,12 @@ export class EcmListingPage implements OnInit {
     })
   }
 
-  ngOnInit() {
-  }
 
   ionViewWillEnter() {
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.entityId))
       .then((successData) => {
         this.entityData = successData;
-        // this.checkAllEvidenceSubmitted();
         this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
           this.entityData["assessment"]["evidences"],
           this.recentlyUpdatedEntity
@@ -59,10 +56,7 @@ export class EcmListingPage implements OnInit {
           .then((successData) => {
             this.generalQuestions = successData;
           })
-          .catch((error) => {});
       })
-      .catch((error) => {
-      });
   }
 
   mapCompletedAndTotalQuestions() {
@@ -82,10 +76,6 @@ export class EcmListingPage implements OnInit {
   }
 
   goToGeneralQuestionList(): void {
-    // this.appCtrl.getRootNav().push("GeneralQuestionListPage", {
-    //   _id: this.entityId,
-    //   name: this.entityName,
-    // });
   }
 
   checkForProgressStatus() {
@@ -128,11 +118,6 @@ export class EcmListingPage implements OnInit {
           }
         })
 
-      // this.navCtrl.push("SectionListPage", {
-      //   _id: this.entityId,
-      //   name: this.entityName,
-      //   selectedEvidence: index,
-      // });
     } else {
       const entity = { _id: this.entityId, name: this.entityName };
       this.openAction(entity, index);

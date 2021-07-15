@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ChartType } from 'chart.js';
 import { MultiDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
@@ -8,7 +8,7 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
   templateUrl: './graph-circle.component.html',
   styleUrls: ['./graph-circle.component.scss'],
 })
-export class GraphCircleComponent implements OnInit {
+export class GraphCircleComponent {
   @Input() data;
   total;
   chartConstructor = 'chart'; // optional string, defaults to 'chart'
@@ -68,7 +68,6 @@ export class GraphCircleComponent implements OnInit {
   };
 
   constructor() {}
-  ngOnInit() {}
 
   plotSimpleBarChart() {
     this.extraColor = [

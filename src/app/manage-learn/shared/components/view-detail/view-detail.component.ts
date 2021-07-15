@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
@@ -6,13 +6,12 @@ import { ModalController, NavParams } from '@ionic/angular';
   templateUrl: './view-detail.component.html',
   styleUrls: ['./view-detail.component.scss'],
 })
-export class ViewDetailComponent implements OnInit {
+export class ViewDetailComponent {
   submission: any;
 
   constructor(params: NavParams, private modalCtrl: ModalController) {
     this.submission = params.get('submission');
   }
-  ngOnInit() {}
 
   close() {
     this.modalCtrl.dismiss();

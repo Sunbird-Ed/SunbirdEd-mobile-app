@@ -1473,8 +1473,12 @@
   "GOOGLE_LOGIN": "Sign in with Google",
   "LOGIN_WITH": "Login with {{appName}}",
   "LOGIN_TO": "Login to {{appName}}",
+  "FRMELEMENTS_MSG_FEATURE_USING_OFFLINE":"Dear user, please go online to use this feature",
   "YOB_TITLE": "Year of birth",
   "SELECT_YOB": "Select year of birth",
   "DETAILS": "Content Details",
-  "CONTENT_RELEVANT_MSG": "This content is relevant for: "
+  "CONTENT_RELEVANT_MSG": "This content is relevant for: ",
+  "DOWNLOAD_FORM":"Do you want to download this form?",
+  "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded successfully!",
+  "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded"
 }
