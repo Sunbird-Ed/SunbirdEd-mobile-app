@@ -273,8 +273,7 @@ export class FaqHelpPage implements OnInit {
       event.data.action,
       Environment.USER,
       PageId.FAQ,
-      telemetryObject,
-      undefined);
+      telemetryObject);
   }
 
   logInteractEvent(event) {
@@ -290,7 +289,6 @@ export class FaqHelpPage implements OnInit {
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
       PageId.FAQ,
-      undefined,
       undefined);
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
