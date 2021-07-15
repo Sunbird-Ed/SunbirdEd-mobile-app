@@ -10,7 +10,9 @@
   <ion-searchbar debounce="1000" (ionInput)="search($event)" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}">
   </ion-searchbar>
   <div class="ion-padding">
-    <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}} <ion-icon name="chevron-forward" color="primary"></ion-icon>
+    <ion-icon name="funnel" color="primary"></ion-icon> 
+    <ion-label>{{'FRMELEMNTS_LBL_FILTERS' | translate}} </ion-label> <ion-icon
+      name="chevron-forward" color="primary"></ion-icon>
     <div class="filters">
       <ion-button *ngFor="let filter of filters" shape="round" [color]="filter.isActive ? 'primary' : 'light'"(click)="setFilter(filter);">{{filter.name}} </ion-button>
     </div>

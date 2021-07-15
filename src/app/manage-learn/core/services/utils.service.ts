@@ -35,7 +35,6 @@ export class UtilsService {
   userId;
   mandatoryFields ={};
   constructor(
-    private utility: UtilityService,
     @Inject("PROFILE_SERVICE") private profileService: ProfileService,
     @Inject("AUTH_SERVICE") public authService: AuthService,
     private zone: NgZone,
@@ -46,15 +45,9 @@ export class UtilsService {
     private storage: Storage,
     private events: Events,
 
-  ) {
-    this.storage.get(storageKeys.mandatoryFields).then(data =>{
-      if (data) {
-        this.mandatoryFields = data;
-      }
-    });
-
-      this.events.subscribe("loggedInProfile:update", framework => {
-      this.getProfileInfo(true);
+  ) {  
+      this.events.subscribe("loggedInProfile:update", _ => {
+        this.storeMandatoryFields()
     });
   }
 
@@ -426,57 +419,67 @@ export class UtilsService {
     return imageArray;
   }
 
-  async getMandatoryEntities(): Promise<any> {
-  this.profile = await this.getProfileData('SERVER');
-    return new Promise((resolve, reject) => {
-      const config = {
-        url:
-          urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES +
-          `${this.profile.state}?role=${this.profile.role}`
-      };
-
-      this.kendra.get(config).subscribe(
-        data => {
-          if (data.result && data.result.length) {
-            this.requiredFields = data.result;
-            this.mandatoryFields[this.profile.state] = { [this.profile.role]: this.requiredFields};
-            this.storage.set(storageKeys.mandatoryFields, this.mandatoryFields);
-            this.checkMandatoryFields(this.mandatoryFields[this.profile.state][this.profile.role]);
-          } else {
-            this.openProfileUpdateAlert();
-            resolve(false);
-          }
-        },
-        error => {
-          resolve(false);
-          // reject()
-        }
-      );
-    });
-  }
-
-  checkMandatoryFields(requiredFields) {
-    console.log(requiredFields,"requiredFields");
-    if(requiredFields){
-      let allFieldsPresent = true;
-      for (const field of requiredFields) {
-        if (!this.profile[field]) {
-          allFieldsPresent = false;
-          break;
-        }
-      }
-      if (!allFieldsPresent) {
-        this.openProfileUpdateAlert();
-        return false;
-      } else {
-        return true;
-      }
-    }else{
-      this.openProfileUpdateAlert();
-      return false;
+  async storeMandatoryFields(mandatoryEntitiesList?) {
+    if(!mandatoryEntitiesList) this.profile = await this.getProfileData('SERVER');
+    if (!this.profile.role) return;
+    let mandatoryFields;
+    try {
+      mandatoryFields = await this.storage.get(storageKeys.mandatoryFields)
+      if(!mandatoryFields) mandatoryFields = {}
+    } catch {
+      mandatoryFields={}
     }
-  
+    console.log(mandatoryFields)
+    if (mandatoryFields[this.profile.state] && mandatoryFields[this.profile.state][this.profile.role]) return;
+
+    try {
+      if(!mandatoryEntitiesList) mandatoryEntitiesList = await this.getMandatoryEntitiesList()
+      if (!mandatoryEntitiesList || !mandatoryEntitiesList.length) return
+      if(!mandatoryFields[this.profile.state]) mandatoryFields[this.profile.state]={}
+      mandatoryFields[this.profile.state][this.profile.role] = mandatoryEntitiesList
+      await this.storage.set(storageKeys.mandatoryFields, mandatoryFields)
+    } catch{
+      
+    }
   }
+
+  async getMandatoryEntities(): Promise<any> {
+    let data;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mandatoryFields = await this.storage.get(storageKeys.mandatoryFields)
+        if (!mandatoryFields[this.profile.state][this.profile.role]) throw "Mandatory fields locally not found";
+        data = { result: mandatoryFields[this.profile.state][this.profile.role] }
+      } catch {
+          const config = {
+          url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+        };
+        data = await this.kendra.get(config).toPromise()
+        data && data.result && data.result.length && this.storeMandatoryFields(data.result)
+
+      }
+      if (data.result && data.result.length) {
+          this.requiredFields = data.result;
+          let allFieldsPresent = true;
+          for (const field of this.requiredFields) {
+            if (!this.profile[field]) {
+              allFieldsPresent = false;
+              break
+            }
+          }
+          if (!allFieldsPresent) {
+            this.openProfileUpdateAlert()
+            resolve(false)
+          } else {
+            resolve(true);
+          }
+        } else {
+          this.openProfileUpdateAlert();
+          resolve(false)
+        }
+    })
+  }
+
 
   async getMandatoryEntitiesList(): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -496,7 +499,6 @@ export class UtilsService {
         },
         error => {
           resolve(false);
-          // reject()
         }
       );
     });
@@ -530,56 +532,11 @@ export class UtilsService {
     this.profileAlert ? await this.profileAlert.dismiss() : null;
   }
 
-  async getProfileInfo(callMandatory?): Promise<any> {
-    //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+  async getProfileInfo(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      let param = callMandatory ? 'SERVER' :'CACHE'
-      this.profile = await this.getProfileData(param);
-      let allFieldsPresent = true;
-      let mandatoryFields;
-      if (!callMandatory) {
-        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-          mandatoryFields = this.getMandatoryEntities();
-          mandatoryFields ? resolve(this.profile) : resolve(null);
-        } else {
-          this.storage.get(storageKeys.mandatoryFields).then(data => {
-            if (data && data[this.profile.state]) {
-            this.checkMandatoryFields(
-                data[this.profile.state][this.profile.role]
-              );
-              if (!allFieldsPresent) {
-                mandatoryFields ? resolve(this.profile) : resolve(null);
-              } else {
-                resolve(this.profile);
-              }
-            } else {
-              this.openProfileUpdateAlert();
-            }
-          });
-        }
-      } else {
-        mandatoryFields = this.getMandatoryEntities();
-        this.profile = await this.getProfileData('SERVER');
-        mandatoryFields ? resolve(this.profile) : resolve(null);
-      }
-
-      // mandatoryFields = await this.getMandatoryEntities();
-      // resolve(this.profile)
-      // resolve({
-      //   "state" :  "5f33c3d85f637784791cd831",
-      //   "district" : "5f33c56fb451f58478b36997",
-      //   "block" : "5f33c63ece438a849b4a17f4",
-      //   "school" : "5f33c6dcc1352f84a29f547a",
-      //   "role" : "DEO"
-
-      // })
-      // resolve({
-      //   "role": "DEO",
-      //   "state": "a10623c3-cc97-4971-a7fe-2f6d4e6883f7",
-      //   "district": "5a27983c-5cfd-4fbb-89d5-8f45742a77d1",
-      //   "school": "1"
-
-      // })
+      this.profile = await this.getProfileData();
+      const mandatoryFields = await this.getMandatoryEntities();
+      mandatoryFields ? resolve(this.profile) : resolve(null);
     });
   }
 
@@ -638,7 +595,7 @@ export class UtilsService {
             const serverProfileDetailsRequest = {
               userId: session.userToken,
               requiredFields: ProfileConstants.REQUIRED_FIELDS,
-              from: CachedItemRequestSourceFrom[fromData]
+              from: CachedItemRequestSourceFrom[fromData],
             };
             this.profileService
               .getServerProfilesDetails(serverProfileDetailsRequest)
