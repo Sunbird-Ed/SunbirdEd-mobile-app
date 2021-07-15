@@ -72,7 +72,7 @@
   </div>
   <div class="entity-block">
     <h5 (click)="checkNetwork('entity')">
-      <ion-icon name="location"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
+      <ion-icon name="location" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span>
     </h5>
     <ion-card *ngIf="selectedEntity" class="data-list">
@@ -102,6 +102,6 @@
   </div>
 </ion-content>
 <ion-footer *ngIf="template">
-  <div class="footer-btn" (click)="createProject()">{{button | translate}}
+  <div class="footer-btn" (click)="createProject()" >{{button | translate}}
   </div>
 </ion-footer>
