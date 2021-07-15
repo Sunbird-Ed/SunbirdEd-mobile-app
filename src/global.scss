@@ -63,6 +63,8 @@
 // Discussion Forum
 .discussion-forum{
   background-color: map-get($colors, light_gray_8c);
+  min-height: 90vh !important;
+  height: 90vh !important;
 }
 .discuss-left-panel{
   z-index: 3 !important;
