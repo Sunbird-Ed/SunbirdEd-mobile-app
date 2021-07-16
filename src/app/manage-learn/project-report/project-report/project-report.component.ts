@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AlertController, IonSelect, ModalController } from '@ionic/angular';
@@ -16,7 +16,7 @@ import { AppHeaderService } from '@app/services';
   templateUrl: './project-report.component.html',
   styleUrls: ['./project-report.component.scss'],
 })
-export class ProjectReportComponent implements OnInit {
+export class ProjectReportComponent {
   reportData: any;
   showFilter: boolean = false;
   filterType: { label: string; value: number }[];
@@ -75,7 +75,6 @@ export class ProjectReportComponent implements OnInit {
     this.loadFilterType();
   }
 
-  ngOnInit() {}
 
   loadFilterType() {
     this.filterType = [

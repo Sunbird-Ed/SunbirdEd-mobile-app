@@ -1,15 +1,12 @@
 import { GroupDetailsPageModule } from './../group-details/group-details.module';
 import { Location } from '@angular/common';
 import { AppHeaderService } from '../../../services/app-header.service';
-import { Component, ViewEncapsulation, OnInit, OnDestroy, Injectable } from '@angular/core';
+import { Component, ViewEncapsulation, OnDestroy, Injectable } from '@angular/core';
 import { Platform} from '@ionic/angular';
 import { TelemetryGeneratorService, CommonUtilService } from '@app/services';
 import {
     Environment,
-    ImpressionSubtype,
     ImpressionType,
-    InteractSubtype,
-    InteractType,
     PageId
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -33,7 +30,7 @@ export interface ViewMoreActivityActionsDelegate {
     styleUrls: ['./view-more-activity.page.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class ViewMoreActivityPage implements OnInit, OnDestroy {
+export class ViewMoreActivityPage implements  OnDestroy {
 
     unregisterBackButton: Subscription;
     headerObservable: any;
@@ -61,8 +58,6 @@ export class ViewMoreActivityPage implements OnInit, OnDestroy {
         }
     }
 
-    ngOnInit() {
-    }
 
     ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

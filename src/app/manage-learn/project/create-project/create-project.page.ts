@@ -1,12 +1,11 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { ModalController, AlertController, PopoverController } from '@ionic/angular';
+import { ModalController, AlertController, PopoverController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategorySelectComponent } from '../category-select/category-select.component';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DbService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { localStorageConstants } from '../../core/constants/localStorageConstants';

@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { ToastService, UtilsService } from '../../core';
-import { LoaderService } from '../../core';
+import { ToastService, UtilsService, LoaderService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { Subscription } from 'rxjs';
@@ -17,7 +16,7 @@ import { UpdateLocalSchoolDataService } from '../../core/services/update-local-s
   templateUrl: './solution-listing.component.html',
   styleUrls: ['./solution-listing.component.scss'],
 })
-export class SolutionListingComponent implements OnInit {
+export class SolutionListingComponent {
   programId: any;
   solutions;
   description;
@@ -52,7 +51,6 @@ export class SolutionListingComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();

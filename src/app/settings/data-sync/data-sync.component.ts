@@ -103,8 +103,7 @@ export class DataSyncComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SHARE_TELEMETRY_CLICKED,
       Environment.SETTINGS,
-      PageId.SETTINGS_DATASYNC,
-      undefined);
+      PageId.SETTINGS_DATASYNC);
 
     try {
       await this.telemetryService.sync({

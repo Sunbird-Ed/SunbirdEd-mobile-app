@@ -16,7 +16,6 @@ import {
 } from "../../core";
 import { storageKeys } from "../../storageKeys";
 import { EvidenceService } from "../../core/services/evidence.service";
-import { ScroreReportMenusComponent } from "../../shared/components/scrore-report-menus/scrore-report-menus.component";
 import { SubmissionActionsComponent } from "../../shared/components/submission-actions/submission-actions.component";
 import { TranslateService } from "@ngx-translate/core";
 import { urlConstants } from "../../core/constants/urlConstants";
@@ -356,7 +355,6 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   async openMenu(event, submission, index) {
-    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
       if (!this.networkFlag) {
         this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
       } else {
@@ -405,7 +403,6 @@ export class ObservationSubmissionComponent implements OnInit {
       this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     } else {
       let submission = this.submissions[0];
-      // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
       if (submission.criteriaLevelReport && submission.isRubricDriven) {
         this.router.navigate([RouterLinks.GENERIC_REPORT], {
           state: {

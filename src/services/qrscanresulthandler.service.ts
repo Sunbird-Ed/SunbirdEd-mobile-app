@@ -211,7 +211,7 @@ export class QRScannerResultHandler {
 
   handleInvalidQRCode(source: string, scannedData: string) {
     this.source = source;
-    this.generateQRScanSuccessInteractEvent(scannedData, 'UNKNOWN', undefined);
+    this.generateQRScanSuccessInteractEvent(scannedData, 'UNKNOWN');
     this.generateEndEvent(this.source, scannedData);
   }
 

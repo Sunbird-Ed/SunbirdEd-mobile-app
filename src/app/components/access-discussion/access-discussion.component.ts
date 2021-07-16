@@ -48,8 +48,6 @@ export class AccessDiscussionComponent implements OnInit {
       InteractSubtype.FORUM_ICON_CLICKED,
       Environment.DISCUSSION,
       PageId.GROUP_DETAIL,
-      undefined,
-      undefined,
       undefined
     );
     this.headerService.hideHeader();

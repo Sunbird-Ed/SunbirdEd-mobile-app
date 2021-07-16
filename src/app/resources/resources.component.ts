@@ -488,7 +488,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         contentSearchCriteria.board = this.getGroupByPageReq.board;
         contentSearchCriteria.medium = this.getGroupByPageReq.medium;
         contentSearchCriteria.grade = this.getGroupByPageReq.grade;
-        // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };

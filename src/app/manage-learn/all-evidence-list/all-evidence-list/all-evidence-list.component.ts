@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 
 @Component({

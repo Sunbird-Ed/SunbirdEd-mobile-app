@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { MenuController, NavParams, Platform, PopoverController } from '@ionic/angular';
@@ -9,7 +9,7 @@ import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest }
   templateUrl: './edit-contact-verify-popup.component.html',
   styleUrls: ['./edit-contact-verify-popup.component.scss'],
 })
-export class EditContactVerifyPopupComponent implements OnInit{
+export class EditContactVerifyPopupComponent {
   /**
    * Key may be phone or email depending on the verification flow from which it is called
    */
@@ -40,7 +40,6 @@ export class EditContactVerifyPopupComponent implements OnInit{
 
   }
 
-  ngOnInit() { }
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);

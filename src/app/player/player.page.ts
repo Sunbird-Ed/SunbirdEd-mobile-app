@@ -354,13 +354,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     const content = { identifier, hierarchyInfo };
 
     // Migration todo
-    /*     this.navCtrl.push(ContentDetailsPage, {
-          content: content
-        }).then(() => {
-          // Hide player while going back
-          this.navCtrl.remove(this.navCtrl.length() - 2);
-        });
-     */
     setTimeout(() => {
       this.closeIframe(content);
     }, 1000);
