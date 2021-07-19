@@ -43,6 +43,5 @@ cordova-plugin=cordova.plugins.diagnostic
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git
-sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0
