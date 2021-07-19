@@ -1,9 +1,4 @@
 <ion-toolbar>
-  <!-- <ion-buttons slot="start">
-    <ion-button (click)="confirmToClose()">
-      <ion-icon slot="start" name="close"></ion-icon>
-    </ion-button>
-  </ion-buttons> -->
   <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
     <ion-button class="skip-icon">
       <ion-icon slot="end" name="play-skip-forward"></ion-icon>
@@ -77,7 +72,7 @@
   </div>
   <div class="entity-block">
     <h5 (click)="checkNetwork('entity')">
-      <ion-icon name="location"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
+      <ion-icon name="location" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span>
     </h5>
     <ion-card *ngIf="selectedEntity" class="data-list">
@@ -88,12 +83,6 @@
       </ion-item>
     </ion-card>
   </div>
-  <!-- <div class="rating-block" *ngIf="showRatings">
-    <h5>{{'FRMELEMNTS_LBL_LIKED_PROJECT' | translate}} </h5>
-    <p> {{'FRMELEMNTS_MSG_RATING_LABEL_MESSAGE' | translate}} </p>
-    <app-star-ratings [ratingStar]="ratingStar" [userRating]="template.userRating" (onRate)="rating($event)">
-    </app-star-ratings>
-  </div> -->
   <div class="learningResources" *ngIf="showLearningResources">
     <h5>{{'FRMELEMNTS_LBL_LINK_LEARNING_RESOURCES' | translate}} </h5>
     <div *ngIf="selectedResources">
@@ -113,6 +102,6 @@
   </div>
 </ion-content>
 <ion-footer *ngIf="template">
-  <div class="footer-btn" (click)="createProject()">{{button | translate}}
+  <div class="footer-btn" (click)="createProject()" >{{button | translate}}
   </div>
 </ion-footer>

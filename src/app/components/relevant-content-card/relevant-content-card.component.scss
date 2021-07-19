@@ -1,0 +1,27 @@
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
+:host {
+    .certificate-container {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        align-items:center;
+        background-color: map-get($colors, pale_blue_f6);
+        padding: 4px;
+        .certificate-icon {
+          padding-right: 5px;
+        }
+      }
+      .certified-section-color{
+        color: map-get($colors, bright_blue_9f);
+      }
+    .subtitle-color{
+        color: map-get($colors, granite_gray);
+    }
+    .font-10{
+      font-size: 10px;
+    }
+    .font-12 {
+      font-size: 12px !important;
+    }
+}

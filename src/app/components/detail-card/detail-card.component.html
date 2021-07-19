@@ -1,5 +1,5 @@
 <div class="sb-dt-card">
-  <div class="sb-dt-content">
+  <!-- <div class="sb-dt-content">
     <div class="left" style="overflow: hidden;">
 
       <div class="sb-dt-title"> {{contentDetail?.contentData?.name}}</div>
@@ -21,8 +21,8 @@
           [src]="commonUtil.convertFileSrc(localImage) || commonUtil.convertFileSrc(contentDetail?.contentData?.appIcon) || defaultAppIcon">
       </div>
     </div>
-  </div>
-
+  </div> -->
+<app-toc-header [contentData]="contentDetail?.contentData"></app-toc-header>
   <div class="sb-dt-content pt-0">
     <div class="left">
     </div>

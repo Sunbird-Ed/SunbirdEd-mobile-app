@@ -93,7 +93,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.handleDeviceBackButton();
     this.courseList = [];
     try {
-      this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier);
+      this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier, this.activity.objectType);
       console.log('this.courseData', this.courseData);
       this.getNestedCourses(this.courseData.children);
       if (this.courseList.length) {
@@ -290,7 +290,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
         const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        // const downloadDirectoryLocal = this.file.externalDataDirectory;
         const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
         
         this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})

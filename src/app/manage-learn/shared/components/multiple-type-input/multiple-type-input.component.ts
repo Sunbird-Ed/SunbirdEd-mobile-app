@@ -32,9 +32,7 @@ export class MultipleTypeInputComponent implements OnInit {
   ) {
     this.text = "Hello World";
 
-    // if(!this.data.value) {
-    //   this.data.value = [];
-    // }
+
   }
   ngOnInit() {
     this.data.value = this.data.value ? this.data.value : [];
@@ -61,7 +59,6 @@ export class MultipleTypeInputComponent implements OnInit {
   }
 
   next(status?: string) {
-    // this.utils.isQuestionComplete(this.data);
     this.data.isCompleted = this.utils.isQuestionComplete(this.data);
     this.nextCallBack.emit(status);
   }
@@ -77,7 +74,6 @@ export class MultipleTypeInputComponent implements OnInit {
   }
 
  async openHint(hint) {
-    // this.hintService.presentHintModal({ hint: hint });
     let hintModal = await this.modalCtrl.create({
       component: HintComponent,
       componentProps: {

@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AppHeaderService, CommonUtilService } from "@app/services";
-import { TranslateService } from "@ngx-translate/core";
-import { LoaderService, ToastService } from "../../core";
-import { DbService } from "../../core/services/db.service";
-import { UtilsService } from "../../core/services/utils.service";
+import { Component, Inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AppHeaderService, CommonUtilService } from '@app/services';
+import { TranslateService } from '@ngx-translate/core';
+import { LoaderService, ToastService } from '../../core';
+import { DbService } from '../../core/services/db.service';
+import { UtilsService } from '../../core/services/utils.service';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Location } from '@angular/common';
@@ -13,18 +13,18 @@ import { Platform } from '@ionic/angular';
 
 var environment = {
   db: {
-    projects: "project.db",
-    categories: "categories.db",
+    projects: 'project.db',
+    categories: 'categories.db',
   },
   deepLinkAppsUrl: ''
 };
 
 @Component({
-  selector: "app-learning-resources",
-  templateUrl: "./learning-resources.page.html",
-  styleUrls: ["./learning-resources.page.scss"],
+  selector: 'app-learning-resources',
+  templateUrl: './learning-resources.page.html',
+  styleUrls: ['./learning-resources.page.scss'],
 })
-export class LearningResourcesPage implements OnInit {
+export class LearningResourcesPage {
   projectId;
   taskId: any;
   list;
@@ -67,7 +67,6 @@ export class LearningResourcesPage implements OnInit {
     })
   }
 
-  ngOnInit() { }
 
   ngOnDestroy() {
     if(this._networkSubscription){
@@ -77,14 +76,14 @@ export class LearningResourcesPage implements OnInit {
 
   ionViewWillEnter() {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_LEARNING_RESOURCES"]).subscribe((text) => {
+    this.translate.get(['FRMELEMNTS_LBL_LEARNING_RESOURCES']).subscribe((text) => {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
     this._headerConfig.actionButtons = [];
     this._headerConfig.showHeader = true;
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
+    this._headerConfig.pageTitle = data['FRMELEMNTS_LBL_LEARNING_RESOURCES'];
     this.headerService.updatePageConfig(this._headerConfig);
     this.handleBackButton();
   }
@@ -96,17 +95,14 @@ export class LearningResourcesPage implements OnInit {
     });
   }
   getProjectFromLocal(projectId) {
-    // this.loader.startLoader();
     this.db.query({ _id: projectId }).then(
       (success) => {
-        // this.loader.stopLoader();
         this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
       },
       (error) => {
-        // this.loader.stopLoader();
       }
     );
   }
@@ -115,7 +111,6 @@ export class LearningResourcesPage implements OnInit {
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
       return
     }
-    // let identifier = link.split("/").pop();
     const req: ContentDetailRequest = {
       contentId: id,
       attachFeedback: false,

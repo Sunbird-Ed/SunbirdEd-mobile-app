@@ -6,7 +6,6 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
 import { NetworkService } from './network.service';
-import { localStorageConstants } from '../constants/localStorageConstants';
 import { urlConstants } from '../constants/urlConstants';
 import { KendraApiService } from './kendra-api.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
@@ -73,16 +72,6 @@ export class SyncService {
 
         }
 
-        // this.localStorage.getLocalStorage(localStorageConstants.SYNC_VARIABLE).then(status => {
-        //   if (status === 'ON' && this.network.isNetworkAvailable) {
-        //     this.router.navigate(['/menu/sync']);
-        //   } else if (status === 'ON' && !this.network.isNetworkAvailable) {
-        //     this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
-        //   } else {
-        //   }
-        // }).catch(error => {
-        //   this.router.navigate(['/menu/sync']);
-        // })
       }
     })
   }
@@ -115,7 +104,6 @@ export class SyncService {
     if(showLoader){
       this.loader.startLoader()
     }
-    // const project = JSON.parse(JSON.stringify(project));
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._rev;
     delete payload._id;

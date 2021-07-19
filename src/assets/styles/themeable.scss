@@ -7,12 +7,15 @@ html[data-theme="JOYFUL"]{
   --app-primary-medium:#007AFF;
   --app-primary-light-2:#94CCF5;
   --app-primary-light:#C6E7FF;
-  --app-primary-background:#F3F7FB;
+  --app-primary-background:#E9E8D9;
   --app-primary-header:#FFD954;
   --app-primary-header-light:#FFE487;
   --app-secondary-background:#F2F2EA;
   --app-tertiary:#6236FF;
   --app-tertiary-light:#E0E1FD;
+  --app-tertiary-background:#F3F7FB;
+  --app-quaternary-medium: #FF794A;
+  --app-quaternary-light: #FDF0E4;
 
   --joyful-light-yellow:#F9FFBE; // take it out
   --joyful-light-blue:#DAECFF; // take it out
@@ -31,6 +34,7 @@ html[data-theme="JOYFUL"]{
 
   --app-shadow:rgba(0,0,0,0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
   ion-toolbar {
@@ -203,9 +207,9 @@ html[data-theme="JOYFUL"]{
     border-radius: 0.5rem;
   }
 
-  // .sb--card--course{
-  //   margin: 0 0 1rem 0 !important;
-  // }
+  .sb--card--course{
+    border-radius: 1rem !important;
+  }
 
   sb-course-cards-hlist, sb-library-cards-stack{
     .title{
@@ -224,10 +228,6 @@ html[data-theme="JOYFUL"]{
 
   sb-library-cards-stack{
     .header{
-      .title{
-        padding-left: 1rem;
-        font-weight: bold !important;
-      }
       i{
         display: none;
       }
@@ -459,6 +459,7 @@ html[data-theme="JOYFUL"]{
       background: transparent !important;
       sb-course-cards-hlist > .layout-course > .header > .title{
         color: var(--app-gray) !important;
+        padding-left: 1rem !important;
       }
     }
   }
@@ -482,7 +483,9 @@ html[data-theme="JOYFUL"]{
     }
     .sign-in-block{
       box-shadow: 0 20px 40px -10px #D8D8D8 !important;
-      border-radius: 12px !important;
+      ion-button{
+        --border-radius: 100px !important;
+      }
     }
 
     ion-card{
@@ -498,6 +501,7 @@ html[data-theme="JOYFUL"]{
     .enrolled-course-card-button{
       background-color: var(--app-primary) !important;
       border-radius: 50px !important;
+      margin: 1rem 0 1rem !important;
     }
     .view-credits{
       strong{
@@ -524,6 +528,12 @@ html[data-theme="JOYFUL"]{
     }
     .sb-course-complete-container, .sb-batch-end-container{
       border-radius: 1rem;
+    }
+
+    .card-content-bottom-0 {
+      .segment-button-has-label-only {
+        color: var(--app-primary) !important;
+      }
     }
   }
 
@@ -657,10 +667,14 @@ html[data-theme="JOYFUL"]{
         background: var(--app-secondary-background) !important;
         .sb-pills-container{
           .pill{
+            min-width: 5rem;
             box-shadow: var(--button-style-shadow) !important;
             color: var(--app-dark-gray) !important;
             .img-align{
               margin-top: 0 !important;
+            }
+            .allign-middle{
+              width: 100%;
             }
           }
           .pill.active{
@@ -675,10 +689,24 @@ html[data-theme="JOYFUL"]{
 
     .textbook-accordian{
       background-color: transparent;
+      padding: 0 0.5rem;
       sb-accordion-header{
         .sbaccordion__panel-header{
+          border: none !important;
           background-color: var(--app-secondary-background) !important;
           box-shadow: var(--block-style-shadow) !important;
+        }
+        .expansion-indicator {
+          width: 1.5rem;
+          height: 1.5rem;
+          background-color: var(--app-white);
+          border-radius: 5rem;
+          text-align: center;
+          box-shadow: var(--button-sm-style-shadow);
+          svg {
+            width: 80%;
+            fill: var(--app-gray);
+          }
         }
       }
       .accordion-item-header-expanded{
@@ -693,18 +721,30 @@ html[data-theme="JOYFUL"]{
       }
       sb-accordion-body{
         .sbaccordion__panel-content{
+          border: none !important;
           background-color: var(--app-secondary-background) !important;
           border-radius: 0 0 1rem 1rem;
+          padding: 0.5rem !important;
+        }
+        .sbaccordion__panel-content > div{
+          background-color: var(--app-white);
+          padding: 0.5rem;
+          border-radius: 1rem;
+          box-shadow: var(--button-style-shadow);
         }
       }
       sb-toc-card{
         .sbchapter__item{
-          border-radius: 1rem;
-          border-color: var(--app-white);
-          box-shadow: var(--block-style-shadow);
+          border-radius: 5rem;
+          box-shadow: none;
+          border: 1px solid var(--app-primary-background);
           .d-inline-flex{
             align-items: center;
           }
+        }
+        .sbchapter__item.sbchapter__item--active{
+          background-color: var(--app-quaternary-light);
+          border-color: var(--app-quaternary-medium);
         }
         .sbchapter__img{
           border-radius: 0.5rem;
@@ -714,6 +754,9 @@ html[data-theme="JOYFUL"]{
       sb-accordion-item{
         .sbaccordion{
           box-shadow: none !important;
+          .sbaccordion__panel{
+            margin-bottom: 1rem !important;
+          }
         }
       }
       .sbchapter__play__btn{
@@ -841,9 +884,15 @@ html[data-theme="JOYFUL"]{
   }
 
   sb-toc-curriculum{
+
+    .sb-curiculum-responsive-grid{
+      padding: 0.5rem 0 1rem !important;
+    }
+
     .sb-curiculum__border{
       border-radius: 12px;
       box-shadow: var(--button-style-shadow);
+      margin: 0 0 1rem !important;
     }
     .sb-curiculum{
       border: none !important;
@@ -1670,4 +1719,12 @@ html[data-theme="JOYFUL"]{
   ion-toolbar {
     border-bottom-left-radius: 0 !important;
   }
+
+  app-user-home, app-search, app-admin-home{
+    ion-content{
+      background-color: var(--app-tertiary-background);
+      --background: var(--app-tertiary-background);
+    }
+  }
+
 }

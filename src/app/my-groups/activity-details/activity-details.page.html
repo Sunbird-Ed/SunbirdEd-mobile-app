@@ -1,7 +1,6 @@
 <ion-content>
   <div class="ad-container">
     <div class="ad-card-container">
-      <!-- <button (click)="openDashboard()">activity dashboard</button> -->
       <ion-icon src="assets/imgs/dashboard-icon.svg" class="dashboard-icon" *ngIf="activityDetail && isTrackable" (click)="openDashboard()"></ion-icon>
       <sb-course-card *ngIf="isTrackable" [section]="null"
         [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
@@ -11,9 +10,6 @@
         (menuClick)="activityMenuClick($event, activity, i)">
       </sb-library-card>
     </div>
-    <!-- <div class="mb-8" *ngIf="isGroupCreatorOrAdmin">
-      <button class="sb-btn sb-btn-small" (click)="downloadCsv()">download</button>
-    </div> -->
     <div class="ad-member-container">
       <div class="ad-note" *ngIf="!isTrackable">
         <span>{{'NOTE' | translate}} :</span>

@@ -3,6 +3,8 @@ import {
     AppHeaderService,
     CommonUtilService,
     FormAndFrameworkUtilService,
+    InteractSubtype,
+    InteractType,
     LoginHandlerService
 } from '@app/services';
 import {
@@ -14,13 +16,14 @@ import {
     NativeGoogleSessionProvider,
     AuthService,
     SystemSettingsService,
-    SignInError
+    SignInError,
+    SharedPreferences
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
-import {SystemSettingsIds} from '@app/app/app.constant';
+import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
 import {Location} from '@angular/common';
 
 @Component({
@@ -36,6 +39,7 @@ export class SignInPage implements OnInit {
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private appHeaderService: AppHeaderService,
         private commonUtilService: CommonUtilService,
         private loginHandlerService: LoginHandlerService,
@@ -61,6 +65,8 @@ export class SignInPage implements OnInit {
     }
 
     async loginWithStateSystem() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewStateSessionProviderConfig: WebviewStateSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -85,17 +91,20 @@ export class SignInPage implements OnInit {
     }
 
     async signInWithGoogle() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
         const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
         this.googlePlusLogin.login({
             webClientId: clientId.value
         }).then(async (result) => {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
+            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true).toPromise();
             await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation).then(() => {
                 this.navigateBack(this.skipNavigation);
             });
         }).catch(async (err) => {
-            this.sbProgressLoader.hide({id: 'login'});
+            await this.sbProgressLoader.hide({id: 'login'});
             if (err instanceof SignInError) {
                 this.commonUtilService.showToast(err.message);
             } else {

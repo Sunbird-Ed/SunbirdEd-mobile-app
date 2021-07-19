@@ -308,7 +308,7 @@ export class ViewMoreActivityComponent implements OnInit {
 
   getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
-    this.contentService.getContentDetails({ contentId: identifier }).toPromise()
+    this.contentService.getContentDetails({ contentId: identifier, objectType: content.objectType }).toPromise()
       .then((data: Content) => {
         if (Boolean(data.isAvailableLocally)) {
           const contentDetailsParams: NavigationExtras = {
@@ -586,7 +586,7 @@ export class ViewMoreActivityComponent implements OnInit {
       id: this.sectionName,
       type: CorReleationDataType.SECTION
     }, {
-      id: identifier,
+      id: identifier || '',
       type: CorReleationDataType.ROOT_ID
     }];
 

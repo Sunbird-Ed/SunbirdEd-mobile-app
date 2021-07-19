@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, CanActivate } from '@angular/router';
+import { UrlTree, Router, CanActivate } from '@angular/router';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 ​

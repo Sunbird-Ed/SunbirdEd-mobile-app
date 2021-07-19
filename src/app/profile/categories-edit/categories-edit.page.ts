@@ -527,17 +527,19 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
       .then(updatedProfile => {
          // ******* Segmentation
+         var frameworkData = [];
          Object.keys(updatedProfile.framework).forEach((key) => {
           if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            updatedProfile.framework[key] = updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase());
+            frameworkData.push(updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase()));
           }
          });
-         window['segmentation'].SBTagService.pushTag(updatedProfile.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+         window['segmentation'].SBTagService.pushTag(frameworkData, TagPrefixConstants.USER_ATRIBUTE, true);
          let userLocation = [];
          (updatedProfile['userLocations'] || []).forEach(element => {
            userLocation.push({ name: element.name, code: element.code });
          });
          window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
          this.segmentationTagService.evalCriteria();
       });
   }
@@ -607,5 +609,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       }
     });
     return subscriptionArray;
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

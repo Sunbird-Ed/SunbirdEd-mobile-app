@@ -124,11 +124,11 @@ export class SurveyHomeComponent implements OnInit {
           this.surveyProvider.showMsg('surveyCompleted', true);
           return;
         }
-        if (data.result.isCreator) {
-          this.toast.openToast(data.message);
-          this.router.navigate(['']);
-          return;
-        }
+        // if (data.result.isCreator) {
+        //   this.toast.openToast(data.message); // creator can also submit now
+        //   this.router.navigate(['']);
+        //   return;
+        // }
         survey = data.result;
         this.storeRedirect(survey);
       })
@@ -152,7 +152,6 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   redirect(submissionId: any): void {
-    // const navParams = { _id: submissionId, selectedEvidence: 0, selectedSection: 0 };
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
       replaceUrl: this.link ? true : false,
       queryParams: {
@@ -176,9 +175,10 @@ export class SurveyHomeComponent implements OnInit {
       // for auto targeted _id will be blank
       // so creator also no will be able to submit
     }
-    if (isCreator) {
-      return;
-    }
+    // if (isCreator) {
+    //   return; // creator can also submit
+    // }
+
     this.surveyProvider
       .getDetailsById(surveyId, solutionId)
       .then((res) => {

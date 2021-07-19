@@ -26,23 +26,6 @@ export class ApiService {
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
-    // return this.authService.getSession().pipe(
-    //   mergeMap((session) => {
-    //     const httpOptions = {
-    //       headers: new HttpHeaders({
-    //         'x-auth-token': session ? session.access_token : "",
-    //         'x-authenticated-user-token': session ? session.access_token : "",
-    //       })
-    //     };
-    //     return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
-    //       tap(data => {
-    //         return observableOf(data)
-    //       }, error => {
-    //         catchError(this.handleError(error))
-    //       }),
-    //     );
-    //   })
-    // );
 
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
@@ -89,24 +72,6 @@ export class ApiService {
   }
 
   post(requestParam: RequestParams): Observable<any> {
-    // return this.authService.getSession().pipe(
-    //   mergeMap((session) => {
-    //     const httpOptions = {
-    //       headers: new HttpHeaders({
-    //         'x-auth-token': session ? session.access_token : "",
-    //         'x-authenticated-user-token': session ? session.access_token : "",
-    //       })
-    //     };
-    //     return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
-    //       tap(data => {
-    //         return data
-    //       }, error => {
-    //         catchError(this.handleError(error))
-    //       }),
-    //     );
-    //   })
-    // );
-
 
     return this.checkTokenValidation().pipe(
       mergeMap(session => {

@@ -2,14 +2,10 @@
 <ion-content>
   <h3 class="ion-padding-horizontal ion-text-capitalize">{{solutionName}}</h3>
   <div *ngIf="criterias?.length">
-    <!-- <ion-item-divider color="light">
-      <h4 class="bold" text-wrap>{{criteriaImp.criteriaName}}</h4>
-    </ion-item-divider> -->
     <div *ngFor="let criteria of criterias;let i=index">
       <ion-card *ngIf="criteria.criteriaName">
         <ion-item class="ion-text-wrap">
           <div class="flex-box" (click)="item=i" style="width: 100%;">
-            <!-- <ion-icon name="play" class="logoIcon"></ion-icon> -->
             <div style="flex: 1">{{criteria.criteriaName}}</div>
             <div class="flex-box justify-content-center">
               <p class="ion-padding-end" style="margin-bottom: 0;">{{criteria.label}}</p>

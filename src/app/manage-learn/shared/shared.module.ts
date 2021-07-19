@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
 import { CamelToTitlePipe } from './pipe/camel-to-title.pipe';
-import { UtilsService } from '../core/services/utils.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -65,7 +64,7 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
-import { GenericPopUpService } from './TC-generic.popupService';
+import { GenericPopUpService } from './generic.popup';
 
 
 @NgModule({

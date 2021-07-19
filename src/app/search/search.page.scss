@@ -40,6 +40,7 @@
   .sb-search-header-meta {
     color: $blue;
     font-size: 12px;
+    padding-top: 0.5rem;
   }
 
 
@@ -308,11 +309,6 @@
     display: inline-block; flex: 1 auto;
   }
   
-}  
-  
-.search-bg {
-  background-color: var(--primary-100);
-  --background: var(--primary-100);
 }
 
 .results-count {
@@ -355,25 +351,28 @@
 .search-info {
   display: flex;
   .title {
-    font-size: 24px;
+    font-size: 18px;
   }
   .description {
     color: #333333;
+    font-size: 12px;
+    margin-bottom: 0;
   }
 }
 
 .search-container {
   margin: 1rem;
+  margin-bottom: 0.25rem;
   .search-input {
     background-color: var(--app-white);
     border-radius: 1rem;
-    padding: 0.7rem 1rem;
+    padding: 0.25rem 0.75rem;
     ion-input {
       border: none;
       width: 90%;
       display: inline-block;
       padding: 0.25rem;
-      font-size: 14px;
+      font-size: 18px;
     }
     button{
       background-color: transparent;
@@ -411,5 +410,4 @@
   position: sticky;
   z-index: 9;
   top: 0px;
-  padding-top: 0px !important;
 }

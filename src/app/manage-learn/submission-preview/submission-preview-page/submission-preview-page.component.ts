@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
-// import { Events } from '@app/util/events';
 import { Network } from '@ionic-native/network/ngx';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,13 +35,6 @@ export class SubmissionPreviewPageComponent implements OnInit {
     private alertCtrl: AlertController,
     private router: Router
   ) {
-    // this.events.subscribe('network:offline', () => {
-    //   this.networkAvailable = false;
-    // });
-    // this.events.subscribe('network:online', () => {
-    //   this.networkAvailable = true;
-    // });
-    // this.networkAvailable = this.commonUtils.getNetworkStatus() //TODO:check workng
     this.networkAvailable = this.commonUtils.networkInfo.isNetworkAvailable;
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -139,7 +131,6 @@ export class SubmissionPreviewPageComponent implements OnInit {
             text: translateObject['FRMELEMNTS_LBL_NO'],
             role: 'cancel',
             handler: () => {
-              //console.log('Cancel clicked');
             },
           },
           {
@@ -155,8 +146,8 @@ export class SubmissionPreviewPageComponent implements OnInit {
       this.goToImageListing();
     } else if (this.network.type === 'none') {
       let noInternetMsg;
-      this.translate.get(['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION']).subscribe((translations) => {
-        noInternetMsg = translations['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION'];
+      this.translate.get(['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE']).subscribe((translations) => {
+        noInternetMsg = translations['FRMELEMENTS_MSG_FEATURE_USING_OFFLINE'];
         this.commonUtils.showToast(noInternetMsg);
       });
     }

@@ -13,7 +13,6 @@ import {
 } from '@app/services';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { Subscription } from 'rxjs';
 import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
@@ -22,7 +21,7 @@ import {
   SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';

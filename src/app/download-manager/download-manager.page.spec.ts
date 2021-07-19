@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';
 import { featureIdMap } from '../feature-id-map';
+import { DbService, LocalStorageService, UtilsService } from '../manage-learn/core/services';
 
 describe('DownloadManagerPage', () => {
     let downloadManagerPage: DownloadManagerPage;
@@ -124,6 +125,18 @@ describe('DownloadManagerPage', () => {
         getSupportedContentFilterConfig: jest.fn(() => Promise.resolve(supportedPrimaryCategories))
     };
 
+    const mockDb: Partial<DbService> = {
+        
+    }
+    const mockStorage: Partial<LocalStorageService> = {
+        getLocalStorage: jest.fn(() => Promise.resolve([])),
+        setLocalStorage:jest.fn(() => Promise.resolve())
+    }
+    const mockUtils: Partial<UtilsService> = {
+        
+    }
+    
+
     beforeAll(() => {
         downloadManagerPage = new DownloadManagerPage(
             mockContentService as ContentService,
@@ -138,6 +151,9 @@ describe('DownloadManagerPage', () => {
             mockRouter as Router,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockDb as DbService,
+            mockStorage as LocalStorageService,
+            mockUtils as UtilsService
         );
     });
 
@@ -175,6 +191,7 @@ describe('DownloadManagerPage', () => {
             it('should navigate to Active downloads page and generate INTERACT Telemetry', (done) => {
                 // arrange
                 mockAppHeaderService.headerEventEmitted$ = of({ name: 'download' });
+                mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
                 // act
                 downloadManagerPage.ionViewWillEnter().then(() => {
                     // assert

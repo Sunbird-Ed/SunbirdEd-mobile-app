@@ -20,7 +20,7 @@ import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [

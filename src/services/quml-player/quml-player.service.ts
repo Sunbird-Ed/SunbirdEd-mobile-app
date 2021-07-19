@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { CsModule } from '@project-sunbird/client-services';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

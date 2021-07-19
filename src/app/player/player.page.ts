@@ -53,7 +53,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private content: Content;
   public objRollup: Rollup;
   nextContentToBePlayed: Content;
-  playerType: string = 'sunbird-old-player';
+  playerType: string;
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -118,7 +118,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
-    } 
+    } else {
+      this.playerType = 'sunbird-old-player';
+    }
     this.config['context'].dispatcher = {
       dispatch: function (event) {
         SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
@@ -241,7 +243,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async playerEvents(event) {
     if (event.edata) {
-      if (event.edata['type'] === 'EXIT') {
+      if (event.edata['type'] === 'END' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+        // sourav need to check this
+        this.courseService.syncAssessmentEvents().subscribe;
+      } else if (event.edata['type'] === 'EXIT') {
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           this.showConfirm()
         } else {
@@ -290,7 +295,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   async getNewPlayerConfiguration() {
-      const nextContent = this.config['metadata'].hierarchyInfo ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
+      const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
         this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;

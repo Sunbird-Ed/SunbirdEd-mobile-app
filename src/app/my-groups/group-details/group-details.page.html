@@ -19,7 +19,6 @@
           </div>
           <div class="gd-opts">
             <accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
-              <!-- <ion-icon [accessDiscussion]="fetchForumIdRequest" src="assets/imgs/ic_chat.svg" class="card-icons" (click)="openDiscussionForum()"></ion-icon> -->
             <ion-icon ios="ellipsis-horizontal" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon>
           </div>
         </div>
@@ -112,13 +111,12 @@
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>
               <span class="gd-card-titile">{{activityGroup.title}}</span>
             </div>
-            <div>
-              <sb-library-cards-stack [title]="activityGroup?.name" [contentList]="filteredGroupedActivityListMap[activityGroup?.title]"
-                  [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [viewMoreButtonText]="'VIEW_MORE' | translate"
-                  [cardType]="activityGroup.title === 'ACTIVITY_COURSE_TITLE' ? 'course' : 'textbook' " 
-                  [maxCardCount]="3" (viewMoreClick)="!isSuspended && navigateToViewMorePage(activityGroup)" [isMenu]="!isSuspended && loggedinUser.role === 'admin'"
-                  (cardClick)="!isSuspended && onActivityCardClick($event)" (menuClick)="!isSuspended && activityMenuClick($event)">
-                </sb-library-cards-stack>
+            <div *ngFor="let activity of filteredGroupedActivityListMap[activityGroup?.title]; let j = index">
+                <sb-library-card 
+                  (cardClick)="!isSuspended && onActivityCardClick($event)" [content]="activity" [section]="null"
+                  [isMenu]="!isSuspended && loggedinUser.role === 'admin'" [cardImg]="activity?.appIcon
+                      || config?.assetsPath?.book" (menuClick)="!isSuspended && activityMenuClick($event)">
+                </sb-library-card>
             </div>
           </div>
         </div>

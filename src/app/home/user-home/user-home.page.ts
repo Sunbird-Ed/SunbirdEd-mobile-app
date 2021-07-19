@@ -22,7 +22,7 @@ import {
   PillsViewType,
   SelectMode,
   ShowMoreViewType
-} from '@project-sunbird/common-consumption-v8';
+} from '@project-sunbird/common-consumption';
 import {NavigationExtras, Router} from '@angular/router';
 import {
   CachedItemRequestSourceFrom,
@@ -57,7 +57,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
 import {NavigationService} from '@app/services/navigation-handler.service';
-import {IonContent as ContentView, IonRefresher, PopoverController} from '@ionic/angular';
+import {IonContent as ContentView, IonRefresher, ModalController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {Subscription} from 'rxjs';
 import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -81,9 +81,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
   concatProfileFilter: Array<string> = [];
-  boards: string;
-  medium: string;
-  grade: string;
   profile: Profile;
   guestUser: boolean;
   appLabel: string;
@@ -107,6 +104,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   homeDataAvailable = false;
   displayBanner: boolean;
   bannerSegment: any;
+  preferenceList = [];
+  boardList = [];
+  mediumList = [];
+  gradeLevelList = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -122,7 +123,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private headerService: AppHeaderService,
     private events: Events,
     private qrScanner: SunbirdQRScanner,
-    private popoverCtrl: PopoverController,
+    private ModalCtrl: ModalController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
@@ -217,16 +218,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           acc[category.code] = category;
           return acc;
         }, {});
-
-        if (this.profile.board && this.profile.board.length) {
-          this.boards = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.board, 'board'));
-        }
-        if (this.profile.medium && this.profile.medium.length) {
-          this.medium = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.medium, 'medium'));
-        }
-        if (this.profile.grade && this.profile.grade.length) {
-          this.grade = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
-        }
+        this.preferenceList = [];
+        setTimeout(() => {
+          this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
+          this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
+          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
+          this.preferenceList.push(this.boardList);
+          this.preferenceList.push(this.mediumList);
+          this.preferenceList.push(this.gradeLevelList);
+        }, 0);
       });
   }
 
@@ -240,9 +240,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
         if (lowerCase) {
-          element.name = element.name.toLowerCase();
+          displayValues.push(element.name.toLowerCase());
+        } else {
+          displayValues.push(element.name);
         }
-        displayValues.push(element.name);
       }
     });
 
@@ -341,14 +342,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
-    const identifier = item.contentId || item.identifier;
-    // const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
     const values = {};
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); // TODO
-      // this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
+      this.navService.navigateToDetailPage(item, { content: item }); 
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
@@ -427,7 +425,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME
     );
-    const subjectListPopover = await this.popoverCtrl.create({
+    const subjectListPopover = await this.ModalCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
@@ -639,7 +637,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   navigateToSpecificLocation(event) {
-    console.log('banner', event);
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({ id: event.data.code || '', type: 'BannerType' });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_BANNER,
+      '',
+      Environment.HOME,
+      PageId.HOME, undefined, undefined, undefined,
+      corRelationList
+     );
     switch (event.data.code) {
       case 'banner_external_url':
            this.commonUtilService.openLink(event.data.action.params.route);
@@ -652,27 +658,37 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             }
             break;
       case 'banner_search':
-          const payload = {
-            data: {
-              request: event.data.action.params.filter
-            },
-            action: 'ACTION_SEARCH'
+          const extras = {
+            state: {
+              source: PageId.HOME,
+              corRelation: corRelationList,
+              preAppliedFilter: event.data.action.params.filter,
+              hideSearchOption: true,
+              searchWithBackButton: true
+            }
           };
-          this.splaschreenDeeplinkActionHandlerDelegate.handleVendorAppAction(payload, event.data.code);
+          this.router.navigate(['search'], extras);
           break;
       case 'banner_content':
-           this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
-           break;
+        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier,
+          undefined, undefined, undefined, undefined, corRelationList);
+        break;
     }
   }
 
   showorHideBanners() {
-    this.bannerSegment = this.segmentationTagService.exeCommands.find((cmd) => {
+    this.bannerSegment = this.segmentationTagService.exeCommands.filter((cmd) => {
       if (cmd.controlFunction === 'BANNER_CONFIG') {
         return cmd;
       }
     });
-    this.displayBanner = (this.bannerSegment && this.bannerSegment.controlFunctionPayload.values.length) ? true : false;
+    this.displayBanner = !!(this.bannerSegment && this.bannerSegment.length);
+    this.bannerSegment = this.bannerSegment.reduce((accumulator, cmd) => {
+      const bannerConfig = cmd.controlFunctionPayload.values.filter((value) =>
+        Number(value.expiry) > Math.floor(Date.now() / 1000));
+      accumulator = accumulator.concat(bannerConfig);
+      return accumulator;
+    }, []);
     if (this.bannerSegment ) {
       this.setBannerConfig();
     }
@@ -681,8 +697,23 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   setBannerConfig() {
     this.displaySections.forEach((section, index) => {
       if (section.dataSrc.type === 'CONTENT_DISCOVERY_BANNER') {
-        this.displaySections[index]['data'] = this.bannerSegment.controlFunctionPayload.values.filter((value) =>
-         Number(value.expiry) > Math.floor(Date.now() / 1000));
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: this.boardList.join(',') || '', type: CorReleationDataType.BOARD });
+        corRelationList.push({ id: this.gradeLevelList.join(',') || '', type: CorReleationDataType.CLASS });
+        corRelationList.push({ id: this.mediumList.join(',') || '', type: CorReleationDataType.MEDIUM });
+        corRelationList.push({ id: (this.profile && this.profile.profileType)
+          ? this.profile.profileType : '', type: CorReleationDataType.USERTYPE });
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW, ImpressionSubtype.BANNER,
+          PageId.HOME,
+          Environment.HOME,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+         );
+        this.displaySections[index]['data'] = this.bannerSegment;
       }
     });
   }

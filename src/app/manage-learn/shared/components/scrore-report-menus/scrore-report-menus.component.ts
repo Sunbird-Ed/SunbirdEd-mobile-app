@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavParams, NavController, PopoverController } from '@ionic/angular';
 
@@ -8,7 +8,7 @@ import { NavParams, NavController, PopoverController } from '@ionic/angular';
   templateUrl: './scrore-report-menus.component.html',
   styleUrls: ['./scrore-report-menus.component.scss'],
 })
-export class ScroreReportMenusComponent implements OnInit {
+export class ScroreReportMenusComponent {
   submission;
   navigateToobservationReport: boolean = false;
   showEntityActionsheet;
@@ -35,7 +35,6 @@ export class ScroreReportMenusComponent implements OnInit {
     this.entityType = this.navParams.get('entityType');
   }
 
-  ngOnInit() {}
 
   viewObservationReportsWithoutScore() {
     this.popover.dismiss();
@@ -60,12 +59,6 @@ export class ScroreReportMenusComponent implements OnInit {
   submissionReportWithScore() {
     this.popover.dismiss();
     this.showActionsheet = false;
-    // this.router.navigate([RouterLinks.REPORT_WITH_SCORE], {
-    //   queryParams: {
-    //     submissionId: this.submission._id || this.submission.submissionId,
-    //     entityType: this.entityType,
-    //   },
-    // });
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {
         scores: true,
@@ -81,12 +74,6 @@ export class ScroreReportMenusComponent implements OnInit {
   submissionReport() {
     this.popover.dismiss();
     this.showActionsheet = false;
-    // this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-    //   queryParams: {
-    //     submissionId: this.submission._id || this.submission.submissionId,
-    //     entityType: this.entityType,
-    //   },
-    // });
 
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {
@@ -110,13 +97,6 @@ export class ScroreReportMenusComponent implements OnInit {
 
   viewEntityReportsWithScore() {
     this.popover.dismiss();
-    // this.router.navigate([RouterLinks.REPORT_WITH_SCORE], {
-    //   queryParams: {
-    //     entityId: this.entityId,
-    //     observationId: this.observationId,
-    //     entityType: this.entityType,
-    //   },
-    // });
 
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {
@@ -136,13 +116,6 @@ export class ScroreReportMenusComponent implements OnInit {
     this.popover.dismiss();
     this.showEntityActionsheet = false;
     this.showActionsheet = false;
-    /*  this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-      queryParams: {
-        entityId: this.entity,
-        observationId: this.observationId,
-        entityType: this.entityType,
-      },
-    }); */
 
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {

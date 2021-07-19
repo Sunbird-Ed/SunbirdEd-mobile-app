@@ -36,7 +36,6 @@ import {
   CourseCertificate,
   CertificateAlreadyDownloaded,
   NetworkError,
-  FormRequest,
   FormService,
   FrameworkService,
   ProfileType,
@@ -44,7 +43,7 @@ import {
   GetLearnerCerificateRequest
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
@@ -305,6 +304,7 @@ export class ProfilePage implements OnInit {
                   userLocation.push({ name: element.name, code: element.code });
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+                window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
                 this.segmentationTagService.evalCriteria();
                 // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
@@ -322,18 +322,7 @@ export class ProfilePage implements OnInit {
                       .then((frameWorkData) => {
                         if (!frameWorkData['status']) {
                           // Migration-todo
-                          /* that.app.getRootNav().setRoot(CategoriesEditPage, {
-                            showOnlyMandatoryFields: true,
-                            profile: frameWorkData['activeProfileData']
-                          }); */
 
-                          // Need to test thoroughly
-                          // that.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                          //   state: {
-                          //     showOnlyMandatoryFields: true,
-                          //     profile: frameWorkData['activeProfileData']
-                          //   }
-                          // });
                         }
                       });
                     that.formatRoles();
@@ -360,10 +349,14 @@ export class ProfilePage implements OnInit {
   formatRoles() {
     this.roles = [];
     if (this.profile && this.profile.roleList) {
-      if (this.profile.organisations && this.profile.organisations.length) {
-        for (let i = 0, len = this.profile.organisations[0].roles.length; i < len; i++) {
-          const roleKey = this.profile.organisations[0].roles[i];
-          const val = this.profile.roleList.find(role => role.id === roleKey);
+      const roles = {};
+      this.profile.roleList.forEach((r) => {
+        roles[r.id] = r;
+      });
+      if (this.profile.roles && this.profile.roles.length) {
+        for (let i = 0, len = this.profile.roles.length; i < len; i++) {
+          const roleKey = this.profile.roles[i].role;
+          const val = roles[roleKey];
           if (val && val.name.toLowerCase() !== 'public') {
             this.roles.push(val.name);
           }
@@ -945,8 +938,7 @@ export class ProfilePage implements OnInit {
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
-          content,
-          resumeCourseFlag: (training.status === 1 || training.status === 0) && !(training.batch.status === 2)
+          content
         }
       );
     } catch (err) {

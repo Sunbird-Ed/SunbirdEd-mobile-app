@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
@@ -10,29 +10,20 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService, NetworkService, ToastService } from '../../core';
-import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
 import cloneDeep from 'lodash/cloneDeep';
 
-// var environment = {
-//   db: {
-//     projects: "project.db",
-//     categories: "categories.db",
-//   },
-//   deepLinkAppsUrl: ''
-// };
 @Component({
   selector: 'app-project-operation',
   templateUrl: './project-operation.page.html',
   styleUrls: ['./project-operation.page.scss'],
 })
-export class ProjectOperationPage implements OnInit {
+export class ProjectOperationPage  {
   button = 'FRMELEMNTS_BTN_IMPORT_PROJECT';
   private _appHeaderSubscription?: Subscription;
 
@@ -91,13 +82,11 @@ export class ProjectOperationPage implements OnInit {
         this.getProjectFromLocal(this.projectId);
       } else {
         this.showRatings = true;
-        // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
       }
     });
 
   }
 
-  ngOnInit() { }
   ionViewWillEnter() {
     this.initApp();
     let data;
@@ -180,7 +169,6 @@ export class ProjectOperationPage implements OnInit {
         }
       }
     }, error => {
-      // this.loader.stopLoader();
     })
   }
 
@@ -202,11 +190,6 @@ export class ProjectOperationPage implements OnInit {
     return await modal.present();
   }
   addEntity() {
-    // if (this.profileData && this.profileData.state && this.profileData.state._id) {
-    // this.networkService.isNetworkAvailable ? this.openAddEntityModal() : this.showPopupForNoNet('LABELS.UNABLE_TO_ADD_ENTITY', 'MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'LABELS.CANCEL', 'LABELS.TRYAGAIN');
-    // } else {
-    //   this.toast.showMessage('MESSAGES.DISABLED_ADD_ENTITY', 'danger');
-    // }
     this.openAddEntityModal();
   }
   checkNetwork(type?, url?) {
@@ -231,14 +214,10 @@ export class ProjectOperationPage implements OnInit {
   }
   addLearningResources() {
     this.openAddResourcesModal();
-    // this.networkService.isNetworkAvailable ? this.openAddResourcesModal(urlConstants.API_URLS.LEARNING_RESOURCES_LIST) : this.showPopupForNoNet('LABELS.UNABLE_TO_SHOW_LIBRARY', 'MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'LABELS.CANCEL', 'LABELS.TRYAGAIN');
   }
 
   async openAddEntityModal() {
     let entityType;
-    // if (this.template.entityType && this.template.entityType.length) {
-    //   entityType = this.template.entityType;
-    // }
     const modal = await this.modalController.create({
       component: AddEntityComponent,
       componentProps: {
@@ -273,11 +252,9 @@ export class ProjectOperationPage implements OnInit {
         this.template.entityId ? delete this.template.entityId : '';
       }
     } else if (type == 'program') {
-      // if (this.template.isAPrivateProgram) {
       this.selectedProgram = '';
       this.template.programId ? delete this.template.programId : '';
       this.template.programName ? delete this.template.programName : '';
-      // }
     } else if (type == 'resources') {
       const index = this.selectedResources.indexOf(data, 0);
       if (index > -1) {
@@ -296,7 +273,6 @@ export class ProjectOperationPage implements OnInit {
     const isProgramPresent = (this.selectedProgram && this.selectedProgram.name) || (this.selectedProgram && this.selectedProgram._id);
     const isEntityAdded = (this.selectedEntity && this.selectedEntity._id)
     if (this.template.showProgramAndEntity && (!isEntityAdded || !isProgramPresent)) {
-      // this.toast.showMessage('MESSAGES.REQUIRED_FIELDS', 'danger');
       return false
     }
     return true
@@ -309,7 +285,6 @@ export class ProjectOperationPage implements OnInit {
     this.template.isDeleted = false;
     this.db.update(this.template).then(success => {
       newProject ? this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) : this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
-    }).catch(error => {
     })
   }
 
@@ -321,7 +296,7 @@ export class ProjectOperationPage implements OnInit {
       texts = data;
     })
     this.viewProjectAlert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'dark-background',
       subHeader: texts[header],
       backdropDismiss: false,
       buttons: [
@@ -366,35 +341,6 @@ export class ProjectOperationPage implements OnInit {
     this.template.downloaded = true;
 
     this.update(true);
-    // delete this.template._id;
-    // const payload = this.syncServ.removeKeys(JSON.parse(JSON.stringify(this.template)), ['isNew', 'isEdit']);
-    // delete payload._rev;
-    // const config = {
-    //   url: urlConstants.API_URLS.CREATE_PROJECT,
-    //   payload: payload
-    // }
-    // this.unnatiDataService.post(config).subscribe(data => {
-    //   this.template.isNew = false;
-    //   this.template.isEdit = false;
-    //   this.db.delete(id, this.template._rev).then(res => {
-    //     this.template._id = data.result.projectId;
-    //     this.template.programId = data.result.programId;
-    //     this.template.lastDownloadedAt = data.result.lastDownloadedAt;
-    //     delete this.template._rev;
-    //     this.loaderService.stopLoader();
-    //     this.db
-    //       .create(this.template)
-    //       .then((success) => {
-    //         this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true);
-    //       })
-    //       .catch((error) => {
-    //       });
-    //   }).catch((error) => {
-    //     this.loaderService.stopLoader();
-    //   });
-    // }, error => {
-    //   this.loaderService.stopLoader();
-    // })
   }
   ionViewWillLeave() {
     if(this.viewProjectAlert ){
@@ -402,4 +348,3 @@ export class ProjectOperationPage implements OnInit {
     }
    }
 }
-

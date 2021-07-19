@@ -27,7 +27,7 @@
         </div>
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -61,7 +61,7 @@
         <div class="sb-common-player-group sb-play-title-group"
           *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(true)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -104,7 +104,7 @@
 
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -182,24 +182,51 @@
       *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
       <div class="sb-content-info-title">{{'ABOUT' | translate}}</div>
 
+      <div class="audience-info" *ngIf="content?.contentData.audience">
+        <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+          <strong>{{'CONTENT_RELEVANT_MSG' | translate }}</strong>
+          <span class="sb-content-title-data">{{content?.contentData?.audience}}</span>
+        </ion-card-title>
+      </div>
+
       <ion-card class="sb-content-info-card"
         *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
         <div class="sb-content-info-heading"
           *ngIf="content?.contentData?.description && content?.contentData?.description?.length">
           {{content?.description}}</div>
-        <div class="sb-info" *ngIf="content?.contentData?.board">
+        <div class="sb-info" *ngIf="content?.contentData?.se_boards; else previousBoard">
           <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
-          <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
+          <div class="sb-content-title-data">{{content?.contentData?.se_boards | aliased}}</div>
         </div>
+        <ng-template #previousBoard>
+          <div class="sb-info">
+            <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
+          </div>
+        </ng-template>
+
         <div *ngIf="showMoreFlag">
-          <div class="sb-info" *ngIf="content?.contentData?.medium">
+          <div class="sb-info" *ngIf="content?.contentData?.se_mediums; else previousMedium">
             <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.medium | csa}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.se_mediums | csa}}</div>
           </div>
-          <div class="sb-info" *ngIf="content?.contentData?.gradeLevel && content?.contentData?.gradeLevel?.length">
+          <ng-template #previousMedium>
+            <div class="sb-info">
+              <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.medium | csa}}</div>
+            </div>
+          </ng-template>
+
+          <div class="sb-info" *ngIf="content?.contentData?.se_gradeLevels && content?.contentData?.se_gradeLevels?.length; else previousGradeLevel">
             <div class="sb-content-title">{{'CLASS' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.gradeLevel?.join(', ')}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.se_gradeLevels?.join(', ')}}</div>
           </div>
+          <ng-template #previousGradeLevel>
+            <div class="sb-info">
+              <div class="sb-content-title">{{'CLASS' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.gradeLevel?.join(', ')}}</div>
+            </div>
+          </ng-template>
           <div class="sb-info" *ngIf="content?.contentData?.subject">
             <div class="sb-content-title">{{'SUBJECT' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
@@ -241,10 +268,6 @@
             <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
             <div class="sb-content-title-data">{{mergeProperties(['attributions', 'contributors', 'creators'])}}</div>
           </div>
-          <!-- <div class="sb-info" *ngIf="content?.contentData?.contributors || content?.contentData?.creators">
-            <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
-            <div class="sb-content-title-data">{{mergeProperties(['attributions', 'contributors', 'creators'])}}</div>
-          </div> -->
           <div class="sb-info" *ngIf="content?.contentData?.origin">
             <div class="sb-content-title">{{'ORIGINAL_CONTENT_DATA' | translate}}</div>
           </div>
@@ -272,13 +295,11 @@
         <div class="read-more" *ngIf="content && content.contentData.description &&
          content.contentData.description.length > 10 || content.contentData.gradeLevel ||
          content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
-          <div *ngIf="showMoreFlag" style="padding-left: 8px; padding-right: 8px;" class="padding-top-10"
-            (click)="readLessorReadMore('read-less-clicked')">
+          <div *ngIf="showMoreFlag" (click)="readLessorReadMore('read-less-clicked')">
             {{ 'READ_LESS' | translate }}
             <ion-icon name="arrow-up"></ion-icon>
           </div>
-          <div *ngIf="!showMoreFlag" style="padding-left: 8px; padding-right: 8px;"
-            (click)="readLessorReadMore('read-more-clicked')">
+          <div *ngIf="!showMoreFlag" (click)="readLessorReadMore('read-more-clicked')">
             {{ 'READ_MORE' | translate }}
           </div>
         </div>
