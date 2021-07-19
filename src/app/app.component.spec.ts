@@ -35,11 +35,26 @@ import { SegmentationTagService } from '../services/segmentation-tag/segmentatio
 import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
-declare const supportfile;
 declare const plugins;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window['sbutility'] = {
+        getBuildConfigValue: jest.fn(() => { }),
+        openPlayStore: jest.fn(() => { }),
+        getDeviceAPILevel: jest.fn(() => { }),
+        checkAppAvailability: jest.fn(() => { }),
+        getDownloadDirectoryPath: jest.fn(() => { }),
+        exportApk: jest.fn(() => { }),
+        getDeviceSpec: jest.fn(() => { }),
+        getUtmInfo: jest.fn(() => { }),
+        clearUtmInfo: jest.fn(() => { }),
+        readFromAssets: jest.fn(() => { }),
+        rm: jest.fn(() => { }),
+        getApkSize: jest.fn(() => { }),
+        getMetaData: jest.fn(() => { }),
+        makeEntryInSunbirdSupportFile: jest.fn(() => { })
+    };
     window.cordova.plugins = {
         notification: {
             local: {
