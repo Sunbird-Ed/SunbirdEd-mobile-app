@@ -910,7 +910,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
-    (window as any).cordova.plugins.Keyboard.close();
+    (window as any).Keyboard.hide();
     const facets = this.searchFilterConfig.reduce((acc, filterConfig) => {
       acc.push(filterConfig.code);
       return acc;
