@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './section-listing.page.html',
   styleUrls: ['./section-listing.page.scss'],
 })
-export class SectionListingPage implements OnInit {
+export class SectionListingPage {
   sectionData: any;
   currentEvidence: any;
   evidenceSections: any;
@@ -46,7 +46,7 @@ export class SectionListingPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+
 
   ionViewWillEnter() {
     this.localStorage
@@ -63,8 +63,7 @@ export class SectionListingPage implements OnInit {
         this.evidenceSections = this.currentEvidence['sections'];
         this.selectedEvidenceName = this.currentEvidence['name'];
         this.checkForEvidenceCompletion();
-      })
-      .catch((error) => {});
+      });
   }
 
   checkForEvidenceCompletion(): void {

@@ -89,7 +89,6 @@ describe('EditContactVerifyPopupComponent', () => {
         } as any;
 
         // act
-        editContactVerifyPopupComponent.ngOnInit();
         editContactVerifyPopupComponent.ionViewWillEnter();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(false);

@@ -75,7 +75,7 @@ describe('ActivityTocPage', () => {
         activityDashboardPage.handleBackButton(true);
         // assert
         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-            PageId.ACTIVITY_TOC, Environment.GROUP, true, undefined, undefined);
+            PageId.ACTIVITY_TOC, Environment.GROUP, true);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 

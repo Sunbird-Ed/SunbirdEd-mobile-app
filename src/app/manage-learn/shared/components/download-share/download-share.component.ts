@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { LoaderService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -16,7 +16,7 @@ import { DhitiApiService } from '@app/app/manage-learn/core/services/dhiti-api.s
   templateUrl: './download-share.component.html',
   styleUrls: ['./download-share.component.scss'],
 })
-export class DownloadShareComponent implements OnInit {
+export class DownloadShareComponent {
   @Input() interface;
   @Input() showOptions;
   @Input() name = ['filter'];
@@ -48,7 +48,6 @@ export class DownloadShareComponent implements OnInit {
       });
   }
 
-  ngOnInit() {}
   async openPopupMenu(ev) {
     const popover = await this.popoverController.create({
       component: DownloadShareComponent,

@@ -506,7 +506,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
@@ -530,7 +529,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
@@ -553,7 +551,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
