@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
@@ -12,7 +12,7 @@ import { LocalStorageService, UtilsService } from '../../core';
   templateUrl: './submission-preview-page.component.html',
   styleUrls: ['./submission-preview-page.component.scss'],
 })
-export class SubmissionPreviewPageComponent implements OnInit {
+export class SubmissionPreviewPageComponent {
   submissionId;
   entityName;
   selectedEvidenceIndex;
@@ -44,7 +44,6 @@ export class SubmissionPreviewPageComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
   ionViewDidEnter() {
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))

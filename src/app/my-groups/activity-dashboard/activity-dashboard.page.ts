@@ -69,7 +69,7 @@ export class ActivityDashboardPage {
 
     handleBackButton(isNavBack: boolean) {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC,
-            Environment.GROUP, isNavBack, undefined, undefined);
+            Environment.GROUP, isNavBack);
         this.location.back();
     }
 

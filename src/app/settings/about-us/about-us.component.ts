@@ -151,7 +151,6 @@ export class AboutUsComponent implements OnInit {
       ImpressionType.VIEW, '',
       PageId.SETTINGS_ABOUT_US,
       Environment.SETTINGS, '', '', '',
-      undefined,
       undefined
     );
   }

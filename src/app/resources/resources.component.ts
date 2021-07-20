@@ -488,7 +488,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         contentSearchCriteria.board = this.getGroupByPageReq.board;
         contentSearchCriteria.medium = this.getGroupByPageReq.medium;
         contentSearchCriteria.grade = this.getGroupByPageReq.grade;
-        // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };
@@ -693,8 +692,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then((res: CategoryTerm[]) => {
         this.subjects = res;
-      })
-      .catch(() => { });
+      });
   }
 
   getMediumData(frameworkId, categories): any {
@@ -709,8 +707,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
         this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
-      })
-      .catch(() => {
       });
   }
 
@@ -762,8 +758,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
             }
           }
         }
-      })
-      .catch(() => {
       });
   }
 
