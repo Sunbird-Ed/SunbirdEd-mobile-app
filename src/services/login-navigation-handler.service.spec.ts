@@ -6,7 +6,7 @@ import {
     SharedPreferences,
     SignInError,
     WebviewStateSessionProvider
-} from '../../../sunbird-mobile-sdk/tmp';
+} from '@project-sunbird/sunbird-sdk';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import {Events} from '@app/util/events';
 import {AppGlobalService} from '@app/services/app-global-service.service';
