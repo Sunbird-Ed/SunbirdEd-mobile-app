@@ -11,9 +11,11 @@ import {
     TelemetryGeneratorService,
     CommonUtilService,
     ContainerService,
-    AppHeaderService
+    AppHeaderService,
+    AuditProps,
+    AuditType
 } from '../../services';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
@@ -21,7 +23,7 @@ import {
     CorReleationDataType, Environment, InteractSubtype, InteractType, LoginHandlerService, PageId,
     SplashScreenService
 } from '../../services';
-import { ProfileType } from '@project-sunbird/sunbird-sdk';
+import { AuditState, CorrelationData, ProfileType } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { ProfileHandler } from '../../services/profile-handler';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
@@ -176,6 +178,71 @@ describe('UserTypeSelectionPage', () => {
         expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
     });
 
+    describe('handleBackButton', () => {
+        it('should not navigate to language settings page for onboarding completed', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            userTypeSelectionPage.categoriesProfileData = true;
+            // act
+            userTypeSelectionPage.handleBackButton(true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.USER_TYPE_SELECTION,
+                Environment.HOME,
+                true);
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                false,
+                Environment.HOME,
+                PageId.USER_TYPE);
+        });
+
+        it('should navigate to language settings page for onboarding', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockAppGlobalService.isOnBoardingCompleted = false;
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            userTypeSelectionPage.categoriesProfileData = false;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.handleBackButton(true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.USER_TYPE_SELECTION,
+                Environment.ONBOARDING,
+                true);
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                false,
+                Environment.ONBOARDING,
+                PageId.USER_TYPE);
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.LANGUAGE_SETTING}`]);
+        });
+
+        it('should not generated telemetry if back clicked is not trigger', () => {
+            userTypeSelectionPage.categoriesProfileData = false;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            userTypeSelectionPage.handleBackButton(false);
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.LANGUAGE_SETTING}`]);
+        });
+    });
+
+    it('should invoked backButton', () => {
+        // arrange
+        const event = { name: 'back' };
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        jest.spyOn(userTypeSelectionPage, 'handleBackButton').mockImplementation(() => {
+            return;
+        });
+        // act
+        userTypeSelectionPage.handleHeaderEvents(event);
+        // assert
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.USER_TYPE_SELECTION,
+            Environment.ONBOARDING,
+            true);
+    });
+
     describe('ionViewWillEnter', () => {
         it('should initialized all user-type', (done) => {
             // arrange
@@ -194,6 +261,9 @@ describe('UserTypeSelectionPage', () => {
                 }))
             });
             jest.spyOn(userTypeSelectionPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(userTypeSelectionPage, 'handleBackButton').mockImplementation(() => {
                 return;
             });
             jest.advanceTimersByTime(450);
@@ -258,6 +328,9 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'handleHeaderEvents').mockImplementation(() => {
                 return;
             });
+            jest.spyOn(userTypeSelectionPage, 'handleBackButton').mockImplementation(() => {
+                return;
+            });
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('sunbird'));
             mockCommonUtilService.showExitPopUp = jest.fn();
             mockHeaderService.hideHeader = jest.fn();
@@ -302,4 +375,201 @@ describe('UserTypeSelectionPage', () => {
         });
     });
 
+    describe('ionViewWillLeave', () => {
+        it('should unsubscribe of header and backButton is undefined', () => {
+            // arrange
+            userTypeSelectionPage.headerObservable = {
+                unsubscribe: jest.fn()
+            };
+            mockEvents.unsubscribe = jest.fn(() => true);
+            userTypeSelectionPage.backButtonFunc = undefined;
+            // act
+            userTypeSelectionPage.ionViewWillLeave();
+            // assert
+            expect(userTypeSelectionPage.headerObservable.unsubscribe).toHaveBeenCalled();
+            expect(mockEvents.unsubscribe).toHaveBeenCalled();
+            expect(userTypeSelectionPage.backButtonFunc).toBeUndefined();
+        });
+
+        it('should unsubscribe of header and backButton', () => {
+            // arrange
+            userTypeSelectionPage.headerObservable = {
+                unsubscribe: jest.fn()
+            };
+            mockEvents.unsubscribe = jest.fn(() => true);
+            userTypeSelectionPage.backButtonFunc = {
+                unsubscribe: jest.fn()
+            } as any;
+            // act
+            userTypeSelectionPage.ionViewWillLeave();
+            // assert
+            expect(userTypeSelectionPage.headerObservable.unsubscribe).toHaveBeenCalled();
+            expect(mockEvents.unsubscribe).toHaveBeenCalled();
+            expect(userTypeSelectionPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        });
+    });
+
+    describe('continue', () => {
+        it('should go to next page if userType is not change', () => {
+            // arrange
+            userTypeSelectionPage.profile = {
+                handle: 'USER',
+                profileType: 'sample-type'
+            };
+            userTypeSelectionPage.selectedUserType = 'sample-type';
+            jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
+                return;
+            });
+            // act
+            userTypeSelectionPage.continue();
+            // assert
+            expect(userTypeSelectionPage.profile.profileType).toEqual(userTypeSelectionPage.selectedUserType);
+        });
+
+        it('should go to next page if userType is changed', () => {
+            // arrange
+            userTypeSelectionPage.profile = {
+                handle: 'USER',
+                profileType: 'sample-type'
+            };
+            userTypeSelectionPage.selectedUserType = 'sample-user-type';
+            jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
+                return;
+            });
+            // act
+            userTypeSelectionPage.continue();
+            // assert
+            expect(userTypeSelectionPage.profile.profileType).toBeTruthy();
+        });
+
+        it('should set profile if profile is undefined and uid is not null', (done) => {
+            // arrange
+            userTypeSelectionPage.profile = {
+                handle: undefined,
+                profileType: 'sample-type',
+                uid: 'sample-uid'
+            };
+            userTypeSelectionPage.selectedUserType = 'sample-user-type';
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                uid: 'sample-uid',
+                handle: 'USER'
+            }));
+            mockEvents.publish = jest.fn(() => []);
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
+            jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
+                return;
+            });
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
+            correlationlist.push({ id: 'sample-user-type', type: CorReleationDataType.USERTYPE });
+            // act
+            userTypeSelectionPage.continue();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalledWith({
+                    handle: 'Guest1',
+                    profileType: 'sample-user-type',
+                    source: 'local',
+                    uid: 'sample-uid'
+                });
+                expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalledWith(userTypeSelectionPage.profile.uid);
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+                expect(mockSharedPreferences.putString).toHaveBeenCalledWith(
+                    PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN,
+                    userTypeSelectionPage.profile.uid
+                );
+                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                    Environment.ONBOARDING,
+                    AuditState.AUDIT_UPDATED,
+                    [AuditProps.PROFILE_TYPE],
+                    AuditType.SELECT_USERTYPE,
+                    undefined,
+                    undefined,
+                    undefined,
+                    correlationlist
+                );
+                done();
+            }, 0);
+        });
+
+        it('should set profile if profile is undefined and uid is null', (done) => {
+            // arrange
+            userTypeSelectionPage.profile = {
+                handle: undefined,
+                profileType: 'sample-type',
+                uid: 'sample-uid'
+            };
+            userTypeSelectionPage.selectedUserType = 'sample-user-type';
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                uid: 'null',
+                handle: 'USER'
+            }));
+            mockEvents.publish = jest.fn(() => []);
+            jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
+                return;
+            });
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
+            correlationlist.push({ id: 'sample-user-type', type: CorReleationDataType.USERTYPE });
+            // act
+            userTypeSelectionPage.continue();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalledWith({
+                    handle: 'Guest1',
+                    profileType: 'sample-user-type',
+                    source: 'local',
+                    uid: 'sample-uid'
+                });
+                expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalledWith('sample-uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                    Environment.ONBOARDING,
+                    AuditState.AUDIT_UPDATED,
+                    [AuditProps.PROFILE_TYPE],
+                    AuditType.SELECT_USERTYPE,
+                    undefined,
+                    undefined,
+                    undefined,
+                    correlationlist
+                );
+                done();
+            }, 0);
+        });
+
+        it('should return null if profile is undefined for catch part', (done) => {
+            // arrange
+            userTypeSelectionPage.profile = {
+                handle: undefined,
+                profileType: 'sample-type',
+                uid: 'sample-uid'
+            };
+            userTypeSelectionPage.selectedUserType = 'sample-user-type';
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => throwError({
+                error: {}
+            }));
+            // act
+            userTypeSelectionPage.continue();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalledWith({
+                    handle: 'Guest1',
+                    profileType: 'sample-user-type',
+                    source: 'local',
+                    uid: 'sample-uid'
+                });
+                expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalledWith('sample-uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
 });
