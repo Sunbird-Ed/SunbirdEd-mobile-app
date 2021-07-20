@@ -32,7 +32,7 @@ import { of } from 'rxjs';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
 import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
-window['supportfile'] = {
+window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
 };
 

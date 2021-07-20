@@ -892,7 +892,7 @@ describe('ActivityDetailsPage', () => {
                     InteractType.TOUCH,
                     InteractSubtype.DOWNLOAD_CLICKED,
                     Environment.USER,
-                    PageId.ACTIVITY_DETAIL, undefined,
+                    PageId.ACTIVITY_DETAIL
                 )
                 expect(activityDetailsPage.openCsv).toHaveBeenCalled();
                 done();
