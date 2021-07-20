@@ -5,7 +5,7 @@ import {
 } from 'sunbird-sdk';
 import { Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -409,6 +409,285 @@ describe('UserTypeSelectionPage', () => {
         });
     });
 
+    describe('navigateToTabsAsLogInUser', () => {
+        it('should return birthday popup', (done) => {
+            // arrange
+            userTypeSelectionPage.categoriesProfileData = {
+                status: 'active',
+                showOnlyMandatoryFields: 'YES',
+                hasFilledLocation: true
+            };
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
+            mockAppGlobalService.showYearOfBirthPopup = jest.fn(() => Promise.resolve());
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.navigateToTabsAsLogInUser();
+            // assert
+            setTimeout(() => {
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(mockTncUpdateHandlerService.isSSOUser).toHaveBeenCalled();
+                expect(mockAppGlobalService.showYearOfBirthPopup).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.TABS]);
+                done();
+            }, 0);
+        });
+
+        it('should navigate to location page', (done) => {
+            // arrange
+            userTypeSelectionPage.categoriesProfileData = {
+                status: 'active',
+                showOnlyMandatoryFields: 'YES',
+                hasFilledLocation: false
+            };
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            const navigationExtras: NavigationExtras = {
+                state: {
+                  isShowBackButton: false
+                }
+              };
+            // act
+            userTypeSelectionPage.navigateToTabsAsLogInUser();
+            // assert
+            setTimeout(() => {
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(mockTncUpdateHandlerService.isSSOUser).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                done();
+            }, 0);
+        });
+
+        it('should navigate to category edit page', (done) => {
+            // arrange
+            userTypeSelectionPage.categoriesProfileData = {
+                status: false,
+                showOnlyMandatoryFields: 'YES',
+                hasFilledLocation: false
+            };
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.navigateToTabsAsLogInUser();
+            // assert
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('updateProfile', () => {
+        it('should navigate to tabs as guest', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = 'sample-user';
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            // act
+            userTypeSelectionPage.updateProfile('TabsPage', {});
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], navigationExtras);
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate To Tabs As LogInUser', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = 'sample-user';
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            userTypeSelectionPage.categoriesProfileData = {};
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            jest.spyOn(userTypeSelectionPage, 'navigateToTabsAsLogInUser').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            userTypeSelectionPage.updateProfile('sample-page', {});
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate To signIn page', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = ProfileType.ADMIN;
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            userTypeSelectionPage.categoriesProfileData = undefined;
+            mockProfileService.updateServerProfile = jest.fn(() => throwError({error: {}}));
+            jest.spyOn(userTypeSelectionPage, 'navigateToTabsAsLogInUser').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.updateProfile('sample-page', {});
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN]);
+                done();
+            }, 0);
+        });
+
+        it('should navigate To ProfileSettingsPage', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = ProfileType.TEACHER;
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            userTypeSelectionPage.categoriesProfileData = undefined;
+            mockProfileService.updateServerProfile = jest.fn(() => throwError({error: {}}));
+            jest.spyOn(userTypeSelectionPage, 'navigateToTabsAsLogInUser').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockNativePageTransitions.slide = jest.fn(() => Promise.resolve());
+            // act
+            userTypeSelectionPage.updateProfile('sample-page', {});
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                expect(mockNativePageTransitions.slide).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return error for update profile', (done) => {
+            userTypeSelectionPage.selectedUserType = ProfileType.TEACHER;
+            mockProfileService.updateProfile = jest.fn(() => throwError({error: {}}));
+            mockProfileService.updateServerProfile = jest.fn(() => throwError({error: {}}));
+            userTypeSelectionPage.updateProfile('sample-page', {});
+            setTimeout(() => {
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('gotoNextPage', () => {
+        it('should navigate To Tabs As Guest', () => {
+            // arrange
+            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = true;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockRouter.navigate = jest.fn();
+            const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+            // act
+            userTypeSelectionPage.gotoNextPage(false);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+            expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+            expect(mockContainer.addTab).toHaveBeenCalled();
+            expect(mockAppGlobalService.isProfileSettingsCompleted).toBeTruthy();
+            expect(mockAppGlobalService.isOnBoardingCompleted).toBeTruthy();
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], navigationExtras);
+        });
+
+        it('should update profile if userType is changed', () => {
+            // arrange
+            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            jest.spyOn(userTypeSelectionPage, 'updateProfile').mockImplementation(() => {
+                return;
+            });
+            userTypeSelectionPage.selectedUserType = ProfileType.STUDENT;
+            // act
+            userTypeSelectionPage.gotoNextPage(true);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+            expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+            expect(mockContainer.addTab).toHaveBeenCalled();
+            expect(mockAppGlobalService.isProfileSettingsCompleted).toBeTruthy();
+            expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeTruthy();
+        });
+
+        it('should navigate to signIn page for admin', () => {
+            // arrange
+            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            userTypeSelectionPage.selectedUserType = ProfileType.ADMIN;
+            mockAppGlobalService.isProfileSettingsCompleted = false;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.gotoNextPage(false);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+            expect(mockAppGlobalService.isProfileSettingsCompleted).toBeFalsy();
+            expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeTruthy();
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN]);
+        });
+
+        it('should navigate to profile settings page for student', () => {
+            // arrange
+            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            userTypeSelectionPage.selectedUserType = ProfileType.STUDENT;
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = false;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            mockNativePageTransitions.slide = jest.fn(() => Promise.resolve({}));
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            userTypeSelectionPage.gotoNextPage(false);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+            expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+            expect(mockContainer.addTab).toHaveBeenCalled();
+            expect(mockAppGlobalService.isProfileSettingsCompleted).toBeFalsy();
+            expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeTruthy();
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
+            { state: { showProfileSettingPage: true } });
+        });
+
+        it('should update profile data', () => {
+            // arrange
+            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            userTypeSelectionPage.selectedUserType = ProfileType.STUDENT;
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = false;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
+            jest.spyOn(userTypeSelectionPage, 'updateProfile').mockImplementation(() => {
+                return;
+            });
+            // act
+            userTypeSelectionPage.gotoNextPage(false);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+            expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+            expect(mockContainer.addTab).toHaveBeenCalled();
+            expect(mockAppGlobalService.isProfileSettingsCompleted).toBeFalsy();
+            expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeFalsy();
+        });
+    });
+
     describe('continue', () => {
         it('should go to next page if userType is not change', () => {
             // arrange
@@ -571,5 +850,63 @@ describe('UserTypeSelectionPage', () => {
                 done();
             }, 0);
         });
+    });
+
+    it('should generate interact telemetry', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockAppGlobalService.isOnBoardingCompleted = false;
+        const values = new Map();
+        values['userType'] = ('sample-user').toUpperCase();
+        const correlationlist: Array<CorrelationData> = [];
+        correlationlist.push({ id: 'sample-user', type: CorReleationDataType.USERTYPE });
+        // act
+        userTypeSelectionPage.generateInteractEvent('sample-user');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+            InteractType.TOUCH,
+            InteractSubtype.USER_TYPE_SELECTED,
+            Environment.ONBOARDING,
+            PageId.USER_TYPE_SELECTION,
+            undefined,
+            values
+        );
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+            InteractType.SELECT_CONTINUE, '',
+            Environment.ONBOARDING,
+            PageId.USER_TYPE,
+            undefined,
+            values,
+            undefined,
+            correlationlist
+        );
+    });
+
+    it('should navigate to profile page', () => {
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        userTypeSelectionPage.navigateToProfilePage();
+        expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    it('should return response for onSubmitAttempt', (done) => {
+        userTypeSelectionPage.onSubmitAttempt();
+        jest.spyOn(userTypeSelectionPage, 'continue').mockImplementation();
+        setTimeout(() => {
+            done();
+        }, 50);
+    });
+
+    it('should unsubscribe back button', () => {
+        userTypeSelectionPage.backButtonFunc = {
+            unsubscribe: jest.fn()
+        } as any;
+        userTypeSelectionPage.ngOnDestroy();
+        expect(userTypeSelectionPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should not unsubscribe back button', () => {
+        userTypeSelectionPage.backButtonFunc = undefined;
+        userTypeSelectionPage.ngOnDestroy();
+        expect(userTypeSelectionPage.backButtonFunc).toBeUndefined();
     });
 });
