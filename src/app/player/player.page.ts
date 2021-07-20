@@ -201,13 +201,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
-      if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] !== "application/vnd.sunbird.questionset") {
-        this.location.back();
-      } else if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+      if (!activeAlert) {
         this.showConfirm();
-      } else if (!activeAlert && this.playerType === 'sunbird-old-player' ) {
-        this.showConfirm();
-      } 
+      }
     });
 
     this.events.subscribe('endGenieCanvas', (res) => {
@@ -443,9 +439,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
               this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
               this.closeIframe();
-            }
-            if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-                this.location.back();
+            } else {
+              this.location.back();
             }
           }
         }
