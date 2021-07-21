@@ -319,7 +319,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
                 && profileDetails.allTncAccepted.groupsTnc.version) {
                 if (profileDetails.allTncAccepted.groupsTnc.version !== this.groupTncVersion) {
                   if (this.groupList.length) {
-                    // this.updateGroupTnc(this.groupTncVersion);
                     this.openAcceptGuidelinesPopup(true);
                   } else {
                     this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);

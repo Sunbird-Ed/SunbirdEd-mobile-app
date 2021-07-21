@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 import * as moment from "moment";
 import * as _ from "underscore";
 import { statusType } from "@app/app/manage-learn/core/constants/statuses.constant";
-import { UtilityService } from "@app/services";
 import {
   ProfileService,
   AuthService,

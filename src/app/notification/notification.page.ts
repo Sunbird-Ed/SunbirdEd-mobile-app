@@ -1,7 +1,6 @@
 import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
 import { Notification, CorrelationData } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';

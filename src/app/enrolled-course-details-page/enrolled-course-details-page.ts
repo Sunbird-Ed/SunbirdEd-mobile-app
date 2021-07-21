@@ -38,7 +38,6 @@ import {
   CorReleationDataType,
   Environment, ErrorType,
   ImpressionType, InteractSubtype, InteractType,
-  LogType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';
@@ -1060,8 +1059,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           'download-all-button-clicked',
           Environment.HOME,
           PageId.COURSE_DETAIL,
-          undefined,
-          undefined,
+          undefined
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);

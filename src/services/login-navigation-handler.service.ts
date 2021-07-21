@@ -49,8 +49,6 @@ export class LoginNavigationHandlerService {
         ).toPromise()
             .then(async () => {
                 await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
-                const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-                // set default guest user for Quiz deeplink
                 const isOnboardingCompleted =
                     (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
                 if (!isOnboardingCompleted) {
