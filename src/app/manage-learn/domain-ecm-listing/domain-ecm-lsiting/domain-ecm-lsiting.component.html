@@ -9,14 +9,14 @@
     <div
       arrow
       *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts"
-      class="d-flex flex-ai-center flex-dc mr-15"
+      class="d-flex flex-ai-center flex-dc mr-15  clr-primary"
       (click)="$event.stopPropagation(); pushToLocal(submission)"
     >
-      <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
+      <ion-icon class="clr-primary" name="arrow-down"></ion-icon>
       <span>{{ 'FRMELEMNTS_LBL_DOWNLOAD' | translate }}</span>
     </div>
-    <div arrow *ngIf="downloadedSubmissionList?.includes(submissionId)" class="d-flex flex-ai-center flex-dc mr-15">
-      <ion-icon class="mg-popup-btn-icon" style="color: green" name="checkmark"></ion-icon>
+    <div arrow *ngIf="downloadedSubmissionList?.includes(submissionId)" class="d-flex flex-ai-center flex-dc mr-15 clr-primary">
+      <ion-icon class="clr-downloaded-btn" style="color: green" name="checkmark"></ion-icon>
       <span>{{ 'FRMELEMNTS_LBL_DOWNLOADED' | translate }}</span>
     </div>
   </div>
