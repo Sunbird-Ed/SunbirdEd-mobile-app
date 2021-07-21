@@ -375,7 +375,6 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
-      undefined,
       undefined);
   }
 
@@ -394,7 +393,6 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
-      undefined,
       undefined);
   }
 
@@ -417,7 +415,6 @@ export class ProfilePage implements OnInit {
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.PROFILE, null,
-      undefined,
       undefined);
   }
 
@@ -938,8 +935,7 @@ export class ProfilePage implements OnInit {
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
-          content,
-          resumeCourseFlag: (training.status === 1 || training.status === 0) && !(training.batch.status === 2)
+          content
         }
       );
     } catch (err) {

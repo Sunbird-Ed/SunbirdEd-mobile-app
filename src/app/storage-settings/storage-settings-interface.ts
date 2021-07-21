@@ -2,9 +2,6 @@ import { OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface StorageSettingsInterface extends OnInit {
-  // eventBusService: EventBusService
-  // deviceInfo: DeviceInfo
-  // sharedpreferencesService: sharedpreferencesService
 
   isExternalMemoryAvailable: boolean;
 

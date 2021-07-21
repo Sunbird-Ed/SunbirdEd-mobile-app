@@ -17,7 +17,6 @@
       <ion-list lines="none" *ngIf="notificationList.length">
         <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList" #slidingItem>
           <ion-item>
-            <!-- <app-notification-item (generateNotification)="handleTelemetry($event)" [itemData]="item"></app-notification-item> -->
             <div class="w-100">
               <sb-notification-card [notification]="item" [hideDeleteOption]="true"></sb-notification-card>
             </div>

@@ -506,7 +506,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
@@ -530,7 +529,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
@@ -553,7 +551,6 @@ describe('Profile.page', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.PROFILE, null,
-            undefined,
             undefined
         );
     });
@@ -1149,8 +1146,7 @@ describe('Profile.page', () => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalledWith(
                     {
-                        content: 'sample_content',
-                        resumeCourseFlag: false
+                        content: 'sample_content'
                     }
                 );
                 done();

@@ -38,7 +38,6 @@ import {
   CorReleationDataType,
   Environment, ErrorType,
   ImpressionType, InteractSubtype, InteractType,
-  LogType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';
@@ -72,6 +71,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 declare const cordova;
 
@@ -197,6 +197,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   forumId?: string;
 
   @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
   public objRollup: Rollup;
   pageName = '';
   contentId: string;
@@ -396,6 +397,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
+    this.accessDiscussionComponent.fetchForumIds();
   }
 
   private checkUserLoggedIn() {
@@ -1059,8 +1061,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           'download-all-button-clicked',
           Environment.HOME,
           PageId.COURSE_DETAIL,
-          undefined,
-          undefined,
+          undefined
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
@@ -1494,6 +1495,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.courseCardData = course;
             this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
             this.fetchForumIdReq.type = 'batch';
+            
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
           }

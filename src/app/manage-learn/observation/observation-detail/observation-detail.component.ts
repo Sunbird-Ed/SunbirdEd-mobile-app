@@ -124,7 +124,6 @@ export class ObservationDetailComponent implements OnInit {
             }
             this.localStorage.setLocalStorage(this.generatedKey,success.result);
 
-            //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {
             this.entities = [];
             if (!this.observationId) {

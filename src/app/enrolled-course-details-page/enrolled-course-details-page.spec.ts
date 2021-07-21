@@ -186,6 +186,9 @@ describe('EnrolledCourseDetailsPage', () => {
         jest.resetAllMocks();
 
         mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        enrolledCourseDetailsPage.accessDiscussionComponent = {
+            fetchForumIds: jest.fn()
+        };
     });
 
     describe('enrolledCourseDetailsPage', () => {
@@ -1335,8 +1338,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     'download-all-button-clicked',
                     Environment.HOME,
                     PageId.COURSE_DETAIL,
-                    undefined,
-                    undefined,
+                    undefined
                 );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();

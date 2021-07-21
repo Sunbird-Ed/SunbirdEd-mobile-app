@@ -1,13 +1,10 @@
 <ion-toolbar>
-  <!-- <ion-title>
-    {{title | translate}}
-  </ion-title> -->
   <ion-buttons (click)="close()" slot="start" class="padding" color="primary">
     <ion-icon name="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
 <ion-content class="ion-padding">
-  <h5>{{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
+  <h5 class="clr-primary">{{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
   <ion-item>
     <ion-label position="stacked" class="custom-label">
       {{'FRMELEMNTS_LBL_ASSIGNED_TO' | translate}}
@@ -46,7 +43,6 @@
       <ion-col size="6" class="file-list">
         <div *ngIf="newTask.attachments.length == 0">
           <ion-icon color="primary" name="image"></ion-icon>
-          <!-- <ion-icon name="attach"></ion-icon> -->
         </div>
       </ion-col>
       <ion-col size="6">

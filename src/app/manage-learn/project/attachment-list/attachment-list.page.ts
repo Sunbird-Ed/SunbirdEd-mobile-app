@@ -121,7 +121,7 @@ export class AttachmentListPage implements OnInit {
 
             }
           }
-        };
+        }
       }
       function compare(fileType, tabType): boolean {
         tabType = tabType.substr(0, tabType.indexOf("/"));
