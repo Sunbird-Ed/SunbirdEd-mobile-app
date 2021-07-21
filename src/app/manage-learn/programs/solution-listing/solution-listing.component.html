@@ -17,7 +17,7 @@
     [id]="data?.id"
     (click)="selectedSolution(data)"
     *ngFor="let data of solutions">
-    <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
+    <ion-icon class="clr-primary" name="arrow-forward" arrow></ion-icon>
   </app-item-list-card>
   <app-no-data *ngIf="!solutions?.length"></app-no-data>
 </ion-content>
