@@ -1337,8 +1337,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     InteractType.TOUCH,
                     'download-all-button-clicked',
                     Environment.HOME,
-                    PageId.COURSE_DETAIL,
-                    undefined
+                    PageId.COURSE_DETAIL
                 );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();

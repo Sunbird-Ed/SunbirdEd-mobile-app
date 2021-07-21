@@ -1,7 +1,5 @@
 import { SbNoNetworkPopupComponent } from './sb-no-network-popup.component';
-import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
 
 describe('SbNoNetworkPopupComponent', () => {
     let sbNoNetworkPopupComponent: SbNoNetworkPopupComponent;
