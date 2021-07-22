@@ -2042,8 +2042,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
-                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
-                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
