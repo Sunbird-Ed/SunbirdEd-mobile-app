@@ -66,6 +66,10 @@ export class ContentPlayerHandler {
                 request['correlationData'].push(correlationData);
             }
 
+            if (!contentInfo.correlationList) {
+                contentInfo.correlationList = [correlationData];
+            }
+
             request['correlationData'] = [correlationData];
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
