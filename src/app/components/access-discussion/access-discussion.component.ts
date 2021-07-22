@@ -61,12 +61,12 @@ export class AccessDiscussionComponent implements OnInit {
     ];
     this.navigationService.setNavigationUrl(this.router.url);
     this.discussionService.createUser(this.createUserReq).subscribe((response) => {
-      const userName = response.result.userId.uid
+      const userId = response.result.userId.uid
       const result = [this.forumDetails.cid];
         this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
           categories: JSON.stringify({ result }),
-          userId: userName
+          userId: userId
         }
       });
     }, error => {
