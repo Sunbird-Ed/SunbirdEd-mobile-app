@@ -86,10 +86,11 @@ export class ContentShareHandlerService {
       this.social.share(null, null, null, shareLink);
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
+      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
-        destinationFolder: cordova.file.externalRootDirectory + 'Download/',
+        destinationFolder: folderPath + 'Download/',
         saveLocally: true
       };
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);

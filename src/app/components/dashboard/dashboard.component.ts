@@ -52,7 +52,8 @@ export class DashboardComponent implements OnInit {
       if (result) {
         const expTime = new Date().getTime();
         const filename = this.collectionName.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const downloadDirectory = `${folderPath}Download/`;
         
         this.lib.instance.exportCsv({'strict': true}).then((csvData) => {
           console.log('exportCSVdata', csvData)

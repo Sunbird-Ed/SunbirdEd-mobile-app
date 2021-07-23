@@ -290,7 +290,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
         const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const downloadDirectory = `${folderPath}Download/`;
         
         this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
         .then((res)=> {
