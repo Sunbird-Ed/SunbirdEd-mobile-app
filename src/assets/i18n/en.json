@@ -1480,5 +1480,6 @@
   "CONTENT_RELEVANT_MSG": "This content is relevant for: ",
   "DOWNLOAD_FORM":"Do you want to download this form?",
   "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded successfully!",
-  "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded"
+  "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded",
+  "FRMELEMNTS_BTN_START":"Start"
 }
