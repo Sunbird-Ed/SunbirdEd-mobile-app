@@ -95,10 +95,9 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
     }
 
     handleHeaderEvents($event) {
-        switch ($event.name) {
-            case 'back':
-                this.handleBackButton(true);
-                break;
+        if($event.name == 'back')
+        {
+        this.handleBackButton(true);
         }
     }
 

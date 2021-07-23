@@ -124,11 +124,10 @@ export class AddMemberToGroupPage {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(true);
-        break;
-    }
+    if($event.name == 'back')
+     {
+      this.handleBackButton(true);
+     }
   }
 
   handleBackButton(isNavBack) {
