@@ -150,12 +150,11 @@ export class StorageSettingsPage implements OnInit {
   }
 
   private handleHeaderEvents(event: { name: string }) {
-    switch (event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.STORAGE_SETTINGS, Environment.HOME,
-          true);
-        this.location.back();
-        break;
+    if(event.name == 'back')
+    {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.STORAGE_SETTINGS, Environment.HOME,
+        true);
+      this.location.back();
     }
   }
 

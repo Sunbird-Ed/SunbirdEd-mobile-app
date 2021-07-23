@@ -318,10 +318,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(true);
-        break;
+    if($event.name == 'back')
+    {
+      this.handleBackButton(true);
     }
   }
 

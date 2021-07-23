@@ -200,14 +200,13 @@ export class SubProfileEditPage {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.CREATE_MANAGED_USER,
-          Environment.USER,
-          true
+    if($event.name == 'back')
+    {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.CREATE_MANAGED_USER,
+        Environment.USER,
+        true
         );
-        break;
     }
   }
 

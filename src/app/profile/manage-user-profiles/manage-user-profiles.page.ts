@@ -170,14 +170,12 @@ export class ManageUserProfilesPage implements OnInit {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.MANAGE_USERS,
-          Environment.USER,
-          true
-        );
-        break;
+    if($event.name == 'back')
+    {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.MANAGE_USERS,
+        Environment.USER,
+        true);
     }
   }
 
