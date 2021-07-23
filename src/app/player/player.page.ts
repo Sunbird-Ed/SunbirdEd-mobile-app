@@ -137,17 +137,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
-    if (this.playerType === 'sunbird-old-player') {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-      this.statusBar.hide();
-      this.config['uid'] = this.config['context'].actor.id;
-      this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+    const playerInterval = setInterval(() => {
+      if (this.playerType && this.playerType === 'sunbird-old-player') {
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        this.statusBar.hide();
+        this.config['uid'] = this.config['context'].actor.id;
+        this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
-      if (this.config['metadata'].isAvailableLocally) {
-        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
-      }
+        if (this.config['metadata'].isAvailableLocally) {
+          this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+        }
 
-      const playerInterval = setInterval(() => {
         if (this.previewElement?.nativeElement) {
           clearInterval(playerInterval);
           // This is to reload a iframe as iframes reload method not working on cross-origin.
@@ -201,8 +201,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
             }, 1000);
           };
         }
-      }, 500);
-    }
+      }
+    }, 500);
 
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
