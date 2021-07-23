@@ -4,6 +4,7 @@ import { StoragePermissionHandlerService } from '@app/services/storage-permissio
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Platform } from '@ionic/angular';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -24,7 +25,8 @@ export class DashboardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
     private fileOpener: FileOpener,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private platform: Platform
 ) {
    
 }

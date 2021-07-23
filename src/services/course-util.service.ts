@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { ContentImport } from 'sunbird-sdk';
 import { ViewCreditsComponent } from '@app/app/components/popups/view-credits/view-credits.component';
 
@@ -9,6 +9,7 @@ export class CourseUtilService {
 
     constructor(
         private popOverCtrl: PopoverController,
+        private platform: Platform
     ) { }
 
     /**

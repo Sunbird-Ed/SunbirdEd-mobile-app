@@ -11,6 +11,7 @@ import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AppGlobalService } from '../app-global-service.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class ContentShareHandlerService {
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion,
-    private appGlobalService: AppGlobalService) {
+    private appGlobalService: AppGlobalService, private platform: Platform) {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
