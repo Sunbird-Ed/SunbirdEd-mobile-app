@@ -48,7 +48,7 @@ export class SurveyProviderService {
   async getDetailsByLink(link): Promise<any> {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_LINK + link,
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_ID + '/' + link,
       payload: payload,
     };
 

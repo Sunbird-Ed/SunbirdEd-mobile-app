@@ -104,54 +104,11 @@ export class ImageListingComponent implements OnInit {
       }
     }
     this.uploadImages = imageArray;
-    this.checkIfEcmSumittedByUser();
-  }
-
-  async checkIfEcmSumittedByUser() {
-    this.loader.startLoader();
-    const submissionId = this.submissionId;
-    let url = this.schoolData.survey
-      ? urlConstants.API_URLS.IS_SURVEY_SUBMISSION_ALLOWED
-      : this.schoolData.observation
-      ? urlConstants.API_URLS.IS_OBSERVATION_SUBMISSION_ALLOWED
-      : urlConstants.API_URLS.CHECK_IF_SUBMITTED;
-
-    let payload = await this.utils.getProfileInfo();
-    url = url + submissionId + '?evidenceId=' + this.currentEvidence.externalId;
-    const config = {
-      url: url,
-      payload: payload,
-    };
-
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        if (success.result.allowed) {
-          if (this.uploadImages.length) {
-            this.createImageFromName(this.uploadImages);
-          } else {
-            this.submitEvidence();
-          }
-        } else {
-          this.translate.get('FRMELEMENTS_MSG_SUBMISSION_COMPLETED').subscribe((translations) => {
-            this.toast.openToast(translations);
-          });
-          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
-          this.localStorage.setLocalStorage(
-            this.utils.getAssessmentLocalStorageKey(this.submissionId),
-            this.schoolData
-          );
-          const options = {
-            _id: this.submissionId,
-            name: this.schoolName,
-          };
-          window.history.go(-2);
-        }
-      },
-      (error) => {
-        this.loader.stopLoader();
-      }
-    );
+     if (this.uploadImages.length) {
+       this.createImageFromName(this.uploadImages);
+     } else {
+       this.submitEvidence();
+     }
   }
 
   createImageFromName(imageList) {
