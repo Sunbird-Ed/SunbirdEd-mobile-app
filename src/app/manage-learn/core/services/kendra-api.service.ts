@@ -6,6 +6,7 @@ import { urlConstants } from '../constants/urlConstants';
 import { ToastService } from './toast/toast.service';
 import { AuthService, DeviceInfo } from 'sunbird-sdk';
 import { ApiUtilsService } from './api-utils.service';
+import { UtilityService } from '@app/services/utility-service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,9 +20,11 @@ export class KendraApiService extends ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
 
-    private utils: ApiUtilsService
+    private utils: ApiUtilsService,
+    private utilityService: UtilityService
   ) {
     super(http, toast, modalController, authService, deviceInfo, utils);
-    this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
+    // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
+    this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url));
   }
 }
