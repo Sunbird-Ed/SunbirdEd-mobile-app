@@ -7,11 +7,10 @@ export const urlConstants = {
     SUNBIRD: '/sunbird/api/',
   },
   API_URLS: {
-    PROGRAM_LISTING: 'v1/users/programs?',
+    PROGRAM_LISTING: 'v1/users/programs?isAPrivateProgram=',
     GET_TARGETED_SOLUTIONS: 'v1/solutions/targetedSolutions',
     SOLUTIONS_LISTING: 'v1/users/solutions/',
     GET_PROJECT: 'v2/userProjects/details',
-    PRIVATE_PROGRAMS: 'v1/users/privatePrograms',
     GET_SUB_ENITIES_FOR_ROLES: 'v1/entities/subEntityListBasedOnRoleAndLocation/',
     GET_ENTITY_LIST: 'v1/entities/subEntityList/',
     GET_REPORT: 'v1/reports/entity/',
