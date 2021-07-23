@@ -147,56 +147,61 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
 
-      // This is to reload a iframe as iframes reload method not working on cross-origin.
-      const src = this.previewElement.nativeElement.src;
-      this.previewElement.nativeElement.src = '';
-      this.previewElement.nativeElement.src = src;
-      this.previewElement.nativeElement.onload = () => {
-        setTimeout(() => {
-          this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
-          this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
-          this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-          this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
-            if (resp.data === 'renderer:question:submitscore') {
-              this.courseService.syncAssessmentEvents().subscribe();
-            } else if (resp.data && typeof resp.data === 'object') {
-              if (resp.data['player.pdf-renderer.error']) {
-                const pdfError = resp.data['player.pdf-renderer.error'];
-                if (pdfError.name === 'MissingPDFException') {
-                  const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
-                    this.config['metadata']['contentData']['artifactUrl'];
-                  this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    InteractSubtype.DOWNLOAD_PDF_CLICKED,
-                    Environment.PLAYER,
-                    PageId.PLAYER,
-                    ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
-                    undefined,
-                    ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
-                  this.openPDF(downloadUrl);
+      const playerInterval = setInterval(() => {
+        if (this.previewElement?.nativeElement) {
+          clearInterval(playerInterval);
+          // This is to reload a iframe as iframes reload method not working on cross-origin.
+          const src = this.previewElement.nativeElement.src;
+          this.previewElement.nativeElement.src = '';
+          this.previewElement.nativeElement.src = src;
+          this.previewElement.nativeElement.onload = () => {
+            setTimeout(() => {
+              this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
+              this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
+              this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
+              this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+                if (resp.data === 'renderer:question:submitscore') {
+                  this.courseService.syncAssessmentEvents().subscribe();
+                } else if (resp.data && typeof resp.data === 'object') {
+                  if (resp.data['player.pdf-renderer.error']) {
+                    const pdfError = resp.data['player.pdf-renderer.error'];
+                    if (pdfError.name === 'MissingPDFException') {
+                      const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
+                        this.config['metadata']['contentData']['artifactUrl'];
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                        InteractType.TOUCH,
+                        InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                        Environment.PLAYER,
+                        PageId.PLAYER,
+                        ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
+                        undefined,
+                        ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
+                      this.openPDF(downloadUrl);
+                    }
+                  } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
+                    || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
+                    cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                      () => { },
+                      () => { }
+                    );
+                  } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
+                    this.closeIframe();
+                  }
+                } else if (this.isJSON(resp.data)) {
+                  const response = JSON.parse(resp.data);
+                  if (response.event === 'renderer:navigate') {
+                    this.navigateBackToTrackableCollection = true;
+                    this.navigateBackToContentDetails = false;
+                    this.closeIframe({
+                      identifier: response.data.identifier
+                    });
+                  }
                 }
-              } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
-                  || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
-                cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-                    () => {},
-                    () => {}
-                );
-              } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                this.closeIframe();
-              }
-            } else if (this.isJSON(resp.data)) {
-              const response = JSON.parse(resp.data);
-              if (response.event === 'renderer:navigate') {
-                this.navigateBackToTrackableCollection = true;
-                this.navigateBackToContentDetails = false;
-                this.closeIframe({
-                  identifier: response.data.identifier
-                });
-              }
-            }
-          });
-        }, 1000);
-      };
+              });
+            }, 1000);
+          };
+        }
+      }, 500);
     }
 
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
