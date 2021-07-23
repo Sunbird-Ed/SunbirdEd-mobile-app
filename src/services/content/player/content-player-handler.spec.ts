@@ -84,8 +84,7 @@ describe('ContentPlayerHandler', () => {
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, true);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: true } });
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
 
         it('should disbale the user switcher if content is being played from course', () => {
