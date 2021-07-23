@@ -59,14 +59,14 @@
 
         </div>
         <div class="sb-common-player-group sb-play-title-group"
-          *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive' || isIOS">
+          *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
           <button fill="clear" icon-only class="sb-common-title" (click)="handleContentPlay(true)">
             <img src="assets/imgs/play_circle.svg" alt="play-circle" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
         <div class="sb-common-player-group sb-download-title-group" (click)="openConfirmPopUp()"
-          *ngIf="content.mimeType === 'application/vnd.ekstep.h5p-archive' && !isIOS">
+          *ngIf="content.mimeType === 'application/vnd.ekstep.h5p-archive'">
           <ion-button fill="clear" icon-only class="sb-common-title">
             <ion-icon name="cloud-download" class="sb-common-white-icon"></ion-icon>
           </ion-button>
@@ -133,7 +133,7 @@
 
         <div class="sb-btn-tile-group">
           <div *ngIf="content && !this.limitedShareContentFlag">
-            <button *ngIf="!contentDownloadable[content?.identifier] && !isIOS" (click)="openConfirmPopUp()"
+            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [ngClass]="cardData.mimeType === 'application/vnd.sunbird.questionset' || !(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
               [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only
               class="sb-btn-tile">

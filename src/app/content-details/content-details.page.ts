@@ -180,7 +180,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isCompatibleWithVendorApps = false;
   appLists: any;
   isIOS = false;
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -254,11 +253,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.onboarding = extras.onboarding || this.onboarding;
     }
     this.isIOS = (window['device'].platform.toLowerCase() === "ios")
-    if(!this.isIOS) {
       this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
         map((requests) => !!requests.find((request) => request.identifier === this.identifier))
       );
-    }
 
   }
 

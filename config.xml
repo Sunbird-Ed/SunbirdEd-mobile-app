@@ -123,7 +123,7 @@
         <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
         <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
         <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
-        <preference name="UseSwiftLanguageVersion" value="5" />
+        <preference name="UseSwiftLanguageVersion" value="4" />
         <resource-file src="GoogleService-Info.plist" />
         <splash height="2688" src="resources/ios/splash/Default-2688h~iphone.png" width="1242" />
         <splash height="1792" src="resources/ios/splash/Default-1792h~iphone.png" width="828" />
