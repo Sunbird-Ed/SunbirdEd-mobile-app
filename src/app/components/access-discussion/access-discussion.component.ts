@@ -47,8 +47,7 @@ export class AccessDiscussionComponent implements OnInit {
       InteractType.TOUCH, 
       InteractSubtype.FORUM_ICON_CLICKED,
       Environment.DISCUSSION,
-      PageId.GROUP_DETAIL,
-      undefined
+      PageId.GROUP_DETAIL
     );
     this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [
@@ -59,12 +58,12 @@ export class AccessDiscussionComponent implements OnInit {
     ];
     this.navigationService.setNavigationUrl(this.router.url);
     this.discussionService.createUser(this.createUserReq).subscribe((response) => {
-      const userName = response.result.userName
+      const userId = response.result.userId.uid
       const result = [this.forumDetails.cid];
         this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
           categories: JSON.stringify({ result }),
-          userName: userName
+          userId: userId
         }
       });
     }, error => {

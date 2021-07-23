@@ -1060,8 +1060,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
-          PageId.COURSE_DETAIL,
-          undefined
+          PageId.COURSE_DETAIL
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
