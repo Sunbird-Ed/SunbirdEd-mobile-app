@@ -40,7 +40,7 @@ export class ContentPlayerHandler {
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
         navigateBackToContentDetails?: boolean , isChildContent?: boolean) {
         const maxCompatibilityLevel = await this.utilityService.getBuildConfigValue(GenericAppConfig.MAX_COMPATIBILITY_LEVEL);
-        if (content.contentData['compatibilityLevel'] < maxCompatibilityLevel) {
+        if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
             cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
                 () => { },
                 () => { }
