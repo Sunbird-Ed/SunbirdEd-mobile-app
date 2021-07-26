@@ -504,12 +504,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   playerTelemetryEvents(event) {
-    if (event.eid === 'ASSESS') {
-      const attempt = this.corRelationList.find((c) => c.type === 'AttemptId');
-      if (attempt) {
-        event?.context?.cdata.push(attempt);
-      }
-    }
     SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
       (res) => console.log('response after telemetry', res),
     );

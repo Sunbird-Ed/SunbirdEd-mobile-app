@@ -84,9 +84,11 @@ export class ContentPlayerHandler {
             this.lastPlayedContentId = content.identifier;
             this.isPlayerLaunched = true;
 
-            if (data.metadata.mimeType === 'application/vnd.sunbird.questionset') {
-                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment.maxAttempts == undefined ? 0 : maxAttemptAssessment.maxAttempts;
-                data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment.currentAttempt == undefined ? 0 : maxAttemptAssessment.currentAttempt;
+            if (data?.metadata?.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
+                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment?.maxAttempts === undefined ? 0
+                : maxAttemptAssessment.maxAttempts;
+                data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment?.currentAttempt === undefined ? 0
+                : maxAttemptAssessment.currentAttempt;
             }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
