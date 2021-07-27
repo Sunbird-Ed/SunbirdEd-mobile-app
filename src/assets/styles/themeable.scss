@@ -827,12 +827,36 @@ html[data-theme="JOYFUL"]{
       background-position: bottom center;
     }
   }
+  .ui-container-ios {
+    &::part(scroll) {
+      z-index: auto;
+    }
+    &::after {
+      content: '';
+      width: 100%;
+      height: 50px;
+      display: block;
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      border-bottom-left-radius: 20px;
+      background-color: var(--app-primary-header) !important;
+      background-image: url(/assets/imgs/header-background.svg);
+      background-repeat: no-repeat;
+      background-position: bottom center;
+    }
+  }
   .backgrond-div::after{
     top: -56px;
   }
   .ui-content{
     z-index: 2;
     position: relative;
+  }
+  .ui-content-ios{
+    z-index: 2;
+    position: relative;
+    top: 45px;
   }
 
   .ps-container{
