@@ -66,4 +66,3 @@ ionic cordova plugin add cordova-plugin-splashscreen
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add ios
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build ios
-
