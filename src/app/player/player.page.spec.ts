@@ -29,7 +29,9 @@ describe('PlayerPage', () => {
     const mockAlertCtrl: Partial<AlertController> = {
         
     };
-    const mockCourseService: Partial<CourseService> = {};
+    const mockCourseService: Partial<CourseService> = {
+        syncAssessmentEvents: jest.fn(() => of(undefined))
+    };
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {
         handleAction: jest.fn()
     };
@@ -734,6 +736,22 @@ describe('PlayerPage', () => {
         });
     });
     describe('pdfPlayerEvents', () => {
+        it('should sync assessment events', () => {
+            mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
+            const event = {
+                edata: {
+                    type: 'END'
+                }
+            };
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'application/vnd.sunbird.questionset'
+                }
+            }
+            playerPage.playerEvents(event);
+
+            expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
+        });
         it('should exit the player', (done) => {
             const event = {
                 edata: {

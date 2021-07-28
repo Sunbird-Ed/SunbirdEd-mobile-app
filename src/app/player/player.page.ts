@@ -240,8 +240,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async playerEvents(event) {
     if (event.edata) {
       if (event.edata['type'] === 'END' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-        // sourav need to check this
-        this.courseService.syncAssessmentEvents().subscribe;
+        this.courseService.syncAssessmentEvents().subscribe();
       } else if (event.edata['type'] === 'EXIT') {
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           this.showConfirm()
