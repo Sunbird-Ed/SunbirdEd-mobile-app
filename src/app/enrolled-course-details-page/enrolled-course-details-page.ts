@@ -1400,7 +1400,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.showResumeBtn = false;
     }
 
-    // TODO: Need to check
     if (!this.isAlreadyEnrolled) {
       this.getAllBatches();
     } else {
