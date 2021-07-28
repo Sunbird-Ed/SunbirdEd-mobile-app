@@ -1,0 +1,31 @@
+.preference-container {
+  color: var(--app-gray);
+  padding: 1rem;
+  font-size: 12px;
+
+  .preference-username {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0.75rem 0;
+  }
+
+  .preference-message {
+    .preference-label{
+      color: var(--app-gray);
+      display: flex;
+      align-items: center;
+      hr{
+        flex: 1;
+        background-color: var(--app-primary-header);
+      }
+    }
+  }
+
+  .preference-data { 
+    margin: 0.25rem 0 1rem;
+  }
+
+  .change-preference{
+    text-align: center;
+  }
+}
