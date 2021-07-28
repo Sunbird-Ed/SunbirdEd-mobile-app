@@ -1,0 +1,49 @@
+// App specific Properties
+app_id = APP_ID
+app_name = APP_NAME
+app_version_code = APP_VERSION_CODE
+environment = ENVIRONMENT
+
+// Fabric Keys
+release_fabric_api_key = RELEASE_FABRIC_API_KEY
+release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
+player_deeplink_scheme = PLAYER_DEEPLINK_SCHEME
+
+display_onboarding_page = DISPLAY_ONBOARDING_PAGE
+display_onboarding_cards= DISPLAY_ONBOARDING_CARDS
+
+version_name = VERSION_NUMBER
+display_framework_categories_in_profile = DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE
+display_signin_footer_card_in_course_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER
+display_signin_footer_card_in_library_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER
+display_signin_footer_card_in_profile_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER
+display_signin_footer_card_in_course_tab_for_student = DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_STUDENT
+display_signin_footer_card_in_library_tab_for_student = DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT
+display_signin_footer_card_in_profile_tab_for_student = DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT
+
+track_user_telemetry = TRACK_USER_TELEMETRY
+content_streaming_enabled = CONTENT_STREAMING_ENABLED
+open_rapdiscovery_enabled = OPEN_RAPDISCOVERY_ENABLED
+display_onboarding_category_page = DISPLAY_ONBOARDING_CATEGORY_PAGE
+display_onboarding_scan_page = false
+support_email = SUPPORT_EMAIL
+
+
+deeplink_base_url = DEEPLINK_BASE_URL
+deeplink_ncert_url = DEEPLINK_NCERT_URL
+deeplink_igot_url = DEEPLINK_IGOT_URL
+
+custom_scheme = staging.diksha.app
+
+base_url = BASE_URL
+merge_account_base_url= MERGE_ACCOUT_BASE_URL
+producer_id = PRODUCER_ID
+channel_id = CHANNEL_ID
+max_compatibility_level = MAX_COMPATIBILITY_LEVEL
+mobile_app_consumer = MOBILE_APP_CONSUMER
+mobile_app_key = MOBILE_APP_KEY
+mobile_app_secret = MOBILE_APP_SECRET
+oauth_redirect_url = OATH_REDIRECT_URL
+tou_base_url = TOU_BASE_URL
+survey_base_url= SURVEY_BASE_URL
+projects_base_url= PROJECTS_BASE_URL
