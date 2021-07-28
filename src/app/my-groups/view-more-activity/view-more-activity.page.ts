@@ -95,7 +95,7 @@ export class ViewMoreActivityPage implements  OnDestroy {
     }
 
     handleHeaderEvents($event) {
-        if($event.name == 'back')
+        if($event.name === 'back')
         {
             this.handleBackButton(true);
         }

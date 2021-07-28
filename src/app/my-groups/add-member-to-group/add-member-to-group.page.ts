@@ -124,7 +124,7 @@ export class AddMemberToGroupPage {
   }
 
   handleHeaderEvents($event) {
-    if($event.name == 'back')
+    if($event.name === 'back')
      {
       this.handleBackButton(true);
      }

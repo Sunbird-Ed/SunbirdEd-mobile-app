@@ -200,7 +200,7 @@ export class SubProfileEditPage {
   }
 
   handleHeaderEvents($event) {
-    if($event.name == 'back')
+    if($event.name === 'back')
     {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.CREATE_MANAGED_USER,

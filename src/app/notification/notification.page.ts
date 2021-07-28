@@ -136,7 +136,7 @@ export class NotificationPage implements OnInit {
   }
 
   private handleHeaderEvents(event) {
-    if(event.name == 'back') 
+    if(event.name === 'back') 
     {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
     }

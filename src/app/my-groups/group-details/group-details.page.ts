@@ -142,7 +142,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   handleHeaderEvents($event) {
-    if($event.name == 'back')
+    if($event.name === 'back')
     {
       this.handleBackButton(true);
     }

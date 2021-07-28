@@ -238,7 +238,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    if($event.name == 'back')
+    if($event.name === 'back')
     {
       this.handleBackButton(true);
     }

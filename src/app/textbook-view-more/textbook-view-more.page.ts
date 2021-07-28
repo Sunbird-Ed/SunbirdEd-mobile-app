@@ -67,7 +67,7 @@ export class TextbookViewMorePage {
   }
 
   private handleHeaderEvents(event: { name: string }) {
-    if(event.name == 'back')
+    if(event.name === 'back')
     {
       this.location.back();
     }
