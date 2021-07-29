@@ -68,6 +68,9 @@ export class ConsentService {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
                 }
             });
+        if (isOrgConsent) {
+            this.updateProfileDeclaration(userDetails);
+        }
     }
 
     private async updateProfileDeclaration(userDetails) {
@@ -93,7 +96,6 @@ export class ConsentService {
         try {
             await this.profileService.updateServerProfileDeclarations({ declarations }).toPromise();
         } catch (e) {
-            console.log('e::', e);
         }
     }
 }
