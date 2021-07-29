@@ -173,33 +173,6 @@
     }
   }
 
-  .back-btn-container-ios{
-    height: 32px;
-    @include ltr() {
-      top: 50px;
-      left: 0;
-      position: relative;
-    }
-    @include rtl() {
-      top: 0;
-      right: 0;
-    }
-    flex-grow: 0;
-    flex-shrink: 0;
-    .top-back-button{
-      position: absolute;
-      width: 30px;
-      @include ltr() {
-        left: 16px;
-        transform: rotate(180deg);
-      }
-      @include rtl() {
-        right: 16px;
-        transform: rotate(0deg);
-      }
-    }
-  }
-
   .qr-content {
     display: flex;
     flex-direction: column;
@@ -391,3 +364,32 @@
   background-color: map-get($colors, white);
   color: $blue !important;
 }
+
+// ************* iOS start*************
+.back-btn-container-ios{
+  height: 32px;
+  @include ltr() {
+    top: 50px;
+    left: 0;
+    position: relative;
+  }
+  @include rtl() {
+    top: 0;
+    right: 0;
+  }
+  flex-grow: 0;
+  flex-shrink: 0;
+  .top-back-button{
+    position: absolute;
+    width: 30px;
+    @include ltr() {
+      left: 16px;
+      transform: rotate(180deg);
+    }
+    @include rtl() {
+      right: 16px;
+      transform: rotate(0deg);
+    }
+  }
+}
+// ************* iOS end **************
