@@ -750,7 +750,8 @@ export class ProfilePage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass: 'popover-alert input-focus',
+      translucent: true
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
