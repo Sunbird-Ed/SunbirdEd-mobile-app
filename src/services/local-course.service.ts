@@ -343,7 +343,7 @@ export class LocalCourseService {
   }
 
   fetchAssessmentStatus(contentStatusData, content) {
-    let maxAttempts = content.contentData ? content.contentData.maxAttempts : content.maxAttempts;
+    let maxAttempts = (content && content.contentData) ? content.contentData.maxAttempts : content.maxAttempts;
     if (!maxAttempts) {
       maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
     }

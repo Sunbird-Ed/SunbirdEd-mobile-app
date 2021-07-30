@@ -431,8 +431,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   subscribeTrackDownloads() {
-    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
-      share());
+      this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+        share());
   }
 
   checkCurrentUserType() {
@@ -924,6 +924,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -1275,10 +1276,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
     const doNotShow = await this.preferences.getBoolean(key).toPromise();
-    const profile = await this.profileService.getActiveSessionProfile({
-      requiredFields: ProfileConstants.REQUIRED_FIELDS
-    }).toPromise();
-
+    const optionReq = { requiredFields: ProfileConstants.REQUIRED_FIELDS };
+    const profile = await this.profileService.getActiveSessionProfile(optionReq).toPromise();
     if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
       this.startContent();
     } else {
@@ -1289,7 +1288,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (!this.nextContent) {
+      if (this.nextContent && !this.nextContent) {
         this.initNextContent();
       }
       const telemetryDetails = {

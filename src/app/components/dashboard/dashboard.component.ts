@@ -4,6 +4,7 @@ import { StoragePermissionHandlerService } from '@app/services/storage-permissio
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Platform } from '@ionic/angular';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -24,7 +25,8 @@ export class DashboardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
     private fileOpener: FileOpener,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private platform: Platform
 ) {
    
 }
@@ -52,7 +54,8 @@ export class DashboardComponent implements OnInit {
       if (result) {
         const expTime = new Date().getTime();
         const filename = this.collectionName.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const downloadDirectory = `${folderPath}Download/`;
         
         this.lib.instance.exportCsv({'strict': true}).then((csvData) => {
           console.log('exportCSVdata', csvData)

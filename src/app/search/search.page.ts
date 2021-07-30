@@ -910,7 +910,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
-    (window as any).cordova.plugins.Keyboard.close();
+    (window as any).Keyboard.hide();
     const facets = this.searchFilterConfig.reduce((acc, filterConfig) => {
       acc.push(filterConfig.code);
       return acc;
@@ -1555,11 +1555,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         // TODO - check with Anil for destination folder path
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : []
       });

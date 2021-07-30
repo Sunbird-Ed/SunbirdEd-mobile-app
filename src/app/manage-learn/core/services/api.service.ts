@@ -26,7 +26,6 @@ export class ApiService {
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
-
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
         const httpOptions = {
@@ -34,8 +33,8 @@ export class ApiService {
             'x-auth-token': session ? session.access_token : '',
             'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID(),
+            // 'X-App-Ver': this.apiUtils.appVersion,
+            // 'deviceId': this.deviceInfo.getDeviceID(),
           }),
         };
         return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
@@ -80,8 +79,8 @@ export class ApiService {
             'x-auth-token': session ? session.access_token : '',
             'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID(),
+            // 'X-App-Ver': this.apiUtils.appVersion,
+            // 'deviceId': this.deviceInfo.getDeviceID(),
           }),
         };
         return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
@@ -96,7 +95,7 @@ export class ApiService {
   }
 
   delete(requestParam: RequestParams): Observable<any> {
-    
+
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
         const httpOptions = {
@@ -104,8 +103,8 @@ export class ApiService {
             'x-auth-token': session ? session.access_token : '',
             'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID()
+            // 'X-App-Ver': this.apiUtils.appVersion,
+            // 'deviceId': this.deviceInfo.getDeviceID()
           }),
           body: requestParam.payload,
         };

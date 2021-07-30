@@ -179,7 +179,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   maxAttemptAssessment: any;
   isCompatibleWithVendorApps = false;
   appLists: any;
-
+  isIOS = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -252,9 +252,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.checkLimitedContentSharingFlag(extras.content);
       this.onboarding = extras.onboarding || this.onboarding;
     }
-    this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
-      map((requests) => !!requests.find((request) => request.identifier === this.identifier))
-    );
+    this.isIOS = (window['device'].platform.toLowerCase() === "ios")
+      this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
+        map((requests) => !!requests.find((request) => request.identifier === this.identifier))
+      );
+
   }
 
   async ngOnInit() {
@@ -1096,7 +1098,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Play content
    */
   private playContent(isStreaming: boolean) {
-    if (this.apiLevel < 21 && this.appAvailability === 'false') {
+    if (this.apiLevel < 21 && this.appAvailability === 'false' && !this.isIOS) {
       this.showPopupDialog();
     } else {
       const hierachyInfo = this.childContentHandler.contentHierarchyInfo || this.content.hierarchyInfo;
