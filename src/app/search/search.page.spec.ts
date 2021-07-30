@@ -975,8 +975,7 @@ describe('SearchPage', () => {
                 InteractType.TOUCH,
                 InteractSubtype.FILTER_BUTTON_CLICKED,
                 Environment.HOME,
-                'source',
-                undefined
+                'source'
             );
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalled();

@@ -124,10 +124,6 @@ export class DistrictMappingPage implements OnDestroy {
     this.headerService.hideHeader();
     // await this.checkLocationAvailability();
     const correlationList: Array<CorrelationData> = [];
-    // if (this.stateName) {
-    //   correlationList.push({ id: this.stateName || '', type: CorReleationDataType.STATE });
-    //   correlationList.push({ id: this.districtName || '', type: CorReleationDataType.DISTRICT });
-    // }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
       this.getEnvironment(),

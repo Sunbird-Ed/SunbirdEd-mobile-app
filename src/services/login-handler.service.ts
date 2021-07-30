@@ -5,7 +5,6 @@ import {
     WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 
-import {PreferenceKey} from '@app/app/app.constant';
 import {
     FormAndFrameworkUtilService,
     CommonUtilService,
@@ -20,7 +19,6 @@ import {
     InteractType,
     PageId
 } from '@app/services/telemetry-constants';
-import {Router} from '@angular/router';
 
 @Injectable()
 export class LoginHandlerService {

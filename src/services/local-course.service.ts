@@ -80,7 +80,6 @@ export class LocalCourseService {
             if (!this.isMinor()) {
               await this.consentService.showConsentPopup(enrollCourse);
             }
-           // this.preferences.putString(PreferenceKey.IS_CONSENT_POPUP_DISPLAY, 'true').toPromise();
 
             if (consentPopoverActionsDelegate) {
               consentPopoverActionsDelegate.onConsentPopoverDismiss();

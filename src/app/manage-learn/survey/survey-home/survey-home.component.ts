@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { UpdateLocalSchoolDataService } from '../../core/services/update-local-s
   templateUrl: './survey-home.component.html',
   styleUrls: ['./survey-home.component.scss'],
 })
-export class SurveyHomeComponent implements OnInit {
+export class SurveyHomeComponent {
   private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
@@ -47,7 +47,6 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
 
   ionViewDidLoad(): void {}
 
@@ -100,8 +99,7 @@ export class SurveyHomeComponent implements OnInit {
       .then((allId) => {
         this.submissionArr = allId;
         this.applySubmission(); // make downloaded = true
-      })
-      .catch((err) => {});
+      });
   }
 
   applySubmission(): void {
@@ -122,11 +120,6 @@ export class SurveyHomeComponent implements OnInit {
         }
         if (data.result.status && data.result.status == 'completed') {
           this.surveyProvider.showMsg('surveyCompleted', true);
-          return;
-        }
-        if (data.result.isCreator) {
-          this.toast.openToast(data.message);
-          this.router.navigate(['']);
           return;
         }
         survey = data.result;
@@ -175,18 +168,13 @@ export class SurveyHomeComponent implements OnInit {
       // for auto targeted _id will be blank
       // so creator also no will be able to submit
     }
-    if (isCreator) {
-      return;
-    }
+
     this.surveyProvider
       .getDetailsById(surveyId, solutionId)
       .then((res) => {
         const survey = res.result;
         this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
         this.storeRedirect(survey);
-      })
-      .catch((err) => {
-        console.log(err);
       });
   }
 

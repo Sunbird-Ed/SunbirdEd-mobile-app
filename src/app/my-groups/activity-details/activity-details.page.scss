@@ -43,14 +43,16 @@
 }
 .ad-timestamp-container{
     padding: 8px;
-    // color: map-get($colors, primary);
     .ad-dw-csv{
         color: $blue;
         font-weight: bold;
+        padding: 0 !important;
     }
     .ad-timestamp{
         color: $gray-300;
-        float: left;
+    }
+    .ad-dw-csv-container{
+        padding-top: 8px;
     }
 }
 .ad-mebers-container{

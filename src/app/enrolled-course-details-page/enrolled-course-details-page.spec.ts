@@ -186,6 +186,9 @@ describe('EnrolledCourseDetailsPage', () => {
         jest.resetAllMocks();
 
         mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        enrolledCourseDetailsPage.accessDiscussionComponent = {
+            fetchForumIds: jest.fn()
+        };
     });
 
     describe('enrolledCourseDetailsPage', () => {
@@ -604,22 +607,6 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('subscribeUtilityEvents()', () => {
-        it('#subscribeUtilityEvents should handle error condition', (done) => {
-            // arrange
-            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
-            mockEvents.subscribe = jest.fn(() => ({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
-            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
-            // assert
-            enrolledCourseDetailsPage.subscribeUtilityEvents();
-            // act
-            setTimeout(() => {
-                expect(enrolledCourseDetailsPage.baseUrl).toBe('');
-                expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
 
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
             // arrange
@@ -1350,9 +1337,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     InteractType.TOUCH,
                     'download-all-button-clicked',
                     Environment.HOME,
-                    PageId.COURSE_DETAIL,
-                    undefined,
-                    undefined,
+                    PageId.COURSE_DETAIL
                 );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();

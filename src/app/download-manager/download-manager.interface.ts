@@ -14,9 +14,6 @@ export interface EmitedContents {
 type SortAttribute = [keyof Content];
 
 export interface DownloadManagerPageInterface extends OnInit {
-    // downloadService: DownloadService;
-    // contentService: ContentService;
-    // eventBusService: EventBusService;
 
     storageInfo: AppStorageInfo;
     downloadedContents: Content[];

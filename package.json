@@ -12,8 +12,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
-    "ionic-build": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova run android",
-    "ionic-build:debug": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova run android --debug --buildConfig ./buildConfig/build.json",
+    "ionic-build": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova build android",
+    "ionic-build:debug": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova build android --debug --buildConfig ./buildConfig/build.json",
     "ionic-build:prod": "ionic cordova build android --configuration=$npm_config_angular_configuration --prod --release --buildConfig ./buildConfig/build.json",
     "ionic-serve": "ionic cordova run android --livereload --configuration=hmr",
     "sonar-scanner": "sonar-scanner",
@@ -99,7 +99,6 @@
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-file-opener2": "^2.2.1",
-    "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git",
     "cordova-plugin-file-transfer": "^1.7.1",
     "cordova-plugin-filechooser": "^1.2.0",
     "cordova-plugin-filepath": "^1.5.8",
@@ -127,7 +126,7 @@
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^6.0.3",
     "cordova-plugin-zip": "^3.1.0",
-    "cordova-sqlite-storage": "5.1.0",
+    "cordova-sqlite-storage": "6.0.0",
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "cordova.plugins.diagnostic": "^5.0.2",
     "core-js": "^2.6.10",
@@ -230,7 +229,6 @@
         "URL_HOST": "mobile"
       },
       "cordova-plugin-qr-scanner": {},
-      "cordova-plugin-file-support": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"

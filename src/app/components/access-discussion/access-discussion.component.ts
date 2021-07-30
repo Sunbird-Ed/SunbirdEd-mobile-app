@@ -47,10 +47,7 @@ export class AccessDiscussionComponent implements OnInit {
       InteractType.TOUCH, 
       InteractSubtype.FORUM_ICON_CLICKED,
       Environment.DISCUSSION,
-      PageId.GROUP_DETAIL,
-      undefined,
-      undefined,
-      undefined
+      PageId.GROUP_DETAIL
     );
     this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [

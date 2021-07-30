@@ -421,7 +421,6 @@ export class UserTypeSelectionPage implements OnDestroy {
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
-    // this.nativePageTransitions.slide(options);
     this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
   }
 

@@ -30,10 +30,6 @@ export class QRScannerAlert {
   }
 
   ionViewWillEnter() {
-    // this.unregisterBackButton = this.platform.registerBackButtonAction(() => {
-    //   this.cancel();
-    //   this.unregisterBackButton();
-    // }, 11);
   }
   tryAgain() {
     if (this.callback) {

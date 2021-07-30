@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import * as _ from "underscore";
 import { TranslateService } from "@ngx-translate/core";
@@ -25,7 +25,7 @@ var environment = {
   templateUrl: "./task-view.page.html",
   styleUrls: ["./task-view.page.scss"],
 })
-export class TaskViewPage implements OnInit {
+export class TaskViewPage {
   parameters;
   @ViewChild("dateTime", { static: false }) sTime;
   editField;
@@ -72,7 +72,7 @@ export class TaskViewPage implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  
 
 
   ionViewWillEnter() {
@@ -215,6 +215,7 @@ export class TaskViewPage implements OnInit {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
+      cssClass: 'background-theme-color',
       buttons: [
         {
           text: data["CANCEL"],

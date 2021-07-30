@@ -125,6 +125,7 @@ describe('ConsentService', () => {
         }
       };
       mockProfileService.getConsent = jest.fn(() => of({}));
+      mockProfileService.updateServerProfileDeclarations = jest.fn(() => of({}));
       // act
       consentService.getConsent(userDetails, true);
       // assert
@@ -197,6 +198,7 @@ describe('ConsentService', () => {
         },
         code: 'NETWORK_ERRO'
       }));
+      mockProfileService.updateServerProfileDeclarations = jest.fn(() => of({}));
       jest.spyOn(consentService, 'showConsentPopup').mockImplementation(() => {
         return Promise.resolve();
       });

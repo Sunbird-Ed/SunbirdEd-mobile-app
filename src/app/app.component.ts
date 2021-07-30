@@ -702,7 +702,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async makeEntryInSupportFolder() {
     return new Promise((resolve => {
-      (window as any).supportfile.makeEntryInSunbirdSupportFile((result) => {
+      (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
       }, () => {
@@ -894,7 +894,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
           }
           this.logoutHandlerService.onLogout();
-          this.localStorage.deleteAllStorage();
         }
         break;
 

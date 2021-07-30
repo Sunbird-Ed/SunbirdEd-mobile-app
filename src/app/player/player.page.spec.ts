@@ -264,7 +264,7 @@ describe('PlayerPage', () => {
             nativeElement: {
                 src: '12346'
             }
-        }
+        };
         playerPage.config = {
             context: {
                 actor: {
@@ -275,8 +275,8 @@ describe('PlayerPage', () => {
               basePath: 'basePath',
               mimeType: 'application'
             }
-        }
-        playerPage.playerType = 'sunbird-pdf-player'
+        };
+        playerPage.playerType = 'sunbird-pdf-player';
         // playerPage.loadPdfPlayer = true;
         mockStatusBar.hide = jest.fn();
         mockPlatform.backButton = {
@@ -286,15 +286,12 @@ describe('PlayerPage', () => {
         jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
             return Promise.resolve();
         });
-        // mockLocation.back = jest.fn();
         mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
         playerPage.ionViewWillEnter();
         setTimeout(() => {
-            // expect(playerPage.loadPdfPlayer).toBeTruthy();
             expect(mockPlatform.backButton).toBeTruthy();
             expect(mockAlertCtrl.getTop).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
-            expect(mockLocation.back).toHaveBeenCalled();
             done();
         }, 0);
     });

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
-// import { IonicPageModule } from '@ionic/angular';
 import { UserTypeSelectionPage } from './user-type-selection';
 import { TranslateModule } from '@ngx-translate/core';
 

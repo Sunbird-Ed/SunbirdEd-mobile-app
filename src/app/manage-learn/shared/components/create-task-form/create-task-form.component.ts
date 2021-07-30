@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ModalController } from '@ionic/angular';
-import { GenericPopUpService } from '../../TC-generic.popupService';
+import { GenericPopUpService } from '../../generic.popup';
 
 @Component({
   selector: 'app-create-task-form',

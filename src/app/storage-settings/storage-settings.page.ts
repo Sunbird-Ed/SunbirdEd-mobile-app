@@ -23,7 +23,7 @@ import { AndroidPermissionsService } from 'services/android-permissions/android-
 import { AndroidPermission, AndroidPermissionsStatus } from 'services/android-permissions/android-permission';
 import { Location } from '@angular/common';
 import { featureIdMap } from '../feature-id-map';
-import { mergeMap, map, filter , takeWhile, skip, take, startWith, tap} from 'rxjs/operators';
+import { mergeMap, map, filter , takeWhile, take, startWith, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-storage-settings',

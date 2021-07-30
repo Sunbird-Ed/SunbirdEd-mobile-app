@@ -14,7 +14,6 @@ import {
     TelemetryInterruptRequest,
     DeviceSpecification,
     Actor,
-    AuditState,
     TelemetrySummaryRequest
 } from 'sunbird-sdk';
 import {Map} from '../app/telemetryutil';
@@ -238,7 +237,6 @@ export class TelemetryGeneratorService {
 
     generateErrorTelemetry(env, errCode, errorType, pageId, stackTrace) {
         const telemetryErrorRequest = new TelemetryErrorRequest();
-        // telemetryErrorRequest.env = env;
         telemetryErrorRequest.errorCode = errCode;
         telemetryErrorRequest.errorType = errorType;
         telemetryErrorRequest.pageId = pageId;

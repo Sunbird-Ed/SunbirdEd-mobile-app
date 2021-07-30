@@ -1,34 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AppHeaderService } from '@app/services';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
-import { ObservationService } from '../observation.service';
-import { RouterLinks } from '@app/app/app.constant';
-import { LoaderService, LocalStorageService, UtilsService } from '../../core';
-import { storageKeys } from '../../storageKeys';
-import { EvidenceService } from '../../core/services/evidence.service';
-import { SubmissionActionsComponent } from '../../shared/components/submission-actions/submission-actions.component';
-import { TranslateService } from '@ngx-translate/core';
-import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
-import { ViewDetailComponent } from '../../shared/components/view-detail/view-detail.component';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AppHeaderService, CommonUtilService } from "@app/services";
+import {
+  AlertController,
+  ModalController,
+  PopoverController
+} from "@ionic/angular";
+import { ObservationService } from "../observation.service";
+import { RouterLinks } from "@app/app/app.constant";
+import {
+  LoaderService,
+  LocalStorageService,
+  UtilsService,
+  ToastService
+} from "../../core";
+import { storageKeys } from "../../storageKeys";
+import { EvidenceService } from "../../core/services/evidence.service";
+import { SubmissionActionsComponent } from "../../shared/components/submission-actions/submission-actions.component";
+import { TranslateService } from "@ngx-translate/core";
+import { urlConstants } from "../../core/constants/urlConstants";
+import { AssessmentApiService } from "../../core/services/assessment-api.service";
+import { ViewDetailComponent } from "../../shared/components/view-detail/view-detail.component";
+import { Subscription } from "rxjs";
+import { Storage } from "@ionic/storage";
+import { GenericPopUpService } from "../../shared";
 
 @Component({
-  selector: 'app-observation-submission',
-  templateUrl: './observation-submission.component.html',
-  styleUrls: ['./observation-submission.component.scss'],
+  selector: "app-observation-submission",
+  templateUrl: "./observation-submission.component.html",
+  styleUrls: ["./observation-submission.component.scss"]
 })
 export class ObservationSubmissionComponent implements OnInit {
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: [],
+    actionButtons: []
   };
   submissionList: any;
   inProgressObservations = [];
   completedObservations = [];
   submissions: any[];
-  currentTab = 'all';
+  currentTab = "all";
   showEntityActionsheet: boolean;
   showActionsheet: boolean;
   submissionIdArr: any;
@@ -38,7 +50,11 @@ export class ObservationSubmissionComponent implements OnInit {
   entityId: any;
   entityName: any;
   disableObserveAgain: boolean = false;
-
+  private _networkSubscription?: Subscription;
+  networkFlag;
+  generatedKey;
+  downloadedSubmissionList: any = [];
+  msgs:any
   constructor(
     private headerService: AppHeaderService,
     private observationService: ObservationService,
@@ -52,40 +68,70 @@ export class ObservationSubmissionComponent implements OnInit {
     private alertCntrl: AlertController,
     private routerParam: ActivatedRoute,
     private assessmentService: AssessmentApiService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    public commonUtilService: CommonUtilService,
+    public storage: Storage,
+    public toast: ToastService,
+    public genericPopup: GenericPopUpService
   ) {
-    this.routerParam.queryParams.subscribe((params) => {
+    this.routerParam.queryParams.subscribe(params => {
       this.observationId = params.observationId;
       this.solutionId = params.solutionId;
       this.programId = params.programId;
       this.entityId = params.entityId;
       this.entityName = params.entityName;
       this.disableObserveAgain = params.disableObserveAgain;
+      let data = {
+        observationId: this.observationId,
+        entityId: this.entityId
+      };
+      this.generatedKey = this.utils.getUniqueKey(data,storageKeys.submissionsList);
     });
   }
 
   ngOnInit() {
-    this.getProgramFromStorage();
+   
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+        this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
+      }
+    );
+    this.fetchDownloaded();
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
+  }
+  getLocalData() {
+    this.storage.get(this.generatedKey).then(data => {
+      this.submissionList = data;
+      this.splitCompletedAndInprogressObservations();
+      this.tabChange(this.currentTab ? this.currentTab : "all");
+    });
   }
 
   ionViewWillEnter() {
+  
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.getProgramFromStorage();
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
   }
 
   async getProgramFromStorage(isDeleted = false) {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
-      payload: payload,
+      url:
+        urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS +
+        `${this.observationId}?entityId=${this.entityId}`,
+      payload: payload
     };
     this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
-      (success) => {
+      async success => {
         if (success.result && success.result.length == 0) {
           if (isDeleted) {
             this.loader.stopLoader();
@@ -96,54 +142,43 @@ export class ObservationSubmissionComponent implements OnInit {
             entityId: this.entityId,
             observationId: this.observationId,
             submission: {
-              submissionNumber: 1,
-            },
-          };
-          this.observationService.getAssessmentDetailsForObservation(event).then(
-            (res) => {
-              this.loader.stopLoader();
-
-              this.getProgramFromStorage();
-            },
-            (err) => {
-              this.loader.stopLoader();
+              submissionNumber: 1
             }
-          );
+          };
+          await this.observationService
+            .getAssessmentDetailsForObservation(event)
+            .then(
+              res => {
+                this.loader.stopLoader();
+                this.getProgramFromStorage();
+              },
+              err => {
+                this.loader.stopLoader();
+              }
+            );
         }
-        this.localStorage
-          .getLocalStorage(storageKeys.observationSubmissionIdArr)
-          .then((ids) => {
-            this.submissionIdArr = ids;
-          })
-          .catch((err) => {
-            this.submissionIdArr = [];
-          })
-          .finally(() => {
-            this.loader.stopLoader();
-            this.submissionList = success.result;
-            this.applyDownloadedflag();
 
-            this.splitCompletedAndInprogressObservations();
-
-            this.tabChange(this.currentTab ? this.currentTab : 'all');
-          });
+        this.loader.stopLoader();
+        this.submissionList = success.result;
+        this.storage.set(this.generatedKey, this.submissionList);
+        this.splitCompletedAndInprogressObservations();
+        this.tabChange(this.currentTab ? this.currentTab : "all");
       },
-      (error) => {
+      error => {
         console.log(error);
       }
     );
   }
 
-  applyDownloadedflag() {
-    this.submissionList.map((s) => {
-      this.submissionIdArr.includes(s._id) ? (s.downloaded = true) : null;
-    });
+  async fetchDownloaded() {
+    this.downloadedSubmissionList = await this.observationService.fetchDownloaded();
   }
+
   splitCompletedAndInprogressObservations() {
     this.completedObservations = [];
     this.inProgressObservations = [];
     for (const submission of this.submissionList) {
-      submission.status === 'completed'
+      submission.status === "completed"
         ? this.completedObservations.push(submission)
         : this.inProgressObservations.push(submission);
     }
@@ -153,61 +188,107 @@ export class ObservationSubmissionComponent implements OnInit {
     this.submissions = [];
     this.currentTab = value;
     switch (value) {
-      case 'inProgress':
+      case "inProgress":
         this.submissions = this.inProgressObservations;
 
         break;
-      case 'completed':
+      case "completed":
         this.submissions = this.completedObservations;
         break;
-      case 'all':
-        this.submissions = this.submissions.concat(this.inProgressObservations, this.completedObservations);
+      case "all":
+        this.submissions = this.submissions.concat(
+          this.inProgressObservations,
+          this.completedObservations
+        );
         break;
       default:
-        this.submissions = this.submissions.concat(this.inProgressObservations, this.completedObservations);
-        console.log(this.submissions);
+        this.submissions = this.submissions.concat(
+          this.inProgressObservations,
+          this.completedObservations
+        );
     }
   }
   getAssessmentDetails(submission) {
-    this.showActionsheet = false;
-    this.showEntityActionsheet = false;
+    if (this.networkFlag) {
+      this.showActionsheet = false;
+      this.showEntityActionsheet = false;
 
-    this.localStorage
-      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
-      .then((data) => {
-        if (!data) {
+      this.localStorage
+        .getLocalStorage(
+          this.utils.getAssessmentLocalStorageKey(submission._id)
+        )
+        .then(data => {
+          if (!data) {
+            this.getAssessmentDetailsApi(submission);
+          } else {
+            this.goToEcm(submission);
+          }
+        })
+        .catch(error => {
           this.getAssessmentDetailsApi(submission);
-        } else {
-          this.goToEcm(submission);
-        }
-      })
-      .catch((error) => {
-        this.getAssessmentDetailsApi(submission);
-      });
+        });
+    } else {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+    }
   }
 
   getAssessmentDetailsApi(submission) {
     let event = {
       submission: submission,
       entityId: this.entityId,
-      observationId: this.observationId,
+      observationId: this.observationId
     };
     this.observationService
       .getAssessmentDetailsForObservation(event)
-      .then(async (programList) => {
+      .then(async programList => {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
+      .catch(error => {});
+  }
+
+  async pushToLocal(submission) {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    }
+    try {
+      let args = {
+        title: 'DOWNLOAD_FORM',
+        yes: 'YES',
+        no: 'NO',
+      };
+      const confirmed = await this.genericPopup.confirmBox(args);
+      if (!confirmed) return;
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
+      let event = {
+        submission: submission,
+        entityId: this.entityId,
+        observationId: this.observationId,
+      };
+      let submissionId = await this.observationService.getAssessmentDetailsForObservation(event);
+      await this.observationService.pushToDownloads(submissionId);
+      this.fetchDownloaded();
+      let argsForSuccess = {
+        title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+        yes: 'OKAY',
+        autoDissmiss: true,
+      };
+      this.loader.stopLoader()
+      await this.genericPopup.confirmBox(argsForSuccess);
+    } catch {
+        this.loader.stopLoader()
+    }
+    
   }
 
   goToEcm(submission) {
-    // TODO: Remove
     let submissionId = submission._id;
     let heading = this.entityName;
 
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
-      .then((successData) => {
+      .then(successData => {
         if (
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
@@ -217,19 +298,24 @@ export class ObservationSubmissionComponent implements OnInit {
             queryParams: {
               submisssionId: submissionId,
               schoolName: heading,
-            },
+              allowMultipleAssessemts:true
+
+            }
           });
         } else {
           if (successData.assessment.evidences[0].startTime) {
-            this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
+            this.utils.setCurrentimageFolderName(
+              successData.assessment.evidences[0].externalId,
+              submissionId
+            );
 
             this.router.navigate([RouterLinks.QUESTIONNAIRE], {
               queryParams: {
                 submisssionId: submissionId,
                 evidenceIndex: 0,
                 sectionIndex: 0,
-                schoolName: this.entityName,
-              },
+                schoolName: this.entityName
+              }
             });
           } else {
             const assessment = { _id: submissionId, name: heading };
@@ -237,30 +323,41 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
+      .catch(error => {
+        this.getAssessmentDetailsApi(submission);
+      });
   }
   async openAction(assessment, aseessmemtData, evidenceIndex) {
-    this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
+    this.utils.setCurrentimageFolderName(
+      aseessmemtData.assessment.evidences[evidenceIndex].externalId,
+      assessment._id
+    );
     const options = {
       _id: assessment._id,
       name: assessment.name,
       selectedEvidence: evidenceIndex,
-      entityDetails: aseessmemtData,
+      entityDetails: aseessmemtData
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
-    console.log(JSON.stringify(options));
-    let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
+    let action = await this.evdnsServ.openActionSheet(
+      options,
+      "FRMELEMNTS_LBL_OBSERVATION"
+    );
     if (action) {
       this.router.navigate([RouterLinks.QUESTIONNAIRE], {
         queryParams: {
           submisssionId: assessment._id,
           evidenceIndex: 0,
           sectionIndex: 0,
-          schoolName: this.entityName,
-        },
+          schoolName: this.entityName
+        }
       });
     }
   }
   async openMenu(event, submission, index) {
+      if (!this.networkFlag) {
+        this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      } else {
     if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
@@ -269,8 +366,8 @@ export class ObservationSubmissionComponent implements OnInit {
           entityId: submission.entityId,
           entityType: submission.entityType,
           observationId: submission.observationId,
-          submissionId: submission._id,
-        },
+          submissionId: submission._id
+        }
       });
       return;
     }
@@ -283,8 +380,8 @@ export class ObservationSubmissionComponent implements OnInit {
           criteriaWise: false,
           submissionId: submission._id,
           entityType: submission.entityType,
-          filter: { questionId: [] },
-        },
+          filter: { questionId: [] }
+        }
       });
     } else {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
@@ -294,37 +391,42 @@ export class ObservationSubmissionComponent implements OnInit {
           criteriaWise: false,
           submissionId: submission._id,
           entityType: submission.entityType,
-          filter: { questionId: [] },
-        },
+          filter: { questionId: [] }
+        }
       });
     }
   }
+  }
   //  entity actions
   entityActions(e) {
-    let submission = this.submissions[0];
-    if (submission.criteriaLevelReport && submission.isRubricDriven) {
-      this.router.navigate([RouterLinks.GENERIC_REPORT], {
-        state: {
-          scores: true,
-          observation: true,
-          entityId: submission.entityId,
-          entityType: submission.entityType,
-          observationId: submission.observationId,
-        },
-      });
-      return;
-    }
-    let noScore: boolean = true;
-    this.submissions.forEach((submission) => {
-      submission.showActionsheet = false;
-      if (submission.ratingCompletedAt) {
-        noScore = false;
-      }
-    });
-    if (noScore) {
-      this.viewEntityReports();
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     } else {
-      this.openEntityReportMenu(e);
+      let submission = this.submissions[0];
+      if (submission.criteriaLevelReport && submission.isRubricDriven) {
+        this.router.navigate([RouterLinks.GENERIC_REPORT], {
+          state: {
+            scores: true,
+            observation: true,
+            entityId: submission.entityId,
+            entityType: submission.entityType,
+            observationId: submission.observationId
+          }
+        });
+        return;
+      }
+      let noScore: boolean = true;
+      this.submissions.forEach(submission => {
+        submission.showActionsheet = false;
+        if (submission.ratingCompletedAt) {
+          noScore = false;
+        }
+      });
+      if (noScore) {
+        this.viewEntityReports();
+      } else {
+        this.openEntityReportMenu(e);
+      }
     }
   }
 
@@ -340,8 +442,8 @@ export class ObservationSubmissionComponent implements OnInit {
         entityId: submission.entityId,
         entityType: submission.entityType,
         observationId: submission.observationId,
-        filter: { questionId: [] },
-      },
+        filter: { questionId: [] }
+      }
     });
   }
 
@@ -358,8 +460,8 @@ export class ObservationSubmissionComponent implements OnInit {
         entityId: submission.entityId,
         entityType: submission.entityType,
         observationId: submission.observationId,
-        filter: { questionId: [] },
-      },
+        filter: { questionId: [] }
+      }
     });
   }
   // Actions on submissions
@@ -368,65 +470,76 @@ export class ObservationSubmissionComponent implements OnInit {
     let popover = await this.popoverCtrl.create({
       component: SubmissionActionsComponent,
       componentProps: {
-        submission: submission,
+        submission: submission
       },
-      event: event,
+      event: event
     });
     popover.onDidDismiss().then((data: any) => {
-      if (data.data && data.data.action === 'update') {
+      if (data.data && data.data.action === "update") {
         const payload = {
           submissionId: submission._id,
-          title: data.data.name,
+          title: data.data.name
         };
         this.ediSubmissionName(payload, index);
-      } else if (data.data && data.data.action === 'delete') {
+      } else if (data.data && data.data.action === "delete") {
         this.deleteSubmission(submission._id);
       }
     });
     await popover.present();
   }
   async deleteSubmission(submissionId) {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    } 
     let translateObject;
     this.translate
-      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_MSG_DELETE_SUBMISSION', 'FRMELEMNTS_LBL_YES', 'FRMELEMNTS_LBL_NO'])
-      .subscribe((translations) => {
+      .get([
+        "FRMELEMNTS_LBL_CONFIRM",
+        "FRMELEMNTS_MSG_DELETE_SUBMISSION",
+        "FRMELEMNTS_LBL_YES",
+        "FRMELEMNTS_LBL_NO"
+      ])
+      .subscribe(translations => {
         translateObject = translations;
       });
     let alert = await this.alertCntrl.create({
-      header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
-      message: translateObject['FRMELEMNTS_MSG_DELETE_SUBMISSION'],
+      header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+      message: translateObject["FRMELEMNTS_MSG_DELETE_SUBMISSION"],
       buttons: [
         {
-          text: translateObject['FRMELEMNTS_LBL_NO'],
-          role: 'cancel',
-          handler: () => {},
+          text: translateObject["FRMELEMNTS_LBL_NO"],
+          role: "cancel",
+          handler: () => {}
         },
         {
-          text: translateObject['FRMELEMNTS_LBL_YES'],
+          text: translateObject["FRMELEMNTS_LBL_YES"],
           handler: async () => {
             let payload = await this.utils.getProfileInfo();
 
             const config = {
-              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${submissionId}`,
-              payload: payload,
+              url:
+                urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE +
+                `${submissionId}`,
+              payload: payload
             };
             this.loader.startLoader();
 
             this.assessmentService.delete(config).subscribe(
-              (success) => {
+              success => {
                 this.loader.stopLoader();
 
                 if (success && success.status == 200) {
                   this.getProgramFromStorage(true);
                 }
               },
-              (error) => {
+              error => {
                 this.loader.stopLoader();
               }
             );
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     alert.present();
   }
@@ -436,45 +549,51 @@ export class ObservationSubmissionComponent implements OnInit {
     payload.title = data.title;
 
     const config = {
-      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${data.submissionId}`,
-      payload: payload,
+      url:
+        urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE +
+        `${data.submissionId}`,
+      payload: payload
     };
     this.assessmentService.post(config).subscribe(
-      (success) => {
-        console.log(success);
+      success => {
         if (success && success.status == 200) {
           this.getProgramFromStorage();
         }
       },
-      (error) => {}
+      error => {}
     );
   }
 
   async observeAgain() {
-    this.loader.startLoader('Creating an Observation');
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+    } else {
+      this.loader.startLoader("Creating an Observation");
 
-    const entityId = this.entityId;
-    const observationId = this.observationId;
+      const entityId = this.entityId;
+      const observationId = this.observationId;
 
-    let payload = await this.utils.getProfileInfo();
+      let payload = await this.utils.getProfileInfo();
 
-    const config = {
-      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_CREATE + `${observationId}?entityId=${entityId}`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
+      const config = {
+        url:
+          urlConstants.API_URLS.OBSERVATION_SUBMISSION_CREATE +
+          `${observationId}?entityId=${entityId}`,
+        payload: payload
+      };
+      this.assessmentService.post(config).subscribe(
+        success => {
+          this.loader.stopLoader();
 
-        console.log(success);
-        if (success && success.status == 200) {
-          this.getProgramFromStorage();
+          if (success && success.status == 200) {
+            this.getProgramFromStorage();
+          }
+        },
+        error => {
+          this.loader.stopLoader();
         }
-      },
-      (error) => {
-        this.loader.stopLoader();
-      }
-    );
+      );
+    }
   }
 
   //open info menu
@@ -483,9 +602,15 @@ export class ObservationSubmissionComponent implements OnInit {
     const modal = await this.modalCtrl.create({
       component: ViewDetailComponent,
       componentProps: {
-        submission: submission,
-      },
+        submission: submission
+      }
     });
     await modal.present();
+  }
+
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }

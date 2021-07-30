@@ -98,7 +98,6 @@ export class SettingsPage implements OnInit {
       ImpressionType.VIEW, '',
       PageId.SETTINGS,
       Environment.SETTINGS, '', '', '',
-      undefined,
       undefined
     );
   }
@@ -136,9 +135,7 @@ export class SettingsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
       PageId.SETTINGS,
-      Environment.SETTINGS, null,
-      undefined,
-      undefined
+      Environment.SETTINGS, null
     );
   }
 

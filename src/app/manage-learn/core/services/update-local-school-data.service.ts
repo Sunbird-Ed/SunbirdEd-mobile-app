@@ -23,20 +23,6 @@ export class UpdateLocalSchoolDataService {
       });
   }
 
-  storeObsevationSubmissionId(obsevationSubmissionId) {
-    // obsevationSubmissionId can be array(only when migration is run) or string (single value)
-    this.localStorage
-      .getLocalStorage(storageKeys.observationSubmissionIdArr)
-      .then((arr) => {
-        Array.isArray(obsevationSubmissionId) ? arr.concat(obsevationSubmissionId) : arr.push(obsevationSubmissionId);
-        this.localStorage.setLocalStorage(storageKeys.observationSubmissionIdArr, arr);
-      })
-      .catch((err) => {
-        let arr;
-        Array.isArray(obsevationSubmissionId) ? (arr = obsevationSubmissionId) : (arr = [obsevationSubmissionId]);
-        this.localStorage.setLocalStorage(storageKeys.observationSubmissionIdArr, arr);
-      });
-  }
 
   mapSubmissionDataToQuestion(schoolDetails, isObservation?: boolean,isSurvey?:boolean): void {
     let mappedData;
