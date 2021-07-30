@@ -7,17 +7,17 @@
   </ion-refresher>
   <div class="container-focus">
     <div class="user-profile">
-      <div class="user-name-text">{{profile?.handle}}</div>
+      <div class="user-name-text"><span>{{'HI' | translate}}</span>&nbsp;{{profile?.handle}}</div>
     </div> 
     
     <div class="preference-container" *ngIf="preferenceList && preferenceList.length">
       <div class="user-preference">
-        <div class="preference-data">
-          <div (click)="viewPreferenceInfo()">
+        <div class="preference-data" (click)="viewPreferenceInfo()">
+          <div>
             <span>{{'YOUR_PREFERENCES' | translate}}</span>
             <img class="preference-info-icon" src="assets/imgs/info-white.svg" alt="preferences-info">
           </div>
-          <div (click)="editProfileDetails()">
+          <div>
             <app-truncated-ellipsis 
               [arrayList]= "preferenceList"
               [showCount]="1"
@@ -25,8 +25,8 @@
             </app-truncated-ellipsis>
           </div>
         </div>
-        <div class="change-btn">
-          <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
+        <div class="change-btn py-8" (click)="editProfileDetails()">
+          <button class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
         </div>
       </div>
     </div>

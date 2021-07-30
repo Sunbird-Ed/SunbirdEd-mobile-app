@@ -1481,5 +1481,6 @@
   "DOWNLOAD_FORM":"Do you want to download this form?",
   "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded successfully!",
   "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded",
-  "CHANGE_PREFERENCE": "Change Preference"
+  "CHANGE_PREFERENCE": "Change Preference",
+  "HI": "Hi"
 }

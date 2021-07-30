@@ -20,6 +20,9 @@
   .user-name-text{
     font-size: 22px;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
