@@ -787,6 +787,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.location.back();
     }
 
+    if (Boolean(data.isAvailableLocally)) {
+      await this.setChildContents();
+    } else {
+      this.showLoading = true;
+      this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
+      this.importContent([this.identifier], false);
+    }
+
     /* getting batch details for the course
        Check Point: should be called on the condition of already enrolled courses only */
     await this.getBatchDetails();
@@ -794,14 +802,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
-    }
-
-    if (Boolean(data.isAvailableLocally)) {
-      await this.setChildContents();
-    } else {
-      this.showLoading = true;
-      this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
-      this.importContent([this.identifier], false);
     }
 
     this.setCourseStructure();
