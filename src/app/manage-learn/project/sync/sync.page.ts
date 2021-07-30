@@ -119,7 +119,7 @@ export class SyncPage implements  OnDestroy {
       } else {
         this.location.back()
         this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'])
-      };
+      }
     }, error => { })
   }
 
