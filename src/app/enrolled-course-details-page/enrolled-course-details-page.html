@@ -300,7 +300,7 @@
 								<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 									<strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</strong>
 								</ion-card-title>
-								<p>{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : </p>
+								<p>{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : course }} : {{ batchDetails?.endDate ? (batchDetails?.endDate | date: 'dd/MM/yyyy') : ''}}</p>
 							</div>
 							<div>
 								<p>{{course?.description}}</p>

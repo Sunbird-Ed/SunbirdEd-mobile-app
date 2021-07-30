@@ -891,7 +891,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                 console.log(err);
               });
             }
-            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false);
+            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
           }
           this.logoutHandlerService.onLogout();
           this.localStorage.deleteAllStorage();
