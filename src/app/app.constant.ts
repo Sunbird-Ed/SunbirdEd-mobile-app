@@ -104,7 +104,8 @@ export class ProfileConstants {
         'organisations',
         'roles',
         'locations',
-        'declarations'
+        'declarations',
+        'externalIds'
     ];
 
     public static readonly CONTACT_TYPE_PHONE = 'phone';
