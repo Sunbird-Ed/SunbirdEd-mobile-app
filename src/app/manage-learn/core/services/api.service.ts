@@ -9,6 +9,8 @@ import { AuthService, DeviceInfo } from 'sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
 import { ApiUtilsService } from './api-utils.service';
+import { HTTP } from '@ionic-native/http/ngx';
+
 
 
 @Injectable({
@@ -17,33 +19,42 @@ import { ApiUtilsService } from './api-utils.service';
 export class ApiService {
   baseUrl: string;
   tokens;
-  constructor(public http: HttpClient,
+  constructor(
+    public http: HttpClient,
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
-    public apiUtils: ApiUtilsService
+    public apiUtils: ApiUtilsService,
+    public ionicHttp:HTTP,
+
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
-
+    debugger
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token : '',
-            'x-authenticated-user-token': session ? session.access_token : '',
-            'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID(),
-          }),
-        };
-        return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
-          tap(data => {
+        let headers = {
+            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
+        //     // 'x-auth-token': session ? session.access_token : '',
+            'X-authenticated-user-token': session.access_token,
+          }
+        // const httpOptions = {
+        //   headers: new HttpHeaders({
+        //     'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
+        //     // 'x-auth-token': session ? session.access_token : '',
+        //     'X-authenticated-user-token': session.access_token,
+        //     // 'X-App-Id': this.apiUtils.appName,
+        //     // 'X-App-Ver': this.apiUtils.appVersion,
+        //     // 'deviceId': this.deviceInfo.getDeviceID(),
+        //   }),
+        // };
+        return this.ionicHttp.get(this.baseUrl + requestParam.url,'', headers).then(
+          data => {
             return observableOf(data)
           }, error => {
             catchError(this.handleError(error))
-          }),
+          },
         );
       })
     )
@@ -151,3 +162,7 @@ export class ApiService {
     };
   }
 }
+
+
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg

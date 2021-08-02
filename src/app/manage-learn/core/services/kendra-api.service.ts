@@ -7,6 +7,7 @@ import { ToastService } from './toast/toast.service';
 import { AuthService, DeviceInfo } from 'sunbird-sdk';
 import { ApiUtilsService } from './api-utils.service';
 import { UtilityService } from '@app/services/utility-service';
+import { HTTP } from '@ionic-native/http/ngx';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +22,10 @@ export class KendraApiService extends ApiService {
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
 
     private utils: ApiUtilsService,
-    private utilityService: UtilityService
+    private utilityService: UtilityService,
+    public ionicHttp:HTTP
   ) {
-    super(http, toast, modalController, authService, deviceInfo, utils);
+    super(http, toast, modalController, authService, deviceInfo, utils,ionicHttp);
     // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
     this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url));
   }

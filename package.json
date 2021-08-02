@@ -43,6 +43,7 @@
     "@ionic-native/file-path": "^5.30.0",
     "@ionic-native/file-transfer": "^5.15.1",
     "@ionic-native/google-plus": "^5.33.0",
+    "@ionic-native/http": "^5.34.0",
     "@ionic-native/image-picker": "^5.30.0",
     "@ionic-native/ionic-webview": "^5.15.1",
     "@ionic-native/keyboard": "^5.15.1",

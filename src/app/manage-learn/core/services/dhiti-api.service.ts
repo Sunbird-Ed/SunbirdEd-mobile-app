@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
 import { ModalController } from '@ionic/angular';
 import { AuthService, DeviceInfo } from '@project-sunbird/sunbird-sdk';
 import { ToastService } from '.';
@@ -19,9 +20,11 @@ export class DhitiApiService extends ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
 
-    private utils: ApiUtilsService
+    private utils: ApiUtilsService,
+        public ionicHttp:HTTP
+
   ) {
-    super(http, toast, modalController, authService,deviceInfo, utils);
+    super(http, toast, modalController, authService,deviceInfo, utils,ionicHttp);
     this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.DHITI;
   }
 }
