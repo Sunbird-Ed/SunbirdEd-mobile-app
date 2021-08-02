@@ -75,27 +75,29 @@ export class SunbirdQRScanner {
     return new Promise<string | undefined>(async (resolve, reject) => {
       this.source = source;
       this.showButton = showButton;
-
+      
       this.platform.pause.pipe(
-          take(1)
+        take(1)
       ).subscribe(() => this.stopScanner());
       this.generateImpressionTelemetry(source);
       this.generateStartEvent(source);
-
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
-
-      if (permissionStatus.hasPermission) {
+      if (this.platform.is("ios")) {
         resolve(this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source));
-      } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
       } else {
-        this.showPopover(source).then((result) => {
-          if (result) {
+        const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
+        if (permissionStatus.hasPermission) {
+          resolve(this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source));
+        } else if (permissionStatus.isPermissionAlwaysDenied) {
+          await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+        } else {
+          this.showPopover(source).then((result) => {
+            if (result) {
               resolve(result);
-          } else {
-           resolve(undefined);
-          }
-        });
+            } else {
+              resolve(undefined);
+            }
+          });
+        }
       }
     });
   }
@@ -161,6 +163,7 @@ export class SunbirdQRScanner {
     if (!this.isScannerActive) {
       return;
     }
+    if (this.platform.is("ios")) this.toggleQRScanner("remove");
     // to prevent back event propagating up to parent
     setTimeout(() => {
       (window as any).qrScanner.stopScanner();
@@ -188,6 +191,7 @@ private getProfileSettingConfig() {
       return;
     }
     this.isScannerActive = true;
+    if (this.platform.is("ios")) this.toggleQRScanner("add");
     return new Promise<string | undefined>((resolve, reject) => {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
@@ -236,6 +240,7 @@ private getProfileSettingConfig() {
                 corRelationList);
               this.generateImpressionTelemetry(source, dialCode);
               this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
+
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
             } else if (scannedData.includes('/certs/')) {
@@ -249,9 +254,19 @@ private getProfileSettingConfig() {
           resolve(scannedData);
         }, (e) => {
           reject(e);
+          if (this.platform.is("ios") && ["camera_access_denied", "camera_access_restricted"].includes(e)) {
+            this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false)
+          }
           this.stopScanner();
         });
     });
+  }
+
+  private toggleQRScanner(opacity: "add" | "remove") {
+    const ionAppElement = window.document.querySelector('ion-app');
+    if (ionAppElement) {
+      ionAppElement.classList[opacity]('hide');
+    }
   }
 
 private generateImpressionTelemetry(source, dialCode?) {
