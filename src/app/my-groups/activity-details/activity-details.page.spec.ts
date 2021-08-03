@@ -27,7 +27,9 @@ describe('ActivityDetailsPage', () => {
     const mockGroupService: Partial<GroupService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({
             extras: {

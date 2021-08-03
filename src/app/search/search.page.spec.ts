@@ -69,7 +69,9 @@ describe('SearchPage', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockProfileService: Partial<ProfileService> = {};
     const mockRouterExtras = {
         extras: {
