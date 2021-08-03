@@ -117,7 +117,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private appGlobalService: AppGlobalService,
     private events: Events,
     private scanner: SunbirdQRScanner,
-    private platform: Platform,
+    public platform: Platform,
     private commonUtilService: CommonUtilService,
     private container: ContainerService,
     private headerService: AppHeaderService,
