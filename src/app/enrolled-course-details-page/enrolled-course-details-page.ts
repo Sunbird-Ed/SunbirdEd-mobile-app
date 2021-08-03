@@ -787,6 +787,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.location.back();
     }
 
+    if (Boolean(data.isAvailableLocally)) {
+      await this.setChildContents();
+    } else {
+      this.showLoading = true;
+      this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
+      this.importContent([this.identifier], false);
+    }
+
     /* getting batch details for the course
        Check Point: should be called on the condition of already enrolled courses only */
     await this.getBatchDetails();
@@ -794,14 +802,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
-    }
-
-    if (Boolean(data.isAvailableLocally)) {
-      await this.setChildContents();
-    } else {
-      this.showLoading = true;
-      this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
-      this.importContent([this.identifier], false);
     }
 
     this.setCourseStructure();
@@ -1292,17 +1292,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (!this.nextContent) {
         this.initNextContent();
       }
-      const telemetryDetails = {
-        pageId: PageId.COURSE_DETAIL,
-        corRelationList: this.corRelationList
-      };
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
-
-      const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-      if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
-        return;
-      }
-      this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
+      this.navigateToContentDetails(this.nextContent, 1);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
@@ -1313,22 +1303,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Function gets executed when user click on resume course button.
    */
   async resumeContent(): Promise<void> {
-    if (!this.nextContent) {
-      this.initNextContent();
-    }
-    const telemetryDetails = {
-      pageId: PageId.COURSE_DETAIL,
-      corRelationList: this.corRelationList
-    };
-
-    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
-
-    const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-    if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
-      return;
-    }
-
-    this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
+    this.navigateToContentDetails(this.nextContent, 1);
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
