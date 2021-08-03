@@ -176,11 +176,9 @@
     "@types/node": "12.11.5",
     "babel-jest": "^25.4.0",
     "babel-polyfill": "^6.26.0",
-    "code-push": "^3.0.1",
     "cordova-ios": "^6.2.0",
-    "cordova-plugin-android-downloadmanager": "git+https://github.com/shikshalokam/sb-cordova-plugin-downloadmanager.git#release-3.9.0-ios",
+    "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
     "cordova-plugin-awesome-shared-preferences": "git+https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git",
-    "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git",
     "cordova-plugin-file-transfer": "git+https://github.com/apache/cordova-plugin-file-transfer.git",
     "cordova-plugin-googleplus": "git+https://github.com/EddyVerbruggen/cordova-plugin-googleplus.git",
@@ -189,6 +187,7 @@
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
     "cordova-plugin-proguard": "git+https://github.com/greybax/cordova-plugin-proguard.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
+    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git",
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "fs-extra": "^8.1.0",
     "jest": "^25.4.0",
@@ -196,8 +195,8 @@
     "properties-reader": "^2.2.0",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/shikshalokam/sb-cordova-plugin-db.git",
-    "sb-cordova-plugin-sync": "git+https://github.com/shikshalokam/sb-cordova-plugin-sync.git#release-3.9.0-ios",
-    "sb-cordova-plugin-utility": "git+https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios",
+    "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git",
+    "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git",
     "sonarqube-scanner": "^2.5.0",
     "tiny-glob": "^0.2.9",
     "ts-node": "^8.4.1",
@@ -271,7 +270,8 @@
       "cordova-plugin-googleplus": {
         "REVERSED_CLIENT_ID": "com.googleusercontent.apps.282927060960-1ls3h8ad2oj4sontnnp8t6kg4573m92u"
       },
-      "cordova-plugin-file-transfer": {}
+      "cordova-plugin-file-transfer": {},
+      "cordova-plugin-file-support": {}
     },
     "platforms": [
       "android",

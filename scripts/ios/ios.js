@@ -2,13 +2,13 @@ const fs    = require('fs-extra');
 const plist = require('plist');
 const glob = require('tiny-glob');
 const propertiesReader = require('properties-reader');
-const environtment = process.env.ENVIRONTMENT
+let environment;
 
 module.exports = function (context) {
 
     (async function(){
         
-        const properties = propertiesReader('sunbird-ios.properties');
+        const properties = propertiesReader('buildConfig/sunbird-ios.properties');
         const files = await glob('platforms/ios/*/*-Info.plist');
         let xml = fs.readFileSync(files[0], 'utf8');
         let obj = plist.parse(xml);
@@ -38,15 +38,18 @@ module.exports = function (context) {
                                 'TOU_BASE_URL', 
                                 'SURVEY_BASE_URL', 
                                 'PROJECTS_BASE_URL',
-                                'VERSION_NAME']
+                                'VERSION_NAME',
+                                'ENVIRONMENT']
 
         defaultConfig.forEach(config => {
             obj[config] = properties.get(config.toLowerCase()) + ""
         });
+        environment = properties.get('environment')+""
         obj['custom_scheme_url'] = properties.get('custom_scheme') + ""
         obj['REAL_VERSION_NAME'] = properties.get('version_name') + "" 
-        obj['FLAVOR'] = environtment
+        obj['FLAVOR'] = properties.get('version_name')+""
         obj['APPLICATION_ID'] = properties.get('app_id') + "" 
+        // obj['VERSION_CODE'] = properties.get('app_version_code')
 
         const releaseBuild = process.argv.some(arg => arg === "--release")
         obj["DEBUG"] = !releaseBuild
@@ -59,7 +62,7 @@ module.exports = function (context) {
         await fs.remove('platforms/ios/www/assets/data')
         await fs.ensureDir('platforms/ios/www/assets/data')
         await fs.ensureDir('platforms/ios/www/assets/data/faq')
-        await fs.copy(`buildConfig/data/${environtment}`, 'platforms/ios/www/assets/data')
+        await fs.copy(`buildConfig/data/${environment}`, 'platforms/ios/www/assets/data')
         await fs.copy(`buildConfig/data/notificationconfig`, 'platforms/ios/www/assets/data')
         await fs.copy(`buildConfig/data/faq`, 'platforms/ios/www/assets/data/faq')
         await fs.copy(`buildConfig/data/content-rating`, 'platforms/ios/www/assets/data/content-rating')

@@ -35,28 +35,18 @@ Node JS Version - above 8
     - Open chrome and enter `chrome://inspect`    
     - Select app    
 
-
-
-
-
 ---------------------------------------
-
 # IOS Development setup
-
 ## Prerequisites
-
     1. Node js version 10.18.1
     2. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
     3. Cordova 9.0.0  using `npm i cordova@9.0.0 -g`
     4. cordova-res 0.15.3 - using `npm install -g cordova-res`
     5. ios-deploy  1.11.4 - using `brew install ios-deploy`
-
     all of the above should be installed globally
-
     Xcode 12.4 Build version 12D4e or above
     
 ## Steps
-
     1. Checkout sunbird-sdk repo from https://github.com/shikshalokam/sunbird-mobile-sdk with branch release-3.9.0-ios
     2. cd to <sunbird-mobile-sdk> && npm i && npm run build:prod
     3. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
@@ -66,19 +56,12 @@ Node JS Version - above 8
     7. RUN npm i
     8. RUN ./build-ios.sh
     9. RUN cordova emulate ios
-
-
 ## Possible Errors 
-
 1. error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird') or Duplicate GoogleService-Info.plist file error
-
 ### Solution
     open platforms/ios/Sunbird.xcworkspace 
-
     Select Sunbird 
     Build setting Project, targets
     update Swift language version to 4 
     Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
     and close Xcode then rerun the **cordova emulate ios**
-
-

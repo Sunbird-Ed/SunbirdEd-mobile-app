@@ -355,7 +355,6 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
-
       this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
         share());
     
