@@ -67,7 +67,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     private event: Events,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
-    private platform: Platform,
+    public platform: Platform,
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,

@@ -109,7 +109,7 @@ describe('EditContactDetailsPopupComponent', () => {
     it('should hide the keyboard when cancel is invoked', () => {
         // arrange
         // act
-        editContactDetailsPopupComponent.cancel({});
+        editContactDetailsPopupComponent.cancel();
         // assert
         expect(mockKeyBoard.hide).toHaveBeenCalled();
     });
