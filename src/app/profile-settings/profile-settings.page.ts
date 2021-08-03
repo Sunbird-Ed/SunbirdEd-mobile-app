@@ -651,7 +651,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         await this.loader.present();
       })
       .catch(async () => {
-        // todo
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });

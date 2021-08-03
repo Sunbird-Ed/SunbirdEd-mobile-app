@@ -213,8 +213,6 @@ export class ProjectDetailPage implements OnDestroy {
       if (this.templateId) {
         this.toast.openToast(this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS'])
       }
-      // this.projectId = success.result._id;
-      // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
       let data = success.result;
       let newCategories = []
       for (const category of data.categories) {
@@ -240,7 +238,6 @@ export class ProjectDetailPage implements OnDestroy {
         })
 
       }
-      // TODO:till here
       this.db.create(success.result).then(successData => {
         this.projectId ? this.getProject() :
           this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
