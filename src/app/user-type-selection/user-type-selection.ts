@@ -244,7 +244,6 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  // TODO Remove getCurrentUser as setCurrentProfile is returning uid
   setProfile(profileRequest: Profile) {
     this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
