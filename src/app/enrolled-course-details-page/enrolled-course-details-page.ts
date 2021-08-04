@@ -898,8 +898,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.profileService.getServerProfilesDetails(req).toPromise()
       .then((serverProfile) => {
         if (serverProfile) {
-          this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
-          this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          if (this.batchDetails && this.batchDetails.creatorDetails) {
+            this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
+            this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          }
         }
       });
   }
