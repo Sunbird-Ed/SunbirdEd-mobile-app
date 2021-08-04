@@ -36,8 +36,9 @@
     <div *ngIf="!contentDownloadable[content?.identifier]">
       <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="content-icon">
       <div class="sb-overlay-container">
-        <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
-          <div class="sb-circle">
+        <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
+        (click)="handleNavBackButton();$event.stopPropagation()">
+          <div [ngClass]="{'sb-circle': platform.is('android'), 'sb-circle-ios': platform.is('ios')}">
             <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
           </div>
         </div>

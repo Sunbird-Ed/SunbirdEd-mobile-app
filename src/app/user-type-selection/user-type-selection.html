@@ -1,5 +1,5 @@
-<ion-content class="ui-container ion-padding">
-    <div class="ui-content">
+<ion-content class="ion-padding" [ngClass]="{ 'ui-content': platform.is('android'), 'ui-container-ios': platform.is('ios') }">
+    <div [ngClass]="{ 'ui-content': platform.is('android'), 'ui-content-ios': platform.is('ios') }">
         <div class="back-btn-container">
             <img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !categoriesProfileData"
                  (click)="handleBackButton(true)"

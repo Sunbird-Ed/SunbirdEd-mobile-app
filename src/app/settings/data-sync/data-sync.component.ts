@@ -112,11 +112,12 @@ export class DataSyncComponent implements OnInit {
       }).toPromise();
     } catch (e) {
     }
-
+    
+    const folderPath = this.platform.is('ios') ? cordova.file.cacheDirectory : cordova.file.externalDataDirectory;
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],
-        filePath: cordova.file.externalCacheDirectory + '/tmp'
+        filePath: folderPath + '/tmp'
       })
       .toPromise()
       .then(async (r) => {

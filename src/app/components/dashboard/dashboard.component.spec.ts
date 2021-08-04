@@ -33,6 +33,9 @@ describe('DashboardComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
     };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(),
+    }
     beforeAll(() => {
         dashboardComponent = new DashboardComponent(
             mockStoragePermissionHandlerService as StoragePermissionHandlerService,
@@ -40,7 +43,8 @@ describe('DashboardComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFileService as File,
             mockFileOpener as FileOpener,
-            mockAppVersion as AppVersion
+            mockAppVersion as AppVersion,
+            mockPlatform as Platform
         );
     });
 
