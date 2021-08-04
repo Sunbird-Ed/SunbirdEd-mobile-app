@@ -288,8 +288,7 @@ export class FaqHelpPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
-      PageId.FAQ,
-      undefined);
+      PageId.FAQ);
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;

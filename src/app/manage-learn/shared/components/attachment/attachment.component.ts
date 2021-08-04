@@ -66,7 +66,6 @@ export class AttachmentComponent implements OnInit {
     //   'location=no,toolbar=no,clearcache=yes'
     // );
     // browser.show();
-    // TODO:check working
     // (window as any).cordova.InAppBrowser.open(
     //   'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
     //   '',
