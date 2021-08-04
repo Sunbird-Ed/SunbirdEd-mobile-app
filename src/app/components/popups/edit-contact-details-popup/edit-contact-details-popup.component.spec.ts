@@ -111,7 +111,8 @@ describe('EditContactDetailsPopupComponent', () => {
         // act
         editContactDetailsPopupComponent.cancel();
         // assert
-        expect(mockKeyBoard.hide).toHaveBeenCalled();
+        expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ isEdited: false });
+
     });
 
     it('should enable MenuDrawer and unsubscribe back function', () => {

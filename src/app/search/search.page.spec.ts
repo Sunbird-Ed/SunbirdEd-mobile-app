@@ -1025,6 +1025,7 @@ describe('SearchPage', () => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
+            (window as any)['Keyboard']={hide:()=>{}}
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'
