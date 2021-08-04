@@ -349,7 +349,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    // Migration todo
     setTimeout(() => {
       this.closeIframe(content);
     }, 1000);

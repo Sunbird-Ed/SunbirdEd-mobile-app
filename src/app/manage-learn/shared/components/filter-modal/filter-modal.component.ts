@@ -54,7 +54,6 @@ export class FilterModalComponent implements OnInit {
     this.type == 'entity' ? this.serachEntity(searchText) : this.searchProgramByEntity(searchText);
   }
   async searchProgramByEntity(searchText: any) {
-    //TODO
     this.loader.startLoader();
     let payload = await this.utils.getProfileData();
 
@@ -76,8 +75,6 @@ export class FilterModalComponent implements OnInit {
     );
   }
   async serachEntity(searchText: any) {
-    // TODO
-    // let payload = await this.utils.getProfileInfo();
 
   }
   getEntityTypes() {
