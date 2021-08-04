@@ -342,34 +342,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
           selectedEvidenceIndex: this.selectedEvidenceIndex,
         },
       });
-      // TODO:Remove gps check
-      // this.diagnostic
-      //   .isLocationAuthorized()
-      //   .then((authorized) => {
-      //     if (!AppConfigs.enableGps) {
-      //       return true;
-      //     }
-      //     if (authorized) {
-      //       return this.diagnostic.isLocationEnabled();
-      //     } else {
-      //       this.toast.openToast("Please enable location permission to continue.");
-      //     }
-      //   })
-      //   .then((success) => {
-      //     if (success) {
-      //       const params = {
-      //         _id: this.submissionId,
-      //         name: this.schoolName,
-      //         selectedEvidence: this.selectedEvidenceIndex,
-      //       };
-      //       this.navCtrl.push(ImageListingPage, params);
-      //     } else {
-      //       this.ngps.checkForLocationPermissions();
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     this.ngps.checkForLocationPermissions();
-      //   });
     } else {
       this.translate.get('FRMELEMNTS_MSG_CONNECT_TO_INTERNET').subscribe((translations) => {
         this.toast.openToast(translations);

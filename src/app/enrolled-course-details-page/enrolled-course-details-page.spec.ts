@@ -76,7 +76,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockCourseUtilService: Partial<CourseUtilService> = {
         showCredits: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
@@ -2027,8 +2029,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
-                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
-                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
@@ -2756,7 +2756,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: jest.fn(() => Promise.resolve({}))
             } as any)));
             mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((x, callback) => callback())
+                subscribeWithPriority: jest.fn((x, callback) => callback()),
+                is: jest.fn()
             };
             enrolledCourseDetailsPage.isConsentPopUp = true;
             // act

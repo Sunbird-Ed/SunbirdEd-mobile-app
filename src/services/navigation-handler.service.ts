@@ -90,12 +90,4 @@ export class NavigationService {
         }
     }
 
-    setNavigationUrl(navigationUrl: string) {
-        this.previousNavigationUrl = navigationUrl;
-    }
-
-    navigateToLastUrl(){
-        this.router.navigate([this.previousNavigationUrl], {replaceUrl: true});
-    }
-
 }
