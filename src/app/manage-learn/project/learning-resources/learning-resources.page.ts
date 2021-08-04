@@ -1,28 +1,28 @@
-import { Component, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
-import { TranslateService } from '@ngx-translate/core';
-import { LoaderService, ToastService } from '../../core';
-import { DbService } from '../../core/services/db.service';
-import { UtilsService } from '../../core/services/utils.service';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { Platform } from '@ionic/angular';
+import { Component, Inject } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { AppHeaderService, CommonUtilService } from "@app/services";
+import { TranslateService } from "@ngx-translate/core";
+import { LoaderService, ToastService } from "../../core";
+import { DbService } from "../../core/services/db.service";
+import { UtilsService } from "../../core/services/utils.service";
+import { ContentDetailRequest, Content, ContentService } from "sunbird-sdk";
+import { NavigationService } from "@app/services/navigation-handler.service";
+import { Location } from "@angular/common";
+import { Subscription } from "rxjs";
+import { Platform } from "@ionic/angular";
 
 var environment = {
   db: {
-    projects: 'project.db',
-    categories: 'categories.db',
+    projects: "project.db",
+    categories: "categories.db"
   },
-  deepLinkAppsUrl: ''
+  deepLinkAppsUrl: ""
 };
 
 @Component({
-  selector: 'app-learning-resources',
-  templateUrl: './learning-resources.page.html',
-  styleUrls: ['./learning-resources.page.scss'],
+  selector: "app-learning-resources",
+  templateUrl: "./learning-resources.page.html",
+  styleUrls: ["./learning-resources.page.scss"]
 })
 export class LearningResourcesPage {
   projectId;
@@ -35,7 +35,7 @@ export class LearningResourcesPage {
   private _headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    pageTitle: '',
+    pageTitle: "",
     actionButtons: [] as string[]
   };
 
@@ -50,75 +50,87 @@ export class LearningResourcesPage {
     private navigateService: NavigationService,
     private platform: Platform,
     private location: Location,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private commonUtilService: CommonUtilService,
-
-    // private openResources: OpenResourcesService
-  ) {
+    @Inject("CONTENT_SERVICE") private contentService: ContentService,
+    private commonUtilService: CommonUtilService
+  ) // private openResources: OpenResourcesService
+  {
     let data;
-    routerparam.params.subscribe((param) => {
+    routerparam.params.subscribe(param => {
       this.projectId = param.id;
       this.taskId = param.taskId;
       this.getProjectFromLocal(this.projectId);
     });
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-      this.networkFlag = available;
-    })
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+      }
+    );
   }
 
-
   ngOnDestroy() {
-    if(this._networkSubscription){
+    if (this._networkSubscription) {
       this._networkSubscription.unsubscribe();
     }
   }
 
   ionViewWillEnter() {
     let data;
-    this.translate.get(['FRMELEMNTS_LBL_LEARNING_RESOURCES']).subscribe((text) => {
-      data = text;
-    });
+    this.translate
+      .get(["FRMELEMNTS_LBL_LEARNING_RESOURCES"])
+      .subscribe(text => {
+        data = text;
+      });
     this._headerConfig = this.headerService.getDefaultPageConfig();
     this._headerConfig.actionButtons = [];
     this._headerConfig.showHeader = true;
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data['FRMELEMNTS_LBL_LEARNING_RESOURCES'];
+    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
     this.headerService.updatePageConfig(this._headerConfig);
     this.handleBackButton();
   }
 
   private handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
-    });
-  }
-  getProjectFromLocal(projectId) {
-    this.db.query({ _id: projectId }).then(
-      (success) => {
-        this.list = success.docs.length ? success.docs[0] : [];
-        if (this.taskId) {
-          this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
-        }
-      },
-      (error) => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(
+      10,
+      () => {
+        this.location.back();
+        this.backButtonFunc.unsubscribe();
       }
     );
   }
-  openBodh(id) {
+  getProjectFromLocal(projectId) {
+    this.db.query({ _id: projectId }).then(
+      success => {
+        this.list = success.docs.length ? success.docs[0] : [];
+        if (this.taskId) {
+          this.list = this.list.tasks.filter(t => t._id == this.taskId)[0];
+        }
+      },
+      error => {}
+    );
+  }
+  openBodh(resource) {
     if (!this.networkFlag) {
-      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
-      return
+      this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT", "danger");
+      return;
+    }
+    let identifier;
+    if (resource.id) {
+      identifier = resource.id;
+    } else {
+      identifier = resource.link.split("/").pop();
     }
     const req: ContentDetailRequest = {
-      contentId: id,
+      contentId: identifier,
       attachFeedback: false,
       attachContentAccess: false,
       emitUpdateIfAny: false
     };
 
-    this.contentService.getContentDetails(req).toPromise()
+    this.contentService
+      .getContentDetails(req)
+      .toPromise()
       .then(async (data: Content) => {
         this.navigateService.navigateToDetailPage(data, { content: data });
       });
