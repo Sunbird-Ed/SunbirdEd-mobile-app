@@ -321,7 +321,6 @@ export class ProfilePage implements OnInit {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
                       .then((frameWorkData) => {
                         if (!frameWorkData['status']) {
-                          // Migration-todo
 
                         }
                       });

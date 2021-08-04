@@ -152,7 +152,7 @@ export class CreateProjectPage implements OnInit {
         res.taskData.forEach((element) => {
           if (element.validation) {
             if (element.validation.required) {
-              (element.validation.name = 'required'), validationsArray.push(Validators.required);
+              (element.validation.name = 'required'),  validationsArray.push(Validators.required);
             }
             controls[element.field] = new FormControl('', validationsArray);
           }
@@ -325,8 +325,7 @@ export class CreateProjectPage implements OnInit {
               queryParams: { availableInLocal: true, isCreate: true }, replaceUrl: true,
             })
           );
-        })
-        .catch((error) => { });
+        });
     } else {
       this.button == 'FRMELEMNTS_BTN_SAVE_EDITS'
         ? this.router.navigate(['menu/project-operation', this.projectId], {
@@ -346,8 +345,7 @@ export class CreateProjectPage implements OnInit {
       .update(this.project)
       .then((success) => {
         this.location.back();
-      })
-      .catch((error) => { });
+      });
   }
 
   async createProjectModal(header, msg, button, button1) {

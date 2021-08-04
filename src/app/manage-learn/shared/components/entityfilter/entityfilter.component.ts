@@ -152,7 +152,6 @@ export class EntityfilterComponent implements OnInit {
         !event ? this.loader.stopLoader() : this.toggleInfiniteScroll(event);
       }
     );
-    //TODO:uncomment
   }
 
   toggleInfiniteScroll(e) {

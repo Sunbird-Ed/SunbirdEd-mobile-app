@@ -21,7 +21,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    HttpClientModule, // TODO:Tremove after api integration
+    HttpClientModule, 
     TranslateModule.forChild(),
     SharedModule,
     IonicModule,
