@@ -5,7 +5,7 @@ export const mockContent = {
        'createdBy'
     ],
      totalQuestions: 10,
-     mimeType : ' application/vnd.ekstep.ecml-archive',
+     mimeType : 'application/vnd.ekstep.ecml-archive',
      gradeLevel : [
        'Class 9' ,
        'Class 10 '

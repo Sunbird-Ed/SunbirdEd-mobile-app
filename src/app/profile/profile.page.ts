@@ -374,8 +374,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   /**
@@ -392,8 +391,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   showLessBadges(): void {
@@ -414,8 +412,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   showLessTrainings(listName): void {

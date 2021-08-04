@@ -2042,9 +2042,12 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
 }
-.message,.projects-labels {
-  color: $white;
-}
+  .message,.projects-labels, .clr-primary {
+    color: $white;
+  }
+  .attach-label, .action-sheet-icon {
+    color:var(--app-primary) !important;
+  }
   .searchbar-input {
     background: var(--app-secondary-background) !important;
     border: 1px solid var(--app-secondary-background);
@@ -2052,9 +2055,23 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .task-desc{
     border:none;
   }
-  .entity-block, .task-list, .footer-btn, .learningResources, .sb-popover-content-details, .heading-name, .task-board {
-    h4, h3, h5 {
+  .entity-block, .task-list, .footer-btn, .learningResources, .sb-popover-content-details, .heading-name, .color-white, .task-board {
+    h4, h3, h5, span {
       color: $white;
     }
+  }
+  .button-clr{
+  color: map-get($colors, black) !important;
+}
+.clr-downloaded-btn{
+  color:green !important;
+}
+ion-icon.mg-popup-btn-icon.md.hydrated{
+  filter: invert(0) !important;
+}
+  .loading-spinner.sc-ion-loading-md,
+  .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md{
+    filter: invert(0) !important;
+    background: var(--app-secondary-background);
   }
 }
