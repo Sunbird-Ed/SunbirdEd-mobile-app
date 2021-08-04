@@ -318,10 +318,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(true);
-        break;
+    if($event.name === 'back')
+    {
+      this.handleBackButton(true);
     }
   }
 
@@ -652,7 +651,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         await this.loader.present();
       })
       .catch(async () => {
-        // todo
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });

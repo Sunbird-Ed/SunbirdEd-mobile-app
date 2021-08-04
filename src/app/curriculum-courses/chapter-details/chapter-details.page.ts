@@ -873,9 +873,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
-        // Cancel Clicked Telemetry
-        // todo
-        // this.generateCancelDownloadTelemetry(this.contentDetail);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');

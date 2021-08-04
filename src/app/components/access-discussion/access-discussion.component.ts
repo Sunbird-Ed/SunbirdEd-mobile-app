@@ -56,7 +56,6 @@ export class AccessDiscussionComponent implements OnInit {
         type: this.fetchForumIdReq.type
       }
     ];
-    this.navigationService.setNavigationUrl(this.router.url);
     this.discussionService.createUser(this.createUserReq).subscribe((response) => {
       const userId = response.result.userId.uid
       const result = [this.forumDetails.cid];

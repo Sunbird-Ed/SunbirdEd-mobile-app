@@ -74,7 +74,6 @@ export class ReportModalFilter implements OnInit {
   }
  */
   close() {
-    // this.viewCntrl.dismiss({ action: "cancelled" }); TODO:remove after checking,viewCtrl is not available in i3
     this.modalCtrl.dismiss('cancel');
   }
 }

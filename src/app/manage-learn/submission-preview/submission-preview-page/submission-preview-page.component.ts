@@ -57,24 +57,6 @@ export class SubmissionPreviewPageComponent {
       .catch((error) => {
         this.loaded = true;
       });
-    //TODO:remove
-    //Moved to constructor
-    // this.submissionId = this.navParams.get('_id');
-    // this.entityName = this.navParams.get('name');
-    // this.selectedEvidenceIndex = this.navParams.get('selectedEvidence');
-    //TODO till here
-    // this.localStorage
-    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
-    //   .then((data) => {
-    //     this.loaded = true;
-    //     this.entityDetails = data;
-    //     this.currentEvidence = data['assessment']['evidences'][this.selectedEvidenceIndex];
-    //     this.evidenceSections = this.currentEvidence['sections'];
-    //     this.checkForEvidenceCompletion();
-    //   })
-    //   .catch((error) => {
-    //     this.loaded = true;
-    //   });
   }
 
   checkForEvidenceCompletion(): void {

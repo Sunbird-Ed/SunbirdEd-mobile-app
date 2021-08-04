@@ -136,10 +136,9 @@ export class NotificationPage implements OnInit {
   }
 
   private handleHeaderEvents(event) {
-    switch (event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
-        break;
+    if(event.name === 'back') 
+    {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
     }
   }
 

@@ -337,7 +337,6 @@ export class ObservationSubmissionComponent implements OnInit {
       name: assessment.name,
       selectedEvidence: evidenceIndex,
       entityDetails: aseessmemtData
-      // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     let action = await this.evdnsServ.openActionSheet(
       options,
