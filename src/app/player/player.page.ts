@@ -99,25 +99,25 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
-    if (this.config['metadata'].hierarchyInfo) {
-      await this.getNextContent(this.config['metadata'].hierarchyInfo, this.config['metadata'].identifier)
+    if(this.config['metadata'].hierarchyInfo) {
+      await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
-    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig, 'pdfPlayer').name === "pdfPlayer") {
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
-    } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig, 'epubPlayer').name === "epubPlayer") {
+    } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-epub-player'
-    } else if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig, 'qumlPlayer').name === "qumlPlayer") {
+    } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
-      this.playerType = 'sunbird-quml-player';
-    } else if (["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig, 'videoPlayer').name === "videoPlayer") {
+       this.playerType = 'sunbird-quml-player';
+    } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
-      this.playerType = 'sunbird-video-player';
+       this.playerType = 'sunbird-video-player';
     } else {
       this.playerType = 'sunbird-old-player';
     }
@@ -148,73 +148,76 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
         }
 
-        // This is to reload a iframe as iframes reload method not working on cross-origin.
-        const src = this.previewElement.nativeElement.src;
-        this.previewElement.nativeElement.src = '';
-        this.previewElement.nativeElement.src = src;
-        this.previewElement.nativeElement.onload = () => {
-          setTimeout(() => {
-            this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
-            this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
-            this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-            this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
-              if (resp.data === 'renderer:question:submitscore') {
-                this.courseService.syncAssessmentEvents().subscribe();
-              } else if (resp.data && typeof resp.data === 'object') {
-                if (resp.data['player.pdf-renderer.error']) {
-                  const pdfError = resp.data['player.pdf-renderer.error'];
-                  if (pdfError.name === 'MissingPDFException') {
-                    const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
-                      this.config['metadata']['contentData']['artifactUrl'];
-                    this.telemetryGeneratorService.generateInteractTelemetry(
-                      InteractType.TOUCH,
-                      InteractSubtype.DOWNLOAD_PDF_CLICKED,
-                      Environment.PLAYER,
-                      PageId.PLAYER,
-                      ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
-                      undefined,
-                      ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
-                    this.openPDF(downloadUrl);
+        if (this.previewElement?.nativeElement) {
+          clearInterval(playerInterval);
+          // This is to reload a iframe as iframes reload method not working on cross-origin.
+          const src = this.previewElement.nativeElement.src;
+          this.previewElement.nativeElement.src = '';
+          this.previewElement.nativeElement.src = src;
+          this.previewElement.nativeElement.onload = () => {
+            setTimeout(() => {
+              this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
+              this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
+              this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
+              this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+                if (resp.data === 'renderer:question:submitscore') {
+                  this.courseService.syncAssessmentEvents().subscribe();
+                } else if (resp.data && typeof resp.data === 'object') {
+                  if (resp.data['player.pdf-renderer.error']) {
+                    const pdfError = resp.data['player.pdf-renderer.error'];
+                    if (pdfError.name === 'MissingPDFException') {
+                      const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
+                        this.config['metadata']['contentData']['artifactUrl'];
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                        InteractType.TOUCH,
+                        InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                        Environment.PLAYER,
+                        PageId.PLAYER,
+                        ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
+                        undefined,
+                        ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
+                      this.openPDF(downloadUrl);
+                    }
+                  } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
+                    || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
+                    cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                      () => { },
+                      () => { }
+                    );
+                  } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
+                    this.closeIframe();
                   }
-                } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
-                  || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
-                  cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-                    () => { },
-                    () => { }
-                  );
-                } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                  this.closeIframe();
+                } else if (this.isJSON(resp.data)) {
+                  const response = JSON.parse(resp.data);
+                  if (response.event === 'renderer:navigate') {
+                    this.navigateBackToTrackableCollection = true;
+                    this.navigateBackToContentDetails = false;
+                    this.closeIframe({
+                      identifier: response.data.identifier
+                    });
+                  }
                 }
-              } else if (this.isJSON(resp.data)) {
-                const response = JSON.parse(resp.data);
-                if (response.event === 'renderer:navigate') {
-                  this.navigateBackToTrackableCollection = true;
-                  this.navigateBackToContentDetails = false;
-                  this.closeIframe({
-                    identifier: response.data.identifier
-                  });
-                }
-              }
-            });
-          }, 1000);
-        };
+              });
+            }, 1000);
+          };
+        }
       }
+    }, 500);
 
-      this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
-        const activeAlert = await this.alertCtrl.getTop();
-        if (!activeAlert) {
-          this.showConfirm();
-        }
-      });
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
+      const activeAlert = await this.alertCtrl.getTop();
+      if (!activeAlert) {
+        this.showConfirm();
+      }
+    });
 
-      this.events.subscribe('endGenieCanvas', (res) => {
-        if (res.showConfirmBox) {
-          this.showConfirm();
-        } else {
-          this.closeIframe();
-        }
-      });
-    }, 1000);
+    this.events.subscribe('endGenieCanvas', (res) => {
+      if (res.showConfirmBox) {
+        this.showConfirm();
+      } else {
+        this.closeIframe();
+      }
+    });
   }
 
   async ionViewWillLeave() {
@@ -281,48 +284,48 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         }
       } else if (event.edata['type'] === 'PRINT') {
         this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
-      } else if (event.edata.type === 'NEXT_CONTENT_PLAY') {
-        this.playNextContent();
+      } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
+           this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
         cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-          () => { },
-          () => { }
+          () => {},
+          () => {}
         );
       }
     }
   }
 
   async getNewPlayerConfiguration() {
-    const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
-    this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
-    if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
-    }
-    this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
-    this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
-    this.config['metadata'] = this.config['metadata'].contentData;
-    this.config['data'] = {};
-    this.config['config'] = {
-      nextContent,
-      sideMenu: {
-        showShare: true,
-        showDownload: true,
-        showReplay: false,
-        showExit: true,
-        showPrint: true
+      const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+      if (this.config['metadata'].isAvailableLocally) {
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
-    }
+      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
+      this.config['metadata'] = this.config['metadata'].contentData;
+      this.config['data'] = {};
+      this.config['config'] = {
+        nextContent,
+        sideMenu: {
+          showShare: true,
+          showDownload: true,
+          showReplay: false,
+          showExit: true,
+          showPrint: true
+        }
+      }
 
-    if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-      const questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, { fields: 'instructions' }).toPromise();
-      this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
-    }
-    const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    this.config['context'].userData = {
-      firstName: profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
-      lastName: ''
-    };
-    return this.config;
+      if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
+       const questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+      }
+      const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      this.config['context'].userData = {
+        firstName:  profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
+        lastName: ''
+      };
+      return this.config;
   }
 
   getNextContent(hierarchyInfo, identifier) {
@@ -334,7 +337,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     })
   }
 
-  playNextContent() {
+  playNextContent(){
     const content = this.nextContentToBePlayed;
     this.events.publish(EventTopics.NEXT_CONTENT, {
       content,
@@ -393,7 +396,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         replaceUrl: true
       });
-    } else if (this.navigateBackToTrackableCollection) {
+    }  else if (this.navigateBackToTrackableCollection) {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content
@@ -433,7 +436,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         {
           text: this.commonUtilService.translateMessage('OKAY'),
-          handler: async () => {
+          handler: async() => {
             if (this.playerType === 'sunbird-old-player') {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
@@ -520,7 +523,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  checkIsPlayerEnabled(config, playerType) {
-    return config.fields.find(ele => ele.name === playerType && ele.values[0].isEnabled)
+  checkIsPlayerEnabled(config , playerType) {
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
   }
 }
