@@ -12,7 +12,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 
-fdescribe('DashboardComponent', () => {
+describe('DashboardComponent', () => {
     let dashboardComponent: DashboardComponent;
 
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
