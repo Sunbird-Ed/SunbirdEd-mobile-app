@@ -20,7 +20,6 @@ describe('GroupDetailsPage', () => {
         hideHeader: jest.fn()
     };
     const mockNavigationService: Partial<NavigationService> = {
-        setNavigationUrl: jest.fn()
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
