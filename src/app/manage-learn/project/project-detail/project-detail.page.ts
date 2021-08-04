@@ -584,8 +584,6 @@ export class ProjectDetailPage implements OnDestroy {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
-          //TODO: add location service
-          // this.location.back();
         } else if (type == "taskDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
         }
