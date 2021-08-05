@@ -1010,8 +1010,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             if (response.ipLocation.district) {
               ipLocationMap['district'] = response.ipLocation.district;
             }
-            await this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(ipLocationMap)).toPromise();
           }
+          await this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(ipLocationMap)).toPromise();
         }
       });
     }
