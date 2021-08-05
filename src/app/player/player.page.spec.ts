@@ -24,7 +24,7 @@ import { IterableDiffers } from '@angular/core';
 
 declare const cordova;
 
-fdescribe('PlayerPage', () => {
+describe('PlayerPage', () => {
     let playerPage: PlayerPage;
     const mockAlertCtrl: Partial<AlertController> = {
         
