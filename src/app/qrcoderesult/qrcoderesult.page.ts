@@ -840,10 +840,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
-        break;
+    if($event.name === 'back'){
+      this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
     }
   }
 
