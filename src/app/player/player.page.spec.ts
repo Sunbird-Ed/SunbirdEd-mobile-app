@@ -24,13 +24,13 @@ import { IterableDiffers } from '@angular/core';
 
 declare const cordova;
 
-describe('PlayerPage', () => {
+fdescribe('PlayerPage', () => {
     let playerPage: PlayerPage;
     const mockAlertCtrl: Partial<AlertController> = {
         
     };
     const mockCourseService: Partial<CourseService> = {
-        syncAssessmentEvents: jest.fn(() => of(undefined))
+        syncAssessmentEvents: jest.fn(() => of(undefined)),
     };
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {
         handleAction: jest.fn()
@@ -48,7 +48,8 @@ describe('PlayerPage', () => {
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        handleAssessmentStatus: jest.fn(),
     };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {
@@ -932,6 +933,18 @@ describe('PlayerPage', () => {
                 expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
                 done();
             }, 50);
+        });
+        it('should handle the exdata event', () => {
+            const event = {
+                edata: {
+                    type: 'exdata',
+                    currentattempt: 2,
+                    maxLimitExceeded: false,
+                    isLastAttempt: false,
+                }
+            };
+            playerPage.playerEvents(event);
+            expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
         });
     });
 
