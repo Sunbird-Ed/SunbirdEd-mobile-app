@@ -160,7 +160,8 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      destination = cordova.file.externalRootDirectory + 'Download/';
+      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+      destination = folderPath + 'Download/';
     }
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
