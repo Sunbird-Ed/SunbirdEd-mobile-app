@@ -134,6 +134,12 @@ export class SurveyHomeComponent {
 
   onSurveyClick(survey) {
     if (!this.isReport) {
+
+    if (survey.status == 'expired') {
+      // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
+      this.surveyProvider.showMsg('surveyExpired');
+      return;
+    }
       
     // surveyId changed to _id
     survey.downloaded
