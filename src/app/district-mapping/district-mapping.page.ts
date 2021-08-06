@@ -308,7 +308,7 @@ export class DistrictMappingPage implements OnDestroy {
         if (!this.profile && value === LocationConfig.SKIP_USER) {
           this.showNotNowFlag = true;
         }
-      } else if (!(this.source === PageId.GUEST_PROFILE) && value === LocationConfig.SKIP_DEVICE) {
+      } else if ((this.source !== PageId.GUEST_PROFILE) && value !== LocationConfig.SKIP_DEVICE) {
         this.showNotNowFlag = true;
       }
     }
