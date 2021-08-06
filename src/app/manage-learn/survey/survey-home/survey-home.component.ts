@@ -9,7 +9,7 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Router } from '@angular/router';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
-
+import * as moment from 'moment'
 @Component({
   selector: 'app-survey-home',
   templateUrl: './survey-home.component.html',
@@ -81,6 +81,7 @@ export class SurveyHomeComponent {
       (success) => {
         if (success.result && success.result.data) {
           this.count = success.result.count;
+          success.result.data.map(this.createExpiryMsg)
           this.surveyList = [...this.surveyList, ...success.result.data];
           this.getSubmissionArr();
           this.loader.stopLoader();
@@ -91,6 +92,16 @@ export class SurveyHomeComponent {
         console.log(error);
       }
     );
+  }
+  createExpiryMsg(s) {
+    const format = 'Do MMM YY'
+    const today = moment();
+    const expiryDate = moment(s.endDate);
+    const diff: any = expiryDate.diff(today, 'day');
+    if (diff == 1) return s.generatedExpMsg = 'Will Expire in One day';
+    if (diff == 2) return s.generatedExpMsg = 'Will Expire in Two days';
+    if (diff > 2) return s.generatedExpMsg = `Valid till ${expiryDate.format(format)}.`;
+    if (diff <= 0) return s.generatedExpMsg = `Expired On ${expiryDate.format(format)}.`;
   }
   //check if suvey detail is present in local storage
   getSubmissionArr(): void {
