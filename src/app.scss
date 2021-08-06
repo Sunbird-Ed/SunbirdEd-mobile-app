@@ -1990,4 +1990,10 @@ app-user-home, app-discover {
   .sb--card{
     border-radius: 1rem !important;
   }
+
+  sb-banner-card-hlist {
+    .sb--card.sb--card--theme2 {
+      width: 85vw !important;
+    }
+  }
 }
