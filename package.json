@@ -78,7 +78,7 @@
     "chartjs-plugin-stacked100": "^0.7.1",
     "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
-    "com.jjdltc.cordova.plugin.zip": "https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
+    "com.jjdltc.cordova.plugin.zip": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
     "common-form-elements-v9": "4.1.4",
     "cordova-android": "^9.0.0",
