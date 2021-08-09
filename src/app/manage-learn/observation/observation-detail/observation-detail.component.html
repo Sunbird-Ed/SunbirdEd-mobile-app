@@ -3,7 +3,7 @@
   <div class="d-flex flex-jc-flex-end grade_ellipsis info">
     <ion-button
       size="small"
-      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
+      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr"
       (click)="addEntity()"
       >{{ 'FRMELEMNTS_LBL_ADD_ENTITY' | translate }}</ion-button
     >
@@ -12,7 +12,7 @@
     <app-item-list-card [title]="entity?.name">
       <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
       <ion-icon
-        class="mg-popup-btn-icon delete-icon"
+        class="delete-icon clr-primary"
         name="trash"
         arrow
         *ngIf="!entity?.submissionsCount"

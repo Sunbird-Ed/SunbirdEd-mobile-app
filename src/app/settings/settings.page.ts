@@ -135,8 +135,7 @@ export class SettingsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
       PageId.SETTINGS,
-      Environment.SETTINGS, null,
-      undefined
+      Environment.SETTINGS, null
     );
   }
 

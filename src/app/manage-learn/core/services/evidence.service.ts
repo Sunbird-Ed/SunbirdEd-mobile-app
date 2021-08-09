@@ -51,9 +51,9 @@ export class EvidenceService {
         ])
         .subscribe(async (translations) => {
           translateObject = translations;
-          console.log(JSON.stringify(translations));
           let action = await this.actionSheet.create({
             header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
+            cssClass: 'actionSheet-custom-class',
             buttons: [
               {
                 text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),

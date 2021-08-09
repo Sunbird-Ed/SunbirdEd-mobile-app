@@ -104,7 +104,8 @@ export class ProfileConstants {
         'organisations',
         'roles',
         'locations',
-        'declarations'
+        'declarations',
+        'externalIds'
     ];
 
     public static readonly CONTACT_TYPE_PHONE = 'phone';
@@ -258,6 +259,7 @@ export class GenericAppConfig {
     public static readonly SUPPORT_EMAIL = 'SUPPORT_EMAIL';
     public static readonly VERSION_NAME = 'REAL_VERSION_NAME';
     public static readonly VERSION_CODE = 'VERSION_CODE';
+    public static readonly MAX_COMPATIBILITY_LEVEL = 'MAX_COMPATIBILITY_LEVEL';
 }
 
 export const appLanguages = [
