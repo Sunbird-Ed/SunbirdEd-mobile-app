@@ -101,7 +101,6 @@ export class SearchFilterPage implements OnInit {
             this.appliedFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(contentSearchResult.filterCriteria);
             this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
-            // todo show error toast
             console.error(e);
         } finally {
             await loader.dismiss();

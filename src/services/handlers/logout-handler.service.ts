@@ -54,8 +54,9 @@ export class LogoutHandlerService {
           const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
-
-        splashscreen.clearPrefs();
+        if(splashscreen){
+          splashscreen.clearPrefs();
+        }
       }),
       mergeMap((guestUserId: string) => {
         return this.profileService.setActiveSessionForProfile(guestUserId);

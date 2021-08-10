@@ -69,7 +69,9 @@ describe('SearchPage', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockProfileService: Partial<ProfileService> = {};
     const mockRouterExtras = {
         extras: {
@@ -1023,6 +1025,7 @@ describe('SearchPage', () => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
+            (window as any)['Keyboard']={hide:()=>{}}
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'

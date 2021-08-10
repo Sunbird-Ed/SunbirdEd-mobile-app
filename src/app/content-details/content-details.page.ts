@@ -252,7 +252,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.checkLimitedContentSharingFlag(extras.content);
       this.onboarding = extras.onboarding || this.onboarding;
     }
-    this.isIOS = (window['device'].platform.toLowerCase() === "ios")
+    this.isIOS = (this.platform.is('ios'))
       this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
         map((requests) => !!requests.find((request) => request.identifier === this.identifier))
       );

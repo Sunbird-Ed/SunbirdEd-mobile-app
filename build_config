@@ -1,6 +1,6 @@
 cordova-plugin=cordova-plugin-printer
-cordova-plugin=https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git
-cordova-plugin=cordova-plugin-ionic-keyboard
+cordova-plugin=https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
+cordova-plugin=ionic-plugin-keyboard
 cordova-plugin=cordova-plugin-whitelist
 cordova-plugin=cordova-plugin-ionic-webview
 cordova-plugin=cordova-plugin-app-version
@@ -33,7 +33,7 @@ cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.g
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage
-cordova plugin=cordova-plugin-googleplus@7.0.1 --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
+cordova plugin=cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
 cordova-pligin=cordova-plugin-camera
 cordova-plugin=cordova-plugin-telerik-imagepicker
 cordova-plugin=cordova-plugin-filechooser
