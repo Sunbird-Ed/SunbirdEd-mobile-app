@@ -78,7 +78,8 @@ export class ActivityDashboardPage {
         })
     }
 
-    private async getActvityDetails() {
+    async getActvityDetails() {
+        console.log('in getActvityDetails');
         const req: GroupActivityDataAggregationRequest = {
           from: CachedItemRequestSourceFrom.SERVER,
           groupId: this.group.id,
@@ -88,20 +89,20 @@ export class ActivityDashboardPage {
           },
           mergeGroup: this.group
         };
-        if (this.isTrackable) {
+        // if (this.isTrackable) {
         //   if (this.selectedCourse) {
         //     req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
         //   } else {
             req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
         //   }
-        }
+        // }
         try {
         //   this.isActivityLoading = true;
           const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
           if (response) {
             this.memberList = response.members;
             this.activityDetail = response.activity;
-            const loggedInUserId = this.loggedinUser.userId;
+            const loggedInUserId = this.loggedinUser;
             if (this.memberList) {
               this.memberList = this.memberList.sort((a, b) => {
                 if (a.userId === loggedInUserId) {

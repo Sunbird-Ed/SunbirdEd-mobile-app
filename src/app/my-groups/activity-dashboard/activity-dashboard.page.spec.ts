@@ -6,7 +6,7 @@ import { AppHeaderService, AppGlobalService, CommonUtilService } from '../../../
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
-import { GroupService, InteractType } from '@project-sunbird/sunbird-sdk';
+import { GroupMemberRole, GroupService, InteractType } from '@project-sunbird/sunbird-sdk';
 
 describe('ActivityTocPage', () => {
     let activityDashboardPage: ActivityDashboardPage;
@@ -107,6 +107,78 @@ describe('ActivityTocPage', () => {
         // assert
         expect(mockPlatform.backButton).not.toBeUndefined();
     });
+    describe('getActvityDetails', () => {
+        it('should fetch activity data', (done) => {
+            activityDashboardPage.hierarchyData = {
+                contentData: {
+                    leafNodes: ['node1']
+                }
+            } as any;
+            mockGroupService.activityService = {
+                getDataAggregation: jest.fn(() => of({
+                    members: [{
+                        role: GroupMemberRole.MEMBER,
+                        createdBy: 'sample-creator',
+                        name: 'member-name',
+                        userId: 'sample-user-id-2',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
+                    }, {
+                        role: GroupMemberRole.ADMIN,
+                        createdBy: 'sample-creator',
+                        name: 'member-name',
+                        userId: 'sample-user-id-1',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 1
+                        }]
+                    }],
+                    activity: {
+                        id: 'activity-id',
+                        type: 'activity-type',
+                        agg: []
+                    }
+                })) as any,
+                getDataForDashlets: jest.fn(() => of({
+                    members: [{
+                        role: GroupMemberRole.MEMBER,
+                        createdBy: 'sample-creator',
+                        name: 'member-name',
+                        userId: 'sample-user-id-2',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
+                    }, {
+                        role: GroupMemberRole.ADMIN,
+                        createdBy: 'sample-creator',
+                        name: 'member-name',
+                        userId: 'sample-user-id-1',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 1
+                        }]
+                    }],
+                    activity: {
+                        id: 'activity-id',
+                        type: 'activity-type',
+                        agg: {}
+                    }
+                })) as any
+            } as any
+            // activityDetailsPage.activity = {
+            //     type: 'Course'
+            // };
+            activityDashboardPage.getActvityDetails()
+            setTimeout(() => {
+                expect(activityDashboardPage.memberList).toHaveLength(2)
+                done()
+            });
+            
+        })
+    })
 
     describe('ionViewWillEnter', () => {
         beforeEach(() => {
@@ -116,6 +188,7 @@ describe('ActivityTocPage', () => {
             });
             jest.spyOn(activityDashboardPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(activityDashboardPage, 'handleDeviceBackButton').mockImplementation();
+            jest.spyOn(activityDashboardPage, 'getActvityDetails').mockImplementation();
             activityDashboardPage.hierarchyData = {
                 children: [
                     {
@@ -153,6 +226,7 @@ describe('ActivityTocPage', () => {
             }, 0);
         });
     });
+
 
     // describe('ionViewWillLeave', () => {
     //     it('should unsubscribe all header service', () => {
