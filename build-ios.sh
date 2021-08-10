@@ -65,7 +65,8 @@ ionic cordova plugin rm cordova-plugin-fcm-with-dependecy-updated
 ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
 ionic cordova plugin rm sb-cordova-plugin-db
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
-
+ionic cordova plugin add https://github.com/project-sunbird/cordova-plugin-file-support.git
+ionic cordova plugin rm plugin-googleplus
 ionic cordova plugin add plugin-googleplus --variable REVERSED_CLIENT_ID=REVERSED_CLIENT_ID
 
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
