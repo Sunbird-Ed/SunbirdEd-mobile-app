@@ -6,8 +6,9 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { GroupService } from '@project-sunbird/sunbird-sdk';
+import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService, TrackingEnabled } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '@app/services';
+import { CsGroupActivityAggregationMetric, CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
 
 @Component({
     selector: 'activity-dashboard',
@@ -27,6 +28,15 @@ export class ActivityDashboardPage {
     activity: any;
     lastUpdatedOn: any;
     collectionName: string;
+    memberList: any;
+    activityDetail: any;
+    filteredMemberList: any;
+
+    loggedinUser;
+    group
+    corRelationList
+    isTrackable
+    isGroupCreatorOrAdmin
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -40,11 +50,14 @@ export class ActivityDashboardPage {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
             this.hierarchyData = extras.hierarchyData;
-            this.aggData = extras.aggData;
             this.activity = extras.activity;
-            this.lastUpdatedOn = extras.lastUpdatedOn;
-            this.collectionName = extras.collectionName;
-            console.log('lastUpdatedOn', this.lastUpdatedOn)
+            this.loggedinUser = extras.loggedinUser;
+            this.group = extras.group;
+            this.corRelationList = extras.corRelation;
+            // this.isTrackable = this.activity.trackable && (this.activity.trackable.enabled === TrackingEnabled.YES) ;
+            // this.isGroupCreatorOrAdmin = extras.isGroupCreatorOrAdmin;
+
+            this.collectionName = this.hierarchyData.name;
         }
     }
 
@@ -54,11 +67,85 @@ export class ActivityDashboardPage {
         });
         this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
+        this.getActvityDetails()
+    }
+
+    getDashletData() {
         this.groupService.activityService.getDataForDashlets(this.hierarchyData.children, this.aggData).subscribe((data) => {
-            console.log('getDataForDashlets data', data);
+            console.log('getDataForDashlets data new', data);
             this.dashletData = data;
+            this.getActivityAggLastUpdatedOn()
         })
     }
+
+    private async getActvityDetails() {
+        const req: GroupActivityDataAggregationRequest = {
+          from: CachedItemRequestSourceFrom.SERVER,
+          groupId: this.group.id,
+          activity: {
+            id: this.activity.identifier,
+            type: this.activity.type
+          },
+          mergeGroup: this.group
+        };
+        if (this.isTrackable) {
+        //   if (this.selectedCourse) {
+        //     req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+        //   } else {
+            req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
+        //   }
+        }
+        try {
+        //   this.isActivityLoading = true;
+          const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
+          if (response) {
+            this.memberList = response.members;
+            this.activityDetail = response.activity;
+            const loggedInUserId = this.loggedinUser.userId;
+            if (this.memberList) {
+              this.memberList = this.memberList.sort((a, b) => {
+                if (a.userId === loggedInUserId) {
+                  return -1;
+                } else if (b.userId === loggedInUserId) {
+                  return 1;
+                }
+                const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+                const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+                if (!aCompletedCount && !bCompletedCount) {
+                  return 0;
+                }
+                if (!aCompletedCount && bCompletedCount) {
+                  return 1;
+                } else if (aCompletedCount && !bCompletedCount) {
+                  return -1;
+                }
+                return bCompletedCount!.value - aCompletedCount!.value;
+              });
+            }
+            this.aggData =  {
+                members: this.memberList,
+                activity: this.activityDetail
+            }
+            this.getDashletData()
+            // this.filteredMemberList = new Array(...this.memberList);
+            // console.log('this.filteredMemberList', this.filteredMemberList);
+            // this.isActivityLoading = false;
+          }
+        } catch (e) {
+          console.log(' CsGroupActivityDataAggregation err', e);
+        //   this.isActivityLoading = false;
+        }
+    }
+
+    getActivityAggLastUpdatedOn() {
+        this.lastUpdatedOn = 0;
+        if (this.activityDetail && this.activityDetail.agg) {
+          const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.ENROLMENT_COUNT);
+          if (activityAgg && activityAgg.lastUpdatedOn) {
+            this.lastUpdatedOn = typeof activityAgg.lastUpdatedOn === 'string' ? parseInt(activityAgg.lastUpdatedOn, 10) : activityAgg.lastUpdatedOn;
+          }
+        }
+      }
 
     ionViewWillLeave() {
         this.headerObservable.unsubscribe();

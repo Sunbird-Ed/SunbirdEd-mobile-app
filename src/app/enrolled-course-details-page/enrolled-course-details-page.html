@@ -58,15 +58,15 @@
 					<p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : course }}</p>
 				</div>
 				<div *ngIf="!isAlreadyEnrolled">
-							<div class="sb-dt-card-actions">
-                                <div class="wrapper sb-btn-tile-group">
-									<button slot="icon-only" (click)="share()" class="card-button pb-8">
-										<ion-icon name="share" class="card-icons"></ion-icon>
-										<p class="card-text">{{'SHARE' | translate}}</p>
-									</button>
-								</div>
-							</div>
+					<div class="sb-dt-card-actions">
+						<div class="wrapper sb-btn-tile-group">
+							<button slot="icon-only" (click)="share()" class="card-button pb-8">
+								<ion-icon name="share" class="card-icons"></ion-icon>
+								<p class="card-text">{{'SHARE' | translate}}</p>
+							</button>
 						</div>
+					</div>
+				</div>
 				<div *ngIf="isAlreadyEnrolled">
 					<div>
 						<div>
@@ -138,6 +138,12 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div *ngIf="activityData && activityData.isGroupCreatorOrAdmin">
+					<button (click)="navigateToDashboard()" slot="icon-only" class="enrolled-course-card-button">
+						<img src="assets/imgs/dashboard-icon.svg" class="card-icons-red">
+						<span>{{'ACTIVITY_DASHBOARD' | translate}}</span>
+					</button>
 				</div>
 			</ion-card-content>
 			<div #stickyPillsRef
