@@ -33,7 +33,7 @@ cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.g
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage
-cordova plugin=cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
+cordova plugin=cordova-plugin-googleplus
 cordova-pligin=cordova-plugin-camera
 cordova-plugin=cordova-plugin-telerik-imagepicker
 cordova-plugin=cordova-plugin-photo-library

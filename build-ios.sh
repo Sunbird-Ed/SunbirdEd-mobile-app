@@ -66,6 +66,8 @@ ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
 ionic cordova plugin rm sb-cordova-plugin-db
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 
+ionic cordova plugin add plugin-googleplus --variable REVERSED_CLIENT_ID=REVERSED_CLIENT_ID
+
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add ios
