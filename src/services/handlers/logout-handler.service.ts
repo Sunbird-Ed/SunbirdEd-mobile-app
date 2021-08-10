@@ -38,7 +38,11 @@ export class LogoutHandlerService {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
-
+    
+    this.profileService.getActiveProfileSession().toPromise()
+    .then((profile) => {
+      this.profileService.deleteProfile(profile.uid).subscribe()
+    });
     this.segmentationTagService.persistSegmentation();
 
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
