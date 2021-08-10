@@ -18,7 +18,8 @@ describe('ActivityTocPage', () => {
         getCurrentNavigation: jest.fn(() => ({
             extras: {
                 state: {
-                    courseList: {
+                    hierarchyData: {
+                        name: 'some-name',
                         children: [{
                             contentType: 'collection',
                             children: [
@@ -28,6 +29,12 @@ describe('ActivityTocPage', () => {
                                 }
                             ]
                         }]
+                    },
+                    group: {
+                        id: 'some-id'
+                    },
+                    activity: {
+                        identifier: 'some-id'
                     }
                 }
             }
