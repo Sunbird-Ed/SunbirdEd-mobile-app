@@ -2764,4 +2764,25 @@ describe('EnrolledCourseDetailsPage', () => {
 
         });
     });
+
+    describe('navigateToDashboard', () => {
+        it('should navigate to dashboard', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                identifier: 'some-id'
+            } as any
+            enrolledCourseDetailsPage.activityData = {
+                activity: {
+                    name: 'some-name'
+                },
+                group: {
+                    id: 'some-id'
+                }
+            }as any
+            // act
+            enrolledCourseDetailsPage.navigateToDashboard()
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled()
+        });
+    });
 });
