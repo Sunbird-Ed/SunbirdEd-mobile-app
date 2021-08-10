@@ -6,7 +6,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService, TrackingEnabled } from '@project-sunbird/sunbird-sdk';
+import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { CsGroupActivityAggregationMetric, CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
 
@@ -54,9 +54,6 @@ export class ActivityDashboardPage {
             this.loggedinUser = extras.loggedinUser;
             this.group = extras.group;
             this.corRelationList = extras.corRelation;
-            // this.isTrackable = this.activity.trackable && (this.activity.trackable.enabled === TrackingEnabled.YES) ;
-            // this.isGroupCreatorOrAdmin = extras.isGroupCreatorOrAdmin;
-
             this.collectionName = this.hierarchyData.name;
         }
     }
@@ -92,7 +89,6 @@ export class ActivityDashboardPage {
             req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
         
         try {
-        //   this.isActivityLoading = true;
           const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
           if (response) {
             this.memberList = response.members;
@@ -123,11 +119,9 @@ export class ActivityDashboardPage {
                 activity: this.activityDetail
             }
             this.getDashletData()
-            // this.isActivityLoading = false;
           }
         } catch (e) {
           console.log(' CsGroupActivityDataAggregation err', e);
-        //   this.isActivityLoading = false;
         }
     }
 
