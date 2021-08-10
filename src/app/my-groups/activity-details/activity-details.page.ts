@@ -10,12 +10,10 @@ import {
   CollectionService, AppGlobalService, InteractSubtype, InteractType, ID, AndroidPermissionsService
 } from '@app/services';
 import {
-  GroupService, GroupActivityDataAggregationRequest,
-  GroupMember, CachedItemRequestSourceFrom, Content,
+  GroupService, GroupMember, Content,
   Group, MimeType, CorrelationData, TrackingEnabled
 } from '@project-sunbird/sunbird-sdk';
 import {
-  CsGroupActivityDataAggregation,
   CsGroupActivityAggregationMetric
 } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';

@@ -42,7 +42,6 @@ import {
 } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
-import { ActivityData } from '../group.interface';
 
 @Component({
   selector: 'app-group-details',

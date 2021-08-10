@@ -30,13 +30,10 @@ export class ActivityDashboardPage {
     collectionName: string;
     memberList: any;
     activityDetail: any;
-    filteredMemberList: any;
 
     loggedinUser;
     group
     corRelationList
-    isTrackable
-    isGroupCreatorOrAdmin
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -69,14 +66,12 @@ export class ActivityDashboardPage {
 
     getDashletData() {
         this.groupService.activityService.getDataForDashlets(this.hierarchyData.children, this.aggData).subscribe((data) => {
-            console.log('getDataForDashlets data new', data);
             this.dashletData = data;
             this.getActivityAggLastUpdatedOn()
         })
     }
 
     async getActvityDetails() {
-        console.log('in getActvityDetails');
         const req: GroupActivityDataAggregationRequest = {
           from: CachedItemRequestSourceFrom.SERVER,
           groupId: this.group.id,
