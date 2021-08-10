@@ -89,13 +89,8 @@ export class ActivityDashboardPage {
           },
           mergeGroup: this.group
         };
-        // if (this.isTrackable) {
-        //   if (this.selectedCourse) {
-        //     req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
-        //   } else {
             req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
-        //   }
-        // }
+        
         try {
         //   this.isActivityLoading = true;
           const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -128,8 +123,6 @@ export class ActivityDashboardPage {
                 activity: this.activityDetail
             }
             this.getDashletData()
-            // this.filteredMemberList = new Array(...this.memberList);
-            // console.log('this.filteredMemberList', this.filteredMemberList);
             // this.isActivityLoading = false;
           }
         } catch (e) {
