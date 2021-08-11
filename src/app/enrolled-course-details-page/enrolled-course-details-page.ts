@@ -42,7 +42,7 @@ import {
   PageId
 } from '../../services/telemetry-constants';
 import {
-  BatchConstants, ContentCard, EventTopics, MaxAttempt, MimeType,
+  BatchConstants, ContentCard, EventTopics, MimeType,
   PreferenceKey, ProfileConstants, RouterLinks, ShareItemType
 } from '../app.constant';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';

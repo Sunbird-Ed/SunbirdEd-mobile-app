@@ -147,12 +147,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        setTimeout(() => {
-          this.handleBackButton();
-        }, 100);
-        break;
+    if($event.name === 'back'){
+      setTimeout(() => {
+        this.handleBackButton();
+      }, 100);
     }
   }
 
