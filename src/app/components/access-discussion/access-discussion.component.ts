@@ -15,7 +15,7 @@ export class AccessDiscussionComponent implements OnInit {
   @Input() createUserReq: any;
   @Output() forumData = new EventEmitter();
   forumDetails;
-  forumEnabled = false;
+  isForumEnabled = false;
 
   constructor(
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
@@ -25,25 +25,25 @@ export class AccessDiscussionComponent implements OnInit {
     private headerService: AppHeaderService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService
-) {
-  if(this.appGlobalService.isForumEnabled) {
-    this.forumEnabled = true;
-  }
-}
+) {}
 
   ngOnInit() {
-      this.fetchForumIds();
+    if(this.appGlobalService.isForumEnabled) {
+      this.isForumEnabled = true;
+    }
+    this.fetchForumIds();
   }
+  
   fetchForumIds() {
     this.forumDetails = '';
     this.discussionService.getForumIds(this.fetchForumIdReq).toPromise().then(forumDetails => {
         if (forumDetails.result.length) {
             this.forumDetails = forumDetails.result[0];
             this.forumData.emit(this.forumDetails);
-            this.forumEnabled = true;
+            this.isForumEnabled = true;
             this.appGlobalService.isForumEnabled = true;
         } else {
-          this.forumEnabled = false;
+          this.isForumEnabled = false;
           this.appGlobalService.isForumEnabled = false;
         }
     }).catch(error => {
