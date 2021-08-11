@@ -26,7 +26,6 @@ export class AccessDiscussionComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService
 ) {
-  console.log('his.appGlobalService.isForumEnabled) const', this.appGlobalService.isForumEnabled)
   if(this.appGlobalService.isForumEnabled) {
     this.forumEnabled = true;
   }

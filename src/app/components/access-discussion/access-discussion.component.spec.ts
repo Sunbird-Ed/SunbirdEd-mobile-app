@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from './access-discussion.component';
 import { AppHeaderService, CommonUtilService, NavigationService } from '@app/services';
-import { TelemetryGeneratorService } from '../../../services';
+import { AppGlobalService, TelemetryGeneratorService } from '../../../services';
 
 describe('GroupDetailsPage', () => {
     let accessDiscussionComponent: AccessDiscussionComponent;
@@ -19,7 +19,7 @@ describe('GroupDetailsPage', () => {
     const mockHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn()
     };
-    const mockNavigationService: Partial<NavigationService> = {
+    const mockAppGlobalService: Partial<AppGlobalService> = {
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
@@ -32,8 +32,8 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService as CommonUtilService,
             mockDiscussionTelemetryService as DiscussionTelemetryService,
             mockHeaderService as AppHeaderService,
-            mockNavigationService as NavigationService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
