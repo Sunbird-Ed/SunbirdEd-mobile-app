@@ -58,7 +58,6 @@ npm install @ionic-native/ionic-webview@5.33.1
 npm install cordova-plugin-inappbrowser@5.0.0
 npm install com.telerik.plugins.nativepagetransitions@0.7.0
 
-ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 ionic cordova plugin rm cordova-plugin-sunbirdsplash
 ionic cordova plugin add cordova-plugin-splashscreen
 ionic cordova plugin rm cordova-plugin-fcm-with-dependecy-updated
