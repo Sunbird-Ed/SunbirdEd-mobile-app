@@ -1,9 +1,8 @@
 import {  Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { DiscussionService, InteractType } from '@project-sunbird/sunbird-sdk';
 
 @Component({
@@ -16,6 +15,7 @@ export class AccessDiscussionComponent implements OnInit {
   @Input() createUserReq: any;
   @Output() forumData = new EventEmitter();
   forumDetails;
+  forumEnabled = false;
 
   constructor(
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
@@ -23,9 +23,14 @@ export class AccessDiscussionComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private discussionTelemetryService: DiscussionTelemetryService,
     private headerService: AppHeaderService,
-    private navigationService: NavigationService,
-    private telemetryGeneratorService: TelemetryGeneratorService
-) {}
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private appGlobalService: AppGlobalService
+) {
+  console.log('his.appGlobalService.isForumEnabled) const', this.appGlobalService.isForumEnabled)
+  if(this.appGlobalService.isForumEnabled) {
+    this.forumEnabled = true;
+  }
+}
 
   ngOnInit() {
       this.fetchForumIds();
@@ -36,6 +41,11 @@ export class AccessDiscussionComponent implements OnInit {
         if (forumDetails.result.length) {
             this.forumDetails = forumDetails.result[0];
             this.forumData.emit(this.forumDetails);
+            this.forumEnabled = true;
+            this.appGlobalService.isForumEnabled = true;
+        } else {
+          this.forumEnabled = false;
+          this.appGlobalService.isForumEnabled = false;
         }
     }).catch(error => {
         console.log('error fetchForumIds', error);
