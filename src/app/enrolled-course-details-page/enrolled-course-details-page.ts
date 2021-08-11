@@ -2201,6 +2201,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const popUp = await this.popoverCtrl.create({
       component: ProfileNameConfirmationPopoverComponent,
       componentProps: {
+        content: this.course
       },
       cssClass: 'sb-popover sb-profile-name-confirmation-popover',
     });

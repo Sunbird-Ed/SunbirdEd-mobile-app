@@ -586,6 +586,8 @@
   "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
   "FRMELEMNTS_MSG_LOAD_FROM_LIBRARY": "Load from library",
   "FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
+  "CRS_NONTRK_FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
+  "TBK_TRK_FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your textbook certificate. Check if it is correct.",
   "FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE": "Select image source",
   "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile",
   "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED": "Attached successfully ",
