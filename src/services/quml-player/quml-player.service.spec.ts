@@ -6,7 +6,8 @@ import { QumlPlayerService } from './quml-player.service';
 describe('PrintPdfService', () => {
     let qumlPlayerService: QumlPlayerService;
     const mockContentService: Partial<ContentService> = {
-        getQuestionList : jest.fn()
+        getQuestionList : jest.fn(),
+        getQuestionSetHierarchy: jest.fn()
     };
   
     beforeAll(() => {
@@ -35,5 +36,11 @@ describe('PrintPdfService', () => {
         const questions = qumlPlayerService.getQuestion(questionId);
         expect(questions).toBe(undefined);
     })
+
+    it('should get question set', () => {
+      const questionId = '1';
+      const qSet = qumlPlayerService.getQuestionSet(questionId);
+      expect(qSet).toBe(undefined);
+  })
 
 });

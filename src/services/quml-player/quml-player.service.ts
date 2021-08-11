@@ -23,6 +23,10 @@ export class QumlPlayerService implements QuestionCursor {
   getQuestionSetHierarchy(data) {
     return this.contentService.getQuestionSetHierarchy(data);
   }
+
+  getQuestionSet(identifier: string) {
+    return this.contentService.getQuestionSetHierarchy(identifier);
+  }
 }
 
 

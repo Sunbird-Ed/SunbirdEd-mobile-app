@@ -20,7 +20,6 @@ describe('GroupDetailsPage', () => {
         hideHeader: jest.fn()
     };
     const mockNavigationService: Partial<NavigationService> = {
-        setNavigationUrl: jest.fn()
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
@@ -100,7 +99,10 @@ describe('GroupDetailsPage', () => {
             }
             const res = {
                 result: {
-                    userName: 'some_user'
+                    userName: 'some_user',
+                    userId: {
+                        uid: 1
+                    }
                 }
             }
             mockDiscussionService.createUser = jest.fn(() => of(res) as any);
@@ -113,7 +115,7 @@ describe('GroupDetailsPage', () => {
                     {
                         queryParams: {
                             categories: JSON.stringify({result:['some_cid']}),
-                            userName: 'some_user'
+                            userId: 1
                         }
                     }
                 );
@@ -127,7 +129,10 @@ describe('GroupDetailsPage', () => {
             }
             const res = {
                 result: {
-                    userName: 'some_user'
+                    userName: 'some_user',
+                    userId: {
+                        uid: 1
+                    }
                 }
             }
             mockDiscussionService.createUser = jest.fn(() => throwError('err') as any);

@@ -51,9 +51,9 @@ export class EvidenceService {
         ])
         .subscribe(async (translations) => {
           translateObject = translations;
-          console.log(JSON.stringify(translations));
           let action = await this.actionSheet.create({
             header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
+            cssClass: 'actionSheet-custom-class',
             buttons: [
               {
                 text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),
@@ -194,6 +194,7 @@ export class EvidenceService {
       startTime: 0,
       endTime: 0,
       notApplicable: true,
+      remarks:''
     };
 
     const currentEvidence = selectedECM;
@@ -201,6 +202,7 @@ export class EvidenceService {
     evidence.externalId = currentEvidence.externalId;
     evidence.startTime = Date.now();
     evidence.endTime = Date.now();
+    evidence.remarks = selectedECM.remarks;
     for (const section of selectedECM.sections) {
       for (const question of section.questions) {
         let obj = {

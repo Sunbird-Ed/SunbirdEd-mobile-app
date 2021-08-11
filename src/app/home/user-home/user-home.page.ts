@@ -69,6 +69,7 @@ import { SegmentationTagService } from '@app/services/segmentation-tag/segmentat
 import { FormConstants } from '@app/app/form.constants';
 import { SbPopoverComponent } from '../../components/popups';
 import { PopoverController } from '@ionic/angular'
+import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
   selector: 'app-user-home',
@@ -95,7 +96,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   selectMode = SelectMode;
   pillShape = PillShape;
   @ViewChild('contentView', { static: false }) contentView: ContentView;
-  showPreferenceInfo = false;
 
   LibraryCardTypes = LibraryCardTypes;
   ButtonPosition = ButtonPosition;
@@ -112,6 +112,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   mediumList = [];
   gradeLevelList = [];
   otherCategories=[];
+  subjectList = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -127,7 +128,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private headerService: AppHeaderService,
     private events: Events,
     private qrScanner: SunbirdQRScanner,
-    private ModalCtrl: ModalController,
+    private modalCtrl: ModalController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
@@ -228,6 +229,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
           this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
           this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
+          this.subjectList = this.getFieldDisplayValues(this.profile.subject, 'subject');
+
           this.preferenceList.push(this.boardList);
           this.preferenceList.push(this.mediumList);
           this.preferenceList.push(this.gradeLevelList);
@@ -417,8 +420,40 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.refresher.disabled = false;
   }
 
-  viewPreferenceInfo() {
-    this.showPreferenceInfo = !this.showPreferenceInfo;
+  async viewPreferenceInfo() {
+    const preferenceData = [
+      {
+        name: this.commonUtilService.translateMessage('BOARD'),
+        list: this.boardList && this.boardList.length ? [this.boardList] : []
+      },
+      {
+          name: this.commonUtilService.translateMessage('MEDIUM'),
+          list: this.mediumList && this.mediumList.length ? [this.mediumList] : []
+      },
+      {
+          name: this.commonUtilService.translateMessage('CLASS'),
+          list: this.gradeLevelList && this.gradeLevelList.length ? [this.gradeLevelList] : []
+      },
+      {
+          name: this.commonUtilService.translateMessage('SUBJECT'),
+          list: this.subjectList && this.subjectList.length ? [this.subjectList] : []
+      }
+    ]
+    const subjectListPopover = await this.modalCtrl.create({
+      component: SbPreferencePopupComponent,
+      componentProps: {
+        userName: this.profile && this.profile.handle || '',
+        preferenceData
+      },
+      backdropDismiss: true,
+      showBackdrop: true,
+      cssClass: 'preference-popup',
+    });
+    await subjectListPopover.present();
+    const { data } = await subjectListPopover.onDidDismiss();
+    if (data && data.showPreference) {
+      this.editProfileDetails();
+    }
   }
 
   async onViewMorePillList(event, section) {
@@ -431,7 +466,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME
     );
-    const subjectListPopover = await this.ModalCtrl.create({
+    const subjectListPopover = await this.modalCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,

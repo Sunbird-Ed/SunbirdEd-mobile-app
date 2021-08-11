@@ -73,6 +73,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet'
 import { TocHeaderComponent } from './toc-header/toc-header.component';
 import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
+import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ContentViewerComponent,
     DashboardComponent,
     TocHeaderComponent,
-    RelevantContentCardComponent
+    RelevantContentCardComponent,
+    SbPreferencePopupComponent
   ],
   imports: [
     CommonModule,
@@ -195,7 +197,8 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    SbPreferencePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -255,7 +258,8 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ContentViewerComponent,
     DashboardComponent,
     TocHeaderComponent,
-    RelevantContentCardComponent
+    RelevantContentCardComponent,
+    SbPreferencePopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
 })

@@ -1337,8 +1337,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     InteractType.TOUCH,
                     'download-all-button-clicked',
                     Environment.HOME,
-                    PageId.COURSE_DETAIL,
-                    undefined
+                    PageId.COURSE_DETAIL
                 );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();
@@ -2028,8 +2027,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
-                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
-                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();

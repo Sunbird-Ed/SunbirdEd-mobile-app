@@ -1758,6 +1758,9 @@ app-user-home{
       }
     }
   }
+}
+
+app-user-home, app-sb-preferences-popup {
   app-truncated-ellipsis {
     font-size: 14px;
     font-weight: bold;
@@ -1773,6 +1776,27 @@ app-user-home{
     width: 100%;
     height: 100%;
     border-radius: 2rem 2rem 0 0;
+  }
+}
+
+.preference-popup {
+  --height: auto;
+  .modal-wrapper {
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    border-radius: 1.5rem 1.5rem 0 0;
+    .ion-page {
+      position: relative;
+      contain: content;
+      max-height: 90vh;
+      .preference-container {
+        .preference-data {
+          overflow: auto;
+          max-height: 50vh;
+        }
+      }
+    }
   }
 }
 
@@ -2018,9 +2042,12 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
 }
-.message,.projects-labels {
-  color: $white;
-}
+  .message,.projects-labels, .clr-primary {
+    color: $white;
+  }
+  .attach-label, .action-sheet-icon {
+    color:var(--app-primary) !important;
+  }
   .searchbar-input {
     background: var(--app-secondary-background) !important;
     border: 1px solid var(--app-secondary-background);
@@ -2028,9 +2055,23 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .task-desc{
     border:none;
   }
-  .entity-block, .task-list, .footer-btn, .learningResources, .sb-popover-content-details, .heading-name, .task-board {
-    h4, h3, h5 {
+  .entity-block, .task-list, .footer-btn, .learningResources, .sb-popover-content-details, .heading-name, .color-white, .task-board {
+    h4, h3, h5, span {
       color: $white;
     }
+  }
+  .button-clr{
+  color: map-get($colors, black) !important;
+}
+.clr-downloaded-btn{
+  color:green !important;
+}
+ion-icon.mg-popup-btn-icon.md.hydrated{
+  filter: invert(0) !important;
+}
+  .loading-spinner.sc-ion-loading-md,
+  .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md{
+    filter: invert(0) !important;
+    background: var(--app-secondary-background);
   }
 }

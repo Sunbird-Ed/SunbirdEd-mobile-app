@@ -93,11 +93,15 @@ describe('UserHomePage', () => {
     describe('viewPreferenceInfo()', () => {
         it('should enable and disable the user prefrence information', () => {
             // arrange
-            userHomePage.showPreferenceInfo = false;
+            mockCommonUtilService.translateMessage = jest.fn();
+            mockModalController.create = jest.fn(() => (Promise.resolve({
+              present: jest.fn(() => Promise.resolve({})),
+              onDidDismiss: jest.fn(() => Promise.resolve({})),
+          } as any)));
             // act
             userHomePage.viewPreferenceInfo();
             // assert
-            expect(userHomePage.showPreferenceInfo).toBeTruthy();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
         });
     });
 
