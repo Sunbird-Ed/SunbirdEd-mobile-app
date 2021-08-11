@@ -361,6 +361,13 @@
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
+            <span class="sb-menu-icon">
+              <img src="./assets/imgs/ic_report.svg" class="tool-icon" alt="reports">
+            </span>
+            <span class="sb-menu-item" menuClose>{{'Reports' | translate}}</span>
+        </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>

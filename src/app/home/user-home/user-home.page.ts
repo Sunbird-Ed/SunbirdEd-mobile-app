@@ -66,6 +66,9 @@ import { FrameworkSelectionDelegateService } from './../../profile/framework-sel
 import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { FormConstants } from '@app/app/form.constants';
+import { SbPopoverComponent } from '../../components/popups';
+import { PopoverController } from '@ionic/angular'
 
 @Component({
   selector: 'app-user-home',
@@ -108,6 +111,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   boardList = [];
   mediumList = [];
   gradeLevelList = [];
+  otherCategories=[];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -129,7 +133,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
     private translate: TranslateService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
@@ -267,6 +272,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    this.getOtherMLCategories()
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = displayItems;
@@ -717,4 +723,69 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }
     });
   }
+
+  async getOtherMLCategories() {
+    try {
+      const board = this.profile.board[0].toLowerCase()
+      let role = this.profile.profileType.toLowerCase()
+      if (this.profile.serverProfile) {
+        role = this.profile.serverProfile.profileUserType.type.toLowerCase()
+      }
+      const otherCategories = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.ML_HOME_CATEGORIES
+      );
+      this.otherCategories = otherCategories[board][role]
+      if (this.otherCategories.length) {
+        this.events.publish('showOtherCategory',true)
+      } else {
+        this.events.publish('showOtherCategory',false)
+      }
+    } catch (error) {
+      this.otherCategories = [],
+      this.events.publish('showOtherCategory',false)
+
+    }
+  }
+
+  async handleOtherCategories(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    let selectedPill = event.data[0].value.name
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
+        metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color label-uppercase label-bold-font'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    if (this.guestUser) {
+      await confirm.present();
+      const { data } = await confirm.onDidDismiss();
+      if (data && data.canDelete) {
+        this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+      }
+      return
+    }
+    switch (selectedPill) {
+      case 'observation':
+      this.router.navigate([RouterLinks.OBSERVATION], {})
+        break;
+      default:
+        break;
+    }
+  }
+
+
 }
+
+
