@@ -290,6 +290,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           () => {},
           () => {}
         );
+      } else if (event.edata.type === 'exdata') {
+        if (event.edata.currentattempt) {
+          const attemptInfo = {
+            isContentDisabled: event.edata.maxLimitExceeded,
+            isLastAttempt: event.edata.isLastAttempt
+          };
+          this.commonUtilService.handleAssessmentStatus(attemptInfo);
+        }
       }
     }
   }

@@ -97,8 +97,7 @@ export class ContentPlayerHandler {
             this.isPlayerLaunched = true;
 
             if (data?.metadata?.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
-                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment?.maxAttempts === undefined ? 0
-                : maxAttemptAssessment.maxAttempts;
+                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment?.maxAttempts;
                 data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment?.currentAttempt === undefined ? 0
                 : maxAttemptAssessment.currentAttempt;
             }

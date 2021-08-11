@@ -72,6 +72,7 @@ import { EnrollmentDetailsComponent } from '../components/enrollment-details/enr
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
+import { ActivityData } from '../my-groups/group.interface';
 
 declare const cordova;
 
@@ -243,6 +244,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
   isMinor: boolean;
+  activityData: ActivityData;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -293,6 +295,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
+      if(extrasState.activityData){
+        this.activityData = extrasState.activityData
+      }
     }
   }
 
@@ -2335,4 +2340,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     }, 1000 * 60);
   }
+
+  navigateToDashboard(){
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
+    {
+      state: {
+        hierarchyData: this.courseHeirarchy,
+        activity: this.activityData.activity,
+        group: this.activityData.group,
+        loggedinUser: this.userId
+      }
+    });
+  }
+
 }
