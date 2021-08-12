@@ -73,8 +73,16 @@
         <hr>
       </div>
       <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
-        <sb-banner-card-hlist [bannerList]="section?.data" (cardClick)="navigateToSpecificLocation($event, section)"></sb-banner-card-hlist>
-      </ng-container>
+        <sb-banner-card-hlist [bannerList]="primaryBanner" (cardClick)="navigateToSpecificLocation($event, section)"></sb-banner-card-hlist>
+        <div class="banner-pills">
+          <sb-pills-grid *ngIf="secondaryBanner?.length" [title]="text" [pillSize]="'small'" [pillsViewType]="'scroll'"
+                (select)="navigateToSpecificLocation($event)">
+                <sb-pill-item *ngFor="let pillData of secondaryBanner" [name]="pillData?.ui?.text | translateJson | titlecase"
+                  [icon]="pillData?.ui?.icon" [value]="pillData"
+                  [theme]="pillData?.ui?.theme"></sb-pill-item>
+        </sb-pills-grid>
+        </div>
+      </ng-container> 
 
       <!-- Pills -->
       <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-pills-grid'">
