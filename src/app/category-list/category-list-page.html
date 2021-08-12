@@ -7,7 +7,7 @@
         </div>
 
         <!-- filter from discover search page-->
-        <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
+        <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="primaryFacetFiltersFormGroup">
             <ion-grid class="filter-container">
                 <ion-row>
                     <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
@@ -43,11 +43,18 @@
     </div>
 
     <div class="p-8 sticky-header-pills" *ngIf="!showSheenAnimation">
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
+        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate && formField?.showNavigationPill" [pillShape]="'default'"
                        [pillsViewType]="'scroll'"
                        [pillBorder]="PillBorder.SEMI_ROUND">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
+        </sb-pills-grid>
+
+        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.filterPillBy && (initialFacetFilters && initialFacetFilters[formField?.filterPillBy])" [pillShape]="'default'"
+                       [pillsViewType]="'scroll'"
+                       [pillBorder]="PillBorder.SEMI_ROUND">
+            <sb-pill-item (click)="pillFilterHandler(pill)"
+                          *ngFor="let pill of ((initialFacetFilters && initialFacetFilters[formField?.filterPillBy]) || [])" [name]="pill?.name | titlecase"></sb-pill-item>
         </sb-pills-grid>
     </div>
 
