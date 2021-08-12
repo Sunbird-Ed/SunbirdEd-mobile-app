@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, Input} from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { AppGlobalService, CommonUtilService, PageId } from '@app/services';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
@@ -15,7 +15,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
   styleUrls: ['./sb-profile-name-confirmation-popup.component.scss'],
 })
 export class ProfileNameConfirmationPopoverComponent {
-
+  @Input() content;
   appName;
   profile;
   doNotShowAgain = false;

@@ -1651,7 +1651,11 @@ html[data-theme="JOYFUL"]{
       color: map-get($colors, primary) !important;
       background-color: map-get($colors, light_gray) !important;
     }
-    .df-btn-close{
+    .df-back-btn{
+      color: map-get($colors, primary) !important;
+      background-color: map-get($colors, light_gray) !important;
+    }
+    .df-close-btn{
       color: map-get($colors, black) !important;
       background: var(--app-pink) !important;
       padding: 0.5rem 1rem !important;
