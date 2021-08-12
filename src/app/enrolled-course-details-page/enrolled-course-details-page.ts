@@ -1634,7 +1634,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const ongoingBatches = [];
     if (this.batches.length === 1) {
-      this.enrollIntoBatch(this.batches[0]);
+      this.enrollIntoBatch(this.batches[0], this.course);
     } else {
       forEach(this.batches, (batch, key) => {
         if (batch.status === 1) {
@@ -1877,7 +1877,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  async enrollIntoBatch(item: Batch) {
+  async enrollIntoBatch(item: Batch, course?) {
     if (this.isGuestUser) {
       this.promptToLogin(item);
     } else {
@@ -1904,7 +1904,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, course).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
@@ -2139,7 +2139,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
     } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
       await loader.dismiss();
-      await this.consentService.showConsentPopup(this.courseCardData);
+      await this.consentService.showConsentPopup(this.courseCardData, undefined, this.course);
       this.showShareData = false;
       this.checkDataSharingStatus();
     }
@@ -2166,7 +2166,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             if (!this.isConsentPopUp) {
               this.isConsentPopUp = true;
               this.localCourseService.setConsentPopupVisibility(true);
-              await this.consentService.showConsentPopup(this.courseCardData);
+              await this.consentService.showConsentPopup(this.courseCardData, undefined, this.course);
               await this.checkDataSharingStatus();
             }
           } else if (e.code === 'NETWORK_ERROR') {
