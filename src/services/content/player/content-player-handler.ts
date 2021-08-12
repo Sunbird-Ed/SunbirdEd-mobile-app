@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, RouterLinks } from '@app/app/app.constant';
+import {ContentFilterConfig, GenericAppConfig, RouterLinks} from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
@@ -11,6 +11,9 @@ import { ContentUtil } from '@app/util/content-util';
 import { File } from '@ionic-native/file/ngx';
 import { Content, CorrelationData, CourseService, InteractType, PlayerService } from 'sunbird-sdk';
 import { ContentInfo } from '../content-info';
+import {UtilityService} from '@app/services';
+
+declare const cordova;
 
 @Injectable({
     providedIn: 'root'
@@ -26,15 +29,24 @@ export class ContentPlayerHandler {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private router: Router,
         private commonUtilService: CommonUtilService,
-        private appHeaderService: AppHeaderService
+        private appHeaderService: AppHeaderService,
+        private utilityService: UtilityService
     ) { }
 
     /**
      * Launches Content-Player with given configuration
      */
-    public launchContentPlayer(
+    public async launchContentPlayer(
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
-        navigateBackToContentDetails?: boolean , isChildContent?: boolean, maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }) {
+        navigateBackToContentDetails?: boolean , isChildContent?: boolean , maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }) {
+        const maxCompatibilityLevel = await this.utilityService.getBuildConfigValue(GenericAppConfig.MAX_COMPATIBILITY_LEVEL);
+        if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
+            cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                () => { },
+                () => { }
+            );
+            return;
+        }
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -79,7 +91,7 @@ export class ContentPlayerHandler {
             this.lastPlayedContentId = content.identifier;
             this.isPlayerLaunched = true;
 
-            if (data.metadata.mimeType === 'application/vnd.sunbird.questionset') {
+            if (data.metadata.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
                 data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment.maxAttempts == undefined ? 0 : maxAttemptAssessment.maxAttempts;
                 data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment.currentAttempt == undefined ? 0 : maxAttemptAssessment.currentAttempt;
             }

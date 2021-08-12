@@ -67,7 +67,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     private event: Events,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
-    private platform: Platform,
+    public platform: Platform,
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
@@ -244,7 +244,6 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  // TODO Remove getCurrentUser as setCurrentProfile is returning uid
   setProfile(profileRequest: Profile) {
     this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Consent, ProfileService } from 'sunbird-sdk';
 import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
 import { PopoverController } from '@ionic/angular';
-import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { ConsentStatus, UserDeclarationOperation } from '@project-sunbird/client-services/models';
 import { CommonUtilService } from './common-util.service';
 
 @Injectable()
@@ -54,8 +54,8 @@ export class ConsentService {
             userId: isOrgConsent ? userDetails.uid : userDetails.userId,
             consumerId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.channel,
             objectId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId :
-             (userDetails.courseId ? userDetails.courseId : userDetails.batch.courseId),
-             objectType: isOrgConsent ? 'Organisation' : undefined
+                (userDetails.courseId ? userDetails.courseId : userDetails.batch.courseId),
+            objectType: isOrgConsent ? 'Organisation' : undefined
         };
         await this.profileService.getConsent(request).toPromise()
             .then((data) => {
@@ -67,5 +67,34 @@ export class ConsentService {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
                 }
             });
+        if (isOrgConsent) {
+            this.updateProfileDeclaration(userDetails);
+        }
+    }
+
+    private async updateProfileDeclaration(userDetails) {
+        let id = '';
+        if (userDetails.serverProfile.externalIds && userDetails.serverProfile.externalIds.length) {
+            const externalId = userDetails.serverProfile.externalIds.
+                find(element => element.provider === userDetails.serverProfile.channel);
+            id = externalId && externalId.id;
+        }
+        const declarations = [
+            {
+                operation: UserDeclarationOperation.ADD,
+                userId: userDetails.uid,
+                persona: '',
+                orgId: userDetails.serverProfile.rootOrg.rootOrgId,
+                info: {
+                    'declared-ext-id': id,
+                    'declared-phone': '',
+                    'declared-email': ''
+                }
+            }
+        ];
+        try {
+            await this.profileService.updateServerProfileDeclarations({ declarations }).toPromise();
+        } catch (e) {
+        }
     }
 }

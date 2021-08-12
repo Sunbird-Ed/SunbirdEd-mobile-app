@@ -1,5 +1,5 @@
 import { ContentPlayerHandler } from '../../../services/content/player/content-player-handler';
-import { TelemetryGeneratorService, CommonUtilService, AppHeaderService } from '../../../services';
+import {TelemetryGeneratorService, CommonUtilService, AppHeaderService, UtilityService} from '../../../services';
 import { PlayerService, CourseService } from 'sunbird-sdk';
 import { File } from '@ionic-native/file/ngx';
 import { CanvasPlayerService } from '../../canvas-player.service';
@@ -40,6 +40,7 @@ describe('ContentPlayerHandler', () => {
     } as any;
 
     const mockAppHeaderService: Partial<AppHeaderService> = {};
+    const mockUtilityService: Partial<UtilityService> = {};
 
     beforeAll(() => {
         contentPlayerHandler = new ContentPlayerHandler(
@@ -50,7 +51,8 @@ describe('ContentPlayerHandler', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockRouter as Router,
             mockCommonUtilService as CommonUtilService,
-            mockAppHeaderService as AppHeaderService
+            mockAppHeaderService as AppHeaderService,
+            mockUtilityService as UtilityService
         );
     });
 
@@ -81,34 +83,44 @@ describe('ContentPlayerHandler', () => {
     describe('launchContentPlayer()', () => {
         it('should navigate to PlayerPage to launch Content  if isStreaming false', () => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('4'));
             // act
-            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, true);
-            // assert
-            expect(mockRouter.navigate).toHaveBeenCalled();
+            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, true)
+                .then(() => {
+                    // assert
+                    expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
+                        { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: true } });
+                });
         });
 
         it('should disbale the user switcher if content is being played from course', () => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
+
             // act
-            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse , 
-                correlationList: [{id: '123456789', type: 'API' }]} as ContentInfo, true);
+            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse ,
+                correlationList: [{id: '123456789', type: 'API' }]} as ContentInfo, true).then(() => {
+                const navigateMock = jest.spyOn(mockRouter, 'navigate');
+                expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['enableUserSwitcher']).toEqual(false);
+                expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['showUser']).toEqual(false);
+            });
             // assert
-            const navigateMock = jest.spyOn(mockRouter, 'navigate');
-            expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['enableUserSwitcher']).toEqual(false);
-            expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['showUser']).toEqual(false);
         });
 
         it('should enable the user switcher if content is not being played from course', () => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
             // act
-            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, false);
-            // assert
-            const navigateMock = jest.spyOn(mockRouter, 'navigate');
-            expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['enableUserSwitcher']).toEqual(true);
+            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, false).then(() => {
+                // assert
+                const navigateMock = jest.spyOn(mockRouter, 'navigate');
+                expect(navigateMock.mock.calls[0][1]['state']['config']['config']['overlay']['enableUserSwitcher']).toEqual(true);
+            });
         });
 
         it('should launch the content player if is Streaming false', (done) => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('4'));
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, false, true, { course: mockCourse } as any, false);
             // assert
@@ -121,6 +133,8 @@ describe('ContentPlayerHandler', () => {
 
         it('should not launch the content player if is Streaming false and xmlToJSon() method fails', (done) => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
+
             mockCanvasPlayerService.xmlToJSon = jest.fn(() => Promise.reject());
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, false, true, { course: mockCourse } as any, false);
@@ -134,6 +148,7 @@ describe('ContentPlayerHandler', () => {
 
         it('should launch the content player if is Streaming false and index.ecml is not available', (done) => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
             mockFile.checkFile = jest.fn(() => Promise.reject());
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, false, true, { course: mockCourse } as any, false);
@@ -148,6 +163,7 @@ describe('ContentPlayerHandler', () => {
         it('should not launch the content player if is Streaming false and index.ecml is not available and readJSON() fails', (done) => {
             // arrange
             mockFile.checkFile = jest.fn(() => Promise.reject());
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
             mockCanvasPlayerService.readJSON = jest.fn(() => Promise.reject());
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, false, true, { course: mockCourse } as any, false);
@@ -161,6 +177,7 @@ describe('ContentPlayerHandler', () => {
 
         it('should launch the content player if mimeType is not ecml', (done) => {
             // arrange
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
             mockPlayerConfigData.metadata.mimeType = 'x-youtube';
             mockPlayerService.getPlayerConfig = jest.fn(() => of(mockPlayerConfigData));
             // act

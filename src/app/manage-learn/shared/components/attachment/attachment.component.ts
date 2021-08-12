@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { StreamingMedia, StreamingVideoOptions } from '@ionic-native/streaming-media/ngx';
 import { FileExtension } from '../../fileExtension';
@@ -8,7 +8,7 @@ import { FileExtension } from '../../fileExtension';
   templateUrl: './attachment.component.html',
   styleUrls: ['./attachment.component.scss'],
 })
-export class AttachmentComponent implements OnInit {
+export class AttachmentComponent  {
   @Input() url: string;
   @Input() extension: string;
   imageFormats: string[] = FileExtension.imageFormats;
@@ -21,7 +21,6 @@ export class AttachmentComponent implements OnInit {
   constructor(private photoViewer: PhotoViewer, private streamingMedia: StreamingMedia) {
     console.log('Hello AttachmentsComponent Component');
   }
-  ngOnInit(): void {}
 
   playVideo(link) {
     let options: StreamingVideoOptions = {
@@ -66,7 +65,6 @@ export class AttachmentComponent implements OnInit {
     //   'location=no,toolbar=no,clearcache=yes'
     // );
     // browser.show();
-    // TODO:check working
     // (window as any).cordova.InAppBrowser.open(
     //   'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
     //   '',

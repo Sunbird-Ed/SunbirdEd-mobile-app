@@ -9,6 +9,7 @@ import { LoaderService } from './loader/loader.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { ToastService } from './toast/toast.service';
 import { UtilsService } from './utils.service';
+import cloneDeep from 'lodash/cloneDeep';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class EvidenceService {
   entityDetails: any;
   evidenceIndex: any;
   schoolId: any;
+  tempevidenceSections: any;
   constructor(
     private actionSheet: ActionSheetController,
     private localStorage: LocalStorageService,
@@ -102,7 +104,6 @@ export class EvidenceService {
             },
           };
           if (selectedECM.canBeNotAllowed) {
-            // action.data.buttons.splice(action.data.buttons.length - 1, 0, notAvailable);TODO:need to verify
             action.buttons.splice(action.buttons.length - 1, 0, notAvailable);
           }
           action.present();
@@ -196,12 +197,15 @@ export class EvidenceService {
       notApplicable: true,
     };
 
-    const currentEvidence = selectedECM;
+    // const currentEvidence = selectedECM;
+    const currentEvidence = cloneDeep(selectedECM);
     evidence.id = currentEvidence._id;
     evidence.externalId = currentEvidence.externalId;
     evidence.startTime = Date.now();
     evidence.endTime = Date.now();
-    for (const section of selectedECM.sections) {
+    this.tempevidenceSections = currentEvidence.sections;
+    this.tempevidenceSections = this.pullOutPageQuestion();
+    for (const section of this.tempevidenceSections) {
       for (const question of section.questions) {
         let obj = {
           qid: question._id,
@@ -258,5 +262,25 @@ export class EvidenceService {
       value.push(eachInstance);
     }
     return value;
+  }
+
+  pullOutPageQuestion() {
+    let sections = this.tempevidenceSections;
+    sections.forEach((section, sectionIndex) => {
+      let questionsArray = [];
+      section.questions.forEach((question) => {
+        if (question.responseType === 'pageQuestions') {
+          const parentquestionGpsLocation = question.gpsLocation;
+          question.pageQuestions.forEach((pageQuestion) => {
+            pageQuestion.gpsLocation = parentquestionGpsLocation;
+            questionsArray.push(pageQuestion);
+          });
+        } else {
+          questionsArray.push(question);
+        }
+      });
+      this.tempevidenceSections[sectionIndex].questions = questionsArray;
+    });
+    return this.tempevidenceSections;
   }
 }

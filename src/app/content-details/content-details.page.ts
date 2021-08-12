@@ -179,7 +179,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   maxAttemptAssessment: any;
   isCompatibleWithVendorApps = false;
   appLists: any;
-
+  isIOS = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -252,9 +252,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.checkLimitedContentSharingFlag(extras.content);
       this.onboarding = extras.onboarding || this.onboarding;
     }
-    this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
-      map((requests) => !!requests.find((request) => request.identifier === this.identifier))
-    );
+    this.isIOS = (this.platform.is('ios'))
+      this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
+        map((requests) => !!requests.find((request) => request.identifier === this.identifier))
+      );
+
   }
 
   async ngOnInit() {
@@ -523,7 +525,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isChildContent = true;
     }
     if (this.content.contentData.streamingUrl &&
-      !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+      (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
     if (this.content.contentData.attributions && this.content.contentData.attributions.length) {
@@ -810,7 +812,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
-              if (eventPayload.streamingUrl && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+              if (eventPayload.streamingUrl && (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
               } else {
@@ -1096,7 +1098,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Play content
    */
   private playContent(isStreaming: boolean) {
-    if (this.apiLevel < 21 && this.appAvailability === 'false') {
+    if (this.apiLevel < 21 && this.appAvailability === 'false' && !this.isIOS) {
       this.showPopupDialog();
     } else {
       const hierachyInfo = this.childContentHandler.contentHierarchyInfo || this.content.hierarchyInfo;

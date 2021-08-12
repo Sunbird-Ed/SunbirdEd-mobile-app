@@ -16,7 +16,6 @@ import { CoreModule } from '../core/core.module';
     CommonModule,
     CoreModule,
     ObservationRoutingModule,
-    // HttpClientModule, // TODO:Tremove after api integration
     TranslateModule.forChild(),
     SharedModule,
     IonicModule,
