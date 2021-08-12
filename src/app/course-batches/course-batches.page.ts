@@ -144,7 +144,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, this.course).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
