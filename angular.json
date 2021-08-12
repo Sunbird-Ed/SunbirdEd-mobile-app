@@ -78,6 +78,7 @@
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.css",
+              "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",
               {
                 "input": "src/global.scss"
               }

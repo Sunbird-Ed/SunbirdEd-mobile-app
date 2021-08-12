@@ -1,5 +1,5 @@
-<ion-icon src="assets/imgs/ic_chat.svg" class="card-icons" *ngIf="fetchForumIdReq.type==='group' && forumDetails" (click)="openDiscussionForum()"></ion-icon>
-<button (click)="openDiscussionForum()" *ngIf="(fetchForumIdReq.type==='course' || fetchForumIdReq.type==='batch') && forumDetails"
+<ion-icon src="assets/imgs/ic_chat.svg" class="card-icons" *ngIf="fetchForumIdReq.type==='group' && isForumEnabled" (click)="openDiscussionForum()"></ion-icon>
+<button (click)="openDiscussionForum()" *ngIf="(fetchForumIdReq.type==='course' || fetchForumIdReq.type==='batch') && isForumEnabled"
         class="card-button" slot="icon-only">
     <ion-icon src="assets/imgs/ic_chat.svg" class="card-icons"></ion-icon>
     <p class="card-text">{{'FORUM' | translate}}</p>
