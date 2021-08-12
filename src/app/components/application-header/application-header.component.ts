@@ -252,8 +252,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitSideMenuItemEvent($event, menuItem) {
-    this.toggleMenu();
-    this.sideMenuItemEvent.emit({ menuItem });
+    // this.toggleMenu();
+    this.menuCtrl.close().then(() => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    }).catch((e) => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    })
   }
 
   ngOnDestroy() {
