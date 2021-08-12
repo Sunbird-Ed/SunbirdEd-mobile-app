@@ -55,6 +55,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             }[];
             groupBy?: keyof ContentData;
         };
+        showNavigationPill?: boolean;
+        filterPillBy?: string;
     };
     public imageSrcMap = new Map();
     defaultImg: string;
@@ -128,10 +130,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 ]);
             }
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
-            this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
             this.categoryDescription = extrasState.description || '';
-            if (this.fromLibrary) {
+            if (this.primaryFacetFilters) {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();
                     this.subscriptions.push(
@@ -428,6 +429,16 @@ export class CategoryListPage implements OnInit, OnDestroy {
             }
         });
         await this.fetchAndSortData(tempSearchCriteria, false);
+    }
+
+    async pillFilterHandler(pill){
+        const appliedFilterCriteria: ContentSearchCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+        const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === this.formField.filterPillBy);
+        if (facetFilter) {
+            pill.apply = true;
+            facetFilter.values = [pill];
+        }
+        await this.applyFilter(appliedFilterCriteria);
     }
 
     ngOnDestroy() {

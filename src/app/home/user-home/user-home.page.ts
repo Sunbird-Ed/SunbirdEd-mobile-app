@@ -278,7 +278,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     refresher ? refresher.target.complete() : null;
   }
 
-  handlePillSelect(event, section, isFromPopover: boolean) {
+  handlePillSelect(event, section, isFromPopover?: boolean) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -294,6 +294,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       undefined, undefined, undefined,
       isFromPopover ? corRelationList : undefined
     );
+    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+      const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
+      event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    }
     const params = {
       code: section.code,
       formField: event.data[0].value,
@@ -671,7 +675,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.getUserProfileDetails();
   }
 
-  navigateToSpecificLocation(event) {
+  navigateToSpecificLocation(event, section) {
     const corRelationList: Array<CorrelationData> = [];
     corRelationList.push({ id: event.data.code || '', type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -693,16 +697,17 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             }
             break;
       case 'banner_search':
-          const extras = {
-            state: {
-              source: PageId.HOME,
-              corRelation: corRelationList,
-              preAppliedFilter: event.data.action.params.filter,
-              hideSearchOption: true,
-              searchWithBackButton: true
-            }
-          };
-          this.router.navigate(['search'], extras);
+          // const extras = {
+          //   state: {
+          //     source: PageId.HOME,
+          //     corRelation: corRelationList,
+          //     preAppliedFilter: event.data.action.params.filter,
+          //     hideSearchOption: true,
+          //     searchWithBackButton: true
+          //   }
+          // };
+          // this.router.navigate(['search'], extras);
+          this.handlePillSelect({data: [{value: event.data}]}, section);
           break;
       case 'banner_content':
         this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier,
