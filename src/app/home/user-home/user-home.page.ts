@@ -109,6 +109,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   mediumList = [];
   gradeLevelList = [];
   subjectList = [];
+  primaryBanner = [];
+  secondaryBanner = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -753,7 +755,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           undefined,
           corRelationList
          );
-        this.displaySections[index]['data'] = this.bannerSegment;
+         this.displaySections[index]['data'] = this.bannerSegment
+         this.bannerSegment.forEach((banner) => {
+           if (banner.type === 'secondary') {
+             this.secondaryBanner.push(banner);
+           } else {
+             this.primaryBanner.push(banner)
+           }
+         });
       }
     });
   }
