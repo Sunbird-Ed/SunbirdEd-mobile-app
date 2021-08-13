@@ -98,7 +98,7 @@ describe('SegmentationTagService ', () => {
             ];
             jest.spyOn(mockSegmentationService, 'getTags').mockReturnValue(of(JSON.stringify(tagsStored)));
             jest.spyOn(mockSegmentationService, 'getCommand').mockReturnValue(of(JSON.stringify(cmdStored)));
-            jest.spyOn(segmentationTagService, 'getSegmentCommand');
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{code: 'sample-code'}]));
             // act
             segmentationTagService.getPersistedSegmentaion();
             // assert
@@ -106,6 +106,7 @@ describe('SegmentationTagService ', () => {
                 expect(mockSegmentationService.getTags).toBeCalled();
                 expect(mockSegmentationService.getCommand).toBeCalled();
                 expect(mockNotificationSrc.setupLocalNotification).toBeCalled();
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
                 done();
             }, 100);
         });
