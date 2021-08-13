@@ -1758,6 +1758,10 @@ html[data-theme="JOYFUL"]{
     bottom: 0px !important;
     top: unset !important;
   }
+
+  .ios ion-segment {
+    background: inherit;
+  }
   // ************ iOS end ***************
 
 
