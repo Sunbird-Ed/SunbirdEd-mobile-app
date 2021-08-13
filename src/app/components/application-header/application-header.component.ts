@@ -95,7 +95,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLanguageValue();
       }
     });
-    this.events.subscribe('showOtherCategory', res => {
+    this.events.subscribe('onPreferenceChange:showReport', res => {
       this.showReports= res
     })
     this.getUnreadNotifications();

@@ -1490,6 +1490,7 @@
   "FRMELEMENTS_MSG_EXPIRED_ON": "Expired On",
   "FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS":"You must log in to access observations",
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION": "Only registered users can take observation ",
+  "BROWSE_BY_OTHER_CATEGORIES":"Browse by other categories",
 
   "CHANGE_PREFERENCE": "Change Preference",
   "HI": "Hi",

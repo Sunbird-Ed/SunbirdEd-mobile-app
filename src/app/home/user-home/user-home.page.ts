@@ -761,7 +761,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile.board[0].toLowerCase()
+      const board = this.profile.syllabus[0]
       let role = this.profile.profileType.toLowerCase()
       if (this.profile.serverProfile) {
         role = this.profile.serverProfile.profileUserType.type.toLowerCase()
@@ -771,13 +771,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       );
       this.otherCategories = otherCategories[board][role]
       if (this.otherCategories.length) {
-        this.events.publish('showOtherCategory',true)
+        this.homeDataAvailable=true
+        this.events.publish('onPreferenceChange:showReport',true)
       } else {
-        this.events.publish('showOtherCategory',false)
+        this.events.publish('onPreferenceChange:showReport',false)
       }
     } catch (error) {
       this.otherCategories = [],
-      this.events.publish('showOtherCategory',false)
+      this.events.publish('onPreferenceChange:showReport',false)
 
     }
   }
