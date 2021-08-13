@@ -113,6 +113,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   gradeLevelList = [];
   otherCategories=[];
   subjectList = [];
+  primaryBanner = [];
+  secondaryBanner = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -284,7 +286,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     refresher ? refresher.target.complete() : null;
   }
 
-  handlePillSelect(event, section, isFromPopover: boolean) {
+  handlePillSelect(event, section, isFromPopover?: boolean) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -300,6 +302,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       undefined, undefined, undefined,
       isFromPopover ? corRelationList : undefined
     );
+    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+      const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
+      event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    }
     const params = {
       code: section.code,
       formField: event.data[0].value,
@@ -677,9 +683,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.getUserProfileDetails();
   }
 
-  navigateToSpecificLocation(event) {
+  navigateToSpecificLocation(event, section) {
+    const banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: event.data.code || '', type: 'BannerType' });
+    corRelationList.push({ id: banner || '', type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_BANNER,
       '',
@@ -687,31 +694,32 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       PageId.HOME, undefined, undefined, undefined,
       corRelationList
      );
-    switch (event.data.code) {
+    switch (banner.code) {
       case 'banner_external_url':
-           this.commonUtilService.openLink(event.data.action.params.route);
+           this.commonUtilService.openLink(banner.action.params.route);
            break;
       case 'banner_internal_url':
-            if (this.guestUser && event.data.action.params.route === RouterLinks.PROFILE) {
+            if (this.guestUser && banner.action.params.route === RouterLinks.PROFILE) {
               this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
             } else {
-              this.router.navigate([event.data.action.params.route]);
+              this.router.navigate([banner.action.params.route]);
             }
             break;
       case 'banner_search':
-          const extras = {
-            state: {
-              source: PageId.HOME,
-              corRelation: corRelationList,
-              preAppliedFilter: event.data.action.params.filter,
-              hideSearchOption: true,
-              searchWithBackButton: true
-            }
-          };
-          this.router.navigate(['search'], extras);
+          // const extras = {
+          //   state: {
+          //     source: PageId.HOME,
+          //     corRelation: corRelationList,
+          //     preAppliedFilter: event.data.action.params.filter,
+          //     hideSearchOption: true,
+          //     searchWithBackButton: true
+          //   }
+          // };
+          // this.router.navigate(['search'], extras);
+          this.handlePillSelect({data: [{value: banner}]}, section);
           break;
       case 'banner_content':
-        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier,
+        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
           undefined, undefined, undefined, undefined, corRelationList);
         break;
     }
@@ -754,7 +762,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           undefined,
           corRelationList
          );
-        this.displaySections[index]['data'] = this.bannerSegment;
+         this.displaySections[index]['data'] = this.bannerSegment;
+         this.primaryBanner = [];
+         this.secondaryBanner = [];
+         this.bannerSegment.forEach((banner) => {
+           if (banner.type === 'secondary') {
+             this.secondaryBanner.push(banner);
+           } else {
+             this.primaryBanner.push(banner)
+           }
+         });
       }
     });
   }

@@ -77,5 +77,11 @@ export class FormConstants {
         type:"category",
         subType:"targetedCategory",
         action:"homeListing",
-    }
+    };
+    public static SEGMENTATION: FormRequest = {
+        type: 'config',
+        subType: 'segmentation_v2',
+        action: 'get',
+        component: 'app'
+    };
 }
