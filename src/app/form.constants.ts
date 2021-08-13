@@ -73,5 +73,9 @@ export class FormConstants {
         subType: 'project',
         action: 'createTask'
     };
-
+    public static ML_HOME_CATEGORIES: FormRequest = {
+        type:"category",
+        subType:"targetedCategory",
+        action:"homeListing",
+    }
 }

@@ -64,6 +64,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isUpdateAvailable = false;
   currentSelectedTabs: string;
   isDarkMode:boolean;
+  showReports: any;
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -94,6 +95,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLanguageValue();
       }
     });
+    this.events.subscribe('onPreferenceChange:showReport', res => {
+      this.showReports= res
+    })
     this.getUnreadNotifications();
   }
 
