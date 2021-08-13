@@ -1143,7 +1143,8 @@ describe('Profile.page', () => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalledWith(
                     {
-                        content: 'sample_content'
+                        content: 'sample_content',
+                        isCourseCompleted: false
                     }
                 );
                 done();
