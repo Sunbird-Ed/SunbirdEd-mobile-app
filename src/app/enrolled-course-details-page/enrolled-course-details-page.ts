@@ -243,6 +243,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
   isMinor: boolean;
+  isCourseCompleted = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -287,6 +288,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
+      this.isCourseCompleted = extrasState.isCourseCompleted;
       if (CsGroupAddableBloc.instance.initialised) {
         this.isFromGroupFlow = true;
       }
@@ -1374,7 +1376,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (!this.isAlreadyEnrolled) {
       this.getAllBatches();
     } else {
-      this.segmentType = 'modules';
+      if (!this.isCourseCompleted) {
+        this.segmentType = 'modules';
+      }
     }
 
     this.downloadIdentifiers = new Set();
