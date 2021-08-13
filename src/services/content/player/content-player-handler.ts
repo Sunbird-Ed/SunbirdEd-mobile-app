@@ -169,7 +169,7 @@ export class ContentPlayerHandler {
         let isStreaming: boolean;
         let shouldDownloadAndPlay: boolean;
         if (playingContent.contentData.streamingUrl && this.commonUtilService.networkInfo.isNetworkAvailable &&
-            !(playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) { // 1
+            (playingContent.mimeType !== 'application/vnd.ekstep.h5p-archive')) { // 1
             isStreaming = true;
             shouldDownloadAndPlay = false;
         } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && playingContent.isAvailableLocally) { // 2
