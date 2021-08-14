@@ -1762,6 +1762,13 @@ html[data-theme="JOYFUL"]{
   .ios ion-segment {
     background: inherit;
   }
+
+  .ios ion-split-pane {
+    position: absolute;
+    top: calc(constant(safe-area-inset-top)); //ios 11.2
+    top: calc(env(safe-area-inset-top)); //ios 11.1  
+  }
+
   // ************ iOS end ***************
 
 
