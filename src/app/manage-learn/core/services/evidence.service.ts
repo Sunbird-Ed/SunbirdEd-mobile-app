@@ -194,6 +194,7 @@ export class EvidenceService {
       startTime: 0,
       endTime: 0,
       notApplicable: true,
+      remarks:''
     };
 
     const currentEvidence = selectedECM;
@@ -201,6 +202,7 @@ export class EvidenceService {
     evidence.externalId = currentEvidence.externalId;
     evidence.startTime = Date.now();
     evidence.endTime = Date.now();
+    evidence.remarks = selectedECM.remarks;
     for (const section of selectedECM.sections) {
       for (const question of section.questions) {
         let obj = {

@@ -130,6 +130,29 @@
 
     </ng-container>
 
+      <!-- Ml tile other category start -->
+      <ng-container *ngIf="otherCategories?.length">
+        <div class="heading-label">
+          <span>{{ 'BROWSE_BY_OTHER_CATEGORIES' | translate }}</span>
+          <hr>
+        </div>
+        <sb-pills-grid 
+          [pillShape]="'image_overlap'"
+          [pillsViewType]="'scroll'"          
+          [pillTextElipsis]="'three_line'"
+          (select)="handleOtherCategories($event)"
+          >
+          <sb-pill-item 
+           *ngFor="let pillData of otherCategories; let index=index"
+              [name]="pillData?.name | titlecase"
+              [icon]="pillData?.icon?.app"
+              [value]="pillData"
+              [theme]="({ component: 'sb-pill-item', input: 'theme' })"
+          >
+          </sb-pill-item>
+        </sb-pills-grid>
+      </ng-container>
+      <!-- Ml tile other category end -->
   </div>
 
   <div *ngIf="!homeDataAvailable" class="p-16 pt-32">

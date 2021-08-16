@@ -9,7 +9,6 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Router } from '@angular/router';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
-
 @Component({
   selector: 'app-survey-home',
   templateUrl: './survey-home.component.html',
@@ -81,6 +80,7 @@ export class SurveyHomeComponent {
       (success) => {
         if (success.result && success.result.data) {
           this.count = success.result.count;
+          success.result.data.map(this.surveyProvider.createExpiryMsg.bind(this.surveyProvider))
           this.surveyList = [...this.surveyList, ...success.result.data];
           this.getSubmissionArr();
           this.loader.stopLoader();
@@ -92,6 +92,7 @@ export class SurveyHomeComponent {
       }
     );
   }
+
   //check if suvey detail is present in local storage
   getSubmissionArr(): void {
     this.localStorage
@@ -133,6 +134,12 @@ export class SurveyHomeComponent {
 
   onSurveyClick(survey) {
     if (!this.isReport) {
+
+    if (survey.status == 'expired') {
+      // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
+      this.surveyProvider.showMsg('surveyExpired');
+      return;
+    }
       
     // surveyId changed to _id
     survey.downloaded

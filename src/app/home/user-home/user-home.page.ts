@@ -67,6 +67,9 @@ import { FrameworkSelectionDelegateService } from './../../profile/framework-sel
 import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { FormConstants } from '@app/app/form.constants';
+import { SbPopoverComponent } from '../../components/popups';
+import { PopoverController } from '@ionic/angular'
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
@@ -109,6 +112,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   boardList = [];
   mediumList = [];
   gradeLevelList = [];
+  otherCategories=[];
   subjectList = [];
   primaryBanner = [];
   secondaryBanner = [];
@@ -134,7 +138,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
     private translate: TranslateService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
@@ -274,6 +279,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    this.getOtherMLCategories()
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = displayItems;
@@ -781,4 +787,70 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }
     });
   }
+
+  async getOtherMLCategories() {
+    try {
+      const board = this.profile.syllabus[0]
+      let role = this.profile.profileType.toLowerCase()
+      if (this.profile.serverProfile) {
+        role = this.profile.serverProfile.profileUserType.type.toLowerCase()
+      }
+      const otherCategories = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.ML_HOME_CATEGORIES
+      );
+      this.otherCategories = otherCategories[board][role]
+      if (this.otherCategories.length) {
+        this.homeDataAvailable=true
+        this.events.publish('onPreferenceChange:showReport',true)
+      } else {
+        this.events.publish('onPreferenceChange:showReport',false)
+      }
+    } catch (error) {
+      this.otherCategories = [],
+      this.events.publish('onPreferenceChange:showReport',false)
+
+    }
+  }
+
+  async handleOtherCategories(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    let selectedPill = event.data[0].value.name
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
+        metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color label-uppercase label-bold-font'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    if (this.guestUser) {
+      await confirm.present();
+      const { data } = await confirm.onDidDismiss();
+      if (data && data.canDelete) {
+        this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+      }
+      return
+    }
+    switch (selectedPill) {
+      case 'observation':
+      this.router.navigate([RouterLinks.OBSERVATION], {})
+        break;
+      default:
+        break;
+    }
+  }
+
+
 }
+
+
