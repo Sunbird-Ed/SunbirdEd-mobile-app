@@ -9,6 +9,7 @@ import { CommonUtilService } from '@app/services';
 export class ItemListCardComponent {
   @Input() title: any;
   @Input() subTitle: any;
+  @Input() case:any ={subTitle:'titleCase'}
   @Input() id: any;
   @Output() cardSelect = new EventEmitter();
   @Input() ellipsis:Boolean =false
