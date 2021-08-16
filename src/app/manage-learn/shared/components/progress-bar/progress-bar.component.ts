@@ -12,7 +12,6 @@ export class ProgressBarComponent {
   @Input()completed = 0;
   @Input() showTracker ;
 
-  constructor() { }
 
 
 }
