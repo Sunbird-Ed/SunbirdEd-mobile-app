@@ -933,7 +933,6 @@ export class ProfilePage implements OnInit {
       this.navService.navigateToTrackableCollection(
         {
           content,
-          isCourseCompleted: (training.status === 2) && (training.label === 'COMPLETED')
         }
       );
     } catch (err) {
