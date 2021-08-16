@@ -113,6 +113,11 @@
         width: 100%;
         bottom: 0;
     }
+    .ios-footer {
+        width: 100%;
+        bottom: 0;
+        position: fixed;  
+    }
 
     .heading {
         color: $blue;

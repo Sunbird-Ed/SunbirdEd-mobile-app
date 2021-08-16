@@ -1754,6 +1754,7 @@ html[data-theme="JOYFUL"]{
       background-position: bottom center;
     }
   }
+
   .sc-ion-popover-ios {
     bottom: 0px !important;
     top: unset !important;
@@ -1768,7 +1769,6 @@ html[data-theme="JOYFUL"]{
     top: calc(constant(safe-area-inset-top)); //ios 11.2
     top: calc(env(safe-area-inset-top)); //ios 11.1  
   }
-
   // ************ iOS end ***************
 
 

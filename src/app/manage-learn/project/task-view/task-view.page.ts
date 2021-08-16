@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, ViewChild, Inject } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import * as _ from "underscore";
 import { TranslateService } from "@ngx-translate/core";
@@ -7,11 +7,12 @@ import { Location } from "@angular/common";
 import { statuses } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
-import { AppHeaderService } from "@app/services";
+import { AppHeaderService, CommonUtilService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
-
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 var environment = {
   db: {
@@ -60,6 +61,9 @@ export class TaskViewPage {
     private networkService: NetworkService,
     private headerService: AppHeaderService,
     private popupService: GenericPopUpService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private navigateService: NavigationService,
+    private commonUtilService: CommonUtilService,
 
     // private openResourceSrvc: OpenResourcesService
   ) {
@@ -196,10 +200,23 @@ export class TaskViewPage {
   }
 
   openBodh(link) {
-    // TODO: add service
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResourceSrvc.openBodh(link)
-    //   : this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE", "danger");
+    if(this.commonUtilService.networkInfo.isNetworkAvailable){
+      const id = link.split('/').pop();
+      const req: ContentDetailRequest = {
+        contentId: id,
+        attachFeedback: false,
+        attachContentAccess: false,
+        emitUpdateIfAny: false
+      };
+  
+      this.contentService.getContentDetails(req).toPromise()
+        .then(async (data: Content) => {
+          this.navigateService.navigateToDetailPage(data, { content: data });
+        });
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+    }
+
   }
 
   delete(data) {
