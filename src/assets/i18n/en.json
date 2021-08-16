@@ -1484,6 +1484,14 @@
   "DOWNLOAD_FORM":"Do you want to download this form?",
   "FRMELEMENTS_MSG_FORM_DOWNLOADED":"Your form is downloaded successfully!",
   "FRMELEMENTS_MSG_FORM_DOWNLOADING":"Please wait while your form is getting downloaded",
+  "FRMELEMENTS_MSG_EXPIRE_IN_ONE_DAY": "Will expire in one day",
+  "FRMELEMENTS_MSG_EXPIRE_IN_TWO_DAY": "Will expire in two days",
+  "FRMELEMENTS_MSG_VALID_TILL": "Valid till",
+  "FRMELEMENTS_MSG_EXPIRED_ON": "Expired On",
+  "FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS":"You must log in to access observations",
+  "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION": "Only registered users can take observation ",
+  "BROWSE_BY_OTHER_CATEGORIES":"Browse by other categories",
+
   "CHANGE_PREFERENCE": "Change Preference",
   "HI": "Hi",
   "ACTIVITY_DASHBOARD": "Activity dashboard"

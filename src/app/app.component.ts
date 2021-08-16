@@ -923,6 +923,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         }
         break;
+      case 'MLREPORTS':
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
+        break;
     }
   }
 
