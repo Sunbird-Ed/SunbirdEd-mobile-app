@@ -1775,7 +1775,7 @@ html[data-theme="JOYFUL"]{
     top: calc(constant(safe-area-inset-top)); //ios 11.2
     top: calc(env(safe-area-inset-top)); //ios 11.1  
 
-    ion-content, ion-footer {
+    ion-content, ion-footer, ion-header {
       width: calc(100% + 10%);
     }
 
