@@ -28,6 +28,7 @@ import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
   ContentSearchCriteria,
+  ContentService,
   CorrelationData,
   Framework,
   FrameworkCategoryCode,
@@ -117,6 +118,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -710,8 +712,18 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           //   }
           // };
           // this.router.navigate(['search'], extras);
-          this.handlePillSelect({data: [{value: banner}]}, section);
-          break;
+        if (banner.action && banner.action.params && banner.action.params.filter) {
+          (banner['searchCriteria'] as ContentSearchCriteria) =
+            this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
+          if (section.dataSrc && section.dataSrc.mapping) {
+            const bannerMap = section.dataSrc.mapping.find(m => m.code === banner.code);
+            banner['filterPillBy'] = bannerMap && bannerMap.filterPillBy;
+            banner['aggregate'] = bannerMap && bannerMap.aggregate;
+            banner['facet'] = banner['facet'] || ''
+          }
+        }
+        this.handlePillSelect({data: [{value: banner}]}, section);
+        break;
       case 'banner_content':
         this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
           undefined, undefined, undefined, undefined, corRelationList);
