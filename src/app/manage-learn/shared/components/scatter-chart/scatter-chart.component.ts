@@ -14,7 +14,6 @@ export class ScatterChartComponent implements OnInit {
   runOutsideAngular = false;
   chartObj;
 
-  constructor() {}
 
   ngOnInit() {
     if (this.data && this.data.chart && this.data.chart.data) {

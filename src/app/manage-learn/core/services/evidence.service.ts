@@ -197,7 +197,7 @@ export class EvidenceService {
       notApplicable: true,
     };
 
-    // const currentEvidence = selectedECM;
+
     const currentEvidence = cloneDeep(selectedECM);
     evidence.id = currentEvidence._id;
     evidence.externalId = currentEvidence.externalId;
