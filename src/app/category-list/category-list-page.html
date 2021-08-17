@@ -50,11 +50,11 @@
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
         </sb-pills-grid>
 
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.filterPillBy && filterPillList" [pillShape]="'default'"
+        <sb-pills-grid class="filter-pills" *ngIf="sectionGroup?.sections && formField?.filterPillBy && filterPillList" [pillShape]="'default'"
                        [pillsViewType]="'scroll'"
                        [pillBorder]="PillBorder.SEMI_ROUND">
-            <sb-pill-item (click)="pillFilterHandler(pill)"
-                          *ngFor="let pill of (filterPillList || [])" [name]="pill?.name | titlecase"></sb-pill-item>
+            <sb-pill-item *ngFor="let pill of (filterPillList || [])" [name]="pill?.name | titlecase"
+                (click)="pillFilterHandler(pill)" [theme]="(pill?.name === selectedFilterPill?.name) && selectedPillTheme"></sb-pill-item>
         </sb-pills-grid>
     </div>
 

@@ -34,7 +34,7 @@ import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { PillBorder } from '@project-sunbird/common-consumption';
+import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '@app/util/object.util';
 
 
@@ -92,6 +92,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
     categoryDescription = '';
     PillBorder = PillBorder;
     filterPillList = [];
+    selectedFilterPill;
+    selectedPillTheme: PillsColorTheme = {
+        pillBgColor: getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary'),
+        pillTextColor: getComputedStyle(document.querySelector('html')).getPropertyValue('--app-white')
+    }
 
     private shouldGenerateImpressionTelemetry = true;
     private corRelationList = [];
@@ -244,9 +249,13 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
                 this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
-                if (this.filterPillList.length && this.filterPillList.length>1) {
-                    this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
-                    this.pillFilterHandler(this.filterPillList[0]);
+                if (this.filterPillList.length) {
+                    if (this.filterPillList.length === 1) {
+                        this.selectedFilterPill = this.filterPillList[0];
+                    } else {
+                        this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+                        this.pillFilterHandler(this.filterPillList[0]);
+                    }
                 }
             }
         }
@@ -450,6 +459,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (facetFilter && pill) {
             pill.apply = true;
             facetFilter.values = [pill];
+            this.selectedFilterPill = pill
         } else if(!pill){
             facetFilter.values = [];
         }

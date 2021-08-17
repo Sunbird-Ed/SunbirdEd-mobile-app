@@ -1920,6 +1920,12 @@ sb-library-card-v3 {
       color: var(--app-white) !important;
     }
   }
+  sb-pills-grid.filter-pills{
+    .sb-label-grid .item:hover{
+      background-color: var(--app-white) !important;
+      color: var(--app-primary) !important;
+    }
+  }
 }
 
 .sb-switch-new-experience-popup{
