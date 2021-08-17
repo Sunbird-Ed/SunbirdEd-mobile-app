@@ -1,4 +1,5 @@
-<ion-content overflow-scroll="true" class="ui-container main-container avoid-bottom-tabs-space">
+<ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space" [ngClass]="{'ui-container': !platform.is('ios')}">
+  <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
     <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
     <div class="profile-info padding-top-10 padding-bottom-10 ion-text-center">
