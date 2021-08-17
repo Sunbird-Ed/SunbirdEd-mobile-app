@@ -255,6 +255,9 @@
       padding-left: 10px;
     }
   }
+  .ios .item-label-stacked ion-select {
+    margin-top: 0px;
+  }
   ion-item.item-label-stacked {
     --border-width: 0;
     --highlight-background: transparent;
@@ -364,32 +367,3 @@
   background-color: map-get($colors, white);
   color: $blue !important;
 }
-
-// ************* iOS start*************
-.back-btn-container-ios{
-  height: 32px;
-  @include ltr() {
-    top: 50px;
-    left: 0;
-    position: relative;
-  }
-  @include rtl() {
-    top: 0;
-    right: 0;
-  }
-  flex-grow: 0;
-  flex-shrink: 0;
-  .top-back-button{
-    position: absolute;
-    width: 30px;
-    @include ltr() {
-      left: 16px;
-      transform: rotate(180deg);
-    }
-    @include rtl() {
-      right: 16px;
-      transform: rotate(0deg);
-    }
-  }
-}
-// ************* iOS end **************
