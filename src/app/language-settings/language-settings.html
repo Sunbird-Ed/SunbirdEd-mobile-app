@@ -1,5 +1,6 @@
-<ion-content [ngClass]="{ 'ui-content': platform.is('android'), 'ui-container-ios': platform.is('ios') }">
-  <div [ngClass]="{ 'ui-content': platform.is('android'), 'ui-content-ios': platform.is('ios') }">
+<ion-content [ngClass]="{ 'ui-container': !platform.is('ios') }">
+  <div class="ui-container" *ngIf="platform.is('ios')"></div>
+  <div class="ui-content">
     <div *ngIf="!isFromSettings" class="app-title ion-text-center">{{'APP_TITLE' | translate:{'%s': appName } }}</div>
     <div class="font-size-17" class="ion-text-center ion-padding ion-text-wrap" style="padding: 0">
       <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>
