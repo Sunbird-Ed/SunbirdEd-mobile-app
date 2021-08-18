@@ -17,7 +17,7 @@
           [title]="user.firstName"
           [identifier]="user.id"
           [initial]="user.firstName | initial"
-          [cardImg]="selectedUserIndex === i ? 'assets/imgs/dark_blue_check.svg' : ''"
+          [cardImg]="selectedUserIndex === i ? 'assets/imgs/dark_blue_check.svg' : platform.is('ios') ? 'random.png' : ''"
           [indexOfMember] = "i"
           [config]="sbCardConfig"
           (cardClick)="selectUser(user, i)">

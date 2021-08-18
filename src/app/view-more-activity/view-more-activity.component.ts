@@ -130,7 +130,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private platform: Platform,
+    public platform: Platform,
     private zone: NgZone,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
