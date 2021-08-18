@@ -1915,16 +1915,6 @@ sb-library-card-v3 {
         min-width: 5rem;
       }
     }
-    .sb-label-grid .item:hover{
-      background-color: var(--app-primary) !important;
-      color: var(--app-white) !important;
-    }
-  }
-  sb-pills-grid.filter-pills{
-    .sb-label-grid .item:hover{
-      background-color: var(--app-white) !important;
-      color: var(--app-black) !important;
-    }
   }
 }
 

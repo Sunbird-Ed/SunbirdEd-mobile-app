@@ -248,15 +248,18 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
-                this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
-                if (this.filterPillList.length) {
-                    if (this.filterPillList.length === 1) {
-                        this.selectedFilterPill = this.filterPillList[0];
-                    } else {
+                this.filterPillList = [];
+                setTimeout(() => {
+                    this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
+                    if (this.filterPillList.length) {
                         this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
-                        this.pillFilterHandler(this.filterPillList[0]);
+                        if (this.filterPillList.length === 1) {
+                            this.selectedFilterPill = this.filterPillList[0];
+                        } else {
+                            this.pillFilterHandler(this.filterPillList[0]);
+                        }
                     }
-                }
+                }, 0);
             }
         }
 
@@ -454,14 +457,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async pillFilterHandler(pill){
-        const appliedFilterCriteria: ContentSearchCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+        if(!pill){
+            return;
+        }
+        const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === this.formField.filterPillBy);
-        if (facetFilter && pill) {
+        if (facetFilter) {
             pill.apply = true;
             facetFilter.values = [pill];
             this.selectedFilterPill = pill
-        } else if(!pill){
-            facetFilter.values = [];
         }
         await this.applyFilter(appliedFilterCriteria, false);
     }
