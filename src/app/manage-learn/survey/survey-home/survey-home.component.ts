@@ -80,7 +80,9 @@ export class SurveyHomeComponent {
       (success) => {
         if (success.result && success.result.data) {
           this.count = success.result.count;
-          success.result.data.map(this.surveyProvider.createExpiryMsg.bind(this.surveyProvider))
+          if (!this.isReport) {
+            success.result.data.map(this.surveyProvider.createExpiryMsg.bind(this.surveyProvider))
+          }
           this.surveyList = [...this.surveyList, ...success.result.data];
           this.getSubmissionArr();
           this.loader.stopLoader();
