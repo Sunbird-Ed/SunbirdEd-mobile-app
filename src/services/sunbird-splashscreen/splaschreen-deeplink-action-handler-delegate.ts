@@ -840,7 +840,8 @@ private async upgradeAppPopover(requiredVersionCode) {
                 depth: 1,
                 isChildContent: true,
                 corRelation: this.getCorrelationList(payloadUrl, corRelationList),
-                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                isCourse: (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) ||
+                    (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE_UNIT.toLowerCase()),
                 isOnboardingSkipped
               });
               this.sbProgressLoader.hide({ id: content.identifier });
