@@ -13,7 +13,7 @@ import {
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ContentAggregatorHandler} from '../../services/content/content-aggregator-handler.service';
-import {FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
+import {ContentService, FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
 import {SunbirdQRScanner} from '@app/services';
 import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
@@ -58,6 +58,7 @@ describe('UserHomePage', () => {
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
     const mockPopoverController: Partial<PopoverController> = {};
+    const mockContentService: Partial<ContentService> = {}
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -65,6 +66,7 @@ describe('UserHomePage', () => {
             mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
             mockSharedPreferences as SharedPreferences,
+            mockContentService as ContentService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
             mockAppGlobalService as AppGlobalService,
