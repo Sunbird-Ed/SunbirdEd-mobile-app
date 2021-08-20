@@ -164,7 +164,7 @@ describe('LocationHandler', () => {
     });
 
     describe('getLocationList', () => {
-        it('should return locationList for school', (done) => {
+        it('should return locationList for school ', (done) => {
             // arrange
             const request = {
                 filters: {
