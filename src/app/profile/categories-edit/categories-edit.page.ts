@@ -79,6 +79,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   hasFilledLocation = false;
   public supportedProfileAttributes: { [key: string]: string } = {};
   userType: string;
+  isUpdatePreferences: boolean;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -157,6 +158,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     } else {
       this.showOnlyMandatoryFields = false;
     }
+    this.isUpdatePreferences = extrasState && extrasState.isUpdatePreferences ? extrasState.isUpdatePreferences : false;
     this.initializeForm();
   }
 
@@ -463,7 +465,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.events.publish('loggedInProfile:update', req.framework);
         const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         await this.refreshSegmentTags();
-        if (this.showOnlyMandatoryFields) {
+        if (this.showOnlyMandatoryFields || this.isUpdatePreferences) {
           const reqObj: ServerProfileDetailsRequest = {
             userId: this.profile.uid,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
@@ -473,21 +475,25 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             .then(updatedProfile => {
                this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then(async () => {
-                  initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation || isSSOUser) {
-                    if (!isSSOUser) {
-                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
-                    }
-                    this.router.navigate([RouterLinks.TABS]);
-                    this.events.publish('update_header');
-                    this.externalIdVerificationService.showExternalIdVerificationPopup();
+                  if (this.isUpdatePreferences) {
+                    this.location.back();
                   } else {
-                    const navigationExtras: NavigationExtras = {
-                      state: {
-                        isShowBackButton: false
+                    initTabs(this.container, LOGIN_TEACHER_TABS);
+                    if (this.hasFilledLocation || isSSOUser) {
+                      if (!isSSOUser) {
+                        this.appGlobalService.showYearOfBirthPopup(updatedProfile);
                       }
-                    };
-                    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                      this.router.navigate([RouterLinks.TABS]);
+                      this.events.publish('update_header');
+                      this.externalIdVerificationService.showExternalIdVerificationPopup();
+                    } else {
+                      const navigationExtras: NavigationExtras = {
+                        state: {
+                          isShowBackButton: false
+                        }
+                      };
+                      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                    }
                   }
                 });
             }).catch(() => {
