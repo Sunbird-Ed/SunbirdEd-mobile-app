@@ -205,7 +205,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   editProfileDetails() {
     if (!this.guestUser) {
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {state: {shouldUpdatePreference: true}});
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
