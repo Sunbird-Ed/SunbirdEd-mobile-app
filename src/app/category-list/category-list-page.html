@@ -42,20 +42,24 @@
         </form>
     </div>
 
-    <div class="p-8 sticky-header-pills" *ngIf="!showSheenAnimation">
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate && formField?.showNavigationPill" [pillShape]="'default'"
-                       [pillsViewType]="'scroll'"
-                       [pillBorder]="PillBorder.SEMI_ROUND">
-            <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
-                          *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
-        </sb-pills-grid>
+    <div class="p-8 sticky-header-pills">
+        <ng-container *ngIf="!showSheenAnimation">
+            <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate && formField?.showNavigationPill" [pillShape]="'default'"
+                           [pillsViewType]="'scroll'"
+                           [pillBorder]="PillBorder.SEMI_ROUND">
+                <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
+                              *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
+            </sb-pills-grid>
+        </ng-container>
 
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.filterPillBy && (initialFacetFilters && initialFacetFilters[formField?.filterPillBy])" [pillShape]="'default'"
-                       [pillsViewType]="'scroll'"
-                       [pillBorder]="PillBorder.SEMI_ROUND">
-            <sb-pill-item (click)="pillFilterHandler(pill)"
-                          *ngFor="let pill of ((initialFacetFilters && initialFacetFilters[formField?.filterPillBy]) || [])" [name]="pill?.name | titlecase"></sb-pill-item>
-        </sb-pills-grid>
+        <ng-container *ngIf="sectionGroup?.sections && formField?.filterPillBy && filterPillList && filterPillList.length">
+            <sb-pills-grid [pillShape]="'default'"
+                           [pillsViewType]="'scroll'"
+                           [pillBorder]="PillBorder.SEMI_ROUND">
+                <sb-pill-item *ngFor="let pill of (filterPillList || [])" [name]="pill?.name | titlecase"
+                    (click)="pillFilterHandler(pill)" [theme]="(pill?.name === selectedFilterPill?.name) && selectedPillTheme"></sb-pill-item>
+            </sb-pills-grid>
+        </ng-container>
     </div>
 
     <ion-list class="m-n" *ngIf="showSheenAnimation">

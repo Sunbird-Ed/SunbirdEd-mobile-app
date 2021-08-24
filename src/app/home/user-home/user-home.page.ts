@@ -686,7 +686,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   navigateToSpecificLocation(event, section) {
-    const banner = Array.isArray(event.data) ? event.data[0].value : event.data;
+    let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
     corRelationList.push({ id: banner || '', type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -723,9 +723,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
           if (section.dataSrc && section.dataSrc.mapping) {
             const bannerMap = section.dataSrc.mapping.find(m => m.code === banner.code);
-            banner['filterPillBy'] = bannerMap && bannerMap.filterPillBy;
-            banner['aggregate'] = bannerMap && bannerMap.aggregate;
-            banner['facet'] = banner['facet'] || ''
+            if(bannerMap){
+              banner = {...banner, ...bannerMap};
+            }
+            banner['facet'] = (banner.ui && banner.ui.text) || ''
           }
         }
         this.handlePillSelect({data: [{value: banner}]}, section);

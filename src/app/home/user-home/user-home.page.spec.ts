@@ -58,7 +58,7 @@ describe('UserHomePage', () => {
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
     const mockPopoverController: Partial<PopoverController> = {};
-    const mockContentService: Partial<ContentService> = {}
+    const mockContentService: Partial<ContentService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
