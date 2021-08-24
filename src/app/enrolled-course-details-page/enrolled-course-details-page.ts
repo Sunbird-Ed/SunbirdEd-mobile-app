@@ -397,7 +397,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
-    this.accessDiscussionComponent.fetchForumIds();
+    this.accessDiscussionComponent && this.accessDiscussionComponent.fetchForumIds();
   }
 
   private checkUserLoggedIn() {
@@ -898,8 +898,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.profileService.getServerProfilesDetails(req).toPromise()
       .then((serverProfile) => {
         if (serverProfile) {
-          this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
-          this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          if (this.batchDetails) {
+            (this.batchDetails.creatorDetails || (this.batchDetails.creatorDetails = {})).firstName = serverProfile.firstName ? serverProfile.firstName : '';
+            this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          }
         }
       });
   }
@@ -1285,7 +1287,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (this.nextContent && !this.nextContent) {
+      if (!this.nextContent) {
         this.initNextContent();
       }
       this.navigateToContentDetails(this.nextContent, 1);
@@ -2313,7 +2315,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
       this.createUserReq.username = (p.serverProfile && p.serverProfile['userName']) || p.handle;
-      this.isMinor = p.serverProfile.isMinor;
+      this.isMinor = p.serverProfile && p.serverProfile.isMinor;
     });
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
