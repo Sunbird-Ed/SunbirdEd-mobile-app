@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { QrScannerIOSComponent } from '@app/app/components/qr-scanner-ios/qr-scanner-ios.component';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { AppGlobalService, CommonUtilService, QRScannerResultHandler, TelemetryGeneratorService } from '@app/services/';
 import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import { ContainerService } from '@app/services/container.services';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Platform, ToastController } from '@ionic/angular';
+import { ModalController, Platform, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { CorrelationData, Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
@@ -39,6 +40,7 @@ export class SunbirdQRScanner {
   showButton = false;
   appName = '';
   private isScannerActive = false;
+  private qrModal: HTMLIonModalElement
   constructor(
     private translate: TranslateService,
     private platform: Platform,
@@ -50,7 +52,8 @@ export class SunbirdQRScanner {
     private commonUtilService: CommonUtilService,
     private appVersion: AppVersion,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private modalCtrl: ModalController
   ) {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
@@ -163,7 +166,7 @@ export class SunbirdQRScanner {
     if (!this.isScannerActive) {
       return;
     }
-    if (this.platform.is("ios")) this.toggleQRScanner("remove");
+    if (this.platform.is("ios") && this.qrModal) this.qrModal.dismiss();
     // to prevent back event propagating up to parent
     setTimeout(() => {
       (window as any).qrScanner.stopScanner();
@@ -191,7 +194,21 @@ private getProfileSettingConfig() {
       return;
     }
     this.isScannerActive = true;
-    if (this.platform.is("ios")) this.toggleQRScanner("add");
+    if (this.platform.is("ios")) {
+      this.qrModal = await this.modalCtrl.create({
+        component: QrScannerIOSComponent,
+        cssClass: 'qr-scanner-modal',
+        showBackdrop: false,
+        backdropDismiss: true,
+        mode: 'ios',
+        swipeToClose: false
+      })
+      await this.qrModal.present();
+      this.qrModal.onWillDismiss().finally(() => {
+        this.stopScanner();
+      });
+    }
+    
     return new Promise<string | undefined>((resolve, reject) => {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
@@ -260,13 +277,6 @@ private getProfileSettingConfig() {
           this.stopScanner();
         });
     });
-  }
-
-  private toggleQRScanner(opacity: "add" | "remove") {
-    const ionAppElement = window.document.querySelector('ion-app');
-    if (ionAppElement) {
-      ionAppElement.classList[opacity]('hide');
-    }
   }
 
 private generateImpressionTelemetry(source, dialCode?) {

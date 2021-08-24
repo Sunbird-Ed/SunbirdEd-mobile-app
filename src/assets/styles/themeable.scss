@@ -1781,5 +1781,13 @@ html[data-theme="JOYFUL"]{
 
   }
 
+  .ios .qr-scanner-modal {
+    background: transparent !important;
+
+    .modal-wrapper {
+      background: transparent !important;
+    }
+  }
+
   // ************ iOS end ***************
 }
