@@ -726,6 +726,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           this.objRollup,
           this.corRelationList
         );
+        if(this.platform.is('ios')) this.getContentState(true);
       })
       .catch(error => {
         console.log('Error Fetching Childrens', error);
