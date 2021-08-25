@@ -533,14 +533,27 @@ export class ProjectDetailPage implements OnDestroy {
   }
   openResources(task = null) {
     if (task && task.learningResources && task.learningResources.length === 1) {
-      let link = task.learningResources[0].link;
-      this.openBodh(link);
+      if(task.learningResources[0].id){
+        this.openBodh(task.learningResources[0].id);
+      }else{
+        let identifier = task.learningResources[0].link.split("/").pop();
+        this.openBodh(identifier);
+      }
       return;
     }
     if (task) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
+      if( this.project.learningResources && this.project.learningResources.length == 1){
+        if(this.project.learningResources[0].id){
+          this.openBodh(this.project.learningResources[0].id);
+        }else{
+          let identifier = this.project.learningResources[0].link.split("/").pop();
+          this.openBodh(identifier );
+        }
+      }else{
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
+      }
     }
   }
   //open openBodh
@@ -584,8 +597,6 @@ export class ProjectDetailPage implements OnDestroy {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
-          //TODO: add location service
-          // this.location.back();
         } else if (type == "taskDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
         }

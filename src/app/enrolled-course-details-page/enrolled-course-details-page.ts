@@ -42,7 +42,7 @@ import {
   PageId
 } from '../../services/telemetry-constants';
 import {
-  BatchConstants, ContentCard, EventTopics, MaxAttempt, MimeType,
+  BatchConstants, ContentCard, EventTopics, MimeType,
   PreferenceKey, ProfileConstants, RouterLinks, ShareItemType
 } from '../app.constant';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -1374,7 +1374,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (!this.isAlreadyEnrolled) {
       this.getAllBatches();
     } else {
-      this.segmentType = 'modules';
+      if (this.courseCardData.completionPercentage < 100) {
+        this.segmentType = 'modules';
+      }
     }
 
     this.downloadIdentifiers = new Set();

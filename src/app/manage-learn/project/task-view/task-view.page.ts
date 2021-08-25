@@ -196,10 +196,6 @@ export class TaskViewPage {
   }
 
   openBodh(link) {
-    // TODO: add service
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResourceSrvc.openBodh(link)
-    //   : this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE", "danger");
   }
 
   delete(data) {

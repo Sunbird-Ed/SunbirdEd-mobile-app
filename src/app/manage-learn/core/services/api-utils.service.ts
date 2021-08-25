@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { GenericAppConfig } from '@app/app/app.constant';
 import { CommonUtilService, UtilityService } from '@app/services';
 
 @Injectable({
