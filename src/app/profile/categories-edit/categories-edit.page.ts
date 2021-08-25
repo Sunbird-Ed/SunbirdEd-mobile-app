@@ -295,7 +295,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             this.mediumControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
           this.loader.dismiss();

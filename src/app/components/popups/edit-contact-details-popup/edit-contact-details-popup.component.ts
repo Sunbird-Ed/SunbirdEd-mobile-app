@@ -162,12 +162,8 @@ export class EditContactDetailsPopupComponent {
       });
   }
 
-  async cancel(event) {
-    if (event.sourceCapabilities) {
-      await this.popOverCtrl.dismiss({ isEdited: false });
-    } else {
-      this.keyboard.hide();
-    }
+  async cancel() {
+    await this.popOverCtrl.dismiss({ isEdited: false });
   }
 
   ionViewWillLeave() {

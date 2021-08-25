@@ -76,37 +76,6 @@ export class DeeplinkRedirectComponent implements OnInit {
     let pId = paramsArr[0];
     let sId = paramsArr[1];
     let eId = paramsArr[2];
-    // TODO:Implement
-    // this.programSrvc
-    //   .getProgramApi(true)
-    //   .then((data: any) => {
-    //     console.log(data);
-    //     const pIndex = data.findIndex((p) => p._id == pId);
-    //     let sIndex;
-
-    //     let page;
-    //     if (type == "observation") {
-    //       page = ProgramSolutionObservationDetailPage;
-    //       const solution = data[pIndex].solutions;
-    //       sIndex = solution.findIndex((s) => s.solutionId == sId);
-    //     } else {
-    //       page = ProgramSolutionEntityPage;
-    //       const solution = data[pIndex].solutions;
-    //       sIndex = solution.findIndex((s) => s._id == sId);
-    //     }
-    //     this.navCtrl
-    //       .push(page, {
-    //         programIndex: pIndex,
-    //         solutionIndex: sIndex,
-    //       })
-    //       .then(() => {
-    //         this.navCtrl.remove(1, 1);
-    //       });
-    //   })
-    //   .catch(() => {
-    //     this.utils.openToast(this.translateObject["message.canNotOpenLink"]);
-    //     this.navCtrl.popToRoot();
-    //   });
   }
 
   async redirectObservation(link) {
@@ -176,17 +145,6 @@ export class DeeplinkRedirectComponent implements OnInit {
         entityType: etype,
         solutionId: sId,
       };
-      // TODO:assessment not there yet
-      // setTimeout(() => {
-      //   this.navCtrl
-      //     .push(DashboardPage, payload)
-      //     .then(() => {
-      //       this.navCtrl.remove(1, 1);
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      // }, 1000);
     }
   }
 }

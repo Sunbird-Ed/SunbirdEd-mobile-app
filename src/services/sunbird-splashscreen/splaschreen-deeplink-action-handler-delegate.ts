@@ -148,7 +148,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     // const urlMatch = payloadUrl.match(urlRegex);
 
-    // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
     const deepLinkUrlConfig: { name: string, code: string, pattern: string, route: string, priority?: number, params?: {} }[] =
@@ -169,7 +168,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
 
     if (!matchedDeeplinkConfig) {
-      // TODO, toast message
       return;
     }
 
@@ -266,8 +264,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private generateUtmTelemetryEvent(identifier, dialCode, url) {
-    // TODO: Here identifier and dialcode both could be undefined.
-    // TODO: What needs to pass if deeplink in not having neither identifier nor dialcode.
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
     const utmUrl = url.slice(url.indexOf('?') + 1);
     const params: { [param: string]: string } = qs.parse(utmUrl);
@@ -518,9 +514,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       };
       const profile: Profile = await this.profileService.updateProfile(updateProfileRequest).toPromise();
 
-      // TODO: need to revisit below section
-      // initTabs(this.container, GUEST_TEACHER_TABS);
-      // this.events.publish('refresh:profile');
+
       this.appGlobalServices.guestUserProfile = profile;
 
       this.commonUtilService.handleToTopicBasedNotification();
@@ -589,7 +583,6 @@ private async upgradeAppPopover(requiredVersionCode) {
           };
       }
       this.setTabsRoot();
-      // TODO: Needs to check route exists or not before navigating
       this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
@@ -602,7 +595,6 @@ private async upgradeAppPopover(requiredVersionCode) {
     payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>
   ) {
     try {
-      // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
         content = await this.getContentData(identifier);

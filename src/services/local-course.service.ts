@@ -343,8 +343,8 @@ export class LocalCourseService {
   }
 
   fetchAssessmentStatus(contentStatusData, content) {
-    let maxAttempts = content.contentData ? content.contentData.maxAttempts : content.maxAttempts;
-    if (!maxAttempts && content.mimeType !== 'application/vnd.sunbird.questionset') {
+    let maxAttempts = (content && content.contentData) ? content.contentData.maxAttempts : content.maxAttempts;
+    if (!maxAttempts) {
       maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
     }
     const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number } = {

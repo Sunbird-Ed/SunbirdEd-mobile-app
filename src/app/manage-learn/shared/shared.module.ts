@@ -174,7 +174,7 @@ import { GenericPopUpService } from './generic.popup';
     Diagnostic,
     Media,
     CommonModule,
-    HttpClientModule, //TODO:remove after api integration
+    HttpClientModule, 
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,

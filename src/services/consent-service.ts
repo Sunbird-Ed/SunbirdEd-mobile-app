@@ -4,7 +4,6 @@ import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii
 import { PopoverController } from '@ionic/angular';
 import { ConsentStatus, UserDeclarationOperation } from '@project-sunbird/client-services/models';
 import { CommonUtilService } from './common-util.service';
-import { identifierName } from '@angular/compiler';
 
 @Injectable()
 export class ConsentService {

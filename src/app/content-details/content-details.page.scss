@@ -171,3 +171,11 @@
 .subtitle-color{
   color: map-get($colors, granite_gray);
 }
+
+// **** iOS
+.sb-back-transparent-ios {
+  width: 50px;
+  min-height: 100px;
+  background: transparent;
+}
+// **** iOS
