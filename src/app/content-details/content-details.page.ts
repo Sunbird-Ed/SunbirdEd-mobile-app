@@ -1372,20 +1372,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async getContentState() {
     return new Promise(async (resolve, reject) => {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
-      this.courseContext = JSON.parse(this.courseContext);
-      if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
-        const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
-        const progress = courseDetails.progress;
-        const contentStatusData = courseDetails.contentStatusData || {};
-        if (progress !== 100) {
-          this.appGlobalService.showCourseCompletePopup = true;
+      if (this.courseContext) {
+        this.courseContext = JSON.parse(this.courseContext);
+        if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
+          const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
+          const progress = courseDetails.progress;
+          const contentStatusData = courseDetails.contentStatusData || {};
+          if (progress !== 100) {
+            this.appGlobalService.showCourseCompletePopup = true;
+          }
+          if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
+            this.appGlobalService.showCourseCompletePopup = false;
+            this.showCourseCompletePopup = true;
+          }
+          this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
         }
-        if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
-          this.appGlobalService.showCourseCompletePopup = false;
-          this.showCourseCompletePopup = true;
-        }
-
-        this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
       }
       resolve();
     });
