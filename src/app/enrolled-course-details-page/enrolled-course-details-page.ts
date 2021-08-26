@@ -726,7 +726,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           this.objRollup,
           this.corRelationList
         );
-        if(this.platform.is('ios')) this.getContentState(true);
+        if (this.platform.is('ios')) this.getContentState(true);
       })
       .catch(error => {
         console.log('Error Fetching Childrens', error);
@@ -1764,6 +1764,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
           if (this.courseHeirarchy && this.courseHeirarchy.children) {
             this.getStatusOfCourseCompletion(this.courseHeirarchy.children);
+            if (this.platform.is('ios')) {
+              this.downloadSize = 0;
+              this.getContentsSize(this.courseHeirarchy.children);
+            }
           }
 
           if (this.resumeCourseFlag) {

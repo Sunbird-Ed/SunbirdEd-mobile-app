@@ -61,7 +61,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements();
+    this.fetchDisplayElements(true);
   }
 
   doRefresh(refresher) {
@@ -79,7 +79,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.hideRefresher.emit(false);
-    if (refresher) {
+    if (refresher && refresher.target) {
       refresher.target.complete();
     }
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
