@@ -108,7 +108,7 @@ export class LearningResourcesPage {
   }
   openBodh(id) {
     if (!this.networkFlag) {
-      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return
     }
     const req: ContentDetailRequest = {
