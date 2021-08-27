@@ -22,11 +22,12 @@ import {
     ContentData,
     ContentSearchCriteria,
     SearchType,
-    CorrelationData
+    CorrelationData,
+    Profile
 } from 'sunbird-sdk';
 import { AggregatorConfigField, ContentAggregation } from 'sunbird-sdk/content/handlers/content-aggregator';
 import { ContentUtil } from '@app/util/content-util';
-import { RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ScrollToService } from '@app/services/scroll-to.service';
 import { FormConstants } from '@app/app/form.constants';
@@ -106,6 +107,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private initialFilterCriteria: ContentSearchCriteria;
     private resentFilterCriteria: ContentSearchCriteria;
     private preFetchedFilterCriteria: ContentSearchCriteria;
+    profile: Profile;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -190,10 +192,17 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true) {
         this.showSheenAnimation = true;
+        this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
             .aggregate({
-                interceptSearchCriteria: () => (searchCriteria)
+                interceptSearchCriteria: () => (searchCriteria),
+                userPreferences: {
+                    board: this.profile.board,
+                    medium: this.profile.medium,
+                    gradeLevel: this.profile.grade,
+                    subject: this.profile.subject,
+                  }
             },
                 [], null, [{
                     dataSrc: {

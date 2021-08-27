@@ -107,14 +107,8 @@ export class LearningResourcesPage {
   }
   openBodh(resource) {
     if (!this.networkFlag) {
-      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
-    }
-    let identifier;
-    if (resource.id) {
-      identifier = resource.id;
-    } else {
-      identifier = resource.link.split('/').pop();
     }
     const req: ContentDetailRequest = {
       contentId: identifier,
