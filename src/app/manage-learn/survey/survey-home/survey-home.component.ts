@@ -50,7 +50,7 @@ export class SurveyHomeComponent {
   ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
-    
+    this.page=1
     this.surveyList = [];
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
 
@@ -181,6 +181,10 @@ export class SurveyHomeComponent {
     this.surveyProvider
       .getDetailsById(surveyId, solutionId)
       .then((res) => {
+        if (res.result == false) {
+          this.surveyProvider.showMsg('surveyExpired');
+          return;
+        }
         const survey = res.result;
         this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
         this.storeRedirect(survey);
