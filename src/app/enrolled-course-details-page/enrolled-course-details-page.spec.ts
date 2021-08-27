@@ -76,7 +76,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockCourseUtilService: Partial<CourseUtilService> = {
         showCredits: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
@@ -2754,7 +2756,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: jest.fn(() => Promise.resolve({}))
             } as any)));
             mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((x, callback) => callback())
+                subscribeWithPriority: jest.fn((x, callback) => callback()),
+                is: jest.fn()
             };
             enrolledCourseDetailsPage.isConsentPopUp = true;
             // act

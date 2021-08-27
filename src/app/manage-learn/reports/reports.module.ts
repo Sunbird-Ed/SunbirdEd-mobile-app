@@ -37,7 +37,7 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     CommonConsumptionModule,
-    HttpClientModule, // TODO:Tremove after api integration
+    HttpClientModule, 
     TranslateModule.forChild(),
     SharedModule,
     IonicModule,

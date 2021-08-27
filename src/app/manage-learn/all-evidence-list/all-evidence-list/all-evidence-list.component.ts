@@ -59,28 +59,6 @@ export class AllEvidenceListComponent implements OnInit {
 
   ionViewDidLoad() {
     this.selectedTab = 'evidence';
-    //TODO:move to ngOninit
-    // const submissionId = this.navParams.get('submissionId');
-    // const observationId = this.navParams.get('observationId');
-    // const entityId = this.navParams.get('entityId');
-    // const questionExternalId = this.navParams.get('questionExternalId');
-    // const entityType = this.navParams.get('entityType');
-    // const surveyEvidence = this.navParams.get('surveyEvidence'); // for survey evidence true/false
-    // const solutionId = this.navParams.get('solutionId');
-    // this.data = this.navParams.get('data');
-    // this.payload = {
-    //   submissionId: submissionId,
-    //   questionId: questionExternalId,
-    //   observationId: observationId,
-    //   entityId: entityId,
-    //   entityType: entityType,
-    //   solutionId: solutionId,
-    // };
-    // if (this.data) {
-    //   this.setAllEvidence();
-    // } else {
-    //   surveyEvidence ? this.getSurveyEvidence() : this.getAllEvidence();
-    // }
   }
 
   onTabChange(tabName) {

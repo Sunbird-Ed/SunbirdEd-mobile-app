@@ -75,8 +75,6 @@ const PROFILE_TAB = {
     index: 5
 };
 
-// todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
-
 export const GUEST_TEACHER_TABS = [
     LIBRARY_TAB,
     COURSE_TAB,
@@ -101,7 +99,6 @@ export const GUEST_STUDENT_TABS = [
     GUEST_PROFILE_TAB
 ];
 
-// todo name
 export const GUEST_HOME_SEARCH_TABS = [
     HOME_TAB,
     SEARCH_TAB,

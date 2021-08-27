@@ -217,6 +217,13 @@
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
+          <span class="sb-menu-icon">
+            <ion-icon name="log-in-outline"></ion-icon>
+          </span>
+          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
+        </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
@@ -371,8 +378,7 @@
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
-
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>

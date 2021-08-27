@@ -138,7 +138,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
   async ionViewWillEnter() {
     const playerInterval = setInterval(() => {
-      if (this.playerType && this.playerType === 'sunbird-old-player') {
+      if (this.playerType === 'sunbird-old-player') {
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
         this.statusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
@@ -361,7 +361,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    // Migration todo
     setTimeout(() => {
       this.closeIframe(content);
     }, 1000);

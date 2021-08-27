@@ -42,7 +42,7 @@ import {
   PageId
 } from '../../services/telemetry-constants';
 import {
-  BatchConstants, ContentCard, EventTopics, MaxAttempt, MimeType,
+  BatchConstants, ContentCard, EventTopics, MimeType,
   PreferenceKey, ProfileConstants, RouterLinks, ShareItemType
 } from '../app.constant';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -436,8 +436,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   subscribeTrackDownloads() {
-    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
-      share());
+      this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+        share());
   }
 
   checkCurrentUserType() {
@@ -931,6 +931,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -1071,9 +1072,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
-        // Cancel Clicked Telemetry
-        // todo
-        // this.generateCancelDownloadTelemetry(this.contentDetail);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -1282,10 +1280,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
     const doNotShow = await this.preferences.getBoolean(key).toPromise();
-    const profile = await this.profileService.getActiveSessionProfile({
-      requiredFields: ProfileConstants.REQUIRED_FIELDS
-    }).toPromise();
-
+    const optionReq = { requiredFields: ProfileConstants.REQUIRED_FIELDS };
+    const profile = await this.profileService.getActiveSessionProfile(optionReq).toPromise();
     if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
       this.startContent();
     } else {
@@ -1296,7 +1292,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (!this.nextContent) {
+      if (this.nextContent && !this.nextContent) {
         this.initNextContent();
       }
       this.navigateToContentDetails(this.nextContent, 1);
@@ -1382,11 +1378,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.showResumeBtn = false;
     }
 
-    // TODO: Need to check
     if (!this.isAlreadyEnrolled) {
       this.getAllBatches();
     } else {
-      this.segmentType = 'modules';
+      if (this.courseCardData.completionPercentage < 100) {
+        this.segmentType = 'modules';
+      }
     }
 
     this.downloadIdentifiers = new Set();

@@ -275,7 +275,10 @@
 		<div *ngIf="(isGuestUser &&!showSheenAnimation) || (!isGuestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
 				<app-relevant-content-card [contentData]="course"
-				[isAlreadyEnrolled]="isAlreadyEnrolled" [isCertifiedCourse]="isCertifiedCourse" [certificateDescription]="certificateDescription"></app-relevant-content-card>
+										   [isAlreadyEnrolled]="isAlreadyEnrolled"
+										   [isCertifiedCourse]="isCertifiedCourse"
+										   [certificateDescription]="certificateDescription"
+				[batchEndDate]="batchDetails?.endDate"></app-relevant-content-card>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">

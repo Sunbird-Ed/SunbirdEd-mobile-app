@@ -3,7 +3,6 @@ import { PreferenceKey, ProfileConstants } from "@app/app/app.constant";
 import { AuthService, Profile, ProfileService, SegmentationService, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService } from "../app-global-service.service";
 import { NotificationService } from '@app/services/notification.service';
-import * as _ from "dayjs/locale/*";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 import { SplaschreenDeeplinkActionHandlerDelegate } from "../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate";
 import { FormConstants } from "@app/app/form.constants";

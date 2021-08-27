@@ -169,6 +169,50 @@
       cursor: default;
     }
   }
+  // **** iOS
+  .sb-popover-header-ios {
+    border-radius: 4px 4px 0 0;
+    background-color: $info-color;
+    padding-top: 40px;
+    &::after {
+      background-image: none;
+    }
+    .sb-popover-toolbar {
+      min-height: 40px;
+      max-height: 40px;
+      background-color: $info-color;
+      border-radius: 4px 4px 0 0;
+      //   @include padding(($base-block-space * 0.5), ($base-block-space * 1));
+      .toolbar-background {
+        border-radius: 4px 4px 0 0;
+        background-color: $info-color;
+      }
+      .sb-popover-close-btn {
+        color: $white-color;
+      }
+      .sb-popover-title {
+        font-size: ($font-size-base);
+        font-weight: bold;
+        //@extend line-height: 19px;
+        text-align: center;
+        color: $white-color;
+        @include padding(0);
+        // @include padding(0, ($base-block-space * 5) ,0,0);
+      }
+    }
+    .sb-modal-close {
+      position: absolute;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      top: -2px;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  // ****
 }
 
 .enrollement-popover {
