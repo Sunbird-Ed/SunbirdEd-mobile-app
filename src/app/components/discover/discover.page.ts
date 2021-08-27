@@ -11,7 +11,7 @@ import {
   CorReleationDataType,
   Environment, ImpressionType, InteractType, PageId, TelemetryGeneratorService
 } from '@app/services';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import {
   CachedItemRequestSourceFrom,
@@ -54,14 +54,15 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements(true);
+    this.fetchDisplayElements(this.platform.is('ios') ? true : false);
   }
 
   doRefresh(refresher) {
