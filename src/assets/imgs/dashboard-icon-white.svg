@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="21px" viewBox="0 0 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Activity_icon white</title>
+    <defs>
+        <filter color-interpolation-filters="auto" id="filter-1">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Activity-dashboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g filter="url(#filter-1)" id="Activity_icon-white">
+            <g transform="translate(1.500000, 1.550000)">
+                <path d="M16,0.045 L2,0.045 C0.9,0.045 0,0.945 0,2.045 L0,16.045 C0,17.145 0.9,18.045 2,18.045 L16,18.045 C17.1,18.045 18,17.145 18,16.045 L18,2.045 C18,0.945 17.1,0.045 16,0.045 L16,0.045 Z" id="Shape-Copy" stroke="#024F9D" stroke-width="1.5"></path>
+                <g id="Group-10" transform="translate(9.000000, 9.045000) scale(-1, 1) translate(-9.000000, -9.045000) translate(4.050000, 4.545000)" stroke="#024F9D" stroke-width="2">
+                    <line x1="0.45" y1="3.402" x2="0.45" y2="8.748" id="Path-7"></line>
+                    <line x1="4.58941568" y1="4.60431693e-14" x2="4.58941568" y2="8.748" id="Path-7-Copy"></line>
+                    <line x1="8.72883136" y1="2.187" x2="8.72883136" y2="8.748" id="Path-7-Copy-2"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

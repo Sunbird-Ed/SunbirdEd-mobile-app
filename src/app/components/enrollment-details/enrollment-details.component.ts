@@ -113,7 +113,7 @@ export class EnrollmentDetailsComponent implements OnInit {
             pageId: PageId.COURSE_BATCHES,
             courseId: this.courseId
         };
-        this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+        this.localCourseService.enrollIntoBatch(enrollCourse, undefined, this.content).toPromise()
             .then((data: any) => {
                 this.zone.run(() => {
                     this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.content));

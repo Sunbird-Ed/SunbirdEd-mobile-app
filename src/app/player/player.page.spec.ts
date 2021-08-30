@@ -29,7 +29,9 @@ describe('PlayerPage', () => {
     const mockAlertCtrl: Partial<AlertController> = {
         
     };
-    const mockCourseService: Partial<CourseService> = {};
+    const mockCourseService: Partial<CourseService> = {
+        syncAssessmentEvents: jest.fn(() => of(undefined)),
+    };
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {
         handleAction: jest.fn()
     };
@@ -46,7 +48,8 @@ describe('PlayerPage', () => {
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        handleAssessmentStatus: jest.fn(),
     };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {
@@ -734,6 +737,22 @@ describe('PlayerPage', () => {
         });
     });
     describe('pdfPlayerEvents', () => {
+        it('should sync assessment events', () => {
+            mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
+            const event = {
+                edata: {
+                    type: 'END'
+                }
+            };
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'application/vnd.sunbird.questionset'
+                }
+            }
+            playerPage.playerEvents(event);
+
+            expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
+        });
         it('should exit the player', (done) => {
             const event = {
                 edata: {
@@ -914,6 +933,18 @@ describe('PlayerPage', () => {
                 expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
                 done();
             }, 50);
+        });
+        it('should handle the exdata event', () => {
+            const event = {
+                edata: {
+                    type: 'exdata',
+                    currentattempt: 2,
+                    maxLimitExceeded: false,
+                    isLastAttempt: false,
+                }
+            };
+            playerPage.playerEvents(event);
+            expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
         });
     });
 

@@ -1,7 +1,7 @@
 import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {ModalController} from '@ionic/angular';
+import {ModalController, PopoverController} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {AppGlobalService, PageId, TelemetryGeneratorService} from '@app/services';
 import {CommonUtilService} from '../../services/common-util.service';
@@ -13,7 +13,7 @@ import {
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ContentAggregatorHandler} from '../../services/content/content-aggregator-handler.service';
-import {FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
+import {ContentService, FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
 import {SunbirdQRScanner} from '@app/services';
 import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
@@ -36,7 +36,8 @@ describe('UserHomePage', () => {
     };
     const mockFrameworkService: Partial<FrameWorkService> = {};
     const mockEvents: Partial<Events> = {
-        subscribe: jest.fn()
+        subscribe: jest.fn(),
+        publish:jest.fn()
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockRouter: Partial<Router> = {};
@@ -56,6 +57,8 @@ describe('UserHomePage', () => {
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
+    const mockPopoverController: Partial<PopoverController> = {};
+    const mockContentService: Partial<ContentService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -63,6 +66,7 @@ describe('UserHomePage', () => {
             mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
             mockSharedPreferences as SharedPreferences,
+            mockContentService as ContentService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
             mockAppGlobalService as AppGlobalService,
@@ -78,7 +82,8 @@ describe('UserHomePage', () => {
             mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
             mockTranslateService as TranslateService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockSegmentationTagService as SegmentationTagService
+            mockSegmentationTagService as SegmentationTagService,
+            mockPopoverController as PopoverController
         );
     });
 
@@ -93,11 +98,15 @@ describe('UserHomePage', () => {
     describe('viewPreferenceInfo()', () => {
         it('should enable and disable the user prefrence information', () => {
             // arrange
-            userHomePage.showPreferenceInfo = false;
+            mockCommonUtilService.translateMessage = jest.fn();
+            mockModalController.create = jest.fn(() => (Promise.resolve({
+              present: jest.fn(() => Promise.resolve({})),
+              onDidDismiss: jest.fn(() => Promise.resolve({})),
+          } as any)));
             // act
             userHomePage.viewPreferenceInfo();
             // assert
-            expect(userHomePage.showPreferenceInfo).toBeTruthy();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
         });
     });
 
@@ -459,4 +468,66 @@ describe('UserHomePage', () => {
             expect(userHomePage.refresh).toBe(true);
         });
     });
+
+    describe('getOtherMLCategories', () => {
+        it('should get other categories', () => {
+            // arrange
+            let data = {
+                'ekstep_ncert_k-12': {
+                    teacher: [
+                        {
+                            name: 'observation',
+                            icon: {
+                                web: 'assets/images/mask-image/observation_category.png',
+                                app: 'assets/imgs/observation_category.png',
+                            },
+                        },
+                    ],
+                },
+            };
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(data))
+            // act
+            userHomePage.getOtherMLCategories().then(() => {
+                // assert
+                expect(userHomePage.otherCategories).toHaveLength(1);
+            })
+        })
+    });
+
+      describe('should handle click action of otherCategories', () => {
+        it('should show login prompt', (done) => {
+            userHomePage.guestUser = true;
+            let event = { data: [{ value: {name:'observation'} }] };
+            mockPopoverController.create = jest.fn(() =>
+              Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({})),
+              } as any)
+            );
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mockRouter.navigate).not.toHaveBeenCalled()
+                done()
+            })
+        })
+          
+          it('should navigate to observation listing page', (done) => {
+            userHomePage.guestUser = false;
+            let event = { data: [{ value: {name:'observation'} }] };
+            mockPopoverController.create = jest.fn(() =>
+              Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({})),
+              } as any)
+            );
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+                expect(mockRouter.navigate).toHaveBeenCalled()
+                done()
+            })
+        })
+    })
 });

@@ -221,12 +221,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
     this.ratingHandler.resetRating();
-    this.route.queryParams.subscribe(params => {
-      this.getNavParams();
+    this.route.queryParams.subscribe(async(params) => {
+      await this.getNavParams();
     });
   }
 
-  getNavParams() {
+  async getNavParams() {
     const extras = this.content || this.router.getCurrentNavigation().extras.state;
     if (extras) {
       this.course = this.course || extras.course;
@@ -250,6 +250,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
+      if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
+        await this.getContentState();
+      }
       this.onboarding = extras.onboarding || this.onboarding;
     }
     this.isIOS = (this.platform.is('ios'))
@@ -306,11 +309,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
-    this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
+    this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
       this.generateEndEvent();
       this.content = data.content;
       this.course = data.course;
-      this.getNavParams();
+      await this.getNavParams();
       setTimeout(() => {
         this.contentPlayerHandler.setLastPlayedContentId('');
         this.generateTelemetry(true);

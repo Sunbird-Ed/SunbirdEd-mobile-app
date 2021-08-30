@@ -195,6 +195,7 @@ export class EvidenceService {
       startTime: 0,
       endTime: 0,
       notApplicable: true,
+      remarks:''
     };
 
 
@@ -203,9 +204,8 @@ export class EvidenceService {
     evidence.externalId = currentEvidence.externalId;
     evidence.startTime = Date.now();
     evidence.endTime = Date.now();
-    this.tempevidenceSections = currentEvidence.sections;
-    this.tempevidenceSections = this.pullOutPageQuestion();
-    for (const section of this.tempevidenceSections) {
+    evidence.remarks = selectedECM.remarks;
+    for (const section of selectedECM.sections) {
       for (const question of section.questions) {
         let obj = {
           qid: question._id,

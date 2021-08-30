@@ -63,7 +63,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   unreadNotificationsCount = 0;
   isUpdateAvailable = false;
   currentSelectedTabs: string;
-  isDarkMode: boolean;
+  isDarkMode:boolean;
+  showReports: any;
   showLoginButton = false;
 
   constructor(
@@ -96,6 +97,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLanguageValue();
       }
     });
+    this.events.subscribe('onPreferenceChange:showReport', res => {
+      this.showReports= res
+    })
     this.getUnreadNotifications();
   }
 
@@ -251,8 +255,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitSideMenuItemEvent($event, menuItem) {
-    this.toggleMenu();
-    this.sideMenuItemEvent.emit({ menuItem });
+    // this.toggleMenu();
+    this.menuCtrl.close().then(() => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    }).catch((e) => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    })
   }
 
   ngOnDestroy() {

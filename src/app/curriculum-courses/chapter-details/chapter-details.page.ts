@@ -666,7 +666,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         userConsent: this.courseContent.contentData.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, this.courseContent).toPromise()
         .then(async (data: boolean) => {
           // await this.loader.dismiss();
           this.courseContent.batchId = item.id;

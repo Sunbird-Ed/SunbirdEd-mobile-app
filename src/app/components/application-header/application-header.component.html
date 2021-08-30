@@ -303,6 +303,16 @@
           <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
+            <span class="sb-menu-icon">
+              <img src="./assets/imgs/Reports.png" class="tool-icon" alt="reports">
+            </span>
+            <span class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
+             <div class="new-feature-badge">
+              <div class="square-badge">New</div>
+              <div class="circle-badge"></div>
+            </div>
+        </ion-item>
 
         <ion-item (click)="switchTabs()">
           <div class="beta-info">

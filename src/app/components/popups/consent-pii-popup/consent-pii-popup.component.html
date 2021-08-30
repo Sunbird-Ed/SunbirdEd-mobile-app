@@ -30,7 +30,7 @@
                     </span>
                     <span>
                         <p class="cr-terms-checkbox-label" *ngIf="!isSSOUser">
-                            <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | translate}}</span>
+                            <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | categoryKeyTranslate: course}}</span>
                             <span (click)="openTermsOfUse()" class="terms-info">{{'INSTANCE_TERMS_OF_USE' | translate: {'app_name': appName} }}</span>
                         </p>
                         <p class="cr-terms-checkbox-label" *ngIf="isSSOUser">
