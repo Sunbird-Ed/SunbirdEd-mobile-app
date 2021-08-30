@@ -35,9 +35,10 @@ export class ApiService {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
         let headers = {
-            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
+            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg' : '',
         //     // 'x-auth-token': session ? session.access_token : '',
             'X-authenticated-user-token': session.access_token,
+            'Content-Type':'application/json'
           }
         // const httpOptions = {
         //   headers: new HttpHeaders({
@@ -49,9 +50,11 @@ export class ApiService {
         //     // 'deviceId': this.deviceInfo.getDeviceID(),
         //   }),
         // };
+    this.ionicHttp.setDataSerializer('json');
         return this.ionicHttp.get(this.baseUrl + requestParam.url,'', headers).then(
           data => {
-            return observableOf(data)
+            // return observableOf(JSON.parse(data.data))
+            return JSON.parse(data.data);
           }, error => {
             catchError(this.handleError(error))
           },
@@ -85,23 +88,54 @@ export class ApiService {
   post(requestParam: RequestParams): Observable<any> {
 
     return this.checkTokenValidation().pipe(
+      // mergeMap(session => {
+      //   const httpOptions = {
+      //     headers: new HttpHeaders({
+      //       'x-auth-token': session ? session.access_token : '',
+      //       'x-authenticated-user-token': session ? session.access_token : '',
+      //       'X-App-Id': this.apiUtils.appName,
+      //       'X-App-Ver': this.apiUtils.appVersion,
+      //       'deviceId': this.deviceInfo.getDeviceID(),
+      //     }),
+      //   };
+      //   return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
+      //     tap(data => {
+      //       return data
+      //     }, error => {
+      //       catchError(this.handleError(error))
+      //     }),
+      //   );
+      // })
+
+
+
       mergeMap(session => {
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token : '',
-            'x-authenticated-user-token': session ? session.access_token : '',
-            'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID(),
-          }),
-        };
-        return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
-          tap(data => {
-            return data
+        let headers = {
+            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg' : '',
+        //     // 'x-auth-token': session ? session.access_token : '',
+            'X-authenticated-user-token': session.access_token,
+            'Content-Type':'application/json'
+          }
+        // const httpOptions = {
+        //   headers: new HttpHeaders({
+        //     'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
+        //     // 'x-auth-token': session ? session.access_token : '',
+        //     'X-authenticated-user-token': session.access_token,
+        //     // 'X-App-Id': this.apiUtils.appName,
+        //     // 'X-App-Ver': this.apiUtils.appVersion,
+        //     // 'deviceId': this.deviceInfo.getDeviceID(),
+        //   }),
+        // };
+        let body = requestParam.payload ? requestParam.payload : {};
+        this.ionicHttp.setDataSerializer('json');
+        return this.ionicHttp.post(this.baseUrl + requestParam.url,body, headers).then(
+          data => {
+            // return observableOf(JSON.parse(data.data));
+            return JSON.parse(data.data);
+
           }, error => {
             catchError(this.handleError(error))
-          }),
-        );
+          });
       })
     )
   }

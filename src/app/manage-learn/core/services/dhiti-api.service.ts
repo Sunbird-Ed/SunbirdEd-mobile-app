@@ -7,6 +7,7 @@ import { ToastService } from '.';
 import { urlConstants } from '../constants/urlConstants';
 import { ApiUtilsService } from './api-utils.service';
 import { ApiService } from './api.service';
+import { UtilityService } from '@app/services/utility-service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +20,14 @@ export class DhitiApiService extends ApiService {
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
+    private utilityService: UtilityService,
 
     private utils: ApiUtilsService,
         public ionicHttp:HTTP
 
   ) {
     super(http, toast, modalController, authService,deviceInfo, utils,ionicHttp);
-    this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.DHITI;
+    // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.DHITI;
+    this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url));
   }
 }

@@ -62,8 +62,10 @@ export const urlConstants = {
     GET_OBSERVATION_DETAILS: '/api/observations/mlsurvey/v1/assessment/',
 
     // MANDATORY_ENTITY_TYPES_FOR_ROLES: 'v1/users/entityTypesByLocationAndRole/',
-    MANDATORY_ENTITY_TYPES_FOR_ROLES: '/api/entities/mlcore/v1/subEntityListBasedOnRoleAndLocation/',
+    MANDATORY_ENTITY_TYPES_FOR_ROLES: '/api/entities/mlcore/v1/entityTypesByLocationAndRole/',
 
+
+    
     // GET_OBSERVATION_SUBMISSION_COUNT: 'v1/observations/submissionsCount',
     GET_OBSERVATION_SUBMISSION_COUNT: '/api/observations/mlreports/v1/submissionsCount',
 
