@@ -631,10 +631,12 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams: ContentImport[] = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
+   
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList ? this.corRelationList : [],
         rollUp: this.rollUpMap[value]
