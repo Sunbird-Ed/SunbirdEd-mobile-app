@@ -82,6 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   eventSubscription: Subscription;
   isTimeAvailable = false;
   isOnBoardingCompleted: boolean;
+  public swipeGesture = true;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -523,6 +524,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         this.rootPageDisplayed = event.url.indexOf('tabs') !== -1;
+        if (this.platform.is('ios')) {
+          this.swipeGesture = !this.rootPageDisplayed;
+        }
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
