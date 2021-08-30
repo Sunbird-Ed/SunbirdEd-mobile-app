@@ -23,7 +23,7 @@
       </ion-item>
       <p class="share-desc" *ngIf="fileSize">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': fileSize | fileSize } }}</p>
 
-      <ion-item>
+      <ion-item *ngIf="!platform.is('ios')">
         <ion-label>{{shareOptions.save.name | translate}}</ion-label>
         <ion-radio slot="start" value="{{shareOptions.save.value}}"></ion-radio>
       </ion-item>
