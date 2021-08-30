@@ -708,10 +708,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
+   
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
         rollUp: isChild ? this.objRollup : undefined
