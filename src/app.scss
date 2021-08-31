@@ -2006,6 +2006,15 @@ app-user-home, app-discover {
   .sb--card{
     border-radius: 1rem !important;
   }
+
+  sb-banner-card-hlist {
+    .sb--card.sb--card--theme2 {
+      width: 85vw !important;
+      height: 17vh !important;
+      background-repeat: no-repeat !important;
+      background-size: 100% 100% !important;
+    }
+  }
 }
 
 .label-uppercase {

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'underscore';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';

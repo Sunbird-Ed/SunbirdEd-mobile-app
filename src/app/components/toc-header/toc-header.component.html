@@ -6,7 +6,7 @@
             <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
             <span class="sb-user">{{ contentData?.owner || contentData?.creator}}</span>
         </div>
-        <div class="sb-dt-class-info ellipsis" *ngIf="contentData?.gradeLevel || contentData?.subject">
+        <div class="sb-dt-class-info" *ngIf="contentData?.gradeLevel || contentData?.subject">
             <span *ngIf="contentData?.board">
                 <span class="sb-dt-label sb-dt-subject">{{contentData?.board}}</span>
                 <span class="sb-separator-dot"></span>
