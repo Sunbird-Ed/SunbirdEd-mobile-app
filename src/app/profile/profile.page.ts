@@ -934,7 +934,7 @@ export class ProfilePage implements OnInit {
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
-          content
+          content,
         }
       );
     } catch (err) {

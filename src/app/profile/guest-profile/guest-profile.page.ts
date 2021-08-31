@@ -255,10 +255,8 @@ export class GuestProfilePage implements OnInit {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'download':
-        this.redirectToActiveDownloads();
-        break;
+    if($event.name === 'download'){
+      this.redirectToActiveDownloads();
     }
   }
 

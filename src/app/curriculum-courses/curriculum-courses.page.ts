@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
   InteractType, InteractSubtype, ImpressionType
@@ -24,7 +24,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
   templateUrl: './curriculum-courses.page.html',
   styleUrls: ['./curriculum-courses.page.scss'],
 })
-export class CurriculumCoursesPage implements OnInit {
+export class CurriculumCoursesPage {
 
   isLoading = true;
   subjectName: string;
@@ -102,8 +102,7 @@ export class CurriculumCoursesPage implements OnInit {
     }
   }
 
-  async ngOnInit() {
-  }
+
 
   openCourseDetails(course) {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');

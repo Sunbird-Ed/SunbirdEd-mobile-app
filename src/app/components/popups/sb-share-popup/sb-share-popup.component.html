@@ -27,7 +27,7 @@
         {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
       </p>
 
-      <ion-item>
+      <ion-item *ngIf="!platform.is('ios')">
         <ion-label>{{shareOptions.save.name | translate}}</ion-label>
         <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
         </ion-radio>
@@ -82,7 +82,7 @@
           {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
         </p>
       </div>
-      <ion-item lines="none">
+      <ion-item *ngIf="!platform.is('ios')">
         <ion-label>{{shareOptions.save.name | translate}}</ion-label>
         <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
         </ion-radio>

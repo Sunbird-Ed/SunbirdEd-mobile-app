@@ -139,11 +139,7 @@
     <plugin name="cordova-plugin-file-opener2" spec="^2.2.0" />
     <plugin name="cordova-plugin-media" spec="^5.0.3" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
-    <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
-    <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
-    <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
-    <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
@@ -167,9 +163,13 @@
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />
     </plugin>
-    <plugin name="cordova-sqlite-storage" spec="^5.1.0" />
-    <plugin name="cordova-plugin-googleplus" spec="^5.2.1">
-        <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.282927060960-1ls3h8ad2oj4sontnnp8t6kg4573m92u" />
+    </plugin>
+    <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
+    <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
+    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.4.0" />
+    <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
+    <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
+    <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
     </plugin>
     <plugin name="cordova-plugin-camera" spec="^5.0.2" />
     <plugin name="cordova-plugin-telerik-imagepicker" spec="^2.3.3" />

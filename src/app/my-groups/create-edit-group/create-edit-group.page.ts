@@ -240,12 +240,10 @@ export class CreateEditGroupPage {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
-          Environment.GROUP, true, undefined, this.corRelationList);
-        this.location.back();
-        break;
+    if ($event.name === 'back'){
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
+        Environment.GROUP, true, undefined, this.corRelationList);
+      this.location.back();
     }
   }
 }

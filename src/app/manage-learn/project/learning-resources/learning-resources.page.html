@@ -1,6 +1,6 @@
 <ion-content *ngIf="list">
   <ion-list *ngIf="list?.learningResources?.length">
-    <ion-item *ngFor="let resource of list.learningResources" (click)="openBodh(resource?.id)">
+    <ion-item *ngFor="let resource of list.learningResources" (click)="openBodh(resource)">
       {{resource?.name}}
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>

@@ -13,6 +13,7 @@ export class RelevantContentCardComponent {
   @Input() isAlreadyEnrolled: boolean;
   @Input() isCertifiedCourse: boolean;
   @Input() certificateDescription: string;
+  @Input() batchEndDate;
 
   constructor(public commonUtil: CommonUtilService) {
   }

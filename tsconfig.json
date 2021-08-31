@@ -12,6 +12,7 @@
     "module": "es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es5",
@@ -34,7 +35,8 @@
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v9"],
       "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v9/*"],
-      "crypto": ["../node_modules/crypto-js"]
+      "common-form-elements": ["../node_modules/common-form-elements-v9"],
+      "common-form-elements/*": ["../node_modules/common-form-elements-v9/*"]
     }
   },
   "include": [

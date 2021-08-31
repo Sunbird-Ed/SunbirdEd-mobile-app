@@ -104,7 +104,6 @@ export class EvidenceService {
             },
           };
           if (selectedECM.canBeNotAllowed) {
-            // action.data.buttons.splice(action.data.buttons.length - 1, 0, notAvailable);TODO:need to verify
             action.buttons.splice(action.buttons.length - 1, 0, notAvailable);
           }
           action.present();
@@ -198,7 +197,7 @@ export class EvidenceService {
       notApplicable: true,
     };
 
-    // const currentEvidence = selectedECM;
+
     const currentEvidence = cloneDeep(selectedECM);
     evidence.id = currentEvidence._id;
     evidence.externalId = currentEvidence.externalId;
