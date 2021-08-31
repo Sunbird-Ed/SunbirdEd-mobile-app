@@ -555,6 +555,9 @@ private async upgradeAppPopover(requiredVersionCode) {
     } else if (identifier) {
       const content = await this.getContentData(identifier);
       if (!content) {
+        if (urlMatchGroup.contentId) {
+          this.navigateContent(urlMatchGroup.contentId, true, null, payloadUrl, null);
+        }
         this.closeProgressLoader();
       } else {
         this.navigateContent(identifier, true, content, payloadUrl, route);
@@ -627,7 +630,7 @@ private async upgradeAppPopover(requiredVersionCode) {
             };
             const navExtras = {
               state: {
-                content: content,
+                content,
               }
             };
             const telemetryObject = {
@@ -699,6 +702,8 @@ private async upgradeAppPopover(requiredVersionCode) {
             this.commonUtilService.showToast('ERROR_FETCHING_DATA');
           } else if (NetworkError.isInstance(e)) {
             this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          } else if (e.response && e.response.responseCode === 404) {
+            return null;
           } else {
             this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
           }
@@ -842,7 +847,8 @@ private async upgradeAppPopover(requiredVersionCode) {
                 depth: 1,
                 isChildContent: true,
                 corRelation: this.getCorrelationList(payloadUrl, corRelationList),
-                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                isCourse: (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) ||
+                    (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE_UNIT.toLowerCase()),
                 isOnboardingSkipped
               });
               this.sbProgressLoader.hide({ id: content.identifier });
