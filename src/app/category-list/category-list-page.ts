@@ -108,6 +108,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private resentFilterCriteria: ContentSearchCriteria;
     private preFetchedFilterCriteria: ContentSearchCriteria;
     profile: Profile;
+    private existingSearchFilters = {};
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -154,6 +155,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     return acc;
                 }, new FormGroup({}));
             }
+            this.existingSearchFilters = this.getExistingFilters(extrasState.formField);
         }
     }
 
@@ -419,7 +421,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             component: SearchFilterPage,
             componentProps: {
                 initialFilterCriteria: inputFilterCriteria,
-                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria))
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
+                existingSearchFilters: this.existingSearchFilters
             }
         });
         await openFiltersPage.present();
@@ -489,6 +492,21 @@ export class CategoryListPage implements OnInit, OnDestroy {
             filterCriteriaData = JSON.parse(JSON.stringify(this.filterCriteria))
         }
         return filterCriteriaData;
+    }
+
+    getExistingFilters(formFields){
+        const existingSearchFilters = {};
+        if(formFields){
+            if(formFields.filterPillBy){
+                existingSearchFilters[formFields.filterPillBy] = true;
+            }
+            if(formFields.primaryFacetFilters){
+                formFields.primaryFacetFilters.forEach(facets => {
+                    existingSearchFilters[facets.code] = true;
+                });
+            }
+        }
+        return existingSearchFilters;
     }
 
     ngOnDestroy() {
