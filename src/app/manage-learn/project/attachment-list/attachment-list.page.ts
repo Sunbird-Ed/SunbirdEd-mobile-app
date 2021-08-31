@@ -103,9 +103,7 @@ export class AttachmentListPage implements OnInit {
               for (const element of task.attachments) {
                 if (compare(element.type, tab.type)) {
                   element.localUrl = this.win.Ionic.WebView.convertFileSrc(
-                    this.platform.is("ios")
-                      ? this.file.documentsDirectory
-                      : this.file.externalDataDirectory + element.name
+                    this.path+ element.name
                   );
                   attachments.push(element);
                 }

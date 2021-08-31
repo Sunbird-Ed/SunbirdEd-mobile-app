@@ -1,6 +1,6 @@
 import { LocationHandler } from './location-handler';
 import { of } from 'rxjs';
-import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { FrameworkService, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '../app/app.constant';
 
 describe('LocationHandler', () => {
@@ -26,12 +26,14 @@ describe('LocationHandler', () => {
     const mockProfileService: Partial<ProfileService> = {
         searchLocation: jest.fn(() => of(mockProfile.userLocations))
     };
+    const mockFrameworkService: Partial<FrameworkService> = {};
 
 
     beforeAll(() => {
         locationHandler = new LocationHandler(
             mockSharedPreference as SharedPreferences,
-            mockProfileService as ProfileService
+            mockProfileService as ProfileService,
+            mockFrameworkService as FrameworkService
         );
     });
 
@@ -158,6 +160,52 @@ describe('LocationHandler', () => {
             // arrange
             // act
             expect(locationHandler.isUserLocationAvalable(mockProfile)).toBeTruthy();
+        });
+    });
+
+    describe('getLocationList', () => {
+        it('should return locationList for school', (done) => {
+            // arrange
+            const request = {
+                filters: {
+                    parentId: 'sample-parent-id',
+                    type: 'school'
+                }
+            };
+            mockFrameworkService.searchOrganization = jest.fn(() => of({content: [{
+                externalId: 'sample-id',
+                orgName: 'sample-org'
+            }]})) as any;
+            // act
+            locationHandler.getLocationList(request);
+            // assert
+            setTimeout(() => {
+                expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return locationList for state', (done) => {
+            // arrange
+            const request = {
+                filters: {
+                    parentId: 'sample-parent-id',
+                    type: 'state'
+                }
+            };
+            mockProfileService.searchLocation = jest.fn(() => of([{
+                code: 'state-code',
+                name: 'state-name',
+                type: 'sample-type',
+                id: 'state-id'
+            }]));
+            // act
+            locationHandler.getLocationList(request);
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.searchLocation).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 

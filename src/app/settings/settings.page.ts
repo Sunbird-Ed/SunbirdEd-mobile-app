@@ -58,7 +58,7 @@ export class SettingsPage implements OnInit {
     private translate: TranslateService,
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private platform: Platform,
+    public platform: Platform,
     private location: Location,
     private events: Events
   ) {

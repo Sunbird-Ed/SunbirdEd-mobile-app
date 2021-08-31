@@ -192,6 +192,10 @@ P{
         top: 90vh;
         padding: 0 16px 70px 16px;
     }
+
+    .ios .initiate-email-info-button {
+        top: 85vh;
+    }
 }
 @media only screen and (min-width : 1025px) {
     .report-button{
@@ -395,4 +399,8 @@ ion-item.item-label-stacked {
 .report-submit-info{
     font-size: 0.8rem;
     color: var(--app-gray);
+}
+
+.ios .send-email-form ::ng-deep .sb-modal {
+    bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
 }

@@ -60,6 +60,7 @@ import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -107,7 +108,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private navService: NavigationService,
     private contentPlayerHandler: ContentPlayerHandler,
     private formnFrameworkUtilService: FormAndFrameworkUtilService,
-    private updateProfileService: UpdateProfileService
+    private updateProfileService: UpdateProfileService,
+    private platform: Platform
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -553,6 +555,9 @@ private async upgradeAppPopover(requiredVersionCode) {
     } else if (identifier) {
       const content = await this.getContentData(identifier);
       if (!content) {
+        if (urlMatchGroup.contentId) {
+          this.navigateContent(urlMatchGroup.contentId, true, null, payloadUrl, null);
+        }
         this.closeProgressLoader();
       } else {
         this.navigateContent(identifier, true, content, payloadUrl, route);
@@ -625,7 +630,7 @@ private async upgradeAppPopover(requiredVersionCode) {
             };
             const navExtras = {
               state: {
-                content: content,
+                content,
               }
             };
             const telemetryObject = {
@@ -697,6 +702,8 @@ private async upgradeAppPopover(requiredVersionCode) {
             this.commonUtilService.showToast('ERROR_FETCHING_DATA');
           } else if (NetworkError.isInstance(e)) {
             this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          } else if (e.response && e.response.responseCode === 404) {
+            return null;
           } else {
             this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
           }
@@ -840,7 +847,8 @@ private async upgradeAppPopover(requiredVersionCode) {
                 depth: 1,
                 isChildContent: true,
                 corRelation: this.getCorrelationList(payloadUrl, corRelationList),
-                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                isCourse: (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) ||
+                    (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE_UNIT.toLowerCase()),
                 isOnboardingSkipped
               });
               this.sbProgressLoader.hide({ id: content.identifier });
@@ -927,10 +935,12 @@ private async upgradeAppPopover(requiredVersionCode) {
   private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const rollUpMap: { [key: string]: Rollup } = {};
     const requestParams: ContentImport[] = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+       
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: [],
         rollUp: rollUpMap[value]
