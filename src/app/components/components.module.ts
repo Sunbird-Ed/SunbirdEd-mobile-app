@@ -73,7 +73,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet'
 import { TocHeaderComponent } from './toc-header/toc-header.component';
 import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
-
+import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
+import { ContentShareHandlerService } from '@app/services';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -135,7 +136,8 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ContentViewerComponent,
     DashboardComponent,
     TocHeaderComponent,
-    RelevantContentCardComponent
+    RelevantContentCardComponent,
+    QrScannerIOSComponent
   ],
   imports: [
     CommonModule,
@@ -195,7 +197,8 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    QrScannerIOSComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -255,8 +258,9 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
     ContentViewerComponent,
     DashboardComponent,
     TocHeaderComponent,
-    RelevantContentCardComponent
+    RelevantContentCardComponent,
+    QrScannerIOSComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation,ContentShareHandlerService]
 })
 export class ComponentsModule { }

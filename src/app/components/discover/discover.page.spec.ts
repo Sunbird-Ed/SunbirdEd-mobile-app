@@ -1,6 +1,6 @@
 import { DiscoverComponent } from './discover.page';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
@@ -19,6 +19,9 @@ describe('DiscoverComponent', () => {
     };
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn()
+    };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockRouter: Partial<Router> = {};
@@ -58,7 +61,8 @@ describe('DiscoverComponent', () => {
             mockCommonUtilService as CommonUtilService,
             mockPopoverController as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockPlatform as Platform,
         );
     });
 
