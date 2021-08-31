@@ -726,7 +726,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           this.objRollup,
           this.corRelationList
         );
-        //IOS specific  chnages
+        //IOS specific  changes
         if (this.platform.is('ios')) this.getContentState(true);
       })
       .catch(error => {
