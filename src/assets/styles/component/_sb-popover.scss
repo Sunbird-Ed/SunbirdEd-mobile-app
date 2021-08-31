@@ -78,6 +78,10 @@
     }
   }
 
+  .ios .sb-popover-header {
+    margin-top: calc(constant(safe-area-inset-top)); //ios 11.2
+    margin-top: calc(env(safe-area-inset-top)); //ios 11.1  
+  }
   //sb popover content
   .sb-popover-container {
     text-align: left;

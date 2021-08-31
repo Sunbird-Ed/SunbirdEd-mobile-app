@@ -60,6 +60,7 @@ import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -107,7 +108,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private navService: NavigationService,
     private contentPlayerHandler: ContentPlayerHandler,
     private formnFrameworkUtilService: FormAndFrameworkUtilService,
-    private updateProfileService: UpdateProfileService
+    private updateProfileService: UpdateProfileService,
+    private platform: Platform
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -933,10 +935,12 @@ private async upgradeAppPopover(requiredVersionCode) {
   private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const rollUpMap: { [key: string]: Rollup } = {};
     const requestParams: ContentImport[] = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+       
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: [],
         rollUp: rollUpMap[value]

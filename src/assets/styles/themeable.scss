@@ -1754,11 +1754,40 @@ html[data-theme="JOYFUL"]{
       background-position: bottom center;
     }
   }
-  .sc-ion-popover-ios {
-    bottom: 0px !important;
-    top: unset !important;
+
+  // .sc-ion-popover-ios {
+  //   bottom: 0px !important;
+  //   top: unset !important;
+  // }
+
+  .ios ion-segment {
+    background: inherit;
   }
+
+  .ios ion-split-pane {
+    position: absolute;
+    top: calc(constant(safe-area-inset-top)); //ios 11.2
+    top: calc(env(safe-area-inset-top)); //ios 11.1  
+  }
+
+  .ios ion-menu {
+    position: absolute;
+    top: calc(constant(safe-area-inset-top)); //ios 11.2
+    top: calc(env(safe-area-inset-top)); //ios 11.1  
+
+    ion-content, ion-footer, ion-header {
+      width: calc(100% + 10%);
+    }
+
+  }
+
+  .ios .qr-scanner-modal {
+    background: transparent !important;
+
+    .modal-wrapper {
+      background: transparent !important;
+    }
+  }
+
   // ************ iOS end ***************
-
-
 }

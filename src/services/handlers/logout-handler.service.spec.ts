@@ -15,7 +15,9 @@ describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
     const mockProfileService: Partial<ProfileService> = {
         setActiveSessionForProfile: jest.fn(() => of(true)),
-        getAllProfiles: jest.fn(() => of([]))
+        getAllProfiles: jest.fn(() => of([])),
+        getActiveProfileSession: jest.fn(() => of({})),
+        deleteProfile: jest.fn((id) => of({}))
     };
     const mockAuthService: Partial<AuthService> = {
         resignSession: jest.fn(() => from(new Promise<void>((resolve) => {
