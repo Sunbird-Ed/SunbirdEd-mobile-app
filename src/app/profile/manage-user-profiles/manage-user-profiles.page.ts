@@ -50,7 +50,7 @@ export class ManageUserProfilesPage implements OnInit {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private platform: Platform,
+    public platform: Platform,
     private location: Location,
     private popoverCtrl: PopoverController,
     private tncUpdateHandlerService: TncUpdateHandlerService
