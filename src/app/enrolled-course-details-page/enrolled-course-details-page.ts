@@ -397,7 +397,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
-    this.accessDiscussionComponent.fetchForumIds();
+    this.accessDiscussionComponent && this.accessDiscussionComponent.fetchForumIds();
   }
 
   private checkUserLoggedIn() {
@@ -726,6 +726,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           this.objRollup,
           this.corRelationList
         );
+        if (this.platform.is('ios')) this.getContentState(true);
       })
       .catch(error => {
         console.log('Error Fetching Childrens', error);
@@ -898,8 +899,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.profileService.getServerProfilesDetails(req).toPromise()
       .then((serverProfile) => {
         if (serverProfile) {
-          this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
-          this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          if (this.batchDetails) {
+            (this.batchDetails.creatorDetails || (this.batchDetails.creatorDetails = {})).firstName = serverProfile.firstName ? serverProfile.firstName : '';
+            this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
+          }
         }
       });
   }
@@ -928,7 +931,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
         rollUp: this.rollUpMap[value]
@@ -1763,6 +1766,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
           if (this.courseHeirarchy && this.courseHeirarchy.children) {
             this.getStatusOfCourseCompletion(this.courseHeirarchy.children);
+            if (this.platform.is('ios')) {
+              this.downloadSize = 0;
+              this.getContentsSize(this.courseHeirarchy.children);
+            }
           }
 
           if (this.resumeCourseFlag) {
@@ -2315,7 +2322,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
       this.createUserReq.username = (p.serverProfile && p.serverProfile['userName']) || p.handle;
-      this.isMinor = p.serverProfile.isMinor;
+      this.isMinor = p.serverProfile && p.serverProfile.isMinor;
     });
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
