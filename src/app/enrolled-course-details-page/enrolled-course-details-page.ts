@@ -1288,7 +1288,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (!this.nextContent) {
+      if (this.nextContent && !this.nextContent) {
         this.initNextContent();
       }
       this.navigateToContentDetails(this.nextContent, 1);
