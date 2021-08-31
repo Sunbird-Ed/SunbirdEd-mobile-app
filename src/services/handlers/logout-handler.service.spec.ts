@@ -10,6 +10,7 @@ import { of, from } from 'rxjs';
 import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
+import { Platform } from '@ionic/angular';
 
 describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
@@ -53,6 +54,9 @@ describe('LogoutHandlerService', () => {
         persistSegmentation: jest.fn(),
         getPersistedSegmentaion: jest.fn()
     };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
 
     beforeAll(() => {
         logoutHandlerService = new LogoutHandlerService(
@@ -65,7 +69,8 @@ describe('LogoutHandlerService', () => {
             mockContainerService as ContainerService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockRoute as Router,
-            mockSegmentationTagService as SegmentationTagService
+            mockSegmentationTagService as SegmentationTagService,
+            mockPlatform as Platform
         );
     });
 
