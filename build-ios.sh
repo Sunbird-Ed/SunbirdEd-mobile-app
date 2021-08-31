@@ -61,6 +61,7 @@ npm install com.telerik.plugins.nativepagetransitions@0.7.0
 ionic cordova plugin rm cordova-plugin-sunbirdsplash
 ionic cordova plugin add cordova-plugin-splashscreen
 ionic cordova plugin rm cordova-plugin-fcm-with-dependecy-updated
+ionic cordova plugin rm cordova-plugin-file-support
 
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
 #need to inspect on webpack dependdencies at the earliest
