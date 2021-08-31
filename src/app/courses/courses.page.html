@@ -1,5 +1,6 @@
 <ion-content hide-header-footer overflow-scroll="true"
-  class="main-container avoid-bottom-tabs-space ui-container" scrollEvents="true">
+  class="main-container avoid-bottom-tabs-space" scrollEvents="true" [ngClass]="{'ui-container': !platform.is('ios')}">
+  <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>

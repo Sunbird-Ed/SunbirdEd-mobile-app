@@ -45,7 +45,7 @@
     </ion-item>
   </ion-list>
 
-  <div class="form-api-components" *ngIf="displaySections && displaySections.length && homeDataAvailable">
+  <div class="form-api-components" *ngIf="displaySections && displaySections.length && (homeDataAvailable || displayBanner)">
 
     <ng-container *ngFor="let section of displaySections">
 

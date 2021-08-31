@@ -33,3 +33,7 @@
   height: 87vh;
   overflow-y: scroll;
 }
+
+.subject-list-container {
+  margin-top: env(safe-area-inset-top);
+}

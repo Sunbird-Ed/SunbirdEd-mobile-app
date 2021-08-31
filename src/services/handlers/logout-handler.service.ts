@@ -39,6 +39,10 @@ export class LogoutHandlerService {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
 
+    this.profileService.getActiveProfileSession().toPromise()
+    .then((profile) => {
+      this.profileService.deleteProfile(profile.uid).subscribe()
+    });
     this.segmentationTagService.persistSegmentation();
 
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
@@ -54,8 +58,9 @@ export class LogoutHandlerService {
           const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
-
-        splashscreen.clearPrefs();
+        if(splashscreen){
+          splashscreen.clearPrefs();
+        }
       }),
       mergeMap((guestUserId: string) => {
         return this.profileService.setActiveSessionForProfile(guestUserId);

@@ -162,6 +162,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
                 if (resp.data === 'renderer:question:submitscore') {
                   this.courseService.syncAssessmentEvents().subscribe();
+                } else if (resp.data === 'renderer:question:reviewAssessment') {
+                  this.courseService.clearAssessments().subscribe();
                 } else if (resp.data && typeof resp.data === 'object') {
                   if (resp.data['player.pdf-renderer.error']) {
                     const pdfError = resp.data['player.pdf-renderer.error'];
