@@ -1789,5 +1789,20 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  .ios ion-alert {
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: calc(env(safe-area-inset-bottom) + 20px);
+
+      .alert-button.sc-ion-alert-ios {
+        margin-right: 8px;
+        min-width: 45%;
+      }
+    }
+  }
+
   // ************ iOS end ***************
 }
