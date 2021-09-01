@@ -538,7 +538,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          if (this.platform.is('ios')) {
+            this.headerService.showHeaderWithHomeButton();
+          } else {
+            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          }
         }
       } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
         this.headerService.sidebarEvent('back');
@@ -811,7 +815,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            if (this.platform.is('ios')) {
+              this.headerService.showHeaderWithHomeButton();
+            } else {
+              this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            }
         } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
           this.headerService.sidebarEvent($event);
         } else {

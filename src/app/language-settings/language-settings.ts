@@ -82,7 +82,11 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
-        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
+        }
       }
     });
   }
