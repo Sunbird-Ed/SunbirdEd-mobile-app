@@ -189,7 +189,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
     if (this.isRootPage) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
-        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        }
       });
     }
   }

@@ -1,13 +1,12 @@
 <ion-content class="padding-bottom-if-header">
 	<div class="">
 		<form [formGroup]="profileSettingsForm" class="ps-container">
-			<div [ngClass]="{ 'back-btn-container': platform.is('android'), 'back-btn-container-ios': platform.is('ios')}">
+			<div class="back-btn-container">
 				<img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton"
 					 (click)="handleBackButton(true)"
 					 class="top-back-button" alt="back">
 			</div>
-			<div class="qr-container"
-            [ngClass]="{ 'ui-container': platform.is('android'), 'ui-container-ios': platform.is('ios')}" *ngIf="showQRScanner">
+			<div class="qr-container ui-container" *ngIf="showQRScanner">
 				<div class="qr-content">
 					<img #animatedQRImage class="qr-img" src="assets/imgs/qr_with_book.svg" alt="">
 					<div class="qr-instruction-container text-center">
