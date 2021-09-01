@@ -1,12 +1,14 @@
-<ion-header>
-  <ion-navbar color="primary">
-    <div class="_flex-box">
-      <ion-title text-capitalize>{{ 'FRMELEMENTS_LBL_HINT' | translate }}</ion-title>
-      <ion-icon name="close" isActive="true" class="closeBtn ion-margin-end ion-float-right" (click)="cancel()"></ion-icon>
-    </div>
-  </ion-navbar>
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title text-capitalize>{{ 'FRMELEMENTS_LBL_HINT' | translate }}</ion-title>
+    <ion-buttons class="sb-header-btn-group pr-12" slot="end">
+      <ion-button icon-only (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar> 
 </ion-header>
 
-<ion-content class="ion-padding" >
+<ion-content class="ion-padding">
   {{ hint }}
 </ion-content>

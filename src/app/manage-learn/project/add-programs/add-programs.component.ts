@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { LoaderService, UtilsService } from '../../core';
@@ -24,7 +24,8 @@ export class AddProgramsComponent implements OnInit {
     private http: HttpClient,
     private loaderService: LoaderService,
     private kendraApiService: KendraApiService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    public platform: Platform
 
   ) { }
   ngOnInit() {

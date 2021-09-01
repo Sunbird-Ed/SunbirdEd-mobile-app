@@ -154,10 +154,6 @@
     <plugin name="com-sarriaroman-photoviewer" spec="^1.2.5" />
     <plugin name="cordova-plugin-filepath" spec="^1.6.0" />
     <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/shikshalokam/sb-cordova-plugin-utility.git#release-3.9.0-ios" />
-    <plugin name="sb-cordova-plugin-db" spec="https://github.com/shikshalokam/sb-cordova-plugin-db.git">
-        <variable name="USESWIFTLANGUAGEVERSION" value="4" />
-    </plugin>
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />

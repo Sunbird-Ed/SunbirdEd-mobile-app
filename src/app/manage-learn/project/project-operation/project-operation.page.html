@@ -52,8 +52,8 @@
   <div class="program-block" *ngIf="!selectedProgram">
     <ion-label position="stacked" class="font-bold"> {{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span></ion-label>
-    <ion-item lines="none">
-      <ion-input (ionFocus)="checkNetwork('programs')" placeholder="{{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}}">
+    <ion-item lines="none" (click)="checkNetwork('programs')">
+      <ion-input  placeholder="{{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}}">
       </ion-input>
       <ion-icon name="caret-down" slot="end"></ion-icon>
     </ion-item>

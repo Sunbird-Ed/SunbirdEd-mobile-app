@@ -271,10 +271,10 @@
       "sb-cordova-plugin-db": {
         "USESWIFTLANGUAGEVERSION": "4"
       },
-      "sb-cordova-plugin-utility": {},
       "cordova-plugin-googleplus": {
         "REVERSED_CLIENT_ID": "com.googleusercontent.apps.282927060960-vue4qp1n9t6e5cbfon4ptc6f6cae2pbj"
-      }
+      },
+      "sb-cordova-plugin-utility": {}
     },
     "platforms": [
       "android",

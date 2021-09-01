@@ -55,7 +55,7 @@ export class ProjectOperationPage  {
     private utils: UtilsService,
     private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
+    public platform: Platform,
     private db: DbService,
     private translate: TranslateService,
     private alertController: AlertController,
@@ -63,7 +63,7 @@ export class ProjectOperationPage  {
     private loaderService: LoaderService,
     private syncServ: SyncService,
     private networkService: NetworkService,
-    private toast: ToastService
+    private toast: ToastService,
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
