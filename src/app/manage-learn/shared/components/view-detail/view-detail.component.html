@@ -1,4 +1,4 @@
-<ion-toolbar>
+<ion-toolbar [ngClass]="{'container': platform.is('ios')}">
   <ion-buttons (click)="close()" slot="start" class="padding">
     <ion-icon name="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>

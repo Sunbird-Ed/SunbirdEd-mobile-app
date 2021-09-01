@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-view-detail',
@@ -9,7 +9,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 export class ViewDetailComponent {
   submission: any;
 
-  constructor(params: NavParams, private modalCtrl: ModalController) {
+  constructor(params: NavParams, private modalCtrl: ModalController, public platform: Platform) {
     this.submission = params.get('submission');
   }
 
