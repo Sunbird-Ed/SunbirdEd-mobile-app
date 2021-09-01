@@ -46,5 +46,3 @@ google-services.json
 GoogleService-Info.plist
 #sonarcloud
 .scannerwork
-
-sunbird-ios.properties

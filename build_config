@@ -1,5 +1,5 @@
 cordova-plugin=cordova-plugin-printer
-cordova-plugin=https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git
+cordova-plugin=https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 cordova-plugin=ionic-plugin-keyboard
 cordova-plugin=cordova-plugin-whitelist
 cordova-plugin=cordova-plugin-ionic-webview
@@ -8,7 +8,7 @@ cordova-plugin=cordova-plugin-x-socialsharing
 cordova-plugin=cordova-plugin-androidx-adapter
 cordova-plugin=cordova-plugin-device
 cordova-plugin=cordova-plugin-file
-cordova-plugin=https://github.com/apache/cordova-plugin-file-transfer.git
+cordova-plugin=cordova-plugin-file-transfer
 cordova-plugin=cordova-plugin-inappbrowser
 cordova-plugin=cordova-plugin-network-information
 cordova-plugin=cordova-plugin-statusbar
@@ -28,12 +28,12 @@ cordova-plugin=cordova-plugin-document-viewer
 cordova-plugin=com-sarriaroman-photoviewer
 cordova-plugin=cordova-plugin-filepath
 cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
-cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-4.1.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
-cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage
-cordova plugin=cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
+cordova plugin=cordova-plugin-googleplus
 cordova-pligin=cordova-plugin-camera
 cordova-plugin=cordova-plugin-telerik-imagepicker
 cordova-plugin=cordova-plugin-filechooser
@@ -42,7 +42,5 @@ cordova-plugin=cordova.plugins.diagnostic
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git
-sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0
-cordova-plugin=cordova-plugin-add-swift-support@2.0.2
