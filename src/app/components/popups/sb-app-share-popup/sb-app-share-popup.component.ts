@@ -43,7 +43,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     public popoverCtrl: PopoverController,
     private social: SocialSharing,
-    private platform: Platform,
+    public platform: Platform,
     private utilityService: UtilityService,
     private appVersion: AppVersion,
     private navParams: NavParams,
