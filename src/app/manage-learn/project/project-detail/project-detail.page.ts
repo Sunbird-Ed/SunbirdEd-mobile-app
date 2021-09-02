@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { statusType,statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService , CommonUtilService} from '@app/services';
@@ -176,7 +176,7 @@ export class ProjectDetailPage implements OnDestroy {
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
-            !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
+            !this.viewOnlyMode &&  this.project.status != statusType.notStarted ? this._headerConfig.actionButtons.push('more') : null;
             this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
             this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
@@ -571,9 +571,11 @@ export class ProjectDetailPage implements OnDestroy {
   }
 
   //Update the project
-  update(type) {
+  update(type?) {
     this.project.isEdit = true;
+    if(type !='started'){
     this.project = this.utils.setStatusForProject(this.project);
+    }
     this.db
       .update(this.project)
       .then((success) => {
@@ -894,5 +896,12 @@ export class ProjectDetailPage implements OnDestroy {
       }
       this.backButtonFunc.unsubscribe();
     });
+  }
+  projectStart(){
+    console.log( this.project.status,' this.project.status',statuses[0].title);
+    this.project.status = statuses[1].title;
+    this.update('started');
+    console.log( this.project.status,' this.project.status',statuses[1].title);
+
   }
 }
