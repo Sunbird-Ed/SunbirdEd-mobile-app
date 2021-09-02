@@ -283,6 +283,9 @@ export class TaskViewPage {
   markTaskAsCompleted() {
     this.showAttachments = true;
   }
+  closemarkTaskAsCompleted(){
+    this.showAttachments = false;
+  }
   insertAttachment() {
     this.showAttachments = false;
     !this.task.attachments ? (this.task.attachments = []) : "";

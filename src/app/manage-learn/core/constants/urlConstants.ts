@@ -20,7 +20,7 @@ export const urlConstants = {
     GET_PROJECT: '/api/userProjects/mlprojects/v1/details',
 
     // PRIVATE_PROGRAMS: 'v1/users/privatePrograms',
-    PRIVATE_PROGRAMS: 'v1/users/privatePrograms', //TODO:it should be merged,decision pending
+    PRIVATE_PROGRAMS: '/v1/users/privatePrograms', //TODO:it should be merged,decision pending
 
     // GET_SUB_ENITIES_FOR_ROLES: 'v1/entities/subEntityListBasedOnRoleAndLocation/',
     GET_SUB_ENITIES_FOR_ROLES: '/api/entities/mlcore/v1/subEntityListBasedOnRoleAndLocation/',

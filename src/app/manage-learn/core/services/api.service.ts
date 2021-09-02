@@ -5,7 +5,7 @@ import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
-import { AuthService, DeviceInfo } from 'sunbird-sdk';
+import { AuthService, DeviceInfo ,SharedPreferences} from 'sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
 import { ApiUtilsService } from './api-utils.service';
@@ -19,30 +19,32 @@ import { HTTP } from '@ionic-native/http/ngx';
 export class ApiService {
   baseUrl: string;
   tokens;
+  authToken;
   constructor(
     public http: HttpClient,
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
+    @Inject('SHARED_PREFERENCES') public preferences : SharedPreferences,
     public apiUtils: ApiUtilsService,
     public ionicHttp:HTTP,
-
-  ) { }
+  ) { 
+    // this.getToken();
+  }
 
   get(requestParam: RequestParams): Observable<any> {
-    debugger
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
         let headers = {
-            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg' : '',
-        //     // 'x-auth-token': session ? session.access_token : '',
+            'Authorization': session ? '' :'',
+             // 'x-auth-token': session ? session.access_token : '',
             'X-authenticated-user-token': session.access_token,
             'Content-Type':'application/json'
           }
         // const httpOptions = {
         //   headers: new HttpHeaders({
-        //     'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
+        //     'Authorization': session ? '' : '',
         //     // 'x-auth-token': session ? session.access_token : '',
         //     'X-authenticated-user-token': session.access_token,
         //     // 'X-App-Id': this.apiUtils.appName,
@@ -85,6 +87,12 @@ export class ApiService {
     )
   }
 
+  getToken(){
+    this.preferences.getString('api_bearer_token_v2').subscribe(resp=>{
+      this.authToken =  resp;
+      console.log(resp,"this.authToken");
+   });
+  }
   post(requestParam: RequestParams): Observable<any> {
 
     return this.checkTokenValidation().pipe(
@@ -111,27 +119,19 @@ export class ApiService {
 
       mergeMap(session => {
         let headers = {
-            'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg' : '',
-        //     // 'x-auth-token': session ? session.access_token : '',
+          'Authorization': session ? '' : '',
+            // 'Authorization': session ? 'Bearer '+ this.authToken : '',
+            
+           // 'x-auth-token': session ? session.access_token : '',
             'X-authenticated-user-token': session.access_token,
             'Content-Type':'application/json'
           }
-        // const httpOptions = {
-        //   headers: new HttpHeaders({
-        //     'Authorization': session ? 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJLM0RDRUpFYUx6U0lhVzlkWVlHOThkbEdXMlpCQXAzTSJ9.A4O9NKWHRKf8tKPdhivg1RtwUA_yKOhaCUFXe_ah2IA' : '',
-        //     // 'x-auth-token': session ? session.access_token : '',
-        //     'X-authenticated-user-token': session.access_token,
-        //     // 'X-App-Id': this.apiUtils.appName,
-        //     // 'X-App-Ver': this.apiUtils.appVersion,
-        //     // 'deviceId': this.deviceInfo.getDeviceID(),
-        //   }),
-        // };
         let body = requestParam.payload ? requestParam.payload : {};
         this.ionicHttp.setDataSerializer('json');
         return this.ionicHttp.post(this.baseUrl + requestParam.url,body, headers).then(
           data => {
             // return observableOf(JSON.parse(data.data));
-            return JSON.parse(data.data);
+            console.log(data.data,"data.data");
 
           }, error => {
             catchError(this.handleError(error))

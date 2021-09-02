@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { AttachmentService, statuses, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ModalController } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 
@@ -11,6 +11,7 @@ import { GenericPopUpService } from '../../generic.popup';
 export class CreateTaskFormComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
+  statuses = statuses;
   today
   constructor(
     private modalCtrl: ModalController,

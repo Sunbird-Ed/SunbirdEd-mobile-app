@@ -1,17 +1,47 @@
 @import "src/assets/styles/_variables.scss";
 .custom-label{
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
     margin-bottom: 15px;
 }
 
+.custom-datetime{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0px;
+    padding: 0px 15px;
+    ion-datetime{
+    border-bottom: 1px solid #999999;
+    min-width: 200px;
+    font-size: 16px;
+    }
+}
+.custom-datetime-label{
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 15px;
+}
+.custom-label-float{
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
 .file-list{
     margin: auto; 
     font-size: 24px;
 }
-
+.custom-item{
+    margin: 20px 0px;
+    ion-select{
+        min-width: 200px;
+    }
+}
+.btn-disabled{
+    --background: #999999 !important;
+    --border-color: #999999 !important;
+  }
 .attachments-box{
-    background: #a9a9a966;
+    background: $white;
     margin-bottom: 35px;
     height: auto;
     padding: 5px 10px;
