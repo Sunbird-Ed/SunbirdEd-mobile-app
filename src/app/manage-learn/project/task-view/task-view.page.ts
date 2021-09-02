@@ -337,7 +337,7 @@ export class TaskViewPage {
         name = "Edit Subtask"
     }
     const alert = await this.alert.create({
-      cssClass: "my-custom-class",
+      cssClass: "central-alert",
       header: name,
       // message: "Message <strong>text</strong>!!!",
       inputs: [

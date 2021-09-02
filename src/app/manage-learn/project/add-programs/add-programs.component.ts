@@ -52,7 +52,7 @@ export class AddProgramsComponent implements OnInit {
       text = data;
     })
     const alert = await this.alertCtrl.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_CREATE_PROGRAM'],
       message: text['FRMELEMNTS_MSG_CREATE_PROGRAM_MESSAGE'],
       inputs: [

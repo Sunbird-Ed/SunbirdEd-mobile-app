@@ -128,7 +128,7 @@ export class ProjectOperationPage  {
         text = data;
       });
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -296,7 +296,7 @@ export class ProjectOperationPage  {
       texts = data;
     })
     this.viewProjectAlert = await this.alertController.create({
-      cssClass: 'dark-background',
+      cssClass: 'dark-background central-alert',
       subHeader: texts[header],
       backdropDismiss: false,
       buttons: [

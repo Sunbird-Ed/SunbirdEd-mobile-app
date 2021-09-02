@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import * as _ from 'underscore';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { Location } from '@angular/common';
@@ -29,7 +29,8 @@ export class FilterModalComponent implements OnInit {
     public unnatiSrvc: UnnatiDataService,
     private modalCtrl: ModalController,
     private utils: UtilsService,
-    private location: Location
+    private location: Location,
+    public platform: Platform
   ) {
     this.search = _.debounce(this.search, 500);
   }

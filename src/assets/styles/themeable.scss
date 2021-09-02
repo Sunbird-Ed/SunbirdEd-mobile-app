@@ -1804,5 +1804,22 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  .ios .central-alert{
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: 5px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .alert-button.sc-ion-alert-ios {
+        margin: 3px;
+        min-width: 45%;
+      }
+    }
+  }
+
   // ************ iOS end ***************
 }

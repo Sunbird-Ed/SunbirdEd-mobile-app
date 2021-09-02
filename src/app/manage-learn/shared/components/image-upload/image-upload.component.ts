@@ -372,6 +372,7 @@ export class ImageUploadComponent implements OnInit {
     let alert = await this.alertCtrl.create({
       // header: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
       message: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],

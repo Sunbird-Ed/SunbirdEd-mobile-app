@@ -1,4 +1,4 @@
-<ion-content padding>
+<ion-content padding [ngClass]="{'container': platform.is('ios')}">
   <div>
     <h3 class="heading" *ngIf="dataType == 'question'">{{ 'FRMELEMENTS_MSG_QUESTION_FILTER' | translate }}</h3>
     <h3 class="heading" *ngIf="dataType == 'criteria'">{{ 'FRMELEMENTS_MSG_CRITERIA_FILTER' | translate }}</h3>

@@ -81,7 +81,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private changeDetectionRef: ChangeDetectorRef,
     private notification: NotificationService,
     private translate: TranslateService,
-    private platform: Platform,
+    public platform: Platform,
     private router: Router,
     private ngZone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,

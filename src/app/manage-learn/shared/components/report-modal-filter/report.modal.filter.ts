@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from '@app/app/manage-learn/core';
 import { CommonUtilService, UtilityService } from '@app/services';
-import { ModalController, NavController, NavParams } from '@ionic/angular';
+import { ModalController, NavController, NavParams, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'report-modal-filter',
@@ -21,7 +21,7 @@ export class ReportModalFilter implements OnInit {
     private toast: ToastService,
     private modalCtrl: ModalController,
     private commonUtilService: CommonUtilService,
-
+    public platform: Platform
   ) {}
 
   ngOnInit() {
