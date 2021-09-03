@@ -85,7 +85,8 @@
               "node_modules/epubjs/dist/epub.js",
               "node_modules/katex/dist/katex.min.js",
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/datatables.net/js/jquery.dataTables.js"
+              "node_modules/datatables.net/js/jquery.dataTables.js",
+              "node_modules/video.js/dist/video.js"
             ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true
