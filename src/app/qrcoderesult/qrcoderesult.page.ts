@@ -736,10 +736,11 @@ export class QrcoderesultPage implements OnDestroy {
 
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : []
       });
@@ -839,10 +840,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
-        break;
+    if($event.name === 'back'){
+      this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
     }
   }
 

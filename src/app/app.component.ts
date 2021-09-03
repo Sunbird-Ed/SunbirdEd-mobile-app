@@ -228,7 +228,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.segmentationTagService.getPersistedSegmentaion();
   }
 
-  // TODO: make this as private
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
@@ -329,17 +328,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (codePush === null) {
       return;
     }
-    /**
-     * TODO
-     * call the update
-     * if update is set
-     * then check for default-deplyment-key, if matches
-     * then remove emperiment_key and emperiemtn_app_version
-     * if not then
-     * then set emperiment_key and experiemnt_app_version
-     * if update is null
-     * then remove emperiment_key and emperiemtn_app_version
-     */
+
     codePush.getCurrentPackage((update) => {
       if (update) {
         this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
@@ -575,10 +564,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.translate.onLangChange.subscribe((params) => {
       if (params.lang === 'ur') {
-        // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'rtl';
       } else {
-        // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'ltr';
       }
     });
@@ -922,6 +909,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.router.navigate([RouterLinks.SIGN_IN]);
           }
         }
+        break;
+      case 'MLREPORTS':
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
         break;
     }
   }

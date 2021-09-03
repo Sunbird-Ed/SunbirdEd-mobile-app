@@ -55,7 +55,7 @@ export class ContentRatingAlertComponent {
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popOverCtrl: PopoverController,
-    private platform: Platform,
+    public platform: Platform,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,

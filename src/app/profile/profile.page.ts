@@ -321,7 +321,6 @@ export class ProfilePage implements OnInit {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
                       .then((frameWorkData) => {
                         if (!frameWorkData['status']) {
-                          // Migration-todo
 
                         }
                       });
@@ -374,8 +373,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   /**
@@ -392,8 +390,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   showLessBadges(): void {
@@ -414,8 +411,7 @@ export class ProfilePage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
-      PageId.PROFILE, null,
-      undefined);
+      PageId.PROFILE, null);
   }
 
   showLessTrainings(listName): void {
@@ -753,7 +749,8 @@ export class ProfilePage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass: 'popover-alert input-focus',
+      translucent: true
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -935,7 +932,7 @@ export class ProfilePage implements OnInit {
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
-          content
+          content,
         }
       );
     } catch (err) {

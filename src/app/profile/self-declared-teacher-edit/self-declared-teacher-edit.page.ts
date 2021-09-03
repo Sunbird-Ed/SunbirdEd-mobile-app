@@ -461,7 +461,6 @@ export class SelfDeclaredTeacherEditPage {
   linkClicked(event) {
     this.commonUtilService.openLink(event);
   }
-  // todo Move this to consent service
   public updateConsent(profileDetails, orgId) {
     const request: Consent = {
       status: ConsentStatus.ACTIVE,

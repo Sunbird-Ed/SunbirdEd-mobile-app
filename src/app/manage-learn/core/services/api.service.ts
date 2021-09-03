@@ -141,7 +141,7 @@ export class ApiService {
   }
 
   delete(requestParam: RequestParams): Observable<any> {
-    
+
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
         const httpOptions = {
@@ -149,8 +149,8 @@ export class ApiService {
             'x-auth-token': session ? session.access_token : '',
             'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion,
-            'deviceId': this.deviceInfo.getDeviceID()
+            // 'X-App-Ver': this.apiUtils.appVersion,
+            // 'deviceId': this.deviceInfo.getDeviceID()
           }),
           body: requestParam.payload,
         };
@@ -180,18 +180,9 @@ export class ApiService {
 
     }
     return (error: any): Observable<any> => {
-      // TODO: send the error to remote logging infrastructure
       console.error(error, error.status, "status"); // log to console instead, 
 
-      // TODO: better job of transforming error for user consumption
-      // this.log(`${operation} failed: ${error.message}`);
 
-      // Let the app keep running by returning an empty result.
-      // if (error.status === 401) {
-      //   this.auth.sessionExpired();
-      // } else {
-      //   this.toast.showMessage('FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')
-      // }
       return observableOf(result);
     };
   }

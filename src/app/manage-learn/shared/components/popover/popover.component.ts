@@ -7,8 +7,7 @@ import { popoverController } from '@ionic/core';
 })
 export class PopoverComponent {
   @Input() menus;
-  constructor(
-  ) { }
+  
   onEvent(menu) {
     popoverController.dismiss(menu.VALUE);
   }

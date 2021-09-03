@@ -157,7 +157,6 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   goToObservationSubmission(entity) { 
-    // TODO : Changed logic to call 1st submission in the submission page only .
     this.router.navigate(
       [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`],
       {
@@ -170,7 +169,6 @@ export class ObservationDetailComponent implements OnInit {
         }
       }
     );
-    // TODO:till here
   }
 
   async addEntity() {

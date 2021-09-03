@@ -75,7 +75,9 @@ describe('ContentDetailsPage', () => {
         subscribe: jest.fn(() => 'playConfig')
     };
     const mockPopoverController: Partial<PopoverController> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };
@@ -2494,7 +2496,6 @@ describe('ContentDetailsPage', () => {
                 expect(mockRatingHandler.resetRating).toHaveBeenCalled();
                 expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
                 expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
-                expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
                 done();
             }, 1000);
         });

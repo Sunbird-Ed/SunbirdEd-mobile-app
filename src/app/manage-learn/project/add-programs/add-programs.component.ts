@@ -42,7 +42,7 @@ export class AddProgramsComponent implements OnInit {
         this.dataList = data.result;
       }
     }, error => {
-      this.loaderService.stopLoader();
+      this.loaderService.stopLoader(); 
     })
   }
   async createProgram() {

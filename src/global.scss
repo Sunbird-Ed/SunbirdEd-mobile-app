@@ -65,6 +65,11 @@
   background-color: map-get($colors, light_gray_8c);
   min-height: 90vh !important;
   height: 90vh !important;
+  .my-discussion{
+    .topic-list-container{
+      height: 300px !important;
+    }
+  }
 }
 .discuss-left-panel{
   z-index: 3 !important;
@@ -78,7 +83,8 @@
 }
 
 .video-js {
-  padding-top: 50% !important; 
+  height: 100% !important;
+  padding-top: inherit !important;
 }
 
 // dashlet

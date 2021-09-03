@@ -21,17 +21,18 @@
         <div class="ion-margin-bottom mt-8">
             <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                 <strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : contentData }}</strong>
-               &nbsp; <span class="sb-content-title-data">{{contentData?.audience}}</span>
             </ion-card-title>
             <p *ngIf="contentData?.se_gradeLevels || contentData.gradeLevel">{{'CLASS' | translate}} : {{contentData?.se_gradeLevels || contentData.gradeLevel}}</p>
-            <p *ngIf="contentData?.subject">{{'SUBJECT' | translate}}: {{contentData?.subject}}</p>
             <p *ngIf="contentData?.se_mediums || contentData.medium">{{'MEDIUM' | translate}} : {{contentData?.se_mediums || contentData.medium}}</p>
-
+            <p *ngIf="contentData?.se_boards || contentData.board">{{'BOARD' | translate}} : {{contentData?.se_boards || contentData.board}}</p>
+            <p *ngIf="contentData?.audience">{{'USER_TYPE' | translate}} : {{contentData?.audience}}</p>
         </div>
         <div class="ion-margin-bottom">
             <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                 <strong>{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : contentData }}</strong>
             </ion-card-title>
+            <p *ngIf="batchEndDate">{{'FRMELEMNTS_LBL_TRAINING_END_DATE' | categoryKeyTranslate : contentData }} : {{
+                batchEndDate | date: 'dd/MM/yyyy'}}</p>
         </div>
         <div>
             <p>{{contentData?.description}}</p>

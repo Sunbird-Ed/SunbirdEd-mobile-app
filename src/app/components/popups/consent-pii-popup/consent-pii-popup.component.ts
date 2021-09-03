@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService, AppGlobalService, UtilityService } from '@app/services';
 import {FormAndFrameworkUtilService} from '../../../../services/formandframeworkutil.service';
@@ -12,6 +12,7 @@ import { RouterLinks } from '@app/app/app.constant';
 
 
 export class ConsentPiiPopupComponent {
+    @Input() course;
     profile: any;
     consentForm = [];
     isAgreed = false;

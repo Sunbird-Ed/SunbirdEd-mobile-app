@@ -617,7 +617,7 @@ export class UtilsService {
                     profileData["profileUserType"] &&
                     profileData["profileUserType"]["subType"]
                       ? profileData["profileUserType"]["subType"].toUpperCase()
-                      : null;
+                      : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);
                 });
               })

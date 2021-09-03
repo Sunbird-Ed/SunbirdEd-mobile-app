@@ -369,7 +369,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           groups: groupsData
         };
         const groupsUpdateResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
-        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.ACCEPT_GROUP_GUIDELINES);
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', [], ID.ACCEPT_GROUP_GUIDELINES);
         this.fetchGroupList();
       } catch (err) {
         console.log('groupsUpdateResponse err', err);

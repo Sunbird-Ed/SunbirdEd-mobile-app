@@ -1,5 +1,5 @@
-<ion-content class="ion-padding ui-container">
-  <div class="ui-content">
+<ion-content [ngClass]="{ 'ui-content': platform.is('android'), 'ui-container-ios': platform.is('ios') }">
+  <div [ngClass]="{ 'ui-content': platform.is('android'), 'ui-content-ios': platform.is('ios') }">
     <p *ngIf="!isFromSettings" class="app-title ion-text-center">{{'APP_TITLE' | translate:{'%s': appName } }}</p>
     <div class="font-size-17" class="ion-text-center ion-padding ion-text-wrap" style="padding: 0">
       <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>

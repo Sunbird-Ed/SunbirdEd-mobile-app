@@ -175,7 +175,7 @@ import { HTTP } from '@ionic-native/http/ngx';
     Diagnostic,
     Media,
     CommonModule,
-    HttpClientModule, //TODO:remove after api integration
+    HttpClientModule, 
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,

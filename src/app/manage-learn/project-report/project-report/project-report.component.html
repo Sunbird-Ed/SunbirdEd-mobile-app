@@ -4,7 +4,7 @@
       <div class="filter-icon">
         <ion-icon item-start name="funnel" color="primary" class="icon"></ion-icon>
       </div>
-      <div>{{ 'FRMELEMNTS_BTN_FILTER' | translate }}</div>
+      <div class="clr-primary">{{ 'FRMELEMNTS_BTN_FILTER' | translate }}</div>
       <div class="filter-icon">
         <ion-icon name="chevron-forward-outline" color="primary" *ngIf="!showFilter"></ion-icon>
         <ion-icon name="chevron-down-outline" color="primary" *ngIf="showFilter"></ion-icon>
@@ -22,7 +22,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ 'FRMELEMNTS_LBL_PROJECT_OVERVIEW' | translate }}</h5>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_PROJECT_OVERVIEW' | translate }}</h5>
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
@@ -50,7 +50,7 @@
             <div class="card-image">
               <img src="{{ p?.img }}" alt="" />
             </div>
-            <div class="card-content">
+            <div class="card-content sb--card__title">
               <div class="content-heading">{{ p?.name }}</div>
               <div class="count">{{ reportData?.projects[p?.key] }}</div>
             </div>
@@ -66,7 +66,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ 'FRMELEMNTS_LBL_TASK_OVERVIEW' | translate }}</h5>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_TASK_OVERVIEW' | translate }}</h5>
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
@@ -105,7 +105,7 @@
       <div class="overview-container">
         <div class="overview-heading">
           <div>
-            <h5>{{ 'FRMELEMNTS_LBL_CATEGORY_OVERVIEW' | translate }}</h5>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_CATEGORY_OVERVIEW' | translate }}</h5>
           </div>
 
           <div class="filter-download-container">
@@ -138,7 +138,6 @@
     </section>
 
     <section>
-      <!-- //TODO:implement -->
     </section>
   </div>
 </ion-content>

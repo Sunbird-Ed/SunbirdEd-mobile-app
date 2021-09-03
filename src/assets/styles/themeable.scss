@@ -1229,11 +1229,9 @@ html[data-theme="JOYFUL"]{
       padding: 0 16px !important;
       font-size: 20px !important;
       text-align: unset !important;
-      margin-top: 28px !important;
       ion-icon{
         height: 30px !important;
         width: 60px !important;
-        top: -20px !important;
       }
     }
 
@@ -1651,7 +1649,11 @@ html[data-theme="JOYFUL"]{
       color: map-get($colors, primary) !important;
       background-color: map-get($colors, light_gray) !important;
     }
-    .df-btn-close{
+    .df-back-btn{
+      color: map-get($colors, primary) !important;
+      background-color: map-get($colors, light_gray) !important;
+    }
+    .df-close-btn{
       color: map-get($colors, black) !important;
       background: var(--app-pink) !important;
       padding: 0.5rem 1rem !important;
@@ -1726,5 +1728,41 @@ html[data-theme="JOYFUL"]{
       --background: var(--app-tertiary-background);
     }
   }
+  
+  .header-ios ion-toolbar:last-of-type {
+    --border-width: 0px !important;
+  }
+
+  // ************ iOS start *************
+  .ui-content-ios{
+    z-index: 2;
+    position: relative;
+    top: 45px;
+  }
+  .ui-container-ios {
+    &::part(scroll) {
+      z-index: auto;
+    }
+    &::after {
+      content: '';
+      width: 100%;
+      height: 50px;
+      display: block;
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      border-bottom-left-radius: 20px;
+      background-color: var(--app-primary-header) !important;
+      background-image: url(/assets/imgs/header-background.svg);
+      background-repeat: no-repeat;
+      background-position: bottom center;
+    }
+  }
+  .sc-ion-popover-ios {
+    bottom: 0px !important;
+    top: unset !important;
+  }
+  // ************ iOS end ***************
+
 
 }

@@ -666,7 +666,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         userConsent: this.courseContent.contentData.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, this.courseContent).toPromise()
         .then(async (data: boolean) => {
           // await this.loader.dismiss();
           this.courseContent.batchId = item.id;
@@ -873,9 +873,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
-        // Cancel Clicked Telemetry
-        // todo
-        // this.generateCancelDownloadTelemetry(this.contentDetail);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -884,10 +881,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         // correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
         correlationData: [],

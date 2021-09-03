@@ -7,19 +7,17 @@
   </ion-refresher>
   <div class="container-focus">
     <div class="user-profile">
-      <div class="welcome-text">{{'WELCOME' | translate}}</div>
-      <div class="user-name-text">{{profile?.handle}}</div>
+      <div class="user-name-text"><span>{{'HI' | translate}}</span>&nbsp;{{profile?.handle}}</div>
     </div> 
     
     <div class="preference-container" *ngIf="preferenceList && preferenceList.length">
-      <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
       <div class="user-preference">
-        <div class="preference-data">
-          <div (click)="viewPreferenceInfo()">
+        <div class="preference-data" (click)="viewPreferenceInfo()">
+          <div>
             <span>{{'YOUR_PREFERENCES' | translate}}</span>
-            <img class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+            <img class="preference-info-icon" src="assets/imgs/info-white.svg" alt="preferences-info">
           </div>
-          <div (click)="editProfileDetails()">
+          <div>
             <app-truncated-ellipsis 
               [arrayList]= "preferenceList"
               [showCount]="1"
@@ -27,8 +25,8 @@
             </app-truncated-ellipsis>
           </div>
         </div>
-        <div class="change-btn">
-          <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
+        <div class="change-btn py-8" (click)="editProfileDetails()">
+          <button class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
         </div>
       </div>
     </div>
@@ -75,8 +73,16 @@
         <hr>
       </div>
       <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
-        <sb-banner-card-hlist [bannerList]="section?.data" (cardClick)="navigateToSpecificLocation($event)"></sb-banner-card-hlist>
-      </ng-container>
+        <sb-banner-card-hlist [bannerList]="primaryBanner" (cardClick)="navigateToSpecificLocation($event, section)"></sb-banner-card-hlist>
+        <div class="banner-pills">
+          <sb-pills-grid *ngIf="secondaryBanner?.length" [title]="text" [pillSize]="'small'" [pillsViewType]="'scroll'"
+                (select)="navigateToSpecificLocation($event)">
+                <sb-pill-item *ngFor="let pillData of secondaryBanner" [name]="pillData?.ui?.text | translateJson | titlecase"
+                  [icon]="pillData?.ui?.icon" [value]="pillData"
+                  [theme]="pillData?.ui?.theme"></sb-pill-item>
+        </sb-pills-grid>
+        </div>
+      </ng-container> 
 
       <!-- Pills -->
       <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-pills-grid'">
@@ -124,6 +130,29 @@
 
     </ng-container>
 
+      <!-- Ml tile other category start -->
+      <ng-container *ngIf="otherCategories?.length">
+        <div class="heading-label">
+          <span>{{ 'BROWSE_OTHER_CATEGORIES' | translate }}</span>
+          <hr>
+        </div>
+        <sb-pills-grid 
+          [pillShape]="'image_overlap'"
+          [pillsViewType]="'scroll'"          
+          [pillTextElipsis]="'three_line'"
+          (select)="handleOtherCategories($event)"
+          >
+          <sb-pill-item 
+           *ngFor="let pillData of otherCategories; let index=index"
+              [name]="pillData?.name | titlecase"
+              [icon]="pillData?.icon?.app"
+              [value]="pillData"
+              [theme]="({ component: 'sb-pill-item', input: 'theme' })"
+          >
+          </sb-pill-item>
+        </sb-pills-grid>
+      </ng-container>
+      <!-- Ml tile other category end -->
   </div>
 
   <div *ngIf="!homeDataAvailable" class="p-16 pt-32">

@@ -59,7 +59,7 @@ export class CategorySelectComponent implements OnInit {
     this.categoryData.forEach(element => {
       if (element.field == 'otherCategories') {
         if (element.validation.required) {
-          element.validation.name = "required",
+          element.validation.name = "required"
             validationsArray.push(
               Validators.required
             );

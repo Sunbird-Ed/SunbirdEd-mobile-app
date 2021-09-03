@@ -17,7 +17,6 @@ export interface DownloadManagerPageInterface extends OnInit {
 
     storageInfo: AppStorageInfo;
     downloadedContents: Content[];
-    // migration-TODO
     // loader?: Loading
     loader?: any
 

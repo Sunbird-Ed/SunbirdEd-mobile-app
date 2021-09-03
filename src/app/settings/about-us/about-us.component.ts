@@ -150,8 +150,7 @@ export class AboutUsComponent implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.SETTINGS_ABOUT_US,
-      Environment.SETTINGS, '', '', '',
-      undefined
+      Environment.SETTINGS, '', '', ''
     );
   }
 

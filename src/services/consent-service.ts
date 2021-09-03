@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Consent, ProfileService } from 'sunbird-sdk';
 import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
 import { PopoverController } from '@ionic/angular';
-import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { ConsentStatus, UserDeclarationOperation } from '@project-sunbird/client-services/models';
 import { CommonUtilService } from './common-util.service';
 
 @Injectable()
@@ -13,11 +13,12 @@ export class ConsentService {
         private commonUtilService: CommonUtilService
     ) { }
 
-    async showConsentPopup(userDetails, isOrgConsent?) {
+    async showConsentPopup(userDetails, isOrgConsent?, course?) {
         const popover = await this.popoverCtrl.create({
             component: ConsentPiiPopupComponent,
             componentProps: {
-                isSSOUser: isOrgConsent
+                isSSOUser: isOrgConsent,
+                course
             },
             cssClass: 'sb-popover',
             backdropDismiss: false
@@ -49,23 +50,52 @@ export class ConsentService {
             });
     }
 
-    async getConsent(userDetails, isOrgConsent?) {
+    async getConsent(userDetails, isOrgConsent?, course?) {
         const request: Consent = {
             userId: isOrgConsent ? userDetails.uid : userDetails.userId,
             consumerId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.channel,
             objectId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId :
-             (userDetails.courseId ? userDetails.courseId : userDetails.batch.courseId),
-             objectType: isOrgConsent ? 'Organisation' : undefined
+                (userDetails.courseId ? userDetails.courseId : userDetails.batch.courseId),
+            objectType: isOrgConsent ? 'Organisation' : undefined
         };
         await this.profileService.getConsent(request).toPromise()
             .then((data) => {
             })
             .catch(async (e) => {
                 if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND' && e.response.responseCode === 404) {
-                    await this.showConsentPopup(userDetails, isOrgConsent);
+                    await this.showConsentPopup(userDetails, isOrgConsent, course);
                 } else if (e.code === 'NETWORK_ERROR') {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
                 }
             });
+        if (isOrgConsent) {
+            this.updateProfileDeclaration(userDetails);
+        }
+    }
+
+    private async updateProfileDeclaration(userDetails) {
+        let id = '';
+        if (userDetails.serverProfile.externalIds && userDetails.serverProfile.externalIds.length) {
+            const externalId = userDetails.serverProfile.externalIds.
+                find(element => element.provider === userDetails.serverProfile.channel);
+            id = externalId && externalId.id;
+        }
+        const declarations = [
+            {
+                operation: UserDeclarationOperation.ADD,
+                userId: userDetails.uid,
+                persona: '',
+                orgId: userDetails.serverProfile.rootOrg.rootOrgId,
+                info: {
+                    'declared-ext-id': id,
+                    'declared-phone': '',
+                    'declared-email': ''
+                }
+            }
+        ];
+        try {
+            await this.profileService.updateServerProfileDeclarations({ declarations }).toPromise();
+        } catch (e) {
+        }
     }
 }
