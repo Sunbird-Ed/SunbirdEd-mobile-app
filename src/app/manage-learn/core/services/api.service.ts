@@ -131,8 +131,7 @@ export class ApiService {
         return this.ionicHttp.post(this.baseUrl + requestParam.url,body, headers).then(
           data => {
             // return observableOf(JSON.parse(data.data));
-            console.log(data.data,"data.data");
-
+            return JSON.parse(data.data);
           }, error => {
             catchError(this.handleError(error))
           });
