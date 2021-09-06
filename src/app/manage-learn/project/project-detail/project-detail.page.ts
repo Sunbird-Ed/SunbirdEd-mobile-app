@@ -16,8 +16,6 @@ import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
@@ -105,13 +103,11 @@ export class ProjectDetailPage implements OnDestroy {
     private unnatiService: UnnatiDataService,
     private platform: Platform,
     private ref: ChangeDetectorRef,
-    private navigateService: NavigationService,
     private alertController: AlertController,
     private network: NetworkService,
     private location: Location,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
@@ -176,7 +172,7 @@ export class ProjectDetailPage implements OnDestroy {
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
-            !this.viewOnlyMode &&  this.project.status != statusType.notStarted ? this._headerConfig.actionButtons.push('more') : null;
+            !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
             this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
             this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
@@ -532,52 +528,11 @@ export class ProjectDetailPage implements OnDestroy {
     this.update("ProjectDelete");
   }
   openResources(task = null) {
-    if (task && task.learningResources && task.learningResources.length === 1) {
-      if(task.learningResources[0].id){
-        this.openBodh(task.learningResources[0].id);
-      }else{
-        let identifier = task.learningResources[0].link.split("/").pop();
-        this.openBodh(identifier);
-      }
-      return;
-    }
     if (task) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      if( this.project.learningResources && this.project.learningResources.length == 1){
-        if(this.project.learningResources[0].id){
-          this.openBodh(this.project.learningResources[0].id);
-        }else{
-          let identifier = this.project.learningResources[0].link.split("/").pop();
-          this.openBodh(identifier );
-        }
-      }else{
         this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
       }
-    }
-  }
-  //open openBodh
-  openBodh(link) {
-    if(!this.networkFlag){
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
-      return
-    }
-    this.loader.startLoader();
-    let identifier = link.split("/").pop();
-    const req: ContentDetailRequest = {
-      contentId: identifier,
-      attachFeedback: false,
-      attachContentAccess: false,
-      emitUpdateIfAny: false
-    };
-
-    this.contentService.getContentDetails(req).toPromise()
-      .then(async (data: Content) => {
-        this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
-      }, error => {
-        this.loader.stopLoader();
-      });
   }
 
   //Update the project
