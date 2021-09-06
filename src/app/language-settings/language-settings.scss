@@ -24,15 +24,20 @@
     }
   }
 
-  button span {
+  .md button span {
     width: 100%;
     display: inline-block;
-
     position: absolute;
-
     top: 50%;
     left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
+  .ios button span {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
