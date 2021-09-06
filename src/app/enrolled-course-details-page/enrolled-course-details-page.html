@@ -284,7 +284,7 @@
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">
 					<div>
 						<div class="ion-padding">
-							<div class="font-14-new view-credits" (click)="expandDataSettings()">
+							<div class="font-14-new view-credits" role="heading" aria-level="1" (click)="expandDataSettings()">
 								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-up"></ion-icon>

@@ -1,7 +1,7 @@
 <div class="sb-dt-content">
     <div class="left" style="overflow: hidden;">
 
-        <div class="sb-dt-title"> {{contentData?.name}}</div>
+        <div class="sb-dt-title" role="heading" aria-level="1"> {{contentData?.name}}</div>
         <div class="sb-dt-source" *ngIf="contentData?.owner || contentData?.creator">
             <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
             <span class="sb-user">{{ contentData?.owner || contentData?.creator}}</span>
