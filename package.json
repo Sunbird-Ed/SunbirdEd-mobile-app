@@ -67,11 +67,7 @@
     "@project-sunbird/sb-dashlet": "1.0.4",
     "@project-sunbird/sb-styles": "0.0.9",
     "sb-tag-manager": "^3.9.19",
-<<<<<<< HEAD
-    "@project-sunbird/sunbird-sdk": "4.2.4",
-=======
     "@project-sunbird/sunbird-sdk": "4.2.5",
->>>>>>> ae212b82bfa729d91b2650514df199e65f043175
     "@project-sunbird/sunbird-epub-player-v9": "^4.2.0",
     "@project-sunbird/sunbird-pdf-player-v9": "^4.2.0",
     "@project-sunbird/sunbird-player-sdk-v9": "^4.2.0",
