@@ -83,7 +83,7 @@
       </ion-buttons>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" name="ellipsis-vertical"></ion-icon>
+        <ion-icon class="ion-float-end" md="ellipsis-vertical"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">

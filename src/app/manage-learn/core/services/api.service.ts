@@ -43,14 +43,14 @@ export class ApiService {
             'Content-Type':'application/json'
           }
         // const httpOptions = {
-        //   headers: new HttpHeaders({
-        //     'Authorization': session ? '' : '',
-        //     // 'x-auth-token': session ? session.access_token : '',
-        //     'X-authenticated-user-token': session.access_token,
-        //     // 'X-App-Id': this.apiUtils.appName,
-        //     // 'X-App-Ver': this.apiUtils.appVersion,
-        //     // 'deviceId': this.deviceInfo.getDeviceID(),
-        //   }),
+          // headers: new HttpHeaders({
+          //   'Authorization': session ? '' : '',
+          //   'x-auth-token': session ? session.access_token : '',
+          //   'X-authenticated-user-token': session.access_token,
+          //   'X-App-Id': this.apiUtils.appName,
+          //   'X-App-Ver': this.apiUtils.appVersion,
+          //   'deviceId': this.deviceInfo.getDeviceID(),
+          // }),
         // };
     this.ionicHttp.setDataSerializer('json');
         return this.ionicHttp.get(this.baseUrl + requestParam.url,'', headers).then(
@@ -186,7 +186,3 @@ export class ApiService {
     };
   }
 }
-
-
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4OTU4MzIyNzkyMTE0MWJiYWE0MjA4ZTBkMjE3YmU0ZiJ9.t2OPiAMuongqwSQfdJAsokgt2Eur5t7RchNZmWOwNTg

@@ -27,6 +27,6 @@ export class KendraApiService extends ApiService {
   ) {
     super(http, toast, modalController, authService, deviceInfo,preferences, utils,ionicHttp);
     // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
-    this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url));
+    !this.baseUrl ? this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url)) :'';
   }
 }

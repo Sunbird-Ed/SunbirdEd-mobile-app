@@ -906,10 +906,7 @@ export class ProjectDetailPage implements OnDestroy {
     });
   }
   projectStart(){
-    console.log( this.project.status,' this.project.status',statuses[0].title);
     this.project.status = statuses[1].title;
     this.update('started');
-    console.log( this.project.status,' this.project.status',statuses[1].title);
-
   }
 }

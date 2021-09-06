@@ -27,6 +27,6 @@ export class AssessmentApiService extends ApiService {
   ) {
     super(http, toast, modalController, authService, deviceInfo,preferences, utils,ionicHttp);
     // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.SAMIKSHA;
-    this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url));
+    !this.baseUrl ? this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url)) :'';
   }
 }
