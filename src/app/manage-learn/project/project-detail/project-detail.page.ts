@@ -583,9 +583,6 @@ export class ProjectDetailPage implements OnDestroy {
   //Update the project
   update(type?) {
     this.project.isEdit = true;
-    if(type !='started'){
-    this.project = this.utils.setStatusForProject(this.project);
-    }
     this.db
       .update(this.project)
       .then((success) => {
@@ -904,9 +901,5 @@ export class ProjectDetailPage implements OnDestroy {
       }
       this.backButtonFunc.unsubscribe();
     });
-  }
-  projectStart(){
-    this.project.status = statuses[1].title;
-    this.update('started');
   }
 }

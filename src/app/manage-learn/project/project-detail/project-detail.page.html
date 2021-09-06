@@ -128,11 +128,6 @@
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
 </ion-content>
-<div *ngIf="project?.status == statuses[0].title && project?.isNew" class="start-btn-primary">
-    <ion-button color="primary" (click)="projectStart()">
-        {{'FRMELEMNTS_BTN_START' | translate}}
-      </ion-button>
-  </div>
 <ion-footer *ngIf="project && viewOnlyMode">
   <ion-button expand="block" (click)="importProjectConfirm()" *ngIf="!project.projectId || !project.projectId.length">
     {{'FRMELEMNTS_BTN_IMPORT_PROJECT' | translate}}
