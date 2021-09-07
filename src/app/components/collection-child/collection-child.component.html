@@ -26,7 +26,7 @@
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
           <div class="etb-card-item-content">
             <div class="image-position">
-              <img class="content-icon" alt=""
+              <img class="content-icon" alt="content-logo" aria-hidden="true"
                    [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) ||
                commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
               <span class="icon-position" *ngIf="childData?.isAvailableLocally">
