@@ -506,6 +506,7 @@ export class UtilsService {
   async openProfileUpdateAlert() {
     this.profileAlert = await this.aleryCtrl.create({
       header: "Alert",
+      cssClass:'central-alert',
       message: `Please update   ${
         this.requiredFields && this.requiredFields.length
           ? this.requiredFields + " in"
