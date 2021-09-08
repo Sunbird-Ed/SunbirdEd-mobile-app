@@ -304,7 +304,6 @@ export class SettingsPage implements OnInit {
   }
 
   async debugModeToggle() {
-      console.log('this.debugmode', this.debugmode);
       if (this.debugmode) {
         const confirm = await this.popoverCtrl.create({
           component: SbPopoverComponent,
