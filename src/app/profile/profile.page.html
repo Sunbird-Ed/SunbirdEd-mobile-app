@@ -27,9 +27,9 @@
             </span>
         </p>
         <div class="school-recent" *ngIf="organisationName">
-            <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
+            <h6 class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
 
-            </p>
+            </h6>
         </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
@@ -52,7 +52,7 @@
         </div>
     </div>
    <div *ngIf="profile" class="school-details text-center">
-    <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+    <div *ngIf="profile?.persona || profile?.framework" class="preference-info" role="heading" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
         <div>

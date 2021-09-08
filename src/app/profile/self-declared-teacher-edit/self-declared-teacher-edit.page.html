@@ -1,7 +1,7 @@
 <ion-content>
 
-  <p *ngIf="editType === 'add'" class="title">{{'PLEASE_PROVIDE_FOLLOWING_DETAILS' | translate}}</p>
-  <p *ngIf="editType === 'edit'" class="title">{{'UPDATE_DETAILS' | translate}}</p>
+  <h4 *ngIf="editType === 'add'" class="title">{{'PLEASE_PROVIDE_FOLLOWING_DETAILS' | translate}}</h4>
+  <h4 *ngIf="editType === 'edit'" class="title">{{'UPDATE_DETAILS' | translate}}</h4>
 
   <div class="declaration-container">
     <sb-form *ngIf="tenantPersonaForm && tenantPersonaForm.length"
