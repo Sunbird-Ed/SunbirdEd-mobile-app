@@ -112,6 +112,23 @@
         </sb-pills-grid>
       </ng-container>
 
+      <!-- Recently published courses -->
+      <div *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.theme?.component === 'sb-course-cards'">
+        <sb-library-cards-hlist
+          [title]="section?.title | translateJson"
+          [contentList]="section?.data?.sections[0]?.contents"
+          [type]="section?.theme?.inputs?.type || LibraryCardTypes.MOBILE_TEXTBOOK"
+          [layoutConfig]="layoutConfiguration"
+          [isLoading]="false"
+          [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+          [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
+          [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
+          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+          (viewMoreClick)="navigateToViewMoreContentsPage(section, section?.data?.sections)"
+          (cardClick)="navigateToDetailPage($event, section?.title);">
+        </sb-library-cards-hlist>
+      </div>
+
       <!-- Recently viewed -->
       <div class="sb-recently-viewed-container" *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.theme?.component === 'sb-library-cards-hlist'">
         <sb-library-cards-hlist
