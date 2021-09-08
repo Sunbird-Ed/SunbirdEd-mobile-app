@@ -68,6 +68,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
     facetFilters: {
         [code: string]: FilterValue[]
     } = {};
+    displayFacetFilters: {
+        [code: string]: FilterValue[]
+    } = {};
     initialFacetFilters?: {
         [code: string]: FilterValue[]
     };
@@ -232,6 +235,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
             return acc;
         }, {});
 
+        if(this.facetFilters){
+            this.displayFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
+        }
         if (isInitialCall) {
             this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
         }
@@ -244,12 +250,12 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
                     if (p.sort) {
-                        this.initialFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
                     }
                     acc[p.code] = this.facetFilters[p.code]
                         .filter(v => v.apply)
                         .map(v => {
-                            return this.initialFacetFilters[p.code].find(i => (i.name === v.name));
+                            return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
                         });
                     return acc;
                 }, {}),
@@ -507,6 +513,10 @@ export class CategoryListPage implements OnInit, OnDestroy {
             }
         }
         return existingSearchFilters;
+    }
+
+    reloadDropdown(index, item){
+        return item;
     }
 
     ngOnDestroy() {
