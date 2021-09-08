@@ -28,7 +28,6 @@ export class SunbirdService extends ApiService {
 
   ) {
     super(http, toast, modalController, authService,deviceInfo,preferences, utils,ionicHttp);
-    // this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.SUNBIRD;
     !this.baseUrl ? this.utilityService.getBuildConfigValue('BASE_URL').then((url) => (this.baseUrl = url)) :'';
   }
 }

@@ -31,10 +31,6 @@ export const urlConstants = {
     OBSERVATION_SUBMISSION_CREATE: '/api/observationSubmissions/mlsurvey/v1/create/',
     SEARCH_ENTITY: '/api/observations/mlsurvey/v1/searchEntities',
     OBSERVATION_UPDATE_ENTITES: '/api/observations/mlsurvey/v1/updateEntities/',
-    IS_SURVEY_SUBMISSION_ALLOWED: 'v1/surveySubmissions/isAllowed/', //TODO:remove this api code
-    IS_OBSERVATION_SUBMISSION_ALLOWED: 'v1/observationSubmissions/isAllowed/', //TODO: remove this api code
-    CHECK_IF_SUBMITTED: 'v1/submissions/isAllowed/', //TODO: remove this api code
-    SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/make/', //TODO: not found in sheet
     SUBMISSION: 'v1/submissions/make/', //TODO its assessment submissionAPI
     TARGETTED_ENTITY_TYPES: '/api/users/mlcore/v1/targetedEntity/',
     OBSERVATION_REPORT_SOLUTION_LIST: '/api/observationSubmissions/mlsurvey/v1/solutionList?',
@@ -43,13 +39,9 @@ export const urlConstants = {
     ALL_EVIDENCE: '/api/observations/mlsurvey/v1/listAllEvidences',
 
     SURVEY_FEEDBACK: {
-      GET_DETAILS_BY_LINK: 'v1/surveys/getDetailsByLink/' /* + link */, //TODO api needs to merge , decision pending
-    
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
       MAKE_SUBMISSION: 'v1/surveySubmissions/make/', //TODO: Not found in sheet
-
       LIST_ALL_EVIDENCES: '/api/surveys/mlreports/v1/listAllEvidences',
-
       GET_ALL_ANSWERS: '/api/surveys/mlreports/v1/getAllResponsesOfQuestion/',
     },
     DEEPLINK: {
@@ -58,23 +50,3 @@ export const urlConstants = {
     PRESIGNED_URLS: '/api/cloud-services/mlcore/v1/files/preSignedUrls',
   },
 };
-
-// TODO:
-1
-// isAllowed api all 3
-2
-
-// Survey Details - {{url}}/assessment/api/v2/surveys/details
-//                    +
-// Survye DetailsLink - {{url}}/assessment/api/v1/surveys/getDetailsByLink/:link
-//                  =
-// Survey v3 details - {{url}}/assessment/api/v3/surveys/details/:surveyId/link
-
-3
-// SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
-// SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/update/',
-
-    // PRIVATE_PROGRAMS: 'v1/users/privatePrograms',
-    // SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
-    // GET_DETAILS_BY_LINK: 'v1/surveys/getDetailsByLink/'
-    // MAKE_SUBMISSION: 'v1/surveySubmissions/make/'

@@ -5,7 +5,7 @@ import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
-import { AuthService, DeviceInfo ,SharedPreferences} from 'sunbird-sdk';
+import { AuthService, DeviceInfo, SharedPreferences } from 'sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
 import { ApiUtilsService } from './api-utils.service';
@@ -26,45 +26,40 @@ export class ApiService {
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
-    @Inject('SHARED_PREFERENCES') public preferences : SharedPreferences,
+    @Inject('SHARED_PREFERENCES') public preferences: SharedPreferences,
     public apiUtils: ApiUtilsService,
-    public ionicHttp:HTTP,
-  ) { 
+    public ionicHttp: HTTP,
+  ) {
     // this.getToken();
+  }
+  async setHeaders(session) {
+    let headers = {
+      'Authorization': session ? '' : '',
+      'x-auth-token': session ? session.access_token : '',
+      'X-authenticated-user-token': session ? session.access_token : '',
+      'Content-Type': 'application/json',
+      'X-App-Id': this.apiUtils.appName,
+      'deviceId': this.deviceInfo.getDeviceID(),
+    }
+    return headers;
   }
 
   get(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        let headers = {
-            'Authorization': session ? '' :'',
-             // 'x-auth-token': session ? session.access_token : '',
-            'X-authenticated-user-token': session.access_token,
-            'Content-Type':'application/json'
-          }
-        // const httpOptions = {
-          // headers: new HttpHeaders({
-          //   'Authorization': session ? '' : '',
-          //   'x-auth-token': session ? session.access_token : '',
-          //   'X-authenticated-user-token': session.access_token,
-          //   'X-App-Id': this.apiUtils.appName,
-          //   'X-App-Ver': this.apiUtils.appVersion,
-          //   'deviceId': this.deviceInfo.getDeviceID(),
-          // }),
-        // };
-    this.ionicHttp.setDataSerializer('json');
-        return this.ionicHttp.get(this.baseUrl + requestParam.url,'', headers).then(
-          data => {
-            // return observableOf(JSON.parse(data.data))
-            return JSON.parse(data.data);
-          }, error => {
-            catchError(this.handleError(error))
-          },
-        );
+        return this.setHeaders(session).then(data => {
+          this.ionicHttp.setDataSerializer('json');
+          return this.ionicHttp.get(this.baseUrl + requestParam.url, '', data).then(
+            data => {
+              return JSON.parse(data.data);
+            }, error => {
+              catchError(this.handleError(error))
+            },
+          );
+        })
       })
     )
   }
-
 
   checkTokenValidation(): Observable<any> {
     return this.authService.getSession().pipe(
@@ -87,79 +82,38 @@ export class ApiService {
     )
   }
 
-  getToken(){
-    this.preferences.getString('api_bearer_token_v2').subscribe(resp=>{
-      this.authToken =  resp;
-      console.log(resp,"this.authToken");
-   });
+  getToken() {
+    this.preferences.getString('api_bearer_token_v2').subscribe(resp => {
+      this.authToken = resp;
+    });
   }
   post(requestParam: RequestParams): Observable<any> {
-
     return this.checkTokenValidation().pipe(
-      // mergeMap(session => {
-      //   const httpOptions = {
-      //     headers: new HttpHeaders({
-      //       'x-auth-token': session ? session.access_token : '',
-      //       'x-authenticated-user-token': session ? session.access_token : '',
-      //       'X-App-Id': this.apiUtils.appName,
-      //       'X-App-Ver': this.apiUtils.appVersion,
-      //       'deviceId': this.deviceInfo.getDeviceID(),
-      //     }),
-      //   };
-      //   return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
-      //     tap(data => {
-      //       return data
-      //     }, error => {
-      //       catchError(this.handleError(error))
-      //     }),
-      //   );
-      // })
-
-
-
       mergeMap(session => {
-        let headers = {
-          'Authorization': session ? '' : '',
-            // 'Authorization': session ? 'Bearer '+ this.authToken : '',
-            
-           // 'x-auth-token': session ? session.access_token : '',
-            'X-authenticated-user-token': session.access_token,
-            'Content-Type':'application/json'
-          }
-        let body = requestParam.payload ? requestParam.payload : {};
-        this.ionicHttp.setDataSerializer('json');
-        return this.ionicHttp.post(this.baseUrl + requestParam.url,body, headers).then(
-          data => {
-            // return observableOf(JSON.parse(data.data));
-            return JSON.parse(data.data);
-          }, error => {
-            catchError(this.handleError(error))
-          });
+        return this.setHeaders(session).then(headers => {
+          let body = requestParam.payload ? requestParam.payload : {};
+          this.ionicHttp.setDataSerializer('json');
+          return this.ionicHttp.post(this.baseUrl + requestParam.url, body, headers).then(
+            data => {
+              return JSON.parse(data.data);
+            }, error => {
+              catchError(this.handleError(error))
+            });
+        })
       })
     )
   }
 
   delete(requestParam: RequestParams): Observable<any> {
-
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token : '',
-            'x-authenticated-user-token': session ? session.access_token : '',
-            'X-App-Id': this.apiUtils.appName,
-            // 'X-App-Ver': this.apiUtils.appVersion,
-            // 'deviceId': this.deviceInfo.getDeviceID()
-          }),
-          body: requestParam.payload,
-        };
-        return this.http.delete(this.baseUrl + requestParam.url, httpOptions).pipe(
-          tap(data => {
+        return this.setHeaders(session).then(headers => {
+          return this.ionicHttp.delete(this.baseUrl + requestParam.url, '', headers).then(data => {
             return data
           }, error => {
             catchError(this.handleError(error))
-          }),
-        );
+          })
+        })
       })
     )
   }
@@ -179,9 +133,6 @@ export class ApiService {
 
     }
     return (error: any): Observable<any> => {
-      console.error(error, error.status, "status"); // log to console instead, 
-
-
       return observableOf(result);
     };
   }

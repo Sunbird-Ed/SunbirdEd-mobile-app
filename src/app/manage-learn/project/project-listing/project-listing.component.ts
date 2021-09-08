@@ -142,7 +142,10 @@ export class ProjectListingComponent {
     }
 
     async getCreatedProjects() {
+        console.log("in getCreatedProjects");
         this.getOfflineCreatedProjects().then(offlineProjects => {
+            console.log( this.projects," this.projects");
+            console.log( offlineProjects,"offlineProjects");
             this.projects = offlineProjects;
             this.currentOnlineProjectLength = 0;
             this.getProjectList();
@@ -185,6 +188,7 @@ export class ProjectListingComponent {
     }
 
     fetchProjectList() {
+        console.log('in fetchProjectList',this.networkFlag);
         this.projects = [];
         if (this.networkFlag) {
             this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
