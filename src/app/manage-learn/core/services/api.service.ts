@@ -32,9 +32,9 @@ export class ApiService {
   ) {
     // this.getToken();
   }
-  async setHeaders(session) {
-    let headers = {
-      'Authorization': session ? '' : '',
+   setHeaders(session) {
+    const headers = {
+      'Authorization': session ? ''  : '',
       'x-auth-token': session ? session.access_token : '',
       'X-authenticated-user-token': session ? session.access_token : '',
       'Content-Type': 'application/json',
@@ -47,16 +47,15 @@ export class ApiService {
   get(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        return this.setHeaders(session).then(data => {
+        const headers = this.setHeaders(session);
           this.ionicHttp.setDataSerializer('json');
-          return this.ionicHttp.get(this.baseUrl + requestParam.url, '', data).then(
+          return this.ionicHttp.get(this.baseUrl + requestParam.url, '', headers).then(
             data => {
               return JSON.parse(data.data);
             }, error => {
               catchError(this.handleError(error))
             },
           );
-        })
       })
     )
   }
@@ -90,7 +89,7 @@ export class ApiService {
   post(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        return this.setHeaders(session).then(headers => {
+        const headers = this.setHeaders(session);
           let body = requestParam.payload ? requestParam.payload : {};
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.post(this.baseUrl + requestParam.url, body, headers).then(
@@ -99,7 +98,6 @@ export class ApiService {
             }, error => {
               catchError(this.handleError(error))
             });
-        })
       })
     )
   }
@@ -107,13 +105,12 @@ export class ApiService {
   delete(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        return this.setHeaders(session).then(headers => {
+        const headers = this.setHeaders(session);
           return this.ionicHttp.delete(this.baseUrl + requestParam.url, '', headers).then(data => {
             return data
           }, error => {
             catchError(this.handleError(error))
           })
-        })
       })
     )
   }

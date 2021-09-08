@@ -1,13 +1,13 @@
 <ion-content *ngIf="task" class="ion-padding background-theme-color">
   <div class="heading-name" (click)="edit('task',task?.name)">
-    <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
+   <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
     <ion-icon name="create" color="primary" class="iconAdj"> </ion-icon>
   </div>
 
-  <div style="margin-bottom: 15px">
+ <div style="margin-bottom: 15px">
     <div class="heading-name" (click)="edit('assignName',task?.assignee)">
 
-      <h5 style="font-weight: 500"> {{'FRMELEMNTS_LBL_ASSIGN_TASK' | translate}} <span class="assignee _capitalize">:
+        <h5 style="font-weight: 500"> {{'FRMELEMNTS_LBL_ASSIGN_TASK' | translate}} <span class="assignee _capitalize">:
           {{task.assignee}}</span> </h5>
       <div>
 
@@ -36,11 +36,12 @@
       <ion-select [(ngModel)]="task.status" class="custom-select" [disabled]="checkDisabled()" [interfaceOptions]="{
           cssClass: 'select-box',
           animated: false
-        }" placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}"
+        }" 
+        placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}"
         (ionChange)="selectedTaskStatus($event)">
         <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
-          selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
-      </ion-select>
+            selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
+        </ion-select>
 
     </ion-col>
   </ion-row>
@@ -60,39 +61,36 @@
     </ion-row>
   </div>
 
-  <div class="subtask-box " *ngFor="let subtask of task?.children; let subTaskIndex = index">
+    <div class="subtask-box " *ngFor="let subtask of task?.children; let subTaskIndex = index">
     <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted">
       <ion-row>
         <ion-col size="1">
           <ion-icon name="radio-button-off" color="primary"></ion-icon>
         </ion-col>
-        <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
+          <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
           *ngIf="editField != 'subtaskName'">
           {{subtask.name}}
         </ion-col>
         <ion-col size="1" style="margin: auto; text-align: center">
-          <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px"
-            (click)="askPermissionToDelete(subtask,'subtask')" />
+          <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px" (click)="askPermissionToDelete(subtask,'subtask')" />
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="6">
           <ion-item class="ion-date-time" lines="none">
             <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" />
-            <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate"
-              displayFormat="DD/MM/YYYY" min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc">
-            </ion-datetime>
+            <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate" displayFormat="DD/MM/YYYY"
+            min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc"></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col size="6">
           <ion-select [(ngModel)]="subtask.status" class="custom-select"
-            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}"
-            (ionChange)="selectedStatus($event)" [interfaceOptions]="{
+            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)" [interfaceOptions]="{
                   cssClass: 'select-box',
                   animated: false
                 }">
-            <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
-              selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
+                <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
+                selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
           </ion-select>
         </ion-col>
       </ion-row>
