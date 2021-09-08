@@ -27,7 +27,8 @@
   --width: 100%;
   position: absolute;
 }
-.popover-alert .popover-content.sc-ion-popover-md {
+.popover-alert .popover-content.sc-ion-popover-md, 
+.popover-alert .popover-content.sc-ion-popover-ios {
   top: unset !important;
   bottom: 0;
   left: 0 !important;

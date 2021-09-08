@@ -113,6 +113,11 @@
         width: 100%;
         bottom: 0;
     }
+    .ios-footer {
+        width: 100%;
+        bottom: 0;
+        position: fixed;  
+    }
 
     .heading {
         color: $blue;
@@ -208,4 +213,8 @@
     0% {right: 0;}
     50% {right: 10px;}
     100% {right: 0;}
+}
+
+.ios ::ng-deep .sb-modal {
+    bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
 }

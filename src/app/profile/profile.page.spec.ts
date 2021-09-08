@@ -10,7 +10,7 @@ import {
 } from 'sunbird-sdk';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
-import {PopoverController, ToastController} from '@ionic/angular';
+import {PopoverController, ToastController, Platform} from '@ionic/angular';
 import {Events} from '@app/util/events';
 import {
     AndroidPermissionsService,
@@ -52,6 +52,9 @@ describe('Profile.page', () => {
             refresh_token: '',
             userToken: 'sample_user_token'
         }))
+    };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
@@ -163,7 +166,8 @@ describe('Profile.page', () => {
             mockTranslateService as TranslateService,
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
-            mockSegmentationTagService as SegmentationTagService
+            mockSegmentationTagService as SegmentationTagService,
+            mockPlatform as Platform,
         );
     });
 
