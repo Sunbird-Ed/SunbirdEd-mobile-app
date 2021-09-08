@@ -8,7 +8,7 @@
   <div class="container-focus sticky-position" *ngIf="!hideSearchOption" [ngClass]="{'pt-0': searchInfolVisibility==='hide', '': searchInfolVisibility==='show'}">
     <div class="search-info pt-8 mx-24">
       <div [@labelVisibility]="searchInfolVisibility">
-        <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
+        <strong class="title" role="heading" aria-level="1">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
         <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appName} }}</p>
       </div>
     </div>

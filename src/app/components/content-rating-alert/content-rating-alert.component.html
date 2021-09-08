@@ -1,7 +1,7 @@
 <ion-content class="sb-popover-container ion-no-padding" [ngClass]="{'rating-full-height': userRating}">
   <ion-header [ngClass]="{ 'sb-popover-header': platform.is('android'), 'sb-popover-header-ios': platform.is('ios')}">
     <ion-toolbar class="sb-popover-toolbar">
-      <ion-title class="sb-popover-title">{{'RATE_THE_CONTENT' | translate}}
+      <ion-title class="sb-popover-title" role="heading" aria-level="2">{{'RATE_THE_CONTENT' | translate}}
         <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
       </ion-title>
     </ion-toolbar>
@@ -15,7 +15,7 @@
         <div class="meta-info">
           {{ratingMetaInfo?.ratingText}}
         </div>
-        <div class="rating-qstn">
+        <div class="rating-qstn" role="heading" aria-level="2">
           {{ratingMetaInfo?.question ? ratingMetaInfo.question : 'RATING_QUESTION' | translate}}
         </div>
       </div>

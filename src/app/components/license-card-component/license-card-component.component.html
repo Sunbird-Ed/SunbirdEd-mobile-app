@@ -3,7 +3,7 @@
         <div *ngIf="content.author || content.organisation || content.license || content.copyright">
             <div>
                 <div class="ion-padding">
-                    <div class="font-14-new view-credits" (click)="showLicensce()">
+                    <div class="font-14-new view-credits" role="heading" aria-level="1" (click)="showLicensce()">
                         <span>
                             <strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong>
                         </span>

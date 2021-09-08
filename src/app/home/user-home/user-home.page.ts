@@ -116,6 +116,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   subjectList = [];
   primaryBanner = [];
   secondaryBanner = [];
+  layoutConfiguration = {
+    layout: 'v3'
+};
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -282,7 +285,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.getOtherMLCategories()
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
-    this.displaySections = displayItems;
+    this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.showorHideBanners();
     this.refresh = false;
     refresher ? refresher.target.complete() : null;
@@ -340,6 +343,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         };
         break;
+        case 'CONTENTS':
+          state = {
+            contentList: subsection[0].contents,
+            pageName: ViewMore.PAGE_TV_PROGRAMS,
+            subjectName: this.commonUtilService.getTranslatedValue(section.title, ''),
+          };
+          break;
     }
 
     const values = new Map();
@@ -352,7 +362,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const params: NavigationExtras = {
       state
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] : 
+      [RouterLinks.TEXTBOOK_VIEW_MORE], params);
   }
 
   navigateToDetailPage(event, sectionName) {
