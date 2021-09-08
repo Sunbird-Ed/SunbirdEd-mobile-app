@@ -1,29 +1,33 @@
 import { Injectable } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
 import { IFacetFilterFieldTemplateConfig } from 'common-form-elements';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
 
 interface FilterFormConfigWithDefaults {
     config: IFacetFilterFieldTemplateConfig[];
     defaults: { [key: string]: string[] | string | undefined };
 }
 
+interface SearchFilterConfig {
+    code: string,
+    type: string,
+    name: string,
+    placeholder?: string,
+    multiple?: boolean,
+    index?: number
+}
+
 @Injectable()
 export class FilterFormConfigMapper {
+    private searchFilterFormConfig: any[];
+
     constructor(
-        private commonUtilService: CommonUtilService,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private translateJsonPipe: TranslateJsonPipe
     ) {
+        this.fetchSearchFormAPI();
     }
-    private static order = [
-        'board',
-        'medium',
-        'gradeLevel',
-        'subject',
-        'channel',
-        'mimeType',
-        'primaryCategory',
-        'audience'
-    ];
 
     private static buildDefault(filterValues: FilterValue[], multiple: boolean): string[] | string | undefined {
         if (multiple) {
@@ -36,114 +40,35 @@ export class FilterFormConfigMapper {
         }
     }
 
-    map(facetFilters: { [key: string]: FilterValue[] }): FilterFormConfigWithDefaults {
-        const accumulator = (acc, key) => {
-            const { config, defaults } = acc;
-            switch (key) {
-                case 'board': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], false);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('BOARD'),
-                        placeholderText: 'Select Board',
-                        multiple: false,
-                    });
-                    break;
-                }
-                case 'medium': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('MEDIUM'),
-                        placeholderText: 'Select Medium',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'gradeLevel': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('CLASS'),
-                        placeholderText: 'Select Class',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'subject': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('SUBJECT'),
-                        placeholderText: 'Select Subject',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'channel': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('PUBLISHER'),
-                        placeholderText: 'Select Publisher',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'mimeType': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEDIA_TYPE'),
-                        placeholderText: 'Select Media Type',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'primaryCategory': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
-                        placeholderText: 'Select Content Type',
-                        multiple: true,
-                    });
-                    break;
-                }
-                case 'audience': {
-                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
-                    config.push({
-                        facet: key,
-                        type: 'dropdown',
-                        labelText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
-                        placeholderText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
-                        multiple: true,
-                    });
-                    break;
-                }
-            }
-            return acc;
-        };
-        const { config, defaults } = Object.keys(facetFilters).reduce<FilterFormConfigWithDefaults>(accumulator, { config: [], defaults: {} });
-
-        return {
-            defaults,
-            config: config.sort((a, b) => {
-                if (
-                    FilterFormConfigMapper.order.includes(a.facet) &&
-                    FilterFormConfigMapper.order.includes(b.facet)
-                ) {
-                    return FilterFormConfigMapper.order.indexOf(a.facet) - FilterFormConfigMapper.order.indexOf(b.facet);
-                }
-                return 1;
-            })
-        };
+    private async fetchSearchFormAPI(){
+        this.searchFilterFormConfig = await this.formAndFrameworkUtilService.getSearchFilters();
     }
+
+    async map(facetFilters: { [key: string]: FilterValue[] }, existingFilters={}): Promise<FilterFormConfigWithDefaults> {
+        if(!this.searchFilterFormConfig || !this.searchFilterFormConfig.length){
+            this.searchFilterFormConfig = await this.formAndFrameworkUtilService.getSearchFilters();
+        }
+        const mappedFilters: FilterFormConfigWithDefaults = {config:[], defaults:{}};
+        this.searchFilterFormConfig.sort((a, b)=>{
+            if(a.index && b.index){
+                return (a.index-b.index);
+            }
+            return 1;
+        });
+        this.searchFilterFormConfig.forEach((filterConfig:SearchFilterConfig) => {
+            if(facetFilters[filterConfig.code] && !existingFilters[filterConfig.code]){
+                mappedFilters.defaults[filterConfig.code] = FilterFormConfigMapper.buildDefault(facetFilters[filterConfig.code], filterConfig.multiple);
+                mappedFilters.config.push({
+                    facet: filterConfig.code,
+                    type: filterConfig.type as ('dropdown' | 'pills'),
+                    labelText: this.translateJsonPipe.transform(filterConfig.name),
+                    placeholderText: this.translateJsonPipe.transform(filterConfig.placeholder),
+                    multiple: filterConfig.multiple
+                });
+            }
+        });
+
+        return mappedFilters;
+    }
+
 }
