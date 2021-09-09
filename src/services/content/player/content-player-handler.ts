@@ -96,8 +96,8 @@ export class ContentPlayerHandler {
             this.lastPlayedContentId = content.identifier;
             this.isPlayerLaunched = true;
 
-            if (data.metadata.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
-                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment.maxAttempts == undefined ? 0 : maxAttemptAssessment.maxAttempts;
+            if (data?.metadata?.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
+                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment?.maxAttempts;
                 data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment.currentAttempt == undefined ? 0 : maxAttemptAssessment.currentAttempt;
             }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
