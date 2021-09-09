@@ -159,7 +159,7 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
+            <img src="./assets/imgs/my_group.svg" class="tool-icon" aria-hidden="true" alt="my group">
           </span>
           <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
           <div class="new-feature-badge">
@@ -170,7 +170,7 @@
 
         <ion-item (click)="switchTheme()">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" alt="help">
+            <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
           <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item"
             menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
@@ -184,7 +184,7 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
+            <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
           <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
           <div class="new-feature-badge">
@@ -195,7 +195,7 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
+            <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app language">
           </span>
           <div class="sb-language">
             <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
@@ -205,14 +205,14 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+            <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
           <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
+            <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
@@ -226,7 +226,7 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
+            <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
           <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
@@ -298,14 +298,14 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
+            <img src="./assets/imgs/my_group.svg" aria-hidden="true" class="tool-icon" alt="my group">
           </span>
           <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
             <span class="sb-menu-icon">
-              <img src="./assets/imgs/Reports.png" class="tool-icon" alt="reports">
+              <img src="./assets/imgs/Reports.png" aria-hidden="true" class="tool-icon" alt="reports">
             </span>
             <span class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
              <div class="new-feature-badge">
@@ -317,7 +317,7 @@
         <ion-item (click)="switchTabs()">
           <div class="beta-info">
             <span class="sb-menu-icon">
-              <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+              <img src="./assets/imgs/ic_switch.svg" aria-hidden="true" class="tool-icon sb-menu-item-switch" alt="help">
             </span>
             <div><span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item"
                 menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate: {'appName': appName} }}</span>
@@ -334,7 +334,7 @@
 
         <ion-item (click)="switchMode()">
           <span class="sb-menu-icon dark-mode-icon">
-            <img src="./assets/imgs/darkmode.svg" class="tool-icon sb-menu-item-switch" alt="darkmode">
+            <img src="./assets/imgs/darkmode.svg" aria-hidden="true"  class="tool-icon sb-menu-item-switch" alt="darkmode">
           </span>
           <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
             <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
@@ -349,14 +349,14 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
+            <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
           <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app langugae">
+            <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app langugae">
           </span>
           <div class="sb-language">
             <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
@@ -366,14 +366,14 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+            <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
           <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
+            <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
@@ -387,7 +387,7 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
+            <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
           <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
