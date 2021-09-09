@@ -40,7 +40,7 @@ export const urlConstants = {
 
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
-      MAKE_SUBMISSION: 'v1/surveySubmissions/make/', //TODO: Not found in sheet
+      MAKE_SUBMISSION: '/api/surveySubmissions/mlsurvey/v1/update',
       LIST_ALL_EVIDENCES: '/api/surveys/mlreports/v1/listAllEvidences',
       GET_ALL_ANSWERS: '/api/surveys/mlreports/v1/getAllResponsesOfQuestion/',
     },
