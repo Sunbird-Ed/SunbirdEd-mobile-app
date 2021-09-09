@@ -51,7 +51,7 @@ export class LanguageSettingsPage {
     private events: Events,
     private zone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private platform: Platform,
+    public platform: Platform,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private notification: NotificationService,

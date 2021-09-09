@@ -34,7 +34,9 @@ describe('SunbirdQRScanner', () => {
             return fn({});
         })
     } as any;
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockQRScannerResultHandler: Partial<QRScannerResultHandler> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {

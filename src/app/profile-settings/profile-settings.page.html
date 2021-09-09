@@ -1,17 +1,18 @@
 <ion-content class="padding-bottom-if-header">
 	<div class="">
 		<form [formGroup]="profileSettingsForm" class="ps-container">
-			<div class="back-btn-container">
+			<div [ngClass]="{ 'back-btn-container': platform.is('android'), 'back-btn-container-ios': platform.is('ios')}">
 				<img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton"
 					 (click)="handleBackButton(true)"
 					 class="top-back-button" alt="back">
 			</div>
-			<div class="qr-container ui-container" *ngIf="showQRScanner">
+			<div class="qr-container"
+            [ngClass]="{ 'ui-container': platform.is('android'), 'ui-container-ios': platform.is('ios')}" *ngIf="showQRScanner">
 				<div class="qr-content">
 					<img #animatedQRImage class="qr-img" src="assets/imgs/qr_with_book.svg" alt="">
 					<div class="qr-instruction-container text-center">
 						<div class="qr-instruction">
-							<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
+							<span class="title" role="heading" aria-level="1">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
 							<div class="sub-title">{{'QR_CODE_DETAILS' | translate}}</div>
 						</div>
 						<div class="qr-btn-container">
@@ -27,7 +28,7 @@
 						<span class="or-circle">{{'OR' | translate}}</span>
 					</div>
 					<div class="fill-in-style msg-size">
-						<div class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</div>
+						<div class="fill-in-head" role="heading" aria-level="2">{{'NO_QR_CODE_QSTN' | translate}}</div>
 						<div class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</div>
 					</div>
 

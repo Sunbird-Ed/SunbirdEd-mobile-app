@@ -60,27 +60,27 @@
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "4.2.2",
-    "@project-sunbird/common-consumption-v9": "4.1.1",
+    "@project-sunbird/client-services": "4.2.5",
+    "@project-sunbird/common-consumption-v9": "4.1.4",
     "@project-sunbird/content-player": "3.7.1",
-    "@project-sunbird/discussions-ui-v8": "2.1.7",
+    "@project-sunbird/discussions-ui-v8": "2.2.0",
     "@project-sunbird/sb-dashlet": "1.0.4",
     "@project-sunbird/sb-styles": "0.0.9",
     "sb-tag-manager": "^3.9.19",
-    "@project-sunbird/sunbird-sdk": "4.2.0",
+    "@project-sunbird/sunbird-sdk": "4.2.5",
     "@project-sunbird/sunbird-epub-player-v9": "^4.2.0",
     "@project-sunbird/sunbird-pdf-player-v9": "^4.2.0",
     "@project-sunbird/sunbird-player-sdk-v9": "^4.2.0",
-    "@project-sunbird/sunbird-quml-player-v9": "4.2.1",
+    "@project-sunbird/sunbird-quml-player-v9": "4.2.6",
     "@project-sunbird/sunbird-video-player-v9": "4.2.1",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "chartjs-plugin-stacked100": "^0.7.1",
     "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
-    "com.jjdltc.cordova.plugin.zip": "https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
+    "com.jjdltc.cordova.plugin.zip": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
-    "common-form-elements": "^4.0.15",
+    "common-form-elements-v9": "4.1.4",
     "cordova-android": "^9.0.0",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
@@ -191,7 +191,7 @@
     "@babel/preset-typescript": "^7.9.0",
     "@ionic/angular-toolkit": "^2.3.1",
     "@ionic/v4-migration-tslint": "^1.7.1",
-    "@project-sunbird/sb-themes": "0.0.18",
+    "@project-sunbird/sb-themes": "0.0.20",
     "@project-sunbird/telemetry-sdk": "0.0.29",
     "@types/jest": "^25.2.1",
     "@types/node": "12.11.5",
@@ -332,10 +332,10 @@
         "<rootDir>/node_modules/@project-sunbird/common-consumption-v9/*"
       ],
       "common-form-elements": [
-        "<rootDir>/node_modules/common-form-elements"
+        "<rootDir>/node_modules/common-form-elements-v9"
       ],
       "common-form-elements/*": [
-        "<rootDir>/node_modules/common-form-elements/*"
+        "<rootDir>/node_modules/common-form-elements-v9/*"
       ]
     },
     "transformIgnorePatterns": [],

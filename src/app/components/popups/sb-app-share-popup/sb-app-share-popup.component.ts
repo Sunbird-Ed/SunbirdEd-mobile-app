@@ -43,7 +43,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     public popoverCtrl: PopoverController,
     private social: SocialSharing,
-    private platform: Platform,
+    public platform: Platform,
     private utilityService: UtilityService,
     private appVersion: AppVersion,
     private navParams: NavParams,
@@ -160,7 +160,8 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      destination = cordova.file.externalRootDirectory + 'Download/';
+      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+      destination = folderPath + 'Download/';
     }
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -177,6 +178,11 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
+        resolve(true);
+      });
+    }
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 

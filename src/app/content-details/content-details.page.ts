@@ -179,7 +179,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   maxAttemptAssessment: any;
   isCompatibleWithVendorApps = false;
   appLists: any;
-
+  isIOS = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -255,9 +255,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
       this.onboarding = extras.onboarding || this.onboarding;
     }
-    this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
-      map((requests) => !!requests.find((request) => request.identifier === this.identifier))
-    );
+    this.isIOS = (this.platform.is('ios'))
+      this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
+        map((requests) => !!requests.find((request) => request.identifier === this.identifier))
+      );
+
   }
 
   async ngOnInit() {
@@ -526,7 +528,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isChildContent = true;
     }
     if (this.content.contentData.streamingUrl &&
-      !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+      (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
     if (this.content.contentData.attributions && this.content.contentData.attributions.length) {
@@ -709,10 +711,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
+   
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
         rollUp: isChild ? this.objRollup : undefined
@@ -813,7 +817,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
-              if (eventPayload.streamingUrl && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+              if (eventPayload.streamingUrl && (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
               } else {
@@ -1099,7 +1103,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Play content
    */
   private playContent(isStreaming: boolean) {
-    if (this.apiLevel < 21 && this.appAvailability === 'false') {
+    if (this.apiLevel < 21 && this.appAvailability === 'false' && !this.isIOS) {
       this.showPopupDialog();
     } else {
       const hierachyInfo = this.childContentHandler.contentHierarchyInfo || this.content.hierarchyInfo;
@@ -1373,20 +1377,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async getContentState() {
     return new Promise(async (resolve, reject) => {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
-      this.courseContext = JSON.parse(this.courseContext);
-      if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
-        const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
-        const progress = courseDetails.progress;
-        const contentStatusData = courseDetails.contentStatusData || {};
-        if (progress !== 100) {
-          this.appGlobalService.showCourseCompletePopup = true;
+      if (this.courseContext) {
+        this.courseContext = JSON.parse(this.courseContext);
+        if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
+          const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
+          const progress = courseDetails.progress;
+          const contentStatusData = courseDetails.contentStatusData || {};
+          if (progress !== 100) {
+            this.appGlobalService.showCourseCompletePopup = true;
+          }
+          if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
+            this.appGlobalService.showCourseCompletePopup = false;
+            this.showCourseCompletePopup = true;
+          }
+          this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
         }
-        if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
-          this.appGlobalService.showCourseCompletePopup = false;
-          this.showCourseCompletePopup = true;
-        }
-
-        this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
       }
       resolve();
     });

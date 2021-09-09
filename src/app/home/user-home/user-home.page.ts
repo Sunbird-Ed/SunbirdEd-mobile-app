@@ -28,6 +28,7 @@ import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
   ContentSearchCriteria,
+  ContentService,
   CorrelationData,
   Framework,
   FrameworkCategoryCode,
@@ -66,6 +67,9 @@ import { FrameworkSelectionDelegateService } from './../../profile/framework-sel
 import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { FormConstants } from '@app/app/form.constants';
+import { SbPopoverComponent } from '../../components/popups';
+import { PopoverController } from '@ionic/angular'
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
@@ -108,13 +112,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   boardList = [];
   mediumList = [];
   gradeLevelList = [];
+  otherCategories=[];
   subjectList = [];
+  primaryBanner = [];
+  secondaryBanner = [];
+  layoutConfiguration = {
+    layout: 'v3'
+};
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -130,7 +141,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
     private translate: TranslateService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
@@ -196,7 +208,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   editProfileDetails() {
     if (!this.guestUser) {
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {state: {shouldUpdatePreference: true}});
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -270,15 +282,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    this.getOtherMLCategories()
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
-    this.displaySections = displayItems;
+    this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.showorHideBanners();
     this.refresh = false;
     refresher ? refresher.target.complete() : null;
   }
 
-  handlePillSelect(event, section, isFromPopover: boolean) {
+  handlePillSelect(event, section, isFromPopover?: boolean) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -294,6 +307,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       undefined, undefined, undefined,
       isFromPopover ? corRelationList : undefined
     );
+    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+      const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
+      event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    }
     const params = {
       code: section.code,
       formField: event.data[0].value,
@@ -326,6 +343,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         };
         break;
+        case 'CONTENTS':
+          state = {
+            contentList: subsection[0].contents,
+            pageName: ViewMore.PAGE_TV_PROGRAMS,
+            subjectName: this.commonUtilService.getTranslatedValue(section.title, ''),
+          };
+          break;
     }
 
     const values = new Map();
@@ -338,7 +362,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const params: NavigationExtras = {
       state
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] : 
+      [RouterLinks.TEXTBOOK_VIEW_MORE], params);
   }
 
   navigateToDetailPage(event, sectionName) {
@@ -671,9 +696,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.getUserProfileDetails();
   }
 
-  navigateToSpecificLocation(event) {
+  navigateToSpecificLocation(event, section) {
+    let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: event.data.code || '', type: 'BannerType' });
+    corRelationList.push({ id: banner || '', type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_BANNER,
       '',
@@ -681,31 +707,43 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       PageId.HOME, undefined, undefined, undefined,
       corRelationList
      );
-    switch (event.data.code) {
+    switch (banner.code) {
       case 'banner_external_url':
-           this.commonUtilService.openLink(event.data.action.params.route);
+           this.commonUtilService.openLink(banner.action.params.route);
            break;
       case 'banner_internal_url':
-            if (this.guestUser && event.data.action.params.route === RouterLinks.PROFILE) {
+            if (this.guestUser && banner.action.params.route === RouterLinks.PROFILE) {
               this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
             } else {
-              this.router.navigate([event.data.action.params.route]);
+              this.router.navigate([banner.action.params.route]);
             }
             break;
       case 'banner_search':
-          const extras = {
-            state: {
-              source: PageId.HOME,
-              corRelation: corRelationList,
-              preAppliedFilter: event.data.action.params.filter,
-              hideSearchOption: true,
-              searchWithBackButton: true
+          // const extras = {
+          //   state: {
+          //     source: PageId.HOME,
+          //     corRelation: corRelationList,
+          //     preAppliedFilter: event.data.action.params.filter,
+          //     hideSearchOption: true,
+          //     searchWithBackButton: true
+          //   }
+          // };
+          // this.router.navigate(['search'], extras);
+        if (banner.action && banner.action.params && banner.action.params.filter) {
+          (banner['searchCriteria'] as ContentSearchCriteria) =
+            this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
+          if (section.dataSrc && section.dataSrc.mapping) {
+            const bannerMap = section.dataSrc.mapping.find(m => m.code === banner.code);
+            if(bannerMap){
+              banner = {...banner, ...bannerMap};
             }
-          };
-          this.router.navigate(['search'], extras);
-          break;
+            banner['facet'] = (banner.ui && banner.ui.text) || ''
+          }
+        }
+        this.handlePillSelect({data: [{value: banner}]}, section);
+        break;
       case 'banner_content':
-        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier,
+        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
           undefined, undefined, undefined, undefined, corRelationList);
         break;
     }
@@ -748,8 +786,83 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           undefined,
           corRelationList
          );
-        this.displaySections[index]['data'] = this.bannerSegment;
+         this.displaySections[index]['data'] = this.bannerSegment;
+         this.primaryBanner = [];
+         this.secondaryBanner = [];
+         this.bannerSegment.forEach((banner) => {
+           if (banner.type === 'secondary') {
+             this.secondaryBanner.push(banner);
+           } else {
+             this.primaryBanner.push(banner)
+           }
+         });
       }
     });
   }
+
+  async getOtherMLCategories() {
+    try {
+      const board = this.profile.syllabus[0]
+      let role = this.profile.profileType.toLowerCase()
+      if (this.profile.serverProfile) {
+        role = this.profile.serverProfile.profileUserType.type.toLowerCase()
+      }
+      const otherCategories = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.ML_HOME_CATEGORIES
+      );
+      this.otherCategories = otherCategories[board][role]
+      if (this.otherCategories.length) {
+        this.homeDataAvailable=true
+        this.events.publish('onPreferenceChange:showReport',true)
+      } else {
+        this.events.publish('onPreferenceChange:showReport',false)
+      }
+    } catch (error) {
+      this.otherCategories = [],
+      this.events.publish('onPreferenceChange:showReport',false)
+
+    }
+  }
+
+  async handleOtherCategories(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    let selectedPill = event.data[0].value.name
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
+        metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color label-uppercase label-bold-font'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    if (this.guestUser) {
+      await confirm.present();
+      const { data } = await confirm.onDidDismiss();
+      if (data && data.canDelete) {
+        this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+      }
+      return
+    }
+    switch (selectedPill) {
+      case 'observation':
+      this.router.navigate([RouterLinks.OBSERVATION], {})
+        break;
+      default:
+        break;
+    }
+  }
+
+
 }
+
+

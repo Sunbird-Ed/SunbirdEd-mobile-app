@@ -10,12 +10,10 @@ import {
   CollectionService, AppGlobalService, InteractSubtype, InteractType, ID, AndroidPermissionsService
 } from '@app/services';
 import {
-  GroupService, GroupActivityDataAggregationRequest,
-  GroupMember, CachedItemRequestSourceFrom, Content,
+  GroupService, GroupMember, Content,
   Group, MimeType, CorrelationData, TrackingEnabled
 } from '@project-sunbird/sunbird-sdk';
 import {
-  CsGroupActivityDataAggregation,
   CsGroupActivityAggregationMetric
 } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
@@ -104,7 +102,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       console.log('fetchCollectionData err', err);
     }
     this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
-    this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.identifier);
   }
 
   ionViewWillLeave() {
@@ -118,59 +115,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.appGlobalService.selectedActivityCourseId = '';
   }
 
-  private async getActvityDetails(id) {
-    const req: GroupActivityDataAggregationRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      groupId: this.group.id,
-      activity: {
-        id,
-        type: this.activity.type
-      },
-      mergeGroup: this.group
-    };
-    if (this.isTrackable) {
-      if (this.selectedCourse) {
-        req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
-      } else {
-        req.leafNodesCount = this.courseData.contentData.leafNodes.length;
-      }
-    }
-    try {
-      this.isActivityLoading = true;
-      const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
-      if (response) {
-        this.memberList = response.members;
-        this.activityDetail = response.activity;
-        const loggedInUserId = this.loggedinUser.userId;
-        if (this.memberList) {
-          this.memberList = this.memberList.sort((a, b) => {
-            if (a.userId === loggedInUserId) {
-              return -1;
-            } else if (b.userId === loggedInUserId) {
-              return 1;
-            }
-            const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-            const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-            if (!aCompletedCount && !bCompletedCount) {
-              return 0;
-            }
-            if (!aCompletedCount && bCompletedCount) {
-              return 1;
-            } else if (aCompletedCount && !bCompletedCount) {
-              return -1;
-            }
-            return bCompletedCount!.value - aCompletedCount!.value;
-          });
-        }
-        this.filteredMemberList = new Array(...this.memberList);
-        console.log('this.filteredMemberList', this.filteredMemberList);
-        this.isActivityLoading = false;
-      }
-    } catch (e) {
-      console.log(' CsGroupActivityDataAggregation err', e);
-      this.isActivityLoading = false;
-    }
-  }
 
   onMemberSearch(query) {
     this.memberSearchQuery = query;
@@ -192,17 +136,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       progress = progressMetric ? progressMetric.value : 0;
     }
     return '' + progress;
-  }
-
-  getActivityAggLastUpdatedOn() {
-    let lastUpdatedOn = 0;
-    if (this.activityDetail && this.activityDetail.agg) {
-      const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.ENROLMENT_COUNT);
-      if (activityAgg && activityAgg.lastUpdatedOn) {
-        lastUpdatedOn = typeof activityAgg.lastUpdatedOn === 'string' ? parseInt(activityAgg.lastUpdatedOn, 10) : activityAgg.lastUpdatedOn;
-      }
-    }
-    return lastUpdatedOn;
   }
 
   private getNestedCourses(courseData) {
@@ -238,10 +171,9 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(true);
-        break;
+    if($event.name === 'back')
+    {
+      this.handleBackButton(true);
     }
   }
 
@@ -290,7 +222,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
         const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const downloadDirectory = `${folderPath}Download/`;
         
         this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
         .then((res)=> {
@@ -309,21 +242,30 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async checkForPermissions(): Promise<boolean | undefined> {
-    return new Promise<boolean | undefined>(async (resolve) => {
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
-      if (permissionStatus.hasPermission) {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
         resolve(true);
-      } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-        resolve(false);
+      });
+    }
+    return new Promise<boolean | undefined>(async (resolve) => {
+      if (this.platform.is('ios')) {
+        resolve(true);
       } else {
-        this.showStoragePermissionPopover().then((result) => {
-          if (result) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
+        const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
+        if (permissionStatus.hasPermission) {
+          resolve(true);
+        } else if (permissionStatus.isPermissionAlwaysDenied) {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          resolve(false);
+        } else {
+          this.showStoragePermissionPopover().then((result) => {
+            if (result) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        }
       }
     });
   }
@@ -383,19 +325,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       this.corRelationList,
       ID.SELECT_ACTIVITY_DASHBOARD
     );
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
-    {
-      state: {
-        aggData: {
-          members: this.memberList,
-          activity: this.activityDetail
-        },
-        hierarchyData: this.courseData,
-        activity: this.activity,
-        lastUpdatedOn: this.getActivityAggLastUpdatedOn(),
-        collectionName: this.courseData.name
-      }
-    });
   }
 
 }

@@ -224,12 +224,10 @@ export class FaqHelpPage implements OnInit {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        setTimeout(() => {
-          this.handleBackButton();
-        }, 100);
-        break;
+    if($event.name === 'back'){
+      setTimeout(() => {
+        this.handleBackButton();
+      }, 100);
     }
   }
   registerDeviceBackButton() {
@@ -288,8 +286,7 @@ export class FaqHelpPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
-      PageId.FAQ,
-      undefined);
+      PageId.FAQ);
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;

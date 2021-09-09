@@ -1,4 +1,5 @@
-<ion-content overflow-scroll="true" class="ui-container">
+<ion-content overflow-scroll="true" [ngClass]="{'ui-container': !platform.is('ios')}">
+  <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
     <div class="empty-search-result ion-text-center ion-padding-top" *ngIf="!showLoader && searchList && searchList.length === 0">
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
@@ -6,8 +7,8 @@
 
     <div>
       <div class="view-more-course-bg">
-        <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
-        <p class="title" *ngIf="pageType === 'popularCourses' || pageType === 'tvPrograms'">{{title}}</p>
+        <p class="title" role="heading" aria-level="1" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
+        <p class="title" role="heading" aria-level="1" *ngIf="pageType === 'popularCourses' || pageType === 'tvPrograms'">{{title}}</p>
         <p *ngIf="searchList && searchList.length" class="count-text">
           {{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
         <ng-container *ngIf="!isLoading">

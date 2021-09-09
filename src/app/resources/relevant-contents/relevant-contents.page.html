@@ -11,7 +11,7 @@
     </div>
 
     <div class="p-16 rc-bg-color" *ngIf="relevantContentList?.length">
-        <p class="rc-title">{{'FRMELEMNTS_LBL_CONTENT_FOUND' | translate }}</p>
+        <p class="rc-title" role="heading" aria-level="1">{{'FRMELEMNTS_LBL_CONTENT_FOUND' | translate }}</p>
         <div class="sb-textbook-container">
             <sb-library-cards-stack 
                 [contentList]="relevantContentList"
@@ -25,7 +25,7 @@
     </div>
 
     <div class="p-16 mt-8" *ngIf="similarContentList?.length">
-        <p class="rc-title">{{'FRMELEMNTS_LBL_CONTENT_AVAIALABLE_IN_OTHER_BOARD' | translate }}</p>
+        <p class="rc-title" role="heading" aria-level="2">{{'FRMELEMNTS_LBL_CONTENT_AVAIALABLE_IN_OTHER_BOARD' | translate }}</p>
         <div class="sb-textbook-container">
             <sb-library-cards-stack 
                 [contentList]="similarContentList"

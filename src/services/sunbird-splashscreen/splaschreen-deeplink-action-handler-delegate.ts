@@ -60,6 +60,7 @@ import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -107,7 +108,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private navService: NavigationService,
     private contentPlayerHandler: ContentPlayerHandler,
     private formnFrameworkUtilService: FormAndFrameworkUtilService,
-    private updateProfileService: UpdateProfileService
+    private updateProfileService: UpdateProfileService,
+    private platform: Platform
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -148,7 +150,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     // const urlMatch = payloadUrl.match(urlRegex);
 
-    // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
     const deepLinkUrlConfig: { name: string, code: string, pattern: string, route: string, priority?: number, params?: {} }[] =
@@ -169,7 +170,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
 
     if (!matchedDeeplinkConfig) {
-      // TODO, toast message
       return;
     }
 
@@ -266,8 +266,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private generateUtmTelemetryEvent(identifier, dialCode, url) {
-    // TODO: Here identifier and dialcode both could be undefined.
-    // TODO: What needs to pass if deeplink in not having neither identifier nor dialcode.
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
     const utmUrl = url.slice(url.indexOf('?') + 1);
     const params: { [param: string]: string } = qs.parse(utmUrl);
@@ -518,9 +516,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       };
       const profile: Profile = await this.profileService.updateProfile(updateProfileRequest).toPromise();
 
-      // TODO: need to revisit below section
-      // initTabs(this.container, GUEST_TEACHER_TABS);
-      // this.events.publish('refresh:profile');
+
       this.appGlobalServices.guestUserProfile = profile;
 
       this.commonUtilService.handleToTopicBasedNotification();
@@ -559,6 +555,9 @@ private async upgradeAppPopover(requiredVersionCode) {
     } else if (identifier) {
       const content = await this.getContentData(identifier);
       if (!content) {
+        if (urlMatchGroup.contentId) {
+          this.navigateContent(urlMatchGroup.contentId, true, null, payloadUrl, null);
+        }
         this.closeProgressLoader();
       } else {
         this.navigateContent(identifier, true, content, payloadUrl, route);
@@ -589,7 +588,6 @@ private async upgradeAppPopover(requiredVersionCode) {
           };
       }
       this.setTabsRoot();
-      // TODO: Needs to check route exists or not before navigating
       this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
@@ -602,7 +600,6 @@ private async upgradeAppPopover(requiredVersionCode) {
     payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>
   ) {
     try {
-      // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
         content = await this.getContentData(identifier);
@@ -633,7 +630,7 @@ private async upgradeAppPopover(requiredVersionCode) {
             };
             const navExtras = {
               state: {
-                content: content,
+                content,
               }
             };
             const telemetryObject = {
@@ -705,6 +702,8 @@ private async upgradeAppPopover(requiredVersionCode) {
             this.commonUtilService.showToast('ERROR_FETCHING_DATA');
           } else if (NetworkError.isInstance(e)) {
             this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          } else if (e.response && e.response.responseCode === 404) {
+            return null;
           } else {
             this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
           }
@@ -848,7 +847,8 @@ private async upgradeAppPopover(requiredVersionCode) {
                 depth: 1,
                 isChildContent: true,
                 corRelation: this.getCorrelationList(payloadUrl, corRelationList),
-                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                isCourse: (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) ||
+                    (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE_UNIT.toLowerCase()),
                 isOnboardingSkipped
               });
               this.sbProgressLoader.hide({ id: content.identifier });
@@ -935,10 +935,12 @@ private async upgradeAppPopover(requiredVersionCode) {
   private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const rollUpMap: { [key: string]: Rollup } = {};
     const requestParams: ContentImport[] = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+       
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: [],
         rollUp: rollUpMap[value]

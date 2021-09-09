@@ -3,6 +3,7 @@ import {
   PopoverController,
   ToastController,
   IonRefresher,
+  Platform,
 } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import {
@@ -162,7 +163,8 @@ export class ProfilePage implements OnInit {
     private translate: TranslateService,
     private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
     private profileHandler: ProfileHandler,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private platform: Platform
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -321,7 +323,6 @@ export class ProfilePage implements OnInit {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
                       .then((frameWorkData) => {
                         if (!frameWorkData['status']) {
-                          // Migration-todo
 
                         }
                       });
@@ -750,7 +751,8 @@ export class ProfilePage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass: 'popover-alert input-focus',
+      translucent: true
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -932,7 +934,7 @@ export class ProfilePage implements OnInit {
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
-          content
+          content,
         }
       );
     } catch (err) {
@@ -941,6 +943,11 @@ export class ProfilePage implements OnInit {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
+        resolve(true);
+      });
+    }
     return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {

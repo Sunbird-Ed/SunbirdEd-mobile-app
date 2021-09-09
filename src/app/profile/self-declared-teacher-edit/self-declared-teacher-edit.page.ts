@@ -58,7 +58,7 @@ export class SelfDeclaredTeacherEditPage {
     private router: Router,
     private location: Location,
     private events: Events,
-    private platform: Platform,
+    public platform: Platform,
     private activatedRoute: ActivatedRoute,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -461,7 +461,6 @@ export class SelfDeclaredTeacherEditPage {
   linkClicked(event) {
     this.commonUtilService.openLink(event);
   }
-  // todo Move this to consent service
   public updateConsent(profileDetails, orgId) {
     const request: Consent = {
       status: ConsentStatus.ACTIVE,

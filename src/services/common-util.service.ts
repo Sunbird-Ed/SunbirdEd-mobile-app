@@ -541,7 +541,10 @@ export class CommonUtilService {
     }
 
     isAccessibleForNonStudentRole(profileType) {
-        return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER || profileType === ProfileType.ADMIN;
+        return profileType === ProfileType.TEACHER ||
+            profileType === ProfileType.OTHER ||
+            profileType === ProfileType.ADMIN ||
+            profileType === ProfileType.PARENT;
     }
 
     public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {

@@ -14,7 +14,7 @@
   <ion-list class="ion-margin-top ion-text-wrap" *ngIf="data?.value?.length">
     <ion-item text-capitalize class="_flex-box" *ngFor="let instance of data?.value; let i = index">
       <div class="_flex-box conatiner" (click)="viewInstance(i)">
-        <span [ngClass]="{'_validQuestion': data?.completedInstance?.includes(i)}" style="flex:1">
+          <span [ngClass]="{'_validQuestion': instance?.isInstanceCompleted}" style="flex:1">
           {{data?.instanceIdentifier}} {{i+1}}</span>
         <span class="modified" *ngIf="getLastModified(instance)">Last Modified
           {{getLastModified(instance)|date:'shortTime'}} {{getLastModified(instance)|date:'mediumDate'}} </span>

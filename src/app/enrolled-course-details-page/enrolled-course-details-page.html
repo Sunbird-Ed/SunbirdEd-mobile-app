@@ -58,15 +58,15 @@
 					<p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : course }}</p>
 				</div>
 				<div *ngIf="!isAlreadyEnrolled">
-							<div class="sb-dt-card-actions">
-                                <div class="wrapper sb-btn-tile-group">
-									<button slot="icon-only" (click)="share()" class="card-button pb-8">
-										<ion-icon name="share" class="card-icons"></ion-icon>
-										<p class="card-text">{{'SHARE' | translate}}</p>
-									</button>
-								</div>
-							</div>
+					<div class="sb-dt-card-actions">
+						<div class="wrapper sb-btn-tile-group">
+							<button slot="icon-only" (click)="share()" class="card-button pb-8">
+								<ion-icon name="share" class="card-icons"></ion-icon>
+								<p class="card-text">{{'SHARE' | translate}}</p>
+							</button>
 						</div>
+					</div>
+				</div>
 				<div *ngIf="isAlreadyEnrolled">
 					<div>
 						<div>
@@ -139,6 +139,12 @@
 						</div>
 					</div>
 				</div>
+				<div *ngIf="activityData && activityData.isGroupCreatorOrAdmin">
+					<button (click)="navigateToDashboard()" slot="icon-only" class="enrolled-course-card-button">
+						<span><img src="assets/imgs/dashboard-icon-white.svg" class="card-icons-red play-icon">
+						{{'ACTIVITY_DASHBOARD' | translate}}</span>
+					</button>
+				</div>
 			</ion-card-content>
 			<div #stickyPillsRef
 				*ngIf="!isFromGroupFlow && !showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
@@ -146,7 +152,7 @@
 				<div class="timer-info" *ngIf="batchRemaningTime && !batchExp"><div><span>{{ 'BATCH_ENDS_TEXT' | translate }}</span>&nbsp;<span>{{batchRemaningTime}}</span></div></div>
 				<ion-card class="enrolled-course-card">
 					<ion-card-content class="ion-padding-top">
-						<ion-card-title class="last-read-content padding-bottom-8">{{nextContent?.name}}
+						<ion-card-title class="last-read-content padding-bottom-8" role="heading" aria-level="2">{{nextContent?.name}}
 						</ion-card-title>
 						<button
 							*ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
@@ -269,13 +275,16 @@
 		<div *ngIf="(isGuestUser &&!showSheenAnimation) || (!isGuestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
 				<app-relevant-content-card [contentData]="course"
-				[isAlreadyEnrolled]="isAlreadyEnrolled" [isCertifiedCourse]="isCertifiedCourse" [certificateDescription]="certificateDescription"></app-relevant-content-card>
+										   [isAlreadyEnrolled]="isAlreadyEnrolled"
+										   [isCertifiedCourse]="isCertifiedCourse"
+										   [certificateDescription]="certificateDescription"
+				[batchEndDate]="batchDetails?.endDate"></app-relevant-content-card>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">
 					<div>
 						<div class="ion-padding">
-							<div class="font-14-new view-credits" (click)="expandDataSettings()">
+							<div class="font-14-new view-credits" role="heading" aria-level="1" (click)="expandDataSettings()">
 								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-up"></ion-icon>

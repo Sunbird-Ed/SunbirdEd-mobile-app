@@ -75,7 +75,9 @@ describe('ContentDetailsPage', () => {
         subscribe: jest.fn(() => 'playConfig')
     };
     const mockPopoverController: Partial<PopoverController> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };

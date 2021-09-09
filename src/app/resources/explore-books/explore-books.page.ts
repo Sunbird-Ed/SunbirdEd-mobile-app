@@ -289,7 +289,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         );
       }),
       tap(() => {
-        (window as any).cordova.plugins.Keyboard.close();
+        (window as any).Keyboard.hide();
       }),
       tap((result?: ContentSearchResult) => {
         this.zone.run(() => {

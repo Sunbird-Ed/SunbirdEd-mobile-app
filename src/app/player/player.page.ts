@@ -138,7 +138,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
   async ionViewWillEnter() {
     const playerInterval = setInterval(() => {
-      if (this.playerType && this.playerType === 'sunbird-old-player') {
+      if (this.playerType === 'sunbird-old-player') {
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
         this.statusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
@@ -162,6 +162,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
                 if (resp.data === 'renderer:question:submitscore') {
                   this.courseService.syncAssessmentEvents().subscribe();
+                } else if (resp.data === 'renderer:question:reviewAssessment') {
+                  this.courseService.clearAssessments().subscribe();
                 } else if (resp.data && typeof resp.data === 'object') {
                   if (resp.data['player.pdf-renderer.error']) {
                     const pdfError = resp.data['player.pdf-renderer.error'];
@@ -361,7 +363,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    // Migration todo
     setTimeout(() => {
       this.closeIframe(content);
     }, 1000);

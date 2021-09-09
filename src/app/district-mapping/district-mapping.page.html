@@ -1,7 +1,7 @@
 <ion-content>
   <div class="dm-header ion-padding">
     <ion-icon *ngIf="isShowBackButton" name="arrow-back" (click)="goBack(true)"
-      class="top-back-button"></ion-icon><span class="preference-info">{{ 'SET_PREFERENCE' | translate }}</span>
+      class="top-back-button"></ion-icon><span class="preference-info" role="heading" aria-level="1">{{ 'SET_PREFERENCE' | translate }}</span>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
@@ -19,9 +19,20 @@
              (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
   </div>
-
+  <div class="ios-footer" *ngIf="platform.is('ios')">
+    <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
+      <button class="block-button-clear"
+              [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+              (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
+      </button>
+      <button class="block-button-save"
+              [ngClass]="{'blur-save-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+              (click)="submit()">{{'BTN_SUBMIT' | translate}}
+      </button>
+    </div>
+  </div>
 </ion-content>
-<div class="footer">
+<div class="footer" *ngIf="platform.is('android')">
   <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
     <button class="block-button-clear"
             [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"

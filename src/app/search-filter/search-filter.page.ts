@@ -17,6 +17,7 @@ export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
+    @Input('existingSearchFilters') existingSearchFilters: {[key:string]:boolean};
 
     public config: FieldConfig<any>[];
 
@@ -48,7 +49,7 @@ export class SearchFilterPage implements OnInit {
         this.initialFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(this.initialFilterCriteria);
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
         if (!this.filterFormTemplateConfig) {
-            const {config, defaults} = this.buildConfig(this.appliedFilterCriteria);
+            const {config, defaults} = await this.buildConfig(this.appliedFilterCriteria);
             this.filterFormTemplateConfig = config;
             this.baseSearchFilter = defaults;
         }
@@ -101,19 +102,19 @@ export class SearchFilterPage implements OnInit {
             this.appliedFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(contentSearchResult.filterCriteria);
             this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
-            // todo show error toast
             console.error(e);
         } finally {
             await loader.dismiss();
         }
     }
 
-    private buildConfig(filterCriteria: ContentSearchCriteria) {
-        return this.filterFormConfigMapper.map(
+    private async buildConfig(filterCriteria: ContentSearchCriteria) {
+        return await this.filterFormConfigMapper.map(
             filterCriteria.facetFilters.reduce((acc, f) => {
                 acc[f.name] = f.values;
                 return acc;
-            }, {})
+            }, {}),
+            (this.existingSearchFilters || {})
         );
     }
 

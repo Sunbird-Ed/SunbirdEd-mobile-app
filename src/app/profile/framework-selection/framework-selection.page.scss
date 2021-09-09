@@ -28,3 +28,7 @@ ion-button{
     height: 40px !important;
     text-transform: capitalize !important;
 }
+
+.ios .framework-form-bg ::ng-deep li > div {
+    outline-style: none;
+}

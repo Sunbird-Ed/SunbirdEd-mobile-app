@@ -27,10 +27,10 @@
           placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
       </div>
       <div class="ad-timestamp-container">
-        <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
+        <!-- <div class="ad-timestamp"
           [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
-        </div>
-        <div class="ad-dw-csv-container" *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
+        </div> -->
+        <div *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
           <span class="ad-dw-csv">{{'DOWNLOAD_CSV' | translate}}</span>
           <img src="assets/imgs/download-icon.svg" alt="">
         </div>

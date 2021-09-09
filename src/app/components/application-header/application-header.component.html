@@ -83,7 +83,7 @@
       </ion-buttons>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" md="ellipsis-vertical"></ion-icon>
+        <ion-icon class="ion-float-end" name="ellipsis-vertical"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
@@ -217,6 +217,13 @@
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
+          <span class="sb-menu-icon">
+            <ion-icon name="log-in-outline"></ion-icon>
+          </span>
+          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
+        </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
@@ -296,6 +303,16 @@
           <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
+            <span class="sb-menu-icon">
+              <img src="./assets/imgs/Reports.png" class="tool-icon" alt="reports">
+            </span>
+            <span class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
+             <div class="new-feature-badge">
+              <div class="square-badge">New</div>
+              <div class="circle-badge"></div>
+            </div>
+        </ion-item>
 
         <ion-item (click)="switchTabs()">
           <div class="beta-info">
@@ -361,7 +378,7 @@
           <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>

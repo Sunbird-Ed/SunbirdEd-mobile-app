@@ -3,9 +3,9 @@ import { PreferenceKey, ProfileConstants } from "@app/app/app.constant";
 import { AuthService, Profile, ProfileService, SegmentationService, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService } from "../app-global-service.service";
 import { NotificationService } from '@app/services/notification.service';
-import * as _ from "dayjs/locale/*";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 import { SplaschreenDeeplinkActionHandlerDelegate } from "../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate";
+import { FormConstants } from "@app/app/form.constants";
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
     static readonly USER_ATRIBUTE = 'USERFRAMEWORK_';
@@ -93,7 +93,7 @@ export class SegmentationTagService {
 
     getSegmentCommand() {
         // FormConfig for Segment
-        this.formAndFrameworkUtilService.getSegmentationCommands()
+        this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
         .then(cmdList => {
             if(cmdList && cmdList.length) {
                 this.comdList = cmdList;
@@ -161,3 +161,7 @@ export class SegmentationTagService {
         this.executeCommand(invalidcomd, true);
     }
 }
+function SEGMENTATION(SEGMENTATION: any) {
+    throw new Error("Function not implemented.");
+}
+

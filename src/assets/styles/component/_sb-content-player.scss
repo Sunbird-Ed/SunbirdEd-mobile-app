@@ -92,3 +92,15 @@
   // .sb-player-container.sb-offline-container{
   //   top: none;
   // }
+  // ****iOS
+  .sb-circle-ios {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    height:($base-block-space * 3);
+    width:24px;
+  //  background-color: $white;
+    border-radius: 50%;
+    z-index: 100;
+  }
+  //

@@ -50,7 +50,7 @@ export class ManageUserProfilesPage implements OnInit {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private platform: Platform,
+    public platform: Platform,
     private location: Location,
     private popoverCtrl: PopoverController,
     private tncUpdateHandlerService: TncUpdateHandlerService
@@ -170,14 +170,12 @@ export class ManageUserProfilesPage implements OnInit {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.MANAGE_USERS,
-          Environment.USER,
-          true
-        );
-        break;
+    if($event.name == 'back')
+    {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.MANAGE_USERS,
+        Environment.USER,
+        true);
     }
   }
 

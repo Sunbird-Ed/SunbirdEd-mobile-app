@@ -1,5 +1,6 @@
 <ion-content hide-header-footer overflow-scroll="true"
-  class="main-container avoid-bottom-tabs-space ui-container" scrollEvents="true">
+  class="main-container avoid-bottom-tabs-space" scrollEvents="true" [ngClass]="{'ui-container': !platform.is('ios')}">
+  <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
@@ -34,7 +35,7 @@
       </ng-container>
     </div>
     <div *ngIf="section.theme.component === 'sb-library-cards-stack'">
-      <div class="section-header-style" *ngIf="section?.data.sections.length">{{section?.title | translateJson}}</div>
+      <div class="section-header-style" role="heading" aria-level="2" *ngIf="section?.data.sections.length">{{section?.title | translateJson}}</div>
       <div *ngFor="let section of section?.data.sections; let i=index">
         <div *ngIf="section?.contents?.length" class="sb-textbook-container">
           <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"

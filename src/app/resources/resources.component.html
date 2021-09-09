@@ -29,7 +29,7 @@
           </div>
           <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && (!result?.dataSrc || result?.dataSrc?.type!== 'TRACKABLE_COLLECTIONS')">
             <div class="sb-recently-viewed-items">
-              <div class="sb-recenlty-viewed-title">{{result?.name}}
+              <div class="sb-recenlty-viewed-title" role="heading" aria-level="2">{{result?.name}}
                 <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
                   (click)="navigateToViewMoreContentsPage(result);">
                   {{ 'VIEW_ALL' | translate }}</button>
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div *ngIf="!result?.theme || result?.theme?.orientation === 'vertical'">
-        <div class="section-header-style" *ngIf="result.data.sections.length">{{result.name}}</div>
+        <div class="section-header-style" role="heading" aria-level="2" *ngIf="result.data.sections.length">{{result.name}}</div>
         <div *ngFor="let section of result.data.sections">
           <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">
             <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"

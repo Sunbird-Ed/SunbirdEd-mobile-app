@@ -15,7 +15,7 @@ import {
   CachedItemRequestSourceFrom,
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
   EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
-  Profile, ProfileService,
+  Profile, ProfileService, ProfileType,
   ServerProfile, SharedPreferences
 } from 'sunbird-sdk';
 import {
@@ -64,6 +64,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isUpdateAvailable = false;
   currentSelectedTabs: string;
   isDarkMode:boolean;
+  showReports: any;
+  showLoginButton = false;
+
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -94,6 +97,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLanguageValue();
       }
     });
+    this.events.subscribe('onPreferenceChange:showReport', res => {
+      this.showReports= res
+    })
     this.getUnreadNotifications();
   }
 
@@ -134,7 +140,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
     this.preference.getString('data-mode').subscribe((val)=>{
-      this.isDarkMode=val==AppMode.DARKMODE?true:false
+      this.isDarkMode = val === AppMode.DARKMODE;
     });
     this.checkForAppUpdate().then();
   }
@@ -217,6 +223,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       });
       this.fetchManagedProfileDetails();
     }
+    this.refreshLoginInButton();
   }
 
   async toggleMenu() {
@@ -248,8 +255,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitSideMenuItemEvent($event, menuItem) {
-    this.toggleMenu();
-    this.sideMenuItemEvent.emit({ menuItem });
+    // this.toggleMenu();
+    this.menuCtrl.close().then(() => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    }).catch((e) => {
+      this.sideMenuItemEvent.emit({ menuItem });
+    })
   }
 
   ngOnDestroy() {
@@ -479,5 +490,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       return;
     }
     this.emitEvent({ event, option: data.option }, 'kebabMenu');
+  }
+
+  private refreshLoginInButton() {
+    const profileType = this.appGlobalService.getGuestUserType();
+    this.showLoginButton = (this.commonUtilService.isAccessibleForNonStudentRole(profileType)
+            && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
+        (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
   }
 }

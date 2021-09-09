@@ -7,7 +7,7 @@
         </div>
 
         <!-- filter from discover search page-->
-        <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
+        <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="primaryFacetFiltersFormGroup">
             <ion-grid class="filter-container">
                 <ion-row>
                     <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
@@ -23,7 +23,7 @@
                                         multiple="true"
                                         placeholder="{{primaryFacetFilter.translations | translateJson}}">
                                 <ion-select-option
-                                        *ngFor="let facet of ((initialFacetFilters && initialFacetFilters[primaryFacetFilter.code]) || [])"
+                                        *ngFor="let facet of ((displayFacetFilters && displayFacetFilters[primaryFacetFilter.code]) || []); trackBy:reloadDropdown"
                                         [value]="facet"
                                         class="ion-text-capitalize">
                                     {{facet.name | titlecase }}
@@ -42,13 +42,24 @@
         </form>
     </div>
 
-    <div class="p-8 sticky-header-pills" *ngIf="!showSheenAnimation">
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
-                       [pillsViewType]="'scroll'"
-                       [pillBorder]="PillBorder.SEMI_ROUND">
-            <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
-                          *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
-        </sb-pills-grid>
+    <div class="p-8 sticky-header-pills">
+        <ng-container *ngIf="!showSheenAnimation">
+            <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate && formField?.showNavigationPill" [pillShape]="'default'"
+                           [pillsViewType]="'scroll'"
+                           [pillBorder]="PillBorder.SEMI_ROUND">
+                <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
+                              *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
+            </sb-pills-grid>
+        </ng-container>
+
+        <ng-container *ngIf="sectionGroup?.sections && formField?.filterPillBy && filterPillList && filterPillList.length">
+            <sb-pills-grid [pillShape]="'default'"
+                           [pillsViewType]="'scroll'"
+                           [pillBorder]="PillBorder.SEMI_ROUND">
+                <sb-pill-item *ngFor="let pill of (filterPillList || [])" [name]="pill?.name | titlecase"
+                    (click)="pillFilterHandler(pill)" [theme]="(pill?.name === selectedFilterPill?.name) && selectedPillTheme"></sb-pill-item>
+            </sb-pills-grid>
+        </ng-container>
     </div>
 
     <ion-list class="m-n" *ngIf="showSheenAnimation">

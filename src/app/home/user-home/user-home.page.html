@@ -45,7 +45,7 @@
     </ion-item>
   </ion-list>
 
-  <div class="form-api-components" *ngIf="displaySections && displaySections.length && homeDataAvailable">
+  <div class="form-api-components" *ngIf="displaySections && displaySections.length && (homeDataAvailable || displayBanner)">
 
     <ng-container *ngFor="let section of displaySections">
 
@@ -73,8 +73,16 @@
         <hr>
       </div>
       <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
-        <sb-banner-card-hlist [bannerList]="section?.data" (cardClick)="navigateToSpecificLocation($event)"></sb-banner-card-hlist>
-      </ng-container>
+        <sb-banner-card-hlist [bannerList]="primaryBanner" (cardClick)="navigateToSpecificLocation($event, section)"></sb-banner-card-hlist>
+        <div class="banner-pills">
+          <sb-pills-grid *ngIf="secondaryBanner?.length" [title]="text" [pillSize]="'small'" [pillsViewType]="'scroll'"
+                (select)="navigateToSpecificLocation($event)">
+                <sb-pill-item *ngFor="let pillData of secondaryBanner" [name]="pillData?.ui?.text | translateJson | titlecase"
+                  [icon]="pillData?.ui?.icon" [value]="pillData"
+                  [theme]="pillData?.ui?.theme"></sb-pill-item>
+        </sb-pills-grid>
+        </div>
+      </ng-container> 
 
       <!-- Pills -->
       <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-pills-grid'">
@@ -104,6 +112,23 @@
         </sb-pills-grid>
       </ng-container>
 
+      <!-- Recently published courses -->
+      <div *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.theme?.component === 'sb-course-cards'">
+        <sb-library-cards-hlist
+          [title]="section?.title | translateJson"
+          [contentList]="section?.data?.sections[0]?.contents"
+          [type]="section?.theme?.inputs?.type || LibraryCardTypes.MOBILE_TEXTBOOK"
+          [layoutConfig]="layoutConfiguration"
+          [isLoading]="false"
+          [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+          [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
+          [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
+          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+          (viewMoreClick)="navigateToViewMoreContentsPage(section, section?.data?.sections)"
+          (cardClick)="navigateToDetailPage($event, section?.title);">
+        </sb-library-cards-hlist>
+      </div>
+
       <!-- Recently viewed -->
       <div class="sb-recently-viewed-container" *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.theme?.component === 'sb-library-cards-hlist'">
         <sb-library-cards-hlist
@@ -122,6 +147,29 @@
 
     </ng-container>
 
+      <!-- Ml tile other category start -->
+      <ng-container *ngIf="otherCategories?.length">
+        <div class="heading-label">
+          <span role="heading" aria-level="2">{{ 'BROWSE_OTHER_CATEGORIES' | translate }}</span>
+          <hr>
+        </div>
+        <sb-pills-grid 
+          [pillShape]="'image_overlap'"
+          [pillsViewType]="'scroll'"          
+          [pillTextElipsis]="'three_line'"
+          (select)="handleOtherCategories($event)"
+          >
+          <sb-pill-item 
+           *ngFor="let pillData of otherCategories; let index=index"
+              [name]="pillData?.name | titlecase"
+              [icon]="pillData?.icon?.app"
+              [value]="pillData"
+              [theme]="({ component: 'sb-pill-item', input: 'theme' })"
+          >
+          </sb-pill-item>
+        </sb-pills-grid>
+      </ng-container>
+      <!-- Ml tile other category end -->
   </div>
 
   <div *ngIf="!homeDataAvailable" class="p-16 pt-32">
