@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,10 @@ export class QumlPlayerService implements QuestionCursor {
 
   getQuestionSet(identifier: string) {
     return this.contentService.getQuestionSetHierarchy(identifier);
+  }
+
+  getAllQuestionSet(identifiers: string[]) {
+    return of({});
   }
 }
 
