@@ -135,7 +135,7 @@ export class ProfilePage implements OnInit {
   selfDeclarationInfo: any;
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
-
+  enrolledCourseList = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -451,6 +451,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (res: Course[]) => {
         if (res.length) {
+          this.enrolledCourseList = res;
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
         refreshCourseList ? await loader.dismiss() : false;
