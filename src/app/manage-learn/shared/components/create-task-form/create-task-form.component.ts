@@ -45,6 +45,9 @@ export class CreateTaskFormComponent implements OnInit {
     })
   }
 
+  selectedTaskStatus(event) {
+  }
+
   addTask() {
     this.newTask.name ? this.modalCtrl.dismiss(this.newTask) : this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
   }
