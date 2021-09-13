@@ -9,12 +9,14 @@ import { ProgramService } from './services/program.service';
 import { AssessmentApiService } from './services/assessment-api.service';
 import { DhitiApiService } from './services/dhiti-api.service';
 import { SharingFeatureService } from './services/sharing-feature.service';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    SharedModule
   ],
   providers: [
     UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,

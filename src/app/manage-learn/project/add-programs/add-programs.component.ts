@@ -34,7 +34,7 @@ export class AddProgramsComponent implements OnInit {
   async getPrograms() {
     this.loaderService.startLoader();
     const config = {
-      url: urlConstants.API_URLS.PROGRAM_LISTING + true,
+      url: urlConstants.API_URLS.PROGRAM_LISTING+'isAPrivateProgram=true',
     }
     this.kendraApiService.get(config).subscribe(data => {
       this.loaderService.stopLoader();
