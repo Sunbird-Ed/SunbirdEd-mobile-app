@@ -278,7 +278,7 @@
 										   [isAlreadyEnrolled]="isAlreadyEnrolled"
 										   [isCertifiedCourse]="isCertifiedCourse"
 										   [certificateDescription]="certificateDescription"
-				[batchEndDate]="batchDetails?.endDate"></app-relevant-content-card>
+				[batchEndDate]="batchEndDate"></app-relevant-content-card>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">
