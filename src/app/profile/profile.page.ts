@@ -928,11 +928,11 @@ export class ProfilePage implements OnInit {
 
   async openEnrolledCourse(training) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: training.courseId }).toPromise();
-      console.log('Content Data', content);
+      const content = this.enrolledCourseList.find((course) => (course.courseId === training.courseId)
+          && training.batch.batchId === course.batch.batchId);
       this.navService.navigateToTrackableCollection(
         {
-          content,
+          content
         }
       );
     } catch (err) {
