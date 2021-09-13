@@ -17,7 +17,7 @@
   </app-item-list-card>
   <h5 class="projects-labels sb--card__title"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
   <div>
-    <h5 *ngIf="selectedFilter" class="sb--card__title projects-labels">{{selectedFilter}} </h5>
+    <h5 *ngIf="selectedFilter" class="sb--card__title projects-labels">{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter}} </h5>
   </div>
   <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title"
     [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">
