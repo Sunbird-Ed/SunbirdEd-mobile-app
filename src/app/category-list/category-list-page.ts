@@ -87,7 +87,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private supportedFacets?: string[];
     private subscriptions: Subscription[] = [];
     layoutConfiguration = {
-        layout: 'v3'
+        layout: 'v4'
     };
     appName = '';
     categoryDescription = '';
