@@ -103,6 +103,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
@@ -163,7 +164,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                 if (resp.data === 'renderer:question:submitscore') {
                   this.courseService.syncAssessmentEvents().subscribe();
                 } else if (resp.data === 'renderer:question:reviewAssessment') {
-                  this.courseService.clearAssessments().subscribe();
+                 // this.courseService.clearAssessments().subscribe();
                 } else if (resp.data && typeof resp.data === 'object') {
                   if (resp.data['player.pdf-renderer.error']) {
                     const pdfError = resp.data['player.pdf-renderer.error'];
