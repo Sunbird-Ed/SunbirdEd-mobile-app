@@ -145,7 +145,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.phone">
-            <div class="phone light" (click)="editMobileNumber();">
+            <div class="phone light" (click)="editMobileNumber();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="call"></ion-icon>
                 </span>
@@ -153,7 +153,7 @@
             </div>
         </div>
         <div *ngIf="profile?.email">
-            <div class="email " (click)="editEmail();">
+            <div class="email " (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="mail"></ion-icon>
                 </span>
@@ -161,7 +161,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.email">
-            <div class="email light" (click)="editEmail();">
+            <div class="email light" (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="mail"></ion-icon>
                 </span>
@@ -182,7 +182,7 @@
         </div>
         <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
         ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
-            <div class="email light" (click)="editRecoveryId();">
+            <div class="email light" (click)="editRecoveryId();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
