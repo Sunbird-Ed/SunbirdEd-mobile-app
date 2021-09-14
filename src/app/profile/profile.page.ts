@@ -135,7 +135,7 @@ export class ProfilePage implements OnInit {
   selfDeclarationInfo: any;
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
-
+  enrolledCourseList = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -451,6 +451,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (res: Course[]) => {
         if (res.length) {
+          this.enrolledCourseList = res;
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
         refreshCourseList ? await loader.dismiss() : false;
@@ -928,11 +929,11 @@ export class ProfilePage implements OnInit {
 
   async openEnrolledCourse(training) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: training.courseId }).toPromise();
-      console.log('Content Data', content);
+      const content = this.enrolledCourseList.find((course) => (course.courseId === training.courseId)
+          && training.batch.batchId === course.batch.batchId);
       this.navService.navigateToTrackableCollection(
         {
-          content,
+          content
         }
       );
     } catch (err) {

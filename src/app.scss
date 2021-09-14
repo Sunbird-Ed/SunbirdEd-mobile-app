@@ -2105,3 +2105,34 @@ app-user-home{
     }
   }
 }
+
+app-user-home{
+  sb-course-cards-hlist {
+    .sb--card{
+      box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+    } 
+    .sb--card__main-area{
+      display: revert !important;
+      .sb--card__img{
+        float: right;
+        height: 4.5rem !important;
+        width: 4.5rem !important;
+        margin: .5rem !important;
+        .img-container img{
+            margin-right: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+      }
+    }
+    .sb--card--course .sb--container-box .sb--card__info{
+      padding: 3px 10px !important;
+      display: unset !important;
+      .sb--card__meta1{
+        margin-top: .75rem !important;
+      }
+      .sb--card__title{
+        -webkit-line-clamp: 2 !important;
+      }
+    }
+  }
+}
