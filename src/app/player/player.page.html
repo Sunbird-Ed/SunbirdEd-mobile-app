@@ -12,8 +12,8 @@
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-epub-player>
   </div>
   <div *ngIf="playerType === 'sunbird-quml-player'" style="height:100vh;width:100%;background-color: white;">
-      <quml-player [QumlPlayerConfig]="config" (playerEvent)="playerEvents($event)" 
-      (telemetryEvent)="playerTelemetryEvents($event)"></quml-player>
+      <quml-main-player [QumlPlayerConfig]="config" (playerEvent)="playerEvents($event)" 
+      (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
   </div>
   <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
     <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
