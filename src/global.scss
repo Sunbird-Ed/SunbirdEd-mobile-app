@@ -66,6 +66,9 @@
   background-color: map-get($colors, light_gray_8c);
   min-height: 90vh !important;
   height: 90vh !important;
+  .topic-list-container{
+    height: calc(100vh - 175px) !important;
+  }
   .my-discussion{
     .topic-list-container{
       height: 300px !important;
