@@ -1,5 +1,5 @@
 cordova-plugin=cordova-plugin-printer
-cordova-plugin=https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git
+cordova-plugin=https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 cordova-plugin=ionic-plugin-keyboard
 cordova-plugin=cordova-plugin-whitelist
 cordova-plugin=cordova-plugin-ionic-webview
@@ -36,7 +36,6 @@ cordova-plugin=cordova-sqlite-storage
 cordova plugin=cordova-plugin-googleplus
 cordova-pligin=cordova-plugin-camera
 cordova-plugin=cordova-plugin-telerik-imagepicker
-cordova-plugin=cordova-plugin-photo-library
 cordova-plugin=cordova-plugin-filechooser
 cordova-plugin=cordova-plugin-media
 cordova-plugin=cordova.plugins.diagnostic
