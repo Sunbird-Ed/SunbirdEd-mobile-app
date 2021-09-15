@@ -34,8 +34,19 @@ export class NewExperiencePopupComponent implements OnInit {
     }
 
     async closePopover() {
-     this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG, SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
-     this.popoverCtrl.dismiss();
+        const userType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        const isNewUser = await this.preference.getBoolean(PreferenceKey.IS_NEW_USER).toPromise();
+        this.telemetryGeneratorService.generateNewExprienceSwitchTelemetry(
+            PageId.NEW_EXPERIENCE_POPUP,
+            InteractSubtype.CANCEL_CLICKED,
+            {
+                userType,
+                isNewUser
+            }
+        );
+        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+            SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
+        this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {
@@ -56,7 +67,8 @@ export class NewExperiencePopupComponent implements OnInit {
     }
 
     async switchToHomeTabs() {
-       this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG, SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
-       this.events.publish('UPDATE_TABS');
+        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+            SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
+        this.events.publish('UPDATE_TABS');
     }
 }
