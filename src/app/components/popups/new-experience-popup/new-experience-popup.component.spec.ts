@@ -41,8 +41,11 @@ describe('NewExperiencePopupComponent', () => {
 
     it('should close the popup', (done) => {
         // arrange
+        mockPreference.getString = jest.fn(() => of('sample-userType'));
+        mockPreference.getBoolean = jest.fn(() => of(true));
         mockPreference.putString = jest.fn(() => of(undefined));
         mockPopoverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+        mockTelemetryGeneratorService.generateNewExprienceSwitchTelemetry = jest.fn();
         // act
         newExperiencePopupComponent.closePopover();
         // assert

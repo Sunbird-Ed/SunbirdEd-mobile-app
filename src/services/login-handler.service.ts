@@ -39,7 +39,7 @@ export class LoginHandlerService {
 
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         } else {
-            this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
+            this.generateLoginInteractTelemetry(InteractType.LOGIN_INITIATE, InteractSubtype.KEYCLOAK, '');
 
             const that = this;
             const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
@@ -63,7 +63,7 @@ export class LoginHandlerService {
                 webviewMigrateSessionProviderConfig
             );
 
-            await this.loginNavigationHandlerService.setSession(webViewLoginSession, skipNavigation);
+            await this.loginNavigationHandlerService.setSession(webViewLoginSession, skipNavigation, InteractSubtype.KEYCLOAK);
         }
     }
 
