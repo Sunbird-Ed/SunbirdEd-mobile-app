@@ -324,8 +324,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       }
 
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
-       const questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
-       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+        let questionSet;
+        try{
+          questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+        } catch(e){
+          console.log(e);
+        }
+        this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {

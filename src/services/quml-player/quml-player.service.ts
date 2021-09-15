@@ -16,8 +16,8 @@ export class QumlPlayerService implements QuestionCursor {
     return this.contentService.getQuestionList([questionId]);
   }
 
-  getQuestions(questionIds: string[]): Observable<any> {
-    return this.contentService.getQuestionList(questionIds);
+  getQuestions(questionIds: string[], parentId: string): Observable<any> {
+    return this.contentService.getQuestionList(questionIds, parentId);
   }
 
   getQuestionSetHierarchy(data) {
