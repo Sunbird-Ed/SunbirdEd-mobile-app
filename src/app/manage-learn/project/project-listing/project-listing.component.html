@@ -5,7 +5,7 @@
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
   <div class="container">
-    <sb-library-filters [list]="filters" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"
+    <sb-library-filters [list]="filters" class="text-transform-none" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"
       (selectedFilter)="getDataByFilter($event);" *ngIf="filters?.length">
     </sb-library-filters>
   </div>
@@ -15,7 +15,6 @@
     (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon clr-primary" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
-  <h5 class="projects-labels sb--card__title"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
   <div>
     <h5 *ngIf="selectedFilter" class="sb--card__title projects-labels">{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter}} </h5>
   </div>
