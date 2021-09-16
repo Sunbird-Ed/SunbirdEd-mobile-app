@@ -74,6 +74,10 @@
       height: 300px !important;
     }
   }
+  .discuss-details-content{
+    height: calc(100vh - 125px) !important;
+    overflow: scroll;
+  }
 }
 .discuss-left-panel{
   z-index: 3 !important;
