@@ -54,7 +54,7 @@
   "ANDROID_NOT_SUPPORTED_DESC": "This content cannot be opened as your phone is running on a very old version of Android. Based on your device model you may be able to view this content, if you have Crosswalk. ",
   "ANNOUNCEMENT": "Announcement",
   "ANSWER": "Answer",
-  "APPLY": "APPLY",
+  "APPLY": "Apply",
   "APPLY_FILTER": "APPLY FILTER",
   "APP_ID": "{{%s}} ID",
   "APP_QR_CODE": "Have a {{%s}} QR Code?",
