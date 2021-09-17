@@ -88,7 +88,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
-    private platform: Platform,
+    public platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
     private commonUtilService: CommonUtilService,
