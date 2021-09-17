@@ -77,14 +77,20 @@ export class ContentShareHandlerService {
       if (contentId && !moduleId) {
         contentLink = contentLink + `&contentId=${contentId}`;
       }
+      const shareLinkUrl = await this.getPackageNameWithUTM()
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
         app_name: this.appName,
         content_name: content.contentData.name,
         content_link: contentLink,
-        play_store_url: await this.getPackageNameWithUTM()
+        play_store_url: shareLinkUrl
       });
       this.appGlobalService.isNativePopupVisible = true;
-      this.social.share(null, null, null, shareLink);
+      if(this.platform.is('ios')) {
+        this.social.share(shareLink, null, null, shareLinkUrl);
+      } else {
+        this.social.share(null, null, null, shareLink);
+      }
+      
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
       const folderPath = this.platform.is('ios') ? cordova.file.externalDataDirectory : cordova.file.externalRootDirectory 

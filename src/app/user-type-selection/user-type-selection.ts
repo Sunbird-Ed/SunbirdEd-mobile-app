@@ -130,7 +130,11 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
       if (this.categoriesProfileData) {
-        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+        }
       } else {
         this.backButtonFunc.unsubscribe();
       }
@@ -404,6 +408,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       direction: 'left',
       duration: 500,
       androiddelay: 500,
+      iosdelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
@@ -417,6 +422,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       direction: 'left',
       duration: 500,
       androiddelay: 500,
+      iosdelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };

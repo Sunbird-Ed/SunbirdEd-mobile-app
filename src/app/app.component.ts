@@ -179,7 +179,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
       this.statusBar.styleBlackTranslucent();
-      if(this.platform.is('ios')) this.statusBar.styleDefault();
+      if (this.platform.is('ios')) {
+        this.statusBar.styleDefault();
+        if (window['Keyboard']) {
+          window['Keyboard'].hideFormAccessoryBar(false);
+        }
+      }
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
       this.getCampaignParameter();
