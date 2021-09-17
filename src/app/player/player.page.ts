@@ -317,7 +317,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
-        nextContent,
+       // nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
