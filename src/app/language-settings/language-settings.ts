@@ -299,6 +299,7 @@ export class LanguageSettingsPage {
           direction: 'up',
           duration: 500,
           androiddelay: 500,
+          iosdelay: 500,
           fixedPixelsTop: 0,
           fixedPixelsBottom: 0
         };
