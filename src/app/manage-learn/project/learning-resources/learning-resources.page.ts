@@ -105,13 +105,13 @@ export class LearningResourcesPage {
       error => {}
     );
   }
-  openBodh(id) {
+  openBodh(resource) {
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
     }
     const req: ContentDetailRequest = {
-      contentId: id,
+      contentId: resource.id,
       attachFeedback: false,
       attachContentAccess: false,
       emitUpdateIfAny: false
