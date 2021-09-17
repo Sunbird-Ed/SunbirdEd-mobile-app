@@ -751,6 +751,16 @@ export class FormAndFrameworkUtilService {
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
     }
 
+    async getSearchFilters(): Promise<any[]>{
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'search',
+            action: 'facet_filter',
+            component: 'app'
+        };
+        return await this.getFormFields(formRequest);
+    }
+
     async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
         formRequest.rootOrgId = rootOrgId || '*' ;
         const formData  = await this.formService.getForm(formRequest).toPromise() as any;

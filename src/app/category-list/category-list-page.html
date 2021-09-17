@@ -23,7 +23,7 @@
                                         multiple="true"
                                         placeholder="{{primaryFacetFilter.translations | translateJson}}">
                                 <ion-select-option
-                                        *ngFor="let facet of ((initialFacetFilters && initialFacetFilters[primaryFacetFilter.code]) || [])"
+                                        *ngFor="let facet of ((displayFacetFilters && displayFacetFilters[primaryFacetFilter.code]) || []); trackBy:reloadDropdown"
                                         [value]="facet"
                                         class="ion-text-capitalize">
                                     {{facet.name | titlecase }}

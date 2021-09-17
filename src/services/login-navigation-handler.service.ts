@@ -43,7 +43,7 @@ export class LoginNavigationHandlerService {
     ) {
     }
 
-    async setSession(webViewSession, skipNavigation) {
+    async setSession(webViewSession, skipNavigation, subType: string) {
         this.authService.setSession(
             webViewSession
         ).toPromise()
@@ -64,7 +64,7 @@ export class LoginNavigationHandlerService {
                 }
                 this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
                 initTabs(this.container, LOGIN_TEACHER_TABS);
-                return this.refreshProfileData();
+                return this.refreshProfileData(subType);
             })
             .then(value => {
                 return this.refreshTenantData(value.slug, value.title);
@@ -88,7 +88,7 @@ export class LoginNavigationHandlerService {
             });
     }
 
-    private refreshProfileData() {
+    private refreshProfileData(subType: string) {
         const that = this;
 
         return new Promise<any>((resolve, reject) => {
@@ -114,7 +114,7 @@ export class LoginNavigationHandlerService {
 
                                     return success.profileUserType.type.toLowerCase();
                                 })();
-                                this.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
+                                this.generateLoginInteractTelemetry(InteractType.SUCCESS, subType, success.id);
                                 const profile: Profile = {
                                     uid: success.id,
                                     handle: success.id,

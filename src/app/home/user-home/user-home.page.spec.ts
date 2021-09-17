@@ -156,6 +156,11 @@ describe('UserHomePage', () => {
                 values: [{expiry: 111111}]
             }
         }];
+        mockContentAggregatorHandler.populateIcons = jest.fn(() => [{
+            dataSrc: {
+                type: 'CONTENT_DISCOVERY_BANNER'
+            }
+        }]);
         // act
         userHomePage.ngOnInit();
         // assert
