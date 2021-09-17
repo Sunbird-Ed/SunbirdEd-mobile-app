@@ -15,16 +15,16 @@
     </ion-textarea>
   </ion-item>
 
-  <div class="custom-datetime">
-    <ion-label position="fixed" class="custom-datetime-label" id="endate">
+  <ion-item class="custom-datetime" lines="none">
+    <ion-label id="endate">
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
     <ion-datetime for="endate" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
       display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date custom-alignment-date"
       placeholder={{today}}>
+    <ion-icon name="caret-down-outline"></ion-icon>
     </ion-datetime>
-    <ion-icon name="caret-down-outline" slot="end"></ion-icon>
-  </div>
+  </ion-item>
 
   <ion-item class="custom-item" lines="none">
     <ion-label>{{'FRMELEMNTS_LBL_STATUS' | translate}}</ion-label>
