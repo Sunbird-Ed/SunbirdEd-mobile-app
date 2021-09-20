@@ -26,7 +26,7 @@
         <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList" #slidingItem>
           <ion-item>
             <div class="w-100">
-              <sb-notification-card [notification]="item" [hideDeleteOption]="false"></sb-notification-card>
+              <sb-notification-card [notification]="item" [hideDeleteOption]="true"></sb-notification-card>
             </div>
           </ion-item>
           <ion-item-options side="start">
