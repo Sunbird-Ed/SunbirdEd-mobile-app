@@ -737,11 +737,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             if(bannerMap){
               banner = {...banner, ...bannerMap};
             }
-            banner['facet'] = (banner.ui && banner.ui.text) || '';
+            banner['facet'] = (banner.ui && banner.ui.landing && banner.ui.landing.title) || '';
             banner['description'] = (banner.ui && banner.ui.description) || '';
           }
         }
-        section['description'] = (banner.ui && banner.ui.description) || '';
+        section['description'] = (banner.ui && banner.ui.landing && banner.ui.landing.description) || '';
         this.handlePillSelect({data: [{value: banner}]}, section);
         break;
       case 'banner_content':
