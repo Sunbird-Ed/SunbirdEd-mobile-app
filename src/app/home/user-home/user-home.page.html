@@ -60,6 +60,7 @@
               [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
               [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
               [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+              [publishedByText]="'CONTENT_CREATED_BY' | translate"
               (viewMoreClick)="navigateToViewMoreContentsPage(section, subSection)"
               (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
             </sb-course-cards-hlist>
