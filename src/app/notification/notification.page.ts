@@ -1,8 +1,8 @@
 import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, CorrelationData } from 'sunbird-sdk';
+import { Notification, CorrelationData, ProfileService, UserFeedStatus } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -17,6 +17,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { map, tap } from 'rxjs/operators';
 import { NotificationService } from '../../services/notification.service';
+import { NotificationServiceV2 } from '@app/../../sunbird-mobile-sdk/tmp/notification-v2/def/notification-service-v2';
+import { ProfileConstants } from '../app.constant';
 
 @Component({
   selector: 'app-notification',
@@ -25,13 +27,25 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class NotificationPage implements OnInit {
 
-  notificationList$: Observable<Notification[]> ;
-  unreadNotificationList$: Observable<Notification[]>;
+  // notificationList$: Observable<Notification[]> ;
+  // unreadNotificationList$: Observable<Notification[]>;
+  notificationList = [] ;
+  unreadNotificationList = [];
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;
   private loader?: any;
+  inAppNotificationConfig = { 
+    title: 'Notification',
+    subTitle: 'New Notification (s)',
+    clearText: 'Clear',
+    moreText: 'See more',
+    lessText: 'See less',
+    minNotificationViewCount: 5
+  }
 
   constructor(
+    @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private notificationService: NotificationService,
     private headerService: AppHeaderService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -57,32 +71,43 @@ export class NotificationPage implements OnInit {
   }
 
   private async fetchNotificationList() {
+
+    const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.loader = await this.commonUtilService.getLoader();
-    this.notificationList$ = (this.notificationService.fetchNotificationList() as any).pipe(
-      tap(() => {
-        if (this.loader) {
-          this.loader.dismiss();
-          this.loader = undefined;
-        }
-      })
-    );
-    const corRelationList: Array<CorrelationData> = [];
-    this.unreadNotificationList$ = this.notificationList$.pipe(
-      map((notifications) => notifications.filter((n: any) => !n.data.isRead)),
-        tap((notifications) => {
-          corRelationList.push(
-              {id: notifications.length.toString(),
-                type: CorReleationDataType.NEW_NOTIFICATION});
-        })
-    );
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.PAGE_LOADED,
-      ImpressionSubtype.HOME,
-      PageId.NOTIFICATION,
-      Environment.HOME, '', '', '', undefined,
-      corRelationList
-    );
+    this.notificationServiceV2.notificationRead(profile.uid).subscribe((data) => {
+      this.notificationList = data.feeds;
+      
+      this.unreadNotificationList = this.notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+    })
   }
+
+  // private async fetchNotificationList1() {
+  //   this.loader = await this.commonUtilService.getLoader();
+  //   this.notificationList$ = (this.notificationService.fetchNotificationList() as any).pipe(
+  //     tap(() => {
+  //       if (this.loader) {
+  //         this.loader.dismiss();
+  //         this.loader = undefined;
+  //       }
+  //     })
+  //   );
+  //   const corRelationList: Array<CorrelationData> = [];
+  //   this.unreadNotificationList$ = this.notificationList$.pipe(
+  //     map((notifications) => notifications.filter((n: any) => !n.data.isRead)),
+  //       tap((notifications) => {
+  //         corRelationList.push(
+  //             {id: notifications.length.toString(),
+  //               type: CorReleationDataType.NEW_NOTIFICATION});
+  //       })
+  //   );
+  //   this.telemetryGeneratorService.generateImpressionTelemetry(
+  //     ImpressionType.PAGE_LOADED,
+  //     ImpressionSubtype.HOME,
+  //     PageId.NOTIFICATION,
+  //     Environment.HOME, '', '', '', undefined,
+  //     corRelationList
+  //   );
+  // }
 
   async clearAllNotifications() {
     if (!this.loader) {

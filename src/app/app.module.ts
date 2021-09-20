@@ -184,6 +184,10 @@ export const debuggingService = () => {
   return SunbirdSdk.instance.debuggingService;
 };
 
+export const notificationServiceV2 = () => {
+  return SunbirdSdk.instance.notificationServiceV2;
+};
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -287,7 +291,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DEBUGGING_SERVICE',
     useFactory: debuggingService
-  }];
+  },{
+    provide: 'NOTIFICATION_SERVICE_V2',
+    useFactory: notificationServiceV2
+  },];
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;

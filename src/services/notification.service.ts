@@ -3,16 +3,19 @@ import { Inject, Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
-import { ActionType } from '@app/app/app.constant';
+import { ActionType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { map } from 'rxjs/operators';
+import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
+import { CsNotificationDeleteReq, CsNotificationUpdateReq } from '@app/../../sunbird-client-services/tmp/services/notification/interface/cs-notification-service';
+import { NavigationExtras, Router } from '@angular/router';
 declare const cordova;
 
 @Injectable({
@@ -35,6 +38,7 @@ export class NotificationService implements SbNotificationService {
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
         @Inject('NOTIFICATION_SERVICE') private sdkNotificationService: SdkNotificationService,
+        @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
@@ -42,6 +46,7 @@ export class NotificationService implements SbNotificationService {
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private event: Events,
         private telemetryGeneratorService: TelemetryGeneratorService,
+        private router: Router
     ) {
         this.getAppName();
     }
@@ -65,7 +70,28 @@ export class NotificationService implements SbNotificationService {
         ) as any;
     }
 
+    // async fetchNotificationList() {
+    //     console.log('in fetchNotificationList')
+        
+    //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    //     console.log('fetchNotificationList profile', profile);
+        
+    //     this.notificationServiceV2.notificationRead(profile.uid).subscribe(data => {console.log('notificationlist', data)})
+    //     return this.notificationServiceV2.notificationRead(profile.uid).pipe(
+    //         map((notifications) => {
+    //             const temp = notifications.feeds.map(n => {
+    //                 n['status'] = n['status'] ? UserFeedStatus.READ : UserFeedStatus.UNREAD;
+    //                 n['createdOn'] = n['createdOn'] || n['displayTime'];
+    //                 return { data: n, createdOn: n['createdOn'] };
+    //             });
+    //             console.log('temp', temp);
+    //             return temp as any;
+    //         })
+    //     ) as any;
+    // }
+
     async handleNotificationClick(notificationData: EventNotification): Promise<void> {
+        this.updateNotification(notificationData.data);
         if (!notificationData || !notificationData.data || !notificationData.data.data) {
             return;
         }
@@ -86,11 +112,22 @@ export class NotificationService implements SbNotificationService {
     }
 
     async deleteNotification(notificationData: EventNotification): Promise<boolean> {
+        // try {
+        //     await this.sdkNotificationService.deleteNotification(notificationData.data.data).toPromise();
+        //     return true;
+        // } catch (e) {
+        //     console.error(e);
+        //     return false;
+        // }
+        const req: any = {
+            ids: [notificationData.data.id],
+            userId: notificationData.data.userId,
+            category: notificationData.data.action.category
+        }
         try {
-            await this.sdkNotificationService.deleteNotification(notificationData.data.data).toPromise();
+            const resp = await this.notificationServiceV2.notificationDelete(req).toPromise();
             return true;
         } catch (e) {
-            console.error(e);
             return false;
         }
     }
@@ -288,6 +325,31 @@ export class NotificationService implements SbNotificationService {
             undefined,
             valuesMap
         );
+    }
+
+    updateNotification(notificationData) {
+        const req: CsNotificationUpdateReq = {
+            ids: [notificationData.id],
+            userId: notificationData.userId
+        }
+        this.notificationServiceV2.notificationUpdate(req).toPromise()
+        .then((resp) => {
+        }).catch((err) => {
+            console.log('err', err)
+        });
+        this.redirectNotification(notificationData)
+    }
+
+    redirectNotification(notificationData) {
+        if(notificationData.action.additionalInfo.group) {
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    groupId: notificationData.action.additionalInfo.group.id
+                }
+            };
+            this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+        }
+        
     }
 
 }

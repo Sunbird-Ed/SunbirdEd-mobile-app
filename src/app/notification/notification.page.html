@@ -1,7 +1,8 @@
 <ion-content overflow-scroll="true">
-  <ng-container *ngIf="(notificationList$ | async) as notificationList">
+  <!-- <ng-container *ngIf="(notificationList$ | async) as notificationList"> -->
+  <ng-container *ngIf="notificationList.length">
   <!-- Shows Notification Count with Clear Button -->
-  <ng-container *ngIf="(unreadNotificationList$ | async) as unreadNotificationList">
+  <!-- <ng-container *ngIf="(unreadNotificationList$ | async) as unreadNotificationList">
     <div class="sb-view-all-container">
       <div class="sb-view-all-items">
         <div class="sb-view-all-title">
@@ -11,14 +12,21 @@
         </div>
       </div>
     </div> 
-  </ng-container>
+  </ng-container> -->
+
+  <sb-notification
+    [notificationList]="notificationList"
+    [inAppNotificationConfig]="inAppNotificationConfig"
+    (showMore)="handleShowMore($event)"
+    (showLess)="handleShowLess($event)"
+  ></sb-notification>
 
   <!-- Shows various types of notifications with sliding delete buttons-->
-      <ion-list lines="none" *ngIf="notificationList.length">
+      <!-- <ion-list lines="none" *ngIf="notificationList.length">
         <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList" #slidingItem>
           <ion-item>
             <div class="w-100">
-              <sb-notification-card [notification]="item" [hideDeleteOption]="true"></sb-notification-card>
+              <sb-notification-card [notification]="item" [hideDeleteOption]="false"></sb-notification-card>
             </div>
           </ion-item>
           <ion-item-options side="start">
@@ -39,6 +47,6 @@
           <img src="./assets/imgs/no_notification.svg" alt="delete" />
         </div>
         <h4>{{'MSG_NO_NEW_NOTIFICATION' | translate}}</h4>
-      </div>
+      </div> -->
     </ng-container>
 </ion-content>

@@ -7,6 +7,8 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService, NotificationService as SdkNotificationService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { Router } from '@angular/router';
+import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
@@ -25,18 +27,24 @@ describe('LocalCourseService', () => {
   };
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
   const mockSdkNotificationService: Partial<SdkNotificationService> = {};
+  const mockRouter: Partial<Router> = {
+    navigate: jest.fn()
+  };
+  const mockNotificationServiceV2: Partial<NotificationServiceV2> = {};
 
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
       mockSdkNotificationService as SdkNotificationService,
+      mockNotificationServiceV2 as NotificationServiceV2,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
       mockLocalNotifications as LocalNotifications,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
       mockEvents as Events,
-      mockTelemetryGeneratorService as TelemetryGeneratorService
+      mockTelemetryGeneratorService as TelemetryGeneratorService,
+      mockRouter as Router
     );
   });
 
