@@ -20,10 +20,10 @@ ion-searchbar ::ng-deep .searchbar-input{
   font-weight: 600;
   margin: 20px 0px;
 }
-.text-transform-none{
-  .pill{
-    text-transform : none !important; 
-  }
+:host ::ng-deep {
+      .pill{
+       text-transform: none !important;
+}
 }
 
 .container {
