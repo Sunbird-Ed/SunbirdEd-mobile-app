@@ -90,7 +90,7 @@
                 </h5>
               </div>
             </ion-col>
-            <ion-col size="1" *ngIf="!viewOnlyMode && project?.status != 'notStarted'">
+            <ion-col size="1" *ngIf="!viewOnlyMode">
               <ion-icon name="ellipsis-vertical-outline" color="primary" (click)="openPopover($event,task)">
               </ion-icon>
             </ion-col>
@@ -115,13 +115,13 @@
       </div>
     </div>
   </div>
-  <ion-fab horizontal="center" class="add-task-btn" *ngIf="taskCount < 2 && !viewOnlyMode && project?.status != statuses[0].title">
+  <ion-fab horizontal="center" class="add-task-btn" *ngIf="taskCount < 2 && !viewOnlyMode">
     <ion-fab-button (click)="addTask()" color="primary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
-  <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1 && !viewOnlyMode && project?.status != statuses[0].title" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1 && !viewOnlyMode" slot="fixed">
     <ion-fab-button (click)="addTask()" color="primary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
