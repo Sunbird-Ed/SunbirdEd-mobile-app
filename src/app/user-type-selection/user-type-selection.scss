@@ -129,4 +129,13 @@
   .app-text-heading-welcome {
     padding-top: 1em;
   }
+  .coming-soon-image {
+    opacity: 0.5;
+  }
+  .coming-soon-title {
+    font-weight: 700 !important;
+    font-size: 1.0rem;
+    color: map-get($colors, danger);
+  }
+
 }

@@ -180,13 +180,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  selectUserTypeCard(selectedUserTypeName: string, userType: string) {
-    this.selectCard(selectedUserTypeName, userType);
-    this.generateUserTypeClicktelemetry(userType);
-    if (!this.categoriesProfileData) {
-      setTimeout(() => {
-        this.continue();
-      }, 50);
+  selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
+    if (isActive) {
+      this.selectCard(selectedUserTypeName, userType);
+      this.generateUserTypeClicktelemetry(userType);
+      if (!this.categoriesProfileData) {
+        setTimeout(() => {
+          this.continue();
+        }, 50);
+      }
     }
   }
 

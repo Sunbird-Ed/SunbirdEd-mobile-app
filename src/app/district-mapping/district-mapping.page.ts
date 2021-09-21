@@ -372,6 +372,9 @@ export class DistrictMappingPage implements OnDestroy {
 
       if (config.templateOptions['dataSrc'] && config.templateOptions['dataSrc']['marker'] === 'SUPPORTED_PERSONA_LIST') {
         config.templateOptions.options = (await this.profileHandler.getSupportedUserTypes())
+          .filter(userType => {
+            return userType.isActive;
+          })
           .map(p => ({
             label: p.name,
             value: p.code
