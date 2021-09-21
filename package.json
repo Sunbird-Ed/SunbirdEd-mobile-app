@@ -54,6 +54,7 @@
     "@ionic-native/photo-library": "^5.30.0",
     "@ionic-native/photo-viewer": "^5.30.0",
     "@ionic-native/screen-orientation": "^5.15.1",
+    "@ionic-native/sign-in-with-apple": "^5.36.0",
     "@ionic-native/social-sharing": "^5.15.1",
     "@ionic-native/status-bar": "^5.15.1",
     "@ionic-native/streaming-media": "^5.30.0",
@@ -274,7 +275,8 @@
       },
       "cordova-plugin-googleplus": {
         "REVERSED_CLIENT_ID": "com.googleusercontent.apps.311620532095-tpps5l8ubg3a1c7lmkpjiuvp074puagh"
-      }
+      },
+      "cordova-plugin-sign-in-with-apple": {}
     },
     "platforms": [
       "android",
