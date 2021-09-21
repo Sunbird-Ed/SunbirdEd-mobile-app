@@ -9,16 +9,21 @@
     display: flex;
     justify-content: space-between;
     margin: 20px 0px;
-    padding: 0px 15px;
     ion-datetime{
     border-bottom: 1px solid #999999;
-    min-width: 200px;
+    min-width: 185px;
     font-size: 16px;
+    }
+    ion-icon{
+    font-size: 14px;
+    color: #999999;
+    padding: 0px;
+    margin: 0px;
     }
 }
 .custom-datetime-label{
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 600;
     margin-top: 15px;
 }
 .custom-label-float{

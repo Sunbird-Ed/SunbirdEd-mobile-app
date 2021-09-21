@@ -2037,6 +2037,9 @@ app-user-home, app-discover {
   font-weight: bold !important;
 }
 
+.custom-btn-txt-transform-none{
+  text-transform: none !important;
+}
 
 // Dark theme css
 html[data-theme="JOYFUL"][data-mode="DARKMODE"] {

@@ -649,6 +649,8 @@ export class ProjectDetailPage implements OnDestroy {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         !this.project.tasks ? (this.project.tasks = []) : "";
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
         this.project.tasks.push(data.data);
         this.update("newTask");
       }

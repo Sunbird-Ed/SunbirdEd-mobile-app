@@ -15,15 +15,17 @@
     </ion-textarea>
   </ion-item>
 
-  <div class="custom-datetime">
-    <ion-label position="fixed" class="custom-datetime-label" id="endate">
+  <ion-item class="custom-datetime" lines="none">
+    <ion-label id="endate">
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
+    <ion-icon name="caret-down-outline" slot="end"></ion-icon>
     <ion-datetime for="endate" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
       display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date"
       placeholder={{today}}>
+   
     </ion-datetime>
-  </div>
+  </ion-item>
 
   <ion-item class="custom-item" lines="none">
     <ion-label>{{'FRMELEMNTS_LBL_STATUS' | translate}}</ion-label>
@@ -54,7 +56,7 @@
       </ion-col>
     </ion-row>
   </div>
-  <ion-button expand="block" (click)="addTask()" [disabled]="!newTask.name" [ngClass]="{'btn-disabled': !newTask.name}">
+  <ion-button class="custom-btn-txt-transform-none custom-btn-txt-transform-none" expand="block" (click)="addTask()" [disabled]="!newTask.name" [ngClass]="{'btn-disabled': !newTask.name}">
     {{'FRMELEMNTS_LBL_ADD_TASK' | translate}}
   </ion-button>
 </ion-content>

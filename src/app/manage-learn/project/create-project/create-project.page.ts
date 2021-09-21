@@ -7,7 +7,7 @@ import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DbService, LocalStorageService, ToastService, UtilsService } from '../../core';
+import { DbService, LocalStorageService, statusType, ToastService, UtilsService } from '../../core';
 import { localStorageConstants } from '../../core/constants/localStorageConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
@@ -28,6 +28,7 @@ export class CreateProjectPage implements OnInit {
   createProjectAlert;
   hasAcceptedTAndC: boolean;
   project;
+  projectCopy;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
 
@@ -112,6 +113,7 @@ export class CreateProjectPage implements OnInit {
     this.db.query({ _id: this.parameters.projectId }).then(
       (success) => {
         this.project = success.docs.length ? success.docs[0] : {};
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         if (this.project.categories.length) {
           this.project.categories.forEach((element) => {
             element.isChecked = true;
@@ -340,7 +342,11 @@ export class CreateProjectPage implements OnInit {
     this.project.title = data.title;
     this.project.description = data.description;
     this.project.categories = data.categories;
-    this.project.isEdit = true;
+    if (JSON.stringify(this.project) !== JSON.stringify(this.projectCopy)) {
+      this.project.isEdit = true;
+      this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+      this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
+    }
     this.db
       .update(this.project)
       .then((success) => {
