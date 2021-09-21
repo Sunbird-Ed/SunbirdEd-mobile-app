@@ -119,7 +119,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     const appName = await this.appVersion.getAppName();
     const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
     if(this.platform.is('ios')) {
-      this.social.share(url, null, null, this.shareUrl);
+      this.social.share(null, null, null, this.shareUrl);
     } else {
       this.social.share(null, null, null, url);
     }

@@ -86,7 +86,7 @@ export class ContentShareHandlerService {
       });
       this.appGlobalService.isNativePopupVisible = true;
       if(this.platform.is('ios')) {
-        this.social.share(shareLink, null, null, contentLink);
+        this.social.share(null, null, null, contentLink);
       } else {
         this.social.share(null, null, null, shareLink);
       }
