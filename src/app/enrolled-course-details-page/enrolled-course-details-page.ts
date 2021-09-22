@@ -834,6 +834,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchRemaningTimingIntervalRef = undefined;
           }
           if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
+            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.handleUnenrollButton();
