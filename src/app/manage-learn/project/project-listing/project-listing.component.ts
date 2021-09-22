@@ -405,6 +405,7 @@ export class ProjectListingComponent {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
+                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
                                         this.selectedProgram(project);
                                     })
                                 return;

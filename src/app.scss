@@ -2037,6 +2037,9 @@ app-user-home, app-discover {
   font-weight: bold !important;
 }
 
+.custom-btn-txt-transform-none{
+  text-transform: none !important;
+}
 
 // Dark theme css
 html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
@@ -2112,14 +2115,13 @@ app-user-home{
       box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
     } 
     .sb--card__main-area{
-      display: revert !important;
+      flex-direction: row-reverse !important;
       .sb--card__img{
         float: right;
         height: 4.5rem !important;
         width: 4.5rem !important;
         margin: .5rem !important;
         .img-container img{
-            margin-right: 1rem !important;
             margin-bottom: 1rem !important;
         }
       }

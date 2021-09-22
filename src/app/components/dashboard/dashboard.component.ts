@@ -5,6 +5,7 @@ import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
+import 'datatables.net-fixedcolumns';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -14,7 +15,13 @@ export class DashboardComponent implements OnInit {
   @Input() dashletData: any;
   @Input() collectionName: string;
   DashletRowData = { values: [] };
-  columnConfig = { columnConfig: [] };
+  columnConfig = { 
+    columnConfig: [],
+    scrollX: true,
+    fixedColumns:   {
+      left: 1
+    }
+  };
   
 
   @ViewChild('lib', { static: false }) lib: any;
