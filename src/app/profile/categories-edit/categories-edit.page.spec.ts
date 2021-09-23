@@ -73,7 +73,9 @@ describe('CategoryEditPage', () => {
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
     mockActivatedRoute.snapshot = {
         queryParams: {
