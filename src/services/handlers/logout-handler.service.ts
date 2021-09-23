@@ -63,7 +63,7 @@ export class LogoutHandlerService {
           const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
-        if(splashscreen){
+        if(window.splashscreen && splashscreen){
           splashscreen.clearPrefs();
         }
       }),
