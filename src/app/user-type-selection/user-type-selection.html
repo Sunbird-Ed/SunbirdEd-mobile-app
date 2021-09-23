@@ -13,10 +13,11 @@
 
         <div class="container">
             <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
-                <div class="card-container" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code)" [class.selected]="selectedUserType === userTypeConfig?.code">
+                <div class="card-container" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
-                    <img class="thumbnail" alt="" src="assets/imgs/{{ userTypeConfig?.image }}"/>
+                    <img class="thumbnail" alt="" src="assets/imgs/{{ userTypeConfig?.image }}" [ngClass]="{'coming-soon-image': !userTypeConfig?.isActive}" />
                     <h4 class="card-title">{{ userTypeConfig?.name }}</h4>
+                    <h6 *ngIf="!userTypeConfig?.isActive" class="coming-soon-title">{{ 'FRMELEMNTS_MSG_COMING_SOON' | translate }}</h6>
                 </div>
             </div>
         </div>  
