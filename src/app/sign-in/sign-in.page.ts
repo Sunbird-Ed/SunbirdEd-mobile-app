@@ -164,17 +164,17 @@ export class SignInPage implements OnInit {
           })
           .then(async (res: AppleSignInResponse) => {
             // https://developer.apple.com/documentation/signinwithapplerestapi/verifying_a_user
-            alert('Send token to apple for verification: ' + res.identityToken);
-            console.log(res);
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res as any);
             await this.preferences.putBoolean(PreferenceKey.IS_APPLE_LOGIN, true).toPromise();
             await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation).then(() => {
                 this.navigateBack(this.skipNavigation);
+            }).catch(err => {
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
             });
           })
           .catch((error: AppleSignInErrorResponse) => {
-            alert(error.code + ' ' + error.localizedDescription);
+            this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
             console.error(error);
           });
     }
