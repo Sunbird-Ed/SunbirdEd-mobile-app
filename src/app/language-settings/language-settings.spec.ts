@@ -49,14 +49,17 @@ describe('LanguageSettingsPage', () => {
         generateInteractTelemetry: jest.fn()
     };
 
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'android')
+    };
 
     const mockCommonUtilService: Partial<CommonUtilService> = {};
 
     const mockAppHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn(),
         showHeaderWithBackButton: jest.fn(),
-        showStatusBar: jest.fn()
+        showStatusBar: jest.fn(),
+        showHeaderWithHomeButton: jest.fn()
     };
 
     const mockNotificationService: Partial<NotificationService> = {};
