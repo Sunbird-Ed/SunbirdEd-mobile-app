@@ -30,11 +30,11 @@ export class ApiService {
     public apiUtils: ApiUtilsService,
     public ionicHttp: HTTP,
   ) {
-    // this.getToken();
+    this.getToken();
   }
    setHeaders(session) {
     const headers = {
-      'Authorization': session ? ''  : '',
+      'Authorization': this.authToken ? this.authToken  : '',
       'x-auth-token': session ? session.access_token : '',
       'X-authenticated-user-token': session ? session.access_token : '',
       'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export class ApiService {
 
   getToken() {
     this.preferences.getString('api_bearer_token_v2').subscribe(resp => {
-      this.authToken = resp;
+      this.authToken = `Bearer ${resp}`;
     });
   }
   post(requestParam: RequestParams): Observable<any> {
