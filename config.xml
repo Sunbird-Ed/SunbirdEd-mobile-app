@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget android-versionCode="1" id="staging.sunbird.app" ios-CFBundleVersion="1" version="staging-2.4.0.01" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>Sunbird</name>
-    <description>Sunbird mobile app</description>
+    <name>Diksha</name>
+    <description>Diksha mobile app</description>
     <author email="" href="">EkStep Team</author>
     <access origin="*" />
     <allow-intent href="tel:*" />
