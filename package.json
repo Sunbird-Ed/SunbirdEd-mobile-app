@@ -72,7 +72,7 @@
     "@project-sunbird/sunbird-pdf-player-v9": "4.1.1",
     "@project-sunbird/sunbird-player-sdk-v9": "4.1.0",
     "@project-sunbird/sunbird-quml-player-v9": "4.1.7",
-    "@project-sunbird/sunbird-sdk": "^4.1.21",
+    "@project-sunbird/sunbird-sdk": "^4.1.24",
     "@project-sunbird/sunbird-video-player-v9": "4.1.1",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
@@ -183,6 +183,7 @@
     "cordova-plugin-proguard": "git+https://github.com/greybax/cordova-plugin-proguard.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
     "cordova-plugin-secure-storage-echo": "^5.1.1",
+    "cordova-plugin-sign-in-with-apple": "^0.1.2",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-telerik-imagepicker": "^2.3.6",
     "cordova-plugin-webview-checker": "^1.0.1",
@@ -270,13 +271,13 @@
       "ionic-plugin-keyboard": {},
       "com.jjdltc.cordova.plugin.zip": {},
       "sb-cordova-plugin-utility": {},
+      "cordova-plugin-sign-in-with-apple": {},
       "sb-cordova-plugin-db": {
         "USESWIFTLANGUAGEVERSION": "4"
       },
       "cordova-plugin-googleplus": {
         "REVERSED_CLIENT_ID": "com.googleusercontent.apps.311620532095-tpps5l8ubg3a1c7lmkpjiuvp074puagh"
-      },
-      "cordova-plugin-sign-in-with-apple": {}
+      }
     },
     "platforms": [
       "android",
