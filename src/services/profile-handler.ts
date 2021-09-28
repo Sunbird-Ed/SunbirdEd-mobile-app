@@ -46,6 +46,7 @@ export class ProfileHandler {
         return supportedUserTypes.map((element) => {
             element.name = element.translations ?
                 this.commonUtilService.getTranslatedValue(element.translations, element.name) : element.name;
+            element.isActive = 'isActive' in element ? element.isActive : true;
             return element;
         });
     }
@@ -103,4 +104,5 @@ export interface PersonaConfig {
         mandatory: string[];
         optional: string[];
     };
+    isActive?: boolean;
 }

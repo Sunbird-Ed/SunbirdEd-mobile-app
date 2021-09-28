@@ -24,7 +24,9 @@ export class ProfileSwitchHandler {
     public switchUser(selectedProfile) {
         if (this.appGlobalService.isUserLoggedIn()) {
             this.authService.resignSession().subscribe();
-            splashscreen.clearPrefs();
+            if(splashscreen){
+                splashscreen.clearPrefs();
+            }
         }
         setTimeout(() => {
             if (selectedProfile.profileType === ProfileType.STUDENT) {

@@ -118,6 +118,15 @@ export class ProjectDetailPage implements OnDestroy {
       this.networkFlag = available;
     })
     params.queryParams.subscribe((parameters) => {
+      let data;
+      this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+        data = text;
+      });
+      this._headerConfig = this.headerService.getDefaultPageConfig();
+      this._headerConfig.actionButtons = [];
+      this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+      this._headerConfig.showBurgerMenu = false;
+      this.headerService.updatePageConfig(this._headerConfig);
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -178,7 +187,7 @@ export class ProjectDetailPage implements OnDestroy {
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
             !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
             this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-            this.headerService.updatePageConfig(this._headerConfig);
+              this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
               category.label ? this.categories.push(category.label) : this.categories.push(category.name);
             });
@@ -297,11 +306,6 @@ export class ProjectDetailPage implements OnDestroy {
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
     });
-    this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = [];
-    this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
-    this.headerService.updatePageConfig(this._headerConfig);
   }
 
   ngOnDestroy() {
@@ -458,6 +462,7 @@ export class ProjectDetailPage implements OnDestroy {
     });
     this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
+      cssClass:'central-alert',
       message: data["FRMELEMNTS_LBL_SHARE_MSG"],
       buttons: [
         {
@@ -500,6 +505,7 @@ export class ProjectDetailPage implements OnDestroy {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: data["CANCEL"],

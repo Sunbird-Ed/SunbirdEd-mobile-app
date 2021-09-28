@@ -19,12 +19,20 @@
              (statusChanges)="declarationFormStatusChanges($event)"
              (linkClicked)="linkClicked($event)">
     </sb-form>
+    
+    <div class="footer-buttons" *ngIf="platform.is('ios')">
+      <ng-container *ngTemplateOutlet="footerButtons"></ng-container>
+    </div>
   </div>
-
 </ion-content>
-<ion-footer>
-  <ion-button expand="block" [disabled]="!isTenantPersonaFormValid || !isDeclarationFormValid" class="M16 MB30" (click)="submit()">
-    <span *ngIf="editType === 'add'">{{'BTN_SUBMIT' | translate}}</span> 
-    <span *ngIf="editType === 'edit'">{{'UPDATE' | translate}}</span> 
-  </ion-button>
+<ion-footer *ngIf="!platform.is('ios')">
+  <ng-container *ngTemplateOutlet="footerButtons"></ng-container>
 </ion-footer>
+
+<ng-template #footerButtons>
+  <ion-button expand="block" [disabled]="!isTenantPersonaFormValid || !isDeclarationFormValid" class="M16 MB30"
+    (click)="submit()">
+    <span *ngIf="editType === 'add'">{{'BTN_SUBMIT' | translate}}</span>
+    <span *ngIf="editType === 'edit'">{{'UPDATE' | translate}}</span>
+  </ion-button>
+</ng-template>

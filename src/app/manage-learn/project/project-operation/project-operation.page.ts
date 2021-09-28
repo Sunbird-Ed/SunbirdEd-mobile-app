@@ -55,7 +55,7 @@ export class ProjectOperationPage  {
     private utils: UtilsService,
     private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
+    public platform: Platform,
     private db: DbService,
     private translate: TranslateService,
     private alertController: AlertController,
@@ -63,7 +63,7 @@ export class ProjectOperationPage  {
     private loaderService: LoaderService,
     private syncServ: SyncService,
     private networkService: NetworkService,
-    private toast: ToastService
+    private toast: ToastService,
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -128,7 +128,7 @@ export class ProjectOperationPage  {
         text = data;
       });
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -296,7 +296,7 @@ export class ProjectOperationPage  {
       texts = data;
     })
     this.viewProjectAlert = await this.alertController.create({
-      cssClass: 'dark-background',
+      cssClass: 'dark-background central-alert',
       subHeader: texts[header],
       backdropDismiss: false,
       buttons: [

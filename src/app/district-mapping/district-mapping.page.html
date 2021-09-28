@@ -19,9 +19,20 @@
              (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
   </div>
-
+  <div class="ios-footer" *ngIf="platform.is('ios')">
+    <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
+      <button class="block-button-clear"
+              [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+              (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
+      </button>
+      <button class="block-button-save"
+              [ngClass]="{'blur-save-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+              (click)="submit()">{{'BTN_SUBMIT' | translate}}
+      </button>
+    </div>
+  </div>
 </ion-content>
-<div class="footer">
+<div class="footer" *ngIf="platform.is('android')">
   <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
     <button class="block-button-clear"
             [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"

@@ -450,6 +450,14 @@ ul.rating .ion-md-star-outline:before {
   }
 }
 
+.ios .need-header-space {
+  ion-content:first-child {
+    margin-top: 58px;
+    --offset-top: -54px !important;
+    --padding-bottom: 25px;
+  }
+}
+
 ion-content.avoid-bottom-tabs-space .scroll-content {
   padding-bottom: 88px !important;
 }
