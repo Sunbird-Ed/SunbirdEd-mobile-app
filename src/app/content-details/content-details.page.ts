@@ -82,6 +82,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 declare const window;
 @Component({
@@ -214,6 +215,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
+    private sanitizer: DomSanitizer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -580,6 +582,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
          */
         this.showSwitchUserAlert(false);
       }
+    }
+  }
+  getImageContent() {
+    if(this.platform.is('ios')) {
+      return this.sanitizer.bypassSecurityTrustUrl(this.content.contentData.appIcon);
+    } else {
+      return this.content.contentData.appIcon;
     }
   }
 

@@ -820,6 +820,7 @@ html[data-theme="JOYFUL"]{
       position: absolute;
       z-index: 0;
       top: 0;
+      left: 0;
       border-bottom-left-radius: 20px;
       background-color: var(--app-primary-header) !important;
       background-image: url(/assets/imgs/header-background.svg);
@@ -1786,6 +1787,39 @@ html[data-theme="JOYFUL"]{
 
     .modal-wrapper {
       background: transparent !important;
+    }
+  }
+
+  .ios ion-alert {
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: calc(env(safe-area-inset-bottom) + 20px);
+
+      .alert-button.sc-ion-alert-ios {
+        margin-right: 8px;
+        min-width: 45%;
+      }
+    }
+  }
+
+  .ios .central-alert{
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: 5px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .alert-button.sc-ion-alert-ios {
+        margin: 3px;
+        min-width: 45%;
+      }
+
     }
   }
 

@@ -2,7 +2,7 @@
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
       <ion-icon name="caret-down-outline" color="primary" (click)="toggle()"></ion-icon>
-      <ion-label class="size" *ngIf="!viewOnlyMode">{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
+      <ion-label class="size adjust" *ngIf="!viewOnlyMode">{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
     <ion-card-content>
@@ -28,7 +28,7 @@
       </div>
       <ion-row class="custom-filed" *ngIf="project?.status && !viewOnlyMode">
         <ion-col size="5">
-          <ion-label position="stacked"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
+          <ion-label position="stacked" class="size"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
         </ion-col>
         <ion-col size=5 class="status-bar">
           <ion-progress-bar value="1" color="success" *ngIf="project.status == statuses[2].title"></ion-progress-bar>

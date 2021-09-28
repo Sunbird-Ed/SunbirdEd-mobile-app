@@ -32,3 +32,7 @@ ion-button{
 .ios .framework-form-bg ::ng-deep li > div {
     outline-style: none;
 }
+
+.ios .framework-form-bg ::ng-deep .sb-modal {
+    margin-bottom: calc(env(safe-area-inset-bottom) + 20px);
+}

@@ -337,7 +337,7 @@
             </div>
       </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')" *ngIf="!platform?.is('ios')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
           </span>
