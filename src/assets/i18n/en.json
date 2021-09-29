@@ -1451,7 +1451,7 @@
   "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY": "I confirm that the Content submitted by me comply with the terms and policies of DIKSHA, including DIKSHA's",
   "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL": "Content Policy.",
   "FRMELEMNTS_LBL_UPLOAD_EVIDENCES": "Upload Evidences",
-  "FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT": " Evidence not uploaded please click on attach and accept the content policy",
+  "FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT": "Evidence not uploaded please click on attach and accept the content policy terms",
   "FRMELEMNTS_BTN_DO_NOT_UPLOAD":"Do not Upload",
   "FRMELEMNTS_BTN_UPLOAD":"Upload",
   "FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE":"Dear User, your details will not be shared as you are working offline",
