@@ -1259,7 +1259,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (value.children) {
           this.getContentsSize(value.children);
         }
-        if (!value.isAvailableLocally && value.contentData.downloadUrl) {
+        if (!value.isAvailableLocally && (value.contentData.downloadUrl || value.mimeType === 'application/vnd.sunbird.questionset')) {
           this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
