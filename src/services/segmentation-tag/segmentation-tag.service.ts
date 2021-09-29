@@ -1,5 +1,5 @@
-import { Inject, Injectable } from "@angular/core";
-import { PreferenceKey, ProfileConstants } from "@app/app/app.constant";
+import {Inject, Injectable} from '@angular/core';
+import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
 import {
     AuthService,
     DebuggingService,
@@ -8,12 +8,13 @@ import {
     SegmentationService,
     SharedPreferences
 } from 'sunbird-sdk';
-import { AppGlobalService } from "../app-global-service.service";
-import { NotificationService } from '@app/services/notification.service';
-import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
-import { SplaschreenDeeplinkActionHandlerDelegate } from "../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate";
-import { FormConstants } from "@app/app/form.constants";
-import { Events } from '@app/util/events';
+import {AppGlobalService} from '../app-global-service.service';
+import {NotificationService} from '@app/services/notification.service';
+import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {FormConstants} from '@app/app/form.constants';
+import {Events} from '@app/util/events';
+
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
     static readonly USER_ATRIBUTE = 'USERFRAMEWORK_';
@@ -61,56 +62,55 @@ export class SegmentationTagService {
     }
 
     persistSegmentation() {
-        this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-        .then((userProfile: Profile) => {
-            if (userProfile && userProfile.uid) {
-                console.log(this);
+        this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()
+            .then((userProfile: Profile) => {
+                if (userProfile && userProfile.uid) {
+                    console.log(this);
 
-                this.segmentationService.saveTags(JSON.stringify(window['segmentation'].SBTagService), userProfile.uid)
-                .subscribe(response => {
-                    console.log(response);
-                    response ? window['segmentation'].SBTagService.removeAllTags() : null;
-                });
-                this.segmentationService.saveCommandList(JSON.stringify(this.exeCommands), userProfile.uid).subscribe(response => {
-                    console.log(response);
-                    response ? this.exeCommands = [] : null;
-                });
-            }
-        });
+                    this.segmentationService.saveTags(JSON.stringify(window['segmentation'].SBTagService), userProfile.uid)
+                        .subscribe(response => {
+                            console.log(response);
+                            response ? window['segmentation'].SBTagService.removeAllTags() : null;
+                        });
+                    this.segmentationService.saveCommandList(JSON.stringify(this.exeCommands), userProfile.uid).subscribe(response => {
+                        console.log(response);
+                        response ? this.exeCommands = [] : null;
+                    });
+                }
+            });
     }
 
     getPersistedSegmentaion() {
-        this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-        .then((userProfile: Profile) => {
-            if (userProfile && userProfile.uid) {
-                console.log(userProfile.uid);
-                this.segmentationService.getTags(userProfile.uid)
-                .subscribe(response => {
-                    if (response) {
-                        window['segmentation'].SBTagService.restoreTags(response);
-                    }
-                });
+        this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()
+            .then((userProfile: Profile) => {
+                if (userProfile && userProfile.uid) {
+                    this.segmentationService.getTags(userProfile.uid)
+                        .subscribe(response => {
+                            if (response) {
+                                window['segmentation'].SBTagService.restoreTags(response);
+                            }
+                        });
 
-                this.segmentationService.getCommand(userProfile.uid)
-                .subscribe(cmdList => {
-                    if (cmdList) {
-                        this.exeCommands = JSON.parse(cmdList);
-                    }
-                    this.getSegmentCommand();
-                });
-            }
-        });
+                    this.segmentationService.getCommand(userProfile.uid)
+                        .subscribe(cmdList => {
+                            if (cmdList) {
+                                this.exeCommands = JSON.parse(cmdList);
+                            }
+                            this.getSegmentCommand();
+                        });
+                }
+            });
     }
 
     getSegmentCommand() {
         // FormConfig for Segment
         this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
-        .then(cmdList => {
-            if (cmdList && cmdList.length) {
-                this.comdList = cmdList;
-                this.evalCriteria();
-            }
-        });
+            .then(cmdList => {
+                if (cmdList && cmdList.length) {
+                    this.comdList = cmdList;
+                    this.evalCriteria();
+                }
+            });
     }
 
     evalCriteria() {
@@ -146,9 +146,9 @@ export class SegmentationTagService {
                             this.exeCommands.push(cmdCriteria);
                             this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
                             this.debugginService.enableDebugging(cmdCriteria.controlFunctionPayload.traceId)
-                            .subscribe((isDebugMode) => {
-                                this.events.publish('debug_mode', isDebugMode);
-                            });
+                                .subscribe((isDebugMode) => {
+                                    this.events.publish('debug_mode', isDebugMode);
+                                });
                         }
                         break;
                     default:
@@ -182,6 +182,7 @@ export class SegmentationTagService {
         this.executeCommand(invalidcomd, true);
     }
 }
+
 function SEGMENTATION(SEGMENTATION: any) {
     throw new Error('Function not implemented.');
 }

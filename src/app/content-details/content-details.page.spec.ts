@@ -1968,12 +1968,13 @@ describe('ContentDetailsPage', () => {
 
     describe('openConfirmPopUp', () => {
         it('should return content not downloaded for undefined downloadUrl', (done) => {
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.openConfirmPopUp();
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
                 done();
             }, 0);
         });
