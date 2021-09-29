@@ -255,6 +255,9 @@
       padding-left: 10px;
     }
   }
+  .ios .item-label-stacked ion-select {
+    margin-top: 0px;
+  }
   ion-item.item-label-stacked {
     --border-width: 0;
     --highlight-background: transparent;

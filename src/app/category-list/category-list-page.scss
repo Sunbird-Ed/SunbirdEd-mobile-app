@@ -11,6 +11,10 @@
   background-color: var(--app-primary-background);
 }
 
+.ios .sticky-header-pills {
+  top: 0
+}
+
 .filter-items{
   height: 70%;
   ion-select{

@@ -93,7 +93,8 @@
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs-markers.js",
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
-              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
+              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js",
+              "node_modules/video.js/dist/video.js"
             ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true
