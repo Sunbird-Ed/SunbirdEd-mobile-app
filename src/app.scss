@@ -2145,4 +2145,12 @@ app-user-home{
       }
     }
   }
+  sb-library-card-v3{
+    .sb--card.sb--card--theme2{
+      height: 12.5vh !important;
+      .img-container{
+        height: 4.5rem !important;
+      }
+    }
+  }
 }

@@ -11,7 +11,7 @@
     <div class="gd-header">
       <div *ngIf="!isGroupLoading">
         <div class="gd-title">
-          <div class="gd-name">
+          <div class="gd-name" role="heading" aria-level="1">
             {{groupDetails?.name}}
             <div class="gd-created-by" *ngIf="groupCreator">
               {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
@@ -109,7 +109,7 @@
           <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8">
             <div class="gd-card-head" *ngIf="filteredGroupedActivityListMap[activityGroup?.title].length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>
-              <span class="gd-card-titile">{{activityGroup.title}}</span>
+              <span class="gd-card-titile" role="heading" aria-level="2">{{activityGroup.title}}</span>
             </div>
             <div *ngFor="let activity of filteredGroupedActivityListMap[activityGroup?.title]; let j = index">
                 <sb-library-card 

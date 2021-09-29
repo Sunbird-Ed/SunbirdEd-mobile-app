@@ -16,16 +16,20 @@
 .title-section{
   border-bottom: 1px solid var(--app-primary-header);
   position: sticky;
+  display: flex;
   top: 0;
   background-color: white;
   .close-icon{
     float: right;
     width: 1.5rem;
     height: 1.5rem;
+    flex-grow: 2;
+    margin-top: 1rem;
   }
   
   .subject-title{
     font-size: 1rem;
+    flex-grow: 10;
   }
 }
 
