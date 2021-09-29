@@ -161,7 +161,7 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/my_group.svg" class="tool-icon" aria-hidden="true" alt="my group">
           </span>
-          <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
@@ -172,9 +172,9 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
-          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item"
+          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" role="button"
             menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
-          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item"
+          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" role="button"
             menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
@@ -186,7 +186,7 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
-          <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
@@ -198,7 +198,7 @@
             <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app language">
           </span>
           <div class="sb-language">
-            <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+            <div class="sb-menu-item" role="button">{{'LANGUAGE' | translate}}</div>
             <div class="sb-menu-item-language">{{selectedLanguage}}</div>
           </div>
         </ion-item>
@@ -207,28 +207,28 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
-          <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
-          <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>
-          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
-          <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
 
       </ion-list>
@@ -300,14 +300,14 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/my_group.svg" aria-hidden="true" class="tool-icon" alt="my group">
           </span>
-          <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
             <span class="sb-menu-icon">
               <img src="./assets/imgs/Reports.png" aria-hidden="true" class="tool-icon" alt="reports">
             </span>
-            <span class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
+            <span class="sb-menu-item" role="button" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
              <div class="new-feature-badge">
               <div class="square-badge">New</div>
               <div class="circle-badge"></div>
@@ -336,8 +336,8 @@
           <span class="sb-menu-icon dark-mode-icon">
             <img src="./assets/imgs/darkmode.svg" aria-hidden="true"  class="tool-icon sb-menu-item-switch" alt="darkmode">
           </span>
-          <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
-            <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
+          <span *ngIf="!isDarkMode" class="sb-menu-item" role="button" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
+            <span *ngIf="isDarkMode" class="sb-menu-item" role="button" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
             <div class="onoffswitch">
                 <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
                 <label class="onoffswitch-label" for="myonoffswitch">
@@ -359,7 +359,7 @@
             <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app langugae">
           </span>
           <div class="sb-language">
-            <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+            <div class="sb-menu-item" role="button">{{'LANGUAGE' | translate}}</div>
             <div class="sb-menu-item-language">{{selectedLanguage}}</div>
           </div>
         </ion-item>
@@ -368,28 +368,28 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
-          <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
-          <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>
-          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
-          <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
 
       </ion-list>

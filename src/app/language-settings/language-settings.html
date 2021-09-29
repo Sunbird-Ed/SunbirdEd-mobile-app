@@ -8,7 +8,7 @@
 
     <div class="language-container">
       <div class="language-card" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
-        <label class="language-selection" [for]="'language-selection' + lang.code">
+        <label class="language-selection" role="button" [for]="'language-selection' + lang.code">
           <span class="label-text">
             {{lang?.label | translate}}
           </span>
