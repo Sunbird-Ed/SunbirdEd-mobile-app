@@ -9,7 +9,7 @@
       <p class="profile-name">
         <span class="user">{{profile?.handle | titlecase}}</span>
         <span>
-          <ion-icon class="editIcon" name="create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
+          <ion-icon role="button" class="editIcon" name="create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
           </ion-icon>
         </span>
       </p>
@@ -25,7 +25,7 @@
         <div *ngIf="profile?.profileType" class="grid-item text-align-end" (click)="editGuestProfile(true,'change-role')">
           <div *ngIf="profile?.profileType" class="align-content">
             <div class="ellipsis text-align width-100">{{currentUserTypeConfig?.name}}&lrm;</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon role="button" class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
         </div>
@@ -36,7 +36,7 @@
         <div [hidden]="true" class="grid-item text-align-end" (click)="editGuestProfile(false,'syllabus')">
           <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
             <div class="ellipsis text-align width-100">{{syllabus}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon role="button" class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length" class="vertical-align">
@@ -49,7 +49,7 @@
         <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
             <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" class="vertical-align">{{'ADD' | translate}}
@@ -63,7 +63,7 @@
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{medium}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
@@ -78,7 +78,7 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{grade}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div
@@ -94,7 +94,7 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{subjects}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary">
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div
@@ -110,7 +110,7 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.district" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
@@ -119,7 +119,7 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
-            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" role="button" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.state" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
