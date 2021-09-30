@@ -76,3 +76,6 @@
         font-weight: 500;
     }
 }
+.container {
+    margin-top: env(safe-area-inset-top);
+  }

@@ -58,7 +58,7 @@ export class SelfDeclaredTeacherEditPage {
     private router: Router,
     private location: Location,
     private events: Events,
-    private platform: Platform,
+    public platform: Platform,
     private activatedRoute: ActivatedRoute,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
