@@ -5,6 +5,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Events } from '@app/util/events';
+import { Platform } from '@ionic/angular';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences
@@ -30,13 +31,21 @@ export class LogoutHandlerService {
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private platform: Platform
   ) {
   }
 
   public onLogout() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+    }
+
+    if(this.platform.is('ios')){
+      this.profileService.getActiveProfileSession().toPromise()
+      .then((profile) => {
+        this.profileService.deleteProfile(profile.uid).subscribe()
+      });
     }
 
     this.segmentationTagService.persistSegmentation();
@@ -54,8 +63,9 @@ export class LogoutHandlerService {
           const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
-
-        splashscreen.clearPrefs();
+        if(window.splashscreen && splashscreen){
+          splashscreen.clearPrefs();
+        }
       }),
       mergeMap((guestUserId: string) => {
         return this.profileService.setActiveSessionForProfile(guestUserId);
