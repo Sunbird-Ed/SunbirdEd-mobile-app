@@ -352,8 +352,8 @@ export class SelfDeclaredTeacherEditPage {
         this.updateConsent(userDetails, declarations[0].orgId);
       } else if (this.editType === 'edit' && this.isTenantChanged) {
         this.generateTncAudit();
-        this.updateConsent(userDetails, declarations[1].orgId, this.previousOrgId);
         this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+        this.updateConsent(userDetails, declarations[1].orgId, this.previousOrgId);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
