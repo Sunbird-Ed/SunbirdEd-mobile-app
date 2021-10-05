@@ -1299,7 +1299,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
         if (dialCodeContentCourseResult.length) {
           dialCodeCourseResultObj.dialCodeContentResult = dialCodeContentCourseResult;
-          displayDialCodeResult.push(dialCodeCourseResultObj);
+          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
+            displayDialCodeResult.push(dialCodeCourseResultObj);
+          } else {
+            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentCourseResult;
+          }
         }
         if (dialCodeContentResult.length) {
           dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
