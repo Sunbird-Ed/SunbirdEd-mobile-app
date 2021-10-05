@@ -6,7 +6,7 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+            <ion-icon role="button" name="arrow-back" class="sb-arrow-back"></ion-icon>
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
@@ -293,7 +293,7 @@
           </div>
 
         </div>
-        <div class="read-more" *ngIf="content && content.contentData.description &&
+        <div role="button" class="read-more" *ngIf="content && content.contentData.description &&
          content.contentData.description.length > 10 || content.contentData.gradeLevel ||
          content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
           <div *ngIf="showMoreFlag" (click)="readLessorReadMore('read-less-clicked')">
