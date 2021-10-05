@@ -25,7 +25,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     showBurgerMenu: false,
     actionButtons: [],
   };
-
+  extrasState:any;
   questions: any;
   schoolName: string;
   submissionId: any;
@@ -79,6 +79,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.schoolName = params.schoolName;
     });
 
+    this.extrasState = this.router.getCurrentNavigation().extras.state;
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
@@ -96,39 +97,49 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.localStorage
+    if(this.extrasState){
+      this.isViewOnly = true;
+      this.getQuestions(this.extrasState);
+    }else{
+      this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((data) => {
-        this.schoolData = data;
-        const currentEvidences = this.schoolData['assessment']['evidences'];
-        this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
-        this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
-        this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
-          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
-            'questions'
-          ]
-        );
-
-        this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
-        this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
-        this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-
-        this.questions =
-          currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
-        this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
-          this.selectedSectionIndex
-        ].totalQuestions = this.questions.length;
-        this.dashbordData = {
-          questions: this.questions,
-          evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
-          sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
-          currentViewIndex: this.start,
-        };
-        this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
-        if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-          document.getElementById('stop').style.pointerEvents = 'none';
-        }
+        this.getQuestions(data);
       })
+    }
+  }
+
+  getQuestions(data){
+    this.selectedSectionIndex =0;
+    this.selectedEvidenceIndex =0;
+    this.schoolData = data;
+    const currentEvidences = this.schoolData['assessment']['evidences'];
+    this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
+    this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
+    this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
+        'questions'
+      ]
+    );
+
+    this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
+    this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
+    this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
+    this.questions =
+      currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
+    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
+      this.selectedSectionIndex
+    ].totalQuestions = this.questions.length;
+    this.dashbordData = {
+      questions: this.questions,
+      evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
+      sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
+      currentViewIndex: this.start,
+    };
+    this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
+    if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+      document.getElementById('stop').style.pointerEvents = 'none';
+    }
   }
 
   ionViewWillEnter() {
