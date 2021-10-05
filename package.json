@@ -113,7 +113,8 @@
     "videojs-contrib-quality-levels": "^2.1.0",
     "videojs-http-source-selector": "^1.1.6",
     "x2js": "^3.3.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "terser": "3.14.1"
   },
   "config": {
     "ionic_source_map_type": "inline-source-map",
