@@ -1297,17 +1297,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           }
         });
 
-        if (dialCodeContentResult.length) {
-          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
-          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
-            displayDialCodeResult.push(dialCodeResultObj);
-          } else {
-            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentResult;
-          }
-        }
         if (dialCodeContentCourseResult.length) {
           dialCodeCourseResultObj.dialCodeContentResult = dialCodeContentCourseResult;
           displayDialCodeResult.push(dialCodeCourseResultObj);
+        }
+        if (dialCodeContentResult.length) {
+          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
+          displayDialCodeResult.push(dialCodeResultObj);
         }
       }
       if (displayDialCodeResult.length && displayDialCodeResult[0].dialCodeResult) {
