@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+<ion-toolbar class="toolbar">
+  <ion-title class="color f16">{{'FRMELEMNTS_LBL_PROJECT_VIEW' | translate}}</ion-title>
+  <ion-buttons slot="end">
+    <ion-button (click)="close()">
+      <ion-icon slot="end" name="close" class="close-icon"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-header>
+<ion-content *ngIf="project">
+  <app-project-metadata-card [showDetails]="showDetails" [project]="project" [viewOnlyMode]="viewOnlyMode"
+    [statuses]="statuses" (openResourcesClick)="openResources()" (toggleClick)="toggle()">
+  </app-project-metadata-card>
+  <ion-row class="ion-padding" *ngIf="sortedTasks">
+    <ion-col size="6" class="text-left">
+      {{'FRMELEMNTS_LBL_TOTAL_TASKS' | translate}} : {{taskCount}}
+    </ion-col>
+    <ion-col size="6" class="text-right">
+      {{categories}}
+    </ion-col>
+  </ion-row>
+  <app-project-task-list *ngIf="sortedTasks" 
+  [sortedTasks]="sortedTasks" [schedules]="schedules" [viewOnlyMode]="viewOnlyMode"
+  (actionClick)="!viewOnlyMode && action($event.event,$event.task)" 
+  (openPopoverClick)="openPopover($event.event,$event.task)" 
+  (openResourcesClick)="openResources($event.task)" 
+   ></app-project-task-list> 
+</ion-content>
+<ion-footer>
+  <ion-toolbar class="toolbar start-btn">
+    <ion-button size="small" expand="block" shape="round" class="btn">
+    {{'START' | translate}}
+  </ion-button>
+  </ion-toolbar>
+</ion-footer>
