@@ -37,3 +37,8 @@
   *ngIf="projects?.length && count > currentOnlineProjectLength">
   {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
 </ion-button>
+<ion-footer>
+  <ion-button class="view-more" expand="block"  (click)="projectTemplate()">
+    Project Template
+  </ion-button>
+</ion-footer>

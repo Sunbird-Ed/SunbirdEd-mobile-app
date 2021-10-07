@@ -460,4 +460,11 @@ export class ProjectListingComponent {
             this.selectedProgram(project);
         })
     }
+
+projectTemplate(){
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`], {
+        queryParams: {},
+    });
+}
+
 }
