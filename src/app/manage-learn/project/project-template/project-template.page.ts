@@ -45,32 +45,7 @@ export class ProjectTemplatePage {
   categories = [];
   taskCount: number = 0;
   filters: any = {};
-  schedules = [
-    {
-      title: "FRMELEMNTS_LBL_PAST",
-      value: "past",
-    },
-    {
-      title: "FRMELEMNTS_LBL_TODAY",
-      value: "today",
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_WEEK",
-      value: "thisWeek",
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_MONTH",
-      value: "thisMonth",
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_QUARTER",
-      value: "thisQuarter",
-    },
-    {
-      title: "FRMELEMNTS_LBL_UPCOMING",
-      value: "upcoming",
-    },
-  ];
+  schedules = this.utils.getSchedules();
   sortedTasks;
   programId;
   solutionId;
@@ -93,6 +68,7 @@ export class ProjectTemplatePage {
     pageTitle: '',
     actionButtons: []
   };
+  closeAlert;
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -157,7 +133,7 @@ export class ProjectTemplatePage {
     // this.handleBackButton();
   }
 
-  async getProjectApi() {
+  getProjectApi() {
     this.project = {
       _id: "5ffbd53f5fc92a7dbc972906",
       description: "",
@@ -411,188 +387,46 @@ export class ProjectTemplatePage {
     this.project.categories.forEach((category: any) => {
       category.label ? this.categories.push(category.label) : this.categories.push(category.name);
     });
-    this.sortTasks();
+   this.sortTasks();
   }
 
-  sortTasks() {
-    this.taskCount = 0;
-    let completed = 0;
-    let inProgress = 0;
-    this.sortedTasks = JSON.parse(JSON.stringify(this.utils.getTaskSortMeta()));
-    this.project.tasks.forEach((task: any) => {
-
-      if (!task.isDeleted && task.endDate) {
-        this.taskCount = this.taskCount + 1;
-        let ed = JSON.parse(JSON.stringify(task.endDate));
-        ed = moment(ed).format("YYYY-MM-DD");
-
-        if (ed < this.filters.today) {
-          this.sortedTasks["past"].tasks.push(task);
-        } else if (ed == this.filters.today) {
-          this.sortedTasks["today"].tasks.push(task);
-        } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
-          this.sortedTasks["thisWeek"].tasks.push(task);
-        } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
-          this.sortedTasks["thisMonth"].tasks.push(task);
-        } else if (ed > this.filters.thisMonth && ed <= this.filters.thisQuarter) {
-          this.sortedTasks["thisQuarter"].tasks.push(task);
-        }
-        else {
-          this.sortedTasks["upcoming"].tasks.push(task);
-        }
-      } else if (!task.isDeleted && !task.endDate) {
-        this.sortedTasks["upcoming"].tasks.push(task);
-        this.taskCount = this.taskCount + 1;
-      }
-      if (!task.isDeleted) {
-        if (task.status == this.statuses[1].title) {
-          inProgress = inProgress + 1;
-        } else if (task.status == this.statuses[2].title) {
-          completed = completed + 1;
-        }
-      }
-    });
-    this.project = this.utils.setStatusForProject(this.project);
-    console.log(this.project);
-  }
-
-  openResources(task = null) {
-    if (task) {
-      this.router.navigate([
-        `${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`,
-        this.project._id,
-        task._id,
-      ]);
-    } else {
-      this.router.navigate([
-        `${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`,
-        this.project._id,
-      ]);
-    }
+  async sortTasks() {
+    let projectData:any= await this.utils.getSortTasks(this.project);
+    this.project = projectData.project;
+    this.sortedTasks=projectData.sortedTasks;
+    this.taskCount=projectData.taskCount;
   }
 
   toggle() {
     this.showDetails = !this.showDetails;
   }
 
-  async openPopover(ev: any, task?) {
-    let menu;
-    if (task && task._id) {
-      menu = JSON.parse(JSON.stringify(menuConstants.TASK));
-      if (task.isDeletable) {
-        let deleteOption = {
-          TITLE: 'DELETE',
-          VALUE: 'deleteTask',
-          ICON: 'trash'
+  async closeTemplate() {
+    this.closeAlert= await this.alertController.create({
+      header: "Close Page",
+      message: `Are you sure you want to close this page?`,
+      buttons: [
+        {
+          text: "Go Back",
+          role: "ok",
+          handler: blah => {
+            this.closeAlert.dismiss();
+           this.location.back();
+          }
+        },
+        {
+          text: "Close Page",
+          role: "cancel",
+          handler: blah => {
+            this.router.navigate([
+              `/${RouterLinks.HOME}`
+            ]);
+          }
         }
-        menu.push(deleteOption);
-      }
-    } else {
-      menu = menuConstants.PROJECT;
-    }
-    const popover = await this.popoverController.create({
-      component: PopoverComponent,
-      componentProps: { menus: menu },
-      event: ev,
-      translucent: true,
-    });
-    popover.onDidDismiss().then((data) => {
-      if (data.data) {
-        this.action(data.data, task);
-      }
-    });
-    return await popover.present();
+      ],
+      backdropDismiss: false
+    })
+    await this.closeAlert.present();
   }
-
-
-  action(event, task?) {
-    switch (event) {
-      case "sync": {
-        if (this.network.isNetworkAvailable) {
-          // this.project.isNew
-          //   ? this.createNewProject()
-          //   : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
-        } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-        }
-        break;
-      }
-      case "editTask": {
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, task._id]);
-        break;
-      }
-      case "deleteTask": {
-        this.askPermissionToDelete("task", task._id);
-        break;
-      }
-      case "fileProject": {
-        this.router.navigate([`${RouterLinks.ATTACHMENTS_LIST}`, this.project._id]);
-        break;
-      }
-      case "editProject": {
-        this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.project._id]);
-        break;
-      }
-      case "deleteProject": {
-        this.askPermissionToDelete("Project");
-        break;
-      }
-      case "shareTask": {
-        // this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-        break;
-      }
-      case "shareProject": {
-        // this.network.isNetworkAvailable
-        //   ? this.openSyncSharePopup('shareProject', this.project.title)
-        //   : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-        break;
-      }
-    }
-  }
-
-    // task and project delete permission.
-    async askPermissionToDelete(type, id?) {
-      let data;
-      this.translate.get(["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
-        data = text;
-      });
-      const alert = await this.alert.create({
-        message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
-        buttons: [
-          {
-            text: data["CANCEL"],
-            role: "cancel",
-            cssClass: "secondary",
-            handler: (blah) => { },
-          },
-          {
-            text: data["BTN_SUBMIT"],
-            handler: () => {
-              type == "task" ? this.deleteTask(id) : this.deleteProject();
-            },
-          },
-        ],
-      });
-      await alert.present();
-    }
-  
-    deleteTask(id) {
-      let index = _.findIndex(this.project.tasks, (item) => {
-        return item._id == id;
-      });
-      this.project.tasks[index].isDeleted = true;
-      this.project.tasks[index].isEdit = true;
-      // this.update("taskDelete");
-    }
-    deleteProject() {
-      // actions
-      this.project.isDeleted = true;
-      // this.update("ProjectDelete");
-    }
-
-
-    close(){
-      this.location.back();
-    }
 
 }

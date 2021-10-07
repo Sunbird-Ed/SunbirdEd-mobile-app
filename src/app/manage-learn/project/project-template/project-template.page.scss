@@ -1,10 +1,8 @@
-@import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
-@import "src/assets/styles/_variables.scss";
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
 
-ion-header{
-  --background:map-get($colors, light_gray_8c);
+ion-header.header{
+  --background: var(--app-primary-background);
 }
 
 ion-toolbar.toolbar {
