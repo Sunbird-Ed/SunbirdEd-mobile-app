@@ -35,6 +35,7 @@ export class SubmissionActionsComponent implements OnInit {
   async presentAlert() {
     let alert = await this.alertCntrler.create({
       header: this.translateObject['FRMELEMNTS_LBL_INSTANCE_NAME'],
+      cssClass:'central-alert',
       inputs: [
         {
           name: 'title',

@@ -82,6 +82,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 declare const window;
 @Component({
@@ -214,6 +215,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
+    private sanitizer: DomSanitizer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -585,6 +587,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
     }
   }
+  getImageContent() {
+    if(this.platform.is('ios')) {
+      return this.sanitizer.bypassSecurityTrustUrl(this.content.contentData.appIcon);
+    } else {
+      return this.content.contentData.appIcon;
+    }
+  }
 
   generateTelemetry(forceGenerate?: boolean) {
     if (!this.didViewLoad && !this.isContentPlayed || forceGenerate) {
@@ -693,10 +702,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   popToPreviousPage(isNavBack?) {
     this.appGlobalService.showCourseCompletePopup = false;
-    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
-    } else if (this.isSingleContent) {
+    if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
+    } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.resultLength === 1) {
       window.history.go(-2);
     } else {
@@ -837,10 +846,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
-    if (this.cardData.mimeType === 'application/vnd.sunbird.questionset' || !(this.content.contentData.downloadUrl)) {
-      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
-      return;
-    }
     if (this.limitedShareContentFlag) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;

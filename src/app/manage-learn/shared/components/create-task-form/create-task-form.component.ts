@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
-import { ModalController } from '@ionic/angular';
+import { AttachmentService, statuses, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { ModalController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 
 @Component({
@@ -11,13 +11,15 @@ import { GenericPopUpService } from '../../generic.popup';
 export class CreateTaskFormComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
+  statuses = statuses;
   today
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,
     private attachmentService: AttachmentService,
     private toast: ToastService,
-    private popupService: GenericPopUpService
+    private popupService: GenericPopUpService,
+    public platform: Platform
   ) { }
 
   ngOnInit() {
@@ -42,6 +44,9 @@ export class CreateTaskFormComponent implements OnInit {
         data.isChecked ? this.openAction() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
       }
     })
+  }
+
+  selectedTaskStatus(event) {
   }
 
   addTask() {

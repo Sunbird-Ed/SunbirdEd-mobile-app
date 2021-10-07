@@ -2,7 +2,7 @@
 <ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
     <div *ngIf="contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+      <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -34,7 +34,7 @@
       </div>
     </div>
     <div *ngIf="!contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+      <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
         <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
         (click)="handleNavBackButton();$event.stopPropagation()">
@@ -78,7 +78,7 @@
   </div>
   <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
     <div class="sb-play-container sb-player-container" *ngIf="contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+      <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -135,7 +135,7 @@
         <div class="sb-btn-tile-group">
           <div *ngIf="content && !this.limitedShareContentFlag">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
-              [ngClass]="cardData.mimeType === 'application/vnd.sunbird.questionset' || !(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
+              [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
               [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only
               class="sb-btn-tile">
               <img src="assets/imgs/outline_download.svg" alt="download content" class="mb-4">

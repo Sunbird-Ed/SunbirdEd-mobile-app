@@ -17,7 +17,8 @@ import {
     AuthService,
     SystemSettingsService,
     SignInError,
-    SharedPreferences
+    SharedPreferences,
+    NativeAppleSessionProvider
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
@@ -25,6 +26,12 @@ import {LoginNavigationHandlerService} from '@app/services/login-navigation-hand
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
 import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
 import {Location} from '@angular/common';
+import {
+    SignInWithApple,
+    AppleSignInResponse,
+    AppleSignInErrorResponse,
+    ASAuthorizationAppleIDRequest
+} from '@ionic-native/sign-in-with-apple/ngx';
 
 @Component({
     selector: 'app-sign-in',
@@ -48,7 +55,8 @@ export class SignInPage implements OnInit {
         private sbProgressLoader: SbProgressLoader,
         private loginNavigationHandlerService: LoginNavigationHandlerService,
         private googlePlusLogin: GooglePlus,
-        private location: Location
+        private location: Location,
+        private signInWithApple: SignInWithApple
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
@@ -145,5 +153,31 @@ export class SignInPage implements OnInit {
                 skipNavigation.source === 'resources'))) {
             this.location.back();
         }
+    }
+
+    async appleSignIn() {
+        this.loginNavigationHandlerService.generateLoginInteractTelemetry
+        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
+        // const sd = 'https://sandrino.auth0.com/.well-known/jwks.json';
+        this.signInWithApple.signin({
+            requestedScopes: [
+              ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail
+            ]
+          })
+          .then(async (res: AppleSignInResponse) => {
+            // https://developer.apple.com/documentation/signinwithapplerestapi/verifying_a_user
+            await this.sbProgressLoader.show({id: 'login'});
+            const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res as any);
+            await this.preferences.putBoolean(PreferenceKey.IS_APPLE_LOGIN, true).toPromise();
+            await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation).then(() => {
+                this.navigateBack(this.skipNavigation);
+            }).catch(err => {
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+            });
+          })
+          .catch((error: AppleSignInErrorResponse) => {
+            this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+            console.error(error);
+          });
     }
 }

@@ -1,9 +1,9 @@
 <ion-content *ngIf="list">
-  <ion-list *ngIf="list?.learningResources?.length">
-    <ion-item *ngFor="let resource of list.learningResources" (click)="openBodh(resource)">
-      {{resource?.name}}
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-    </ion-item>
-  </ion-list>
+  <app-item-list-card *ngFor="let resource of list.learningResources" [title]="resource?.name"
+    (cardSelect)="openBodh(resource?.id)">
+    <div arrow class="d-flex flex-dc">
+      <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
+    </div>
+  </app-item-list-card>
   <app-no-data *ngIf="!list?.learningResources?.length"></app-no-data>
 </ion-content>

@@ -49,7 +49,7 @@
         </div>
         <div class="gd-tab-member-container">
           <div class="gd-add-member-container">
-            <div *ngIf="!isSuspended && loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
+            <div *ngIf="(platform.is('ios') ? false : true) && (!isSuspended && loggedinUser?.role === 'admin')" class="gd-add-member" (click)="navigateToAddUserPage()">
               <span class="gd-add-member-icon">
                 <img src="assets/imgs/ic_person_add_white.svg" alt="">
               </span>

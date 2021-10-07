@@ -156,11 +156,7 @@ describe('UserHomePage', () => {
                 values: [{expiry: 111111}]
             }
         }];
-        mockContentAggregatorHandler.populateIcons = jest.fn(() => [{
-            dataSrc: {
-                type: 'CONTENT_DISCOVERY_BANNER'
-            }
-        }]);
+        mockContentAggregatorHandler.populateIcons = jest.fn(() => mockUserHomeData);
         // act
         userHomePage.ngOnInit();
         // assert
@@ -170,6 +166,7 @@ describe('UserHomePage', () => {
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+            expect(mockContentAggregatorHandler.populateIcons).toHaveBeenCalled();
             done();
         }, 0);
     });

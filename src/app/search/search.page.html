@@ -117,6 +117,12 @@
         <!-- Course -->
         <div
           *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
+          <div class="pt-8 px-8">
+            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
+              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+            </p>
+          </div>
           <div class="sb-textbook-container">
             <div class="sb-textbook-items">
               <div class="sb-textbook-title-container">
@@ -137,13 +143,6 @@
 
         <div *ngIf="resultlist && !resultlist.isCourse">
           <div class="px-8">
-
-            <div class="pt-8">
-              <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
-                {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
-                <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
-              </p>
-            </div>
             <!-- Collection List -->
             <div class="sb-textbook-title-container">
               <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>

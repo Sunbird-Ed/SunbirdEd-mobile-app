@@ -13,7 +13,7 @@ import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, NetworkService, ToastService } from '../../core';
+import { LoaderService, NetworkService, statusType, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
 import cloneDeep from 'lodash/cloneDeep';
@@ -55,7 +55,7 @@ export class ProjectOperationPage  {
     private utils: UtilsService,
     private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
+    public platform: Platform,
     private db: DbService,
     private translate: TranslateService,
     private alertController: AlertController,
@@ -63,7 +63,7 @@ export class ProjectOperationPage  {
     private loaderService: LoaderService,
     private syncServ: SyncService,
     private networkService: NetworkService,
-    private toast: ToastService
+    private toast: ToastService,
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -128,7 +128,7 @@ export class ProjectOperationPage  {
         text = data;
       });
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -282,6 +282,11 @@ export class ProjectOperationPage  {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
+    if(!newProject &&  JSON.stringify(this.template) !== JSON.stringify(this.templateCopy)){
+      this.template.isEdit = true;
+      this.template.status =  this.template.status ? this.template.status : statusType.notStarted;
+      this.template.status =  this.template.status == statusType.notStarted ? statusType.inProgress:this.template.status;
+    }
     this.template.isDeleted = false;
     this.db.update(this.template).then(success => {
       newProject ? this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) : this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
@@ -296,7 +301,7 @@ export class ProjectOperationPage  {
       texts = data;
     })
     this.viewProjectAlert = await this.alertController.create({
-      cssClass: 'dark-background',
+      cssClass: 'dark-background central-alert',
       subHeader: texts[header],
       backdropDismiss: false,
       buttons: [
@@ -331,7 +336,6 @@ export class ProjectOperationPage  {
     if (this.button == 'FRMELEMNTS_LBL_VIEW_PROJECT') {
       this.newProjectCreate();
     } else {
-      this.template.isEdit = true; 
       this.update();
     }
   }

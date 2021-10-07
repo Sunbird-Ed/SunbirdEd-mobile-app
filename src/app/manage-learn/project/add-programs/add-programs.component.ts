@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { LoaderService, UtilsService } from '../../core';
@@ -24,7 +24,8 @@ export class AddProgramsComponent implements OnInit {
     private http: HttpClient,
     private loaderService: LoaderService,
     private kendraApiService: KendraApiService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    public platform: Platform
 
   ) { }
   ngOnInit() {
@@ -34,7 +35,7 @@ export class AddProgramsComponent implements OnInit {
   async getPrograms() {
     this.loaderService.startLoader();
     const config = {
-      url: urlConstants.API_URLS.PROGRAM_LISTING + true,
+      url: urlConstants.API_URLS.PROGRAM_LISTING+'isAPrivateProgram=true',
     }
     this.kendraApiService.get(config).subscribe(data => {
       this.loaderService.stopLoader();
@@ -51,7 +52,7 @@ export class AddProgramsComponent implements OnInit {
       text = data;
     })
     const alert = await this.alertCtrl.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_CREATE_PROGRAM'],
       message: text['FRMELEMNTS_MSG_CREATE_PROGRAM_MESSAGE'],
       inputs: [

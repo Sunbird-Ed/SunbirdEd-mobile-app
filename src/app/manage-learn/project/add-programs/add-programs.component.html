@@ -1,4 +1,4 @@
-<ion-toolbar>
+<ion-toolbar  [ngClass]="{'container': platform.is('ios')}">
   <ion-title>
     {{title | translate}}
   </ion-title>

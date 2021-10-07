@@ -244,10 +244,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.dialCode) {
       this.enableSearch = true;
     }
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
-    });
-    if(this.isFromGroupFlow || this.searchWithBackButton){
+    this.enableHeaderEvents();
+    if (this.isFromGroupFlow || this.searchWithBackButton) {
       this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
@@ -332,9 +330,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
+    this.disableHeaderEvents();
     this.refresher.disabled = true;
   }
 
@@ -342,9 +338,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
+    this.disableHeaderEvents();
   }
 
   private async getAppName() {
@@ -602,6 +596,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         });
         break;
     }
+    this.disableHeaderEvents();
   }
 
   setGrade(reset, grades) {
@@ -1302,17 +1297,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           }
         });
 
-        if (dialCodeContentResult.length) {
-          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
-          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
-            displayDialCodeResult.push(dialCodeResultObj);
-          } else {
-            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentResult;
-          }
-        }
         if (dialCodeContentCourseResult.length) {
           dialCodeCourseResultObj.dialCodeContentResult = dialCodeContentCourseResult;
-          displayDialCodeResult.push(dialCodeCourseResultObj);
+          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
+            displayDialCodeResult.push(dialCodeCourseResultObj);
+          } else {
+            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentCourseResult;
+          }
+        }
+        if (dialCodeContentResult.length) {
+          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
+          displayDialCodeResult.push(dialCodeResultObj);
         }
       }
       if (displayDialCodeResult.length && displayDialCodeResult[0].dialCodeResult) {
@@ -1775,7 +1770,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
           this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-          this.appGlobalService.isDiscoverBackEnabled = false; 
+          this.appGlobalService.isDiscoverBackEnabled = false;
         } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
           break;
         } else {
@@ -1837,12 +1832,28 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
-  tabViewWillEnter() {
-    if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
-    } else {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    private enableHeaderEvents(){
+        if(!this.headerObservable){
+            this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+                this.handleHeaderEvents(eventName);
+            });
+        }
     }
-  }
 
+    private disableHeaderEvents(){
+        if (this.headerObservable) {
+            this.headerObservable.unsubscribe();
+            this.headerObservable = undefined;
+        }
+    }
+
+    tabViewWillEnter() {
+        if (this.isFromGroupFlow || this.searchWithBackButton) {
+            this.headerService.showHeaderWithBackButton
+            (null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
+        } else {
+            this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+        }
+        this.enableHeaderEvents();
+    }
 }
