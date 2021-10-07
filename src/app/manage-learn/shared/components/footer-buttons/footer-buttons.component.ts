@@ -5,7 +5,8 @@ import {
   EventEmitter,
   OnChanges,
 } from "@angular/core";
-import { UtilsService } from '@app/app/manage-learn/core';
+import { UtilsService,ToastService } from '@app/app/manage-learn/core';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-footer-buttons',
@@ -26,13 +27,12 @@ export class FooterButtonsComponent implements OnChanges {
     this._data = JSON.parse(JSON.stringify(data));
   }
   @Input() isFirst: boolean;
-  @Input() isTargeted : boolean;
+  @Input() isStartBTNEnabled : boolean;
   @Input() showStartButton : boolean;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
   @Output() backAction = new EventEmitter();
   @Output() openSheetAction = new EventEmitter();
-  @Output() startAction = new EventEmitter();
   @Input() completedQuestionCount = 0;
   @Input() questionCount = 0;
   @Input() isSubmitted;
@@ -43,7 +43,9 @@ export class FooterButtonsComponent implements OnChanges {
   percentage: number = 0;
 
   constructor(
-    private utils: UtilsService
+    private utils: UtilsService,
+    private translate: TranslateService,
+    private toast : ToastService
   ) { }
   ngOnChanges() {
     if (this.completedQuestionCount > 0) {
@@ -121,6 +123,14 @@ export class FooterButtonsComponent implements OnChanges {
   }
 
   startBtnAction(){
-    this.startAction.emit();
+   if(!this.isStartBTNEnabled){
+    let msg;
+    this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
+      msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
+      this.toast.openToast(msg);
+    });
+   } else{
+     // TODO navigate to observation details page.
+   }
   }
 }

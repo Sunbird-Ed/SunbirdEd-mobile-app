@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col>
         <ion-button icon-start color="light" (click)="enableGps ? gpsFlowChecks('back') :back()"
-          *ngIf="!isFirst && isTargeted">
+          *ngIf="!isFirst">
           <ion-icon name="arrow-back" color="primary"></ion-icon>{{'FRMELEMENTS_BTN_BACK'| translate}}
         </ion-button>
       </ion-col>
@@ -14,7 +14,7 @@
         </progress-bar>
         <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_BTN_SUBMIT'| translate}}
           <ion-icon name="chevron-up-circle" style="padding: 0 9px;" color="primary"></ion-icon></ion-button>
-          <ion-button  round small *ngIf="showStartButton" (click)="startBtnAction()" [ngClass]="{'btn-disabled': !isTargeted}">{{'FRMELEMNTS_BTN_START'| translate}}
+          <ion-button  round small *ngIf="showStartButton" (click)="startBtnAction()" [ngClass]="{'btn-disabled': !isStartBTNEnabled}">{{'FRMELEMNTS_BTN_START'| translate}}
           </ion-button>
       </ion-col>
       <ion-col>
@@ -22,7 +22,7 @@
           *ngIf="!isLast">{{'FRMELEMENTS_BTN_NEXT'|
           translate}} <ion-icon name="arrow-forward" color="primary"></ion-icon></ion-button>
         <ion-button  icon-start class="ion-float-right" color="light"
-          (click)="next('completed')" *ngIf="isLast && isTargeted">
+          (click)="next('completed')" *ngIf="isLast && !showStartButton">
           <ion-icon name="save" class="ion-margin-end" color="primary"></ion-icon>{{'SAVE'| translate}}
         </ion-button>
       </ion-col>

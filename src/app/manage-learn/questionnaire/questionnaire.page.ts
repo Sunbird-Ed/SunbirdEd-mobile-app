@@ -83,6 +83,8 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     if(!this.isTargeted){
     this.showMessageForNONTargetUsers();
     }
+
+    // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
@@ -102,7 +104,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ngOnInit() {
     if(this.extrasState){
       this.isViewOnly = true;
-      this.submissionId= this.extrasState.assessment.submissionId;
+      // this.submissionId= this.extrasState.assessment.submissionId;
       this.getQuestions(this.extrasState);
     }else{
       this.localStorage
@@ -143,9 +145,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     };
     this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
     if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-     setTimeout(() => {
       document.getElementById('stop').style.pointerEvents = 'none';
-    }, 200)
     }
   }
 

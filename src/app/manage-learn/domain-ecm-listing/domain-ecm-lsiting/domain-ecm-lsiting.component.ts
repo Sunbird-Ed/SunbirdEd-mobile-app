@@ -56,7 +56,7 @@ export class DomainEcmLsitingComponent {
     });
     this.extrasState = this.router.getCurrentNavigation().extras.state;
     if( this.extrasState){
-      this.submissionId= this.extrasState.assessment.submissionId;
+      // this.submissionId= this.extrasState.assessment.submissionId;
     }
   }
 
@@ -239,7 +239,7 @@ export class DomainEcmLsitingComponent {
         evidenceIndex: this.selectedEvidenceIndex,
         sectionIndex: selectedSection,
         schoolName: this.entityName,
-      }, state: this.extrasState // Either state or query params will true one at a time. State is using for Deeplinking.
+      }, state: this.extrasState //State is using for Template view for Deeplink.
     });
   }
 
