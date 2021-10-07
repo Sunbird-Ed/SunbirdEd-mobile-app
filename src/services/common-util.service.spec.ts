@@ -732,9 +732,27 @@ describe('CommonUtilService', () => {
       // assert
       expect(commonUtilService.showAssessmentLastAttemptPopup).not.toHaveBeenCalled();
       expect(commonUtilService.showToast).not.toHaveBeenCalled();
-
     });
-
   });
 
+  describe('fetchPrimaryCategory', () => {
+    it('should fetch primaryCategory from content and return trim and lowerCaseData', () => {
+      // arrange
+      // act
+      jest.spyOn(commonUtilService, 'getPrimaryCategoryDetailPage').getMockImplementation();
+      commonUtilService.getPrimaryCategoryDetailPage({primaryCategory: 'Digital Textbook'});
+      // assert
+
+      expect(commonUtilService.getPrimaryCategoryDetailPage).toHaveReturnedWith('digitaltextbook-detail');
+    });
+
+    it('should fetch from contentType is primaryCategory is not available', () => {
+      // arrange
+      jest.spyOn(commonUtilService, 'getPrimaryCategoryDetailPage').getMockImplementation();
+      // act
+      commonUtilService.getPrimaryCategoryDetailPage({contentType: 'Digital Textbook'});
+      // assert
+      expect(commonUtilService.getPrimaryCategoryDetailPage).toHaveReturnedWith('digitaltextbook-detail');
+    });
+  })
 });

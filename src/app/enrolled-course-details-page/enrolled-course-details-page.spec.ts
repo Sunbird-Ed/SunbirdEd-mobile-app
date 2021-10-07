@@ -667,6 +667,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
             mockLocation.back = jest.fn();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.getPrimaryCategoryDetailPage = jest.fn(() => 'course-detail');
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
@@ -690,6 +691,8 @@ describe('EnrolledCourseDetailsPage', () => {
             spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.getPrimaryCategoryDetailPage = jest.fn(() => 'course-detail');
+
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert

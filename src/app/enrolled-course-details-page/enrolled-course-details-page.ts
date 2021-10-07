@@ -223,7 +223,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   nextContent: Content;
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
-  pageId = PageId.COURSE_DETAIL;
+  pageId: string;
   showShareData = false;
   isDataShare = false;
   isShared: any;
@@ -326,7 +326,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       correlationList: this.corRelationList,
       hierachyInfo: undefined
     };
-    this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
+    this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, this.pageId);
   }
 
   subscribeUtilityEvents() {
@@ -509,7 +509,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             content: this.course,
             rating: this.userRating,
             comment: this.ratingComment,
-            pageId: PageId.COURSE_DETAIL
+            pageId: this.pageId
           },
           cssClass: 'sb-popover info',
         });
@@ -547,7 +547,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.course,
         batchDetails: this.batchDetails,
-        pageName: PageId.COURSE_DETAIL,
+        pageName: this.pageId,
         corRelationList: this.corRelationList,
         objRollup: this.telemetryObject,
         showUnenrollButton: this.showUnenrollButton
@@ -644,7 +644,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               InteractType.OTHER,
               InteractSubtype.UNENROL_SUCCESS,
               Environment.HOME,
-              PageId.COURSE_DETAIL,
+              this.pageId,
               this.telemetryObject,
               undefined,
               this.objRollup,
@@ -657,7 +657,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               InteractType.OTHER,
               InteractSubtype.UNENROL_FAILURE,
               Environment.HOME,
-              PageId.COURSE_DETAIL,
+              this.pageId,
               this.telemetryObject,
               undefined,
               this.objRollup,
@@ -710,7 +710,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   async getCourseHierarchy(request: ContentDetailRequest, data: Content) {
     this.telemetryGeneratorService.generatefastLoadingTelemetry(
       InteractSubtype.FAST_LOADING_INITIATED,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -725,7 +725,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.toggleGroup(0, content.children[0]);
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
           InteractSubtype.FAST_LOADING_FINISHED,
-          PageId.COURSE_DETAIL,
+          this.pageId,
           this.telemetryObject,
           undefined,
           this.objRollup,
@@ -753,6 +753,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objType = this.course.contentType;
       this.objVer = this.course.pkgVersion;
       this.showLoading = false;
+      this.pageId = this.commonUtilService.getPrimaryCategoryDetailPage(this.course);
 
       this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
       if (!this.didViewLoad) {
@@ -980,7 +981,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
             if (isDownloadAllClicked) {
               this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
-                PageId.COURSE_DETAIL,
+                this.pageId,
                 this.course,
                 this.queuedIdentifiers,
                 identifiers.length,
@@ -998,7 +999,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
                 TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                 ErrorType.SYSTEM,
-                PageId.COURSE_DETAIL,
+                this.pageId,
                 JSON.stringify(stackTrace),
               );
             }
@@ -1066,7 +1067,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
-          PageId.COURSE_DETAIL
+          this.pageId
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
@@ -1180,7 +1181,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       ContentUtil.getTelemetryObject(content),
       values,
       undefined,
@@ -1271,7 +1272,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.START_CLICKED,
       Environment.HOME,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -1311,7 +1312,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
       Environment.HOME,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -1423,7 +1424,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.COURSE_DETAIL,
+        this.pageId,
         Environment.HOME,
         false,
         this.identifier,
@@ -1618,7 +1619,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     reqvalues['enrollReq'] = this.courseBatchesRequest;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
-      PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
+      this.pageId, this.telemetryObject, reqvalues, this.objRollup);
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -1657,7 +1658,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.content,
         corRelationList: this.corRelationList,
-        pageId: PageId.COURSE_DETAIL,
+        pageId: this.pageId,
         shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
@@ -1699,7 +1700,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   generateImpressionEvent(objectId, objectType, objectVersion) {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL,
-      '', PageId.COURSE_DETAIL,
+      '', this.pageId,
       Environment.HOME,
       objectId,
       objectType,
@@ -1710,7 +1711,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   generateStartEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
+    this.telemetryGeneratorService.generateStartTelemetry(this.pageId,
       telemetryObject,
       this.objRollup,
       this.corRelationList
@@ -1721,7 +1722,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
     this.telemetryGeneratorService.generateEndTelemetry(objectType || CsPrimaryCategory.COURSE,
       Mode.PLAY,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       Environment.HOME,
       telemetryObject,
       this.objRollup,
@@ -1732,7 +1733,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Opens up popup for the credits.
    */
   viewCredits() {
-    this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
+    this.courseUtilService.showCredits(this.course, this.pageId, undefined, this.corRelationList);
   }
 
   getContentState(returnRefresh: boolean) {
@@ -1862,7 +1863,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.showOverflowMenu($event.event);
         break;
       case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
+        this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.handleNavBackButton();
 
@@ -1975,7 +1976,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       InteractType.TOUCH,
       event.detail.value === 'modules' ? InteractSubtype.TRAINING_MODULE_CLICKED : InteractSubtype.TRAINING_INFO_CLICKED,
       Environment.HOME,
-      PageId.COURSE_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -2052,7 +2053,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         InteractType.TOUCH,
         InteractSubtype.TRAINING_MODULE_CLICKED,
         Environment.HOME,
-        PageId.COURSE_DETAIL,
+        this.pageId,
         this.telemetryObject,
         undefined,
         this.objRollup,
@@ -2279,7 +2280,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
               'ongoing-batch-popup',
               Environment.HOME,
-              PageId.COURSE_DETAIL, undefined,
+              this.pageId, undefined,
               reqvalues, undefined, this.corRelationList);
             const popover = await this.popoverCtrl.create({
               component: EnrollmentDetailsComponent,

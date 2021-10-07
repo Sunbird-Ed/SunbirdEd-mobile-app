@@ -273,7 +273,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
-  pageId = PageId.COLLECTION_DETAIL;
+  pageId: string;
   collectionTocData: Content;
   TocCardType = TocCardType;
   activeContent;
@@ -333,6 +333,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.facets = extras.facets;
     this.telemetryObject = ContentUtil.getTelemetryObject(extras.content);
     this.parentContent = extras.parentContent;
+    this.pageId = this.commonUtilService.getPrimaryCategoryDetailPage(this.cardData);
     if (this.depth) {
       this.showDownloadBtn = false;
       this.isDepthChild = true;
@@ -461,7 +462,7 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       values,
       this.objRollup,
@@ -502,7 +503,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   registerDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
+      this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
         false, this.cardData.identifier, this.corRelationList);
       this.handleBackButton();
     });
@@ -531,7 +532,7 @@ export class CollectionDetailEtbPage implements OnInit {
             this.contentDetail = data;
             this.telemetryGeneratorService.generatefastLoadingTelemetry(
               InteractSubtype.FAST_LOADING_INITIATED,
-              PageId.COLLECTION_DETAIL,
+              this.pageId,
               this.telemetryObject,
               undefined,
               this.objRollup,
@@ -544,7 +545,7 @@ export class CollectionDetailEtbPage implements OnInit {
                 this.toggleGroup(0, this.content);
                 this.telemetryGeneratorService.generatefastLoadingTelemetry(
                   InteractSubtype.FAST_LOADING_FINISHED,
-                  PageId.COLLECTION_DETAIL,
+                  this.pageId,
                   this.telemetryObject,
                   undefined,
                   this.objRollup,
@@ -672,7 +673,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
             if (isDownloadAllClicked) {
               this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
-                PageId.COLLECTION_DETAIL,
+                this.pageId,
                 this.contentDetail,
                 this.queuedIdentifiers,
                 identifiers.length
@@ -694,7 +695,7 @@ export class CollectionDetailEtbPage implements OnInit {
               this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
                 TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                 ErrorType.SYSTEM,
-                PageId.COLLECTION_DETAIL,
+                this.pageId,
                 JSON.stringify(stackTrace),
               );
               this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
@@ -771,7 +772,7 @@ export class CollectionDetailEtbPage implements OnInit {
             InteractType.OTHER,
             InteractSubtype.IMPORT_COMPLETED,
             Environment.HOME,
-            PageId.COLLECTION_DETAIL,
+            this.pageId,
             this.telemetryObject,
             undefined,
             this.objRollup,
@@ -985,7 +986,7 @@ export class CollectionDetailEtbPage implements OnInit {
         content: this.contentDetail,
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
-        pageId: PageId.COLLECTION_DETAIL,
+        pageId: this.pageId,
         shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
@@ -1009,7 +1010,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateImpressionEvent(objectId, objectType, objectVersion) {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.DETAIL, '',
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       Environment.HOME,
       objectId,
       objectType,
@@ -1021,7 +1022,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateStartEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       telemetryObject,
       this.objRollup,
       this.corRelationList);
@@ -1032,7 +1033,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.telemetryGeneratorService.generateEndTelemetry(
       objectType ? objectType : CsPrimaryCategory.DIGITAL_TEXTBOOK,
       Mode.PLAY,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       Environment.HOME,
       telemetryObject,
       this.objRollup,
@@ -1057,7 +1058,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -1096,7 +1097,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           InteractSubtype.DOWNLOAD_ALL_CLICKED,
           Environment.HOME,
-          PageId.COLLECTION_DETAIL,
+          this.pageId,
           this.telemetryObject,
           undefined,
           this.objRollup,
@@ -1132,7 +1133,7 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.CLOSE_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       values, this.objRollup,
       this.corRelationList);
@@ -1165,7 +1166,7 @@ export class CollectionDetailEtbPage implements OnInit {
       correlationList: this.corRelationList,
       hierachyInfo: undefined,
     };
-    this.contentDeleteHandler.showContentDeletePopup(this.contentDetail, this.isChild, contentInfo, PageId.COLLECTION_DETAIL);
+    this.contentDeleteHandler.showContentDeletePopup(this.contentDetail, this.isChild, contentInfo, this.pageId);
   }
 
   refreshHeader() {
@@ -1180,7 +1181,7 @@ export class CollectionDetailEtbPage implements OnInit {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
+        this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
           true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton();
         break;
@@ -1195,7 +1196,7 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined, this.objRollup,
       this.corRelationList);
@@ -1215,7 +1216,7 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -1233,7 +1234,7 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.DROPDOWN_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      this.pageId,
       this.telemetryObject,
       undefined,
       this.objRollup,
@@ -1319,7 +1320,7 @@ export class CollectionDetailEtbPage implements OnInit {
               this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
                 TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                 ErrorType.SYSTEM,
-                PageId.COLLECTION_DETAIL,
+                this.pageId,
                 JSON.stringify(stackTrace),
               );
             }
@@ -1353,7 +1354,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
     const telemetryDetails = {
-      pageId: PageId.COLLECTION_DETAIL,
+      pageId: this.pageId,
       corRelationList
     };
 

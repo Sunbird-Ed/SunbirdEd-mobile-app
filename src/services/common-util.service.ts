@@ -11,7 +11,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
-    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
+    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService, Trackable
 } from 'sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
@@ -33,6 +33,7 @@ import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
+import {CsPrimaryCategory} from '@project-sunbird/client-services/services/content';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -736,4 +737,8 @@ export class CommonUtilService {
         this.telemetryService.populateGlobalCorRelationData([correlationData]);
       }
 
+      public getPrimaryCategoryDetailPage(content): string {
+        const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType;
+        return primaryCategory.replace(/\s/g, '').concat('-detail').toLowerCase();
+      }
 }
