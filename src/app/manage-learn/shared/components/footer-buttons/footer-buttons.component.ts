@@ -26,10 +26,13 @@ export class FooterButtonsComponent implements OnChanges {
     this._data = JSON.parse(JSON.stringify(data));
   }
   @Input() isFirst: boolean;
+  @Input() isTargeted : boolean;
+  @Input() showStartButton : boolean;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
   @Output() backAction = new EventEmitter();
   @Output() openSheetAction = new EventEmitter();
+  @Output() startAction = new EventEmitter();
   @Input() completedQuestionCount = 0;
   @Input() questionCount = 0;
   @Input() isSubmitted;
@@ -117,4 +120,7 @@ export class FooterButtonsComponent implements OnChanges {
     this.openSheetAction.emit()
   }
 
+  startBtnAction(){
+    this.startAction.emit();
+  }
 }

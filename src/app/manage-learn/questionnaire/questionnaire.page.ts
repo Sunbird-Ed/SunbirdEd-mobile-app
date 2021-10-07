@@ -47,7 +47,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   captureGpsLocationAtQuestionLevel: boolean;
   enableQuestionReadOut: boolean;
   networkAvailable;
-
+  isTargeted :boolean;
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -77,15 +77,18 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
+      this.isTargeted = params.isTargeted;
     });
 
+    if(!this.isTargeted){
+    this.showMessageForNONTargetUsers();
+    }
     this.extrasState = this.router.getCurrentNavigation().extras.state;
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
       }
     });
-
     // Online event
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
@@ -99,6 +102,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ngOnInit() {
     if(this.extrasState){
       this.isViewOnly = true;
+      this.submissionId= this.extrasState.assessment.submissionId;
       this.getQuestions(this.extrasState);
     }else{
       this.localStorage
@@ -130,6 +134,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
       this.selectedSectionIndex
     ].totalQuestions = this.questions.length;
+    console.log(this.questions,"this.questions");
     this.dashbordData = {
       questions: this.questions,
       evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
@@ -138,7 +143,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     };
     this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
     if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+     setTimeout(() => {
       document.getElementById('stop').style.pointerEvents = 'none';
+    }, 200)
     }
   }
 
@@ -473,5 +480,18 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.headerConfig.actionButtons = [];
     this.headerService.updatePageConfig(this.headerConfig);
+  }
+
+  startAction(){
+    console.log('clicked startAction');
+    this.showMessageForNONTargetUsers();
+  }
+
+  showMessageForNONTargetUsers(){
+    let msg;
+    this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
+      msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
+      this.toast.openToast(msg);
+    });
   }
 }
