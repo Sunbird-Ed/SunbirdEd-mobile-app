@@ -1,12 +1,12 @@
 <ion-content overflow-scroll="true">
-  <ng-container *ngIf="notificationList.length">
+  <div class="notification-container" *ngIf="notificationList.length">
     <sb-notification
       [notificationList]="notificationList"
       [inAppNotificationConfig]="inAppNotificationConfig"
       (showMore)="handleShowMore($event)"
       (showLess)="handleShowLess($event)"
     ></sb-notification>
-  </ng-container>
+  </div>
   <div class="oval-wrapper" *ngIf="!notificationList.length">
       <div class="oval">
         <img src="./assets/imgs/no_notification.svg" alt="delete" aria-hidden="true" />

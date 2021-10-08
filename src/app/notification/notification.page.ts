@@ -76,7 +76,7 @@ export class NotificationPage implements OnInit, OnDestroy {
       this.notificationList = data.feeds;
       console.log('notification list', this.notificationList);
       this.unreadNotificationList = this.notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
-      this.inAppNotificationConfig.subTitle = this.unreadNotificationList.length + this.inAppNotificationConfig.subTitle;
+      this.inAppNotificationConfig.subTitle = this.unreadNotificationList.length + ' New Notification (s)';
     })
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,
