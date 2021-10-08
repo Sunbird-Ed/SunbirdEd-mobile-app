@@ -172,4 +172,38 @@ export class LocationHandler {
         const deviceLoc = await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise();
         return !!deviceLoc;
     }
+
+    async getLocationList(request): Promise<LocationSearchResult[]> {
+        const locationType = request.filters.type;
+        const parentLocationId = request.filters.parentId;
+        const locationFilter = {
+            type: locationType,
+            ...((parentLocationId) ? { parentId: parentLocationId } : {})
+        };
+        let locations: LocationSearchResult[];
+        if (locationType === Location.TYPE_SCHOOL) {
+            const orgSearchRequest = {
+                filters: {
+                  'orgLocation.id': parentLocationId,
+                  isSchool: true
+                }
+              };
+            let schoolDetails = [];
+            await this.frameworkService.searchOrganization(orgSearchRequest).toPromise().then((data) => {
+                schoolDetails = data.content.map((org: Organization) => {
+                    if (org && org.externalId) {
+                        return {code: org.externalId, name: org.orgName , type: Location.TYPE_SCHOOL, id: org.externalId};
+                    }
+                });
+            });
+            locations = schoolDetails;
+        } else {
+            const req: LocationSearchCriteria = {
+                from: CachedItemRequestSourceFrom.CACHE,
+                filters: locationFilter
+            };
+            locations = await this.profileService.searchLocation(req).toPromise();
+        }
+        return locations;
+    }
 }

@@ -1,4 +1,4 @@
-<ion-toolbar>
+<ion-toolbar [ngClass]="{'container': platform.is('ios')}">
   <ion-title>
     {{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}
   </ion-title>

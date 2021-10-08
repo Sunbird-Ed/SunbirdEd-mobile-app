@@ -117,12 +117,14 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
       setTimeout(() => {
-        this.tabRef.select('courses');
+        const tab:any = 'courses';
+        this.tabRef.select(tab);
       }, 300);
     });
     this.events.subscribe('to_profile', () => {
       setTimeout(() => {
-        this.tabRef.select('profile');
+        const tab:any = 'courses';
+        this.tabRef.select(tab);
       }, 300);
     });
   }

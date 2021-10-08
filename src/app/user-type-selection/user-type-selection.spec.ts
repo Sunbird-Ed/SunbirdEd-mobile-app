@@ -133,7 +133,7 @@ describe('UserTypeSelectionPage', () => {
             jest.advanceTimersByTime(200);
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             // act
-            userTypeSelectionPage.selectUserTypeCard('USER_TYPE_1', ProfileType.TEACHER);
+            userTypeSelectionPage.selectUserTypeCard('USER_TYPE_1', ProfileType.TEACHER, true);
             // assert
             expect(userTypeSelectionPage.selectedUserType).toEqual(ProfileType.TEACHER);
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
