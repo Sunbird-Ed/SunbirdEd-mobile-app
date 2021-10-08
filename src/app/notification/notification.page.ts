@@ -68,7 +68,6 @@ export class NotificationPage implements OnInit, OnDestroy {
   }
 
   private async fetchNotificationList() {
-    // const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.loader = await this.commonUtilService.getLoader();
     this.loader.present();
     await this.notificationService.fetchNotificationList().then((data) => {
