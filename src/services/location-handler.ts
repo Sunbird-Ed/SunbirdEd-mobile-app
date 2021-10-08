@@ -80,6 +80,7 @@ export class LocationHandler {
             }
 
         } else {
+            if (location && location.state) {
             const state = await this.getLocationDetails(Location.TYPE_STATE, location.state);
             const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
             locationResult.push(state);
@@ -101,6 +102,7 @@ export class LocationHandler {
             }
         }
         return locationResult;
+        }
     }
 
     public async getLocationDetails(locationType: string, locationValue: string, parentLocationId?: string):
