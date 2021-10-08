@@ -1,8 +1,8 @@
 import { ImpressionSubtype } from './../../services/telemetry-constants';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, ProfileService, UserFeedStatus } from 'sunbird-sdk';
+import { Notification, UserFeedStatus } from 'sunbird-sdk';
 import {  Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -16,8 +16,6 @@ import {
   ImpressionType
 } from '@app/services/telemetry-constants';
 import { NotificationService } from '../../services/notification.service';
-import { NotificationServiceV2 } from '@app/../../sunbird-mobile-sdk/tmp/notification-v2/def/notification-service-v2';
-import { ProfileConstants } from '../app.constant';
 import { Events } from '@app/util/events';
 
 @Component({

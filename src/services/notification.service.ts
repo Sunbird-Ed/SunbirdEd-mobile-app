@@ -7,7 +7,7 @@ import { ActionType, ProfileConstants, RouterLinks } from '@app/app/app.constant
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -110,7 +110,7 @@ export class NotificationService implements SbNotificationService {
             category: notificationListData.data[0].action.category
         }
         try {
-            const resp = await this.notificationServiceV2.notificationDelete(req).toPromise();
+            await this.notificationServiceV2.notificationDelete(req).toPromise();
             this.events.publish('notification:refresh');
             return true;
         } catch (e) {
