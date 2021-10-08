@@ -4,17 +4,20 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TelemetryService, NotificationService as SdkNotificationService } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, NotificationService as SdkNotificationService, GroupService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { Router } from '@angular/router';
+import { Event, Router } from '@angular/router';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
+import { NavigationService } from './navigation-handler.service';
+import { of } from 'rxjs';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
   const mockTelemetryService: Partial<TelemetryService> = {
     updateCampaignParameters: jest.fn()
   };
+  const mockGroupService: Partial<GroupService> = {};
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockAppVersion: Partial<AppVersion> = {
@@ -31,12 +34,18 @@ describe('LocalCourseService', () => {
     navigate: jest.fn()
   };
   const mockNotificationServiceV2: Partial<NotificationServiceV2> = {};
+  const mockNavigationService: Partial<NavigationService> = {
+    navigateToTrackableCollection: jest.fn(),
+    navigateTo: jest.fn(),
+    navigateToDetailPage: jest.fn()
+  };  
 
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
       mockSdkNotificationService as SdkNotificationService,
       mockNotificationServiceV2 as NotificationServiceV2,
+      mockGroupService as GroupService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
@@ -44,7 +53,9 @@ describe('LocalCourseService', () => {
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
       mockEvents as Events,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
-      mockRouter as Router
+      mockRouter as Router,
+      mockEvents as Events,
+      mockNavigationService as NavigationService
     );
   });
 
@@ -229,6 +240,71 @@ describe('LocalCourseService', () => {
       done();
     });
   });
+
+  describe('redirectNotification', () => {
+    it('should redirect to apprpriate page onclick of notification', () => {
+      // arrange
+      const notification = {
+        id: 'some-id',
+        action: {
+          additionalInfo: {
+            group: {
+              id: 'some-id'
+            }
+          },
+          type: 'member-added'
+        }
+      }
+      // action
+      notificationService.redirectNotification(notification)
+      // assert
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    it('should redirect to appropriate page onclick of notification', (done) => {
+      // arrange
+      const notification = {
+        id: 'some-id',
+        action: {
+          additionalInfo: {
+            group: {
+              id: 'some-id'
+            },
+            activity: {
+              type: 'course',
+              id: 'some-id'
+            }
+          },
+          type: 'group-activity-added'
+        }
+      };
+      const groupDetails = {
+        activitiesGrouped: [
+          {
+            title: 'course',
+            items: [
+              {
+                id: 'some-id',
+                activityInfo: {
+                  id: 'activity-id'
+                }
+              }
+            ]
+          }
+        ]
+      } as any
+      mockGroupService.getById = jest.fn(() => of(groupDetails));
+      // action
+      notificationService.redirectNotification(notification)
+      // assert
+      setTimeout(() => {
+        expect(mockGroupService.getById).toHaveBeenCalled()
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalled();
+        done()
+      });
+    });
+
+  })
 
 
 
