@@ -70,11 +70,13 @@ import { ContentViewerComponent } from './content-viewer/content-viewer.componen
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {DashletModule} from '@project-sunbird/sb-dashlet'
+import {DashletModule} from '@project-sunbird/sb-dashlet';
 import { TocHeaderComponent } from './toc-header/toc-header.component';
 import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
 import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-preferences-popup.component';
 
+import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
+import { ContentShareHandlerService } from '@app/services';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -137,7 +139,8 @@ import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-pre
     DashboardComponent,
     TocHeaderComponent,
     RelevantContentCardComponent,
-    SbPreferencePopupComponent
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent
   ],
   imports: [
     CommonModule,
@@ -198,7 +201,8 @@ import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-pre
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
-    SbPreferencePopupComponent
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -259,8 +263,9 @@ import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-pre
     DashboardComponent,
     TocHeaderComponent,
     RelevantContentCardComponent,
-    SbPreferencePopupComponent
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService]
 })
 export class ComponentsModule { }

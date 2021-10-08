@@ -23,7 +23,9 @@ describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
     const mockContentService: Partial<ContentService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockNavParams: Partial<NavParams> = {

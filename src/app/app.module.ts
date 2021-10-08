@@ -82,6 +82,8 @@ import {UpdateProfileService} from '@app/services/update-profile-service';
 import { SbSearchFilterModule } from 'common-form-elements';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
+import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
+
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -532,7 +534,8 @@ declare const sbutility;
     PhotoViewer,
     StreamingMedia,
     { provide: QuestionCursor, useClass: QumlPlayerService },
-    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService }
+    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
+    TranslateJsonPipe
   ],
   bootstrap: [AppComponent],
   schemas: [

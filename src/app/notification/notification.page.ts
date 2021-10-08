@@ -1,5 +1,5 @@
 import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Notification, CorrelationData, ProfileService, UserFeedStatus } from 'sunbird-sdk';
@@ -19,23 +19,25 @@ import { map, tap } from 'rxjs/operators';
 import { NotificationService } from '../../services/notification.service';
 import { NotificationServiceV2 } from '@app/../../sunbird-mobile-sdk/tmp/notification-v2/def/notification-service-v2';
 import { ProfileConstants } from '../app.constant';
+import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-notification',
   templateUrl: './notification.page.html',
   styleUrls: ['./notification.page.scss'],
 })
-export class NotificationPage implements OnInit {
+export class NotificationPage implements OnInit, OnDestroy {
 
   // notificationList$: Observable<Notification[]> ;
   // unreadNotificationList$: Observable<Notification[]>;
   notificationList = [] ;
+  unreadNotificationList = [];
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;
   private loader?: any;
   inAppNotificationConfig = { 
     title: 'Notification',
-    subTitle: 'New Notification (s)',
+    subTitle: ' New Notification (s)',
     clearText: 'Clear',
     moreText: 'See more',
     lessText: 'See less',
@@ -51,7 +53,7 @@ export class NotificationPage implements OnInit {
     private platform: Platform,
     private location: Location,
     private commonUtilService: CommonUtilService,
-
+    private events: Events
   ) { }
 
   ionViewWillEnter() {
@@ -67,6 +69,9 @@ export class NotificationPage implements OnInit {
 
   ngOnInit() {
     this.fetchNotificationList();
+    this.events.subscribe('notification:refresh', () => {
+      this.fetchNotificationList();
+    });
   }
 
   private async fetchNotificationList() {
@@ -76,7 +81,8 @@ export class NotificationPage implements OnInit {
     this.notificationServiceV2.notificationRead(profile.uid).subscribe((data) => {
       this.loader.dismiss();
       this.notificationList = data.feeds;
-      console.log('this.notificationList', this.notificationList);
+      this.unreadNotificationList = this.notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+      this.inAppNotificationConfig.subTitle = this.unreadNotificationList.length + this.inAppNotificationConfig.subTitle;
     })
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,
@@ -146,5 +152,9 @@ export class NotificationPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
     }
   }
+
+  ngOnDestroy() {
+    this.events.unsubscribe('notification:refresh');
+}
 
 }

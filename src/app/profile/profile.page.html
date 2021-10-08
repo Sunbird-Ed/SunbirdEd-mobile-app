@@ -27,9 +27,9 @@
             </span>
         </p>
         <div class="school-recent" *ngIf="organisationName">
-            <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
+            <h6 class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
 
-            </p>
+            </h6>
         </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
@@ -52,7 +52,7 @@
         </div>
     </div>
    <div *ngIf="profile" class="school-details text-center">
-    <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+    <div *ngIf="profile?.persona || profile?.framework" class="preference-info" role="heading" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
         <div>
@@ -145,7 +145,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.phone">
-            <div class="phone light" (click)="editMobileNumber();">
+            <div class="phone light" (click)="editMobileNumber();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="call"></ion-icon>
                 </span>
@@ -153,7 +153,7 @@
             </div>
         </div>
         <div *ngIf="profile?.email">
-            <div class="email " (click)="editEmail();">
+            <div class="email " (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="mail"></ion-icon>
                 </span>
@@ -161,7 +161,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.email">
-            <div class="email light" (click)="editEmail();">
+            <div class="email light" (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon name="mail"></ion-icon>
                 </span>
@@ -182,7 +182,7 @@
         </div>
         <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
         ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
-            <div class="email light" (click)="editRecoveryId();">
+            <div class="email light" (click)="editRecoveryId();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
