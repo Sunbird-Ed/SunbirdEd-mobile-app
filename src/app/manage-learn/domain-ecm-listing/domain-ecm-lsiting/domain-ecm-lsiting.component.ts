@@ -55,9 +55,6 @@ export class DomainEcmLsitingComponent {
       this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
     this.extrasState = this.router.getCurrentNavigation().extras.state;
-    if( this.extrasState){
-      // this.submissionId= this.extrasState.assessment.submissionId;
-    }
   }
 
   ngOnInit() {
@@ -74,30 +71,32 @@ export class DomainEcmLsitingComponent {
 
   ionViewWillEnter() {
     if(this.extrasState){
-      this.getEntityEvidences(this.extrasState);
+      this.getAssessmentDetails(this.extrasState);
     }else{
       this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((successData) => {
-     this.getEntityEvidences(successData);
+     this.getAssessmentDetails(successData);
       });
     }
   }
 
-  getEntityEvidences(successData){
+  getAssessmentDetails(successData){
     this.entityData = successData;
-    this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
-      this.entityData['assessment']['evidences'],
-      this.recentlyUpdatedEntity
-    );
-    this.mapCompletedAndTotalQuestions();
-    this.checkForProgressStatus();
-    this.localStorage
-      .getLocalStorage('generalQuestions_' + this.submissionId)
-      .then((successData) => {
-        this.generalQuestions = successData;
-      });
-      this.fetchDownloaded();
+    if(this.submissionId){
+      this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
+        this.entityData['assessment']['evidences'],
+        this.recentlyUpdatedEntity
+      );
+      this.mapCompletedAndTotalQuestions();
+      this.checkForProgressStatus();
+      this.localStorage
+        .getLocalStorage('generalQuestions_' + this.submissionId)
+        .then((successData) => {
+          this.generalQuestions = successData;
+        });
+        this.fetchDownloaded();
+    }
   }
 
   mapCompletedAndTotalQuestions() {

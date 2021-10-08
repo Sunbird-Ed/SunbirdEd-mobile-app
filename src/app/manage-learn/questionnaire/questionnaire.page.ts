@@ -104,7 +104,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ngOnInit() {
     if(this.extrasState){
       this.isViewOnly = true;
-      // this.submissionId= this.extrasState.assessment.submissionId;
       this.getQuestions(this.extrasState);
     }else{
       this.localStorage
@@ -136,7 +135,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
       this.selectedSectionIndex
     ].totalQuestions = this.questions.length;
-    console.log(this.questions,"this.questions");
     this.dashbordData = {
       questions: this.questions,
       evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
@@ -480,11 +478,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.headerConfig.actionButtons = [];
     this.headerService.updatePageConfig(this.headerConfig);
-  }
-
-  startAction(){
-    console.log('clicked startAction');
-    this.showMessageForNONTargetUsers();
   }
 
   showMessageForNONTargetUsers(){
