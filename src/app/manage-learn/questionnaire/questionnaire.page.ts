@@ -47,7 +47,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   captureGpsLocationAtQuestionLevel: boolean;
   enableQuestionReadOut: boolean;
   networkAvailable;
-
+  isTargeted :boolean;
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -77,15 +77,20 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
+      this.isTargeted = params.isTargeted;
     });
 
+    if(!this.isTargeted){
+    this.showMessageForNONTargetUsers();
+    }
+
+    // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
       }
     });
-
     // Online event
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
@@ -473,5 +478,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.headerConfig.actionButtons = [];
     this.headerService.updatePageConfig(this.headerConfig);
+  }
+
+  showMessageForNONTargetUsers(){
+    let msg;
+    this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
+      msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
+      this.toast.openToast(msg);
+    });
   }
 }

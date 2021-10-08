@@ -1,5 +1,6 @@
 <ion-content #pageTop>
-  <div class="_container" id="stop" *ngIf="submissionId">
+  <div   id="stop">
+  <div class="_container"  *ngIf="submissionId || extrasState">
     <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
       <ng-container [ngSwitch]="question.responseType.toLowerCase()">
         <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
@@ -33,8 +34,9 @@
       </ng-container>
     </ng-container>
   </div>
+  </div>
 </ion-content>
-<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start"
+<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState"
   [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
   [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
   [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (openSheetAction)="openActionSheet()" >

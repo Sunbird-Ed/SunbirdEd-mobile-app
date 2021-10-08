@@ -32,7 +32,7 @@ export class DomainEcmLsitingComponent {
   private _networkSubscription?: Subscription;
   networkFlag: boolean;
   msgs:any
-
+  extrasState:any;
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
@@ -54,6 +54,7 @@ export class DomainEcmLsitingComponent {
       this.entityName = params.schoolName;
       this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
+    this.extrasState = this.router.getCurrentNavigation().extras.state;
   }
 
   ngOnInit() {
@@ -69,24 +70,33 @@ export class DomainEcmLsitingComponent {
   }
 
   ionViewWillEnter() {
-    this.localStorage
+    if(this.extrasState){
+      this.getAssessmentDetails(this.extrasState);
+    }else{
+      this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((successData) => {
-        this.entityData = successData;
-        this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
-          this.entityData['assessment']['evidences'],
-          this.recentlyUpdatedEntity
-        );
-        this.mapCompletedAndTotalQuestions();
-        this.checkForProgressStatus();
-        this.localStorage
-          .getLocalStorage('generalQuestions_' + this.submissionId)
-          .then((successData) => {
-            this.generalQuestions = successData;
-          });
+     this.getAssessmentDetails(successData);
       });
+    }
+  }
 
-    this.fetchDownloaded();
+  getAssessmentDetails(successData){
+    this.entityData = successData;
+    if(this.submissionId){
+      this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
+        this.entityData['assessment']['evidences'],
+        this.recentlyUpdatedEntity
+      );
+      this.mapCompletedAndTotalQuestions();
+      this.checkForProgressStatus();
+      this.localStorage
+        .getLocalStorage('generalQuestions_' + this.submissionId)
+        .then((successData) => {
+          this.generalQuestions = successData;
+        });
+        this.fetchDownloaded();
+    }
   }
 
   mapCompletedAndTotalQuestions() {
@@ -228,7 +238,7 @@ export class DomainEcmLsitingComponent {
         evidenceIndex: this.selectedEvidenceIndex,
         sectionIndex: selectedSection,
         schoolName: this.entityName,
-      },
+      }, state: this.extrasState //State is using for Template view for Deeplink.
     });
   }
 
