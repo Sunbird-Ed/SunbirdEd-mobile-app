@@ -52,7 +52,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   switch(key) {
     switch (key) {
       case 'observationLink':
-        this.redirectObservation(this.data.create_observation_id);
+        this.verifyLink(this.data.create_observation_id);
         break;
       case 'observationParams':
         this.redirectWithParams(this.data[key], 'observation');
