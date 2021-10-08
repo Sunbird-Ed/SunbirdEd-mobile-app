@@ -1,9 +1,9 @@
-import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
+import { ImpressionSubtype } from './../../services/telemetry-constants';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, CorrelationData, ProfileService, UserFeedStatus } from 'sunbird-sdk';
-import { Observable, Subscription } from 'rxjs';
+import { Notification, ProfileService, UserFeedStatus } from 'sunbird-sdk';
+import {  Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -15,7 +15,6 @@ import {
   InteractSubtype,
   ImpressionType
 } from '@app/services/telemetry-constants';
-import { map, tap } from 'rxjs/operators';
 import { NotificationService } from '../../services/notification.service';
 import { NotificationServiceV2 } from '@app/../../sunbird-mobile-sdk/tmp/notification-v2/def/notification-service-v2';
 import { ProfileConstants } from '../app.constant';
@@ -28,8 +27,6 @@ import { Events } from '@app/util/events';
 })
 export class NotificationPage implements OnInit, OnDestroy {
 
-  // notificationList$: Observable<Notification[]> ;
-  // unreadNotificationList$: Observable<Notification[]>;
   notificationList = [] ;
   unreadNotificationList = [];
   private unregisterBackButton: Subscription;
@@ -45,8 +42,6 @@ export class NotificationPage implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private notificationService: NotificationService,
     private headerService: AppHeaderService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -75,12 +70,13 @@ export class NotificationPage implements OnInit, OnDestroy {
   }
 
   private async fetchNotificationList() {
-    const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    // const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.loader = await this.commonUtilService.getLoader();
     this.loader.present();
-    this.notificationServiceV2.notificationRead(profile.uid).subscribe((data) => {
+    await this.notificationService.fetchNotificationList().then((data) => {
       this.loader.dismiss();
       this.notificationList = data.feeds;
+      console.log('notification list', this.notificationList);
       this.unreadNotificationList = this.notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
       this.inAppNotificationConfig.subTitle = this.unreadNotificationList.length + this.inAppNotificationConfig.subTitle;
     })
@@ -88,8 +84,7 @@ export class NotificationPage implements OnInit, OnDestroy {
       ImpressionType.PAGE_LOADED,
       ImpressionSubtype.HOME,
       PageId.NOTIFICATION,
-      Environment.HOME, '', '', '', undefined,
-      undefined
+      Environment.HOME, '', '', '', undefined
     );
   }
 

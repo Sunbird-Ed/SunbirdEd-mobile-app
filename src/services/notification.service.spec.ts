@@ -4,13 +4,14 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TelemetryService, NotificationService as SdkNotificationService, GroupService } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Event, Router } from '@angular/router';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
 import { NavigationService } from './navigation-handler.service';
 import { of } from 'rxjs';
+import { CommonUtilService } from './common-util.service';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
@@ -18,6 +19,7 @@ describe('LocalCourseService', () => {
     updateCampaignParameters: jest.fn()
   };
   const mockGroupService: Partial<GroupService> = {};
+  const mockProfileService: Partial<ProfileService> = {};
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockAppVersion: Partial<AppVersion> = {
@@ -33,6 +35,9 @@ describe('LocalCourseService', () => {
   const mockRouter: Partial<Router> = {
     navigate: jest.fn()
   };
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    showToast: jest.fn()
+  };
   const mockNotificationServiceV2: Partial<NotificationServiceV2> = {};
   const mockNavigationService: Partial<NavigationService> = {
     navigateToTrackableCollection: jest.fn(),
@@ -43,9 +48,9 @@ describe('LocalCourseService', () => {
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
-      mockSdkNotificationService as SdkNotificationService,
       mockNotificationServiceV2 as NotificationServiceV2,
       mockGroupService as GroupService,
+      mockProfileService as ProfileService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
@@ -55,7 +60,8 @@ describe('LocalCourseService', () => {
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
       mockEvents as Events,
-      mockNavigationService as NavigationService
+      mockNavigationService as NavigationService,
+      mockCommonUtilService as CommonUtilService 
     );
   });
 

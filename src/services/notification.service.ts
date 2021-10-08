@@ -7,16 +7,16 @@ import { ActionType, ProfileConstants, RouterLinks } from '@app/app/app.constant
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus, ProfileService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { map } from 'rxjs/operators';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
-import { CsNotificationDeleteReq, CsNotificationUpdateReq } from '@app/../../sunbird-client-services/tmp/services/notification/interface/cs-notification-service';
+import { CsNotificationUpdateReq } from '@app/../../sunbird-client-services/tmp/services/notification/interface/cs-notification-service';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavigationService } from './navigation-handler.service';
+import { CommonUtilService } from './common-util.service';
 declare const cordova;
 
 @Injectable({
@@ -38,9 +38,9 @@ export class NotificationService implements SbNotificationService {
 
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-        @Inject('NOTIFICATION_SERVICE') private sdkNotificationService: SdkNotificationService,
         @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
         @Inject('GROUP_SERVICE') public groupService: GroupService,
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
@@ -50,28 +50,15 @@ export class NotificationService implements SbNotificationService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private router: Router,
         private events: Events,
-        private navService: NavigationService
+        private navService: NavigationService,
+        private commonUtilService: CommonUtilService
     ) {
         this.getAppName();
     }
 
-    fetchNotificationList() {
-        //In mobile fetchNotification is handled from SDK notifications$.
-        setTimeout(() => {
-            this.sdkNotificationService.getAllNotifications({notificationStatus: NotificationStatus.ALL});
-        }, 1000);
-        return this.sdkNotificationService.notifications$.pipe(
-            map((notifications) => {
-                const temp = notifications.map(n => {
-                    n['status'] = n['status'] || n.isRead ? UserFeedStatus.READ : UserFeedStatus.UNREAD;
-                    n['createdOn'] = n['createdOn'] || n['displayTime'];
-                    n.actionData['description'] = n.actionData['description'] || n.actionData['richText'] || n.actionData['ctaText'];
-                    n.actionData['thumbnail'] = n.actionData['thumbnail'] || n.actionData['appIcon'];
-                    return { data: n, createdOn: n['createdOn'] };
-                });
-                return temp as any;
-            })
-        ) as any;
+    async fetchNotificationList() {
+        const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+        return this.notificationServiceV2.notificationRead(profile.uid).toPromise()
     }
 
     async handleNotificationClick(notificationData: EventNotification): Promise<void> {
@@ -103,10 +90,11 @@ export class NotificationService implements SbNotificationService {
             category: notificationData.data.action.category
         }
         try {
-            const resp = await this.notificationServiceV2.notificationDelete(req).toPromise();
+            await this.notificationServiceV2.notificationDelete(req).toPromise();
             this.events.publish('notification:refresh');
             return true;
         } catch (e) {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
             return false;
         }
     }
@@ -126,8 +114,7 @@ export class NotificationService implements SbNotificationService {
             this.events.publish('notification:refresh');
             return true;
         } catch (e) {
-            console.log('clearAllNotifications clicked err',e);
-            this.events.publish('notification:refresh');
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
             return false;
         }
     }
