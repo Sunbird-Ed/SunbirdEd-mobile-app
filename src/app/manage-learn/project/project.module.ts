@@ -65,7 +65,7 @@ const routes: Routes = [
     component: AttachmentListPage
   },
   {
-    path: `${RouterLinks.TEMPLATE}`,
+    path: `${RouterLinks.TEMPLATE}/:id`,
     component: ProjectTemplatePage
   }
 ];

@@ -43,6 +43,7 @@ export class ProjectTemplatePage {
   projectId;
   projectType = "";
   categories = [];
+  isTargeted;
   taskCount: number = 0;
   filters: any = {};
   schedules = this.utils.getSchedules();
@@ -61,6 +62,7 @@ export class ProjectTemplatePage {
   fromImportProject: boolean = false;
   shareTaskId;
   networkFlag: boolean;
+  id;
   private _networkSubscription: Subscription;
   headerConfig = {
     showHeader: true,
@@ -91,7 +93,11 @@ export class ProjectTemplatePage {
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
   ) {
+    params.params.subscribe(parameters =>{
+      this.id = parameters.id;
+    })
     params.queryParams.subscribe((parameters) => {
+      this.isTargeted = parameters.isTargeted
       // console.log("queryParams");
       // console.log(parameters);
       // this.solutionId = parameters.solutionId;
@@ -411,7 +417,9 @@ export class ProjectTemplatePage {
           role: "ok",
           handler: blah => {
             this.closeAlert.dismiss();
-           this.location.back();
+            this.router.navigate([`/${RouterLinks.PROJECT}`],{queryParams:{
+              selectedFilter:this.isTargeted ? 'assignedToMe' : 'discoveredByMe'
+            }});
           }
         },
         {

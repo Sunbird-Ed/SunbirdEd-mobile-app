@@ -66,12 +66,22 @@ export class DeeplinkRedirectComponent implements OnInit {
       case 'assessmentReportParams':
         this.redirectReportWithParams(this.data[key], 'assessment');
         break;
-
+    case 'projectLink':
+        this.verifyLink(this.data.create_project_id);
+        break;
       default:
         break;
     }
   }
 
+  redirectProject(){
+      console.log( this.data,"redirectProject");
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`,this.data.create_project_id], {
+        queryParams: {
+            isTargeted: true
+        },
+    });
+  }
   redirectWithParams(params: string, type) {
     let paramsArr = params.split('-');
     console.log(paramsArr);
@@ -111,7 +121,10 @@ export class DeeplinkRedirectComponent implements OnInit {
         //   let data = success.result;
         // }
         // })
-this.getTemplateDetails();
+
+        // TODO based response type we have to navigate to project or observation
+        this.redirectProject();
+        // this.getTemplateDetails();
   }
   getTemplateDetails(){
     // Once API ready then will rewrite this method
