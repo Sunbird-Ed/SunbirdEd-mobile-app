@@ -266,12 +266,12 @@ export class ProjectListingComponent {
     onSearch(e) {
         if (this.searchText) {
             let query = this.networkFlag ? this.searchCreatedProjects() : this.searchOfflineProjects();
-            const searchFilter: any = {
+            const searchFilter: any = this.searchText && this.searchText.length ? {
                 title: {
                     $regex: RegExp(this.searchText, 'i')
                 }
-            };
-            query.selector.$and.push(searchFilter);
+            } : null;
+            searchFilter ? query.selector.$and.push(searchFilter) : null;
             this.db.customQuery(query).then(success => {
                 this.projects = success['docs'];
                 if (this.networkFlag) {
@@ -283,7 +283,8 @@ export class ProjectListingComponent {
             })
         } else {
             this.projects = [];
-            this.getDownloadedProjectsList();
+            // this.getDownloadedProjectsList();
+            this.fetchProjectList();
         }
     }
 

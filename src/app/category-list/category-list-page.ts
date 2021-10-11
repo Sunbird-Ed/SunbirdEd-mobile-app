@@ -68,6 +68,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
     facetFilters: {
         [code: string]: FilterValue[]
     } = {};
+    displayFacetFilters: {
+        [code: string]: FilterValue[]
+    } = {};
     initialFacetFilters?: {
         [code: string]: FilterValue[]
     };
@@ -108,6 +111,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private resentFilterCriteria: ContentSearchCriteria;
     private preFetchedFilterCriteria: ContentSearchCriteria;
     profile: Profile;
+    private existingSearchFilters = {};
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -154,6 +158,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     return acc;
                 }, new FormGroup({}));
             }
+            this.existingSearchFilters = this.getExistingFilters(extrasState.formField);
         }
     }
 
@@ -230,6 +235,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
             return acc;
         }, {});
 
+        if(this.facetFilters){
+            this.displayFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
+        }
         if (isInitialCall) {
             this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
         }
@@ -242,12 +250,12 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
                     if (p.sort) {
-                        this.initialFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
                     }
                     acc[p.code] = this.facetFilters[p.code]
                         .filter(v => v.apply)
                         .map(v => {
-                            return this.initialFacetFilters[p.code].find(i => (i.name === v.name));
+                            return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
                         });
                     return acc;
                 }, {}),
@@ -419,7 +427,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             component: SearchFilterPage,
             componentProps: {
                 initialFilterCriteria: inputFilterCriteria,
-                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria))
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
+                existingSearchFilters: this.existingSearchFilters
             }
         });
         await openFiltersPage.present();
@@ -489,6 +498,25 @@ export class CategoryListPage implements OnInit, OnDestroy {
             filterCriteriaData = JSON.parse(JSON.stringify(this.filterCriteria))
         }
         return filterCriteriaData;
+    }
+
+    getExistingFilters(formFields){
+        const existingSearchFilters = {};
+        if(formFields){
+            if(formFields.filterPillBy){
+                existingSearchFilters[formFields.filterPillBy] = true;
+            }
+            if(formFields.primaryFacetFilters){
+                formFields.primaryFacetFilters.forEach(facets => {
+                    existingSearchFilters[facets.code] = true;
+                });
+            }
+        }
+        return existingSearchFilters;
+    }
+
+    reloadDropdown(index, item){
+        return item;
     }
 
     ngOnDestroy() {
