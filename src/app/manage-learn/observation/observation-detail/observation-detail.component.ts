@@ -253,14 +253,10 @@ export class ObservationDetailComponent implements OnInit {
 
   async deleteEntity(entityId) {
     this.loader.startLoader();
-    let payload = await this.utils.getProfileInfo();
-    payload.data = [entityId];
-
     const config = {
       url:
         urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
-        `${this.observationId}`,
-      payload: payload
+        `${this.observationId}?entityId=${entityId}`,
     };
     this.assessmentService.delete(config).subscribe(
       success => {

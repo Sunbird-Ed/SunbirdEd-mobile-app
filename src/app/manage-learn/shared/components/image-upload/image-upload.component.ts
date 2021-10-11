@@ -73,7 +73,6 @@ export class ImageUploadComponent implements OnInit {
     private platform: Platform,
     private translate: TranslateService,
     private filePath: FilePath,
-    // private iosFilePicker: IOSFilePicker,
     private fileOpener: FileOpener,
     private fileChooser: FileChooser,
     private chooser: Chooser,
@@ -162,7 +161,7 @@ export class ImageUploadComponent implements OnInit {
           text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            this.isIos ? this.filePickerForIOS() : this.openFilePicker();
+            this.openFilePicker();
           },
         },
         {
@@ -175,8 +174,6 @@ export class ImageUploadComponent implements OnInit {
     await actionSheet.present();
   }
 
-  filePickerForIOS() {
-  }
 
   // For android
   async openFilePicker() {
@@ -375,6 +372,7 @@ export class ImageUploadComponent implements OnInit {
     let alert = await this.alertCtrl.create({
       // header: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
       message: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],

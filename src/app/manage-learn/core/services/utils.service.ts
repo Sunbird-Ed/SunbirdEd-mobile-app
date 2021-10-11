@@ -44,9 +44,9 @@ export class UtilsService {
     private storage: Storage,
     private events: Events,
 
-  ) {  
-      this.events.subscribe("loggedInProfile:update", _ => {
-        this.storeMandatoryFields()
+  ) {
+    this.events.subscribe("loggedInProfile:update", _ => {
+      this.storeMandatoryFields()
     });
   }
 
@@ -183,8 +183,16 @@ export class UtilsService {
         }
       }
     }
-    projectData.status = this.calculateStatus(projectData.tasks);
-
+    let projectStatus = this.calculateStatus(projectData.tasks);
+    if (projectData.status) {
+      if (projectData.status == statusType.inProgress && projectStatus == statusType.notStarted) {
+        projectData.status = statusType.inProgress;
+      }else{
+        projectData.status = projectStatus;
+      }
+    } else {
+      projectData.status = statusType.notStarted;
+    }
     return projectData;
   }
 
@@ -428,7 +436,6 @@ export class UtilsService {
     } catch {
       mandatoryFields={}
     }
-    console.log(mandatoryFields)
     if (mandatoryFields[this.profile.state] && mandatoryFields[this.profile.state][this.profile.role]) return;
 
     try {
@@ -438,7 +445,7 @@ export class UtilsService {
       mandatoryFields[this.profile.state][this.profile.role] = mandatoryEntitiesList
       await this.storage.set(storageKeys.mandatoryFields, mandatoryFields)
     } catch{
-      
+
     }
   }
 
@@ -450,7 +457,7 @@ export class UtilsService {
         if (!mandatoryFields[this.profile.state][this.profile.role]) throw "Mandatory fields locally not found";
         data = { result: mandatoryFields[this.profile.state][this.profile.role] }
       } catch {
-          const config = {
+        const config = {
           url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
         };
         data = await this.kendra.get(config).toPromise()
@@ -458,24 +465,24 @@ export class UtilsService {
 
       }
       if (data.result && data.result.length) {
-          this.requiredFields = data.result;
-          let allFieldsPresent = true;
-          for (const field of this.requiredFields) {
-            if (!this.profile[field]) {
-              allFieldsPresent = false;
-              break
-            }
+        this.requiredFields = data.result;
+        let allFieldsPresent = true;
+        for (const field of this.requiredFields) {
+          if (!this.profile[field]) {
+            allFieldsPresent = false;
+            break
           }
-          if (!allFieldsPresent) {
-            this.openProfileUpdateAlert()
-            resolve(false)
-          } else {
-            resolve(true);
-          }
-        } else {
-          this.openProfileUpdateAlert();
-          resolve(false)
         }
+        if (!allFieldsPresent) {
+          this.openProfileUpdateAlert()
+          resolve(false)
+        } else {
+          resolve(true);
+        }
+      } else {
+        this.openProfileUpdateAlert();
+        resolve(false)
+      }
     })
   }
 
@@ -506,11 +513,10 @@ export class UtilsService {
   async openProfileUpdateAlert() {
     this.profileAlert = await this.aleryCtrl.create({
       header: "Alert",
-      message: `Please update   ${
-        this.requiredFields && this.requiredFields.length
+      message: `Please update   ${this.requiredFields && this.requiredFields.length
           ? this.requiredFields + " in"
           : ""
-      }   your profile to access the feature.`,
+        }   your profile to access the feature.`,
       buttons: [
         {
           text: "Update Profile",
@@ -615,7 +621,7 @@ export class UtilsService {
 
                   obj["role"] =
                     profileData["profileUserType"] &&
-                    profileData["profileUserType"]["subType"]
+                      profileData["profileUserType"]["subType"]
                       ? profileData["profileUserType"]["subType"].toUpperCase()
                       : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);

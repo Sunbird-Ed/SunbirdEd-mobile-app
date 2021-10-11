@@ -254,7 +254,7 @@ export class ImageListingComponent implements OnInit {
     const submissionId = this.submissionId;
     const url =
       (this.schoolData.survey
-        ? urlConstants.API_URLS.SURVEY_FEEDBACK_MAKE_SUBMISSION
+        ? urlConstants.API_URLS.SURVEY_FEEDBACK.MAKE_SUBMISSION
         : this.schoolData.observation
         ? urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE
         : urlConstants.API_URLS.SUBMISSION) +

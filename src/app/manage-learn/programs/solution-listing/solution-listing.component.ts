@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Component({
   selector: 'app-solution-listing',
@@ -42,7 +43,8 @@ export class SolutionListingComponent {
     private headerService: AppHeaderService,
     private platform: Platform,
     private toast: ToastService,
-    private ulsdp: UpdateLocalSchoolDataService
+    private ulsdp: UpdateLocalSchoolDataService,
+    private deeplinkActionHandler:SplaschreenDeeplinkActionHandlerDelegate
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -83,7 +85,8 @@ export class SolutionListingComponent {
         break;
       case 'survey':
         this.surveyRedirect(data);
-
+      case 'course':
+        this.courseRedirect(data)
       default:
         break;
     }
@@ -196,6 +199,13 @@ export class SolutionListingComponent {
   goBack() {
     this.location.back();
   }
+
+  courseRedirect(data) {
+    let link = data.link
+    let identifier = link.substr(link.lastIndexOf('/')+1)
+    this.deeplinkActionHandler.navigateContent(identifier)
+  }
+
   loadMore() {
     this.page = this.page + 1;
     this.getSolutions();

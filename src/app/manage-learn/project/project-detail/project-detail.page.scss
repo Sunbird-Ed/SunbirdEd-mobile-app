@@ -132,6 +132,10 @@ ion-card {
   background-color: map-get($colors, white);
 }
 
-.size {
+.ios .size {
   font-size: 16px !important;
+}
+
+.ios .adjust {
+  margin-left: 5px;
 }

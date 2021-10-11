@@ -258,12 +258,12 @@ export class ProjectListingComponent {
     onSearch(e) {
         if (this.searchText) {
             let query = this.networkFlag ? this.searchCreatedProjects() : this.searchOfflineProjects();
-            const searchFilter: any = {
+            const searchFilter: any = this.searchText && this.searchText.length ? {
                 title: {
                     $regex: RegExp(this.searchText, 'i')
                 }
-            };
-            query.selector.$and.push(searchFilter);
+            } : null;
+            searchFilter ? query.selector.$and.push(searchFilter) : null;
             this.db.customQuery(query).then(success => {
                 this.projects = success['docs'];
                 if (this.networkFlag) {
@@ -275,7 +275,8 @@ export class ProjectListingComponent {
             })
         } else {
             this.projects = [];
-            this.getDownloadedProjectsList();
+            // this.getDownloadedProjectsList();
+            this.fetchProjectList();
         }
     }
 
@@ -405,6 +406,7 @@ export class ProjectListingComponent {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
+                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
                                         this.selectedProgram(project);
                                     })
                                 return;

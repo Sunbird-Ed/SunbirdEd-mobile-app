@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { statusType,statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService , CommonUtilService} from '@app/services';
@@ -16,8 +16,6 @@ import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
@@ -105,19 +103,26 @@ export class ProjectDetailPage implements OnDestroy {
     private unnatiService: UnnatiDataService,
     private platform: Platform,
     private ref: ChangeDetectorRef,
-    private navigateService: NavigationService,
     private alertController: AlertController,
     private network: NetworkService,
     private location: Location,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       this.networkFlag = available;
     })
     params.queryParams.subscribe((parameters) => {
+      let data;
+      this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+        data = text;
+      });
+      this._headerConfig = this.headerService.getDefaultPageConfig();
+      this._headerConfig.actionButtons = [];
+      this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+      this._headerConfig.showBurgerMenu = false;
+      this.headerService.updatePageConfig(this._headerConfig);
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -178,7 +183,7 @@ export class ProjectDetailPage implements OnDestroy {
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
             !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
             this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-            this.headerService.updatePageConfig(this._headerConfig);
+              this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
               category.label ? this.categories.push(category.label) : this.categories.push(category.name);
             });
@@ -297,11 +302,6 @@ export class ProjectDetailPage implements OnDestroy {
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
     });
-    this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = [];
-    this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
-    this.headerService.updatePageConfig(this._headerConfig);
   }
 
   ngOnDestroy() {
@@ -458,6 +458,7 @@ export class ProjectDetailPage implements OnDestroy {
     });
     this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
+      cssClass:'central-alert',
       message: data["FRMELEMNTS_LBL_SHARE_MSG"],
       buttons: [
         {
@@ -500,6 +501,7 @@ export class ProjectDetailPage implements OnDestroy {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: data["CANCEL"],
@@ -532,58 +534,16 @@ export class ProjectDetailPage implements OnDestroy {
     this.update("ProjectDelete");
   }
   openResources(task = null) {
-    if (task && task.learningResources && task.learningResources.length === 1) {
-      if(task.learningResources[0].id){
-        this.openBodh(task.learningResources[0].id);
-      }else{
-        let identifier = task.learningResources[0].link.split("/").pop();
-        this.openBodh(identifier);
-      }
-      return;
-    }
     if (task) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      if( this.project.learningResources && this.project.learningResources.length == 1){
-        if(this.project.learningResources[0].id){
-          this.openBodh(this.project.learningResources[0].id);
-        }else{
-          let identifier = this.project.learningResources[0].link.split("/").pop();
-          this.openBodh(identifier );
-        }
-      }else{
         this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
       }
-    }
-  }
-  //open openBodh
-  openBodh(link) {
-    if(!this.networkFlag){
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
-      return
-    }
-    this.loader.startLoader();
-    let identifier = link.split("/").pop();
-    const req: ContentDetailRequest = {
-      contentId: identifier,
-      attachFeedback: false,
-      attachContentAccess: false,
-      emitUpdateIfAny: false
-    };
-
-    this.contentService.getContentDetails(req).toPromise()
-      .then(async (data: Content) => {
-        this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
-      }, error => {
-        this.loader.stopLoader();
-      });
   }
 
   //Update the project
-  update(type) {
+  update(type?) {
     this.project.isEdit = true;
-    this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
       .then((success) => {
@@ -695,6 +655,8 @@ export class ProjectDetailPage implements OnDestroy {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         !this.project.tasks ? (this.project.tasks = []) : "";
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
         this.project.tasks.push(data.data);
         this.update("newTask");
       }
