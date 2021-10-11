@@ -8,7 +8,7 @@
         <p class="title">{{pageData?.certificate?.name}}</p>
         <p class="date">{{pageData?.certificate?.lastIssuedOn | date}}</p>
       </div>
-      <div class="download-btn">
+      <div class="download-btn" *ngIf="!platform?.is('ios')">
         <button class="cert-btn" [ngClass]="{'highlight-cert-btn': onPopupOpen, '': !onPopupOpen }" (click)="showCertificateMenu($event)">
           <img src="assets/imgs/download-cloud-white.svg" alt="Download">
           <span>{{'DOWNLOAD' | translate}}</span>

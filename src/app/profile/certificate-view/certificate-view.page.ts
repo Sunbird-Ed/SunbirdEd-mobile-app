@@ -4,7 +4,7 @@ import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/applica
 import { AppGlobalService, AppHeaderService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
@@ -51,6 +51,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private popoverCtrl: PopoverController,
+    public platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
   }
