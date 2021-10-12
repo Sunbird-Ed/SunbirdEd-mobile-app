@@ -3,16 +3,20 @@ import { Inject, Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
-import { ActionType } from '@app/app/app.constant';
+import { ActionType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { map } from 'rxjs/operators';
+import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
+import { CsNotificationUpdateReq } from '@app/../../sunbird-client-services/tmp/services/notification/interface/cs-notification-service';
+import { NavigationExtras, Router } from '@angular/router';
+import { NavigationService } from './navigation-handler.service';
+import { CommonUtilService } from './common-util.service';
 declare const cordova;
 
 @Injectable({
@@ -34,7 +38,9 @@ export class NotificationService implements SbNotificationService {
 
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-        @Inject('NOTIFICATION_SERVICE') private sdkNotificationService: SdkNotificationService,
+        @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
+        @Inject('GROUP_SERVICE') public groupService: GroupService,
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
@@ -42,65 +48,73 @@ export class NotificationService implements SbNotificationService {
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private event: Events,
         private telemetryGeneratorService: TelemetryGeneratorService,
+        private router: Router,
+        private events: Events,
+        private navService: NavigationService,
+        private commonUtilService: CommonUtilService
     ) {
         this.getAppName();
     }
 
-    fetchNotificationList() {
-        //In mobile fetchNotification is handled from SDK notifications$.
-        setTimeout(() => {
-            this.sdkNotificationService.getAllNotifications({notificationStatus: NotificationStatus.ALL});
-        }, 1000);
-        return this.sdkNotificationService.notifications$.pipe(
-            map((notifications) => {
-                const temp = notifications.map(n => {
-                    n['status'] = n['status'] || n.isRead ? UserFeedStatus.READ : UserFeedStatus.UNREAD;
-                    n['createdOn'] = n['createdOn'] || n['displayTime'];
-                    n.actionData['description'] = n.actionData['description'] || n.actionData['richText'] || n.actionData['ctaText'];
-                    n.actionData['thumbnail'] = n.actionData['thumbnail'] || n.actionData['appIcon'];
-                    return { data: n, createdOn: n['createdOn'] };
-                });
-                return temp as any;
-            })
-        ) as any;
+    async fetchNotificationList() {
+        const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+        return this.notificationServiceV2.notificationRead(profile.uid).toPromise()
     }
 
     async handleNotificationClick(notificationData: EventNotification): Promise<void> {
-        if (!notificationData || !notificationData.data || !notificationData.data.data) {
+        console.log('service handleNotificationClick', notificationData)
+        this.updateNotification(notificationData.data);
+        if (!notificationData || !notificationData.data || !notificationData.data.action) {
             return;
         }
-        const notification = notificationData.data.data;
+        const notification = notificationData.data;
         const valuesMap = new Map();
-        valuesMap['notificationBody'] = notification.actionData;
-        if (notification.actionData.deepLink && notification.actionData.deepLink.length) {
-            valuesMap['notificationDeepLink'] = notification.actionData.deepLink;
+        valuesMap['notificationBody'] = notification.action;
+        if (notification.action.deepLink && notification.action.deepLink.length) {
+            valuesMap['notificationDeepLink'] = notification.action.deepLink;
         }
         this.generateClickInteractEvent(valuesMap, InteractSubtype.NOTIFICATION_READ);
 
         notification.isRead = 1;
-        await this.sdkNotificationService.updateNotification(notification).toPromise();
 
         this.notificationId = notification.id || '';
         this.setNotificationParams(notification);
         this.handleNotification();
     }
 
-    async deleteNotification(notificationData: EventNotification): Promise<boolean> {
+    async deleteNotification(notificationData): Promise<boolean> {
+        console.log('service deleteNotification', notificationData)
+        const req: any = {
+            ids: [notificationData.data.id],
+            userId: notificationData.data.userId,
+            category: notificationData.data.action.category
+        }
         try {
-            await this.sdkNotificationService.deleteNotification(notificationData.data.data).toPromise();
+            await this.notificationServiceV2.notificationDelete(req).toPromise();
+            this.events.publish('notification:refresh');
             return true;
         } catch (e) {
-            console.error(e);
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
             return false;
         }
     }
 
     async clearAllNotifications(notificationListData?: EventNotification): Promise<boolean> {
+        const ids = [];
+        notificationListData.data.forEach(element => {
+            ids.push(element.id)
+        });
+        const req: any = {
+            ids: ids,
+            userId: notificationListData.data[0].userId,
+            category: notificationListData.data[0].action.category
+        }
         try {
-            await this.sdkNotificationService.deleteAllNotifications().toPromise();
+            await this.notificationServiceV2.notificationDelete(req).toPromise();
+            this.events.publish('notification:refresh');
             return true;
         } catch (e) {
-            console.error(e);
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
             return false;
         }
     }
@@ -231,9 +245,9 @@ export class NotificationService implements SbNotificationService {
 
     setNotificationParams(data) {
         this.notificationPayload = data;
-        switch (this.notificationPayload.actionData.actionType) {
+        switch (this.notificationPayload.action.type) {
             case ActionType.EXT_URL:
-                this.externalUrl = data.actionData.deepLink;
+                this.externalUrl = data.action.additionalInfo.deepLink;
                 break;
             case ActionType.UPDATE_APP:
                 this.utilityService.getBuildConfigValue('APPLICATION_ID')
@@ -244,10 +258,10 @@ export class NotificationService implements SbNotificationService {
             case ActionType.COURSE_UPDATE:
             case ActionType.CONTENT_UPDATE:
             case ActionType.BOOK_UPDATE:
-                this.identifier = data.actionData.identifier;
+                this.identifier = data.action.additionalInfo.identifier;
                 break;
             case ActionType.CONTENT_URL:
-                this.contentUrl = data.actionData.contentURL;
+                this.contentUrl = data.action.additionalInfo.contentURL;
                 this.telemetryService.updateCampaignParameters([{ type: CorReleationDataType.NOTIFICATION_ID, id: this.notificationId }] as Array<CorrelationData>);
                 break;
         }
@@ -273,7 +287,8 @@ export class NotificationService implements SbNotificationService {
         } else if (this.contentUrl) {
             this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: this.contentUrl }, this);
             this.contentUrl = null;
-        } else if (this.notificationPayload && this.notificationPayload.actionData.actionType === ActionType.CERTIFICATE) {
+        } else if (this.notificationPayload && this.notificationPayload.action.type === ActionType.CERTIFICATE) {
+            console.log('ActionType.CERTIFICATE clicked')
             this.event.publish('to_profile');
         }
         this.notificationId = undefined;
@@ -288,6 +303,68 @@ export class NotificationService implements SbNotificationService {
             undefined,
             valuesMap
         );
+    }
+
+    updateNotification(notificationData) {
+        const req: CsNotificationUpdateReq = {
+            ids: [notificationData.id],
+            userId: notificationData.userId
+        }
+        this.notificationServiceV2.notificationUpdate(req).toPromise()
+        .then((resp) => {
+            this.events.publish('notification:refresh');
+            console.log('resp', resp)
+        }).catch((err) => {
+            console.log('err', err)
+        });
+        this.redirectNotification(notificationData)
+    }
+
+    redirectNotification(notificationData) {
+        if(notificationData.action.additionalInfo.group) {
+            if (notificationData.action.type === 'group-activity-removed' ||
+                notificationData.action.type === 'member-added') 
+            {
+                const navigationExtras: NavigationExtras = {
+                    state: {
+                        groupId: notificationData.action.additionalInfo.group.id
+                    }
+                };
+                this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+            } 
+            else if (notificationData.action.type === 'group-activity-added') {
+                this.redirectToActivityDetails(notificationData)
+            }
+        }
+    }
+
+    private async redirectToActivityDetails(notificationData){
+        const getByIdRequest: GetByIdRequest = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            id: notificationData.action.additionalInfo.group.id,
+            userId: notificationData.userId,
+            options: {
+                includeMembers: true,
+                includeActivities: true,
+                groupActivities: true
+            }
+        };
+        try {
+        const groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
+        const activity = groupDetails.activitiesGrouped.find((g) => g.title === notificationData.action.additionalInfo.activity.type)
+                         .items.find((a) => a.id === notificationData.action.additionalInfo.activity.id).activityInfo
+        this.navService.navigateToDetailPage(activity, {
+        content: activity,
+        activityData: {
+            group: groupDetails,
+            isGroupCreatorOrAdmin: notificationData.action.additionalInfo.groupRole == 'admin',
+            activity
+        },
+        corRelation: undefined,
+        });
+        } catch (e) { 
+            console.log(e);
+        }
     }
 
 }
