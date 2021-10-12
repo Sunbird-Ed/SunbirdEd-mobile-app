@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AttachmentService, statuses, ToastService, UtilsService } from '@app/app/manage-learn/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 
 @Component({
@@ -18,7 +18,8 @@ export class CreateTaskFormComponent implements OnInit {
     private utils: UtilsService,
     private attachmentService: AttachmentService,
     private toast: ToastService,
-    private popupService: GenericPopUpService
+    private popupService: GenericPopUpService,
+    public platform: Platform
   ) { }
 
   ngOnInit() {

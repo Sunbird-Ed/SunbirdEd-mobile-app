@@ -16,9 +16,11 @@ export class SplashScreenService {
 
     async handleSunbirdSplashScreenActions(): Promise<undefined> {
         const stringifiedActions = await new Promise<string>((resolve) => {
-            splashscreen.getActions((actionsTobeDone) => {
-                resolve(actionsTobeDone);
-            });
+            if(splashscreen){
+                splashscreen.getActions((actionsTobeDone) => {
+                    resolve(actionsTobeDone);
+                });
+            }
         });
 
         const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
@@ -43,9 +45,10 @@ export class SplashScreenService {
                 }
             }
         }
-
-        splashscreen.markImportDone();
-        splashscreen.hide();
+        if(splashscreen){
+            splashscreen.markImportDone();
+            splashscreen.hide();
+        }
     }
 
 }

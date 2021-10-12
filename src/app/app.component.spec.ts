@@ -115,7 +115,8 @@ describe('AppComponent', () => {
         resume: pauseData,
         backButton: {
             subscribeWithPriority: jest.fn()
-        } as Partial<BackButtonEmitter> as BackButtonEmitter
+        } as Partial<BackButtonEmitter> as BackButtonEmitter,
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockPreferences: Partial<SharedPreferences> = {
         addListener: jest.fn(() => { })
@@ -126,7 +127,8 @@ describe('AppComponent', () => {
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
-        styleBlackTranslucent: jest.fn()
+        styleBlackTranslucent: jest.fn(),
+        styleDefault: jest.fn()
     };
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
         getSystemSettings: jest.fn(() => of({}))

@@ -12,6 +12,7 @@ import {
 import { AppGlobalService } from '../app-global-service.service';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
+import { Platform } from '@ionic/angular';
 
 describe('ContentShareHandlerService', () => {
 
@@ -29,13 +30,16 @@ describe('ContentShareHandlerService', () => {
         generateInteractTelemetry: jest.fn()
     };
     const mockPermissionService: Partial<AndroidPermissionsService> = {};
-
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     beforeAll(() => {
         storagePermissionHandlerService = new StoragePermissionHandlerService(
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppVersion as AppVersion,
             mockPermissionService as AndroidPermissionsService,
+            mockPlatform as Platform,
         );
     });
 
