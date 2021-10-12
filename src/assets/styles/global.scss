@@ -14,7 +14,7 @@ body {
   font-family: $font-stack-en;
 }
 
-.select-text.select-placeholder, .alert-message.sc-ion-alert-md, .alert-input-group.sc-ion-alert-md {
+.remaining-length,:not(.normalize) .multi-select-container .list-border .placeholder,.select-text.select-placeholder, .alert-message.sc-ion-alert-md, .alert-input-group.sc-ion-alert-md, .sb--card--course .sb--card__meta1,.settings-item-style {
   color: #555555;
 }
 .sc-ion-label-ios-s>p {

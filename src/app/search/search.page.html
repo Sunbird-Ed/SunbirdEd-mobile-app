@@ -19,16 +19,16 @@
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
           [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
         </ion-input>
-        <button (click)="handleSearch()" *ngIf="!filterIcon || isFromGroupFlow">
+        <button (click)="handleSearch()" aria-label="search" *ngIf="!filterIcon || isFromGroupFlow">
           <img src="assets/imgs/search.svg" alt="search">
         </button>
-        <button (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
-          <img src="assets/imgs/ic_action_close.svg" alt="search">
+        <button (click)="handleCancel()" aria-label="clear search" *ngIf="filterIcon && searchKeywords">
+          <img src="assets/imgs/ic_action_close.svg" alt="clear search">
         </button>
       </div>
       <div class="filter-btn" *ngIf="filterIcon">
-        <button (click)="showFilter()">
-          <img src="assets/imgs/filter.svg" alt="search">
+        <button (click)="showFilter()" aria-label="search filter">
+          <img src="assets/imgs/filter.svg" alt="search filter">
         </button>
       </div>
     </div>

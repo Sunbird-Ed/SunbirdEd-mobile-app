@@ -23,7 +23,7 @@
             <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
             <span class="profile-share-icon" (click)="shareUsername()">
-                <ion-icon role="button" name="share-social" class="share-icon"></ion-icon>
+                <ion-icon role="button" aria-label="Share profile" name="share-social" class="share-icon"></ion-icon>
             </span>
         </p>
         <div class="school-recent" *ngIf="organisationName">
@@ -42,12 +42,12 @@
             <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
                 class="txt-capitalize">
                 + {{roles?.length - 2}} {{'MORE' | translate}}
-                <ion-icon class="ML10" name="arrow-down"></ion-icon>
+                <ion-icon role="button" class="ML10" name="arrow-down" aria-label="Show more items"></ion-icon>
             </ion-button>
             <ion-button fill="clear" *ngIf="rolesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessItems()"
                 class="txt-capitalize">
                 {{'SHOW_LESS' | translate }}
-                <ion-icon class="ML10" name="arrow-up"></ion-icon>
+                <ion-icon class="ML10" name="arrow-up" aria-label="show less items"></ion-icon>
             </ion-button>
         </div>
     </div>
@@ -99,7 +99,7 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <ion-button shape="round" (click)="onEditProfileClicked()"
+            <ion-button shape="round" aria-label="Edit Role, Block, District, State"  (click)="onEditProfileClicked()"
                 class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
@@ -124,7 +124,7 @@
             <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
         </div>
         <div class="container">
-            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
+            <ion-button shape="round" aria-label="Edit Board, Medium, Classes, subjects" (click)="navigateToCategoriesEditPage()" class="custom-round">
                 {{'EDIT' | translate }}
             </ion-button>
         </div>
@@ -217,12 +217,12 @@
             <ion-button shape="round" *ngIf="badgesLimit < profile?.badgeAssertions?.length" (click)="showMoreBadges()"
                 class="txt-capitalize custom-round">
                 + {{profile?.badgeAssertions?.length - 2}} {{'MORE' | translate}}
-                <ion-icon class="ML10" name="arrow-down"></ion-icon>
+                <ion-icon role="button" class="ML10" name="arrow-down" aria-label="Show more badges"></ion-icon>
             </ion-button>
             <ion-button shape="round" *ngIf="badgesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessBadges()"
                 class="txt-capitalize custom-round">
                 {{'SHOW_LESS' | translate }}
-                <ion-icon class="ML10" name="arrow-up"></ion-icon>
+                <ion-icon class="ML10" role="button" name="arrow-up" aria-label="Show Less badges"></ion-icon>
             </ion-button>
         </div>
     </div>
@@ -230,7 +230,7 @@
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
-                <ion-icon role="button" name="refresh-circle" class="refresh-icon"
+                <ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
                     (click)="getEnrolledCourses(true, true)"></ion-icon>
             </div>
             <div class="content">
@@ -263,13 +263,13 @@
                         *ngIf="myLearningLimit < mappedTrainingCertificates?.length"
                         (click)="showMoreTrainings('myLearning')">
                         + {{mappedTrainingCertificates?.length - myLearningLimit}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" name="arrow-down"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-down" aria-label="show more trainings"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="myLearningLimit >= mappedTrainingCertificates?.length"
                         (click)="showLessTrainings('myLearning')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" name="arrow-up"></ion-icon>
+                        <ion-icon role="button" class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
                     </ion-button>
                 </div>
             </div>
@@ -303,13 +303,13 @@
                         *ngIf="learnerPassbookLimit < learnerPassbook?.length"
                         (click)="showMoreTrainings('learnerPassbook')">
                         + {{learnerPassbookCount - learnerPassbookLimit}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+                        <ion-icon class="ML10" role="button" name="arrow-down" aria-label="more"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="learnerPassbookLimit >= learnerPassbook?.length"
                         (click)="showLessTrainings('learnerPassbook')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" name="arrow-up"></ion-icon>
+                        <ion-icon class="ML10" role="button" name="arrow-up" aria-label="show less trainings"></ion-icon>
                     </ion-button>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <ion-toolbar>
   <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
     <ion-button class="skip-icon">
-      <ion-icon slot="end" name="play-skip-forward"></ion-icon>
+      <ion-icon slot="end" role="button" aria-label="skip" name="play-skip-forward"></ion-icon>
     </ion-button>
     <ion-label class="skip-button"> {{'SKIP' | translate}}
     </ion-label>

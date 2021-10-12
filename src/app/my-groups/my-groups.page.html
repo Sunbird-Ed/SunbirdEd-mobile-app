@@ -1,15 +1,15 @@
 <ion-content>
   <div class="my-cr-bg">
-    <h4 class="my-cr-title">
+    <div class="my-cr-title">
       {{'MY_GROUPS' | translate}}
-      <img *ngIf="!isGuestUser" tabindex="0" role="button" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="{{'MY_GROUPS' | translate}}">
-    </h4>
+      <img *ngIf="!isGuestUser" tabindex="0" role="button" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="Create group">
+    </div>
 
     <div *ngIf="isGuestUser" class="my-cr-card">
       <div></div>
       <div>
         <div class="my-cr-card-img">
-          <img src="assets/imgs/ic_my_groups.svg" alt="">
+          <img src="assets/imgs/ic_my_groups.svg" alt="My groups">
         </div>
         <p class="my-cr-subtitle">{{'LOGIN_TO_CREATE_GROUP_DESCRIPTION' | translate}}</p>
       </div>
@@ -22,13 +22,13 @@
       <div></div>
       <div>
         <div class="my-cr-card-img">
-          <img src="assets/imgs/ic_my_groups.svg" alt="my-group">
+          <img src="assets/imgs/ic_my_groups.svg" alt="My groups">
         </div>
         <p class="my-cr-subtitle">{{'CREATE_GROUP_DESCRIPTION' | translate}}</p>
       </div>
       <div class="my-cr-btn">
         <button class="sb-btn-large" (click)="createClassroom()">
-          <img src="assets/imgs/ic_group_add_white.svg" alt="">
+          <img src="assets/imgs/ic_group_add_white.svg" role="button" alt="Create Group">
           {{'CREATE_GROUP' | translate}}
         </button>
       </div>
