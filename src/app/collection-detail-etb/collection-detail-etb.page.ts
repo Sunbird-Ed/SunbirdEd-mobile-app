@@ -355,8 +355,9 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
-    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
-      share());
+      this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+        share());
+    
   }
 
   ionViewWillEnter() {
@@ -630,10 +631,12 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams: ContentImport[] = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
+   
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList ? this.corRelationList : [],
         rollUp: this.rollUpMap[value]

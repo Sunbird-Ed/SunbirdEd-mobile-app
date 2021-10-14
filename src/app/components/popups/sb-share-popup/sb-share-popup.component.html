@@ -1,7 +1,7 @@
 <ng-container *ngIf="!shareFromPlayer">
 <ion-header class="sb-popover-header">
   <ion-toolbar class="sb-popover-toolbar">
-    <ion-title class="sb-popover-title">{{'SHARE' | translate}}
+    <ion-title class="sb-popover-title" role="heading" aria-level="1">{{'SHARE' | translate}}
       <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
     </ion-title>
   </ion-toolbar>
@@ -27,7 +27,7 @@
         {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
       </p>
 
-      <ion-item>
+      <ion-item *ngIf="!platform.is('ios')">
         <ion-label>{{shareOptions.save.name | translate}}</ion-label>
         <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
         </ion-radio>
@@ -82,7 +82,7 @@
           {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
         </p>
       </div>
-      <ion-item lines="none">
+      <ion-item *ngIf="!platform.is('ios')">
         <ion-label>{{shareOptions.save.name | translate}}</ion-label>
         <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
         </ion-radio>

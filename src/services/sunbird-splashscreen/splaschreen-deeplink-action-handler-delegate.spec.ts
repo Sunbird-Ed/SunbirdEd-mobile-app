@@ -34,7 +34,7 @@ import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {jest} from '@jest/globals';
 import {LoginNavigationHandlerService} from '@app/services';
-
+import { Platform } from '@ionic/angular';
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     let splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate;
@@ -55,6 +55,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     const mockEvents: Partial<Events> = {
         publish: jest.fn(),
         subscribe: jest.fn()
+    };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockRouter: Partial<Router> = {};
     const mockAppVersion: Partial<AppVersion> = {};
@@ -98,7 +101,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockNavigationService as NavigationService,
             mockContentPlayerHandler as ContentPlayerHandler,
             mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
-            mockUpdateProfileService as UpdateProfileService
+            mockUpdateProfileService as UpdateProfileService,
+            mockPlatform as Platform,
+
         );
     });
 

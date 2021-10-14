@@ -7,6 +7,7 @@ import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } f
 import { FieldConfig, FieldConfigOptionsBuilder } from 'common-form-elements';
 import { concat, defer, iif, of } from 'rxjs';
 import { distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { LocationHandler } from '../location-handler';
 
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
@@ -15,6 +16,7 @@ export class FormLocationFactory {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private locationHandler: LocationHandler
   ) { }
   buildStateListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
     return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
@@ -84,7 +86,7 @@ export class FormLocationFactory {
             notifyLoaded();
             const list = locationList.map((s) => ({ label: s.name, value: s }));
             if (config.default && initial && !formControl.value) {
-              const option = list.find((o) => o.value.id === config.default.id);
+              const option = list.find((o) => o.value.id === (config.code === 'school' ? config.default.code : config.default.id));
               formControl.patchValue(option ? option.value : null);
               formControl.markAsPristine();
               config.default['code'] = option ? option.value['code'] : config.default['code'];
@@ -108,7 +110,7 @@ export class FormLocationFactory {
     if (this.userLocationCache[serialized]) {
       return this.userLocationCache[serialized];
     }
-    return this.profileService.searchLocation(request).toPromise()
+    return this.locationHandler.getLocationList(request)
       .then((response) => {
         this.userLocationCache[serialized] = response;
         return response;

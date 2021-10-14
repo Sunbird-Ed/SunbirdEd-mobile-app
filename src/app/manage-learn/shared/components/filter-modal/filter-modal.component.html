@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header  [ngClass]="{'container': platform.is('ios')}" >
   <app-search-header (onSearch)="search($event)">
     <ion-back-button></ion-back-button>
   </app-search-header>
