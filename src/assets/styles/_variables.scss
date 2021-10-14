@@ -18,7 +18,7 @@ $colors: (
   light_black:     #333333a1,
   light_black_51:  #515151,
 
-  dark_gray:       #979797,
+  dark_gray:       #4D4D4D,
   medium_gray:     #CCCCCC,
   light_gray:      #ECEFF0,
   light_silver:    #D8D8D8,
@@ -75,7 +75,7 @@ $colors: (
   red:             #D50000,
   light_red:       #FA8F9C,
   bright_red :     #FF6979,
-  bright_red_e7:   #e76026,
+  bright_red_e7:   #81310E,
   pale_red:        #FBE7E0,
   vivid_red:       #ff0000,
   // danger_red: #f1453d,
@@ -188,15 +188,15 @@ $font-stack-ur:
 /* gray colors */
 $gray-0:       #f3f3f3; // place holder active bg
 $gray-100:     #cccccc; // disable btn bg, icon color
-$gray-200:     #979797; // disable text, place holder text
-$gray-300:     #999999; // sub heading 2
+$gray-200:     #4D4D4D; // disable text, place holder text
+$gray-300:     #555; // sub heading 2
 $gray-400:     #666666; // sub heading
 $gray-800:     #333333; // text color
 // Base Colors
 $blue:    #024f9d;
 $green:   #008840;
 $orange:  #e55a28;
-$red:     #ff4558;
+$red:     #AD0011;
 $white:   #ffffff;
 $indigo:  #6610f2;
 $purple:  #6f42c1;
@@ -304,7 +304,7 @@ $text-gray: rgb(180, 171, 171);
 $signup-btn-bg-not-active-color: #9b9b9b;
 $signup-thankyou-text-color: #4a4a4a;
 $signup-btn-bg-active-color: #2ca58d;
-$form-input-border-color: #979797;
+$form-input-border-color: #4D4D4D;
 $form-input-border-active-color: #4a90e2;
 $menuitem-color: #212121;
 $primary-border: 0.5px solid rgba(216, 216, 216, 0.5);
