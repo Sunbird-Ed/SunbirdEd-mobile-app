@@ -60,3 +60,4 @@ if [ -n "$angularConfiguration" ]; then
 else
   npm run ionic-build --angular-configuration=production
 fi
+
