@@ -26,10 +26,10 @@
                 </div>
                 <div class="cr-input-primary" lines="none">
                     <span *ngIf="!isSSOUser">
-                        <ion-checkbox class="cr-terms-checkbox" aria-label="{{'AGREE_TO_SHARE_PROFILE_DETAILS' | categoryKeyTranslate: course}}" (ionChange)="changeEvent($event)"></ion-checkbox>
+                        <ion-checkbox class="cr-terms-checkbox" attr.aria-label="{{'AGREE_TO_SHARE_PROFILE_DETAILS' | categoryKeyTranslate: course}}" (ionChange)="changeEvent($event)"></ion-checkbox>
                     </span>
                     <span *ngIf="isSSOUser">
-                        <ion-checkbox class="cr-terms-checkbox" aria-label="{{'SELF_DECLARE_TEACHER_TNC' | translate: {'%appName': appName} }}" (ionChange)="changeEvent($event)"></ion-checkbox>
+                        <ion-checkbox class="cr-terms-checkbox" attr.aria-label="{{'SELF_DECLARE_TEACHER_TNC' | translate: {'%appName': appName} }}" (ionChange)="changeEvent($event)"></ion-checkbox>
                     </span>
                     <span>
                         <p class="cr-terms-checkbox-label" *ngIf="!isSSOUser">
