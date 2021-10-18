@@ -169,7 +169,8 @@ export class SignInPage implements OnInit {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res as any);
             await this.preferences.putBoolean(PreferenceKey.IS_APPLE_LOGIN, true).toPromise();
-            await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation).then(() => {
+            await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation,
+                 InteractSubtype.APPLE).then(() => {
                 this.navigateBack(this.skipNavigation);
             }).catch(err => {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');

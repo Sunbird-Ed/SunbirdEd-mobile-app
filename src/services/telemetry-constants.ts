@@ -551,6 +551,7 @@ export enum InteractSubtype {
     COURSE_TILE_CLICKED = 'course-tile-clicked',
     KEYCLOAK = 'keycloak',
     GOOGLE = 'google',
+    APPLE = 'apple',
     STATE = 'download-clicked',
 }
 
