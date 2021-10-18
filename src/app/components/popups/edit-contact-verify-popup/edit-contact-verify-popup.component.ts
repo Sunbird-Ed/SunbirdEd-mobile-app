@@ -56,13 +56,15 @@ export class EditContactVerifyPopupComponent {
         req = {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_PHONE,
-          otp: this.otp
+          otp: this.otp,
+          userId: this.userId
         };
       } else {
         req = {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_EMAIL,
-          otp: this.otp
+          otp: this.otp,
+          userId: this.userId
         };
       }
       this.profileService.verifyOTP(req).toPromise()
