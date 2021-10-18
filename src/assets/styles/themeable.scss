@@ -102,6 +102,7 @@ html[data-theme="JOYFUL"]{
 
   ion-radio {
     --color-checked: var(--app-primary) !important;
+    --color: var(--app-gray) !important;
   }
 
   ion-card, button{

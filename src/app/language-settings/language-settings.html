@@ -1,14 +1,14 @@
 <ion-content [ngClass]="{ 'ui-container': !platform.is('ios') }">
   <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
-    <div *ngIf="!isFromSettings" class="app-title ion-text-center" role="heading" aria-level="1">{{'APP_TITLE' | translate:{'%s': appName } }}</div>
-    <div class="font-size-17" role="heading" aria-level="2" class="ion-text-center ion-padding ion-text-wrap" style="padding: 0">
+    <div *ngIf="!isFromSettings" tabindex="0" class="app-title ion-text-center" role="heading" aria-level="1">{{'APP_TITLE' | translate:{'%s': appName } }}</div>
+    <div class="font-size-17" role="heading" tabindex="0" aria-level="2" class="ion-text-center ion-padding ion-text-wrap" style="padding: 0">
       <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>
     </div>
 
     <div class="language-container">
-      <div class="language-card" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
-        <label class="language-selection" role="button" [for]="'language-selection' + lang.code">
+      <div class="language-card" tabindex="0" role="button" attr.aria-label="{{lang?.label | translate}}" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
+        <label class="language-selection" [for]="'language-selection' + lang.code">
           <span class="label-text">
             {{lang?.label | translate}}
           </span>
