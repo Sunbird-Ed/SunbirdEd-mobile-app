@@ -296,6 +296,8 @@ export enum InteractType {
     DOWNLOAD_CLICKED = 'download-clicked',
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
     SELECT_BANNER = 'select-banner',
+    LOGIN_INITIATE = 'login-initiate',
+    LOGIN_SUCCESS = 'login-success'
 }
 
 export enum InteractSubtype {
@@ -541,12 +543,15 @@ export enum InteractSubtype {
     OPTED_OUT = 'opted-out',
     GROUP_KEBAB_MENU_CLICKED = 'group-kebab-menu-clicked',
     FORUM_ICON_CLICKED = 'forum-icon-clicked',
-    OBSERVATION_TILE_CLICKED ='observation-tile-clicked',
-    PROGRAM_TILE_CLICKED ='program-tile-clicked',
-    PROJECT_TILE_CLICKED ='project-tile-clicked',
-    SURVEY_TILE_CLICKED ='survey-tile-clicked',
-    REPORTS_TILE_CLICKED ='reports-tile-clicked',
-    COURSE_TILE_CLICKED ='course-tile-clicked'
+    OBSERVATION_TILE_CLICKED = 'observation-tile-clicked',
+    PROGRAM_TILE_CLICKED = 'program-tile-clicked',
+    PROJECT_TILE_CLICKED = 'project-tile-clicked',
+    SURVEY_TILE_CLICKED = 'survey-tile-clicked',
+    REPORTS_TILE_CLICKED = 'reports-tile-clicked',
+    COURSE_TILE_CLICKED = 'course-tile-clicked',
+    KEYCLOAK = 'keycloak',
+    GOOGLE = 'google',
+    STATE = 'download-clicked',
 }
 
 export enum ID {
@@ -610,7 +615,7 @@ export enum ID {
     SELECT_DEACTIVATE = 'select-deactivate',
     SELECT_DELETE = 'select-delete',
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
-    DOWNLOAD_CLICKED = 'download-clicked',
+    DOWNLOAD_CLICKED = 'download-clicked'
 }
 
 export enum ActionButtonType {
