@@ -11,7 +11,7 @@
         <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
+    <ion-title class="color f16" role="heading" aria-level="1" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group pr-12" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">

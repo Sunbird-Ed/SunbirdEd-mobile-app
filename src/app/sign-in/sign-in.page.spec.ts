@@ -130,8 +130,8 @@ describe('SignInPage', () => {
             signInPage.loginWithStateSystem().then(() => {
                 // assert
                 expect(mockLoginNavigationHandlerService.generateLoginInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.LOGIN_INITIATE,
+                    InteractType.LOGIN_INITIATE,
+                    InteractSubtype.STATE,
                     ''
                 );
                 expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
@@ -176,8 +176,8 @@ describe('SignInPage', () => {
             signInPage.signInWithGoogle().then(() => {
                 // assert
                 expect(mockLoginNavigationHandlerService.generateLoginInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.LOGIN_INITIATE,
+                    InteractType.LOGIN_INITIATE,
+                    InteractSubtype.GOOGLE,
                     ''
                 );
                 expect(mockSystemSettingService.getSystemSettings).toHaveBeenCalledWith({id: SystemSettingsIds.GOOGLE_CLIENT_ID});
