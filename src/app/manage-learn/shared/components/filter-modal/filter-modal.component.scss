@@ -4,3 +4,6 @@
   text-transform: capitalize;
   font-size: 22px;
 }
+.container {
+  margin-top: env(safe-area-inset-top);
+}

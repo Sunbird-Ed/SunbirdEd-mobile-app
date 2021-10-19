@@ -1971,10 +1971,17 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
             mockCommonUtilService.showToast = jest.fn();
+            mockFileSizePipe.transform = jest.fn(() => '');
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+            } as any)));
             // act
             contentDetailsPage.openConfirmPopUp();
             setTimeout(() => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(mockFileSizePipe.transform).toHaveBeenCalled();
+                expect(mockPopoverController.create).toHaveBeenCalled();
                 done();
             }, 0);
         });

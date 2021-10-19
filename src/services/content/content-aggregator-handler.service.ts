@@ -108,10 +108,10 @@ export class ContentAggregatorHandler {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.type === 'TRACKABLE_COLLECTIONS' &&
+            } else if ((displaySection.dataSrc.type === 'TRACKABLE_COLLECTIONS' || displaySection.dataSrc.type === 'CONTENTS') &&
             displaySection.data.sections.length && displaySection.data.sections[0].contents) {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
-                    value['cardImg'] = value['courseLogoUrl'] || (value.content && value.content['appIcon']) ||
+                    value['cardImg'] = value['courseLogoUrl'] || (value.content ? value.content['appIcon'] : value['appIcon']) ||
                     'assets/imgs/ic_launcher.png';
                     value = value.content;
                 });
