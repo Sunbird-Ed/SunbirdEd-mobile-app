@@ -95,6 +95,7 @@ export class SegmentationTagService {
                 .subscribe(cmdList => {
                     if (cmdList) {
                         this.exeCommands = JSON.parse(cmdList);
+                        
                     }
                     this.getSegmentCommand();
                 });
@@ -107,7 +108,7 @@ export class SegmentationTagService {
         this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
         .then(cmdList => {
             if (cmdList && cmdList.length) {
-                this.comdList = cmdList;
+                this.comdList = cmdList.filter(v => !v.targetedClient);
                 this.evalCriteria();
             }
         });
