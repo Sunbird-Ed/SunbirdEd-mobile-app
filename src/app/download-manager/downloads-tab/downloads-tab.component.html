@@ -7,7 +7,7 @@
   <div class="p-4 flex-50" (click)="showSortOptions($event)">
     <div class="pull-right">
       <span class="selector">{{selectedFilter | translate}}</span>
-      <span><img src="./assets/imgs/sort.png" alt="sorting"></span>
+      <span><img aria-hidden="true" src="./assets/imgs/sort.png" alt="sorting"></span>
       <ion-icon name="arrow-down" class="selector"></ion-icon>
     </div>
   </div>
@@ -23,7 +23,7 @@
       </ion-label>
     </div>
     <div class="img-container">
-      <img alt="content-logo"
+      <img alt="content-logo" aria-hidden="true"
         [src]="commonUtilService.convertFileSrc(content?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg" />
     </div>
     <div class="sb-card-details">

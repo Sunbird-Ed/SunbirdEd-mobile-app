@@ -37,12 +37,9 @@ describe('SegmentationTagService ', () => {
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {
         onAction: jest.fn(() => of(undefined))
     };
-    const mockDebuggingService: Partial<DebuggingService> = {
-        enableDebugging: jest.fn(() => of(true))
-    };
-    const mockEvents: Partial<Events> = {
-        publish: jest.fn()
-    };
+
+    const mockEvent: Partial<Events> = {};
+    const mockDebuggingService: Partial<DebuggingService> = {};
 
     global.window.segmentation = {
         init: jest.fn(),
@@ -67,7 +64,7 @@ describe('SegmentationTagService ', () => {
             mockAppGlobalService as AppGlobalService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockEvents as Events
+            mockEvent as Events
         );
     });
 

@@ -724,7 +724,7 @@ export class FormAndFrameworkUtilService {
     async getConsentFormConfig() {
         const req: FormRequest = {
             type: 'dynamicForm',
-            subType: 'consentDeclaration_v2',
+            subType: 'consentDeclaration_v3',
             action: 'submit',
             component: 'app'
         };
@@ -749,6 +749,16 @@ export class FormAndFrameworkUtilService {
             component: 'app'
         };
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
+
+    async getSearchFilters(): Promise<any[]>{
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'search',
+            action: 'facet_filter',
+            component: 'app'
+        };
+        return await this.getFormFields(formRequest);
     }
 
     async getFormFields(formRequest: FormRequest, rootOrgId?: string) {

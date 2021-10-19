@@ -67,8 +67,20 @@ export class ConsentPiiPopupComponent {
                       (this.profile.serverProfile['maskedPhone'] ? this.profile.serverProfile['maskedPhone'] : '-');
                     }
                   } else {
-                    return this.profile.serverProfile[dataSrc.params.categoryCode] ?
-                    this.profile.serverProfile[dataSrc.params.categoryCode] : '-';
+                    if (ele.code === 'externalIds') {
+                        let externalId = '-';
+                        if (this.profile.serverProfile[dataSrc.params.categoryCode] ) {
+                            this.profile.serverProfile[dataSrc.params.categoryCode].forEach((externaleId) => {
+                              if (externaleId.provider === this.profile.serverProfile.channel) {
+                                externalId = externaleId.id;
+                              }
+                            });
+                          }
+                        return externalId;
+                    } else {
+                        return this.profile.serverProfile[dataSrc.params.categoryCode] ?
+                        this.profile.serverProfile[dataSrc.params.categoryCode] : '-';
+                    }
                   }
             case 'SERVER_PROFILE_LOCATIONS':
                 let location = '-';

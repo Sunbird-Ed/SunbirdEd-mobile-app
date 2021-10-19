@@ -1,7 +1,7 @@
 <ion-content class="main-container">
   <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}"
     subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESC' | translate }}"> </app-common-header>
-  <ion-searchbar debounce="2000" placeholder="Search your projects here" [(ngModel)]="searchText"
+  <ion-searchbar debounce="1000" placeholder="Search your projects here" [(ngModel)]="searchText"
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
   <div class="container">
