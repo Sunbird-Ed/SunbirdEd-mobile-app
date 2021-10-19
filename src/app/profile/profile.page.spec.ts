@@ -29,9 +29,9 @@ import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 import {of, throwError} from 'rxjs';
 import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
-import { NavigationService } from '../../services/navigation-handler.service';
-import { ProfileHandler } from '../../services/profile-handler';
-import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
+import {NavigationService} from '../../services/navigation-handler.service';
+import {ProfileHandler} from '../../services/profile-handler';
+import {SegmentationTagService} from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -378,11 +378,11 @@ describe('Profile.page', () => {
             mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() =>
                 Promise.resolve(['sample_1', 'sample_2']));
             mockContentService.searchContent = jest.fn(() => of({
-                    result:
-                        {
-                            contentDataList: ['sample_content_data_list']
-                        }
-                }
+                        result:
+                            {
+                                contentDataList: ['sample_content_data_list']
+                            }
+                    }
                 )
             );
             profilePage.userId = 'sample_user_id';
@@ -914,8 +914,8 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'openpdf').mockImplementation();
             mockCertificateDownloadPdfService.download = jest.fn(() => Promise.resolve());
             mockCourseService.certificateManager = {
-                    isCertificateCached: jest.fn(() => of(true))
-                }
+                isCertificateCached: jest.fn(() => of(true))
+            };
             // act
             profilePage.downloadTrainingCertificate(
                 {
@@ -1138,10 +1138,16 @@ describe('Profile.page', () => {
     describe('openEnrolledCourse test-suites', () => {
         it('should get contentDetails and navigate to course-details page', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => of('sample_content'));
             mockRouter.navigate = jest.fn();
+            profilePage.enrolledCourseList = [{
+                courseId: 'do_123',
+                batch: {batchId: 123}
+            }, {
+                courseId: 'do_345',
+                batch: {batchId: 456}
+            }];
             // act
-            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            profilePage.openEnrolledCourse({courseId: 'do_123', batch: {batchId: '123'}});
             setTimeout(() => {
                 // assert
                // expect(mockContentService.getContentDetails).toHaveBeenCalled();
@@ -1165,7 +1171,7 @@ describe('Profile.page', () => {
                 // assert
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalled();
                 done();
-            });
+            }, 0);
         });
     });
 
