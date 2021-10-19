@@ -315,7 +315,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: false,
-      description: (section && section.description) || ''
+      title: (section && section.landingDetails && section.landingDetails.title) || '',
+      description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
