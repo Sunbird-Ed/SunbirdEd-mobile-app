@@ -1,5 +1,5 @@
 <ion-content>
-  <div class="ad-container">
+  <div class="ad-container" tabindex="0">
     <div class="ad-card-container">
       <ion-icon src="assets/imgs/dashboard-icon.svg" class="dashboard-icon" *ngIf="activityDetail && isTrackable" (click)="openDashboard()"></ion-icon>
       <sb-course-card *ngIf="isTrackable" [section]="null"
@@ -10,42 +10,42 @@
         (menuClick)="activityMenuClick($event, activity, i)">
       </sb-library-card>
     </div>
-    <div class="ad-member-container">
+    <div class="ad-member-container" tabindex="0">
       <div class="ad-note" *ngIf="!isTrackable">
         <span>{{'NOTE' | translate}} :</span>
         {{'PROGRESS_CANNOT_BE_TRACKED' | translate: {'collectionType': activity.type } }}
       </div>
-      <div class="font-14" *ngIf="showCourseDropdownSection">
-        <div class="activity-toc clearfix" (click)="openActivityToc()">
+      <div class="font-14" *ngIf="showCourseDropdownSection" tabindex="0">
+        <div class="activity-toc clearfix" (click)="openActivityToc()" tabindex="0">
           <span class="pull-left">{{selectedCourse?.name || activity?.name}}</span>
           <div class="activity-toc-change pull-right">{{'CHANGE' | translate}}</div>
         </div>
       </div>
-      <div class="gd-member-search">
+      <div class="gd-member-search" tabindex="0">
         <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
         <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
           placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
       </div>
-      <div class="ad-timestamp-container">
+      <div class="ad-timestamp-container" tabindex="0">
         <!-- <div class="ad-timestamp"
           [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
         </div> -->
-        <div *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
+        <div *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()" tabindex="0">
           <span class="ad-dw-csv">{{'DOWNLOAD_CSV' | translate}}</span>
-          <img src="assets/imgs/download-icon.svg" alt="">
+          <img src="assets/imgs/download-icon.svg" alt="download-scv">
         </div>
       </div>
      
 
-      <div class="ad-mebers-container">
+      <div class="ad-mebers-container" tabindex="0">
         <div *ngIf="isActivityLoading">
           <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
             <sb-member-card [isLoading]="true"
               [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
           </div>
         </div>
-        <div *ngIf="!isActivityLoading">
-          <div *ngFor="let member of filteredMemberList; let i = index">
+        <div *ngIf="!isActivityLoading" tabindex="0">
+          <div *ngFor="let member of filteredMemberList; let i = index" tabindex="0">
             <sb-member-card *ngIf="isTrackable" [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
               [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
               [title]="getMemberName(member)" [progressDisplay]="getMemberProgress(member)">
@@ -60,10 +60,10 @@
           *ngIf="(!isActivityLoading && !filteredMemberList) || (!isActivityLoading && filteredMemberList?.length <= 1)"
           class="text-center">
           <div class="ad-empty-result" *ngIf="!memberSearchQuery">
-            <img src="assets/imgs/no_member.svg" alt="">
+            <img src="assets/imgs/no_member.svg" alt="no-member">
           </div>
           <div class="ad-empty-result" *ngIf="memberSearchQuery && !filteredMemberList?.length">
-            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <img src="assets/imgs/empty_search_result.svg" alt="no-result">
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
         </div>
