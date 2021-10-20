@@ -17,6 +17,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { NotificationService } from '../../services/notification.service';
 import { Events } from '@app/util/events';
+import { EventTopics } from '../app.constant';
 
 @Component({
   selector: 'app-notification',
@@ -62,7 +63,7 @@ export class NotificationPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fetchNotificationList();
-    this.events.subscribe('notification:refresh', () => {
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
       this.fetchNotificationList();
     });
   }
@@ -146,7 +147,7 @@ export class NotificationPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.events.unsubscribe('notification:refresh');
+    this.events.unsubscribe(EventTopics.NOTIFICATION_REFRESH);
 }
 
 }
