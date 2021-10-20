@@ -32,6 +32,7 @@ import {
     AppleSignInErrorResponse,
     ASAuthorizationAppleIDRequest
 } from '@ionic-native/sign-in-with-apple/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
     selector: 'app-sign-in',
@@ -56,7 +57,8 @@ export class SignInPage implements OnInit {
         private loginNavigationHandlerService: LoginNavigationHandlerService,
         private googlePlusLogin: GooglePlus,
         private location: Location,
-        private signInWithApple: SignInWithApple
+        private signInWithApple: SignInWithApple,
+        private platform: Platform
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
