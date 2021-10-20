@@ -1497,5 +1497,8 @@
   "CHANGE_PREFERENCE": "Change Preference",
   "HI": "Hi",
   "ACTIVITY_DASHBOARD": "Activity dashboard",
-  "FRMELEMNTS_LBL_MY_REPORTS": "My reports"
+  "FRMELEMNTS_LBL_MY_REPORTS": "My reports",
+  "HOW_TO_EARN_CERTIFICATE": "How to earn a Certificate?",
+  "FRMELEMNTS_MSG_EARNMCERT" : "Certificates will be issued if you score above {percent}% in your assessments",
+  "FRMELEMNTS_MSG.EARNYOURCERT" : "Completion certificates will be issued upon 100% completion"
 }
