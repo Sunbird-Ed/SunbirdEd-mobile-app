@@ -58,7 +58,7 @@ export class SignInPage implements OnInit {
         private googlePlusLogin: GooglePlus,
         private location: Location,
         private signInWithApple: SignInWithApple,
-        private platform: Platform
+        public platform: Platform
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
