@@ -49,7 +49,7 @@ export class ShowCertificateComponent implements OnInit {
     private certificateSectionClicked(params) {
         const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
         this.telemetryGeneratorService.generateInteractTelemetry(
-            params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+            params === 'expanded' ? InteractType.CERTIFICATE_CARD_EXPANDED : InteractType.CERTIFICATE_CARD_COLLAPSED,
             '',
             undefined,
             this.pageId,
@@ -57,7 +57,7 @@ export class ShowCertificateComponent implements OnInit {
             undefined,
             this.objRollup,
             this.corRelationList,
-            ID.LICENSE_CARD_CLICKED
+            ID.CERTIFICATE_SECTION
         );
     }
 
