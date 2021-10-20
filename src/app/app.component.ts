@@ -82,6 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   eventSubscription: Subscription;
   isTimeAvailable = false;
   isOnBoardingCompleted: boolean;
+  public swipeGesture = this.platform.is('ios')? false : true;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -178,6 +179,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
       this.statusBar.styleBlackTranslucent();
+      if (this.platform.is('ios')) {
+        this.statusBar.styleDefault();
+        if (window['Keyboard']) {
+          window['Keyboard'].hideFormAccessoryBar(false);
+        }
+      }
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
       this.getCampaignParameter();
@@ -201,9 +208,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
-    })
-    cordova.plugins.notification.local.on("click", (notification) => {
-      var objects = notification.data;
+    });
+    cordova.plugins.notification.local.on('click', (notification) => {
       // My data is now available in objects.heading, objects.subheading and so on.
       this.segmentationTagService.localNotificationId = notification.id;
       this.segmentationTagService.handleLocalNotificationTap();
@@ -214,7 +220,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       const corRelationList: Array<CorrelationData> = [];
       this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
 
-      corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      corRelationList.push({
+        id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + ''
+        : '', type: CorReleationDataType.NOTIFICATION_ID
+      });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
@@ -226,6 +235,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
+    window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
+
   }
 
   checkAndroidWebViewVersion() {
@@ -522,6 +533,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         this.rootPageDisplayed = event.url.indexOf('tabs') !== -1;
+        if (this.platform.is('ios')) {
+          this.swipeGesture = !this.rootPageDisplayed;
+        }
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
@@ -533,7 +547,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          if (this.platform.is('ios')) {
+            this.headerService.showHeaderWithHomeButton();
+          } else {
+            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          }
         }
       } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
         this.headerService.sidebarEvent('back');
@@ -806,7 +824,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            if (this.platform.is('ios')) {
+              this.headerService.showHeaderWithHomeButton();
+            } else {
+              this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            }
         } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
           this.headerService.sidebarEvent($event);
         } else {

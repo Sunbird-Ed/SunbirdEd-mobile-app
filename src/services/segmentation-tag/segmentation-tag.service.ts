@@ -23,6 +23,7 @@ export class TagPrefixConstants {
     static readonly USER_LANG = 'USERLANG_';
     static readonly ALL = 'ALL_';
     static readonly USER_ROLE = 'USERROLE_';
+    static readonly APP_VER = 'APPVERSION_';
 }
 
 export class CommandFunctions {

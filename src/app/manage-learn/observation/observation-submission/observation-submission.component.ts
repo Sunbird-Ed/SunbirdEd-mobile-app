@@ -467,6 +467,7 @@ export class ObservationSubmissionComponent implements OnInit {
   async openActionMenu(event, submission, index) {
     submission.entityName = this.entityName;
     let popover = await this.popoverCtrl.create({
+      cssClass:'central-alert',
       component: SubmissionActionsComponent,
       componentProps: {
         submission: submission
@@ -505,6 +506,7 @@ export class ObservationSubmissionComponent implements OnInit {
     let alert = await this.alertCntrl.create({
       header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
       message: translateObject["FRMELEMNTS_MSG_DELETE_SUBMISSION"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],

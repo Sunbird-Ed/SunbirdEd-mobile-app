@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-hint',
@@ -8,7 +8,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class HintComponent {
   hint: any;
-  constructor(private modalCtrl: ModalController, public navParams: NavParams) {
+  constructor(private modalCtrl: ModalController, public navParams: NavParams, public platform: Platform) {
     this.hint = this.navParams.get('hint');
   }
 

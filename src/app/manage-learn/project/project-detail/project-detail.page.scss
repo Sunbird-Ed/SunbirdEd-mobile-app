@@ -131,3 +131,11 @@ ion-button, ion-fab-button {
 ion-card {
   background-color: map-get($colors, white);
 }
+
+.ios .size {
+  font-size: 16px !important;
+}
+
+.ios .adjust {
+  margin-left: 5px;
+}

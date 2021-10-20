@@ -60,7 +60,8 @@ export class Search {
         'primaryCategory',
         'publisher',
         'mimeType',
-        'audience'
+        'audience',
+        'additionalCategories'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -237,6 +238,7 @@ export class PreferenceKey {
     public static readonly IS_NEW_USER = 'is_new_user';
     public static readonly NAVIGATION_SOURCE = 'navigation_source';
     public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
+    public static readonly IS_APPLE_LOGIN = 'is_apple_login';
 }
 
 export enum SwitchableTabsConfig {

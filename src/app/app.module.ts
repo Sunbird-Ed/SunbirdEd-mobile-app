@@ -82,6 +82,7 @@ import {UpdateProfileService} from '@app/services/update-profile-service';
 import { SbSearchFilterModule } from 'common-form-elements';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
+import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -182,6 +183,10 @@ export const segmentationService = () => {
 
 export const debuggingService = () => {
   return SunbirdSdk.instance.debuggingService;
+};
+
+export const notificationServiceV2 = () => {
+  return SunbirdSdk.instance.notificationServiceV2;
 };
 
 export function sdkDriverFactory(): any {
@@ -287,7 +292,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DEBUGGING_SERVICE',
     useFactory: debuggingService
-  }];
+  },{
+    provide: 'NOTIFICATION_SERVICE_V2',
+    useFactory: notificationServiceV2
+  },];
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
@@ -526,7 +534,8 @@ declare const sbutility;
     PhotoViewer,
     StreamingMedia,
     { provide: QuestionCursor, useClass: QumlPlayerService },
-    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService }
+    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
+    TranslateJsonPipe
   ],
   bootstrap: [AppComponent],
   schemas: [

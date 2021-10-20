@@ -176,7 +176,7 @@ export class CreateProjectPage implements OnInit {
         text = data;
       });
     const alertPopup = await this.alertPopup.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -207,7 +207,7 @@ export class CreateProjectPage implements OnInit {
         text = data;
       });
     const deleteAlert = await this.alert.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'central-alert',
       // header: text['LABELS.DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type + ' ?',
       buttons: [
@@ -360,7 +360,7 @@ export class CreateProjectPage implements OnInit {
       texts = data;
     })
     this.createProjectAlert = await this.alert.create({
-      cssClass: 'background-theme-color',
+      cssClass: 'background-theme-color central-alert',
       header: texts[header],
       message: texts[msg],
       backdropDismiss: false,

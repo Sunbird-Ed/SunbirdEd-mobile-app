@@ -62,7 +62,9 @@ describe('collectionDetailEtbPage', () => {
         subscribe: jest.fn()
     };
     const mockPopoverController: Partial<PopoverController> = {};
-    const mockplatform: Partial<Platform> = {};
+    const mockplatform: Partial<Platform> = {
+        is: jest.fn(platform => platform !== 'ios')
+    };
 
     const mockappGlobalService: Partial<AppGlobalService> = {
         isUserLoggedIn: jest.fn(() => true),
@@ -203,6 +205,8 @@ describe('collectionDetailEtbPage', () => {
             showBurgerMenu: true,
             pageTitle: 'string',
             actionButtons: ['true'],
+            showKebabMenu: true,
+            kebabMenuOptions: []
         }));
         mockHeaderService.updatePageConfig = jest.fn();
         mockevents.publish = jest.fn();
