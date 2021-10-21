@@ -46,8 +46,14 @@ describe('ApplicationHeaderComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockChangeDetectionRef: Partial<ChangeDetectorRef> = {};
+    const nData = {
+        feeds: [
+            {name: 'name', status: 'unread'}
+        ]
+    } as any
     const mockNotification: Partial<NotificationService> = {
-        setupLocalNotification: jest.fn()
+        setupLocalNotification: jest.fn(),
+        fetchNotificationList: jest.fn(() => Promise.resolve(nData))
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockPlatform: Partial<Platform> = {};

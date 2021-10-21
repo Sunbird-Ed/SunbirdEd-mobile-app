@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
-import { ActionType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ActionType, EventTopics, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
@@ -90,7 +90,7 @@ export class NotificationService implements SbNotificationService {
         }
         try {
             await this.notificationServiceV2.notificationDelete(req).toPromise();
-            this.events.publish('notification:refresh');
+            this.events.publish(EventTopics.NOTIFICATION_REFRESH);
             return true;
         } catch (e) {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
@@ -110,7 +110,7 @@ export class NotificationService implements SbNotificationService {
         }
         try {
             await this.notificationServiceV2.notificationDelete(req).toPromise();
-            this.events.publish('notification:refresh');
+            this.events.publish(EventTopics.NOTIFICATION_REFRESH);
             return true;
         } catch (e) {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
@@ -311,8 +311,7 @@ export class NotificationService implements SbNotificationService {
         }
         this.notificationServiceV2.notificationUpdate(req).toPromise()
         .then((resp) => {
-            this.events.publish('notification:refresh');
-            console.log('resp', resp)
+            this.events.publish(EventTopics.NOTIFICATION_REFRESH);
         }).catch((err) => {
             console.log('err', err)
         });
