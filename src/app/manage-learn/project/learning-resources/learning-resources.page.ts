@@ -106,12 +106,19 @@ export class LearningResourcesPage {
     );
   }
   openBodh(resource) {
+    let id
+    if (resource.id) {
+      id = resource.id;
+    } else {
+      id = resource.link.split('/').pop()
+    }
+    
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
     }
     const req: ContentDetailRequest = {
-      contentId: resource.id,
+      contentId: id,
       attachFeedback: false,
       attachContentAccess: false,
       emitUpdateIfAny: false

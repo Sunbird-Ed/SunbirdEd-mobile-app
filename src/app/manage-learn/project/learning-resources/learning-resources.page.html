@@ -1,6 +1,6 @@
 <ion-content *ngIf="list">
   <app-item-list-card *ngFor="let resource of list.learningResources" [title]="resource?.name"
-    (cardSelect)="openBodh(resource?.id)">
+    (cardSelect)="openBodh(resource)">
     <div arrow class="d-flex flex-dc">
       <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
     </div>
