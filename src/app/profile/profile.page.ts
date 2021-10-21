@@ -41,7 +41,8 @@ import {
   FrameworkService,
   ProfileType,
   Batch,
-  GetLearnerCerificateRequest
+  GetLearnerCerificateRequest,
+  GenerateOtpRequest
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -731,7 +732,9 @@ export class ProfilePage implements OnInit {
       userId: this.profile.userId
     };
 
-    await this.showEditContactPopup(componentProps);
+    this.validateAndEditContact()
+    .then((_) => this.showEditContactPopup(componentProps))
+    .catch(err => console.log(err) );
   }
 
   async editEmail() {
@@ -745,7 +748,33 @@ export class ProfilePage implements OnInit {
       userId: this.profile.userId
     };
 
-    await this.showEditContactPopup(componentProps);
+    this.validateAndEditContact()
+    .then((_) => this.showEditContactPopup(componentProps))
+    .catch(err => console.log(err) );
+  }
+
+  private validateAndEditContact() {
+      return new Promise((resolve, reject) => {
+        const request: GenerateOtpRequest = {
+            key: this.profile.email || this.profile.phone || this.profile.recoveryEmail,
+            userId: this.profile.userId,
+            type: ''
+        };
+        if ((this.profile.email && !this.profile.phone) ||
+        (!this.profile.email && !this.profile.phone && this.profile.recoveryEmail)) {
+            request.type = ProfileConstants.CONTACT_TYPE_EMAIL;
+        } else if (this.profile.phone || this.profile.recoveryPhone) {
+            request.type = ProfileConstants.CONTACT_TYPE_PHONE;
+        }
+
+        this.profileService.generateOTP(request).toPromise()
+        .then(async (v) => {
+            const response = await this.callOTPPopover(request.type, request.key);
+            if (response && response.OTPSuccess) {
+                resolve(true);
+            }
+        });
+      });
   }
 
   private async showEditContactPopup(componentProps) {
@@ -792,6 +821,7 @@ export class ProfilePage implements OnInit {
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
+      return data;
     }
   }
 
@@ -905,28 +935,32 @@ export class ProfilePage implements OnInit {
       recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
       recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
     };
-    const popover = await this.popoverCtrl.create({
-      component: AccountRecoveryInfoComponent,
-      componentProps,
-      cssClass: 'popover-alert input-focus'
-    });
 
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
-      Environment.USER,
-      PageId.PROFILE
-    );
+    this.validateAndEditContact()
+    .then(async (_) => {
+        const popover = await this.popoverCtrl.create({
+          component: AccountRecoveryInfoComponent,
+          componentProps,
+          cssClass: 'popover-alert input-focus'
+        });
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+          Environment.USER,
+          PageId.PROFILE
+        );
 
-    await popover.present();
+        await popover.present();
 
-    const { data } = await popover.onDidDismiss();
-    if (data && data.isEdited) {
-      const req: UpdateServerProfileInfoRequest = {
-        userId: this.profile.userId
-      };
-      await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
-    }
+        const { data } = await popover.onDidDismiss();
+        if (data && data.isEdited) {
+          const req: UpdateServerProfileInfoRequest = {
+            userId: this.profile.userId
+          };
+          await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
+        }
+    })
+    .catch(err => console.log(err) );
   }
 
   async openEnrolledCourse(training) {

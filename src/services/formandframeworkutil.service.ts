@@ -724,7 +724,7 @@ export class FormAndFrameworkUtilService {
     async getConsentFormConfig() {
         const req: FormRequest = {
             type: 'dynamicForm',
-            subType: 'consentDeclaration_v2',
+            subType: 'consentDeclaration_v3',
             action: 'submit',
             component: 'app'
         };

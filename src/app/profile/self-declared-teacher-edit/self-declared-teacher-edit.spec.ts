@@ -1,33 +1,19 @@
-import { of, throwError } from 'rxjs';
-import { SelfDeclaredTeacherEditPage } from './self-declared-teacher-edit.page';
-import {
-    SharedPreferences,
-    ProfileService
-} from 'sunbird-sdk';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import {
-    AppHeaderService,
-    CommonUtilService,
-    FormAndFrameworkUtilService,
-    TelemetryGeneratorService
-} from '@app/services';
-import {
-    InteractSubtype,
-    PageId,
-    Environment,
-    ID,
-    InteractType,
-    ImpressionType
-} from '@app/services/telemetry-constants';
-import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { Location } from '@angular/common';
-import { PreferenceKey } from '../../app.constant';
-import { mockTenantPersonaInfoForm, mockSelfDeclarationForm } from '../../../services/formandframeworkutil.service.spec.data';
-import { FormConstants } from '../../form.constants';
-import { FieldConfigValidationType } from 'common-form-elements';
-import { ConsentService } from '../../../services/consent-service';
+import {of, throwError} from 'rxjs';
+import {SelfDeclaredTeacherEditPage} from './self-declared-teacher-edit.page';
+import {Consent, ProfileService, SharedPreferences, UpdateConsentResponse} from 'sunbird-sdk';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Platform, PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
+import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService} from '@app/services';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {FormValidationAsyncFactory} from '@app/services/form-validation-async-factory/form-validation-async-factory';
+import {Location} from '@angular/common';
+import {PreferenceKey} from '../../app.constant';
+import {mockSelfDeclarationForm, mockTenantPersonaInfoForm} from '../../../services/formandframeworkutil.service.spec.data';
+import {FormConstants} from '../../form.constants';
+import {FieldConfigValidationType} from 'common-form-elements';
+import {ConsentService} from '../../../services/consent-service';
+import {ConsentStatus} from '@project-sunbird/client-services/models';
 
 describe('SelfDeclaredTeacherEditPage', () => {
     let selfDeclaredTeacherEditPage: SelfDeclaredTeacherEditPage;
@@ -351,7 +337,23 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
-                        status: 'SUBMITTED'
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
+                        status: 'SUBMITTED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
                     }
                 ]
             };
@@ -390,6 +392,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
                         status: 'SUBMITTED',
                         info: {
                             'declared-email': 'consentuser1@yopmail.com',
@@ -424,6 +437,63 @@ describe('SelfDeclaredTeacherEditPage', () => {
 
         });
 
+        it('should invoke edit and isTenantChanged is true', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            selfDeclaredTeacherEditPage.isTenantChanged = true;
+            selfDeclaredTeacherEditPage['editType'] = 'edit';
+            selfDeclaredTeacherEditPage['profile'] = {
+                rootOrg: { rootOrgId: '0123456789' },
+                declarations: [
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
+                        status: 'SUBMITTED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    }
+                ]
+            };
+            selfDeclaredTeacherEditPage['declaredLatestFormValue'] = {
+                externalIds: '',
+                children: {
+                    externalIds: {
+                        'declared-phone': '123456789',
+                        'declared-email': 'consentuser1@yopmail.com',
+                        'declared-ext-id': 'test 124',
+                    }
+                }
+            };
+            selfDeclaredTeacherEditPage['tenantPersonaLatestFormValue'] = {
+                persona: 'teacher',
+                tenant: '01269934121990553633'
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.updateConsent = jest.fn(() => of());
+            // act
+            selfDeclaredTeacherEditPage.submit().then(() => {
+                // assert
+                expect(mockProfileService.updateServerProfileDeclarations).toHaveBeenCalled();
+                expect(mockProfileService.updateConsent).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+            });
+        });
+
 
         it('should invoke updateServerProfileDeclarationspp and show error toast in case of any error', (done) => {
             // arrange
@@ -439,6 +509,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
                         status: 'SUBMITTED',
                         info: {
                             'declared-email': 'consentuser1@yopmail.com',
@@ -652,6 +733,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
                         status: 'SUBMITTED',
                         info: {
                             'declared-email': 'consentuser1@yopmail.com',
@@ -722,6 +814,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
                         status: 'SUBMITTED',
                         info: {
                             'declared-email': 'consentuser1@yopmail.com',
@@ -786,6 +889,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         persona: 'teacher',
                         errorType: null,
                         orgId: '01269934121990553633',
+                        status: 'REVOKED',
+                        info: {
+                            'declared-email': 'consentuser1@yopmail.com',
+                            'declared-ext-id': 'test 124',
+                            'declared-phone': '123456789'
+                        }
+                    },
+                    {
+                        persona: 'teacher',
+                        errorType: null,
+                        orgId: '01269934121990553634',
                         status: 'SUBMITTED',
                         info: {
                             'declared-email': 'consentuser1@yopmail.com',
@@ -839,54 +953,21 @@ describe('SelfDeclaredTeacherEditPage', () => {
         });
     });
 
-    // describe('showAddedSuccessfullPopup', () => {
-    //     it('should open consent popup', (done) => {
-    //         mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-    //         mockPopOverController.create = jest.fn(() => (Promise.resolve({
-    //             present: jest.fn(() => Promise.resolve({})),
-    //             onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-    //           } as any)));
-    //         mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
-    //         mockConsentService.getConsent = jest.fn(() => Promise.resolve());
-    //         // act
-    //         selfDeclaredTeacherEditPage.showAddedSuccessfullPopup();
-    //         // assert
-    //         setTimeout(() => {
-    //             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-    //             expect(mockPopOverController.create).toHaveBeenCalled();
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1,
-    //                 'THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2,
-    //                 'FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO');
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3,
-    //                 'OK');
-    //             expect(mockConsentService.getConsent).toHaveBeenCalled();
-    //             done();
-    //         }, 0);
-    //     });
+    describe('updateConsent()', () => {
+        it('should check if tenantChanged is true then remove the previous orgId first then activate new orgId', () =>{
+            // arrange
+            const mockConsentResponse: UpdateConsentResponse = {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            };
+            mockProfileService.updateConsent = jest.fn(() => of(mockConsentResponse));
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
 
-    //     it('should not open consent popup', (done) => {
-    //         mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-    //         mockPopOverController.create = jest.fn(() => (Promise.resolve({
-    //             present: jest.fn(() => Promise.resolve({})),
-    //             onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
-    //           } as any)));
-    //         mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
-    //         // act
-    //         selfDeclaredTeacherEditPage.showAddedSuccessfullPopup();
-    //         // assert
-    //         setTimeout(() => {
-    //             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-    //             expect(mockPopOverController.create).toHaveBeenCalled();
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1,
-    //                 'THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2,
-    //                 'FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO');
-    //             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3,
-    //                 'OK');
-    //             done();
-    //         }, 0);
-    //     });
-    // });
-
+        });
+    });
 });

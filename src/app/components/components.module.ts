@@ -77,6 +77,7 @@ import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-pre
 
 import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
 import { ContentShareHandlerService } from '@app/services';
+import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -140,7 +141,8 @@ import { ContentShareHandlerService } from '@app/services';
     TocHeaderComponent,
     RelevantContentCardComponent,
     SbPreferencePopupComponent,
-    QrScannerIOSComponent
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
   imports: [
     CommonModule,
@@ -264,7 +266,8 @@ import { ContentShareHandlerService } from '@app/services';
     TocHeaderComponent,
     RelevantContentCardComponent,
     SbPreferencePopupComponent,
-    QrScannerIOSComponent
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService]
 })

@@ -1968,6 +1968,7 @@ describe('ContentDetailsPage', () => {
 
     describe('openConfirmPopUp', () => {
         it('should return content not downloaded for undefined downloadUrl', (done) => {
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
             mockCommonUtilService.showToast = jest.fn();
             mockFileSizePipe.transform = jest.fn(() => '');
@@ -1978,6 +1979,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.openConfirmPopUp();
             setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
                 expect(mockFileSizePipe.transform).toHaveBeenCalled();
                 expect(mockPopoverController.create).toHaveBeenCalled();
                 done();
