@@ -719,6 +719,7 @@ describe('PlayerPage', () => {
                 return Promise.resolve(playerPage.config);
             });
             playerPage.playerConfig = {};
+            mockContentService.getQuestionSetChildren = jest.fn();
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {

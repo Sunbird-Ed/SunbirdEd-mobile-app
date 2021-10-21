@@ -13,7 +13,6 @@ import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
-import { CsNotificationUpdateReq } from '@app/../../sunbird-client-services/tmp/services/notification/interface/cs-notification-service';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavigationService } from './navigation-handler.service';
 import { CommonUtilService } from './common-util.service';
@@ -306,7 +305,7 @@ export class NotificationService implements SbNotificationService {
     }
 
     updateNotification(notificationData) {
-        const req: CsNotificationUpdateReq = {
+        const req = {
             ids: [notificationData.id],
             userId: notificationData.userId
         }

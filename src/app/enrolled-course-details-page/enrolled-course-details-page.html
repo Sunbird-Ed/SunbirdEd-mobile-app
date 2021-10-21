@@ -333,7 +333,17 @@
 				</ion-card-content>
 			</ion-card>
 			<!--credits and license info-->
-			<div class="cd-license-card" *ngSwitchCase="'info'">
+			<div *ngIf="showCertificateDetails">
+				<div class="cd-license-card mb-8" *ngSwitchCase="'info'">
+					<app-show-certificate-component 
+												[certificateDetails]="certificateDetails"
+												[objRollup]="objRollup"
+												[corRelationList]="corRelationList"
+												[pageId]="pageId"></app-show-certificate-component>
+				</div>
+			</div>
+			
+			<div class="cd-license-card mb-8" *ngSwitchCase="'info'">
 				<app-license-card-component [content]="course"
 											[licenseDetails]="licenseDetails"
 											[appName]="appName"
@@ -341,6 +351,8 @@
 											[corRelationList]="corRelationList"
 											[pageId]="pageId"></app-license-card-component>
 			</div>
+			
+			
 			<div *ngSwitchCase="'modules'">
 				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy"
 					(tocCardClick)="onTocCardClick($event)" shadowColor="#d2eadd" progressColor="#008840">
