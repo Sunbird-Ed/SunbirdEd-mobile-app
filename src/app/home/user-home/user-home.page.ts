@@ -368,7 +368,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   navigateToDetailPage(event, sectionName) {
-    event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
     const values = {};
