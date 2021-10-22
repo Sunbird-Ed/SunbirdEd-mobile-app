@@ -53,7 +53,6 @@ export class ShowCertificateComponent implements OnInit {
 
     private certificateSectionClicked(params) {
         const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-        console.log('expanded' ? InteractType.CERTIFICATE_CARD_EXPANDED : InteractType.CERTIFICATE_CARD_COLLAPSED)
         this.telemetryGeneratorService.generateInteractTelemetry(
             params === 'expanded' ? InteractType.CERTIFICATE_CARD_EXPANDED : InteractType.CERTIFICATE_CARD_COLLAPSED,
             '',
