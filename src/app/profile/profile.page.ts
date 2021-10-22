@@ -750,11 +750,17 @@ export class ProfilePage implements OnInit {
 
     this.validateAndEditContact()
     .then((_) => this.showEditContactPopup(componentProps))
-    .catch(err => console.log(err) );
+    .catch(e => {
+      if (e && e.response && e.response.body && e.response.body.params && e.response.body.params.err &&
+        e.response.body.params.err === 'ERROR_RATE_LIMIT_EXCEEDED') {
+        this.commonUtilService.showToast('ERROR_OTP_LIMIT_EXCEEDED');
+      } else if (e.message !== 'CANCEL') {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      }
+    });
   }
 
-  private validateAndEditContact() {
-      return new Promise((resolve, reject) => {
+  private async validateAndEditContact(): Promise<boolean> {
         const request: GenerateOtpRequest = {
             key: this.profile.email || this.profile.phone || this.profile.recoveryEmail,
             userId: this.profile.userId,
@@ -767,14 +773,15 @@ export class ProfilePage implements OnInit {
             request.type = ProfileConstants.CONTACT_TYPE_PHONE;
         }
 
-        this.profileService.generateOTP(request).toPromise()
-        .then(async (v) => {
+        const resp = await this.profileService.generateOTP(request).toPromise();
+        if (resp) {
             const response = await this.callOTPPopover(request.type, request.key);
             if (response && response.OTPSuccess) {
-                resolve(true);
+                return Promise.resolve(true);
+            } else {
+                return Promise.reject(true);
             }
-        });
-      });
+        }
   }
 
   private async showEditContactPopup(componentProps) {
