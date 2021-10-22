@@ -1,0 +1,38 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
+
+.view-credits{
+  margin-left: 0;
+  span{
+    color: $blue;
+    ion-icon{
+      padding: 0 0 4px 8px;
+      vertical-align: middle;
+      font-size: 18px;
+      margin-right: 2%;
+      float: right;
+    }
+  }
+
+}
+.showCertificate{
+  p{
+    margin-bottom: 16px;
+  }
+  ion-card-title{
+    strong{
+      font-size: .75rem;
+    }
+  }
+}
+
+.label-margin-bottom {
+  margin-bottom: 3px !important;
+}
+
+.subtitle-color{
+  color: map-get($colors, granite_gray);
+}
+.font-12 {
+  font-size: 12px !important;
+}

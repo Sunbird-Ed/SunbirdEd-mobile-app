@@ -245,6 +245,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private batchRemaningTimingIntervalRef?: any;
   isMinor: boolean;
   activityData: ActivityData;
+  showCertificateDetails= false;
+  certificateDetails: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -830,6 +832,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             return;
           }
           this.batchDetails = data;
+          this.showCertificateDetails = this.batchDetails.cert_templates ? true : false;
+          this.certificateDetails = this.batchDetails.cert_templates ? this.batchDetails.cert_templates : '';
           if (this.batchRemaningTimingIntervalRef) {
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
