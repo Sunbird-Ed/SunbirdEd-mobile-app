@@ -32,7 +32,8 @@ export class NavigationService {
             }
         } else {
             // for backward compatibility, remove once not requried
-            if (content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
+            if (content.content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()
+                || content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
                 // Trackable
                 this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
