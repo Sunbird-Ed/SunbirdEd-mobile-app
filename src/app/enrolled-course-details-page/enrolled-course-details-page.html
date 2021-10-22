@@ -335,7 +335,7 @@
 			<!--credits and license info-->
 			<div *ngIf="showCertificateDetails">
 				<div class="cd-license-card mb-8" *ngSwitchCase="'info'">
-					<app-show-certificate-component 
+					<app-show-certificate-component [content]="course"
 												[certificateDetails]="certificateDetails"
 												[objRollup]="objRollup"
 												[corRelationList]="corRelationList"
