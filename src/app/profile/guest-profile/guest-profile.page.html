@@ -119,7 +119,7 @@
             <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
             <span role="button" attr.aria-label="edit {{'DISTRICT' | translate}}">
             <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'DISTRICT' | translate}}" name="create" color="primary" role="button"></ion-icon>
-          </div></span>
+          </span>
           <div *ngIf="!deviceLocation?.district" role="button" attr.aria-label="add {{'DISTRICT' | translate}}" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
@@ -141,5 +141,6 @@
     <div *ngIf="showSignInCard" class="signin-card-bg">
       <app-sign-in-card [source]="'profile'" (valueChange)="onLoginClick($event)"></app-sign-in-card>
     </div>
+  </div>
   </div>
 </ion-content>
