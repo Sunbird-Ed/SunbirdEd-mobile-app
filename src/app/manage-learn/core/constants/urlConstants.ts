@@ -37,7 +37,7 @@ export const urlConstants = {
     GENERIC_REPORTS: '/api/reports/mlreports/v1/fetch',
     PROJECT_TEMPLATE_DETAILS: '/api/project/mlprojects/v1/templates/details/',
     ALL_EVIDENCE: '/api/observations/mlsurvey/v1/listAllEvidences',
-    TEMPLATE_DETAILS:'/api/solutions/mlcore/v1/details/',
+    TEMPLATE_DETAILS:'/api/solutions/mlcore/v1/details/',//+SOL ID
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
       MAKE_SUBMISSION: '/api/surveySubmissions/mlsurvey/v1/update/',
@@ -45,9 +45,11 @@ export const urlConstants = {
       GET_ALL_ANSWERS: '/api/surveys/mlreports/v1/getAllResponsesOfQuestion/',
     },
     DEEPLINK: {
-      VERIFY_OBSERVATION_LINK: '/api/solutions/mlsurvey/v1/verifyLink/',
-      VERIFY_LINK: '/api/solutions/mlcore/v1/verifyLink/'
+      // VERIFY_OBSERVATION_LINK: '/api/solutions/mlsurvey/v1/verifyLink/',
+      VERIFY_LINK: '/api/solutions/mlcore/v1/verifyLink/', //LINK
     },
     PRESIGNED_URLS: '/api/cloud-services/mlcore/v1/files/preSignedUrls',
+    IMPORT_LIBRARY_PROJECT:'/api/userProjects/mlprojects/v1/importFromLibrary/' //tempID?isATargetedSolution=false
+
   },
 };

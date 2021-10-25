@@ -207,8 +207,21 @@ export class ProjectListingComponent {
         }
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe'; // Discovered by me will not added here once we get api we will integrate.
-        if (selectedFilter == 'assignedToMe') {
+
+        let selectedFilter 
+        switch (this.selectedFilterIndex) {
+            case 0:
+                selectedFilter = 'createdByMe'
+                break;
+             case 1:
+                selectedFilter = 'assignedToMe'
+                break;
+            case 2:
+                selectedFilter = 'discoveredByMe'
+            default:
+                break;
+        }
+        if (selectedFilter == 'assignedToMe' || selectedFilter == 'discoveredByMe') {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
