@@ -103,6 +103,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     this.assessmentService.post(config).subscribe((success) => {
       if (success.result) {
         success.result.isATargetedSolution = data.isATargetedSolution;
+        success.result.programId = data.programId;
         this.redirectObservation(success.result);
       }
     });
