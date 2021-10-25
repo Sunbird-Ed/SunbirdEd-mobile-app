@@ -19,7 +19,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   @ViewChild('sample',  {static: false}) nameInputRef: ElementRef;
   @ViewChild('pageTop',  {static: false}) pageTop: IonContent;
   private _appHeaderSubscription?: Subscription;
-
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -77,12 +76,12 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
-      this.isTargeted = params.isTargeted;
+      this.isTargeted = params.isTargeted == 'false' ? false : true;
+      if(!this.isTargeted){
+        this.showMessageForNONTargetUsers();
+        }
     });
-
-    if(!this.isTargeted){
-    this.showMessageForNONTargetUsers();
-    }
+   
 
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
@@ -155,6 +154,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
+  startAction(){
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {queryParams: {solutionId: this.extrasState.solution._id}, replaceUrl: true})
+  }
   ionViewDidLoad() {}
 
   async openQuestionMap() {

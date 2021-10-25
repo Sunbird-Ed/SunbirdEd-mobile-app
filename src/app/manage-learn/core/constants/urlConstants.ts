@@ -37,7 +37,7 @@ export const urlConstants = {
     GENERIC_REPORTS: '/api/reports/mlreports/v1/fetch',
     PROJECT_TEMPLATE_DETAILS: '/api/project/mlprojects/v1/templates/details/',
     ALL_EVIDENCE: '/api/observations/mlsurvey/v1/listAllEvidences',
-
+    TEMPLATE_DETAILS:'/api/solutions/mlcore/v1/details/',
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
       MAKE_SUBMISSION: '/api/surveySubmissions/mlsurvey/v1/update/',
@@ -46,6 +46,7 @@ export const urlConstants = {
     },
     DEEPLINK: {
       VERIFY_OBSERVATION_LINK: '/api/solutions/mlsurvey/v1/verifyLink/',
+      VERIFY_LINK: '/api/solutions/mlcore/v1/verifyLink/'
     },
     PRESIGNED_URLS: '/api/cloud-services/mlcore/v1/files/preSignedUrls',
   },

@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-deeplink-redirect',
@@ -31,7 +32,8 @@ export class DeeplinkRedirectComponent implements OnInit {
     private route: ActivatedRoute,
     private assessmentService: AssessmentApiService,
     private utils: UtilsService,
-    private http:HttpClient
+    private http:HttpClient,
+    private kendra : KendraApiService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -74,7 +76,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
 
-  redirectProject(){
+  redirectProject(data){
       console.log( this.data,"redirectProject");
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`,this.data.create_project_id], {
         queryParams: {
@@ -96,42 +98,50 @@ export class DeeplinkRedirectComponent implements OnInit {
         resp.assessment.evidences[0].sections.length > 1 ||
         (resp.solution.criteriaLevelReport && resp.solution.isRubricDriven)
     ) {
-        this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {state: resp});
+        this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {state: resp, replaceUrl: true});
     } else {
         this.router.navigate([RouterLinks.QUESTIONNAIRE], {
             queryParams: {
-                isTargeted: false
-            },
+                isTargeted: resp.isATargetedSolution,
+            }, replaceUrl: true,
                 state: resp
             });
         }
     }
 
     async verifyLink(link){
-        // TODO API call, once api ready;
-        // let payload = await this.utils.getProfileInfo();
-        // const config = {
-        //   url: urlConstants.API_URLS.DEEPLINK.VERIFY_OBSERVATION_LINK + link,
-        //   payload: payload,
-        // };
-        // this.assessmentService.post(config).subscribe(
-        //   (success) => {
-        // if (success.result) {
-        //   console.log(success);
-        //   let data = success.result;
-        // }
-        // })
-
-        // TODO based response type we have to navigate to project or observation
-        this.redirectProject();
-        // this.getTemplateDetails();
+        let payload = await this.utils.getProfileInfo();
+        const config = {
+          url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link,
+          payload:payload
+        };
+        this.assessmentService.post(config).subscribe(
+          (success) => {
+        if (success.result) {
+          let data = success.result;
+          if(success.result.type == 'improvementProject'){
+            this.redirectProject(success.result);
+          }else if(success.result.type == 'observation'){
+            this.getTemplateDetails(success.result);
+          }
+        }
+        })
   }
-  getTemplateDetails(){
-    // Once API ready then will rewrite this method
-    this.http.get('/assets/dummy/obsAssessmentDetails.json').subscribe((successData:any) =>{
-        console.log(successData,"successData");
-        this.redirectObservation(successData.result)
-    })
+  async getTemplateDetails(data){
+    let payload = await this.utils.getProfileInfo();
+        const config = {
+          url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
+          payload:payload
+        };
+        this.assessmentService.post(config).subscribe(
+          (success) => {
+        if (success.result) {
+          success.result.isATargetedSolution = data.isATargetedSolution;
+          this.redirectObservation(success.result);
+        }
+        })
+
+
   }
   redirectReportWithParams(params: string, type) {
     let paramsArr = params.split('-');
