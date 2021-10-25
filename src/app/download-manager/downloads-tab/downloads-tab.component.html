@@ -8,7 +8,7 @@
     <div class="pull-right" (click)="showSortOptions($event)" role="button" attr.aria-label="Sort By {{selectedFilter | translate}}">
       <span class="selector">{{selectedFilter | translate}}</span>
       <span><img aria-hidden="true" src="./assets/imgs/sort.png" alt="sorting"></span>
-      <ion-icon name="arrow-down" role="button" class="selector"></ion-icon>
+      <span role="button" aria-label="sorting"><ion-icon name="arrow-down" role="button" class="selector"></ion-icon></span>
     </div>
   </div>
 </div>
