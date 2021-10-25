@@ -61,6 +61,12 @@ export class DeeplinkRedirectComponent implements OnInit {
   async redirectProject(data) {
     await this.router.navigate([`/${RouterLinks.HOME}`]);
     if (data.projectId) {// project id will only come if its created alreday for user
+      await this.router
+        .navigate([`/${RouterLinks.PROJECT}`], {
+          queryParams: {
+            selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
+          },
+        })
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
         queryParams: {
           projectId: data.projectId,
