@@ -96,6 +96,8 @@ export class DomainEcmLsitingComponent {
           this.generalQuestions = successData;
         });
         this.fetchDownloaded();
+    }else{
+      this.entityEvidences =  this.entityData['assessment']['evidences'];
     }
   }
 
