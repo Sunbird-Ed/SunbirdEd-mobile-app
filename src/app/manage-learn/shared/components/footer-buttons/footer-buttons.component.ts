@@ -27,12 +27,13 @@ export class FooterButtonsComponent implements OnChanges {
     this._data = JSON.parse(JSON.stringify(data));
   }
   @Input() isFirst: boolean;
-  @Input() isStartBTNEnabled : boolean;
+  @Input() isStartBTNEnabled;
   @Input() showStartButton : boolean;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
   @Output() backAction = new EventEmitter();
   @Output() openSheetAction = new EventEmitter();
+  @Output() startAction = new EventEmitter();
   @Input() completedQuestionCount = 0;
   @Input() questionCount = 0;
   @Input() isSubmitted;
@@ -46,7 +47,7 @@ export class FooterButtonsComponent implements OnChanges {
     private utils: UtilsService,
     private translate: TranslateService,
     private toast : ToastService
-  ) { }
+  ) {}
   ngOnChanges() {
     if (this.completedQuestionCount > 0) {
       this.percentage = this.questionCount ? (this.completedQuestionCount / this.questionCount) * 100 : 0;
@@ -131,6 +132,7 @@ export class FooterButtonsComponent implements OnChanges {
     });
    } else{
      // TODO navigate to observation details page.
+     this.startAction.emit();
    }
   }
 }

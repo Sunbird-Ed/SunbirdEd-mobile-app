@@ -91,10 +91,25 @@ export class ProjectListingComponent {
         let query = {
             selector: {
                 downloaded: true,
-                isAPrivateProgram: isAprivateProgramQuery,
             },
             limit: 10 * this.offlineProjectPage,
         };
+        switch (this.selectedFilterIndex) {
+           
+            case 0:
+                query.selector['isAPrivateProgram'] = { $ne: false }
+                query.selector['referenceFrom']={ $ne: 'link' }
+                break;
+             case 1:
+                query.selector['isAPrivateProgram']=false
+                break;
+             case 2:
+                query.selector['referenceFrom']='link'
+                break;
+        
+            default:
+                break;
+        }
         fields ? (query['fields'] = fields) : null;
         try {
             let data: any = await this.db.customQuery(query);
@@ -207,8 +222,21 @@ export class ProjectListingComponent {
         }
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe'; // Discovered by me will not added here once we get api we will integrate.
-        if (selectedFilter == 'assignedToMe') {
+
+        let selectedFilter 
+        switch (this.selectedFilterIndex) {
+            case 0:
+                selectedFilter = 'createdByMe'
+                break;
+             case 1:
+                selectedFilter = 'assignedToMe'
+                break;
+            case 2:
+                selectedFilter = 'discoveredByMe'
+            default:
+                break;
+        }
+        if (selectedFilter == 'assignedToMe' || selectedFilter == 'discoveredByMe') {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
