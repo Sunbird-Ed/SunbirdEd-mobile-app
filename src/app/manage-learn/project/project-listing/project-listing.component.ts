@@ -91,10 +91,25 @@ export class ProjectListingComponent {
         let query = {
             selector: {
                 downloaded: true,
-                isAPrivateProgram: isAprivateProgramQuery,
             },
             limit: 10 * this.offlineProjectPage,
         };
+        switch (this.selectedFilterIndex) {
+           
+            case 0:
+                query.selector['isAPrivateProgram'] = { $ne: false }
+                query.selector['referenceFrom']={ $ne: 'link' }
+                break;
+             case 1:
+                query.selector['isAPrivateProgram']=false
+                break;
+             case 2:
+                query.selector['referenceFrom']='link'
+                break;
+        
+            default:
+                break;
+        }
         fields ? (query['fields'] = fields) : null;
         try {
             let data: any = await this.db.customQuery(query);
