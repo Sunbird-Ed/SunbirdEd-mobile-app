@@ -105,7 +105,14 @@ export class LearningResourcesPage {
       error => {}
     );
   }
-  openBodh(id) {
+  openBodh(resource) {
+    let id
+    if (resource.id) {
+      id = resource.id;
+    } else {
+      id = resource.link.split('/').pop()
+    }
+    
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
