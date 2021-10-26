@@ -32,6 +32,7 @@ import {
     AppleSignInErrorResponse,
     ASAuthorizationAppleIDRequest
 } from '@ionic-native/sign-in-with-apple/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
     selector: 'app-sign-in',
@@ -56,7 +57,8 @@ export class SignInPage implements OnInit {
         private loginNavigationHandlerService: LoginNavigationHandlerService,
         private googlePlusLogin: GooglePlus,
         private location: Location,
-        private signInWithApple: SignInWithApple
+        private signInWithApple: SignInWithApple,
+        public platform: Platform
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
@@ -74,7 +76,7 @@ export class SignInPage implements OnInit {
 
     async loginWithStateSystem() {
         this.loginNavigationHandlerService.generateLoginInteractTelemetry
-        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
+        (InteractType.LOGIN_INITIATE, InteractSubtype.STATE, '');
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewStateSessionProviderConfig: WebviewStateSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -93,14 +95,14 @@ export class SignInPage implements OnInit {
             webviewStateSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewStateSession, this.skipNavigation).then(() => {
+        await this.loginNavigationHandlerService.setSession(webViewStateSession, this.skipNavigation, InteractSubtype.STATE).then(() => {
             this.navigateBack(this.skipNavigation);
         });
     }
 
     async signInWithGoogle() {
         this.loginNavigationHandlerService.generateLoginInteractTelemetry
-        (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
+        (InteractType.LOGIN_INITIATE, InteractSubtype.GOOGLE, '');
         const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
         this.googlePlusLogin.login({
             webClientId: clientId.value
@@ -108,7 +110,8 @@ export class SignInPage implements OnInit {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
             await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true).toPromise();
-            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation).then(() => {
+            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation, InteractSubtype.GOOGLE)
+            .then(() => {
                 this.navigateBack(this.skipNavigation);
             });
         }).catch(async (err) => {
@@ -140,7 +143,8 @@ export class SignInPage implements OnInit {
             webviewRegisterSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, this.skipNavigation).then(() => {
+        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, this.skipNavigation, InteractSubtype.KEYCLOAK)
+        .then(() => {
             this.navigateBack(this.skipNavigation);
         });
     }
@@ -167,7 +171,8 @@ export class SignInPage implements OnInit {
             await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res as any);
             await this.preferences.putBoolean(PreferenceKey.IS_APPLE_LOGIN, true).toPromise();
-            await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation).then(() => {
+            await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation,
+                 InteractSubtype.APPLE).then(() => {
                 this.navigateBack(this.skipNavigation);
             }).catch(err => {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');

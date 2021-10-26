@@ -25,14 +25,14 @@
     <p class="permission-title" class="pl-16">{{'PERMISSION_EDIT_TITLE' | translate:{'%s': appName} }}</p>
   </div>
   <div class="permission-container">
-    <div *ngFor="let item of permissionListDetails" class="item-row mb-16 d-flex">
+    <div *ngFor="let item of permissionListDetails" role="switch" tabindex="0" class="item-row mb-16 d-flex" (click)="stateChange($event)">
       <div style="flex-grow:1000;" class="pl-16">
         <p class="title m-0 mb-8">{{item?.title}}</p>
         <p class="description">{{item?.description}}</p>
       </div>
       <div class="toggle-col">
         <ion-toggle class="permission-toggle" color="success" mode="ios" [(ngModel)]="item.permission"
-          (click)="stateChange($event)">
+          >
         </ion-toggle>
       </div>
     </div>
