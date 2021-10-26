@@ -47,7 +47,7 @@
       </ion-button>
       <ion-button aria-label="notifications" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
-        <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification">
+        <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification" role="button">
         <ion-badge class="badge-container" *ngIf="notificationCount.unreadCount">{{notificationCount.unreadCount}}</ion-badge>
       </ion-button>
       <ion-button aria-label="search" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
