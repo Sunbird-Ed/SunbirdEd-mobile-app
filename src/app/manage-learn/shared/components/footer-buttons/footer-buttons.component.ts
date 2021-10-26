@@ -47,9 +47,7 @@ export class FooterButtonsComponent implements OnChanges {
     private utils: UtilsService,
     private translate: TranslateService,
     private toast : ToastService
-  ) { 
-    this.isStartBTNEnabled = this.isStartBTNEnabled == 'false' ? false : true;
-  }
+  ) {}
   ngOnChanges() {
     if (this.completedQuestionCount > 0) {
       this.percentage = this.questionCount ? (this.completedQuestionCount / this.questionCount) * 100 : 0;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService,AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -33,12 +33,18 @@ export class DomainEcmLsitingComponent {
   networkFlag: boolean;
   msgs:any
   extrasState:any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+};
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
     private localStorage: LocalStorageService,
     private evdnsServ: EvidenceService,
     private platform: Platform,
+    private headerService: AppHeaderService,
     private routerParam: ActivatedRoute,
     private router: Router,
     private observationService: ObservationService,
@@ -79,6 +85,11 @@ export class DomainEcmLsitingComponent {
      this.getAssessmentDetails(successData);
       });
     }
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+        this.headerConfig.actionButtons = [];
+        this.headerConfig.showHeader = true;
+        this.headerConfig.showBurgerMenu = false;
+        this.headerService.updatePageConfig(this.headerConfig);
   }
 
   getAssessmentDetails(successData){

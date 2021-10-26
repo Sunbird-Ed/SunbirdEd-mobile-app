@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../core';
+import { ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
@@ -28,7 +28,8 @@ export class DeeplinkRedirectComponent implements OnInit {
     private assessmentService: AssessmentApiService,
     private utils: UtilsService,
     private http: HttpClient,
-    private kendra: KendraApiService
+    private kendra: KendraApiService,
+    private toast: ToastService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -111,7 +112,13 @@ export class DeeplinkRedirectComponent implements OnInit {
         success.result.isATargetedSolution = data.isATargetedSolution;
         success.result.programId = data.programId;
         this.redirectObservation(success.result);
+      }else{
+      this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
       }
+    },error =>{
+      this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
     });
   }
 
@@ -137,10 +144,12 @@ export class DeeplinkRedirectComponent implements OnInit {
           break;
         case 'observation':
           resp.result.observationId ? this.goToEntities(resp.result) : this.getTemplateDetails(resp.result);
-
         default:
           break;
       }
+    }else{
+      await this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
     }
   }
 }
