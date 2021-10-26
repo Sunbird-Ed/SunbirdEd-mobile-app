@@ -24,15 +24,16 @@
     </div>
     <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length"
       class="collection-etb-filter">
-      <div class="sb-chapter-dd pl-16" (click)="openTextbookToc()">
+      <div class="sb-chapter-dd pl-16" role="button" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
-        <span class="pull-right">
+        <!-- set aria hidden true because in device the icon is not showing and talkback is speak that text -->
+        <span class="pull-right" aria-hidden="true">
           <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
         </span>
       </div>
       <div class="sb-slider-pills-container">
         <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
-          <div class="pill" *ngFor="let type of mimeTypes; let i = index; let first = first"
+          <div role="button" class="pill" *ngFor="let type of mimeTypes; let i = index; let first = first"
             [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}"
             (click)="onFilterMimeTypeChange(type.value, i, type.name);">
             <span class="img-align" *ngIf="type?.iconNormal && type?.selected">

@@ -84,8 +84,7 @@ export class ProjectListingComponent {
             selector: {
                 downloaded: true,
                 isAPrivateProgram: isAprivateProgramQuery,
-            },
-            limit: 10 * this.offlineProjectPage,
+            }
         };
         fields ? (query['fields'] = fields) : null;
         try {

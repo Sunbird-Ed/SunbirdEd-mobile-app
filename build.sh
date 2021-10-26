@@ -52,7 +52,7 @@ rm -rf platforms
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@9.0.0
 
-NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --buildConfig ./buildConfig/build.json
+NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --verbose --buildConfig ./buildConfig/build.json
 
 if [ -n "$angularConfiguration" ]; then
   echo "$angularConfiguration"
