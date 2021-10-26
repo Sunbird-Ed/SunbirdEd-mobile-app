@@ -32,7 +32,6 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             <queries>
                 <intent>
                     <action android:name="android.media.action.IMAGE_CAPTURE" />

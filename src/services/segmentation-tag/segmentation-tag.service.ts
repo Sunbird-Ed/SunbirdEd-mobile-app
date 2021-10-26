@@ -106,12 +106,12 @@ export class SegmentationTagService {
     getSegmentCommand() {
         // FormConfig for Segment
         this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
-            .then(cmdList => {
-                if (cmdList && cmdList.length) {
-                    this.comdList = cmdList;
-                    this.evalCriteria();
-                }
-            });
+        .then(cmdList => {
+            if (cmdList && cmdList.length) {
+                this.comdList = cmdList.filter(v => !v.targetedClient);
+                this.evalCriteria();
+            }
+        });
     }
 
     evalCriteria() {

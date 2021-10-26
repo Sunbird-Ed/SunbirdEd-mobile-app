@@ -168,6 +168,7 @@ export class EventTopics {
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
     public static readonly BANNER = 'banner';
+    public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
 }
 
 export class ShareUrl {

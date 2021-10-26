@@ -315,7 +315,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: false,
-      description: (section && section.description) || ''
+      title: (section && section.landingDetails && section.landingDetails.title) || '',
+      description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -367,7 +368,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   navigateToDetailPage(event, sectionName) {
-    event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
     const values = {};
@@ -737,9 +737,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
             if(bannerMap){
               banner = {...banner, ...bannerMap};
             }
-            banner['facet'] = (banner.ui && banner.ui.text) || ''
+            banner['facet'] = (banner.ui && banner.ui.landing && banner.ui.landing.title) || '';
+            banner['description'] = (banner.ui && banner.ui.description) || '';
           }
         }
+        section['description'] = (banner.ui && banner.ui.landing && banner.ui.landing.description) || '';
         this.handlePillSelect({data: [{value: banner}]}, section);
         break;
       case 'banner_content':

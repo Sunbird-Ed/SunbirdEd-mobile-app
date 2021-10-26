@@ -16,7 +16,7 @@ import {
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
   EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
   Profile, ProfileService, ProfileType,
-  ServerProfile, SharedPreferences
+  ServerProfile, SharedPreferences, UserFeedStatus
 } from 'sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
@@ -60,7 +60,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
-  unreadNotificationsCount = 0;
+  notificationCount = {
+    unreadCount : 0
+  }
   isUpdateAvailable = false;
   currentSelectedTabs: string;
   isDarkMode:boolean;
@@ -112,6 +114,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed', () => {
       this.setAppLogo();
     });
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
+      this.getUnreadNotifications();
+    });
 
     this.events.subscribe('notification-status:update', (eventData) => {
       this.isUnreadNotification = eventData.isUnreadNotifications;
@@ -134,7 +139,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.decreaseZindex = false;
     });
     this.listenDownloads();
-    this.listenNotifications();
+    // this.listenNotifications();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();
     });
@@ -193,12 +198,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
 
       this.changeDetectionRef.detectChanges();
-    });
-  }
-
-  private listenNotifications() {
-    this.pushNotificationService.notifications$.subscribe((notifications) => {
-      this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
   }
 
@@ -271,17 +270,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed');
   }
 
-  getUnreadNotifications() {
-    let newNotificationCount = 0;
-    this.pushNotificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
-      notificationList.forEach((item) => {
-        if (!item.isRead) {
-          newNotificationCount++;
-        }
-      });
-
-      this.isUnreadNotification = Boolean(newNotificationCount);
-    });
+  async getUnreadNotifications() {
+    await this.notification.fetchNotificationList().then((data) => {
+      const notificationList = data.feeds;
+      const unreadNotificationList = notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+      this.notificationCount.unreadCount = unreadNotificationList.length;
+    })
   }
 
   async fetchManagedProfileDetails() {

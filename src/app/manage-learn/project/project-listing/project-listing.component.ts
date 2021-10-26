@@ -91,8 +91,9 @@ export class ProjectListingComponent {
         let query = {
             selector: {
                 downloaded: true,
-            },
-            limit: 10 * this.offlineProjectPage,
+            }
+          
+          
         };
         switch (this.selectedFilterIndex) {
            
