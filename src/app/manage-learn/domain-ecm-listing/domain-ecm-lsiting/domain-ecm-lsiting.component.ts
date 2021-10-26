@@ -186,7 +186,7 @@ export class DomainEcmLsitingComponent {
       this.checkForEvidenceCompletion();
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
-      let action = await this.openAction(entity, evidenceIndex);
+      let action = this.submissionId ?  await this.openAction(entity, evidenceIndex) : null;
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];

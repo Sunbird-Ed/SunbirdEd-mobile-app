@@ -8,7 +8,7 @@
     </ion-text>
     <div
       arrow
-      *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts"
+      *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts && submissionId"
       class="d-flex flex-ai-center flex-dc mr-15  clr-primary"
       (click)="$event.stopPropagation(); pushToLocal(submission)"
     >

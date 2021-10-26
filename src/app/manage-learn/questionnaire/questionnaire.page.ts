@@ -155,6 +155,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   startAction(){
+    this.location.back();
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
       {queryParams: {solutionId: this.extrasState.solution._id, programId: this.extrasState.programId,
         solutionName: this.extrasState.solution.name}, replaceUrl: true})
