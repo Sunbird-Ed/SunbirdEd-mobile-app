@@ -88,7 +88,9 @@ describe('NavigationService', () => {
     it('should navigate to enrolled course detail page if trackable object is not available', () => {
       // arrange
       const content = {
-        contentType: 'Course'
+        content: {
+          contentType: 'Course'
+        }
       };
       // act
       navigationService.navigateToDetailPage(content, {});
@@ -101,6 +103,9 @@ describe('NavigationService', () => {
     it('should navigate to collection detail page if trackable object is not available', () => {
       // arrange
       const content = {
+        content: {
+          contentType: 'Collection'
+        },
         contentType: 'Collection',
         mimeType: 'application/vnd.ekstep.content-collection'
       };
@@ -115,12 +120,10 @@ describe('NavigationService', () => {
     it('should navigate to content detail page if trackable object is not available', () => {
       // arrange
       const content = {
-        contentData: {
-          trackable: {
-          },
-          contentType: 'Resource',
-          mimeType: 'application/pdf'
-        }
+        content: {
+          contentType: 'Resource'
+        },
+        contentType: 'Resource'
       };
       // act
       navigationService.navigateToDetailPage(content, {});
@@ -130,14 +133,17 @@ describe('NavigationService', () => {
       });
     });
 
-    it('should navigate to content detail page if trackable object is not available', () => {
+    it('should navigate directly to content detail page if trackable object is not available', (done) => {
       // arrange
       // act
       navigationService.navigateTo([RouterLinks.CONTENT_DETAILS], {});
       // assert
-      expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS], {
-        state: {}
-      });
+      setTimeout(() => {
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS], {
+          state: {}
+        });
+        done();
+      }, 0);
     });
   });
 

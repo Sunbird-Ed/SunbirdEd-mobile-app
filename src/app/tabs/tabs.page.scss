@@ -143,6 +143,7 @@ ion-tabs {
   ion-tab-button.tab-selected {
     ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
       background-image: url(/assets/imgs/tab_course_selected.svg);
+      filter: invert(1);
     }
     ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
       background-image: url(/assets/imgs/tab_library_selected.svg);

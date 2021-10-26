@@ -63,7 +63,7 @@ sans-serif;
 $blue: #024f9d;
 $green: #008840;
 $orange: #e55a28; 
-$red: #ff4558;
+$red: #AD0011;
 $white: #fff;
 $indigo: #6610f2;
 $purple: #6f42c1;
@@ -82,8 +82,8 @@ $white-color: $white;
 $gray-0: lighten($gray, 75%); // place holder active bg #F2F2F2
 $gray-100: lighten($gray, 60%); // disable btn bg, icon color #CCCCCC
 $gray-200: lighten($gray, 40%); // disable text, place holder text #999999
-$gray-300: lighten($gray, 39%); // sub heading 2 #969696
-$gray-400: lighten($gray, 20%); // sub heading #666666
+$gray-300: lighten($gray, 12%); // sub heading 2 #969696
+$gray-400: lighten($gray, 8%); // sub heading #666666
 $gray-800: $gray; // text color #333333
 $light-blue-bg: #F3F7FA;
 /*
