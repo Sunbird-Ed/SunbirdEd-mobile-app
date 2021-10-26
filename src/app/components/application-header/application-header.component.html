@@ -48,7 +48,7 @@
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
         <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification">
-        <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
+        <ion-badge class="badge-container" *ngIf="notificationCount.unreadCount">{{notificationCount.unreadCount}}</ion-badge>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
