@@ -8,7 +8,7 @@ import { ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
-
+import { Location } from '@angular/common'
 @Component({
   selector: 'app-deeplink-redirect',
   templateUrl: './deeplink-redirect.component.html',
@@ -29,7 +29,8 @@ export class DeeplinkRedirectComponent implements OnInit {
     private utils: UtilsService,
     private http: HttpClient,
     private kendra: KendraApiService,
-    private toast: ToastService
+    private toast: ToastService,
+    private location: Location
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -113,11 +114,11 @@ export class DeeplinkRedirectComponent implements OnInit {
         success.result.programId = data.programId;
         this.redirectObservation(success.result);
       }else{
-      this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.location.back();
       this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
       }
     },error =>{
-      this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.location.back();
       this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
     });
   }
@@ -148,7 +149,7 @@ export class DeeplinkRedirectComponent implements OnInit {
           break;
       }
     }else{
-      await this.router.navigate([`/${RouterLinks.HOME}`]);
+      this.location.back();
       this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
     }
   }
