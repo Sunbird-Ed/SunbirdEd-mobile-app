@@ -938,6 +938,13 @@ export class ProfilePage implements OnInit {
 
   async editRecoveryId() {
 
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+        Environment.USER,
+        PageId.PROFILE
+    );
+
     const componentProps = {
       recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
       recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
@@ -950,13 +957,6 @@ export class ProfilePage implements OnInit {
           componentProps,
           cssClass: 'popover-alert input-focus'
         });
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
-          Environment.USER,
-          PageId.PROFILE
-        );
-
         await popover.present();
 
         const { data } = await popover.onDidDismiss();
