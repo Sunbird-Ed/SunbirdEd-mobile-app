@@ -154,7 +154,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   startAction(){
-    this.location.back();
+    // this.location.back();
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
       {queryParams: {solutionId: this.extrasState.solution._id, programId: this.extrasState.programId,
         solutionName: this.extrasState.solution.name}, replaceUrl: true})
@@ -188,7 +188,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.updateTheChildrenQuestions(this.questions[this.start]);
     }
     if (this.end < this.questions.length && !status) {
-      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+      if (this.submissionId) {
+        this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+      }
       this.start++;
       this.end++;
       this.dashbordData.currentViewIndex = this.start;
@@ -205,7 +207,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         this.checkForQuestionDisplay(this.questions[this.start])
       ) {
       }
-    } else if (status === 'completed') {
+    } else if (status === 'completed' && this.submissionId) {
       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].sections[
         this.selectedSectionIndex
       ].progressStatus = this.getSectionStatus();
@@ -385,7 +387,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   updateLocalData(): void {
-    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+    if (this.submissionId) {
+      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+    }
   }
 
   checkForQuestionDisplay(qst): boolean {
@@ -420,7 +424,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.updateTheChildrenQuestions(this.questions[this.start]);
     }
     if (this.start > 0) {
-      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+      if (this.submissionId) {
+          this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+      }
       this.start--;
       this.dashbordData.currentViewIndex = this.start;
       this.end--;

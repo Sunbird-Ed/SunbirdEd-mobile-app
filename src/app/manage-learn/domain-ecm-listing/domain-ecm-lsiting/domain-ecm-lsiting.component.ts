@@ -223,7 +223,9 @@ export class DomainEcmLsitingComponent {
         break;
       }
     }
-    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    if (this.submissionId) {
+     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    }
   }
 
   async goToQuestioner(selectedSection) {
@@ -240,7 +242,7 @@ export class DomainEcmLsitingComponent {
     // }
 
     // //
-    if (!this.evidenceSections[selectedSection].progressStatus) {
+    if (!this.evidenceSections[selectedSection].progressStatus && this.submissionId) {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
     }
