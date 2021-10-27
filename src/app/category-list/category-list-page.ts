@@ -94,6 +94,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     };
     appName = '';
     categoryDescription = '';
+    categoryTitle = '';
     PillBorder = PillBorder;
     filterPillList = [];
     selectedFilterPill;
@@ -146,6 +147,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
             this.categoryDescription = extrasState.description || '';
+            this.categoryTitle = extrasState.title || '';
             if (this.primaryFacetFilters) {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();

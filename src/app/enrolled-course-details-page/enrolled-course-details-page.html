@@ -158,19 +158,19 @@
 							*ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="startLearning()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'START_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="showResumeBtn && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="resumeContent()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'CONTINUE_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="nextContent?.contentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'START_ASSESSMENT' | translate }}
 							</span>
 						</button>

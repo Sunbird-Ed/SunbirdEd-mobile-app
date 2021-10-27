@@ -147,7 +147,6 @@ export class NotificationPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.events.unsubscribe(EventTopics.NOTIFICATION_REFRESH);
 }
 
 }

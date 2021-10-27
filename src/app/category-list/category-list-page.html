@@ -1,8 +1,8 @@
 <ion-content>
     <div class="container-focus">
         <div class="px-16 pb-2">
-            <h3 class="mt-4"
-                style="font-weight: 600;">{{ 'EXPLORE' | translate: {'%s': (formField.facet | translateJson)} }}</h3>
+            <h3 *ngIf="categoryTitle" class="mt-4"
+                style="font-weight: 600;">{{(categoryTitle | translateJson: {'%category': (formField.facet | translateJson), '%appName': appName} ) | translate }}</h3>
             <p *ngIf="categoryDescription">{{(categoryDescription | translateJson: {'%category': (formField.facet | translateJson), '%appName': appName} ) | translate }}</p>
         </div>
 

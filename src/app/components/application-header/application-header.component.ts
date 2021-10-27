@@ -60,7 +60,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
-  unreadNotificationsCount = 0;
+  notificationCount = {
+    unreadCount : 0
+  }
   isUpdateAvailable = false;
   currentSelectedTabs: string;
   isDarkMode:boolean;
@@ -272,7 +274,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     await this.notification.fetchNotificationList().then((data) => {
       const notificationList = data.feeds;
       const unreadNotificationList = notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
-      this.unreadNotificationsCount = unreadNotificationList.length;
+      this.notificationCount.unreadCount = unreadNotificationList.length;
     })
   }
 

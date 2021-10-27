@@ -18,7 +18,7 @@
   </div>
   <ion-radio-group [(ngModel)]="storageDestination" (ngModelChange)="$event && attemptTransfer()"
     [name]="storageDestination" ngDefaultControl>
-    <div class="sb-storage-container">
+    <div class="sb-storage-container" role="radio" tabindex="0">
       <div class="radio-container">
         <ion-radio slot="start" class="storage-radio-btn" [value]="StorageDestination.INTERNAL_STORAGE"></ion-radio>
       </div>
@@ -30,7 +30,7 @@
         <div class="info">{{'FREE_SPACE' | translate}} {{availableInternalMemorySize | fileSize}}</div>
       </div>
     </div>
-    <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable">
+    <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable" role="radio" tabindex="0">
       <div class="radio-container">
         <ion-radio slot="start" class="storage-radio-btn" [value]="StorageDestination.EXTERNAL_STORAGE"></ion-radio>
       </div>
