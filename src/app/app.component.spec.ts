@@ -187,6 +187,14 @@ describe('AppComponent', () => {
        startLoader: jest.fn()
     };
     const mockGooglePlusLogin: Partial<GooglePlus> = {};
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -296,6 +304,14 @@ describe('AppComponent', () => {
             mockNetworkService.netWorkCheck = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -447,6 +463,14 @@ describe('AppComponent', () => {
             mockDbService.createDb = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -604,6 +628,14 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
 
         afterEach(() => {
@@ -1444,6 +1476,14 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2091,6 +2131,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2280,6 +2328,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2569,6 +2625,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
