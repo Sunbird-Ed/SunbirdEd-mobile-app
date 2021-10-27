@@ -94,9 +94,6 @@ export class DeeplinkRedirectComponent implements OnInit {
       this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: resp });
     } else {
       this.router.navigate([RouterLinks.QUESTIONNAIRE], {
-        queryParams: {
-          isTargeted: resp.isATargetedSolution,
-        },
         state: resp,
       });
     }

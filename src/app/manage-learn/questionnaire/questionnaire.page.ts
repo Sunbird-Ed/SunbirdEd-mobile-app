@@ -70,21 +70,20 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private router: Router,
     private commonUtilService:CommonUtilService
   ) {
-
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
-      this.isTargeted = params.isTargeted == 'false' ? false : true;
-      if(!this.isTargeted){
-        this.showMessageForNONTargetUsers();
-        }
     });
-   
-
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
+    if(this.extrasState){
+      this.isTargeted = this.extrasState.isATargetedSolution;
+    }
+    if(this.extrasState && !this.isTargeted){
+      this.showMessageForNONTargetUsers();
+      }
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
@@ -489,7 +488,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     let msg;
     this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
       msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
-      this.toast.openToast(msg);
+      this.toast.openToast(msg,'','top');
     });
   }
 }
