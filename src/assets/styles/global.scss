@@ -14,8 +14,12 @@ body {
   font-family: $font-stack-en;
 }
 
-.remaining-length,:not(.normalize) .multi-select-container .list-border .placeholder,.select-text.select-placeholder, .alert-message.sc-ion-alert-md, .alert-input-group.sc-ion-alert-md, .sb--card--course .sb--card__meta1,.settings-item-style,.sc-ion-label-ios-s>p {
-  color: #555555;
+.remaining-length,:not(.normalize) .multi-select-container .list-border .placeholder,.select-text.select-placeholder, .alert-message.sc-ion-alert-md, .alert-input-group.sc-ion-alert-md, .sb--card--course .sb--card__meta1,.settings-item-style,.sc-ion-label-ios-s>p,.placeholder {
+  opacity: 1;
+  color: #555;
+}
+input.native-input::placeholder,input.native-input.sc-ion-input-md::placeholder,textarea.native-textarea.sc-ion-textarea-md::placeholder,textarea.native-textarea::placeholder,.select-placeholder,textarea#knowMoreMsg::placeholder,textarea::placeholder,.sb-textarea::placeholder,.placeholder::placeholder {
+  color: #000;opacity: 0.75;
 }
 input.native-input::placeholder,input.native-input.sc-ion-input-md::placeholder,textarea.native-textarea.sc-ion-textarea-md::placeholder,textarea.native-textarea::placeholder,.select-placeholder {
   color: #000;opacity: 0.75;
