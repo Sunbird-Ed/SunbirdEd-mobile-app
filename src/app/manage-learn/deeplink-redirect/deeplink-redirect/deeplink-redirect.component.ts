@@ -120,10 +120,10 @@ export class DeeplinkRedirectComponent implements OnInit {
     });
   }
 
-  goToEntities(data) {
+   async goToEntities(data) {
+    await  this.router.navigate([`/${RouterLinks.HOME}`])
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId },
-      replaceUrl: true,
+      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId }
     });
   }
 
