@@ -135,4 +135,16 @@ describe('ApplicationHeaderComponent', () => {
             }, 0);
         });
     });
+
+    describe('ngOnDestroy()', () => {
+        it('should subscribe events', () => {
+            // arrange
+            mockEvents.subscribe = jest.fn();
+            // act
+            applicationHeaderComponent.ngOnDestroy();
+            // assert
+            expect(mockEvents.subscribe).toBeCalledWith('user-profile-changed');
+            expect(mockEvents.subscribe).toBeCalledWith('app-global:profile-obj-changed');
+        });
+    });
 });
