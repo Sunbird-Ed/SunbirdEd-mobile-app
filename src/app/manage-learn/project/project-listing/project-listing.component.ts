@@ -86,8 +86,6 @@ export class ProjectListingComponent {
     }
 
     async getDownloadedProjects(fields?: any[]): Promise<[]> {
-        let isAprivateProgramQuery;
-        this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
         let query = {
             selector: {
                 downloaded: true,
@@ -96,7 +94,6 @@ export class ProjectListingComponent {
           
         };
         switch (this.selectedFilterIndex) {
-           
             case 0:
                 query.selector['isAPrivateProgram'] = { $ne: false }
                 query.selector['referenceFrom']={ $ne: 'link' }
