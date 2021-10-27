@@ -19,13 +19,12 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   @ViewChild('sample',  {static: false}) nameInputRef: ElementRef;
   @ViewChild('pageTop',  {static: false}) pageTop: IonContent;
   private _appHeaderSubscription?: Subscription;
-
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: [],
   };
-
+  extrasState:any;
   questions: any;
   schoolName: string;
   submissionId: any;
@@ -47,7 +46,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   captureGpsLocationAtQuestionLevel: boolean;
   enableQuestionReadOut: boolean;
   networkAvailable;
-
+  isTargeted :boolean;
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -77,14 +76,20 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
+      this.isTargeted = params.isTargeted == 'false' ? false : true;
+      if(!this.isTargeted){
+        this.showMessageForNONTargetUsers();
+        }
     });
+   
 
+    // State is using for Template view for Deeplink.
+    this.extrasState = this.router.getCurrentNavigation().extras.state;
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
       }
     });
-
     // Online event
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
@@ -96,39 +101,49 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.localStorage
+    if(this.extrasState){
+      this.isViewOnly = true;
+      this.getQuestions(this.extrasState);
+    }else{
+      this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((data) => {
-        this.schoolData = data;
-        const currentEvidences = this.schoolData['assessment']['evidences'];
-        this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
-        this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
-        this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
-          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
-            'questions'
-          ]
-        );
-
-        this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
-        this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
-        this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-
-        this.questions =
-          currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
-        this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
-          this.selectedSectionIndex
-        ].totalQuestions = this.questions.length;
-        this.dashbordData = {
-          questions: this.questions,
-          evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
-          sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
-          currentViewIndex: this.start,
-        };
-        this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
-        if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-          document.getElementById('stop').style.pointerEvents = 'none';
-        }
+        this.getQuestions(data);
       })
+    }
+  }
+
+  getQuestions(data){
+    this.selectedSectionIndex =0;
+    this.selectedEvidenceIndex =0;
+    this.schoolData = data;
+    const currentEvidences = this.schoolData['assessment']['evidences'];
+    this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
+    this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
+    this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
+        'questions'
+      ]
+    );
+
+    this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
+    this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
+    this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
+    this.questions =
+      currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
+    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
+      this.selectedSectionIndex
+    ].totalQuestions = this.questions.length;
+    this.dashbordData = {
+      questions: this.questions,
+      evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
+      sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
+      currentViewIndex: this.start,
+    };
+    this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
+    if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+      document.getElementById('stop').style.pointerEvents = 'none';
+    }
   }
 
   ionViewWillEnter() {
@@ -139,6 +154,11 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
+  startAction(){
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {queryParams: {solutionId: this.extrasState.solution._id, programId: this.extrasState.programId,
+        solutionName: this.extrasState.solution.name}, replaceUrl: true})
+  }
   ionViewDidLoad() {}
 
   async openQuestionMap() {
@@ -462,5 +482,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.headerConfig.actionButtons = [];
     this.headerService.updatePageConfig(this.headerConfig);
+  }
+
+  showMessageForNONTargetUsers(){
+    let msg;
+    this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
+      msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
+      this.toast.openToast(msg);
+    });
   }
 }

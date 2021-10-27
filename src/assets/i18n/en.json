@@ -1388,6 +1388,7 @@
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_MONTH": "Projects Undertaken this week",
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER": "Projects Undertaken this  quater",
   "FRMELEMNTS_LBL_CREATED_BY_ME": "Created by me",
+  "FRMELEMNTS_LBL_DISCOVERED_BY_ME":"Discovered by me",
   "FRMELEMNTS_LBL_ASSIGNED_TO_ME": "Assigned to me",
   "FRMELEMNTS_LBL_CREATE_NEW_PROJECT": "Create New Project",
   "FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING": "Create your own improvement projects",
@@ -1494,12 +1495,14 @@
   "FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS":"You must log in to access observations",
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION": "Only registered users can take observation ",
   "BROWSE_OTHER_CATEGORIES":"Browse other categories",
-
+  "FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE":"Dear User, this Observation is not relevant for your subrole and location",
   "CHANGE_PREFERENCE": "Change Preference",
   "HI": "Hi",
   "ACTIVITY_DASHBOARD": "Activity dashboard",
   "FRMELEMNTS_LBL_MY_REPORTS": "My reports",
   "FRMELEMNTS_LBL_EARNCERT": "How to earn a Certificate?",
   "FRMELEMNTS_LBL_EARNMCERT" : "Certificates will be issued if you score above {percent}% in your assessments",
-  "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificates will be issued upon 100% completion"
+  "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificates will be issued upon 100% completion",
+  "FRMELEMNTS_MSG_INVALID_LINK":"Invalid Link, please try with other link",
+  "FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND":"Template details not found"
 }

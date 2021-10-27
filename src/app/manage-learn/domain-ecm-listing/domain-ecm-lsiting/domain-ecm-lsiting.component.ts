@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService,AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -32,13 +32,19 @@ export class DomainEcmLsitingComponent {
   private _networkSubscription?: Subscription;
   networkFlag: boolean;
   msgs:any
-
+  extrasState:any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+};
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
     private localStorage: LocalStorageService,
     private evdnsServ: EvidenceService,
     private platform: Platform,
+    private headerService: AppHeaderService,
     private routerParam: ActivatedRoute,
     private router: Router,
     private observationService: ObservationService,
@@ -54,6 +60,7 @@ export class DomainEcmLsitingComponent {
       this.entityName = params.schoolName;
       this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
+    this.extrasState = this.router.getCurrentNavigation().extras.state;
   }
 
   ngOnInit() {
@@ -69,24 +76,40 @@ export class DomainEcmLsitingComponent {
   }
 
   ionViewWillEnter() {
-    this.localStorage
+    if(this.extrasState){
+      this.getAssessmentDetails(this.extrasState);
+    }else{
+      this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((successData) => {
-        this.entityData = successData;
-        this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
-          this.entityData['assessment']['evidences'],
-          this.recentlyUpdatedEntity
-        );
-        this.mapCompletedAndTotalQuestions();
-        this.checkForProgressStatus();
-        this.localStorage
-          .getLocalStorage('generalQuestions_' + this.submissionId)
-          .then((successData) => {
-            this.generalQuestions = successData;
-          });
+     this.getAssessmentDetails(successData);
       });
+    }
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+        this.headerConfig.actionButtons = [];
+        this.headerConfig.showHeader = true;
+        this.headerConfig.showBurgerMenu = false;
+        this.headerService.updatePageConfig(this.headerConfig);
+  }
 
-    this.fetchDownloaded();
+  getAssessmentDetails(successData){
+    this.entityData = successData;
+    if(this.submissionId){
+      this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
+        this.entityData['assessment']['evidences'],
+        this.recentlyUpdatedEntity
+      );
+      this.mapCompletedAndTotalQuestions();
+      this.checkForProgressStatus();
+      this.localStorage
+        .getLocalStorage('generalQuestions_' + this.submissionId)
+        .then((successData) => {
+          this.generalQuestions = successData;
+        });
+        this.fetchDownloaded();
+    }else{
+      this.entityEvidences =  this.entityData['assessment']['evidences'];
+    }
   }
 
   mapCompletedAndTotalQuestions() {
@@ -228,7 +251,7 @@ export class DomainEcmLsitingComponent {
         evidenceIndex: this.selectedEvidenceIndex,
         sectionIndex: selectedSection,
         schoolName: this.entityName,
-      },
+      }, state: this.extrasState //State is using for Template view for Deeplink.
     });
   }
 

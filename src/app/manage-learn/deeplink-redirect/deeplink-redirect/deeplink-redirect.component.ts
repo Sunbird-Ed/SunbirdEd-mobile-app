@@ -1,12 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { NavController} from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../core';
+import { ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
-
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { Location } from '@angular/common'
 @Component({
   selector: 'app-deeplink-redirect',
   templateUrl: './deeplink-redirect.component.html',
@@ -20,16 +22,15 @@ export class DeeplinkRedirectComponent implements OnInit {
 
   constructor(
     public navCtrl: NavController,
-    // public navParams: NavParams,
-    // public deeplinkProvider: DeeplinkProvider,
-    // public programSrvc: ProgramServiceProvider,
-    // public viewCtrl: ViewController,
-    // public utils: UtilsProvider,
     private translate: TranslateService,
     private router: Router,
     private route: ActivatedRoute,
     private assessmentService: AssessmentApiService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private http: HttpClient,
+    private kendra: KendraApiService,
+    private toast: ToastService,
+    private location: Location
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -38,8 +39,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
 
-  ionViewDidLoad() {
-  }
+  ionViewDidLoad() {}
   ngOnInit() {
     this.translate.get(['message.canNotOpenLink']).subscribe((translations) => {
       this.translateObject = translations;
@@ -50,101 +50,107 @@ export class DeeplinkRedirectComponent implements OnInit {
   switch(key) {
     switch (key) {
       case 'observationLink':
-        this.redirectObservation(this.data.create_observation_id);
+        this.verifyLink(this.data.create_observation_id);
         break;
-      case 'observationParams':
-        this.redirectWithParams(this.data[key], 'observation');
+      case 'projectLink':
+        this.verifyLink(this.data.create_project_id);
         break;
-      case 'assessmentParams':
-        this.redirectWithParams(this.data[key], 'assessment');
-        break;
-      case 'observationReportParams':
-        this.redirectReportWithParams(this.data[key], 'observation');
-        break;
-      case 'assessmentReportParams':
-        this.redirectReportWithParams(this.data[key], 'assessment');
-        break;
-
       default:
         break;
     }
   }
 
-  redirectWithParams(params: string, type) {
-    let paramsArr = params.split('-');
-    console.log(paramsArr);
-    let pId = paramsArr[0];
-    let sId = paramsArr[1];
-    let eId = paramsArr[2];
+  async redirectProject(data) {
+    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    if (data.projectId) {// project id will only come if its created alreday for user
+      await this.router
+        .navigate([`/${RouterLinks.PROJECT}`], {
+          queryParams: {
+            selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
+          },
+        })
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+        queryParams: {
+          projectId: data.projectId,
+          programId: data.programId,
+          solutionId: data.solutionId,
+        },
+      });
+      return
+    }
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {
+      queryParams: data,
+      skipLocationChange: true,
+    });
   }
 
-  async redirectObservation(link) {
+  async redirectObservation(resp) {
+    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    if (
+      resp.assessment.evidences.length > 1 ||
+      resp.assessment.evidences[0].sections.length > 1 ||
+      (resp.solution.criteriaLevelReport && resp.solution.isRubricDriven)
+    ) {
+      this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: resp });
+    } else {
+      this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+        queryParams: {
+          isTargeted: resp.isATargetedSolution,
+        },
+        state: resp,
+      });
+    }
+  }
+
+  async getTemplateDetails(data) {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.DEEPLINK.VERIFY_OBSERVATION_LINK + link,
+      url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
       payload: payload,
     };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        if (success.result) {
-          console.log(success);
-          let data = success.result;
-          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-            queryParams: {
-              programId: data.programId,
-              solutionId: data.solutionId,
-              observationId: data._id,
-              solutionName: data.name,
-            },
-          });
-        }
-      },
-      (error) => {
-        console.log(error);
+    this.assessmentService.post(config).subscribe((success) => {
+      if (success.result) {
+        success.result.isATargetedSolution = data.isATargetedSolution;
+        success.result.programId = data.programId;
+        this.redirectObservation(success.result);
+      }else{
+      this.location.back();
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
       }
-    );
-
+    },error =>{
+      this.location.back();
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
+    });
   }
 
-  redirectReportWithParams(params: string, type) {
-    let paramsArr = params.split('-');
-    console.log(paramsArr);
-    let pId = paramsArr[0];
-    let sId = paramsArr[1];
-    let eId = paramsArr[2];
-    let etype = paramsArr[3];
-    let oId = paramsArr[4];
+  goToEntities(data) {
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId },
+      replaceUrl: true,
+    });
+  }
 
-    if (type == 'observation') {
-      let payload = {
-        entityId: eId,
-        entityType: etype,
-        observationId: oId,
-      };
-      setTimeout(() => {
-        // will go call entity report
-        this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-          replaceUrl: true,
-          queryParams: {
-            entityId: eId,
-            entityType: etype,
-            observationId: oId,
-          },
-        });
-      
-      }, 1000);
-    }
+  async verifyLink(link) {
+    let payload = await this.utils.getProfileInfo();
 
-    if (type == 'assessment') {
-      let payload = {
-        programId: pId,
-        entity: {
-          _id: eId,
-          entityType: etype,
-        },
-        entityType: etype,
-        solutionId: sId,
-      };
+    const config = {
+      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link,
+      payload: payload,
+    };
+    let resp = await this.kendra.post(config).toPromise();
+    if (resp && resp.result) {
+      switch (resp.result.type) {
+        case 'improvementProject':
+          this.redirectProject(resp.result);
+          break;
+        case 'observation':
+          resp.result.observationId ? this.goToEntities(resp.result) : this.getTemplateDetails(resp.result);
+        default:
+          break;
+      }
+    }else{
+      this.location.back();
+      this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
     }
   }
 }
