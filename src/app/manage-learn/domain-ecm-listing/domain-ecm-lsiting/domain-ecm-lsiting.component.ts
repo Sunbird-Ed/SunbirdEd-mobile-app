@@ -186,7 +186,7 @@ export class DomainEcmLsitingComponent {
       this.checkForEvidenceCompletion();
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
-      let action = await this.openAction(entity, evidenceIndex);
+      let action = this.submissionId ?  await this.openAction(entity, evidenceIndex) : null;
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -223,7 +223,9 @@ export class DomainEcmLsitingComponent {
         break;
       }
     }
-    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    if (this.submissionId) {
+     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    }
   }
 
   async goToQuestioner(selectedSection) {
@@ -240,7 +242,7 @@ export class DomainEcmLsitingComponent {
     // }
 
     // //
-    if (!this.evidenceSections[selectedSection].progressStatus) {
+    if (!this.evidenceSections[selectedSection].progressStatus && this.submissionId) {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
     }

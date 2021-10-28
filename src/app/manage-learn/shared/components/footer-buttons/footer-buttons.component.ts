@@ -27,7 +27,7 @@ export class FooterButtonsComponent implements OnChanges {
     this._data = JSON.parse(JSON.stringify(data));
   }
   @Input() isFirst: boolean;
-  @Input() isStartBTNEnabled;
+  @Input() isStartBTNEnabled:boolean;
   @Input() showStartButton : boolean;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
@@ -128,7 +128,7 @@ export class FooterButtonsComponent implements OnChanges {
     let msg;
     this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
       msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
-      this.toast.openToast(msg);
+      this.toast.openToast(msg,'','top');
     });
    } else{
      // TODO navigate to observation details page.
