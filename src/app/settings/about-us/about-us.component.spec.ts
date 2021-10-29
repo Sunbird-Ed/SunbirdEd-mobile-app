@@ -3,16 +3,17 @@ import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {
     CommonUtilService,
     Environment,
-    ImpressionType,
+    ImpressionType, InteractSubtype, InteractType,
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
-import { Router } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { AppHeaderService, UtilityService } from '../../../services';
-import { ContentService, DeviceInfo, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import {Router} from '@angular/router';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppHeaderService, UtilityService} from '../../../services';
+import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
+import {of} from 'rxjs';
 
 describe('AboutUsComponent', () => {
     let aboutUsComponent: AboutUsComponent;
@@ -40,7 +41,7 @@ describe('AboutUsComponent', () => {
         }
     } as any;
 
-    beforeAll(()   =>{
+    beforeAll(() => {
         aboutUsComponent = new AboutUsComponent(
             mockProfileService as ProfileService,
             mockContentService as ContentService,
@@ -55,7 +56,7 @@ describe('AboutUsComponent', () => {
             mockLocation as Location,
             mockAppVersion as AppVersion,
             mockPlatform as Platform,
- );
+        );
     });
 
     it('should be able to create an instance', () => {
@@ -65,33 +66,84 @@ describe('AboutUsComponent', () => {
     describe('generateImpressionEvent()', () => {
 
         it('should generate telemetry', () => {
-        //arrange
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        //act
-        aboutUsComponent.generateImpressionEvent();
-        // assert
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW, '',
-            PageId.SETTINGS_ABOUT_US,
-            Environment.SETTINGS, '', '', ''
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            aboutUsComponent.generateImpressionEvent();
+            // assert
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW, '',
+                PageId.SETTINGS_ABOUT_US,
+                Environment.SETTINGS, '', '', ''
             );
-       });
+        });
     });
 
     describe('goBack()', () => {
 
         it('should generate telemetry', () => {
-        //arrange
-        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-        mockLocation.back = jest.fn();
-        //act
-        aboutUsComponent.goBack();
-        // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-            PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, true
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            // act
+            aboutUsComponent.goBack();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, true
             );
 
-       });
+        });
     });
 
+    it('ionViewWillEnter will get the default config and register backButton', () => {
+        // arrange
+        const mockConfig = {
+            showHeader: true,
+            showBurgerMenu: true,
+            actionButtons: [],
+        };
+        mockAppHeaderService.headerConfigEmitted$ = of(mockConfig);
+        mockAppHeaderService.getDefaultPageConfig = jest.fn(() => {
+            return mockConfig;
+        });
+        mockAppHeaderService.updatePageConfig = jest.fn();
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData
+        } as any;
+        const unsubscribeFn = jest.fn();
+        aboutUsComponent.backButtonFunc = {
+            unsubscribe: unsubscribeFn
+        };
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        mockLocation.back = jest.fn();
+        // act
+        aboutUsComponent.ionViewWillEnter();
+        // assert
+        expect(mockAppHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+        expect(mockAppHeaderService.updatePageConfig).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
+        expect(mockLocation.back).toHaveBeenCalled();
+    });
+
+    it('should fetch deviceId, getAppName and versionName', () => {
+        // arrange
+        mockDeviceInfo.getDeviceID = jest.fn(() => 'sample_device_id');
+        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_appName'));
+        mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('sample_build_value'));
+        // act
+        aboutUsComponent.ngOnInit();
+        // assert
+        expect(mockDeviceInfo.getDeviceID).toHaveBeenCalled();
+        expect(mockAppVersion.getAppName).toHaveBeenCalled();
+    });
+
+    it('should generate Interact telemetry ', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        aboutUsComponent.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+    });
 });

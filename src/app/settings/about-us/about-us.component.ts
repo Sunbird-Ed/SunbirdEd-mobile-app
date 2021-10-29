@@ -159,9 +159,6 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
-      })
-      .catch(error => {
-        console.log('Error--', error);
       });
   }
 
@@ -170,9 +167,6 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.version = appName + ' v' + versionName + '.' + response;
         return response;
-      })
-      .catch(error => {
-        console.log('Error--', error);
       });
   }
 
@@ -181,7 +175,7 @@ export class AboutUsComponent implements OnInit {
     this.location.back();
   }
 
-  handleBackButton() {
+  private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, false);
       this.location.back();
