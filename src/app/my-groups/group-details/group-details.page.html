@@ -32,10 +32,16 @@
       </div>
       <div class="gd-tab-header" tabindex="0">
         <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}" tabindex="0">
-          <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
+          <div class="gd-tab-name gd-tab-border" [attr.aria-label]="{
+            true: 'Selected activities tab', 
+            false: 'activities tab, double tap to activate'
+           }[activeTab=='activities']">{{'ACTIVITIES' | translate}}</div>
         </div>
         <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}" tabindex="0">
-          <div class="gd-tab-name">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
+          <div class="gd-tab-name" [attr.aria-label]="{
+            true: 'Selected members' + memberList?.length + 'tab', 
+            false: 'members' + memberList?.length + 'tab, double tap to activate'
+           }[activeTab=='members']">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
         </div>
       </div>
     </div>
