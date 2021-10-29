@@ -10,18 +10,24 @@
       <ion-col style=" margin: auto;">
         <!-- {{completedQuestionCount}} {{questionCount}} -->
         <progress-bar [progress]="percentage" [total]="questionCount" [showTracker]="true"
-          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount">
+          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount && !showStartButton">
         </progress-bar>
         <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_BTN_SUBMIT'| translate}}
-          <ion-icon role="button" name="chevron-up-circle" aria-label="Next completed" style="padding: 0 9px;" color="primary"></ion-icon></ion-button>
+          <ion-icon name="chevron-up-circle" style="padding: 0 9px;" color="primary"></ion-icon></ion-button>
+        <div class="_flex-box _justify-content-center">
+          <ion-button round small *ngIf="showStartButton" (click)="startBtnAction()"
+            [ngClass]="{'btn-disabled': !isStartBTNEnabled}">{{'FRMELEMNTS_BTN_START'| translate}}
+          </ion-button>
+        </div>
+
       </ion-col>
       <ion-col>
         <ion-button  icon-end class="ion-float-right" color="light" aria-label="Next" (click)="next()"
           *ngIf="!isLast">{{'FRMELEMENTS_BTN_NEXT'|
           translate}} <ion-icon name="arrow-forward" color="primary"></ion-icon></ion-button>
         <ion-button  icon-start class="ion-float-right" color="light"
-          (click)="next('completed')" *ngIf="isLast">
-          <ion-icon role="button" name="save" aria-label="Next completed" class="ion-margin-end" color="primary"></ion-icon>{{'SAVE'| translate}}
+          (click)="next('completed')" *ngIf="isLast && !showStartButton">
+          <ion-icon name="save" class="ion-margin-end" color="primary"></ion-icon>{{'SAVE'| translate}}
         </ion-button>
       </ion-col>
     </ion-row>
