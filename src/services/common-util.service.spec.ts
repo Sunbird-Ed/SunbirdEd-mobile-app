@@ -57,7 +57,8 @@ describe('CommonUtilService', () => {
   const mockPopoverController: Partial<PopoverController> = {
     create: jest.fn(() => (Promise.resolve({
       present: presentFn,
-      dismiss: dissmissFn
+      dismiss: dissmissFn,
+      setAttribute: jest.fn()
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
@@ -114,10 +115,33 @@ describe('CommonUtilService', () => {
     expect(commonUtilService).toBeTruthy();
   });
 
+  describe('addPopupAccessibility', ()=>{
+
+    it('Should add the accessibilty to the toast popup', ()=>{
+      // arrange
+      commonUtilService['popupAccessibilityFocus'] = jest.fn();
+      commonUtilService['getPlatformBasedActiveElement'] = jest.fn();
+      const toast = {
+        present: jest.fn(),
+        addEventListener: jest.fn(),
+        onDidDismiss: jest.fn(()=>Promise.resolve()),
+        setAttribute: jest.fn()
+      }
+      // act
+      commonUtilService.addPopupAccessibility(toast, 'message');
+      // assert
+      expect(toast.setAttribute).toHaveBeenCalled();
+    });
+
+  });
+
   describe('showToast()', () => {
 
     it('should show Toast with provided configuration', () => {
       // arrange
+      jest.spyOn(commonUtilService, 'addPopupAccessibility').mockImplementation(()=>{
+        return {present: presentFn}
+      })
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', false);
       // assert
@@ -131,6 +155,9 @@ describe('CommonUtilService', () => {
 
     it('should return if isInactive true', () => {
       // arrange
+      jest.spyOn(commonUtilService, 'addPopupAccessibility').mockImplementation(()=>{
+        return {present: presentFn}
+      })
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', true);
       // assert
