@@ -146,5 +146,19 @@ describe('ApplicationHeaderComponent', () => {
             expect(mockEvents.subscribe).toBeCalledWith('user-profile-changed');
             expect(mockEvents.subscribe).toBeCalledWith('app-global:profile-obj-changed');
         });
+    
+
+        it('should unsubscribe networkSubscription', () => {
+            // arrange
+            applicationHeaderComponent['networkSubscription'] = {
+                unsubscribe: jest.fn(),
+    
+            } as any;
+            // act
+            applicationHeaderComponent.ngOnDestroy();
+            // assert
+            expect(applicationHeaderComponent['networkSubscription'].unsubscribe).toHaveBeenCalled();
+        });
+
     });
-});
+    });

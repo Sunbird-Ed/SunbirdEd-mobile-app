@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 export class QumlPlayerService implements QuestionCursor {
-  
+
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
   ) {}

@@ -8,7 +8,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
     templateUrl: './sb-preferences-popup.component.html',
     styleUrls: ['./sb-preferences-popup.component.scss']
 })
-export class SbPreferencePopupComponent implements OnInit {
+export class SbPreferencePopupComponent {
     @Input() public userName = '';
     @Input() public preferenceData;
 
@@ -16,22 +16,11 @@ export class SbPreferencePopupComponent implements OnInit {
 
     constructor(
         private modalCtrl: ModalController,
-        private telemetryGeneratorService: TelemetryGeneratorService,
         private appVersion: AppVersion
     ) {
         this.appVersion.getAppName().then((appName: any) => {
             this.appLabel = appName;
         });
-    }
-
-    ngOnInit(): void {
-        // this.telemetryGeneratorService.generateImpressionTelemetry(
-        //     ImpressionType.POP_UP_CATEGORY,
-        //     '',
-        //     Environment.HOME,
-        //     PageId.HOME,
-        //     undefined, undefined, undefined, undefined, undefined
-        // );
     }
 
     changePreference() {
