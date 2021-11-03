@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {AppHeaderService, UtilityService} from '../../../services';
 import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
-import {of} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 
 describe('AboutUsComponent', () => {
     let aboutUsComponent: AboutUsComponent;
@@ -146,4 +146,40 @@ describe('AboutUsComponent', () => {
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
     });
+
+        describe('ionViewWillLeave()', () => {
+            it('should unsubscribe to the backbutton events', () => {
+            // arrange
+            const mockbackButtonFuncSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+            aboutUsComponent['backButtonFunc'] = mockbackButtonFuncSubscription as any;
+            // act
+            aboutUsComponent.ionViewWillLeave();
+            // assert
+            expect(aboutUsComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            });
+        
+        });
+
+        describe('handleBackButton()', () => {
+            it('should ', () => {
+                // arrange
+                aboutUsComponent.ShouldGenerateBackClickedTelemetry = true;
+                mockPlatform.backButton = {
+                    subscribeWithPriority: jest.fn((x, callback) => callback()),
+                    is: jest.fn()
+                };
+                mockLocation.back = jest.fn();
+                const unsubscribeFn = jest.fn();
+                aboutUsComponent.backButtonFunc = {
+                unsubscribe: unsubscribeFn,
+                } as any;
+                // act
+                aboutUsComponent.handleBackButton();
+                // assert
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, false);
+
+            });
+        });
 });
