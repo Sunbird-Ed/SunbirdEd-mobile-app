@@ -5,7 +5,10 @@
                 <div class="ion-padding">
                     <div role="button"  class="font-14-new view-credits" role="heading" aria-level="1" (click)="showLicensce()">
                         <span>
-                            <strong aria-label="Credits & License info, Collapsed, double-tap to expand">{{'CREDITS_LICENCE_INFO' | translate}}</strong>
+                            <strong [attr.aria-label]="{
+                                true:'Credits & License info, expand',
+                                false:'Credits & License info, Collapsed'
+                               }[showCredits]">{{'CREDITS_LICENCE_INFO' | translate}}</strong>
                         </span>
                         <span *ngIf="showCredits">
                             <ion-icon name="arrow-up"></ion-icon>
