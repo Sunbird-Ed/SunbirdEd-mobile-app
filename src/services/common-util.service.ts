@@ -157,7 +157,7 @@ export class CommonUtilService {
      * Returns Loading object with default config
      * @returns Loading object
      */
-    getLoader(duration?, message?): any {
+     getLoader(duration?, message?): any {
         return this.loadingCtrl.create({
             message,
             duration: duration ? duration : 30000,
@@ -755,6 +755,10 @@ export class CommonUtilService {
     }
 
     public addPopupAccessibility (toast, message, id='sb-generic-toast') {
+        if(!toast || !toast.setAttribute){
+            return toast;
+        }
+
         toast.setAttribute('role', message);
         toast.setAttribute('id', id);
 
