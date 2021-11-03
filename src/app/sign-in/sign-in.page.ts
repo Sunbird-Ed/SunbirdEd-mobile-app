@@ -180,7 +180,6 @@ export class SignInPage implements OnInit {
           })
           .catch((error: AppleSignInErrorResponse) => {
             this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
-            console.error(error);
           });
     }
 }
