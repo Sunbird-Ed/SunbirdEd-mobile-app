@@ -9,10 +9,8 @@
     <div class="language-container">
       <div class="language-card" tabindex="0" role="button" attr.aria-label="{{lang?.label | translate}}" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
         <label class="language-selection" [for]="'language-selection' + lang.code">
-          <span class="label-text" [attr.aria-label]="{
-            true:'selected ' + lang?.label,
-            false:lang?.label
-             }[isLanguageSelected]">
+          <span class="label-text" [attr.aria-label]="isLanguageSelected ?
+            'selected ' + lang?.label : lang?.label">
             {{lang?.label | translate}}
           </span>
           <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
