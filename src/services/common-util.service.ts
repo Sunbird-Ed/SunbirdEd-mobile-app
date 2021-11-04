@@ -157,7 +157,7 @@ export class CommonUtilService {
      * Returns Loading object with default config
      * @returns Loading object
      */
-     getLoader(duration?, message?): any {
+    getLoader(duration?, message?): any {
         return this.loadingCtrl.create({
             message,
             duration: duration ? duration : 30000,
@@ -759,7 +759,7 @@ export class CommonUtilService {
             return toast;
         }
 
-        toast.setAttribute('role', message);
+        toast.setAttribute('aria-label', message);
         toast.setAttribute('id', id);
 
         const toastElement = document.getElementById(id) as HTMLElement;
