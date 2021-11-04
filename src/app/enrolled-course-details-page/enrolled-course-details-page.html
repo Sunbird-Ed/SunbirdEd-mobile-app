@@ -285,10 +285,8 @@
 					<div>
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" role="heading" aria-level="1" (click)="expandDataSettings()">
-								<span><strong [attr.aria-label]="{
-									true:'profile data sharing, expand',
-									false:'profile data sharing, Collapsed'
-								   }[isDataShare]">{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
+								<span><strong [attr.aria-label]="isDataShare ?
+									'profile data sharing, expand' : 'profile data sharing, Collapsed'">{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-up"></ion-icon>
 								</span>
