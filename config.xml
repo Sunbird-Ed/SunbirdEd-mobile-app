@@ -92,6 +92,9 @@
                 <string>applinks:staging.sunbirded.org</string>
             </array>
         </config-file>
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+            <string>App uses camera permissions to scan QR codes and upload evidences</string>
+        </edit-config>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
