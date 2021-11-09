@@ -32,6 +32,7 @@ import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ProfileHandler} from '../../services/profile-handler';
 import {SegmentationTagService} from '../../services/segmentation-tag/segmentation-tag.service';
+import { UtilityService } from '@app/services/utility-service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -44,7 +45,8 @@ describe('Profile.page', () => {
         getServerProfilesDetails: jest.fn(() => of(
             mockProfileData
         )),
-        isDefaultChannelProfile: jest.fn(() => of(true))
+        isDefaultChannelProfile: jest.fn(() => of(true)),
+        generateOTP: jest.fn(() => true)
     };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({
@@ -138,6 +140,9 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn(() => Promise.resolve('otpTemplateID'))
+    };
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -168,6 +173,7 @@ describe('Profile.page', () => {
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
             mockPlatform as Platform,
+            mockUtilityService as UtilityService,
         );
     });
 
@@ -1100,6 +1106,7 @@ describe('Profile.page', () => {
         }));
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.showToast = jest.fn();
+        profilePage.profile.email = 'sunbird.demo@sunbird.com';
         // act
         profilePage.editRecoveryId();
         // assert

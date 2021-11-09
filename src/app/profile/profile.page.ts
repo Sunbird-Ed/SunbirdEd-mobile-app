@@ -16,6 +16,7 @@ import {
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
@@ -138,6 +139,7 @@ export class ProfilePage implements OnInit {
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
   enrolledCourseList = [];
+  templateId: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -165,7 +167,8 @@ export class ProfilePage implements OnInit {
     private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
-    private platform: Platform
+    private platform: Platform,
+    private utilityService: UtilityService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -196,6 +199,10 @@ export class ProfilePage implements OnInit {
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
       this.custodianOrgId = orgId;
+    });
+
+    this.utilityService.getBuildConfigValue('OTP_TEMPLATE').then((val) => {
+        this.templateId = val;
     });
 
   }
@@ -764,6 +771,7 @@ export class ProfilePage implements OnInit {
         const request: GenerateOtpRequest = {
             key: this.profile.email || this.profile.phone || this.profile.recoveryEmail,
             userId: this.profile.userId,
+            templateId: this.templateId,
             type: ''
         };
         if ((this.profile.email && !this.profile.phone) ||
