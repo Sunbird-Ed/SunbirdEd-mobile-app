@@ -54,6 +54,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   public objRollup: Rollup;
   nextContentToBePlayed: Content;
   playerType: string;
+  isExitPopupShown = false;
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -138,6 +139,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         iframes[0].contentWindow.postMessage('pause.youtube', '*');
       }
     });
+
+    this.isExitPopupShown = false;
   }
   async ionViewWillEnter() {
     const playerInterval = setInterval(() => {
@@ -253,7 +256,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.courseService.syncAssessmentEvents().subscribe();
       } else if (event.edata['type'] === 'EXIT') {
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-          this.showConfirm()
+          if (!this.isExitPopupShown) {
+            this.showConfirm();
+          }
         } else {
           this.location.back();
         }
@@ -430,6 +435,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
    * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
    */
   async showConfirm() {
+    this.isExitPopupShown = true;
     let type, stageId;
     if (this.playerType === 'sunbird-old-player') {
       type = (this.previewElement.nativeElement.contentWindow['Renderer']
@@ -447,6 +453,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           text: this.commonUtilService.translateMessage('CANCEL'),
           role: 'cancel',
           handler: () => {
+            this.isExitPopupShown = false;
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
               'TOUCH', 'ALERT_CANCEL', 'EXIT', { type, stageId });
           }
@@ -541,6 +548,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   checkIsPlayerEnabled(config , playerType) {
-    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled);
   }
 }

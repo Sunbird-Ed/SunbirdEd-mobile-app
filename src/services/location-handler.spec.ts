@@ -74,7 +74,7 @@ describe('LocationHandler', () => {
             // act
             locationHandler.getAvailableLocation().then((response) => {
                 // assert
-                expect(response).toBeUndefined();
+                expect(response).toEqual([{"code": "sample_id", "id": "sample_id", "name": "sample_state", "type": "state"}, {"code": "sample_id", "id": "sample_id", "name": "sample_district", "type": "district"}]);
                 done();
             });
         });

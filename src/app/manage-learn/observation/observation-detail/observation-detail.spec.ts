@@ -361,9 +361,34 @@ describe('ObservationHomeComponent', () => {
       setTimeout(() => {
         // expect(mockAssessmentApiService.post).toHaveBeenCalled();
         // expect(mockToast.openToast).toHaveBeenCalled();
-
         done();
       }, 200);
     });
   });
+
+    describe('ngOnInit', () =>{
+    it('should updateLastViewed', () => {
+      //arrange
+      mockObservationService.updateLastViewed = jest.fn();
+      //act
+      observationDetailComponent.ngOnInit();
+      //assert
+      expect(mockObservationService.updateLastViewed).toHaveBeenCalled();
+    })
+    })
+     
+
+    it('should unsubscribe networkSubscription', () => {
+      // arrange
+      observationDetailComponent['_networkSubscription'] = {
+          unsubscribe: jest.fn(),
+
+      } as any;
+      // act
+      observationDetailComponent.ionViewWillLeave();
+      // assert
+      expect(observationDetailComponent['_networkSubscription'].unsubscribe).toHaveBeenCalled();
+  });
+
+
 });

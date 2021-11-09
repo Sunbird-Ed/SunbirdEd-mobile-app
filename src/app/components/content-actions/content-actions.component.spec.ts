@@ -168,6 +168,9 @@ describe('ContentActionsComponent', () => {
         const presentFn = jest.fn(() => Promise.resolve());
         mockToastCtrl.create = jest.fn(() => Promise.resolve({
             present: presentFn
+        })) as any;
+        mockCommonUtilService.addPopupAccessibility = jest.fn(() => ({
+            present: presentFn
         }));
         // act
         contentActionsComponent.showToaster('CONTENT_DELETE_FAILED');
