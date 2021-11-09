@@ -78,6 +78,15 @@
     height: calc(100vh - 175px) !important;
     overflow: scroll;
   }
+  .comment-section {
+    pointer-events: auto !important;
+  }
+  .tabs-filter{
+    .df-filter-option{
+      border-radius: 0 !important;
+      color: black !important;
+    }
+  }
 }
 .discuss-left-panel{
   z-index: 3 !important;
