@@ -34,32 +34,7 @@ export class ProjectDetailPage implements OnDestroy {
   categories = [];
   taskCount: number = 0;
   filters: any = {};
-  schedules = [
-    {
-      title: "FRMELEMNTS_LBL_PAST",
-      value: "past"
-    },
-    {
-      title: "FRMELEMNTS_LBL_TODAY",
-      value: "today"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_WEEK",
-      value: "thisWeek"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_MONTH",
-      value: "thisMonth"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_QUARTER",
-      value: "thisQuarter"
-    },
-    {
-      title: "FRMELEMNTS_LBL_UPCOMING",
-      value: "upcoming"
-    },
-  ];
+  schedules = this.utils.getSchedules();
   sortedTasks;
   programId;
   solutionId;
@@ -332,45 +307,11 @@ export class ProjectDetailPage implements OnDestroy {
     let endFullQuarter: any = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0);
     this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
   }
-  sortTasks() {
-    this.taskCount = 0;
-    let completed = 0;
-    let inProgress = 0;
-    this.sortedTasks = JSON.parse(JSON.stringify(this.utils.getTaskSortMeta()));
-    this.project.tasks.forEach((task: any) => {
-
-      if (!task.isDeleted && task.endDate) {
-        this.taskCount = this.taskCount + 1;
-        let ed = JSON.parse(JSON.stringify(task.endDate));
-        ed = moment(ed).format("YYYY-MM-DD");
-
-        if (ed < this.filters.today) {
-          this.sortedTasks["past"].tasks.push(task);
-        } else if (ed == this.filters.today) {
-          this.sortedTasks["today"].tasks.push(task);
-        } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
-          this.sortedTasks["thisWeek"].tasks.push(task);
-        } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
-          this.sortedTasks["thisMonth"].tasks.push(task);
-        } else if (ed > this.filters.thisMonth && ed <= this.filters.thisQuarter) {
-          this.sortedTasks["thisQuarter"].tasks.push(task);
-        }
-        else {
-          this.sortedTasks["upcoming"].tasks.push(task);
-        }
-      } else if (!task.isDeleted && !task.endDate) {
-        this.sortedTasks["upcoming"].tasks.push(task);
-        this.taskCount = this.taskCount + 1;
-      }
-      if (!task.isDeleted) {
-        if (task.status == this.statuses[1].title) {
-          inProgress = inProgress + 1;
-        } else if (task.status == this.statuses[2].title) {
-          completed = completed + 1;
-        }
-      }
-    });
-    this.project = this.utils.setStatusForProject(this.project);
+  async sortTasks() {
+    let projectData:any= await this.utils.getSortTasks(this.project);
+    this.project = projectData.project;
+    this.sortedTasks=projectData.sortedTasks;
+    this.taskCount=projectData.taskCount;
   }
   syn() { }
 

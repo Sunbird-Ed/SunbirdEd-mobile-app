@@ -46,8 +46,14 @@ describe('ApplicationHeaderComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockChangeDetectionRef: Partial<ChangeDetectorRef> = {};
+    const nData = {
+        feeds: [
+            {name: 'name', status: 'unread'}
+        ]
+    } as any
     const mockNotification: Partial<NotificationService> = {
-        setupLocalNotification: jest.fn()
+        setupLocalNotification: jest.fn(),
+        fetchNotificationList: jest.fn(() => Promise.resolve(nData))
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockPlatform: Partial<Platform> = {};
@@ -129,4 +135,30 @@ describe('ApplicationHeaderComponent', () => {
             }, 0);
         });
     });
-});
+
+    describe('ngOnDestroy()', () => {
+        it('should subscribe events', () => {
+            // arrange
+            mockEvents.subscribe = jest.fn();
+            // act
+            applicationHeaderComponent.ngOnDestroy();
+            // assert
+            expect(mockEvents.subscribe).toBeCalledWith('user-profile-changed');
+            expect(mockEvents.subscribe).toBeCalledWith('app-global:profile-obj-changed');
+        });
+    
+
+        it('should unsubscribe networkSubscription', () => {
+            // arrange
+            applicationHeaderComponent['networkSubscription'] = {
+                unsubscribe: jest.fn(),
+    
+            } as any;
+            // act
+            applicationHeaderComponent.ngOnDestroy();
+            // assert
+            expect(applicationHeaderComponent['networkSubscription'].unsubscribe).toHaveBeenCalled();
+        });
+
+    });
+    });

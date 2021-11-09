@@ -31,7 +31,7 @@ export class ObservationService {
 
   getAssessmentDetailsForObservation(event) {
     return new Promise(async (resolve, reject) => {
-      if (await this.localStorage.hasKey(this.utils.getAssessmentLocalStorageKey(event.submission._id))) {
+      if (event.submission && event.submission._id && await this.localStorage.hasKey(this.utils.getAssessmentLocalStorageKey(event.submission._id))) {
         resolve(event.submission._id);
         return;
       }

@@ -719,6 +719,7 @@ describe('PlayerPage', () => {
                 return Promise.resolve(playerPage.config);
             });
             playerPage.playerConfig = {};
+            mockContentService.getQuestionSetChildren = jest.fn();
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -947,5 +948,61 @@ describe('PlayerPage', () => {
             expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
         });
     });
+
+        describe('ngOnDestroy', () => {
+        it('should unsubscribe pauseSubscription', () => {
+            // arrange
+            playerPage['pauseSubscription'] = {
+                unsubscribe: jest.fn(),
+
+            } as any;
+            // act
+            playerPage.ngOnDestroy();
+            // assert
+            expect(playerPage['pauseSubscription'].unsubscribe).toHaveBeenCalled();
+        });
+
+    });
+
+            describe('ionViewWillLeave', () => {
+                it('should unsubscribe backButtonSubscription', () => {
+                    // arrange
+                    mockStatusBar.show = jest.fn();
+                    mockScreenOrientation.unlock = jest.fn();
+                    playerPage['events'] = {
+                        unsubscribe: jest.fn(),
+                    } as any;
+                    playerPage['backButtonSubscription'] = {
+                        unsubscribe: jest.fn(),
+                    } as any;
+                    // act
+                    playerPage.ionViewWillLeave();
+                    // assert 
+                    setTimeout(() => {
+                    expect(playerPage['events'].unsubscribe).toHaveBeenCalled();
+                    expect(playerPage['backButtonSubscription'].unsubscribe).toHaveBeenCalled();
+                    expect(mockStatusBar.show).toHaveBeenCalled();
+                    expect( mockScreenOrientation.unlock).toHaveBeenCalled();
+                }, 100);;
+                });
+
+            });
+
+            describe('ionViewWillEnter', () => {
+                it('should hide statusbar', () => {
+                    // arrange
+                   
+                    mockScreenOrientation.lock = jest.fn();
+                    mockStatusBar.hide = jest.fn();
+                    // act
+                    playerPage.ionViewWillEnter();
+                    // assert 
+                    setTimeout(() => {
+                    expect( mockStatusBar.hide).toHaveBeenCalled();
+                    expect( mockScreenOrientation.lock).toHaveBeenCalled();
+                }, 100);;
+                });
+
+            });
 
 });

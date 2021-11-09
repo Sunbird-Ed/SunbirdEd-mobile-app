@@ -39,7 +39,7 @@
 
 <ion-footer>
     <div class="padding-16" *ngIf="!groupDetails">
-      <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
+      <button class="sb-btn-large" expand="block" attr.aria-label="create group {{createGroupForm.invalid ? 'disable' : ''}}" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
         <img src="assets/imgs/ic_group_add_white.svg" alt="">
         {{'CREATE_GROUP' | translate}}
       </button>

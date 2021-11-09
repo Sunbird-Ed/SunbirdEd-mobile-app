@@ -54,6 +54,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   public objRollup: Rollup;
   nextContentToBePlayed: Content;
   playerType: string;
+  isExitPopupShown = false;
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -103,16 +104,19 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
-       this.playerType = 'sunbird-quml-player';
+      this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
+      this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
@@ -135,6 +139,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         iframes[0].contentWindow.postMessage('pause.youtube', '*');
       }
     });
+
+    this.isExitPopupShown = false;
   }
   async ionViewWillEnter() {
     const playerInterval = setInterval(() => {
@@ -250,7 +256,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.courseService.syncAssessmentEvents().subscribe();
       } else if (event.edata['type'] === 'EXIT') {
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-          this.showConfirm()
+          if (!this.isExitPopupShown) {
+            this.showConfirm();
+          }
         } else {
           this.location.back();
         }
@@ -315,7 +323,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
-        nextContent,
+       nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
@@ -427,6 +435,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
    * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
    */
   async showConfirm() {
+    this.isExitPopupShown = true;
     let type, stageId;
     if (this.playerType === 'sunbird-old-player') {
       type = (this.previewElement.nativeElement.contentWindow['Renderer']
@@ -444,6 +453,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           text: this.commonUtilService.translateMessage('CANCEL'),
           role: 'cancel',
           handler: () => {
+            this.isExitPopupShown = false;
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
               'TOUCH', 'ALERT_CANCEL', 'EXIT', { type, stageId });
           }
@@ -538,6 +548,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   checkIsPlayerEnabled(config , playerType) {
-    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled);
   }
 }

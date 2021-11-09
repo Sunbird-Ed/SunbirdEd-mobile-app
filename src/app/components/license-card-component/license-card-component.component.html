@@ -3,9 +3,10 @@
         <div *ngIf="content.author || content.organisation || content.license || content.copyright">
             <div>
                 <div class="ion-padding">
-                    <div class="font-14-new view-credits" role="heading" aria-level="1" (click)="showLicensce()">
+                    <div role="button"  class="font-14-new view-credits" role="heading" aria-level="1" (click)="showLicensce()">
                         <span>
-                            <strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong>
+                            <strong [attr.aria-label]="showCredits ?
+                                'Credits & License info, expand' : 'Credits & License info, Collapsed'">{{'CREDITS_LICENCE_INFO' | translate}}</strong>
                         </span>
                         <span *ngIf="showCredits">
                             <ion-icon name="arrow-up"></ion-icon>

@@ -2,7 +2,7 @@
   <div class="subtitle ion-padding ion-no-margin">
     <h6 style="display:inline-block;" >{{ 'FILTER_BY' | translate }}</h6>
     <ion-button color="dark" class="reset_button" fill="outline" (click)="reset()">{{ 'RESET' | translate}}
-      <ion-icon name="refresh"></ion-icon>
+      <ion-icon role="button" aria-label="filter by" name="refresh"></ion-icon>
     </ion-button>
   </div>
   <div *ngIf="facetsFilter && facetsFilter.length">

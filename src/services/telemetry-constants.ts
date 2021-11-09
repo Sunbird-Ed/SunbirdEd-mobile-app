@@ -236,6 +236,8 @@ export enum InteractType {
     NOT_VISIBLE = 'not-visible',
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
     LICENSE_CARD_EXPANDED = 'license-card-expanded',
+    CERTIFICATE_CARD_COLLAPSED = 'certificate-card-collapsed',
+    CERTIFICATE_CARD_EXPANDED = 'certificate-card-expanded',
     QUIZ_DEEPLINK = 'quiz-deeplink',
     DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
@@ -296,6 +298,8 @@ export enum InteractType {
     DOWNLOAD_CLICKED = 'download-clicked',
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
     SELECT_BANNER = 'select-banner',
+    LOGIN_INITIATE = 'login-initiate',
+    LOGIN_SUCCESS = 'login-success'
 }
 
 export enum InteractSubtype {
@@ -541,12 +545,16 @@ export enum InteractSubtype {
     OPTED_OUT = 'opted-out',
     GROUP_KEBAB_MENU_CLICKED = 'group-kebab-menu-clicked',
     FORUM_ICON_CLICKED = 'forum-icon-clicked',
-    OBSERVATION_TILE_CLICKED ='observation-tile-clicked',
-    PROGRAM_TILE_CLICKED ='program-tile-clicked',
-    PROJECT_TILE_CLICKED ='project-tile-clicked',
-    SURVEY_TILE_CLICKED ='survey-tile-clicked',
-    REPORTS_TILE_CLICKED ='reports-tile-clicked',
-    COURSE_TILE_CLICKED ='course-tile-clicked'
+    OBSERVATION_TILE_CLICKED = 'observation-tile-clicked',
+    PROGRAM_TILE_CLICKED = 'program-tile-clicked',
+    PROJECT_TILE_CLICKED = 'project-tile-clicked',
+    SURVEY_TILE_CLICKED = 'survey-tile-clicked',
+    REPORTS_TILE_CLICKED = 'reports-tile-clicked',
+    COURSE_TILE_CLICKED = 'course-tile-clicked',
+    KEYCLOAK = 'keycloak',
+    GOOGLE = 'google',
+    APPLE = 'apple',
+    STATE = 'download-clicked',
 }
 
 export enum ID {
@@ -557,6 +565,7 @@ export enum ID {
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
     LICENSE_CARD_CLICKED = 'license-card-cliked',
+    CERTIFICATE_SECTION = 'certificate_section',
     QUIZ = 'quiz',
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
     DEEPLINK_CLICKED = 'deeplink-clicked',
@@ -610,7 +619,7 @@ export enum ID {
     SELECT_DEACTIVATE = 'select-deactivate',
     SELECT_DELETE = 'select-delete',
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
-    DOWNLOAD_CLICKED = 'download-clicked',
+    DOWNLOAD_CLICKED = 'download-clicked'
 }
 
 export enum ActionButtonType {

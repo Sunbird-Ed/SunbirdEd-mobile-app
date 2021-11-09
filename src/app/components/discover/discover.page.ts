@@ -148,7 +148,8 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: true,
-      description: (section && section.description) || ''
+      title: (section && section.landingDetails && section.landingDetails.title) || '',
+      description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
     let corRelationType: string = CorReleationDataType.CATEGORY;
     let interactType: string = InteractType.SELECT_CATEGORY;

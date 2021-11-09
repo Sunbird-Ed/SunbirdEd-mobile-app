@@ -1046,6 +1046,7 @@ describe('Profile.page', () => {
             mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
             jest.spyOn(profilePage, 'doRefresh').mockImplementation();
             mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.generateOTP = jest.fn(() => of(true));
             // act
             profilePage.editMobileNumber();
             setTimeout(() => {
@@ -1079,6 +1080,7 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'doRefresh').mockImplementation();
             mockCommonUtilService.translateMessage = jest.fn(v => v);
             mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.generateOTP = jest.fn(() => of(true));
             // act
             profilePage.editEmail();
             setTimeout(() => {
@@ -1094,7 +1096,7 @@ describe('Profile.page', () => {
         // arrange
         mockPopoverController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, value: '123456'}}))
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, value: '123456', OTPSuccess: true}}))
         } as any)));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
@@ -1107,6 +1109,7 @@ describe('Profile.page', () => {
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.showToast = jest.fn();
         profilePage.profile.email = 'sunbird.demo@sunbird.com';
+        mockProfileService.generateOTP = jest.fn(() => of(true));
         // act
         profilePage.editRecoveryId();
         // assert
@@ -1169,11 +1172,9 @@ describe('Profile.page', () => {
 
         it('should get contentDetails and throw console error', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => throwError('sample_error'));
-            jest.spyOn(console, 'error').mockImplementation();
             mockNavService.navigateToTrackableCollection = jest.fn();
             // act
-            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            profilePage.openEnrolledCourse({batch: {batchId: '0998'}});
             setTimeout(() => {
                 // assert
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalled();

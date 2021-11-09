@@ -25,7 +25,9 @@ import {
   NoDataComponent,
   ChartComponent,
   CreateTaskFormComponent,
-  PrivacyPolicyAndTCComponent
+  PrivacyPolicyAndTCComponent,
+  ProjectMetadataCardComponent,
+  ProjectTaskListComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -113,7 +115,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -162,7 +166,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   providers: [
     Camera,
@@ -197,7 +203,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     SurveyMsgComponent,
     CreateTaskFormComponent,
     RemarksModalComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   
 })

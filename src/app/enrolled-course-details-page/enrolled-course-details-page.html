@@ -158,19 +158,19 @@
 							*ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="startLearning()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'START_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="showResumeBtn && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="resumeContent()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'CONTINUE_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="nextContent?.contentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent()">
 							<span>
-								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
 								{{ 'START_ASSESSMENT' | translate }}
 							</span>
 						</button>
@@ -285,7 +285,8 @@
 					<div>
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" role="heading" aria-level="1" (click)="expandDataSettings()">
-								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
+								<span><strong [attr.aria-label]="isDataShare ?
+									'profile data sharing, expand' : 'profile data sharing, Collapsed'">{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-up"></ion-icon>
 								</span>
@@ -333,7 +334,17 @@
 				</ion-card-content>
 			</ion-card>
 			<!--credits and license info-->
-			<div class="cd-license-card" *ngSwitchCase="'info'">
+			<div *ngIf="showCertificateDetails">
+				<div class="cd-license-card mb-8" *ngSwitchCase="'info'">
+					<app-show-certificate-component [content]="course"
+												[certificateDetails]="certificateDetails"
+												[objRollup]="objRollup"
+												[corRelationList]="corRelationList"
+												[pageId]="pageId"></app-show-certificate-component>
+				</div>
+			</div>
+			
+			<div class="cd-license-card mb-8" *ngSwitchCase="'info'">
 				<app-license-card-component [content]="course"
 											[licenseDetails]="licenseDetails"
 											[appName]="appName"
@@ -341,6 +352,8 @@
 											[corRelationList]="corRelationList"
 											[pageId]="pageId"></app-license-card-component>
 			</div>
+			
+			
 			<div *ngSwitchCase="'modules'">
 				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy"
 					(tocCardClick)="onTocCardClick($event)" shadowColor="#d2eadd" progressColor="#008840">

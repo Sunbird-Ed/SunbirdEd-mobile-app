@@ -825,7 +825,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
           this.zone.run(() => {
             const eventPayload = event.payload;
-            if (eventPayload.contentId === this.content.identifier) {
+            if (this.content && eventPayload.contentId === this.content.identifier) {
               if (eventPayload.streamingUrl && (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
@@ -847,6 +847,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   async openConfirmPopUp() {
     if (this.limitedShareContentFlag) {
+      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+      return;
+    }
+
+    if (!this.content.contentData.downloadUrl) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
