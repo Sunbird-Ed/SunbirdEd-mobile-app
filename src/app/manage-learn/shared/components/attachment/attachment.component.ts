@@ -9,7 +9,7 @@ import { FileExtension } from '../../fileExtension';
   templateUrl: './attachment.component.html',
   styleUrls: ['./attachment.component.scss'],
 })
-export class AttachmentComponent  {
+export class AttachmentComponent {
   @Input() url: string;
   @Input() extension: string;
   imageFormats: string[] = FileExtension.imageFormats;
@@ -55,19 +55,18 @@ export class AttachmentComponent  {
   }
 
   openImage(link) {
-    if(this.platform.is('ios')){
+    if (this.platform.is('ios')) {
       const options = {
-        share: true, 
-        closeButton: true, 
-        copyToReference: true, 
-        headers: "",  
-        piccasoOptions: { } 
+        share: true,
+        closeButton: true,
+        copyToReference: true,
+        headers: "",
+        piccasoOptions: {}
       };
-      const newLink = link ? link.split('?') :"";
+      const newLink = link ? link.split('?') : "";
       link = (newLink && newLink.length) ? newLink[0] : ""
-    } else {
-      this.photoViewer.show(link);
     }
+    this.photoViewer.show(link);
   }
 
   openDocument(link) {

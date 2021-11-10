@@ -316,7 +316,7 @@
                 menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate: {'appName': appName} }}</span>
               <span class="new-feature-badge"
                 *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'">
-                <div class="square-badge">Beta</div>
+                <div class="square-badge" *ngIf="!platform?.is('ios')">Beta</div>
                 <div class="circle-badge"></div>
               </span></div>
           </div>

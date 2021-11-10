@@ -53,7 +53,7 @@
   "ANDROID_NOT_SUPPORTED_DESC": "This content cannot be opened as your phone is running on a very old version of Android. Based on your device model you may be able to view this content, if you have Crosswalk. ",
   "ANNOUNCEMENT": "Announcement",
   "ANSWER": "Answer",
-  "APPLE_LOGIN": "Apple Sign In",
+  "APPLE_LOGIN": "Sign in with Apple",
   "APPLY": "APPLY",
   "APPLY_FILTER": "APPLY FILTER",
   "APP_ID": "{{%s}} ID",
