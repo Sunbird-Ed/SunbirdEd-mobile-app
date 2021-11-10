@@ -1,5 +1,5 @@
 import { EditContactVerifyPopupComponent } from './edit-contact-verify-popup.component';
-import { CommonUtilService } from '../../../../services';
+import { CommonUtilService, UtilityService } from '../../../../services';
 import { PopoverController, Platform, NavParams, MenuController } from '@ionic/angular';
 import { of, throwError } from 'rxjs';
 import { ProfileService, HttpClientError } from 'sunbird-sdk';
@@ -56,6 +56,9 @@ describe('EditContactVerifyPopupComponent', () => {
     const mockMenuController: Partial<MenuController> = {
         enable: jest.fn()
     };
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn(() => Promise.resolve('otpTemplateId'))
+    };
 
     beforeAll(() => {
         editContactVerifyPopupComponent = new EditContactVerifyPopupComponent(
@@ -65,6 +68,7 @@ describe('EditContactVerifyPopupComponent', () => {
             mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
             mockMenuController as MenuController,
+            mockUtilityService as UtilityService,
         );
     });
 
