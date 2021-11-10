@@ -121,7 +121,13 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'play-skip-forward.svg',
                 'chckmark.svg',
                 'share-social.svg',
-                'log-in-outline.svg'
+                'log-in-outline.svg',
+                'ic_nishtha_courses.svg',
+                'ic_secondary_course.svg',
+                'ic_revision_preperation.svg',
+                'ic_fln_programme.svg',
+                'ic_administration_programme.svg',
+                'ic_quiz.svg'
             ].includes(file))) {
                 fs.unlinkSync(ionicIconFilePath + '/' + file);
             }
