@@ -220,11 +220,12 @@ export class ContentActionsComponent {
 
 
   async showToaster(message) {
-    const toast = await this.toastCtrl.create({
+    let toast = await this.toastCtrl.create({
       message,
       duration: 2000,
       position: 'bottom'
     });
+    toast = this.commonUtilService.addPopupAccessibility(toast, message);
     await toast.present();
   }
 

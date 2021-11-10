@@ -1979,7 +1979,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.openConfirmPopUp();
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
                 done();
             }, 0);
         });
