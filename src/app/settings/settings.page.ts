@@ -384,10 +384,4 @@ export class SettingsPage implements OnInit {
       }
     });
   }
-  isOptionEnabled() {
-    if(this.platform.is('ios')) {
-      return false;
-    }
-    return true;
-  }
 }
