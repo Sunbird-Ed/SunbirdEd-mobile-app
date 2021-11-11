@@ -248,20 +248,24 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       });
     }
     return new Promise<boolean | undefined>(async (resolve) => {
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
-      if (permissionStatus.hasPermission) {
+      if (this.platform.is('ios')) {
         resolve(true);
-      } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-        resolve(false);
       } else {
-        this.showStoragePermissionPopover().then((result) => {
-          if (result) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
+        const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
+        if (permissionStatus.hasPermission) {
+          resolve(true);
+        } else if (permissionStatus.isPermissionAlwaysDenied) {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          resolve(false);
+        } else {
+          this.showStoragePermissionPopover().then((result) => {
+            if (result) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        }
       }
     });
   }
