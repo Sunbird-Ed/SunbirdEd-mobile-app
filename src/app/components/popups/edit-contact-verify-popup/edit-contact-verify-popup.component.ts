@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
-import { ProfileConstants } from '@app/app/app.constant';
-import { CommonUtilService, UtilityService } from '@app/services/';
+import { ProfileConstants, OTPTemplates } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services/';
 import { MenuController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
@@ -23,7 +23,6 @@ export class EditContactVerifyPopupComponent {
   enableResend = true;
   unregisterBackButton: any;
   remainingAttempts: any;
-  templateId: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -31,17 +30,13 @@ export class EditContactVerifyPopupComponent {
     public popOverCtrl: PopoverController,
     public platform: Platform,
     private commonUtilService: CommonUtilService,
-    private menuCtrl: MenuController,
-    private utilityService: UtilityService
+    private menuCtrl: MenuController
   ) {
     this.userId = this.navParams.get('userId');
     this.key = this.navParams.get('key');
     this.title = this.navParams.get('title');
     this.description = this.navParams.get('description');
     this.type = this.navParams.get('type');
-    this.utilityService.getBuildConfigValue('OTP_TEMPLATE').then((val) => {
-        this.templateId = val;
-    });
   }
 
 
@@ -107,14 +102,14 @@ export class EditContactVerifyPopupComponent {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_PHONE,
           ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
-          { userId: this.userId, templateId: this.templateId })
+          { userId: this.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       } else {
         req = {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_EMAIL,
           ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
-          { userId: this.userId, templateId: this.templateId })
+          { userId: this.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       }
       let loader = await this.commonUtilService.getLoader();

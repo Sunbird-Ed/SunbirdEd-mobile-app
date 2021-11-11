@@ -32,7 +32,6 @@ import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ProfileHandler} from '../../services/profile-handler';
 import {SegmentationTagService} from '../../services/segmentation-tag/segmentation-tag.service';
-import { UtilityService } from '@app/services/utility-service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -140,9 +139,6 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
-    const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn(() => Promise.resolve('otpTemplateID'))
-    };
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -172,8 +168,7 @@ describe('Profile.page', () => {
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform,
-            mockUtilityService as UtilityService,
+            mockPlatform as Platform
         );
     });
 
