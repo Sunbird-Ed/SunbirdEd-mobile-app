@@ -782,4 +782,6 @@ export interface MaxAttempt {
     isCloseButtonClicked: boolean;
 }
 
-
+export class OTPTemplates {
+    public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
+}
