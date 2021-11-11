@@ -70,11 +70,14 @@ import { ContentViewerComponent } from './content-viewer/content-viewer.componen
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {DashletModule} from '@project-sunbird/sb-dashlet'
+import {DashletModule} from '@project-sunbird/sb-dashlet';
 import { TocHeaderComponent } from './toc-header/toc-header.component';
 import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
+import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-preferences-popup.component';
+
 import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
 import { ContentShareHandlerService } from '@app/services';
+import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -137,7 +140,9 @@ import { ContentShareHandlerService } from '@app/services';
     DashboardComponent,
     TocHeaderComponent,
     RelevantContentCardComponent,
-    QrScannerIOSComponent
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
   imports: [
     CommonModule,
@@ -198,6 +203,7 @@ import { ContentShareHandlerService } from '@app/services';
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
+    SbPreferencePopupComponent,
     QrScannerIOSComponent
   ],
   exports: [
@@ -259,8 +265,10 @@ import { ContentShareHandlerService } from '@app/services';
     DashboardComponent,
     TocHeaderComponent,
     RelevantContentCardComponent,
-    QrScannerIOSComponent
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation,ContentShareHandlerService]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService]
 })
 export class ComponentsModule { }

@@ -4,7 +4,7 @@
       subTitle="{{ 'FRMELEMNTS_LBL_SURVEY_DESC' | translate }}"
     ></app-common-header>
     <div *ngFor="let item of surveyList">
-      <app-item-list-card [title]="item?.name" (cardSelect)="onSurveyClick(item)">
+      <app-item-list-card [title]="item?.name"  [subTitle]="item?.generatedExpMsg" [case]="{}" (cardSelect)="onSurveyClick(item)">
         <span
           class="dot"
           [style.background-color]="setStatusColor(item?.status)"

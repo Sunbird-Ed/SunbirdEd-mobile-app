@@ -13,11 +13,12 @@ export class ConsentService {
         private commonUtilService: CommonUtilService
     ) { }
 
-    async showConsentPopup(userDetails, isOrgConsent?) {
+    async showConsentPopup(userDetails, isOrgConsent?, course?) {
         const popover = await this.popoverCtrl.create({
             component: ConsentPiiPopupComponent,
             componentProps: {
-                isSSOUser: isOrgConsent
+                isSSOUser: isOrgConsent,
+                course
             },
             cssClass: 'sb-popover',
             backdropDismiss: false
@@ -49,7 +50,7 @@ export class ConsentService {
             });
     }
 
-    async getConsent(userDetails, isOrgConsent?) {
+    async getConsent(userDetails, isOrgConsent?, course?) {
         const request: Consent = {
             userId: isOrgConsent ? userDetails.uid : userDetails.userId,
             consumerId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.channel,
@@ -62,7 +63,7 @@ export class ConsentService {
             })
             .catch(async (e) => {
                 if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND' && e.response.responseCode === 404) {
-                    await this.showConsentPopup(userDetails, isOrgConsent);
+                    await this.showConsentPopup(userDetails, isOrgConsent, course);
                 } else if (e.code === 'NETWORK_ERROR') {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
                 }

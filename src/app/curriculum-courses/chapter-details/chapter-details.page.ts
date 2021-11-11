@@ -106,6 +106,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   courseHeirarchy: any;
   private hasInit = false;
   courseBatchesRequest: CourseBatchesRequest;
+  courseCardData: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -150,6 +151,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
     this.corRelationList = this.extrasData.corRelation;
+    this.courseCardData = this.extrasData.courseCardData;
   }
 
   ngOnInit() {
@@ -210,8 +212,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             this.appGlobalService.setEnrolledCourseList(courseList);
           }
           return data.find((element) =>
-            (this.courseContent.batchId && element.batchId === this.courseContent.batchId)
-            || (!this.courseContent.batchId && element.courseId === this.courseContent.identifier));
+            (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
+            || (!this.courseCardData.batchId && element.courseId === this.courseCardData.identifier));
         })
         .catch(e => {
           console.log(e);
@@ -666,7 +668,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         userConsent: this.courseContent.contentData.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, this.courseContent).toPromise()
         .then(async (data: boolean) => {
           // await this.loader.dismiss();
           this.courseContent.batchId = item.id;

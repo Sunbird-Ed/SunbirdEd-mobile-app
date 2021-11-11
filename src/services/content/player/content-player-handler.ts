@@ -38,7 +38,7 @@ export class ContentPlayerHandler {
      */
     public async launchContentPlayer(
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
-        navigateBackToContentDetails?: boolean , isChildContent?: boolean , maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }) {
+        navigateBackToContentDetails?: boolean , isChildContent?: boolean, maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }) {
         const maxCompatibilityLevel = await this.utilityService.getBuildConfigValue(GenericAppConfig.MAX_COMPATIBILITY_LEVEL);
         if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
             cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
@@ -62,10 +62,11 @@ export class ContentPlayerHandler {
             request.streaming = isStreaming;
         }
         request['correlationData'] = contentInfo.correlationList;
-        if (isCourse && content.contentData['totalQuestions']) {
+        if (isCourse && (content.contentData['totalQuestions'] || 
+        content.contentData.mimeType === 'application/vnd.sunbird.questionset')) {
             const correlationData: CorrelationData = {
                 id: this.courseService.generateAssessmentAttemptId({
-                    courseId: contentInfo.course.identifier,
+                    courseId: contentInfo.course.identifier || contentInfo.course.courseId,
                     batchId: contentInfo.course.batchId,
                     contentId: content.identifier,
                     userId: contentInfo.course.userId
@@ -75,6 +76,10 @@ export class ContentPlayerHandler {
 
             if (request['correlationData']) {
                 request['correlationData'].push(correlationData);
+            }
+
+            if (!contentInfo.correlationList) {
+                contentInfo.correlationList = [correlationData];
             }
 
             request['correlationData'] = [correlationData];
@@ -91,8 +96,8 @@ export class ContentPlayerHandler {
             this.lastPlayedContentId = content.identifier;
             this.isPlayerLaunched = true;
 
-            if (data.metadata.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
-                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment.maxAttempts == undefined ? 0 : maxAttemptAssessment.maxAttempts;
+            if (data?.metadata?.mimeType === 'application/vnd.sunbird.questionset' && maxAttemptAssessment) {
+                data['metadata']['contentData']['maxAttempt'] = maxAttemptAssessment?.maxAttempts;
                 data['metadata']['contentData']['currentAttempt'] = maxAttemptAssessment.currentAttempt == undefined ? 0 : maxAttemptAssessment.currentAttempt;
             }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {

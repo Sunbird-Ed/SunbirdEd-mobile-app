@@ -12,6 +12,7 @@ import {
   RouterLinks,
   ContentFilterConfig,
   EventTopics,
+  OTPTemplates
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -41,7 +42,8 @@ import {
   FrameworkService,
   ProfileType,
   Batch,
-  GetLearnerCerificateRequest
+  GetLearnerCerificateRequest,
+  GenerateOtpRequest
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -136,7 +138,7 @@ export class ProfilePage implements OnInit {
   selfDeclarationInfo: any;
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
-
+  enrolledCourseList = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -453,6 +455,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (res: Course[]) => {
         if (res.length) {
+          this.enrolledCourseList = res;
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
         refreshCourseList ? await loader.dismiss() : false;
@@ -730,7 +733,9 @@ export class ProfilePage implements OnInit {
       userId: this.profile.userId
     };
 
-    await this.showEditContactPopup(componentProps);
+    this.validateAndEditContact()
+    .then((_) => this.showEditContactPopup(componentProps))
+    .catch(err => console.log(err) );
   }
 
   async editEmail() {
@@ -744,7 +749,41 @@ export class ProfilePage implements OnInit {
       userId: this.profile.userId
     };
 
-    await this.showEditContactPopup(componentProps);
+    this.validateAndEditContact()
+    .then((_) => this.showEditContactPopup(componentProps))
+    .catch(e => {
+      if (e && e.response && e.response.body && e.response.body.params && e.response.body.params.err &&
+        e.response.body.params.err === 'ERROR_RATE_LIMIT_EXCEEDED') {
+        this.commonUtilService.showToast('ERROR_OTP_LIMIT_EXCEEDED');
+      } else if (e.message !== 'CANCEL') {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      }
+    });
+  }
+
+  private async validateAndEditContact(): Promise<boolean> {
+        const request: GenerateOtpRequest = {
+            key: this.profile.email || this.profile.phone || this.profile.recoveryEmail,
+            userId: this.profile.userId,
+            templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE,
+            type: ''
+        };
+        if ((this.profile.email && !this.profile.phone) ||
+        (!this.profile.email && !this.profile.phone && this.profile.recoveryEmail)) {
+            request.type = ProfileConstants.CONTACT_TYPE_EMAIL;
+        } else if (this.profile.phone || this.profile.recoveryPhone) {
+            request.type = ProfileConstants.CONTACT_TYPE_PHONE;
+        }
+
+        const resp = await this.profileService.generateOTP(request).toPromise();
+        if (resp) {
+            const response = await this.callOTPPopover(request.type, request.key);
+            if (response && response.OTPSuccess) {
+                return Promise.resolve(true);
+            } else {
+                return Promise.reject(true);
+            }
+        }
   }
 
   private async showEditContactPopup(componentProps) {
@@ -791,6 +830,7 @@ export class ProfilePage implements OnInit {
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
+      return data;
     }
   }
 
@@ -900,41 +940,45 @@ export class ProfilePage implements OnInit {
 
   async editRecoveryId() {
 
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+        Environment.USER,
+        PageId.PROFILE
+    );
+
     const componentProps = {
       recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
       recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
     };
-    const popover = await this.popoverCtrl.create({
-      component: AccountRecoveryInfoComponent,
-      componentProps,
-      cssClass: 'popover-alert input-focus'
-    });
 
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
-      Environment.USER,
-      PageId.PROFILE
-    );
+    this.validateAndEditContact()
+    .then(async (_) => {
+        const popover = await this.popoverCtrl.create({
+          component: AccountRecoveryInfoComponent,
+          componentProps,
+          cssClass: 'popover-alert input-focus'
+        });
+        await popover.present();
 
-    await popover.present();
-
-    const { data } = await popover.onDidDismiss();
-    if (data && data.isEdited) {
-      const req: UpdateServerProfileInfoRequest = {
-        userId: this.profile.userId
-      };
-      await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
-    }
+        const { data } = await popover.onDidDismiss();
+        if (data && data.isEdited) {
+          const req: UpdateServerProfileInfoRequest = {
+            userId: this.profile.userId
+          };
+          await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
+        }
+    })
+    .catch(err => console.log(err) );
   }
 
   async openEnrolledCourse(training) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: training.courseId }).toPromise();
-      console.log('Content Data', content);
+      const content = this.enrolledCourseList.find((course) => (course.courseId === training.courseId)
+          && training.batch.batchId === course.batch.batchId);
       this.navService.navigateToTrackableCollection(
         {
-          content,
+          content
         }
       );
     } catch (err) {

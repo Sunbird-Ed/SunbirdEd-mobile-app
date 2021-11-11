@@ -3,13 +3,13 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button icon-only (click)="goBack();">
-        <ion-icon name="arrow-back"></ion-icon>
+        <ion-icon role="button" aria-label="back" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ 'ABOUT_US' | translate }}</ion-title>
+    <ion-title role="heading" aria-level="1">{{ 'ABOUT_US' | translate }}</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="shareInformation()" icon-only>
-        <ion-icon name="share" class="ion-float-end"></ion-icon>
+        <ion-icon name="share" role="button" aria-label="share information" class="ion-float-end"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

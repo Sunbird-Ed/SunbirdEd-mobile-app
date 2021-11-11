@@ -5,14 +5,14 @@
         <ion-row>
           <ion-col class="ad-pt-4" size="9">
             <div class="download-page-heading">
-              <strong>{{'ACTIVE_DOWNLOADS' | translate}}</strong>
+              <h6>{{'ACTIVE_DOWNLOADS' | translate}}</h6>
             </div>
             <div class="download-page-info">
               {{'DOWNLOADING_CONTENT' | translate}} : 1/{{(activeDownloadRequests$ | async)?.length}}
             </div>
           </ion-col>
           <ion-col class="ion-no-padding" size="3">
-            <div class="ion-float-right ion-text-center" (click)="cancelAllDownloads()">
+            <div class="ion-float-right ion-text-center" role="button" (click)="cancelAllDownloads()">
               <ion-icon class="download-cancel-icon" name="close"></ion-icon>
               <div class="download-page-info">{{'CANCEL_ALL' | translate}}</div>
             </div>

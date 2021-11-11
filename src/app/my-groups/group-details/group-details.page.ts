@@ -821,22 +821,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   onActivityCardClick(event) {
     const activity = event.data;
-    if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.navService.navigateToDetailPage(activity, {
-        content: activity,
-        corRelation: this.corRelationList
-      });
-    } else {
-      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-        {
-          loggedinUser: this.loggedinUser,
-          group: this.groupDetails,
-          memberList: this.memberList,
-          activity,
-          isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
-          corRelation: this.corRelationList
-        });
-    }
+    this.navService.navigateToDetailPage(activity, {
+      content: activity,
+      activityData: {
+        group: this.groupDetails,
+        isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
+        activity
+      },
+      corRelation: this.corRelationList,
+    });
+    
   }
 
   async navigateToAddActivityPage() {

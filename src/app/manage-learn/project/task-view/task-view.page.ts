@@ -4,7 +4,7 @@ import * as _ from "underscore";
 import { TranslateService } from "@ngx-translate/core";
 import { AlertController } from "@ionic/angular";
 import { Location } from "@angular/common";
-import { statuses } from "../../core/constants/statuses.constant";
+import { statuses,statusType } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
 import { AppHeaderService, CommonUtilService } from "@app/services";
@@ -167,6 +167,11 @@ export class TaskViewPage {
         this.task.isEdit = this.copyOfTaskDetails === JSON.stringify(this.task) ? false : true;
         this.project.isEdit = this.task.isEdit ? true : this.project.isEdit;
       }
+      if (JSON.stringify(this.copyOfTaskDetails) !== JSON.stringify(this.task)) {
+        this.project.isEdit = true;
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
+      }
       const isProjectEdit = _.filter(this.project.tasks, (eachTask) => {
         return eachTask.isEdit;
       });
@@ -299,6 +304,9 @@ export class TaskViewPage {
 
   markTaskAsCompleted() {
     this.showAttachments = true;
+  }
+  closemarkTaskAsCompleted(){
+    this.showAttachments = false;
   }
   insertAttachment() {
     this.showAttachments = false;

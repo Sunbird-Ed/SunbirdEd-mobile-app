@@ -1135,6 +1135,7 @@ sb-course-cards-hlist > .layout-course > .header > .title{
   height: auto !important;
   margin-left: 7px;
   font-size: 1rem !important;
+  text-transform: none !important;
 }
 
 app-courses{
@@ -1766,6 +1767,9 @@ app-user-home{
       }
     }
   }
+}
+
+app-user-home, app-sb-preferences-popup {
   app-truncated-ellipsis {
     font-size: 14px;
     font-weight: bold;
@@ -1781,6 +1785,27 @@ app-user-home{
     width: 100%;
     height: 100%;
     border-radius: 2rem 2rem 0 0;
+  }
+}
+
+.preference-popup {
+  --height: auto;
+  .modal-wrapper {
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    border-radius: 1.5rem 1.5rem 0 0;
+    .ion-page {
+      position: relative;
+      contain: content;
+      max-height: 90vh;
+      .preference-container {
+        .preference-data {
+          overflow: auto;
+          max-height: 50vh;
+        }
+      }
+    }
   }
 }
 
@@ -1898,10 +1923,6 @@ sb-library-card-v3 {
         text-align: center;
         min-width: 5rem;
       }
-    }
-    .sb-label-grid .item:hover{
-      background-color: var(--app-primary) !important;
-      color: var(--app-white) !important;
     }
   }
 }
@@ -2025,6 +2046,9 @@ app-user-home, app-discover {
   font-weight: bold !important;
 }
 
+.custom-btn-txt-transform-none{
+  text-transform: none !important;
+}
 
 // Dark theme css
 html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
@@ -2066,5 +2090,68 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
   .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md{
     filter: invert(0) !important;
     background: var(--app-secondary-background);
+  }
+}
+
+app-user-home{
+  .banner-pills{
+    margin-top: 5px;
+    sb-pills-grid{
+      .sb-label-grid.sb-pills-grid {
+        .item{
+          box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+          height: 8vh;
+          width: 28vw;
+          text-align: center;
+          border: 1px solid lightgray;
+          .img{
+            padding: .2em;
+            margin-right: unset
+          }
+        }
+      }
+      .sb-label-grid.sb-pills-grid.hscroll{
+        margin-top: 5px;
+        padding-bottom: 5px;
+      }
+    }
+  }
+}
+
+app-user-home{
+  sb-course-cards-hlist {
+    .sb--card{
+      box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+    } 
+    .sb--card__main-area{
+      flex-direction: row-reverse !important;
+      .sb--card__img{
+        float: right;
+        height: 4.5rem !important;
+        width: 4.5rem !important;
+        margin: .5rem !important;
+        .img-container img{
+            margin-bottom: 1rem !important;
+        }
+      }
+    }
+    .sb--card--course .sb--container-box .sb--card__info{
+      padding: 3px 10px !important;
+      display: unset !important;
+      .sb--card__meta1{
+        margin-top: .75rem !important;
+      }
+      .sb--card__title{
+        -webkit-line-clamp: 2 !important;
+      }
+    }
+  }
+  sb-library-card-v3{
+    .sb--card.sb--card--theme2{
+      height: 12.5vh !important;
+      .img-container{
+        height: 4.5rem !important;
+      }
+    }
   }
 }

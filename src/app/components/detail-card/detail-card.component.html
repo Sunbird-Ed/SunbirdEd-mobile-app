@@ -4,7 +4,7 @@
     <div class="left">
     </div>
     <div class="right">
-      <div *ngIf="contentDetail?.contentData?.me_averageRating" (click)="rateContent()" class="sb-rating-view">
+      <div *ngIf="contentDetail?.contentData?.me_averageRating" (click)="rateContent()" aria-label="content rating" class="sb-rating-view">
         <span class="sb-rating-value">{{ contentDetail?.contentData?.me_averageRating }}</span>
         <span class="sb-rating-star">
           <ion-icon name="star"></ion-icon>

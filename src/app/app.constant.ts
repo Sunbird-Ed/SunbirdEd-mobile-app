@@ -60,7 +60,8 @@ export class Search {
         'primaryCategory',
         'publisher',
         'mimeType',
-        'audience'
+        'audience',
+        'additionalCategories'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -167,6 +168,7 @@ export class EventTopics {
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
     public static readonly BANNER = 'banner';
+    public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
 }
 
 export class ShareUrl {
@@ -572,6 +574,7 @@ export class RouterLinks {
     public static readonly PROGRAM = 'program';
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
+    public static readonly TEMPLATE = 'template';
     public static readonly REPORTS = "reports";
     public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
     public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
@@ -779,4 +782,6 @@ export interface MaxAttempt {
     isCloseButtonClicked: boolean;
 }
 
-
+export class OTPTemplates {
+    public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
+}

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { statusType,statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService , CommonUtilService} from '@app/services';
@@ -16,8 +16,6 @@ import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
@@ -36,32 +34,7 @@ export class ProjectDetailPage implements OnDestroy {
   categories = [];
   taskCount: number = 0;
   filters: any = {};
-  schedules = [
-    {
-      title: "FRMELEMNTS_LBL_PAST",
-      value: "past"
-    },
-    {
-      title: "FRMELEMNTS_LBL_TODAY",
-      value: "today"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_WEEK",
-      value: "thisWeek"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_MONTH",
-      value: "thisMonth"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_QUARTER",
-      value: "thisQuarter"
-    },
-    {
-      title: "FRMELEMNTS_LBL_UPCOMING",
-      value: "upcoming"
-    },
-  ];
+  schedules = this.utils.getSchedules();
   sortedTasks;
   programId;
   solutionId;
@@ -105,13 +78,11 @@ export class ProjectDetailPage implements OnDestroy {
     private unnatiService: UnnatiDataService,
     private platform: Platform,
     private ref: ChangeDetectorRef,
-    private navigateService: NavigationService,
     private alertController: AlertController,
     private network: NetworkService,
     private location: Location,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
@@ -336,45 +307,11 @@ export class ProjectDetailPage implements OnDestroy {
     let endFullQuarter: any = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0);
     this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
   }
-  sortTasks() {
-    this.taskCount = 0;
-    let completed = 0;
-    let inProgress = 0;
-    this.sortedTasks = JSON.parse(JSON.stringify(this.utils.getTaskSortMeta()));
-    this.project.tasks.forEach((task: any) => {
-
-      if (!task.isDeleted && task.endDate) {
-        this.taskCount = this.taskCount + 1;
-        let ed = JSON.parse(JSON.stringify(task.endDate));
-        ed = moment(ed).format("YYYY-MM-DD");
-
-        if (ed < this.filters.today) {
-          this.sortedTasks["past"].tasks.push(task);
-        } else if (ed == this.filters.today) {
-          this.sortedTasks["today"].tasks.push(task);
-        } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
-          this.sortedTasks["thisWeek"].tasks.push(task);
-        } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
-          this.sortedTasks["thisMonth"].tasks.push(task);
-        } else if (ed > this.filters.thisMonth && ed <= this.filters.thisQuarter) {
-          this.sortedTasks["thisQuarter"].tasks.push(task);
-        }
-        else {
-          this.sortedTasks["upcoming"].tasks.push(task);
-        }
-      } else if (!task.isDeleted && !task.endDate) {
-        this.sortedTasks["upcoming"].tasks.push(task);
-        this.taskCount = this.taskCount + 1;
-      }
-      if (!task.isDeleted) {
-        if (task.status == this.statuses[1].title) {
-          inProgress = inProgress + 1;
-        } else if (task.status == this.statuses[2].title) {
-          completed = completed + 1;
-        }
-      }
-    });
-    this.project = this.utils.setStatusForProject(this.project);
+  async sortTasks() {
+    let projectData:any= await this.utils.getSortTasks(this.project);
+    this.project = projectData.project;
+    this.sortedTasks=projectData.sortedTasks;
+    this.taskCount=projectData.taskCount;
   }
   syn() { }
 
@@ -418,7 +355,7 @@ export class ProjectDetailPage implements OnDestroy {
             ? this.createNewProject()
             : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
         } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SYNC', 'danger');
+          this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         }
         break;
       }
@@ -443,13 +380,13 @@ export class ProjectDetailPage implements OnDestroy {
         break;
       }
       case "shareTask": {
-        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_TASK', 'danger');
+        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       }
       case "shareProject": {
         this.network.isNetworkAvailable
           ? this.openSyncSharePopup('shareProject', this.project.title)
-          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+          : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       }
     }
@@ -538,58 +475,16 @@ export class ProjectDetailPage implements OnDestroy {
     this.update("ProjectDelete");
   }
   openResources(task = null) {
-    if (task && task.learningResources && task.learningResources.length === 1) {
-      if(task.learningResources[0].id){
-        this.openBodh(task.learningResources[0].id);
-      }else{
-        let identifier = task.learningResources[0].link.split("/").pop();
-        this.openBodh(identifier);
-      }
-      return;
-    }
     if (task) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      if( this.project.learningResources && this.project.learningResources.length == 1){
-        if(this.project.learningResources[0].id){
-          this.openBodh(this.project.learningResources[0].id);
-        }else{
-          let identifier = this.project.learningResources[0].link.split("/").pop();
-          this.openBodh(identifier );
-        }
-      }else{
         this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
       }
-    }
-  }
-  //open openBodh
-  openBodh(link) {
-    if(!this.networkFlag){
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
-      return
-    }
-    this.loader.startLoader();
-    let identifier = link.split("/").pop();
-    const req: ContentDetailRequest = {
-      contentId: identifier,
-      attachFeedback: false,
-      attachContentAccess: false,
-      emitUpdateIfAny: false
-    };
-
-    this.contentService.getContentDetails(req).toPromise()
-      .then(async (data: Content) => {
-        this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
-      }, error => {
-        this.loader.stopLoader();
-      });
   }
 
   //Update the project
-  update(type) {
+  update(type?) {
     this.project.isEdit = true;
-    this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
       .then((success) => {
@@ -701,6 +596,8 @@ export class ProjectDetailPage implements OnDestroy {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         !this.project.tasks ? (this.project.tasks = []) : "";
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
         this.project.tasks.push(data.data);
         this.update("newTask");
       }

@@ -81,17 +81,6 @@ describe('ContentPlayerHandler', () => {
     });
 
     describe('launchContentPlayer()', () => {
-        it('should navigate to PlayerPage to launch Content  if isStreaming false', () => {
-            // arrange
-            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('4'));
-            // act
-            contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, true)
-                .then(() => {
-                    // assert
-                    expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                        { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: true } });
-                });
-        });
 
         it('should disbale the user switcher if content is being played from course', () => {
             // arrange

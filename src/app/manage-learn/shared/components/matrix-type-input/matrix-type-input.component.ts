@@ -105,10 +105,12 @@ export class MatrixTypeInputComponent implements OnInit {
       this.data.value[instanceIndex] = instanceValue;
       let instanceCompletion = this.checkCompletionOfInstance(this.data.value[instanceIndex], gpsLocation);
       if (instanceCompletion) {
+        this.data.value[instanceIndex].isInstanceCompleted = true
         if (this.data.completedInstance.indexOf(instanceIndex) < 0) {
           this.data.completedInstance.push(instanceIndex);
         }
       } else {
+       this.data.value[instanceIndex].isInstanceCompleted = false
         const index = this.data.completedInstance.indexOf(instanceIndex);
         if (index >= 0) {
           this.data.completedInstance.splice(index, 1);

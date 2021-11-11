@@ -1,6 +1,6 @@
 <ion-header class="sb-popover-header">
     <ion-toolbar class="sb-popover-toolbar">
-        <ion-title class="sb-popover-title">{{'PROFILE_DETAILS_TITLE' | translate}}
+        <ion-title class="sb-popover-title" role="heading" aria-level="2">{{'PROFILE_DETAILS_TITLE' | translate}}
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -25,12 +25,15 @@
                     </p>
                 </div>
                 <div class="cr-input-primary" lines="none">
-                    <span>
-                        <ion-checkbox class="cr-terms-checkbox" (ionChange)="changeEvent($event)"></ion-checkbox>
+                    <span *ngIf="!isSSOUser">
+                        <ion-checkbox class="cr-terms-checkbox" attr.aria-label="{{'AGREE_TO_SHARE_PROFILE_DETAILS' | categoryKeyTranslate: course}}" (ionChange)="changeEvent($event)"></ion-checkbox>
+                    </span>
+                    <span *ngIf="isSSOUser">
+                        <ion-checkbox class="cr-terms-checkbox" attr.aria-label="{{'SELF_DECLARE_TEACHER_TNC' | translate: {'%appName': appName} }}" (ionChange)="changeEvent($event)"></ion-checkbox>
                     </span>
                     <span>
                         <p class="cr-terms-checkbox-label" *ngIf="!isSSOUser">
-                            <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | translate}}</span>
+                            <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | categoryKeyTranslate: course}}</span>
                             <span (click)="openTermsOfUse()" class="terms-info">{{'INSTANCE_TERMS_OF_USE' | translate: {'app_name': appName} }}</span>
                         </p>
                         <p class="cr-terms-checkbox-label" *ngIf="isSSOUser">

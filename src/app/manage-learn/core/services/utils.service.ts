@@ -2,7 +2,7 @@ import { Injectable, Inject, NgZone } from "@angular/core";
 import { v4 as uuidv4 } from "uuid";
 import * as moment from "moment";
 import * as _ from "underscore";
-import { statusType } from "@app/app/manage-learn/core/constants/statuses.constant";
+import { statuses, statusType } from "../../core/constants/statuses.constant";
 import {
   ProfileService,
   AuthService,
@@ -33,6 +33,10 @@ export class UtilsService {
   profileAlert;
   userId;
   mandatoryFields ={};
+  taskCount: number = 0;
+  sortedTasks;
+  filters: any = {};
+  statuses = statuses;
   constructor(
     @Inject("PROFILE_SERVICE") private profileService: ProfileService,
     @Inject("AUTH_SERVICE") public authService: AuthService,
@@ -44,9 +48,9 @@ export class UtilsService {
     private storage: Storage,
     private events: Events,
 
-  ) {  
-      this.events.subscribe("loggedInProfile:update", _ => {
-        this.storeMandatoryFields()
+  ) {
+    this.events.subscribe("loggedInProfile:update", _ => {
+      this.storeMandatoryFields()
     });
   }
 
@@ -183,8 +187,16 @@ export class UtilsService {
         }
       }
     }
-    projectData.status = this.calculateStatus(projectData.tasks);
-
+    let projectStatus = this.calculateStatus(projectData.tasks);
+    if (projectData.status) {
+      if (projectData.status == statusType.inProgress && projectStatus == statusType.notStarted) {
+        projectData.status = statusType.inProgress;
+      }else{
+        projectData.status = projectStatus;
+      }
+    } else {
+      projectData.status = statusType.notStarted;
+    }
     return projectData;
   }
 
@@ -428,7 +440,6 @@ export class UtilsService {
     } catch {
       mandatoryFields={}
     }
-    console.log(mandatoryFields)
     if (mandatoryFields[this.profile.state] && mandatoryFields[this.profile.state][this.profile.role]) return;
 
     try {
@@ -438,7 +449,7 @@ export class UtilsService {
       mandatoryFields[this.profile.state][this.profile.role] = mandatoryEntitiesList
       await this.storage.set(storageKeys.mandatoryFields, mandatoryFields)
     } catch{
-      
+
     }
   }
 
@@ -450,7 +461,7 @@ export class UtilsService {
         if (!mandatoryFields[this.profile.state][this.profile.role]) throw "Mandatory fields locally not found";
         data = { result: mandatoryFields[this.profile.state][this.profile.role] }
       } catch {
-          const config = {
+        const config = {
           url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
         };
         data = await this.kendra.get(config).toPromise()
@@ -458,24 +469,24 @@ export class UtilsService {
 
       }
       if (data.result && data.result.length) {
-          this.requiredFields = data.result;
-          let allFieldsPresent = true;
-          for (const field of this.requiredFields) {
-            if (!this.profile[field]) {
-              allFieldsPresent = false;
-              break
-            }
+        this.requiredFields = data.result;
+        let allFieldsPresent = true;
+        for (const field of this.requiredFields) {
+          if (!this.profile[field]) {
+            allFieldsPresent = false;
+            break
           }
-          if (!allFieldsPresent) {
-            this.openProfileUpdateAlert()
-            resolve(false)
-          } else {
-            resolve(true);
-          }
-        } else {
-          this.openProfileUpdateAlert();
-          resolve(false)
         }
+        if (!allFieldsPresent) {
+          this.openProfileUpdateAlert()
+          resolve(false)
+        } else {
+          resolve(true);
+        }
+      } else {
+        this.openProfileUpdateAlert();
+        resolve(false)
+      }
     })
   }
 
@@ -506,12 +517,10 @@ export class UtilsService {
   async openProfileUpdateAlert() {
     this.profileAlert = await this.aleryCtrl.create({
       header: "Alert",
-      cssClass:'central-alert',
-      message: `Please update   ${
-        this.requiredFields && this.requiredFields.length
+      message: `Please update   ${this.requiredFields && this.requiredFields.length
           ? this.requiredFields + " in"
           : ""
-      }   your profile to access the feature.`,
+        }   your profile to access the feature.`,
       buttons: [
         {
           text: "Update Profile",
@@ -616,9 +625,9 @@ export class UtilsService {
 
                   obj["role"] =
                     profileData["profileUserType"] &&
-                    profileData["profileUserType"]["subType"]
+                      profileData["profileUserType"]["subType"]
                       ? profileData["profileUserType"]["subType"].toUpperCase()
-                      : null;
+                      : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);
                 });
               })
@@ -629,4 +638,82 @@ export class UtilsService {
         });
     });
   }
+
+getSchedules(){
+  let data=[
+    {
+      title: "FRMELEMNTS_LBL_PAST",
+      value: "past",
+    },
+    {
+      title: "FRMELEMNTS_LBL_TODAY",
+      value: "today",
+    },
+    {
+      title: "FRMELEMNTS_LBL_THIS_WEEK",
+      value: "thisWeek",
+    },
+    {
+      title: "FRMELEMNTS_LBL_THIS_MONTH",
+      value: "thisMonth",
+    },
+    {
+      title: "FRMELEMNTS_LBL_THIS_QUARTER",
+      value: "thisQuarter",
+    },
+    {
+      title: "FRMELEMNTS_LBL_UPCOMING",
+      value: "upcoming",
+    },
+  ];
+  return data;
+}
+
+async getSortTasks(project:any) {
+  this.taskCount = 0;
+  let completed = 0;
+  let inProgress = 0;
+  this.sortedTasks = JSON.parse(JSON.stringify(this.getTaskSortMeta()));
+  project.tasks.forEach((task: any) => {
+
+    if (!task.isDeleted && task.endDate) {
+      this.taskCount = this.taskCount + 1;
+      let ed = JSON.parse(JSON.stringify(task.endDate));
+      ed = moment(ed).format("YYYY-MM-DD");
+
+      if (ed < this.filters.today) {
+        this.sortedTasks["past"].tasks.push(task);
+      } else if (ed == this.filters.today) {
+        this.sortedTasks["today"].tasks.push(task);
+      } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
+        this.sortedTasks["thisWeek"].tasks.push(task);
+      } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
+        this.sortedTasks["thisMonth"].tasks.push(task);
+      } else if (ed > this.filters.thisMonth && ed <= this.filters.thisQuarter) {
+        this.sortedTasks["thisQuarter"].tasks.push(task);
+      }
+      else {
+        this.sortedTasks["upcoming"].tasks.push(task);
+      }
+    } else if (!task.isDeleted && !task.endDate) {
+      this.sortedTasks["upcoming"].tasks.push(task);
+      this.taskCount = this.taskCount + 1;
+    }
+    if (!task.isDeleted) {
+      if (task.status == this.statuses[1].title) {
+        inProgress = inProgress + 1;
+      } else if (task.status == this.statuses[2].title) {
+        completed = completed + 1;
+      }
+    }
+  });
+  let projectData = await this.setStatusForProject(project);
+  let data={
+    project:projectData,
+    sortedTasks:this.sortedTasks,
+    taskCount:this.taskCount
+  }
+  return data;
+}
+
 }

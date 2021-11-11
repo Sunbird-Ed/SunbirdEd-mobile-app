@@ -29,9 +29,9 @@ import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 import {of, throwError} from 'rxjs';
 import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
-import { NavigationService } from '../../services/navigation-handler.service';
-import { ProfileHandler } from '../../services/profile-handler';
-import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
+import {NavigationService} from '../../services/navigation-handler.service';
+import {ProfileHandler} from '../../services/profile-handler';
+import {SegmentationTagService} from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -44,7 +44,8 @@ describe('Profile.page', () => {
         getServerProfilesDetails: jest.fn(() => of(
             mockProfileData
         )),
-        isDefaultChannelProfile: jest.fn(() => of(true))
+        isDefaultChannelProfile: jest.fn(() => of(true)),
+        generateOTP: jest.fn(() => true)
     };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({
@@ -167,7 +168,7 @@ describe('Profile.page', () => {
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform,
+            mockPlatform as Platform
         );
     });
 
@@ -378,11 +379,11 @@ describe('Profile.page', () => {
             mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() =>
                 Promise.resolve(['sample_1', 'sample_2']));
             mockContentService.searchContent = jest.fn(() => of({
-                    result:
-                        {
-                            contentDataList: ['sample_content_data_list']
-                        }
-                }
+                        result:
+                            {
+                                contentDataList: ['sample_content_data_list']
+                            }
+                    }
                 )
             );
             profilePage.userId = 'sample_user_id';
@@ -914,8 +915,8 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'openpdf').mockImplementation();
             mockCertificateDownloadPdfService.download = jest.fn(() => Promise.resolve());
             mockCourseService.certificateManager = {
-                    isCertificateCached: jest.fn(() => of(true))
-                }
+                isCertificateCached: jest.fn(() => of(true))
+            };
             // act
             profilePage.downloadTrainingCertificate(
                 {
@@ -1040,6 +1041,7 @@ describe('Profile.page', () => {
             mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
             jest.spyOn(profilePage, 'doRefresh').mockImplementation();
             mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.generateOTP = jest.fn(() => of(true));
             // act
             profilePage.editMobileNumber();
             setTimeout(() => {
@@ -1073,6 +1075,7 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'doRefresh').mockImplementation();
             mockCommonUtilService.translateMessage = jest.fn(v => v);
             mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.generateOTP = jest.fn(() => of(true));
             // act
             profilePage.editEmail();
             setTimeout(() => {
@@ -1088,7 +1091,7 @@ describe('Profile.page', () => {
         // arrange
         mockPopoverController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, value: '123456'}}))
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, value: '123456', OTPSuccess: true}}))
         } as any)));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
@@ -1100,6 +1103,8 @@ describe('Profile.page', () => {
         }));
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.showToast = jest.fn();
+        profilePage.profile.email = 'sunbird.demo@sunbird.com';
+        mockProfileService.generateOTP = jest.fn(() => of(true));
         // act
         profilePage.editRecoveryId();
         // assert
@@ -1138,16 +1143,22 @@ describe('Profile.page', () => {
     describe('openEnrolledCourse test-suites', () => {
         it('should get contentDetails and navigate to course-details page', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => of('sample_content'));
             mockRouter.navigate = jest.fn();
+            profilePage.enrolledCourseList = [{
+                courseId: 'do_123',
+                batch: {batchId: 123}
+            }, {
+                courseId: 'do_345',
+                batch: {batchId: 456}
+            }];
             // act
-            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            profilePage.openEnrolledCourse({courseId: 'do_123', batch: {batchId: '123'}});
             setTimeout(() => {
                 // assert
-                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+               // expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalledWith(
                     {
-                        content: 'sample_content'
+                        content: undefined
                     }
                 );
                 done();
@@ -1156,16 +1167,14 @@ describe('Profile.page', () => {
 
         it('should get contentDetails and throw console error', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => throwError('sample_error'));
-            jest.spyOn(console, 'error').mockImplementation();
+            mockNavService.navigateToTrackableCollection = jest.fn();
             // act
-            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            profilePage.openEnrolledCourse({batch: {batchId: '0998'}});
             setTimeout(() => {
                 // assert
-                expect(mockContentService.getContentDetails).toHaveBeenCalled();
-                expect(console.error).toHaveBeenCalledWith('sample_error');
+                expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalled();
                 done();
-            });
+            }, 0);
         });
     });
 

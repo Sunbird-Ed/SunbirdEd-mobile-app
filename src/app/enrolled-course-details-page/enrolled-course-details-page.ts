@@ -72,6 +72,7 @@ import { EnrollmentDetailsComponent } from '../components/enrollment-details/enr
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
+import { ActivityData } from '../my-groups/group.interface';
 
 declare const cordova;
 
@@ -243,6 +244,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
   isMinor: boolean;
+  activityData: ActivityData;
+  showCertificateDetails= false;
+  certificateDetails: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -293,6 +297,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
+      if(extrasState.activityData){
+        this.activityData = extrasState.activityData
+      }
     }
   }
 
@@ -824,11 +831,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             return;
           }
           this.batchDetails = data;
+          this.showCertificateDetails = this.batchDetails.cert_templates ? true : false;
+          this.certificateDetails = this.batchDetails.cert_templates ? this.batchDetails.cert_templates : '';
           if (this.batchRemaningTimingIntervalRef) {
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
           }
           if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
+            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.handleUnenrollButton();
@@ -900,8 +910,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.profileService.getServerProfilesDetails(req).toPromise()
       .then((serverProfile) => {
         if (serverProfile) {
-          if (this.batchDetails) {
-            (this.batchDetails.creatorDetails || (this.batchDetails.creatorDetails = {})).firstName = serverProfile.firstName ? serverProfile.firstName : '';
+          if (this.batchDetails && this.batchDetails.creatorDetails) {
+            this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
             this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
           }
         }
@@ -1256,7 +1266,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (value.children) {
           this.getContentsSize(value.children);
         }
-        if (!value.isAvailableLocally && value.contentData.downloadUrl) {
+        if (!value.isAvailableLocally && (value.contentData.downloadUrl || value.mimeType === 'application/vnd.sunbird.questionset')) {
           this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
@@ -1628,7 +1638,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const ongoingBatches = [];
     if (this.batches.length === 1) {
-      this.enrollIntoBatch(this.batches[0]);
+      this.enrollIntoBatch(this.batches[0], this.course);
     } else {
       forEach(this.batches, (batch, key) => {
         if (batch.status === 1) {
@@ -1875,7 +1885,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  async enrollIntoBatch(item: Batch) {
+  async enrollIntoBatch(item: Batch, course?) {
     if (this.isGuestUser) {
       this.promptToLogin(item);
     } else {
@@ -1902,7 +1912,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, course).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
@@ -2137,7 +2147,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
     } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
       await loader.dismiss();
-      await this.consentService.showConsentPopup(this.courseCardData);
+      await this.consentService.showConsentPopup(this.courseCardData, undefined, this.course);
       this.showShareData = false;
       this.checkDataSharingStatus();
     }
@@ -2164,7 +2174,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             if (!this.isConsentPopUp) {
               this.isConsentPopUp = true;
               this.localCourseService.setConsentPopupVisibility(true);
-              await this.consentService.showConsentPopup(this.courseCardData);
+              await this.consentService.showConsentPopup(this.courseCardData, undefined, this.course);
               await this.checkDataSharingStatus();
             }
           } else if (e.code === 'NETWORK_ERROR') {
@@ -2199,6 +2209,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const popUp = await this.popoverCtrl.create({
       component: ProfileNameConfirmationPopoverComponent,
       componentProps: {
+        content: this.course
       },
       cssClass: 'sb-popover sb-profile-name-confirmation-popover',
     });
@@ -2338,4 +2349,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     }, 1000 * 60);
   }
+
+  navigateToDashboard(){
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
+    {
+      state: {
+        hierarchyData: this.courseHeirarchy,
+        activity: this.activityData.activity,
+        group: this.activityData.group,
+        loggedinUser: this.userId
+      }
+    });
+  }
+
 }

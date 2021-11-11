@@ -54,7 +54,7 @@ export class CustomIonSelectDirective implements DoCheck {
             if (selectTextPlaceholderRef) {
                 selectTextPlaceholderRef.setAttribute(
                     'style',
-                    `color: #979797 !important;
+                    `color: #4D4D4D !important;
                     padding-left: 10px;
                     opacity: 1;`.trim()
                 );
@@ -63,7 +63,7 @@ export class CustomIonSelectDirective implements DoCheck {
             if (selectIconInnerRef) {
                 selectIconInnerRef.setAttribute(
                     'style',
-                    `border-color: #979797 !important;
+                    `border-color: #4D4D4D !important;
                     animation: none;
                     border: solid;
                     border-width: 0 2px 2px 0;

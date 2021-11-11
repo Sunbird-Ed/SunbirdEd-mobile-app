@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
@@ -48,6 +48,7 @@ export class ProjectListingComponent {
 
     constructor(
         private router: Router,
+        private routerParams : ActivatedRoute,
         private location: Location,
         private headerService: AppHeaderService,
         private platform: Platform,
@@ -64,11 +65,18 @@ export class ProjectListingComponent {
         private popupService: GenericPopUpService,
         private toastService: ToastService
     ) {
-        this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
-            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
-            this.selectedFilter = this.filters[0];
-        });
-
+        routerParams.queryParams.subscribe(params =>{
+            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME','FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
+            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME']];
+            });
+            if( params.selectedFilter ){
+                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[1] : this.filters[2];
+                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 1 : 2;
+            }else{
+                this.selectedFilter = this.filters[0];
+            }
+        })
+       
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
             this.networkFlag = available;
@@ -78,15 +86,28 @@ export class ProjectListingComponent {
     }
 
     async getDownloadedProjects(fields?: any[]): Promise<[]> {
-        let isAprivateProgramQuery;
-        this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
         let query = {
             selector: {
                 downloaded: true,
-                isAPrivateProgram: isAprivateProgramQuery,
-            },
-            limit: 10 * this.offlineProjectPage,
+            }
+          
+          
         };
+        switch (this.selectedFilterIndex) {
+            case 0:
+                query.selector['isAPrivateProgram'] = { $ne: false }
+                query.selector['referenceFrom']={ $ne: 'link' }
+                break;
+             case 1:
+                query.selector['isAPrivateProgram']=false
+                break;
+             case 2:
+                query.selector['referenceFrom']='link'
+                break;
+        
+            default:
+                break;
+        }
         fields ? (query['fields'] = fields) : null;
         try {
             let data: any = await this.db.customQuery(query);
@@ -199,8 +220,21 @@ export class ProjectListingComponent {
         }
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
-        if (selectedFilter == 'assignedToMe') {
+
+        let selectedFilter 
+        switch (this.selectedFilterIndex) {
+            case 0:
+                selectedFilter = 'createdByMe'
+                break;
+             case 1:
+                selectedFilter = 'assignedToMe'
+                break;
+            case 2:
+                selectedFilter = 'discoveredByMe'
+            default:
+                break;
+        }
+        if (selectedFilter == 'assignedToMe' || selectedFilter == 'discoveredByMe') {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
@@ -406,6 +440,7 @@ export class ProjectListingComponent {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
+                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
                                         this.selectedProgram(project);
                                     })
                                 return;

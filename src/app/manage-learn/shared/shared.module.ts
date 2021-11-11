@@ -25,7 +25,9 @@ import {
   NoDataComponent,
   ChartComponent,
   CreateTaskFormComponent,
-  PrivacyPolicyAndTCComponent
+  PrivacyPolicyAndTCComponent,
+  ProjectMetadataCardComponent,
+  ProjectTaskListComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -64,6 +66,7 @@ import { PercentageColumnChartsComponent } from './components/percentage-column-
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
+import { HTTP } from '@ionic-native/http/ngx';
 
 
 @NgModule({
@@ -112,7 +115,9 @@ import { GenericPopUpService } from './generic.popup';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -161,7 +166,9 @@ import { GenericPopUpService } from './generic.popup';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   providers: [
     Camera,
@@ -178,7 +185,8 @@ import { GenericPopUpService } from './generic.popup';
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,
-    GenericPopUpService
+    GenericPopUpService,
+    HTTP
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -195,7 +203,9 @@ import { GenericPopUpService } from './generic.popup';
     SurveyMsgComponent,
     CreateTaskFormComponent,
     RemarksModalComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   
 })

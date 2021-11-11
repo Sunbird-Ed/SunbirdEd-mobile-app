@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from './access-discussion.component';
 import { AppHeaderService, CommonUtilService, NavigationService } from '@app/services';
-import { TelemetryGeneratorService } from '../../../services';
+import { AppGlobalService, TelemetryGeneratorService } from '../../../services';
 
 describe('GroupDetailsPage', () => {
     let accessDiscussionComponent: AccessDiscussionComponent;
@@ -19,7 +19,7 @@ describe('GroupDetailsPage', () => {
     const mockHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn()
     };
-    const mockNavigationService: Partial<NavigationService> = {
+    const mockAppGlobalService: Partial<AppGlobalService> = {
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
@@ -32,8 +32,8 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService as CommonUtilService,
             mockDiscussionTelemetryService as DiscussionTelemetryService,
             mockHeaderService as AppHeaderService,
-            mockNavigationService as NavigationService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -49,11 +49,13 @@ describe('GroupDetailsPage', () => {
     describe('ngOnInit', () => {
         it('should check for forumIds', () => {
             // arrange
+            mockAppGlobalService.isForumEnabled = true;
             mockDiscussionService.getForumIds = jest.fn(() => throwError({ error: 'error' })) as any;
             // act
             accessDiscussionComponent.ngOnInit()
             // assert
             expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+            expect(accessDiscussionComponent.isForumEnabled).toBe(true);
         });
     })
 
@@ -78,6 +80,28 @@ describe('GroupDetailsPage', () => {
             expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
             setTimeout(() => {
                 expect(accessDiscussionComponent.forumDetails).toEqual(res.result[0]);
+                expect(accessDiscussionComponent.isForumEnabled).toBe(true);
+                done()
+            });
+        })
+
+        it('should check for access for DF', (done) => {
+            // arrange
+            accessDiscussionComponent.fetchForumIdReq = {
+                identifier: ['some_id'],
+                type: 'group'
+            }
+            const res = {
+                result: [
+                ]
+            }
+            mockDiscussionService.getForumIds = jest.fn(() => of(res) as any);
+            // act
+            accessDiscussionComponent.fetchForumIds()
+            // assert
+            expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(accessDiscussionComponent.isForumEnabled).toBe(false);
                 done()
             });
         })

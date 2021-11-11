@@ -91,6 +91,7 @@ export class AppGlobalService implements OnDestroy {
     private _redirectUrlAfterLogin: string;
     private _isNativePopupVisible: boolean;
     private _isDiscoverBackEnabled: boolean = false;
+    private _isForumEnabled: boolean = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -815,6 +816,14 @@ export class AppGlobalService implements OnDestroy {
 
     set isDiscoverBackEnabled(value) {
         this._isDiscoverBackEnabled = value;
+    }
+
+    set isForumEnabled(value) {
+        this._isForumEnabled = value;
+    }
+
+    get isForumEnabled() {
+        return this._isForumEnabled;
     }
 
     setNativePopupVisible(value, timeOut?) {

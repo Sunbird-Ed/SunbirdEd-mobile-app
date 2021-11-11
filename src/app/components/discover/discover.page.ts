@@ -140,13 +140,16 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    const filterConfig = section.dataSrc.params.config.find(((facet) => facet.type === 'filter'));
-    event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+      const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
+      event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    }
     const params = {
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: true,
-      description: (section && section.description) || ''
+      title: (section && section.landingDetails && section.landingDetails.title) || '',
+      description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
     let corRelationType: string = CorReleationDataType.CATEGORY;
     let interactType: string = InteractType.SELECT_CATEGORY;

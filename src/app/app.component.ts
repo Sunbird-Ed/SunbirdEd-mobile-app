@@ -208,9 +208,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
-    })
-    cordova.plugins.notification.local.on("click", (notification) => {
-      var objects = notification.data;
+    });
+    cordova.plugins.notification.local.on('click', (notification) => {
       // My data is now available in objects.heading, objects.subheading and so on.
       this.segmentationTagService.localNotificationId = notification.id;
       this.segmentationTagService.handleLocalNotificationTap();
@@ -221,7 +220,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       const corRelationList: Array<CorrelationData> = [];
       this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
 
-      corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      corRelationList.push({
+        id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + ''
+        : '', type: CorReleationDataType.NOTIFICATION_ID
+      });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
@@ -233,6 +235,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
+    window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
+
   }
 
   checkAndroidWebViewVersion() {
@@ -927,6 +931,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.router.navigate([RouterLinks.SIGN_IN]);
           }
         }
+        break;
+      case 'MLREPORTS':
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
         break;
     }
   }

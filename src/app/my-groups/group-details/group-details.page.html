@@ -1,25 +1,25 @@
 <ion-content>
-  <div class="gd-deactivated" *ngIf="isSuspended">
-    <div class="gd-deactivated-info pull-left">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
-    <div class="gd-deactivated-btn pull-left text-center" *ngIf="isGroupCreatorOrAdmin">
-      <button class="sb-btn-large sb-btn-small" (click)="showReactivateGroupPopup()">
+  <div class="gd-deactivated" *ngIf="isSuspended" tabindex="0">
+    <div class="gd-deactivated-info pull-left" tabindex="0">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
+    <div class="gd-deactivated-btn pull-left text-center" *ngIf="isGroupCreatorOrAdmin" tabindex="0">
+      <button class="sb-btn-large sb-btn-small" (click)="showReactivateGroupPopup()" tabindex="0">
         {{'FRMELEMENTS_BTN_ACTIVATEGRP' | translate}}
       </button>
     </div>
   </div>
-  <div class="gd-page">
+  <div class="gd-page" tabindex="0">
     <div class="gd-header">
       <div *ngIf="!isGroupLoading">
         <div class="gd-title">
-          <div class="gd-name">
+          <div class="gd-name" role="heading" aria-level="1">
             {{groupDetails?.name}}
             <div class="gd-created-by" *ngIf="groupCreator">
               {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
             </div>
           </div>
           <div class="gd-opts">
-            <accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
-            <ion-icon ios="ellipsis-horizontal" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon>
+            <accessDiscussion role="button" aria-label="access discussion forum" [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
+           <span role="button" aria-label="more actions menu"><ion-icon ios="ellipsis-horizontal" role="button" aria-label="more actions menu" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon></span>
           </div>
         </div>
       </div>
@@ -30,28 +30,33 @@
           </app-skeleton-item>
         </div>
       </div>
-      <div class="gd-tab-header">
-        <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}">
-          <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
+      <div class="gd-tab-header" tabindex="0">
+        <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}" tabindex="0">
+          <div class="gd-tab-name gd-tab-border" 
+          [attr.aria-label]="activeTab=='activities' ? 
+            'Selected activities tab' : 
+            'activities tab'">{{'ACTIVITIES' | translate}}</div>
         </div>
-        <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}">
-          <div class="gd-tab-name">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
+        <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}" tabindex="0">
+          <div class="gd-tab-name" [attr.aria-label]="activeTab=='members' ?
+            'Selected members' + memberList?.length + 'tab' :
+            'members' + memberList?.length + 'tab'">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
         </div>
       </div>
     </div>
 
-    <div class="gd-tab-container">
+    <div class="gd-tab-container" tabindex="0">
       <div class="gd-tab-content" *ngIf="activeTab=='members'">
-        <div class="gd-member-search">
-          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="">
+        <div class="gd-member-search" tabindex="0">
+          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="members">
           <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onMemberSearch(searchMember)">
         </div>
-        <div class="gd-tab-member-container">
+        <div class="gd-tab-member-container" tabindex="0">
           <div class="gd-add-member-container">
-            <div *ngIf="(platform.is('ios') ? false : true) && (!isSuspended && loggedinUser?.role === 'admin')" class="gd-add-member" (click)="navigateToAddUserPage()">
+            <div *ngIf="(platform.is('ios') ? false : true) && (!isSuspended && loggedinUser?.role === 'admin')" class="gd-add-member" (click)="navigateToAddUserPage()" tabindex="0">
               <span class="gd-add-member-icon">
-                <img src="assets/imgs/ic_person_add_white.svg" alt="">
+                <img src="assets/imgs/ic_person_add_white.svg" alt="add-member">
               </span>
               <span class="gd-large-text">
                 {{'ADD_MEMBER' | translate}}
@@ -76,42 +81,42 @@
           <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
             class="text-center">
             <div class="gd-empty-result" *ngIf="!memberSearchQuery">
-              <img src="assets/imgs/no_member.svg" alt="">
+              <img src="assets/imgs/no_member.svg" alt="no-member">
             </div>
             <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
-              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <img src="assets/imgs/empty_search_result.svg" alt="no-result">
               <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
             </div>
           </div>
         </div>
       </div>
-      <div class="gd-tab-content" *ngIf="activeTab=='activities'">
-        <div class="gd-member-search">
-          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="">
+      <div class="gd-tab-content" *ngIf="activeTab=='activities'" tabindex="0">
+        <div class="gd-member-search" tabindex="0">
+          <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="search">
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center">
+        <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center" tabindex="0">
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
-            <img src="assets/imgs/no_activity.svg" alt="">
+            <img src="assets/imgs/no_activity.svg" alt="no-activity">
           </div>
           <div class="gd-empty-result" *ngIf="activitySearchQuery">
-            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <img src="assets/imgs/empty_search_result.svg" alt="no-result">
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
         </div>
-        <div *ngIf="isGroupLoading">
+        <div *ngIf="isGroupLoading" tabindex="0">
           <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
             <sb-course-card [isLoading]="true"></sb-course-card>
           </div>
         </div>
-        <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length">
-          <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8">
+        <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length" tabindex="0">
+          <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8" tabindex="0">
             <div class="gd-card-head" *ngIf="filteredGroupedActivityListMap[activityGroup?.title].length">
-              <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>
-              <span class="gd-card-titile">{{activityGroup.title}}</span>
+              <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt="book-icon"></span>
+              <span class="gd-card-titile" role="heading" aria-level="2">{{activityGroup.title}}</span>
             </div>
-            <div *ngFor="let activity of filteredGroupedActivityListMap[activityGroup?.title]; let j = index">
+            <div *ngFor="let activity of filteredGroupedActivityListMap[activityGroup?.title]; let j = index" tabindex="0">
                 <sb-library-card 
                   (cardClick)="!isSuspended && onActivityCardClick($event)" [content]="activity" [section]="null"
                   [isMenu]="!isSuspended && loggedinUser.role === 'admin'" [cardImg]="activity?.appIcon

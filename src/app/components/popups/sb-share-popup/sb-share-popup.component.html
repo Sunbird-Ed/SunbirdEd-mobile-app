@@ -1,7 +1,7 @@
 <ng-container *ngIf="!shareFromPlayer">
 <ion-header class="sb-popover-header">
   <ion-toolbar class="sb-popover-toolbar">
-    <ion-title class="sb-popover-title">{{'SHARE' | translate}}
+    <ion-title class="sb-popover-title" role="heading" aria-level="1">{{'SHARE' | translate}}
       <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
     </ion-title>
   </ion-toolbar>
@@ -35,7 +35,7 @@
       <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
 
       <div *ngIf="!content.isAvailableLocally" class="share-info">
-        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-icon role="button" aria-label="Share info" name="information-circle-outline"></ion-icon>
         {{'DOWNLOAD_FILE_INFO' | translate}}
       </div>
     </ion-radio-group>

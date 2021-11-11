@@ -9,7 +9,7 @@
 <ion-content class="sb-popover-container ion-no-padding">
     <div class="sb-popover-items">
         <div class="icon-container">
-            <img src="assets/imgs/profile_name_confirmation.png" alt="image">
+            <img src="assets/imgs/profile_name_confirmation.png" alt="Certificate of completion">
         </div>
 
         <div class="sb-popover-content-details">
@@ -20,7 +20,7 @@
                     <img src="assets/imgs/edit-icon.svg" alt="edit-name" />
                 </span>
             </div>
-            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_NAMEONCERT' | translate: {'%appName': appName} }} </div>
+            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_NAMEONCERT' | categoryKeyTranslate: content }} </div>
             <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_EDITCERTNAME' | translate: {'%appName': appName} }} </div>
             <div>
                 <ion-checkbox class="pnc-checkbox" color="secondary" checked="false" [(ngModel)]="doNotShowAgain">

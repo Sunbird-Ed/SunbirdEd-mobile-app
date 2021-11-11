@@ -223,12 +223,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
     this.ratingHandler.resetRating();
-    this.route.queryParams.subscribe(params => {
-      this.getNavParams();
+    this.route.queryParams.subscribe(async(params) => {
+      await this.getNavParams();
     });
   }
 
-  getNavParams() {
+  async getNavParams() {
     const extras = this.content || this.router.getCurrentNavigation().extras.state;
     if (extras) {
       this.course = this.course || extras.course;
@@ -252,6 +252,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
+      if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
+        await this.getContentState();
+      }
       this.onboarding = extras.onboarding || this.onboarding;
     }
     this.isIOS = (this.platform.is('ios'))
@@ -308,11 +311,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
-    this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
+    this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
       this.generateEndEvent();
       this.content = data.content;
       this.course = data.course;
-      this.getNavParams();
+      await this.getNavParams();
       setTimeout(() => {
         this.contentPlayerHandler.setLastPlayedContentId('');
         this.generateTelemetry(true);
@@ -699,10 +702,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   popToPreviousPage(isNavBack?) {
     this.appGlobalService.showCourseCompletePopup = false;
-    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
-    } else if (this.isSingleContent) {
+    if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
+    } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.resultLength === 1) {
       window.history.go(-2);
     } else {
@@ -822,7 +825,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
           this.zone.run(() => {
             const eventPayload = event.payload;
-            if (eventPayload.contentId === this.content.identifier) {
+            if (this.content && eventPayload.contentId === this.content.identifier) {
               if (eventPayload.streamingUrl && (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
@@ -843,11 +846,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
-    if (this.cardData.mimeType === 'application/vnd.sunbird.questionset' || !(this.content.contentData.downloadUrl)) {
+    if (this.limitedShareContentFlag) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
-    if (this.limitedShareContentFlag) {
+
+    if (!this.content.contentData.downloadUrl) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }

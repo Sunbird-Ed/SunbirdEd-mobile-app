@@ -65,7 +65,8 @@ describe('LocationHandler', () => {
                 let value;
                 switch (arg) {
                     case PreferenceKey.DEVICE_LOCATION:
-                        value = '{\"district\":\"sample_district\",\"districtId\":\"sample_id\",\"state\":\"sample_state\",\"stateId\":\"sample_id\"}'
+                        value = '{\"district\":\"sample_district\",\
+                        "districtId\":\"sample_id\",\"state\":\"sample_state\",\"stateId\":\"sample_id\"}';
                         break;
                 }
                 return of(value);
@@ -73,18 +74,7 @@ describe('LocationHandler', () => {
             // act
             locationHandler.getAvailableLocation().then((response) => {
                 // assert
-                expect(response).toEqual([{
-                    type: 'state',
-                    code: 'sample_id',
-                    name: 'sample_state',
-                    id: 'sample_id'
-                },
-                    {
-                        type: 'district',
-                        code: 'sample_id',
-                        name: 'sample_district',
-                        id: 'sample_id'
-                    }]);
+                expect(response).toEqual([{"code": "sample_id", "id": "sample_id", "name": "sample_state", "type": "state"}, {"code": "sample_id", "id": "sample_id", "name": "sample_district", "type": "district"}]);
                 done();
             });
         });
