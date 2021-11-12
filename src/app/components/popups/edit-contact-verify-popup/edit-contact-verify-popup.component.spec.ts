@@ -64,7 +64,7 @@ describe('EditContactVerifyPopupComponent', () => {
             mockPopoverCtrl as PopoverController,
             mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
-            mockMenuController as MenuController,
+            mockMenuController as MenuController
         );
     });
 

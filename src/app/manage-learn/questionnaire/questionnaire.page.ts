@@ -113,8 +113,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   getQuestions(data){
-    this.selectedSectionIndex =0;
-    this.selectedEvidenceIndex =0;
     this.schoolData = data;
     const currentEvidences = this.schoolData['assessment']['evidences'];
     this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
