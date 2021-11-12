@@ -777,7 +777,7 @@ export class ProfilePage implements OnInit {
 
         const resp = await this.profileService.generateOTP(request).toPromise();
         if (resp) {
-            const response = await this.callOTPPopover(request.type, request.key, true);
+            const response = await this.callOTPPopover(request.type, request.key, false);
             if (response && response.OTPSuccess) {
                 return Promise.resolve(true);
             } else {
@@ -801,37 +801,37 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  private async callOTPPopover(type: string, key?: any, updateContact?: boolean) {
+  private async callOTPPopover(type: string, key?: any, updateContact: boolean = true) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
         key,
         phone: this.profile.phone,
-        title: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+        title: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
             this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION'),
-        description: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+        description: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
             this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE,
         userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
-      if (data && data.OTPSuccess) {
+      if (updateContact && data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
     } else {
       const componentProps = {
         key,
         phone: this.profile.email,
-        title: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+        title: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
             this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
-        description: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+        description: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
             this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL,
         userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
-      if (data && data.OTPSuccess) {
+      if (updateContact && data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
       return data;
