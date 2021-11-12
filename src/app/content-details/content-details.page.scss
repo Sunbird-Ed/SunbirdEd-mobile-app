@@ -141,6 +141,8 @@
 }
 
 .sb-arrow-back{
+  padding: 0 !important;
+  transform: rotateY(180deg);
   font-size: 1.5rem;
 }
 
