@@ -777,7 +777,7 @@ export class ProfilePage implements OnInit {
 
         const resp = await this.profileService.generateOTP(request).toPromise();
         if (resp) {
-            const response = await this.callOTPPopover(request.type, request.key);
+            const response = await this.callOTPPopover(request.type, request.key, true);
             if (response && response.OTPSuccess) {
                 return Promise.resolve(true);
             } else {
@@ -801,13 +801,15 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  private async callOTPPopover(type: string, key?: any) {
+  private async callOTPPopover(type: string, key?: any, updateContact?: boolean) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
         key,
         phone: this.profile.phone,
-        title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
-        description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
+        title: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+            this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION'),
+        description: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+            this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE,
         userId: this.profile.userId
       };
@@ -820,8 +822,10 @@ export class ProfilePage implements OnInit {
       const componentProps = {
         key,
         phone: this.profile.email,
-        title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
-        description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
+        title: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+            this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
+        description: updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+            this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL,
         userId: this.profile.userId
       };

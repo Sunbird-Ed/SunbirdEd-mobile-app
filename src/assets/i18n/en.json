@@ -1179,6 +1179,8 @@
   "VALIDATION_MAXIMUM_LENGTH": "Maximum length should be 11 numbers",
   "VALIDATION_MINIMUM_LENGTH": "Minimum length should be 11 numbers",
   "VERIFY": "Verify",
+  "AUTHRISE_USER_OTP_TITLE": "OTP to Update Contact",
+  "AUTHRISE_USER_OTP_DESCRIPTION": "Enter OTP to edit your contact information",
   "VERIFY_EMAIL_OTP_DESCRIPTION": "You will receive an email with the OTP for email address verification",
   "VERIFY_EMAIL_OTP_TITLE": "Verify Email Address",
   "VERIFY_PHONE_OTP_DESCRIPTION": "You will receive an SMS with the OTP for mobile number verification",
