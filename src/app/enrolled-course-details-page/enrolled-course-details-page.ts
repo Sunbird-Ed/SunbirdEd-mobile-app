@@ -1098,7 +1098,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   private getLeafNodeIdsWithoutDuplicates(contents: Content[]): Set<string> {
     return contents.reduce((acc, content) => {
-      if (content.children) {
+      if (content.children && !(content.mimeType === 'application/vnd.sunbird.questionset')) {
         this.getLeafNodeIdsWithoutDuplicates(content.children).forEach((c) => acc.add(c));
       } else {
         if (!acc.has(content.identifier)) {
