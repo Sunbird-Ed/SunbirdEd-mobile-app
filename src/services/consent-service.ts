@@ -19,7 +19,7 @@ export class ConsentService {
             componentProps: {
                 isSSOUser: isOrgConsent
             },
-            cssClass: 'sb-popover',
+            cssClass: 'sb-popover back-drop-hard',
             backdropDismiss: false
         });
         await popover.present();
