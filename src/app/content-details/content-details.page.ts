@@ -850,6 +850,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
+
+    if (!this.content.contentData.downloadUrl) {
+      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+      return;
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       this.isUpdateAvail ? InteractSubtype.UPDATE_INITIATE : InteractSubtype.DOWNLOAD_INITIATE,
       Environment.HOME,

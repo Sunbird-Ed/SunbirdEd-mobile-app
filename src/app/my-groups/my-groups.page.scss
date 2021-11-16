@@ -4,7 +4,10 @@
   background: linear-gradient(#E5EDF5, #E5EDF5 88px, white 88px, white 100%);
   padding: 0 8px;
 }
-
+.my-gr-title{
+  display: flex;
+  justify-content: space-between;
+}
 .my-cr-title{
   color: $blue;
   font-family: "Noto Sans", sans-serif;

@@ -12,6 +12,7 @@ import {
   RouterLinks,
   ContentFilterConfig,
   EventTopics,
+  OTPTemplates
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -764,6 +765,7 @@ export class ProfilePage implements OnInit {
         const request: GenerateOtpRequest = {
             key: this.profile.email || this.profile.phone || this.profile.recoveryEmail,
             userId: this.profile.userId,
+            templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE,
             type: ''
         };
         if ((this.profile.email && !this.profile.phone) ||

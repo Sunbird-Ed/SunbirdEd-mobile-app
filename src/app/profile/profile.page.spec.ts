@@ -44,7 +44,8 @@ describe('Profile.page', () => {
         getServerProfilesDetails: jest.fn(() => of(
             mockProfileData
         )),
-        isDefaultChannelProfile: jest.fn(() => of(true))
+        isDefaultChannelProfile: jest.fn(() => of(true)),
+        generateOTP: jest.fn(() => true)
     };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({
@@ -167,7 +168,7 @@ describe('Profile.page', () => {
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform,
+            mockPlatform as Platform
         );
     });
 
@@ -1102,6 +1103,7 @@ describe('Profile.page', () => {
         }));
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.showToast = jest.fn();
+        profilePage.profile.email = 'sunbird.demo@sunbird.com';
         mockProfileService.generateOTP = jest.fn(() => of(true));
         // act
         profilePage.editRecoveryId();

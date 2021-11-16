@@ -42,8 +42,8 @@
             <span class="img-align" *ngIf="type?.iconNormal && !type?.selected">
               <img aria-hidden="true" class="filter-icon" src="{{type?.iconNormal}}" alt="interactive">
             </span>
-            <span class="allign-middle">{{type?.name | translate}}</span>
-
+            <span class="allign-middle" [attr.aria-label]="type?.selected ?
+              'selected ' + type?.name : type?.name">{{type?.name | translate}}</span>
           </div>
         </div>
       </div>
