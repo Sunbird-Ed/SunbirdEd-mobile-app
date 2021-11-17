@@ -161,7 +161,7 @@
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.9.0",
-    "sb-notification": "0.0.2",
+    "sb-notification": "0.0.1",
     "sb-svg2pdf": "0.0.10",
     "sb-tag-manager": "^3.9.19",
     "tslib": "^1.10.0",
