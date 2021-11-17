@@ -189,17 +189,22 @@ export class DistrictMappingPage implements OnDestroy {
         return;
       }
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
+      const userTypes = [];
+      if(this.formGroup.value['persona']&& this.formGroup.value.children['persona']&& this.formGroup.value.children['persona']['subPersona']){
+        for(let i=0; i<this.formGroup.value.children['persona']['subPersona'].length; i++){
+          userTypes.push({
+                "type" : this.formGroup.value['persona'],
+                "subType" : this.formGroup.value.children['persona']['subPersona'][i]
+          })
+        }
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        profileUserType: {
-          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
-          ...((this.formGroup.value.children['persona']['subPersona'] ?
-            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
-        }
-      };
+        profileUserTypes: userTypes
+      };  
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
