@@ -82,7 +82,7 @@
     "com-sarriaroman-photoviewer": "^1.2.5",
     "com.jjdltc.cordova.plugin.zip": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
-    "common-form-elements-v9": "4.2.0",
+    "common-form-elements-v9": "4.4.0",
     "cordova-android": "^9.0.0",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",

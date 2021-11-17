@@ -73,7 +73,7 @@
   </div>
   <div class="cd-container">
     <div class="cd-flex-container">
-      <div class="cd-container-title">{{"CONTENTS" | translate}}</div>
+      <div attr.aria-label="{{'CONTENTS' | translate}}, heading" class="cd-container-title">{{"CONTENTS" | translate}}</div>
       <div class="cd-container-progress" *ngIf="isAlreadyEnrolled">{{viewedContents.length}}/{{childContents.length}} {{"COMPLETED" | translate}}</div>
     </div>
     <div>
