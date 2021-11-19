@@ -397,7 +397,16 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
+                  const subPersonaCodes = [];
+                  if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
+                    subPersonaCodes.push(this.profile.serverProfile.profileUserType);
+                  }
+                  else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
+                    for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
+                      subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                    }
+                  }
+                  personaConfig.default = subPersonaCodes;
                 }
                 break;
               }
