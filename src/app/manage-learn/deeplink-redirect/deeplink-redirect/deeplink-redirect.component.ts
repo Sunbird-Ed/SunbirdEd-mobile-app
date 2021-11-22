@@ -77,7 +77,7 @@ export class DeeplinkRedirectComponent implements OnInit {
             solutionId: data.solutionId,
           },
         });
-      },1000);
+      },500);
       return
     }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {
