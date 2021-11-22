@@ -60,10 +60,10 @@
             <span>{{profile?.persona?.name}}</span>
         </div>
     </div>
-    <div *ngIf="profile?.subPersona" class="text-center">
+    <div *ngIf="profile?.subPersona && profile?.subPersona.length" class="text-center">
         <div>
             <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
-            <span>{{profile?.subPersona}}</span>
+            <span>{{profile?.subPersona.join(', ')}}</span>
         </div>
     </div>
     <div *ngIf="userLocation" class="location text-center">
