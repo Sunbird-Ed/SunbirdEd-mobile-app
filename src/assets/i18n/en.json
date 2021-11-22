@@ -1504,7 +1504,7 @@
   "FRMELEMNTS_LBL_MY_REPORTS": "My reports",
   "FRMELEMNTS_LBL_EARNCERT": "Certificate criteria",
   "FRMELEMNTS_LBL_EARNMCERT" : "Certificates will be issued if you score above {{percent}}% in your assessments",
-  "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificates will be issued upon 100% completion",
+  "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificate will be issued upon 100% completion",
   "FRMELEMNTS_MSG_INVALID_LINK":"Invalid Link, please try with other link",
   "FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND":"Template details not found"
 }
