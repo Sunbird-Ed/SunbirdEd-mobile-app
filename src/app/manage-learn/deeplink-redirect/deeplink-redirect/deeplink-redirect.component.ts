@@ -63,7 +63,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   async redirectProject(data) {
     await this.router.navigate([`/${RouterLinks.HOME}`]);
     if (data.projectId) {// project id will only come if its created alreday for user
-      this.router
+      await this.router
         .navigate([`/${RouterLinks.PROJECT}`], {
           queryParams: {
             selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
@@ -77,7 +77,7 @@ export class DeeplinkRedirectComponent implements OnInit {
             solutionId: data.solutionId,
           },
         });
-      }, 0);
+      },1000);
       return
     }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {
