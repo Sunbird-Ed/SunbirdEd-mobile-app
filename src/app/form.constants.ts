@@ -80,7 +80,7 @@ export class FormConstants {
     };
     public static SEGMENTATION: FormRequest = {
         type: 'config',
-        subType: 'segmentation',
+        subType: 'segmentation_v2',
         action: 'get',
         component: 'app'
     };
