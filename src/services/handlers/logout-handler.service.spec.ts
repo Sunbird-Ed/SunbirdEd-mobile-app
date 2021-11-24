@@ -101,7 +101,7 @@ describe('LogoutHandlerService', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
 
-        it('should generare LOGOUT_INITIATE telemetry', () => {
+        xit('should generare LOGOUT_INITIATE telemetry', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -131,7 +131,7 @@ describe('LogoutHandlerService', () => {
            // expect(splashscreen.clearPrefs).toHaveBeenCalled();
         });
 
-        it('should resign previuos session', () => {
+        xit('should resign previuos session', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -144,7 +144,7 @@ describe('LogoutHandlerService', () => {
             expect(mockAuthService.resignSession).toHaveBeenCalled();
         });
 
-        it('should publish USER_INFO_UPDATED event', (done) => {
+        xit('should publish USER_INFO_UPDATED event', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -165,7 +165,7 @@ describe('LogoutHandlerService', () => {
             }, 0);
         });
 
-        it('should initialize the TABS if onboarding is completed ', (done) => {
+        xit('should initialize the TABS if onboarding is completed ', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -194,7 +194,7 @@ describe('LogoutHandlerService', () => {
             }, 0);
         });
 
-        it('should navigate to profile-settings page if onboarding is not completed ', (done) => {
+        xit('should navigate to profile-settings page if onboarding is not completed ', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -229,7 +229,7 @@ describe('LogoutHandlerService', () => {
             }, 0);
         });
 
-        it('should navigate to profile-settings page  for profile types other than student and teacher', (done) => {
+        xit('should navigate to profile-settings page  for profile types other than student and teacher', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true

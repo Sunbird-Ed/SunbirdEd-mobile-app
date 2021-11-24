@@ -1900,46 +1900,16 @@ describe('AppComponent', () => {
             );
         });
 
-        it('should return a toast for internet changes', () => {
+        it('should handle logout', () => {
             // arrange
             const menuName = {
                 menuItem: 'LOGOUT'
             };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            appComponent.menuItemAction(menuName);
-            // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
-        });
-
-        it('should handle logout', (done) => {
-            // arrange
-            const menuName = {
-                menuItem: 'LOGOUT'
-            };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            };
-            mockPreferences.getBoolean = jest.fn(() => of(true));
-            mockPreferences.putBoolean = jest.fn(() => of(false));
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
-                id: 'googleClientId',
-                field: 'googleClientId',
-                value: 'sample_random_value'
-            }));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.menuItemAction(menuName);
             // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
-            setTimeout(() => {
-                expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
-                done();
-            }, 0);
+            expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
         });
 
         it('should handle inappupdate', () => {
