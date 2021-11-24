@@ -145,6 +145,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;
+          window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
         });
       this.checkForExperiment();
       this.receiveNotification();
@@ -235,7 +236,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
-    window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
 
   }
 
