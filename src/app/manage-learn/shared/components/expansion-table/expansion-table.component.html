@@ -26,7 +26,10 @@
         </tr>
         <tr *ngFor="let criteria of item.criterias" class="_flex-box _justify-content-space-between _noWrap">
           <td class="ion-text-wrap" style="flex: 1">{{ criteria?.name }}</td>
-          <td class="_flex-box" *ngFor="let level of criteria?.levels">: {{ level }}</td>
+          <td class="_flex-box" *ngFor="let level of criteria?.levelsWithScores">
+            <p>{{ level.level }}</p>
+            <p>{{ level.score }}</p>
+          </td>
         </tr>
       </table>
     </div>
