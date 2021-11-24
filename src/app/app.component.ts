@@ -48,7 +48,6 @@ import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 declare const cordova;
 
@@ -125,7 +124,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
     private mlloader: LoaderService,
-    private googlePlusLogin: GooglePlus,
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -706,7 +704,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async makeEntryInSupportFolder() {
-    return new Promise((resolve => {
+    return new Promise<void>((resolve => {
       (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
@@ -884,26 +882,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
       case 'LOGOUT':
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        } else {
-          if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN).toPromise()) {
-            try {
-              await this.googlePlusLogin.disconnect();
-            } catch (e) {
-              const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
-              await this.googlePlusLogin.trySilentLogin({
-                webClientId: clientId.value
-              }).then(async () => {
-                await this.googlePlusLogin.disconnect();
-              }).catch((err) => {
-                console.log(err);
-              });
-            }
-            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
-          }
-          this.logoutHandlerService.onLogout();
-        }
+        this.logoutHandlerService.onLogout();
         break;
 
       case 'UPDATE':

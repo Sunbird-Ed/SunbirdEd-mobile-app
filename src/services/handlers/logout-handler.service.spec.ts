@@ -1,6 +1,6 @@
 import { LogoutHandlerService } from './logout-handler.service';
 import {
-    AuthService, ProfileService, SharedPreferences, ProfileType, InteractType
+    AuthService, ProfileService, SharedPreferences, ProfileType, InteractType, SystemSettingsService
 } from 'sunbird-sdk';
 import { Events } from '@app/util/events';
 import { ContainerService } from '../container.services';
@@ -11,6 +11,7 @@ import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import { Platform } from '@ionic/angular';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
@@ -58,11 +59,16 @@ describe('LogoutHandlerService', () => {
         is: jest.fn(platform => platform === 'ios')
     };
 
+    const mockSystemSettingsService: Partial<SystemSettingsService> = {};
+
+    const mockGooglePlus: Partial<GooglePlus> = {};
+
     beforeAll(() => {
         logoutHandlerService = new LogoutHandlerService(
             mockProfileService as ProfileService,
             mockAuthService as AuthService,
             mockSharedPreferences as SharedPreferences,
+            mockSystemSettingsService as SystemSettingsService,
             mockCommonUtilService as CommonUtilService,
             mockEvents as Events,
             mockAppGlobalService as AppGlobalService,
@@ -70,7 +76,8 @@ describe('LogoutHandlerService', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockRoute as Router,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockGooglePlus as GooglePlus
         );
     });
 

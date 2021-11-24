@@ -33,7 +33,6 @@ import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 declare const plugins;
 
@@ -186,7 +185,6 @@ describe('AppComponent', () => {
        stopLoader: jest.fn(),
        startLoader: jest.fn()
     };
-    const mockGooglePlusLogin: Partial<GooglePlus> = {};
     global.window.segmentation = {
         init: jest.fn(),
         SBTagService: {
@@ -238,7 +236,6 @@ describe('AppComponent', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
             mockMlLoader as LoaderService,
-            mockGooglePlusLogin as GooglePlus,
         );
     });
 
@@ -1929,14 +1926,11 @@ describe('AppComponent', () => {
             };
             mockPreferences.getBoolean = jest.fn(() => of(true));
             mockPreferences.putBoolean = jest.fn(() => of(false));
-            mockGooglePlusLogin.disconnect = jest.fn(() => Promise.reject(undefined));
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
                 id: 'googleClientId',
                 field: 'googleClientId',
                 value: 'sample_random_value'
             }));
-            mockGooglePlusLogin.trySilentLogin = jest.fn(() => Promise.resolve());
-            mockLocalStorageService.deleteAllStorage = jest.fn(() => Promise.resolve({}));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.menuItemAction(menuName);
@@ -1944,9 +1938,6 @@ describe('AppComponent', () => {
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
             setTimeout(() => {
                 expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
-                expect(mockGooglePlusLogin.disconnect).toHaveBeenCalled();
-                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalledWith({id: SystemSettingsIds.GOOGLE_CLIENT_ID});
-                expect(mockGooglePlusLogin.trySilentLogin).toHaveBeenCalledWith({webClientId: 'sample_random_value'});
                 done();
             }, 0);
         });
