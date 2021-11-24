@@ -7,7 +7,7 @@ import { ActionType, EventTopics, ProfileConstants, RouterLinks } from '@app/app
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService, ContentSearchCriteria, ContentService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -40,6 +40,7 @@ export class NotificationService implements SbNotificationService {
         @Inject('NOTIFICATION_SERVICE_V2') private notificationServiceV2: NotificationServiceV2,
         @Inject('GROUP_SERVICE') public groupService: GroupService,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('CONTENT_SERVICE') private contentService: ContentService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
@@ -244,9 +245,18 @@ export class NotificationService implements SbNotificationService {
 
     setNotificationParams(data) {
         this.notificationPayload = data;
-        switch (this.notificationPayload.action.type) {
+        let type;
+        let actionData;
+        if (this.notificationPayload.actionData && this.notificationPayload.actionData.actionType) {
+            type = this.notificationPayload.actionData.actionType;
+            actionData = this.notificationPayload.actionData;
+        } else if (this.notificationPayload.action && this.notificationPayload.action.type) {
+            type = this.notificationPayload.action.type;
+            actionData = this.notificationPayload.action.additionalInfo;
+        }
+        switch (type) {
             case ActionType.EXT_URL:
-                this.externalUrl = data.action.additionalInfo.deepLink;
+                this.externalUrl = actionData.deepLink;
                 break;
             case ActionType.UPDATE_APP:
                 this.utilityService.getBuildConfigValue('APPLICATION_ID')
@@ -257,11 +267,25 @@ export class NotificationService implements SbNotificationService {
             case ActionType.COURSE_UPDATE:
             case ActionType.CONTENT_UPDATE:
             case ActionType.BOOK_UPDATE:
-                this.identifier = data.action.additionalInfo.identifier;
+                this.identifier = actionData.identifier;
                 break;
             case ActionType.CONTENT_URL:
-                this.contentUrl = data.action.additionalInfo.contentURL;
-                this.telemetryService.updateCampaignParameters([{ type: CorReleationDataType.NOTIFICATION_ID, id: this.notificationId }] as Array<CorrelationData>);
+                this.contentUrl = actionData.contentURL;
+                this.telemetryService.updateCampaignParameters([{
+                    type: CorReleationDataType.NOTIFICATION_ID,
+                    id: this.notificationId
+                }] as Array<CorrelationData>);
+                break;
+            case ActionType.SEARCH:
+                const searchFilters = actionData.options;
+                (searchFilters['searchCriteria'] as ContentSearchCriteria) =
+                this.contentService.formatSearchCriteria({ request: searchFilters.filter });
+                searchFilters['facet'] = searchFilters.facets || '';
+                const params = {
+                    formField: searchFilters,
+                    fromLibrary: false
+                };
+                this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
                 break;
         }
     }
@@ -286,7 +310,8 @@ export class NotificationService implements SbNotificationService {
         } else if (this.contentUrl) {
             this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: this.contentUrl }, this);
             this.contentUrl = null;
-        } else if (this.notificationPayload && this.notificationPayload.action.type === ActionType.CERTIFICATE) {
+        } else if (this.notificationPayload && this.notificationPayload.action
+            && this.notificationPayload.action.type === ActionType.CERTIFICATE) {
             console.log('ActionType.CERTIFICATE clicked')
             this.event.publish('to_profile');
         }
