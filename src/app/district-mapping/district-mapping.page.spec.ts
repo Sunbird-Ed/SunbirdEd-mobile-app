@@ -900,4 +900,23 @@ describe('DistrictMappingPage', () => {
     it('should invoked ngOnDestroy for unsubscribe', () => {
         districtMappingPage.ngOnDestroy();
     });
+
+    describe('initialiseFormData', () => {
+        it('should store to subPersonaCodes array', () => {
+            const subPersonaCodes = [
+                {
+                    type:'sample_1',
+                    subType: 'sample1'
+                }
+            ]
+            subPersonaCodes.push({ type: 'sample_2', subType: 'sample2' });
+            districtMappingPage.ionViewWillEnter();
+            expect(subPersonaCodes).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({subType: 'sample2'})
+                ])
+            );
+
+        })
+    })
 });
