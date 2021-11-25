@@ -20,7 +20,8 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk, ProfileService, ContentService
+  ErrorType, SunbirdSdk, ProfileService, ContentService,
+  PlayerService
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -29,7 +30,6 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
-import {PlayerService} from '../../../../sunbird-mobile-sdk/tmp';
 
 declare const cordova;
 
