@@ -163,3 +163,11 @@ table.dataTable tbody tr:nth-child(odd) {
 .sb-popover.ios {
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+.popover-alert.ios {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+ion-button.ios {
+    -webkit-appearance: borderless-attachment;
+}
