@@ -606,8 +606,8 @@ export class ProjectDetailPage implements OnDestroy {
        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
        return;
      }
-    // if (this.project.entityId) {
-      let payload = await this.utils.getProfileInfo();
+
+     let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
         payload:payload
@@ -640,7 +640,6 @@ export class ProjectDetailPage implements OnDestroy {
             return;
           }
 
-          // let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
             queryParams: {
               programId: data.programId,
@@ -648,7 +647,6 @@ export class ProjectDetailPage implements OnDestroy {
               observationId: data.observationId,
               entityId: data.entityId,
               entityName: data.entityName,
-              // disableObserveAgain: true
             },
           });
         },
@@ -656,9 +654,6 @@ export class ProjectDetailPage implements OnDestroy {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
         }
       );
-    // } else {
-    //   this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
-    // }
   }
 
   getProjectTaskStatus() {
@@ -728,7 +723,7 @@ export class ProjectDetailPage implements OnDestroy {
        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
        return;
      }
-    // if (this.project.entityId) {
+
       let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
@@ -750,36 +745,14 @@ export class ProjectDetailPage implements OnDestroy {
               observationId: data.observationId,
               entityId: data.entityId,
               entityName: data.entityName,
-              // disableObserveAgain: true
             },
           });
-
-          // let state = {
-          //   scores: false,
-          //   observation: true,
-          //   entityId: data.entityId,
-          //   entityType: data.entityType,
-          //   observationId: data.observationId,
-          // };
-          // if (data.solutionDetails && data.solutionDetails.isRubricDriven) {
-          //   state.scores = true;
-          // }
-          // if (data.solutionDetails && !data.solutionDetails.criteriaLevelReport) {
-          //   state['filter'] = { questionId: [] };
-          //   state['criteriaWise'] = false;
-          // }
-          // this.router.navigate([RouterLinks.GENERIC_REPORT], {
-          //   state: state,
-          // });
 
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
         }
       );
-    // } else {
-    //   this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
-    // }
   }
 
   importProject() {
