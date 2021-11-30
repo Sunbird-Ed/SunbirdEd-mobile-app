@@ -20,7 +20,8 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk, ProfileService, ContentService
+  ErrorType, SunbirdSdk, ProfileService, ContentService,
+  PlayerService
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -62,6 +63,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -252,9 +254,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async playerEvents(event) {
     if (event.edata) {
+      const userId: string = this.appGlobalService.getCurrentUser().uid;
+      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const contentId: string = this.content.identifier;
+      if (event.edata['type'] === 'END') {
+        const saveState: string = JSON.stringify(event.metaData);
+        this.playerService.savePlayerState(userId, parentId, contentId, saveState);
+      }
       if (event.edata['type'] === 'END' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
         this.courseService.syncAssessmentEvents().subscribe();
       } else if (event.edata['type'] === 'EXIT') {
+        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
             this.showConfirm();
@@ -323,7 +333,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
-       nextContent,
+        ...this.config['config'],
+        ...nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
@@ -331,7 +342,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showExit: true,
           showPrint: true
         }
-      }
+      };
 
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
         let questionSet;
