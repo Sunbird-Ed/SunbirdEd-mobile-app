@@ -34,7 +34,7 @@
             <ion-button size="small"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
               (click)="$event.stopPropagation();checkReport(task)">
-              {{'FRMELEMNTS_LBL_REPORTS' | translate}}
+              {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
             </ion-button>
           </div>
         </ion-card>
