@@ -6,10 +6,11 @@ import { of } from 'rxjs';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { ScrollToService } from '../../services/scroll-to.service';
-import { Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../services';
+import { Environment, FormAndFrameworkUtilService, ImpressionType, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../services';
 import { ContentUtil } from '@app/util/content-util';
 import { RouterLinks } from '@app/app/app.constant';
 import { ModalController } from '@ionic/angular';
+import { access } from 'fs';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
@@ -129,7 +130,49 @@ describe('CategoryListPage', () => {
         //         done();
         //     }, 0);
         // });
-    });
+            it('should generate impression telemetry', (done) => {
+                //arrange
+                const corRelationList = [
+                    {
+                        "id": "Sample",
+                    "type": "form-page"
+                    }
+                ]
+                mockHeaderService.showHeaderWithBackButton = jest.fn();
+                mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+                //act
+                categoryListPage.ionViewWillEnter();
+                //assert
+                setTimeout(() => {
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.PAGE_LOADED,
+                    '',
+                    PageId.CATEGORY_RESULTS,
+                    Environment.HOME,
+                    undefined, undefined, undefined, undefined,
+                    corRelationList
+                )
+                done();
+            }, 0);
+        });
+        });
+
+        describe('ngOnInit' , () => {
+            it('should get Appname' , () => {
+                //arrange
+                const acc = [];
+                acc.push('sample');
+                mockCommonUtilService.getAppName = jest.fn();
+                //act
+                categoryListPage.ngOnInit();
+                //assert
+                setTimeout(() => {
+                    expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+                    expect(acc).toEqual('sample');
+                }, 0);
+            });
+        });
 
     describe('navigate to ViewMore page', () => {
         it('should generate interact telemetry and if network available and navigate to textbook viewmore', () => {
