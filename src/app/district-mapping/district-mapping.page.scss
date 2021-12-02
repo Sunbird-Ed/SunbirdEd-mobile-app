@@ -218,3 +218,8 @@
 .ios ::ng-deep .sb-modal {
     bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
 }
+
+.bottom-section {
+    width: 75px;
+    height: 75px;
+}
