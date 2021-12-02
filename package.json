@@ -172,6 +172,9 @@
     "x2js": "^3.3.0",
     "zone.js": "~0.10.2"
   },
+  "resolutions": {
+    "ng2-material-dropdown": "0.11.0"
+  },
   "config": {
     "ionic_source_map_type": "inline-source-map",
     "ionic_webpack": "./config/webpack.config.js",
