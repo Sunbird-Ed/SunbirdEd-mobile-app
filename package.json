@@ -150,6 +150,7 @@
     "ng-recaptcha": "^5.0.0",
     "ng2-charts": "^2.4.2",
     "ngx-bootstrap": "^5.6.2",
+    "ng2-material-dropdown": "0.11.0",
     "ngx-chips": "2.2.2",
     "ngx-infinite-scroll": "^10.0.1",
     "ngx-moment": "^5.0.0",
