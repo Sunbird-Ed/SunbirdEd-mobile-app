@@ -198,6 +198,11 @@ export class DistrictMappingPage implements OnDestroy {
           })
         }
       }
+      else{
+        userTypes.push({
+          "type" : this.formGroup.value['persona']
+        })
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
