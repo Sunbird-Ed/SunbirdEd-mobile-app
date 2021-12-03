@@ -1153,7 +1153,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       .then(async (data: Batch[]) => {
         if (data && data.length) {
           data.forEach((batch) => {
-            this.showCertificateDetails = batch.cert_templates ? true : false;
+            this.showCertificateDetails = !!batch.cert_templates;
           });
         }
         this.handleUnenrollButton();
