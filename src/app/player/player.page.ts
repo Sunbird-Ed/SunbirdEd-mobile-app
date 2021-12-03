@@ -419,6 +419,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
 
     if (this.navigateBackToContentDetails) {
+      window.history.go(-1);
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
