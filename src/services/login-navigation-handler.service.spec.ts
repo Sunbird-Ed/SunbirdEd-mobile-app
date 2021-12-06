@@ -1,10 +1,11 @@
-import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import {LoginNavigationHandlerService} from './login-navigation-handler.service';
 import {
     AuthService,
     ProfileService, ProfileSource,
     ProfileType,
     SharedPreferences,
     SignInError,
+    SystemSettingsService,
     WebviewStateSessionProvider
 } from '@project-sunbird/sunbird-sdk';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
@@ -17,6 +18,8 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {CommonUtilService} from '@app/services/common-util.service';
 import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
 import {of, throwError} from 'rxjs';
+import { Platform } from '@ionic/angular';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
@@ -55,13 +58,18 @@ describe('LoginNavigationHandlerService', () => {
     const mockAppVersion: Partial<AppVersion> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-
+    const mockSystemSettingsService: Partial<SystemSettingsService> = {};
+    const mockGooglePlus: Partial<GooglePlus> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
 
     beforeAll(() => {
         loginNavigationHandlerService = new LoginNavigationHandlerService(
             mockProfileService as ProfileService,
             mockAuthService as AuthService,
             mockSharedPreferences as SharedPreferences,
+            mockSystemSettingsService as SystemSettingsService,
             mockSbProgressLoader as SbProgressLoader,
             mockEvents as Events,
             mockAppGlobalService as AppGlobalService,
@@ -70,7 +78,9 @@ describe('LoginNavigationHandlerService', () => {
             mockNgZone as NgZone,
             mockAppVersion as AppVersion,
             mockCommonUtilService as CommonUtilService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockPlatform as Platform,
+            mockGooglePlus as GooglePlus
         );
     });
 

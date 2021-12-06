@@ -94,7 +94,7 @@
   }
   .sb-user {
     font-size: ($font-size-base - 2);
-    color: $gray-300;
+    color: $gray-0;
   }
 }
 .sb-dt-content.sb-dt-content-main {
@@ -141,6 +141,8 @@
 }
 
 .sb-arrow-back{
+  padding: 0 !important;
+  transform: rotateY(180deg);
   font-size: 1.5rem;
 }
 

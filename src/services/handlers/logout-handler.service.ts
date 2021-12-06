@@ -8,14 +8,15 @@ import { Events } from '@app/util/events';
 import { Platform } from '@ionic/angular';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
-  AuthService, ProfileService, ProfileType, SharedPreferences
+  AuthService, ProfileService, ProfileType, SharedPreferences, SystemSettingsService
 } from 'sunbird-sdk';
-import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { ContainerService } from '../container.services';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class LogoutHandlerService {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     private commonUtilService: CommonUtilService,
     private events: Events,
     private appGlobalService: AppGlobalService,
@@ -32,14 +34,17 @@ export class LogoutHandlerService {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private segmentationTagService: SegmentationTagService,
-    private platform: Platform
+    private platform: Platform,
+    private googlePlusLogin: GooglePlus,
   ) {
   }
 
-  public onLogout() {
+  public async onLogout() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
+
+    await this.logoutGoogle();
 
     if(this.platform.is('ios')){
       this.profileService.getActiveProfileSession().toPromise()
@@ -80,6 +85,24 @@ export class LogoutHandlerService {
         this.segmentationTagService.getPersistedSegmentaion();
       })
     ).subscribe();
+  }
+
+  private async logoutGoogle(){
+    if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN).toPromise()) {
+      try {
+        await this.googlePlusLogin.disconnect();
+      } catch (e) {
+        const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
+        await this.googlePlusLogin.trySilentLogin({
+          webClientId: clientId.value
+        }).then(async () => {
+          await this.googlePlusLogin.disconnect();
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
+      this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+    }
   }
 
   private async navigateToAptPage() {

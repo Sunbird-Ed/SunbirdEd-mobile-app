@@ -69,13 +69,15 @@ export class DeeplinkRedirectComponent implements OnInit {
             selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
           },
         })
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-        queryParams: {
-          projectId: data.projectId,
-          programId: data.programId,
-          solutionId: data.solutionId,
-        },
-      });
+      setTimeout(() => {
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+          queryParams: {
+            projectId: data.projectId,
+            programId: data.programId,
+            solutionId: data.solutionId,
+          },
+        });
+      },500);
       return
     }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {

@@ -20,7 +20,7 @@ export class ShowCertificateComponent implements OnInit {
     private objType;
     showCompletionCertificate = false;
     showMeritCertificate = false;
-    meritCertPercent = 0;
+    meritCertPercent : any ;
     constructor(
         private telemetryGeneratorService: TelemetryGeneratorService,
         private commonUtilService: CommonUtilService
@@ -36,7 +36,7 @@ export class ShowCertificateComponent implements OnInit {
             if (certCriteria) { 
             this.showCompletionCertificate = certCriteria.enrollment && certCriteria.enrollment.status === 2 ? true : false;     
             this.showMeritCertificate = certCriteria.assessment && certCriteria.assessment.score ? true : false;
-            this.meritCertPercent = certCriteria.assessment && certCriteria.assessment.score;
+            this.meritCertPercent = certCriteria.assessment && certCriteria.assessment.score['>='];
             }
         }
     }

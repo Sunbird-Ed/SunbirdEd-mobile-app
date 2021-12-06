@@ -1,6 +1,6 @@
-import {EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants} from '@app/app/app.constant';
-import {Environment, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
-import {Context as SbProgressLoaderContext, SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants, SystemSettingsIds } from '@app/app/app.constant';
+import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
+import { Context as SbProgressLoaderContext, SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import {
     SharedPreferences,
     ProfileService,
@@ -10,17 +10,20 @@ import {
     ServerProfileDetailsRequest,
     ProfileSource,
     SignInError,
-    OAuthSession
+    SystemSettingsService
 } from 'sunbird-sdk';
-import {initTabs, LOGIN_TEACHER_TABS} from '@app/app/module.service';
-import {Inject, Injectable, NgZone} from '@angular/core';
-import {Events} from '@app/util/events';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {ContainerService} from '@app/services/container.services';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { Inject, Injectable, NgZone } from '@angular/core';
+import { Events } from '@app/util/events';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContainerService } from '@app/services/container.services';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { mergeMap, tap } from 'rxjs/operators';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class LoginNavigationHandlerService {
@@ -29,6 +32,7 @@ export class LoginNavigationHandlerService {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+        @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
         private sbProgressLoader: SbProgressLoader,
         private events: Events,
         private appGlobalService: AppGlobalService,
@@ -38,135 +42,136 @@ export class LoginNavigationHandlerService {
         private appVersion: AppVersion,
         private commonUtilService: CommonUtilService,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-
-
+        private platform: Platform,
+        private googlePlusLogin: GooglePlus,
     ) {
     }
 
     async setSession(webViewSession, skipNavigation, subType: string) {
-        this.authService.setSession(
-            webViewSession
-        ).toPromise()
-            .then(async () => {
-                await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
-                const isOnboardingCompleted =
-                    (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
-                if (!isOnboardingCompleted) {
-                    await this.setDefaultProfileDetails();
+        try {
+            await this.authService.setSession(webViewSession).toPromise();
 
-                    // To avoid race condition
-                    if (this.appGlobalService.limitedShareQuizContent) {
-                        this.appGlobalService.skipCoachScreenForDeeplink = true;
-                    }
-                }
-                if (skipNavigation && skipNavigation.redirectUrlAfterLogin) {
-                    this.appGlobalService.redirectUrlAfterLogin = skipNavigation.redirectUrlAfterLogin;
-                }
-                this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
-                initTabs(this.container, LOGIN_TEACHER_TABS);
-                return this.refreshProfileData(subType);
-            })
-            .then(value => {
-                return this.refreshTenantData(value.slug, value.title);
-            })
-            .then(async () => {
-                this.ngZone.run(() => {
-                    this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
-                        (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
-                    this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-                    this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
-                    this.sbProgressLoader.hide({id: 'login'});
-                });
-            })
-            .catch(async (err) => {
-                this.sbProgressLoader.hide({id: 'login'});
-                if (err instanceof SignInError) {
-                    this.commonUtilService.showToast(err.message);
-                } else {
-                    this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
-                }
+            await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
+            const value = await this.setProfileDetailsAndRefresh(skipNavigation, subType);
+
+            await this.refreshTenantData(value.slug, value.title);
+
+            this.ngZone.run(() => {
+                this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
+                    (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
+                this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
+                this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+                this.sbProgressLoader.hide({ id: 'login' });
             });
+        } catch (err) {
+            await this.logoutOnImpropperLoginProcess();
+
+            this.sbProgressLoader.hide({ id: 'login' });
+            if (err instanceof SignInError) {
+                this.commonUtilService.showToast(err.message);
+            } else {
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+            }
+        }
+    }
+
+    private async setProfileDetailsAndRefresh(skipNavigation, subType) {
+        try {
+            const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
+            if (!isOnboardingCompleted) {
+                await this.setDefaultProfileDetails();
+
+                // To avoid race condition
+                if (this.appGlobalService.limitedShareQuizContent) {
+                    this.appGlobalService.skipCoachScreenForDeeplink = true;
+                }
+            }
+            if (skipNavigation && skipNavigation.redirectUrlAfterLogin) {
+                this.appGlobalService.redirectUrlAfterLogin = skipNavigation.redirectUrlAfterLogin;
+            }
+            this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
+            initTabs(this.container, LOGIN_TEACHER_TABS);
+            const profileData = await this.refreshProfileData(subType);
+            return profileData;
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     private refreshProfileData(subType: string) {
         const that = this;
 
-        return new Promise<any>((resolve, reject) => {
-            that.authService.getSession().toPromise()
-                .then((session: OAuthSession) => {
-                    if (session) {
-                        const req: ServerProfileDetailsRequest = {
-                            userId: session.userToken,
-                            requiredFields: ProfileConstants.REQUIRED_FIELDS
-                        };
-                        that.profileService.getServerProfilesDetails(req).toPromise()
-                            .then(async (success: any) => {
-                                const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-                                const currentProfileType = (() => {
-                                    if (selectedUserType === ProfileType.ADMIN) {
-                                        return selectedUserType;
-                                    } else if (
-                                        (success.profileUserType.type === ProfileType.OTHER.toUpperCase()) ||
-                                        (!success.profileUserType.type)
-                                    ) {
-                                        return ProfileType.NONE;
-                                    }
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                const session = await that.authService.getSession().toPromise();
 
-                                    return success.profileUserType.type.toLowerCase();
-                                })();
-                                this.generateLoginInteractTelemetry(InteractType.SUCCESS, subType, success.id);
-                                const profile: Profile = {
-                                    uid: success.id,
-                                    handle: success.id,
-                                    profileType: currentProfileType,
-                                    source: ProfileSource.SERVER,
-                                    serverProfile: success
-                                };
-                                this.profileService.createProfile(profile, ProfileSource.SERVER)
-                                    .toPromise()
-                                    .then(async () => {
-                                        await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfileType).toPromise();
-                                        that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
-                                            .then(() => {
-                                                that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)
-                                                    .then(() => {
-                                                        resolve({slug: success.rootOrg.slug, title: success.rootOrg.orgName});
-                                                    }).catch(() => {
-                                                    resolve({slug: success.rootOrg.slug, title: success.rootOrg.orgName});
-                                                }).catch((err) => {
-                                                    reject(err);
-                                                });
-                                            }).catch((err) => {
-                                            console.log('err in setActiveSessionProfile in sign-in card --', err);
-                                        });
-                                    }).catch(() => {
+                if (session) {
+                    const req: ServerProfileDetailsRequest = {
+                        userId: session.userToken,
+                        requiredFields: ProfileConstants.REQUIRED_FIELDS
+                    };
+                    const success: any = await that.profileService.getServerProfilesDetails(req).toPromise();
 
-                                });
-                            }).catch((err) => {
-                            reject(err);
-                        });
-                    } else {
-                        reject('session is null');
+                    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+
+                    const currentProfileType = (() => {
+                        if (selectedUserType === ProfileType.ADMIN) {
+                            return selectedUserType;
+                        } else if (
+                            (success.profileUserType.type === ProfileType.OTHER.toUpperCase()) ||
+                            (!success.profileUserType.type)
+                        ) {
+                            return ProfileType.NONE;
+                        }
+
+                        return success.profileUserType.type.toLowerCase();
+                    })();
+                    this.generateLoginInteractTelemetry(InteractType.SUCCESS, subType, success.id);
+                    const profile: Profile = {
+                        uid: success.id,
+                        handle: success.id,
+                        profileType: currentProfileType,
+                        source: ProfileSource.SERVER,
+                        serverProfile: success
+                    };
+                    await this.profileService.createProfile(profile, ProfileSource.SERVER).toPromise()
+
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfileType).toPromise();
+                    await that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
+
+                    try {
+                        that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)
+                    } catch (e) {
+                        console.error(e);
+                    } finally {
+                        resolve({ slug: success.rootOrg.slug, title: success.rootOrg.orgName });
                     }
-                });
+                } else {
+                    reject('session is null');
+                }
+            } catch (err) {
+                reject(err);
+            }
+
         });
     }
 
     private refreshTenantData(slug: string, title: string) {
-        return new Promise((resolve, reject) => {
-            this.profileService.getTenantInfo({slug: ''}).toPromise()
-                .then(async (res) => {
-                    const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
-                    if (isDefaultChannelProfile) {
-                        title = await this.appVersion.getAppName();
-                    }
-                    this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
-                    this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
-                    (window as any).splashscreen.setContent(title, res.appLogo);
-                    resolve();
-                }).catch(() => {
-                resolve(); // ignore
-            });
+        return new Promise<void>(async (resolve, reject) => {
+
+            try {
+                const tenantInfo = await this.profileService.getTenantInfo({ slug: '' }).toPromise();
+                const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
+                if (isDefaultChannelProfile) {
+                    title = await this.appVersion.getAppName();
+                }
+                this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise().then();
+                this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
+                (window as any).splashscreen.setContent(title, tenantInfo.appLogo);
+                resolve();
+            } catch (error) {
+                resolve();
+            }
         });
     }
 
@@ -227,4 +232,58 @@ export class LoginNavigationHandlerService {
         };
         return profileRequest;
     }
+
+    private async logoutOnImpropperLoginProcess() {
+        await this.logoutGoogle();
+
+        if (this.platform.is('ios')) {
+            this.profileService.getActiveProfileSession().toPromise()
+                .then((profile) => {
+                    this.profileService.deleteProfile(profile.uid).subscribe()
+                });
+        }
+
+        this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
+            tap(async (guestUserId: string) => {
+                if (!guestUserId) {
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+                } else {
+                    const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+                    const currentProfile = allProfileDetais.find(ele => ele.uid === guestUserId);
+                    const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
+                }
+            }),
+            mergeMap((guestUserId: string) => {
+                return this.profileService.setActiveSessionForProfile(guestUserId);
+            }),
+            mergeMap(() => {
+                return this.authService.resignSession();
+            }),
+            tap(async () => {
+                this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+                this.appGlobalService.setEnrolledCourseList([]);
+            })
+        ).subscribe();
+
+    }
+
+    private async logoutGoogle() {
+        if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN).toPromise()) {
+            try {
+                await this.googlePlusLogin.disconnect();
+            } catch (e) {
+                const clientId = await this.systemSettingsService.getSystemSettings({ id: SystemSettingsIds.GOOGLE_CLIENT_ID }).toPromise();
+                await this.googlePlusLogin.trySilentLogin({
+                    webClientId: clientId.value
+                }).then(async () => {
+                    await this.googlePlusLogin.disconnect();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+        }
+    }
+
 }
