@@ -1151,6 +1151,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     };
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
+        if (data && data.length) {
+          data.forEach((batch) => {
+            this.showCertificateDetails = !!batch.cert_templates;
+          });
+        }
         this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];

@@ -37,7 +37,7 @@ export class FormConstants {
     };
 
     public static LOCATION_MAPPING: FormRequest = {
-        type: 'profileConfig_v2',
+        type: 'profileConfig',
         subType: 'default',
         action: 'get'
     };
