@@ -189,17 +189,27 @@ export class DistrictMappingPage implements OnDestroy {
         return;
       }
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
+      const userTypes = [];
+      if(this.formGroup.value['persona']&& this.formGroup.value.children['persona']&& this.formGroup.value.children['persona']['subPersona']){
+        for(let i=0; i<this.formGroup.value.children['persona']['subPersona'].length; i++){
+          userTypes.push({
+                "type" : this.formGroup.value['persona'],
+                "subType" : this.formGroup.value.children['persona']['subPersona'][i]
+          })
+        }
+      }
+      else{
+        userTypes.push({
+          "type" : this.formGroup.value['persona']
+        })
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        profileUserType: {
-          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
-          ...((this.formGroup.value.children['persona']['subPersona'] ?
-            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
-        }
-      };
+        profileUserTypes: userTypes
+      };  
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
@@ -392,7 +402,16 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
+                  const subPersonaCodes = [];
+                  if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
+                    subPersonaCodes.push(this.profile.serverProfile.profileUserType);
+                  }
+                  else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
+                    for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
+                      subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                    }
+                  }
+                  personaConfig.default = subPersonaCodes;
                 }
                 break;
               }

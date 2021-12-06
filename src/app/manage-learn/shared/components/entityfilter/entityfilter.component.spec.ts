@@ -85,9 +85,45 @@ beforeAll(() => {
         })
         })
 
-
-
-
+        describe('addSchools' , () => {
+            it('should push element into array' , () => {
+                //arrange
+                const selectedSchools = ['sample_1'];
+                selectedSchools.push('sample_2');
+                mockModalController.dismiss = jest.fn();
+                //act
+                entityfilterComponent.addSchools();
+                //assert
+                expect(selectedSchools).toContainEqual('sample_2');
+                expect(mockModalController.dismiss).toHaveBeenCalled();
+            });
+        });
+        
+            describe('searchEntity', () => {
+                it('should trigger search() ', () => {
+                    // arrange
+                    const selectableList = [];
+                    jest.spyOn(entityfilterComponent, 'search').mockImplementation();
+                    // act
+                    entityfilterComponent.searchEntity();
+                    // assert
+                    setTimeout(() => {              
+                    }, 0);
+                });
+            });
+            
+            describe('ngOnInit', () => {
+                it('should trigger getTargettedEntityType ', () => {
+                    // arrange
+                    const selectableList = [];
+                    jest.spyOn(entityfilterComponent, 'getTargettedEntityType').mockImplementation();
+                    // act
+                    entityfilterComponent.ngOnInit();
+                    // assert
+                    setTimeout(() => {
+                    }, 0);
+                });
+            });
     });
 
     

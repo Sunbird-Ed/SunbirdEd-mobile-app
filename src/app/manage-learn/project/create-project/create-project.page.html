@@ -10,17 +10,19 @@
     <form [formGroup]="projectForm">
       <div *ngFor="let data of projectFormData">
         <div *ngIf="!data.taskData">
-          <ion-item *ngIf="data.input != 'select'">
-            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup *ngIf="data.validation.required" data>*</sup> </ion-label>
-            <ion-label position="floating" class="label-hint"> {{(data.hintTranslations? data.hintTranslations: data.hint)  | translateJson}} </ion-label>
-            <ion-input type="text" required="{{data.validation.required}}" *ngIf="data.input == 'text'"
-              [formControlName]="data.field" name="{{data.field}}" (ionInput)="onKeyPress($event,data)"> </ion-input>
-            <ion-textarea type="text" required="{{data.validation.required}}" *ngIf="data.input == 'textarea'"
-              name="{{data.field}}" [formControlName]="data.field">
-            </ion-textarea>
-          </ion-item>
-          <div *ngIf="data.input == 'select'" style="margin: 15px 10px;">
-            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup>*</sup> </ion-label>
+          <div *ngIf="data.input != 'select'" class="text-feilds">
+            <ion-label class="label-text"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}}</ion-label>
+            <p class="label-hint"> {{(data.hintTranslations? data.hintTranslations: data.hint)  | translateJson}} </p>
+            <ion-item>
+              <ion-input type="text" required="{{data.validation.required}}" *ngIf="data.input == 'text'"
+                [formControlName]="data.field" name="{{data.field}}" (ionInput)="onKeyPress($event,data)"> </ion-input>
+              <ion-textarea type="text" required="{{data.validation.required}}" *ngIf="data.input == 'textarea'"
+                name="{{data.field}}" [formControlName]="data.field">
+              </ion-textarea>
+            </ion-item>
+          </div>
+          <div *ngIf="data.input == 'select'" class="text-feilds">
+            <ion-label class="label-text"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}}</ion-label>
             <p class="label-hint"> {{(data.hintTranslations? data?.hintTranslations: data.hint)  | translateJson}} </p>
             <ion-item (click)="openCategoryModal(data)" *ngIf="!selectedCategories?.length">
               <ion-icon name="pricetag-outline" slot="start" style="margin: 0px 15px 0 -15px;"></ion-icon>

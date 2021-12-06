@@ -444,6 +444,7 @@ export class ActionType {
     public static readonly EXT_URL = 'extURL';
     public static readonly CONTENT_URL = 'contentURL';
     public static readonly CERTIFICATE = 'certificateUpdate';
+    public static readonly SEARCH = 'search';
 }
 
 export class RouterLinks {

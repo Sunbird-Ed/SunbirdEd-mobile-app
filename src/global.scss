@@ -109,7 +109,7 @@
 .dataTables_wrapper {
   white-space: nowrap;
   height: calc(100vh - 100px);
-  // overflow: auto;
+  overflow: auto;
 }
 
 table.dataTable.no-footer {
@@ -179,4 +179,16 @@ table.dataTable.display tbody td {
 
 table.dataTable tbody tr:nth-child(odd) {
   background-color: #f6f6f6 !important;
+}
+
+.sb-popover.ios {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popover-alert.ios {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+ion-button.ios {
+  -webkit-appearance: borderless-attachment;
 }
