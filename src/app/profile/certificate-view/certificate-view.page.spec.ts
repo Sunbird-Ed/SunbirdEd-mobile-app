@@ -3,7 +3,7 @@ import {CertificateDownloadService} from 'sb-svg2pdf';
 import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '@app/services';
 import {Router} from '@angular/router';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
-import {PopoverController, ToastController} from '@ionic/angular';
+import {Platform, PopoverController, ToastController} from '@ionic/angular';
 import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';
 import {EMPTY, of} from 'rxjs';
@@ -62,9 +62,11 @@ describe('CertificateViewPage', () => {
         }))
     };
     const mockPopoverController: Partial<PopoverController> = {};
+    const mockPlatform: Partial<Platform> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
     };
+    const mockPlatform: Partial<Platform> = {};
     let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {
@@ -78,6 +80,7 @@ describe('CertificateViewPage', () => {
             mockFileOpener as FileOpener,
             mockToastController as ToastController,
             mockPopoverController as PopoverController,
+            mockPlatform as Platform,
             mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
@@ -218,5 +221,19 @@ describe('CertificateViewPage', () => {
             });
         });
 
-    })
+        it('should call present toast message when listenActionEvents called upon', () =>{
+            // arrange
+        mockToastController.create = jest.fn(() => {
+            return Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                dismiss: jest.fn(() => Promise.resolve({}))
+            });
+        }) as any;
+        // act
+        certificateViewPage.showCertificateMenu({});
+        setTimeout(() => {
+            expect(mockToastController.create).toHaveBeenCalled();
+        }, 0);
+        })
+    })   
 });

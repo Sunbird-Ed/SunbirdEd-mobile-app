@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, PlayerService } from '@project-sunbird/sunbird-sdk';
+import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, TelemetryErrorCode, ErrorType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
@@ -19,6 +19,8 @@ import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../ap
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { IterableDiffers } from '@angular/core';
+import { url } from 'inspector';
+import { Environment, InteractSubtype } from '../../services';
 
 
 
@@ -958,21 +960,58 @@ describe('PlayerPage', () => {
 
             });
 
-            describe('ionViewWillEnter', () => {
-                it('should hide statusbar', () => {
-                    // arrange
-                   
-                    mockScreenOrientation.lock = jest.fn();
-                    mockStatusBar.hide = jest.fn();
-                    // act
-                    playerPage.ionViewWillEnter();
-                    // assert 
-                    setTimeout(() => {
-                    expect( mockStatusBar.hide).toHaveBeenCalled();
-                    expect( mockScreenOrientation.lock).toHaveBeenCalled();
-                }, 100);;
-                });
+                describe('ionViewWillEnter', () => {
+                    it('should hide statusbar', () => {
+                        // arrange
+                    
+                        mockScreenOrientation.lock = jest.fn();
+                        mockStatusBar.hide = jest.fn();
+                        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                        mockCourseService.syncAssessmentEvents = of({
+                            subscribe: jest.fn()
+                        }) as any;
+                        // act
+                        playerPage.ionViewWillEnter();
+                        // assert 
+                        setTimeout(() => {
+                        expect( mockStatusBar.hide).toHaveBeenCalled();
+                        expect( mockScreenOrientation.lock).toHaveBeenCalled();
+                        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                            InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                            Environment.PLAYER,
+                            PageId.PLAYER,
+                            ContentUtil.getTelemetryObject(playerPage.config['metadata']['contentData']),
+                            undefined,
+                            ContentUtil.generateRollUp(playerPage.config['metadata']['hierarchyInfo'], playerPage.config['metadata']['identifier']))
+                    }, 100);;
+                    });
 
             });
+
+            describe('openPDF' , () =>{
+                it('should create a loader and dismiss' , () =>{
+                    //arrange
+                    mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                        present: jest.fn(),
+                        dismiss: jest.fn(() => Promise.resolve())   
+                    }));
+                    mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+                    mockLocation.back = jest.fn();
+                    //act
+                    playerPage.openPDF(url);
+                    //assert
+                    setTimeout(() => {
+                        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                        expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                            Environment.PLAYER,
+                            TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                            ErrorType.SYSTEM,
+                            PageId.PLAYER,
+                            JSON.stringify(e)
+                        );
+                        expect(mockLocation.back).toHaveBeenCalled();
+                    }, 0);
+                } )
+            })
 
 });

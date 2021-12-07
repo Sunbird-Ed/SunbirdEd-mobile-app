@@ -190,20 +190,40 @@ export class DistrictMappingPage implements OnDestroy {
       }
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
       const userTypes = [];
-      if(this.formGroup.value['persona']&& this.formGroup.value.children['persona']&& this.formGroup.value.children['persona']['subPersona']){
-        for(let i=0; i<this.formGroup.value.children['persona']['subPersona'].length; i++){
-          userTypes.push({
-                "type" : this.formGroup.value['persona'],
-                "subType" : this.formGroup.value.children['persona']['subPersona'][i]
-          })
+      let userType;
+      const userTypeReq = {};
+      if (this.formGroup.value['persona'] && this.formGroup.value.children['persona'] && this.formGroup.value.children['persona']['subPersona'] && this.formGroup.value.children['persona']['subPersona'].length) {
+        if (typeof this.formGroup.value.children['persona']['subPersona'] === 'string') {
+          userType = {
+            type: this.formGroup.value['persona'],
+            subType: this.formGroup.value.children['persona']['subPersona']
+          }
+          userTypes.push(userType);
         }
+        else if (Array.isArray(this.formGroup.value.children['persona']['subPersona'])) {
+          for (let i = 0; i < this.formGroup.value.children['persona']['subPersona'].length; i++) {
+            userTypes.push({
+              "type": this.formGroup.value['persona'],
+              "subType": this.formGroup.value.children['persona']['subPersona'][i]
+            })
+          }
+          userType = userTypes[0];
+        }
+        userTypeReq['profileUserType'] = userType;
+        userTypeReq['profileUserTypes'] = userTypes;
+      }
+      else{
+        userTypes.push({
+          "type" : this.formGroup.value['persona']
+        })
       }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        profileUserTypes: userTypes
+        profileUserTypes: userTypes,
+        ...{userTypeReq}
       };  
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -397,16 +417,21 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  const subPersonaCodes = [];
-                  if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
-                    subPersonaCodes.push(this.profile.serverProfile.profileUserType);
-                  }
-                  else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
-                    for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
-                      subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                  if(personaConfig.templateOptions.multiple){
+                    const subPersonaCodes = [];
+                    if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
+                      subPersonaCodes.push(this.profile.serverProfile.profileUserType);
                     }
+                    else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
+                      for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
+                        subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                      }
+                    }
+                    personaConfig.default = subPersonaCodes;
                   }
-                  personaConfig.default = subPersonaCodes;
+                  else {
+                    personaConfig.default = this.profile.serverProfile.profileUserType;
+                  }
                 }
                 break;
               }
