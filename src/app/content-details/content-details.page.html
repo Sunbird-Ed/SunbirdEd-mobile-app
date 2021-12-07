@@ -6,7 +6,7 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <ion-icon role="button" aria-label="back" name="arrow-back" class="sb-arrow-back"></ion-icon>
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
@@ -39,7 +39,7 @@
         <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
         (click)="handleNavBackButton();$event.stopPropagation()">
           <div [ngClass]="{'sb-circle': platform.is('android'), 'sb-circle-ios': platform.is('ios')}">
-            <ion-icon role="button" name="back" class="sb-arrow-back"></ion-icon>
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
@@ -82,7 +82,7 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <ion-icon role="button" name="back" class="sb-arrow-back"></ion-icon>
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
@@ -114,7 +114,7 @@
     <div class="sb-player-container sb-offline-container" *ngIf="!contentDownloadable[content?.identifier]">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
-          <ion-icon role="button" name="back" class="sb-arrow-back"></ion-icon>
+          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
         </div>
       </div>
       <div class="sb-common-player-group sb-common-title-group">

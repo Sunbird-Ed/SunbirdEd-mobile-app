@@ -1098,7 +1098,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   private getLeafNodeIdsWithoutDuplicates(contents: Content[]): Set<string> {
     return contents.reduce((acc, content) => {
-      if (content.children) {
+      if (content.children && !(content.mimeType === 'application/vnd.sunbird.questionset')) {
         this.getLeafNodeIdsWithoutDuplicates(content.children).forEach((c) => acc.add(c));
       } else {
         if (!acc.has(content.identifier)) {
@@ -1151,6 +1151,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     };
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
+        if (data && data.length) {
+          data.forEach((batch) => {
+            this.showCertificateDetails = !!batch.cert_templates;
+          });
+        }
         this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];
