@@ -17,6 +17,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
 import {TncUpdateHandlerService} from '@app/services/handlers/tnc-update-handler.service';
 import {of} from 'rxjs';
+import { InteractType } from '@project-sunbird/sunbird-sdk';
+import { Environment, InteractSubtype } from '../../../services';
 
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
@@ -129,4 +131,39 @@ describe('ApplicationHeaderComponent', () => {
             }, 0);
         });
     });
+
+        describe('ngOnDestroy', () => {
+            it('should check for subscription and unsubscribe all those events on ngOnDestroy()', () => {
+                // arrange
+                mockEvents.subscribe = jest.fn((topic, fn) => {});
+                applicationHeaderComponent.networkSubscription = true;
+                applicationHeaderComponent.networkSubscription = {
+                    unsubscribe: jest.fn()
+                };
+                // act
+                applicationHeaderComponent.ngOnDestroy();
+                // assert
+                expect(applicationHeaderComponent.networkSubscription.unsubscribe).toHaveBeenCalled();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+            });
+        });
+
+        describe('toggleMenu', () => {
+            it('should generate interact telemetry', () => {
+                //arrange
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                //act
+                applicationHeaderComponent.toggleMenu();
+                //assert
+                setTimeout(() => {
+                    expect(mockMenuController.toggle).toHaveBeenCalled();
+                    expect(mockMenuController.isOpen).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.TOUCH,
+                        InteractSubtype.MENU_CLICKED,
+                        Environment.HOME,
+                        '');
+                }, 0);    
+            })
+        })
 });
