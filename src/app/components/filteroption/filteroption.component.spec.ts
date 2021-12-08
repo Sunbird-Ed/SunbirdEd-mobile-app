@@ -7,7 +7,6 @@ import { Environment, InteractSubtype, PageId } from '../../../services';
 describe('FilterOptionComponent', () => {
     let filteroptionComponent: FilteroptionComponent;
 
-   
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn((arg) => {
             let value;
@@ -17,7 +16,6 @@ describe('FilterOptionComponent', () => {
                         values : {
                             map : jest.fn()
                         }
-
                     }
                     break;
                 case 'source':
@@ -60,19 +58,18 @@ describe('FilterOptionComponent', () => {
         expect(filteroptionComponent).toBeTruthy();
     });
 
-    describe('ngOnDestroy', () =>{
-        it('should unsubscribe backButtonFunc', () => {
-            // arrange
-            filteroptionComponent['backButtonFunc'] = {
-                unsubscribe: jest.fn(),
-
-            } as any;
-            // act
-            filteroptionComponent.ngOnDestroy();
-            // assert
-            expect(filteroptionComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+        describe('ngOnDestroy', () =>{
+            it('should unsubscribe backButtonFunc', () => {
+                // arrange
+                filteroptionComponent['backButtonFunc'] = {
+                    unsubscribe: jest.fn(),
+                } as any;
+                // act
+                filteroptionComponent.ngOnDestroy();
+                // assert
+                expect(filteroptionComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            });
         });
-    });
         describe('confirm', () =>{
             it('should generate Interact telemetry', () =>{
                 //arrange
