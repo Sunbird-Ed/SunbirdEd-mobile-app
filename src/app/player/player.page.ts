@@ -545,9 +545,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   playerTelemetryEvents(event) {
-    SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-      (res) => console.log('response after telemetry', res),
-    );
+    if (event) {
+      SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+        (res) => console.log('response after telemetry', res),
+        );
+    }
   }
 
   private isJSON(input): boolean {
