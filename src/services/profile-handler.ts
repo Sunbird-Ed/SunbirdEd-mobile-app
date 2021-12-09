@@ -60,8 +60,9 @@ export class ProfileHandler {
         return userTypeConfig ? userTypeConfig['searchFilter'] : [];
     }
 
-    public async getSubPersona(subPersonaCodes: string[], persona: string, userLocation: any): Promise<string> {
-        if (!subPersonaCodes || !subPersonaCodes.length || !persona) {
+    public async getSubPersona(profile, persona: string, userLocation: any): Promise<string> {
+
+        if((!profile.profileUserTypes || !profile.profileUserTypes.length) && (!profile.profileUserType || !profile.profileUserType.subType)){
             return undefined;
         }
         let formFields;
@@ -79,7 +80,24 @@ export class ProfileHandler {
         const subPersonaConfig = personaChildrenConfig.find(formField => formField.code === 'subPersona');
         if (!subPersonaConfig) {
             return undefined;
-         }
+        }
+        const subPersonaCodes = [];
+
+        if (subPersonaConfig.templateOptions.multiple) {
+            if (!profile.profileUserTypes && !profile.profileUserTypes.length && profile.profileUserType && profile.profileUserType.subType) {
+                subPersonaCodes.push(profile.profileUserType.subType);
+            }
+            else if (profile.profileUserTypes && profile.profileUserTypes.length) {
+                for (let i = 0; i < profile.profileUserTypes.length; i++) {
+                    subPersonaCodes.push(profile.profileUserTypes[i].subType);
+                }
+            }            
+        } else{
+            if (profile.profileUserType) {
+                subPersonaCodes.push(profile.profileUserType.subType);
+            }
+        }
+
          const subPersonaLabelArray : any = []
          if (subPersonaConfig.templateOptions.options && subPersonaConfig.templateOptions.options.length) {
             subPersonaCodes.forEach(code => {

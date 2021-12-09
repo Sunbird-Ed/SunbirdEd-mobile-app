@@ -318,17 +318,8 @@ export class ProfilePage implements OnInit {
                     && that.profile.profileUserType.type === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.profileUserType.type;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                const subPersonaCodes = [];
-                if(!this.profile.profileUserTypes && !this.profile.profileUserTypes.length && this.profile.profileUserType) {
-                  subPersonaCodes.push(this.profile.profileUserType);
-                }
-                else if(this.profile.profileUserTypes && this.profile.profileUserTypes.length){
-                  for( let i =0; i< that.profile.profileUserTypes.length; i++){
-                    subPersonaCodes.push(that.profile.profileUserTypes[i].subType);
-                  }
-                }
                 
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(subPersonaCodes,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(this.profile,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
@@ -787,7 +778,7 @@ export class ProfilePage implements OnInit {
 
         const resp = await this.profileService.generateOTP(request).toPromise();
         if (resp) {
-            const response = await this.callOTPPopover(request.type, request.key);
+            const response = await this.callOTPPopover(request.type, request.key, false);
             if (response && response.OTPSuccess) {
                 return Promise.resolve(true);
             } else {
@@ -811,33 +802,37 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  private async callOTPPopover(type: string, key?: any) {
+  private async callOTPPopover(type: string, key?: any, updateContact: boolean = true) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
         key,
         phone: this.profile.phone,
-        title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
-        description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
+        title: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+            this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION'),
+        description: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+            this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE,
         userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
-      if (data && data.OTPSuccess) {
+      if (updateContact && data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
     } else {
       const componentProps = {
         key,
         phone: this.profile.email,
-        title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
-        description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
+        title: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_TITLE') :
+            this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
+        description: !updateContact ? this.commonUtilService.translateMessage('AUTHRISE_USER_OTP_DESCRIPTION') :
+            this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL,
         userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
-      if (data && data.OTPSuccess) {
+      if (updateContact && data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
       return data;
