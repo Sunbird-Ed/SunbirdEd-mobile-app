@@ -299,7 +299,7 @@
 								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF' | translate}}</ion-card-title>
 								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'FRMELEMNTS_LBL_DATA_SHARING_ON_INFO' | translate}}</p>
 								<p *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF_INFO' | translate}}</p>
-								<p>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
+								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
 								<div class="edit-setting" (click)="editDataSettings()" *ngIf="!showShareData">{{'FRMELEMNTS_BTN_EDIT_SETTING' | translate}}</div>
 								<div class="edit-setting" (click)="editDataSettings()" *ngIf="showShareData">{{'FRMELEMNTS_BTN_CLOSE' | translate}}</div>
 							</div>
