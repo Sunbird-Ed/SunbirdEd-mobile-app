@@ -212,6 +212,8 @@ private getProfileSettingConfig() {
     return new Promise<string | undefined>((resolve, reject) => {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
+          alert("scanned")
+          alert(JSON.stringify(scannedData))
           if (scannedData === 'skip') {
             if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
               this.stopScanner();
@@ -262,7 +264,9 @@ private getProfileSettingConfig() {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
             } else if (scannedData.includes('/certs/')) {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);
-            } else {
+            } else if(scannedData.includes('/manage-learn/')) {
+              alert("in manage learn")
+            }else {
               this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
               this.showInvalidCodeAlert(scannedData);
             }
