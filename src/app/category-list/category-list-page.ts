@@ -1,3 +1,5 @@
+import { PreferenceKey } from './../app.constant';
+import { forEach } from 'lodash/forEach';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
@@ -55,6 +57,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 [field in keyof ContentData]: 'asc' | 'desc';
             }[];
             groupBy?: keyof ContentData;
+            groupSortBy?: any
         };
         showNavigationPill?: boolean;
         filterPillBy?: string;
@@ -197,9 +200,24 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true) {
+    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true, onSelectedFilter?: any) {
         this.showSheenAnimation = true;
         this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+        if (onSelectedFilter) {
+            const selectedData = [];
+            onSelectedFilter.forEach((selectedFilter) => {
+                selectedData.push(selectedFilter.name);
+            });
+            this.formField.aggregate.groupSortBy.forEach((data) => {
+                data.name.preference = selectedData;
+            });
+        }
+
+        if (this.profile.subject.length >= 1) {
+            this.formField.aggregate.groupSortBy.forEach((sortData) => {
+                sortData.name.preference.push(this.profile.subject);
+            });
+        }
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
             .aggregate({
@@ -445,7 +463,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === primaryFacetFilter.code);
-
+        const onSelectedFilter = [];
         if (facetFilter) {
             facetFilter.values.forEach(facetFilterValue => {
                 if (toApply.find(apply => facetFilterValue.name === apply.name)) {
@@ -454,12 +472,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     facetFilterValue.apply = false;
                 }
             });
+            toApply.forEach((selectedValue) => {
+                onSelectedFilter.push(selectedValue.name);
+            });
 
-            await this.applyFilter(appliedFilterCriteria);
+            await this.applyFilter(appliedFilterCriteria, true, toApply);
         }
     }
 
-    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true) {
+    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true, onSelectedFilter?) {
         const tempSearchCriteria: ContentSearchCriteria = {
             ...appliedFilterCriteria,
             mode: 'hard',
@@ -473,7 +494,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             }
         });
-        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter);
+        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter, onSelectedFilter);
     }
 
     async pillFilterHandler(pill){
