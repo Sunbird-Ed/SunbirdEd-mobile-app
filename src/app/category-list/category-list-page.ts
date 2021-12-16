@@ -215,7 +215,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
         if (this.profile.subject.length >= 1) {
             this.formField.aggregate.groupSortBy.forEach((sortData) => {
-                sortData.name.preference.push(this.profile.subject);
+                if (sortData.name.preference) {
+                    sortData.name.preference.push(this.profile.subject);
+                }
             });
         }
         const temp = ((await this.contentService.buildContentAggregator
