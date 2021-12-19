@@ -1159,6 +1159,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];
+        if(!this.isAlreadyEnrolled && this.batches && this.batches.length){
+          const batchDetails = this.batches[0];
+          this.showCertificateDetails = batchDetails.cert_templates ? true : false;
+          this.certificateDetails = batchDetails.cert_templates ? batchDetails.cert_templates : '';
+        }
         if (data && data.length > 1) {
           this.batchCount = data.length;
         } else if (data && data.length === 1) {
@@ -1408,9 +1413,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    if (this.isAlreadyEnrolled) {
-      await this.checkDataSharingStatus();
-    }
     window['segmentation'].SBTagService.pushTag(
       window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
       TagPrefixConstants.CONTENT_ID,
@@ -1483,7 +1485,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.courseCardData = course;
             this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
             this.fetchForumIdReq.type = 'batch';
-            
+
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
           }
@@ -2168,6 +2170,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       await this.profileService.getConsent(request).toPromise()
         .then((data) => {
           if (data) {
+            if (this.isAlreadyEnrolled && data.consents.length === 0) {
+              this.showShareData = true;
+              this.dataSharingStatus = 'REVOKED';
+              this.isDataShare = true;
+            }
             this.dataSharingStatus = data.consents[0].status;
             this.lastUpdateOn = data.consents[0].lastUpdatedOn;
             this.localCourseService.setConsentPopupVisibility(false);
