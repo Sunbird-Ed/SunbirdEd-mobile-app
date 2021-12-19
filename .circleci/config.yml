@@ -15,7 +15,7 @@ jobs:
           name: Install project dependencies
           command: |
             if [ ! -d "node_modules" ]; then
-            npm ci -f
+            npm i -f
             fi
       - save_cache:
           key: node_modules_cache_{{ checksum "package-lock.json" }}
