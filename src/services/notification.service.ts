@@ -46,7 +46,6 @@ export class NotificationService implements SbNotificationService {
         private appVersion: AppVersion,
         private localNotifications: LocalNotifications,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-        private event: Events,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private router: Router,
         private events: Events,
@@ -313,7 +312,7 @@ export class NotificationService implements SbNotificationService {
         } else if (this.notificationPayload && this.notificationPayload.action
             && this.notificationPayload.action.type === ActionType.CERTIFICATE) {
             console.log('ActionType.CERTIFICATE clicked')
-            this.event.publish('to_profile');
+            this.events.publish('to_profile');
         }
         this.notificationId = undefined;
     }

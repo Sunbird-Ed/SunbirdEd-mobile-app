@@ -4,9 +4,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TelemetryService, NotificationService as SdkNotificationService } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService, ContentService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { NavigationService } from './navigation-handler.service';
+import { CommonUtilService } from '.';
+import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
+import { Router } from '@angular/router';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
@@ -25,18 +29,31 @@ describe('LocalCourseService', () => {
   };
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
   const mockSdkNotificationService: Partial<SdkNotificationService> = {};
+  const mockNotificationService: Partial<NotificationServiceV2> = {};
+  const mockGroupService: Partial<GroupService> = {};
+  const mockProfileService: Partial<ProfileService> = {};
+  const mockContentService: Partial<ContentService> = {};
+  const mockNavService: Partial<NavigationService> = {};
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockRouter: Partial<Router> = {};
 
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
-      mockSdkNotificationService as SdkNotificationService,
+      mockNotificationService as NotificationServiceV2,
+      mockGroupService as GroupService,
+      mockProfileService as ProfileService,
+      mockContentService as ContentService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
       mockLocalNotifications as LocalNotifications,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+      mockTelemetryGeneratorService as TelemetryGeneratorService,
+      mockRouter as Router,
       mockEvents as Events,
-      mockTelemetryGeneratorService as TelemetryGeneratorService
+      mockNavService as NavigationService,
+      mockCommonUtilService as CommonUtilService
     );
   });
 
