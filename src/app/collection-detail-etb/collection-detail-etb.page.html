@@ -34,7 +34,7 @@
       <div class="sb-slider-pills-container">
         <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
           <div role="button" class="pill" *ngFor="let type of mimeTypes; let i = index; let first = first"
-            [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}"
+            [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}" [attr.aria-selected]="type?.selected"
             (click)="onFilterMimeTypeChange(type.value, i, type.name);">
             <span class="img-align" *ngIf="type?.iconNormal && type?.selected">
               <img aria-hidden="true" class="filter-icon" src="{{type?.iconActive}}" alt="video">
