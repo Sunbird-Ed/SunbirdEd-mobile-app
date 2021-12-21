@@ -8,7 +8,7 @@
     </ion-buttons>
     <ion-title>{{ 'ABOUT_US' | translate }}</ion-title>
     <ion-buttons slot="primary">
-      <ion-button (click)="shareInformation()" icon-only>
+      <ion-button (click)="shareInformation()" icon-only *ngIf="!platform.is('ios')">
         <ion-icon name="share" class="ion-float-end"></ion-icon>
       </ion-button>
     </ion-buttons>
