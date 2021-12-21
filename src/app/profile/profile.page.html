@@ -226,7 +226,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="bottom-block">
+    <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
