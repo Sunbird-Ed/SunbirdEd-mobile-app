@@ -1,9 +1,8 @@
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
-import { NavParams, Platform, ModalController } from '@ionic/angular';
+import { NavParams, ModalController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 
 @Component({
   selector: 'app-explore-books-sort',
@@ -31,9 +30,7 @@ export class ExploreBooksSortComponent {
 
   constructor(
       private navParams: NavParams,
-      private platform: Platform,
       private commonUtilService: CommonUtilService,
-      private telemetryGeneratorService: TelemetryGeneratorService,
       private fb: FormBuilder,
       private modalCtrl: ModalController
   ) {

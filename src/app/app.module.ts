@@ -385,7 +385,7 @@ export const sunbirdSdkFactory =
           apiPath: '/api/data/v1',
         },
         appConfig: {
-          maxCompatibilityLevel: 4,
+          maxCompatibilityLevel: 5,
           minCompatibilityLevel: 1
         },
         systemSettingsConfig: {

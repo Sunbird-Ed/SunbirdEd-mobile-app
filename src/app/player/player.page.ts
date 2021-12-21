@@ -334,7 +334,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['data'] = {};
       this.config['config'] = {
         ...this.config['config'],
-        ...nextContent,
+        nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
@@ -545,9 +545,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   playerTelemetryEvents(event) {
-    SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-      (res) => console.log('response after telemetry', res),
-    );
+    if (event) {
+      SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+        (res) => console.log('response after telemetry', res),
+        );
+    }
   }
 
   private isJSON(input): boolean {
