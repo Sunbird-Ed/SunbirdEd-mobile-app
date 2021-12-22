@@ -171,3 +171,12 @@ table.dataTable tbody tr:nth-child(odd) {
 ion-button.ios {
     -webkit-appearance: borderless-attachment;
 }
+.ios sunbird-epub-player .visible-only-landscape {
+  display: block;
+}
+.ios sunbird-pdf-player .BtmNotVisible.isVisible {
+  bottom: 20px;
+}
+.ios sunbird-pdf-player .sb-pdf-reading-status {
+  bottom: 1.75em !important;
+}
