@@ -180,3 +180,28 @@ ion-button.ios {
 .ios sunbird-pdf-player .sb-pdf-reading-status {
   bottom: 1.75em !important;
 }
+html[device-accessable-theme=accessible][data-theme=JOYFUL] app-application-header .buttons-first-slot {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+.ios app-profile-name-confirmation-popover {
+  .icon-container {
+    height: 160px;
+  }
+  .sb-popover .sb-popover-container .sb-popover-items {
+    padding: 0 8px;
+  }
+  font-size: 0.8rem;
+  .pnc-padding-32 {
+    padding: 8px 32px;
+  }
+  .pnc-checkbox-desc {
+    font-size: 12px;
+  }
+  ion-footer .sb-popover-footer {
+    padding: 8px 16px !important;
+  }
+  .ios .sb-popover .sb-popover-title {
+    font-size: 0 !important;
+  }
+}
