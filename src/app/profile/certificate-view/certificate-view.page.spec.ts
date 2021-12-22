@@ -66,7 +66,6 @@ describe('CertificateViewPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
     };
-    const mockPlatform: Partial<Platform> = {};
     let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {
