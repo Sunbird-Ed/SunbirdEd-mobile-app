@@ -142,9 +142,9 @@
         </div>
 
         <div *ngIf="resultlist && !resultlist.isCourse">
-          <div class="px-8">
+          <div>
             <!-- Collection List -->
-            <div class="sb-textbook-title-container">
+            <div class="sb-textbook-title-container px-8">
               <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
             </div>
             <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
@@ -153,7 +153,7 @@
                 <div *ngFor="let content of result.content; let last = last, let i = index"
                   class="content-list ion-no-padding">
                   <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT"
-                    [layoutConfig]="{layout: 'v3'}"
+                    [layoutConfig]="{layout: 'v4'}"
                     (click)="openContent(result, content, i);" [cardImg]="result?.appIcon || defaultAppIcon"
                     [moreInfoLabel]="'Section'" [section]="content.name">
                   </sb-library-card>
@@ -168,7 +168,7 @@
               <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
                 class="content-list">
                 <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
-                  [layoutConfig]="{layout: 'v3'}"
+                  [layoutConfig]="{layout: 'v4'}"
                   (click)="openContent(content, content, i + ((resultlist && resultlist.dialCodeResult) ? resultlist.dialCodeResult.length : 0) )"
                   [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
