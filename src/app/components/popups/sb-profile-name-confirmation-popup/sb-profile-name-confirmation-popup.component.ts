@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { AppGlobalService, CommonUtilService, PageId } from '@app/services';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import {
@@ -26,7 +26,8 @@ export class ProfileNameConfirmationPopoverComponent {
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    public platform: Platform
   ) { }
 
   async ionViewWillEnter() {

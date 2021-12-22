@@ -1,6 +1,7 @@
 <ion-header class="sb-popover-header">
     <ion-toolbar class="sb-popover-toolbar">
-        <ion-title class="sb-popover-title text-left pl-16"> {{'FRMELEMNTS_LBL_PROFCONF' | translate}}
+        <ion-title  class="sb-popover-title text-left pl-16"> 
+            <ng-container *ngIf="!platform.is('ios')">{{'FRMELEMNTS_LBL_PROFCONF' | translate}}</ng-container>
             <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
         </ion-title>
     </ion-toolbar>
