@@ -351,6 +351,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       delete this.batchDetails;
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
       this.isBatchNotStarted = false; // this is needed to change behaviour onclick of individual content
+      this.segmentType = 'info';
+      this.getLocalCourseAndUnitProgress();
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
@@ -1823,7 +1825,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         }
       }
-      if (unitLevelViewedContents.length) {
+      if (unitLevelViewedContents.length && this.isAlreadyEnrolled) {
         collection.progressPercentage = Math.round((unitLevelViewedContents.length / leafNodeIds.length) * 100);
       }
     });
