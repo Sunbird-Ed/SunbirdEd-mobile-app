@@ -1,5 +1,5 @@
 import { ImpressionSubtype } from './../../services/telemetry-constants';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Notification, UserFeedStatus } from 'sunbird-sdk';
@@ -24,7 +24,7 @@ import { EventTopics } from '../app.constant';
   templateUrl: './notification.page.html',
   styleUrls: ['./notification.page.scss'],
 })
-export class NotificationPage implements OnInit, OnDestroy {
+export class NotificationPage implements OnInit {
 
   notificationList = [] ;
   unreadNotificationList = [];
@@ -146,7 +146,5 @@ export class NotificationPage implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-}
 
 }

@@ -115,6 +115,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed', () => {
       this.setAppLogo();
     });
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
+      this.getUnreadNotifications();
+    });
 
     this.events.subscribe('notification-status:update', (eventData) => {
       this.isUnreadNotification = eventData.isUnreadNotifications;
