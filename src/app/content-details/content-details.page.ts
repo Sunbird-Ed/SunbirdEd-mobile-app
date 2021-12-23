@@ -1459,8 +1459,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
     try {
       const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
-      return (batchDetails && batchDetails.cert_templates && Object.keys(batchDetails.cert_templates).length &&
-        batchDetails.cert_templates[Object.keys(batchDetails.cert_templates)[0]].description) || '';
+      for (var key in batchDetails.cert_templates) {
+        return (batchDetails && batchDetails.cert_templates[key] &&
+        batchDetails.cert_templates[key].description) || '';
+      }
     } catch (e) {
       console.log(e);
       return '';
