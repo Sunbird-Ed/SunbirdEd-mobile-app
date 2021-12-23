@@ -83,4 +83,8 @@
   ion-item.item-label-stacked {
     --border-width: 0;
   }
+
+  ion-select {
+    --placeholder-opacity: 1;
+  }
 }
