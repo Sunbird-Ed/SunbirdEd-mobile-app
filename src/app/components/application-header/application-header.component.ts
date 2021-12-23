@@ -16,7 +16,7 @@ import {
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
   EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
   Profile, ProfileService, ProfileType,
-  ServerProfile, SharedPreferences
+  ServerProfile, SharedPreferences, UserFeedStatus
 } from 'sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
@@ -66,6 +66,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isDarkMode:boolean;
   showReports: any;
   showLoginButton = false;
+  notificationCount = {
+    unreadCount : 0
+  }
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -271,17 +274,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed');
   }
 
-  getUnreadNotifications() {
-    let newNotificationCount = 0;
-    this.pushNotificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
-      notificationList.forEach((item) => {
-        if (!item.isRead) {
-          newNotificationCount++;
-        }
-      });
-
-      this.isUnreadNotification = Boolean(newNotificationCount);
-    });
+  async getUnreadNotifications() {
+    await this.notification.fetchNotificationList().then((data) => {
+      const notificationList = data.feeds;
+      const unreadNotificationList = notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+      this.notificationCount.unreadCount = unreadNotificationList.length;
+    })
   }
 
   async fetchManagedProfileDetails() {
