@@ -157,7 +157,7 @@
     "pouchdb-find": "^7.2.2",
     "rxjs": "^6.6.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
-    "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
+    "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-4.6.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.9.0",
     "sb-notification": "0.0.2",
