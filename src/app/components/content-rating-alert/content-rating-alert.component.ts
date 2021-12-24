@@ -130,6 +130,12 @@ export class ContentRatingAlertComponent {
     this.popOverCtrl.dismiss();
   }
   closePopover() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.CLOSE_CLICKED,
+      Environment.HOME,
+      ImpressionSubtype.RATING_POPUP, this.telemetryObject
+    );
     this.popOverCtrl.dismiss();
   }
 
