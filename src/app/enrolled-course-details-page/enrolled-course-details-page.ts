@@ -1467,6 +1467,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (!this.corRelationList) {
       this.corRelationList = [];
     }
+    this.corRelationList = this.corRelationList.filter(x => x.type !== CorReleationDataType.COURSE_BATCH)
     this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
     this.corRelationList.push({ id: this.identifier || '', type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
@@ -1931,6 +1932,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             });
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
+            this.populateCorRelationData(this.courseCardData.batchId)
           });
         }, (error) => {
           this.zone.run(async () => {
