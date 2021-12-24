@@ -7,16 +7,19 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService, ContentService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { NavigationService } from './navigation-handler.service';
-import { CommonUtilService } from '.';
+import { Event, Router } from '@angular/router';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
-import { Router } from '@angular/router';
+import { NavigationService } from './navigation-handler.service';
+import { of } from 'rxjs';
+import { CommonUtilService } from './common-util.service';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
   const mockTelemetryService: Partial<TelemetryService> = {
     updateCampaignParameters: jest.fn()
   };
+  const mockGroupService: Partial<GroupService> = {};
+  const mockProfileService: Partial<ProfileService> = {};
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockAppVersion: Partial<AppVersion> = {
@@ -29,18 +32,24 @@ describe('LocalCourseService', () => {
   };
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
   const mockSdkNotificationService: Partial<SdkNotificationService> = {};
-  const mockNotificationService: Partial<NotificationServiceV2> = {};
-  const mockGroupService: Partial<GroupService> = {};
-  const mockProfileService: Partial<ProfileService> = {};
-  const mockContentService: Partial<ContentService> = {};
-  const mockNavService: Partial<NavigationService> = {};
-  const mockCommonUtilService: Partial<CommonUtilService> = {};
-  const mockRouter: Partial<Router> = {};
+  const mockRouter: Partial<Router> = {
+    navigate: jest.fn()
+  };
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    showToast: jest.fn()
+  };
+  const mockNotificationServiceV2: Partial<NotificationServiceV2> = {};
+  const mockNavigationService: Partial<NavigationService> = {
+    navigateToTrackableCollection: jest.fn(),
+    navigateTo: jest.fn(),
+    navigateToDetailPage: jest.fn()
+  };
+  const mockContentService: Partial<ContentService> = {};  
 
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
-      mockNotificationService as NotificationServiceV2,
+      mockNotificationServiceV2 as NotificationServiceV2,
       mockGroupService as GroupService,
       mockProfileService as ProfileService,
       mockContentService as ContentService,
@@ -52,8 +61,8 @@ describe('LocalCourseService', () => {
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
       mockEvents as Events,
-      mockNavService as NavigationService,
-      mockCommonUtilService as CommonUtilService
+      mockNavigationService as NavigationService,
+      mockCommonUtilService as CommonUtilService 
     );
   });
 
@@ -151,7 +160,7 @@ describe('LocalCourseService', () => {
   describe('setNotificationParams', () => {
     it('should set the External Url when notification type is ExternalId', (done) => {
       // arrange
-      const data = { actionData: { actionType: 'extURL', deepLink: 'someLink' } };
+      const data = { action: { type: 'extURL', additionalInfo:{ deepLink: 'someLink' } } };
       // act
       notificationService.setNotificationParams(data);
       // asset
@@ -160,7 +169,7 @@ describe('LocalCourseService', () => {
 
     it('should set the External Url when notification type is Update App', (done) => {
       // arrange
-      const data = { actionData: { actionType: 'updateApp' } };
+      const data = {  action: { type: 'updateApp' } };
       mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('app_id'));
       // act
       notificationService.setNotificationParams(data);
@@ -170,7 +179,7 @@ describe('LocalCourseService', () => {
 
     it('should set the External Url when notification type is Course Update', (done) => {
       // arrange
-      const data = { actionData: { actionType: 'courseUpdate', identifier: 'courseId' } };
+      const data = {  action: { type: 'courseUpdate', additionalInfo:{ identifier: 'courseId' } }};
       // act
       notificationService.setNotificationParams(data);
       // asset
@@ -179,7 +188,7 @@ describe('LocalCourseService', () => {
 
     it('should set the External Url when notification type is Content Update', (done) => {
       // arrange
-      const data = { actionData: { actionType: 'contentUpdate', identifier: 'contentId' } };
+      const data = {  action: { type: 'contentUpdate', additionalInfo:{ identifier: 'contentId' }} };
       // act
       notificationService.setNotificationParams(data);
       // asset
@@ -188,7 +197,7 @@ describe('LocalCourseService', () => {
 
     it('should set the External Url when notification type is Book Update', (done) => {
       // arrange
-      const data = { actionData: { actionType: 'bookUpdate', identifier: 'bookId' } };
+      const data = {  action: { type: 'bookUpdate', additionalInfo:{ identifier: 'bookId' }} };
       // act
       notificationService.setNotificationParams(data);
       // asset
@@ -199,7 +208,7 @@ describe('LocalCourseService', () => {
   describe('handleNotification', () => {
     it('should navigate to contents page when contentId is set', () => {
       // arrange
-      const data = { actionData: { actionType: 'contentUpdate', identifier: 'contentId' } };
+      const data = {  action: { type: 'contentUpdate', additionalInfo:{ identifier: 'contentId' }} };
       mockSplaschreenDeeplinkActionHandlerDelegate.navigateContent = jest.fn();
       // act
       notificationService.setNotificationParams(data);
@@ -210,7 +219,7 @@ describe('LocalCourseService', () => {
 
     it('should navigate playstore when Appid is set', () => {
       // arrange
-      const data = { actionData: { actionType: 'updateApp' } };
+      const data = {action: { type: 'updateApp' } };
       mockUtilityService.openPlayStore = jest.fn(() => Promise.resolve(undefined));
       // act
       notificationService.setNotificationParams(data);
@@ -221,7 +230,7 @@ describe('LocalCourseService', () => {
 
     it('should open browser page when External url is set', () => {
       // arrange
-      const data = { actionData: { actionType: 'extURL', deepLink: 'someLink' } };
+      const data = { action: { type: 'extURL', additionalInfo:{ deepLink: 'someLink' } } };
       spyOn(window, 'open').and.stub();
       // act
       notificationService.setNotificationParams(data);
@@ -238,6 +247,71 @@ describe('LocalCourseService', () => {
       done();
     });
   });
+
+  describe('redirectNotification', () => {
+    it('should redirect to apprpriate page onclick of notification', () => {
+      // arrange
+      const notification = {
+        id: 'some-id',
+        action: {
+          additionalInfo: {
+            group: {
+              id: 'some-id'
+            }
+          },
+          type: 'member-added'
+        }
+      }
+      // action
+      notificationService.redirectNotification(notification)
+      // assert
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    it('should redirect to appropriate page onclick of notification', (done) => {
+      // arrange
+      const notification = {
+        id: 'some-id',
+        action: {
+          additionalInfo: {
+            group: {
+              id: 'some-id'
+            },
+            activity: {
+              type: 'course',
+              id: 'some-id'
+            }
+          },
+          type: 'group-activity-added'
+        }
+      };
+      const groupDetails = {
+        activitiesGrouped: [
+          {
+            title: 'course',
+            items: [
+              {
+                id: 'some-id',
+                activityInfo: {
+                  id: 'activity-id'
+                }
+              }
+            ]
+          }
+        ]
+      } as any
+      mockGroupService.getById = jest.fn(() => of(groupDetails));
+      // action
+      notificationService.redirectNotification(notification)
+      // assert
+      setTimeout(() => {
+        expect(mockGroupService.getById).toHaveBeenCalled()
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalled();
+        done()
+      });
+    });
+
+  })
 
 
 
