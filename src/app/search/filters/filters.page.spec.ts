@@ -1,3 +1,4 @@
+import { FormAndFrameworkUtilService } from '@app/services';
 
 import { FiltersPage } from './filters.page';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
@@ -69,6 +70,8 @@ describe('FiltersPage', () => {
         generateInteractTelemetry: jest.fn()
     };
 
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
 
     beforeAll(() => {
         filtersPage = new FiltersPage(
@@ -80,7 +83,8 @@ describe('FiltersPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockAppHeaderService as AppHeaderService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -95,6 +99,58 @@ describe('FiltersPage', () => {
     describe('applyInterimFilter', () => {
         it('should invoke searchContent API', (done) => {
             // arrange
+            mockFormAndFrameworkUtilService.changeChannelNameToId = jest.fn(() => {
+                return {
+                    primaryCategories: [],
+                    sortCriteria: [],
+                    mode: 'hard',
+                    facetFilters: [
+                      {
+                        name: 'channel',
+                        values: [
+                          {
+                            name: '0129909224683274240',
+                            count: 3,
+                            apply: false,
+                            rootOrgId: '0129909224683274240'
+                          }
+                        ],
+                        translatedName: 'Publisher'
+                      }
+                    ],
+                    impliedFiltersMap: [
+                      {
+                        contentType: []
+                      },
+                      {
+                        language: []
+                      },
+                      {
+                        topic: []
+                      },
+                      {
+                        purpose: []
+                      }
+                    ],
+                    impliedFilters: [
+                      {
+                        name: 'objectType',
+                        values: [
+                          {
+                            name: 'Content',
+                            apply: true
+                          },
+                          {
+                            name: 'QuestionSet',
+                            apply: true
+                          }
+                        ]
+                      }
+                    ],
+                    searchType: 'filter',
+                    fields: []
+                  }
+            });
             // act
             filtersPage.applyInterimFilter().then(() => {
                 // assert
