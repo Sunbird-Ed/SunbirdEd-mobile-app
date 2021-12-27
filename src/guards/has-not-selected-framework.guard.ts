@@ -5,6 +5,7 @@ import { GenericAppConfig, ProfileConstants } from '@app/app/app.constant';
 import { UtilityService } from '@app/services/utility-service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SplashScreenService } from '@app/services/splash-screen.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class HasNotSelectedFrameworkGuard implements Resolve<any> {
@@ -14,6 +15,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         private appGlobalService: AppGlobalService,
         private utilityService: UtilityService,
         private router: Router,
+        private platform: Platform,
         private splashScreenService: SplashScreenService
     ) {
     }
@@ -29,6 +31,10 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
     resolve(): any {
         if (this.guardActivated) {
             return true;
+        }
+        if(this.platform.is('ios')) {
+            this.router.navigate(['/', 'user-type-selection']);
+            return false;
         }
         this.guardActivated = true;
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE).then((shouldDisplay) => {
