@@ -102,6 +102,8 @@ export class ContentRatingAlertComponent {
       console.log(err);
     });
     this.invokeContentRatingFormApi();
+    const ratingDomTag = document.getElementsByTagName('rating');
+    this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, this.userRating);
   }
 
   ionViewWillLeave() {
@@ -124,6 +126,8 @@ export class ContentRatingAlertComponent {
   rateContent(ratingCount) {
     this.ratingCount = ratingCount;
     this.createRatingForm(ratingCount);
+    const ratingDomTag = document.getElementsByTagName('rating');
+    this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, ratingCount);
   }
 
   cancel() {
