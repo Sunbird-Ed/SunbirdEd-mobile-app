@@ -1852,6 +1852,7 @@ app-user-home, app-sb-preferences-popup {
 sb-form{
   .multi-select-container{
     .list-border{
+      background-color: transparent !important;
       ul{
         width: 90%;
         text-overflow: ellipsis;
