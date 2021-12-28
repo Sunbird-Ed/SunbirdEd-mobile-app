@@ -73,7 +73,9 @@ describe('AppRatingAlertComponent', () => {
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => ('content-details'))
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {}
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        setRatingStarAriaLabel: jest.fn()
+    }
 
     beforeAll(() => {
         appRatingAlertComponent = new AppRatingAlertComponent(

@@ -91,7 +91,8 @@ describe('ContentRatingAlertComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(() => { }),
-        translateMessage: jest.fn(() => 'Message To Display')
+        translateMessage: jest.fn(() => 'Message To Display'),
+        setRatingStarAriaLabel: jest.fn()
     };
     const mockLocation: Partial<Location> = {
         back: jest.fn( () => {})
