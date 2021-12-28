@@ -69,7 +69,7 @@
     "@project-sunbird/discussions-ui-v8": "2.5.0-beta.7",
     "@project-sunbird/sb-dashlet": "1.0.4",
     "@project-sunbird/sb-styles": "0.0.9",
-    "@project-sunbird/sunbird-sdk": "4.5.3",
+    "@project-sunbird/sunbird-sdk": "4.5.4",
     "@project-sunbird/sunbird-epub-player-v9": "4.5.5",
     "@project-sunbird/sunbird-pdf-player-v9": "4.5.3",
     "@project-sunbird/sunbird-quml-player-v9": "4.5.14",
