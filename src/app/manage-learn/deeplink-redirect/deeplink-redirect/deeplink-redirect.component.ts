@@ -170,7 +170,7 @@ export class DeeplinkRedirectComponent implements OnInit {
           break;
       }
     }else{
-      if(resp && resp.status !=0){
+      if(resp && resp.status){
         this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
       }
       this.location.back();
