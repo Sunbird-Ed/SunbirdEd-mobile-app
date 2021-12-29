@@ -152,6 +152,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
+    alert("in verifylink");
     let payload = await this.utils.getProfileInfo();
 
     const config = {
@@ -170,8 +171,10 @@ export class DeeplinkRedirectComponent implements OnInit {
           break;
       }
     }else{
+      if(resp && resp.status !=0){
+        this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
+      }
       this.location.back();
-      this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
     }
   }
 }

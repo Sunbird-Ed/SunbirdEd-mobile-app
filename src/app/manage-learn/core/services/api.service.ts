@@ -118,11 +118,12 @@ export class ApiService {
 
 
   private handleError(result) {
-    switch (result.status) {
-      case 0:
+    let status  = result.status;
+    switch (true) {
+      case (status <=0):
         this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
         break
-      case 401:
+      case (status == 401):
         this.toast.showMessage('Session expired', 'danger')
         break
       default:
