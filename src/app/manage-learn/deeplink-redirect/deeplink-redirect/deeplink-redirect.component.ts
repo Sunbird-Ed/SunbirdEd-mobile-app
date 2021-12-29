@@ -152,7 +152,6 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
-    alert("in verifylink");
     let payload = await this.utils.getProfileInfo();
 
     const config = {
