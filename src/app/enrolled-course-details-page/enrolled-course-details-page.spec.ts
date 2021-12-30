@@ -1693,7 +1693,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1712,7 +1712,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 PageId.COURSE_DETAIL,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1735,7 +1735,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 objectType,
                 objectVersion,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1756,7 +1756,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
 
@@ -2022,9 +2022,9 @@ describe('EnrolledCourseDetailsPage', () => {
                     Environment.HOME,
                     PageId.COURSE_DETAIL,
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                    undefined,
+                   undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
@@ -2061,7 +2061,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                     undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
@@ -2105,7 +2105,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                     undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
