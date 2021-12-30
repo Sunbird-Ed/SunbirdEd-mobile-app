@@ -125,7 +125,7 @@ export class ProjectListingComponent {
                 isAPrivateProgram: isAprivateProgramQuery,
                 isNew: true,
             },
-            limit: 10 * this.offlineProjectPage,
+            // limit: 10 * this.offlineProjectPage,
         };
         if (fields) {
             query['fields'] = fields
