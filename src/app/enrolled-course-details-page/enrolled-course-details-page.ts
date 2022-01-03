@@ -834,7 +834,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
           this.batchDetails = data;
           this.showCertificateDetails = this.batchDetails.cert_templates ? true : false;
-          this.certificateDetails = this.batchDetails.cert_templates ? this.batchDetails.cert_templates : '';
+          for (var key in this.batchDetails.cert_templates) {
+            this.certificateDetails = this.batchDetails.cert_templates; 
+            if (this.certificateDetails) {
+              this.isCertifiedCourse = true;
+              if (this.certificateDetails[key].description) {
+                this.certificateDescription = this.certificateDetails[key].description;
+              }
+            } else {
+              this.isCertifiedCourse = false;
+            }
+          }
           if (this.batchRemaningTimingIntervalRef) {
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
@@ -844,14 +854,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.handleUnenrollButton();
-          if (data.cert_templates && Object.keys(data.cert_templates).length) {
-            this.isCertifiedCourse = true;
-            if (data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
-              this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
-            }
-          } else {
-            this.isCertifiedCourse = false;
-          }
           this.saveContentContext(this.appGlobalService.getUserId(),
             this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
           this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -1469,6 +1471,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (!this.corRelationList) {
       this.corRelationList = [];
     }
+    this.corRelationList = this.corRelationList.filter(x => x.type !== CorReleationDataType.COURSE_BATCH)
     this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
     this.corRelationList.push({ id: this.identifier || '', type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
@@ -1933,6 +1936,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             });
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
+            this.populateCorRelationData(this.courseCardData.batchId)
           });
         }, (error) => {
           this.zone.run(async () => {

@@ -2,7 +2,7 @@
     <h4 class="sort-heading">{{'SORT_BY' | translate}}</h4>
     <form novalidate [formGroup]="sortForm" class="form-position">
         <ion-item>
-            <ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
+            <ion-label position="stacked" class="label-font">{{'BOARD' | translate }}</ion-label>
             <ion-select multiple="true" #boardSelect class="ion-text-capitalize" formControlName="board" [interfaceOptions]="boardOptions"
                         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
                 <ion-select-option *ngFor="let board of boardList" value="{{board?.name}}">{{board?.name | aliased}}&lrm;</ion-select-option>
@@ -10,7 +10,7 @@
         </ion-item>
 
         <ion-item>
-            <ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
+            <ion-label position="stacked" class="label-font">{{'MEDIUM' | translate }}</ion-label>
             <ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize" [interfaceOptions]="mediumOptions"
                         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
                 <ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize" value="{{medium?.name}}">{{medium?.name}}</ion-select-option>

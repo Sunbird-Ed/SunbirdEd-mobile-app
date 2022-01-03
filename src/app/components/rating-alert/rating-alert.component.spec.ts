@@ -11,7 +11,8 @@ import {
     ImpressionType,
     ImpressionSubtype,
     InteractType,
-    InteractSubtype
+    InteractSubtype,
+    CommonUtilService
 } from '../../../services';
 import { of } from 'rxjs';
 import { PreferenceKey, StoreRating } from '../../app.constant';
@@ -72,6 +73,9 @@ describe('AppRatingAlertComponent', () => {
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => ('content-details'))
     };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        setRatingStarAriaLabel: jest.fn()
+    }
 
     beforeAll(() => {
         appRatingAlertComponent = new AppRatingAlertComponent(
@@ -84,6 +88,7 @@ describe('AppRatingAlertComponent', () => {
             mockPlatform as Platform,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockNavParams as NavParams,
+            mockCommonUtilService as CommonUtilService
         );
     });
 
