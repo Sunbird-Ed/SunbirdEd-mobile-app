@@ -811,7 +811,7 @@ export class ProjectDetailPage implements OnDestroy {
 
   getTemplate(id, payload?:any) {
     const config = {
-        url: urlConstants.API_URLS.TEMPLATE_DETAILS + id,
+        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id,
         payload: payload ? payload : {}
     }
 
