@@ -9,8 +9,9 @@ import {
   CorrelationData,
   TelemetryObject,
   TelemetryService,
+  SharedPreferences,
 } from 'sunbird-sdk';
-import { EventTopics, RouterLinks } from '../app/app.constant';
+import { EventTopics, RouterLinks, PreferenceKey } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
 import {
@@ -32,6 +33,7 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
+import { FormConstants } from '@app/app/form.constants';
 
 declare var cordova;
 
@@ -41,12 +43,15 @@ export class QRScannerResultHandler {
   source: string;
   inAppBrowserRef: any;
   scannedUrlMap: object;
+  selectedUserType?: any;
+  guestUser: boolean = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageAssembleService: PageAssembleService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
@@ -300,5 +305,53 @@ export class QRScannerResultHandler {
       source ? Environment.ONBOARDING : Environment.HOME, '', '', '',
       undefined,
       corRelationList);
+  }
+
+  async manageLearScan(scannedData) {
+    this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    if (!this.appGlobalService.isUserLoggedIn()) {
+      this.commonUtilService.showToast("FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER");
+      return;
+    }
+    if (scannedData.includes('/create-project/') && this.selectedUserType == "administrator") {
+      this.navigateHandler(scannedData);
+      return;
+    } else if ((scannedData.includes('/create-observation/')) && (this.selectedUserType == "administrator" || this.selectedUserType == "teacher")) {
+      this.navigateHandler(scannedData);
+      return;
+    } else {
+      this.commonUtilService.showToast('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
+    }
+  }
+  async navigateHandler(scannedData) {
+    const deepLinkUrlConfig: { name: string, code: string, pattern: string, route: string, priority?: number, params?: {} }[] =
+      await this.formFrameWorkUtilService.getFormFields(FormConstants.DEEPLINK_CONFIG);
+    let matchedDeeplinkConfig: { name: string, code: string, pattern: string, route: string, priority?: number } = null;
+    let urlMatch;
+    deepLinkUrlConfig.forEach(config => {
+      const urlRegexMatch = scannedData.match(new RegExp(config.pattern));
+      if (!!urlRegexMatch && (!matchedDeeplinkConfig)) {
+        if (config.code === 'profile' && !this.appGlobalService.isUserLoggedIn()) {
+          config.route = 'tabs/guest-profile';
+        }
+        matchedDeeplinkConfig = config;
+        urlMatch = urlRegexMatch;
+      }
+    });
+    if (!matchedDeeplinkConfig) {
+      return;
+    }
+    let identifier;
+    if (urlMatch && urlMatch.groups && Object.keys(urlMatch.groups).length) {
+      identifier = urlMatch.groups.quizId || urlMatch.groups.content_id || urlMatch.groups.course_id;
+    }
+    let extras = {};
+    const route = matchedDeeplinkConfig.route;
+    extras = {
+      state: {
+        data: urlMatch.groups
+      }
+    };
+    this.navCtrl.navigateForward([route], extras);
   }
 }
