@@ -221,6 +221,9 @@
         width: 100%;
         padding: 16px 0 16px 0;
     }
+    .disable-css {
+      opacity : 0.5;
+     }
     .segment-button-checked{
       ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
         font-weight: bold;
