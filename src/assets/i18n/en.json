@@ -1507,5 +1507,7 @@
   "FRMELEMNTS_LBL_EARNMCERT" : "Certificate will be issued if you score above {{percent}}% in your assessment", 
   "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificate will be issued upon 100% completion",
   "FRMELEMNTS_MSG_INVALID_LINK":"Invalid Link, please try with other link",
-  "FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND":"Template details not found"
+  "FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND":"Template details not found",
+  "FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE":"This content is not available for your role",
+  "FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER":"Please login as HT & Other Officials to access this content"
 }
