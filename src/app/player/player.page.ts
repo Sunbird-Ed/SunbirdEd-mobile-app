@@ -456,6 +456,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
       this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
         'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    } else {
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(true, Environment.PLAYER, PageId.PLAYER);
     }
 
     const alert = await this.alertCtrl.create({
