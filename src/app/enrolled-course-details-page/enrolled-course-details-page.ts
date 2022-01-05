@@ -432,8 +432,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         console.log(e);
         return undefined;
       });
-    console.log("this.updatedCourseCardData at updateEnrolledCOurseData", this.updatedCourseCardData);
-      
     if (this.updatedCourseCardData && !this.courseCardData.batch) {
       this.courseCardData.batch = this.updatedCourseCardData.batch;
       this.courseCardData.batchId = this.updatedCourseCardData.batchId;
