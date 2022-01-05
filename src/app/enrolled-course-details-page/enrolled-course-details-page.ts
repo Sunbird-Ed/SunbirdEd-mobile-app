@@ -1506,7 +1506,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   getCourseProgress() {
     if (this.courseCardData.batchId && this.updatedCourseCardData) {
       this.course.progress = this.updatedCourseCardData.completionPercentage;
-      console.log('course-progress-set', this.course.progress);
     }
   }
 
