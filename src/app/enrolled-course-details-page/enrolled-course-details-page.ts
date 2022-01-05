@@ -432,7 +432,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         console.log(e);
         return undefined;
       });
-
+    console.log("this.updatedCourseCardData at updateEnrolledCOurseData", this.updatedCourseCardData);
+      
     if (this.updatedCourseCardData && !this.courseCardData.batch) {
       this.courseCardData.batch = this.updatedCourseCardData.batch;
       this.courseCardData.batchId = this.updatedCourseCardData.batchId;
@@ -853,7 +854,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
-          this.handleUnenrollButton();
           this.saveContentContext(this.appGlobalService.getUserId(),
             this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
           this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -1508,6 +1508,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   getCourseProgress() {
     if (this.courseCardData.batchId && this.updatedCourseCardData) {
       this.course.progress = this.updatedCourseCardData.completionPercentage;
+      console.log('course-progress-set', this.course.progress);
     }
   }
 
@@ -1841,7 +1842,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     } else {
       this.course.progress = 0;
     }
-
+    this.handleUnenrollButton();
     if (!this.course.progress || this.course.progress !== 100) {
       this.appGlobalService.generateCourseCompleteTelemetry = true;
     }
@@ -2014,12 +2015,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     if (this.updatedCourseCardData) {
       this.showUnenrollButton = (batchDetails !== 2 &&
-        (this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1 || this.course.progress < 100) &&
+        (this.course.progress < 100 && this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1) &&
         enrollmentType !== 'invite-only');
     } else {
       this.showUnenrollButton = (
         (batchDetails !== 2 &&
-          (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
+          (this.course.progress < 100 && this.courseCardData.status === 0 || this.courseCardData.status === 1) &&
           enrollmentType !== 'invite-only')
       );
     }
