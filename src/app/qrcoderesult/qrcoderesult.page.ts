@@ -508,6 +508,10 @@ export class QrcoderesultPage implements OnDestroy {
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
     if (content.contentData.streamingUrl && !content.isAvailableLocally) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+        return;
+      }
       const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_CARD, '',
