@@ -26,11 +26,6 @@
                 <ion-icon name="share-social" aria-hidden="true" class="share-icon"></ion-icon>
             </span>
         </p>
-        <div class="school-recent" *ngIf="organisationName">
-            <h6 class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-
-            </h6>
-        </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
@@ -97,6 +92,10 @@
             <span>{{userLocation.state.name}}</span>
             <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
                 class="lighter">{{'ADD_STATE' | translate}}</span>
+        </div>
+        <div *ngIf="organisationName">
+            <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
+            <span>{{organisationName}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
             <ion-button shape="round" aria-label="Edit Role, Block, District, State"  (click)="onEditProfileClicked()"
@@ -226,7 +225,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="bottom-block">
+    <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>

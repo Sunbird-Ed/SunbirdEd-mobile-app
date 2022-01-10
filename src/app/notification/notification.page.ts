@@ -137,6 +137,7 @@ export class NotificationPage implements OnInit {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.events.publish(EventTopics.NOTIFICATION_REFRESH);
   }
 
   private handleHeaderEvents(event) {
