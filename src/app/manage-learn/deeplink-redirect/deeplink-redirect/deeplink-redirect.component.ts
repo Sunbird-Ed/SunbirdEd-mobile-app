@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
+import { AppGlobalService, CommonUtilService } from '@app/services';
+import { SharedPreferences } from 'sunbird-sdk';
+
 @Component({
   selector: 'app-deeplink-redirect',
   templateUrl: './deeplink-redirect.component.html',
@@ -19,8 +22,10 @@ export class DeeplinkRedirectComponent implements OnInit {
   translateObject: any;
   link: any;
   extra: string;
+  selectedUserType;
 
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,
     private translate: TranslateService,
     private router: Router,
@@ -30,7 +35,9 @@ export class DeeplinkRedirectComponent implements OnInit {
     private http: HttpClient,
     private kendra: KendraApiService,
     private toast: ToastService,
-    private location: Location
+    private location: Location,
+    private appGlobalService: AppGlobalService,
+    private commonUtilService: CommonUtilService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -47,7 +54,9 @@ export class DeeplinkRedirectComponent implements OnInit {
     this.switch(this.extra);
   }
 
-  switch(key) {
+  async switch(key) {
+    this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+
     switch (key) {
       case 'observationLink':
         this.verifyLink(this.data.create_observation_id);
@@ -61,6 +70,15 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async redirectProject(data) {
+    if (!this.appGlobalService.isUserLoggedIn()) {
+      this.commonUtilService.showToast("FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER");
+      this.location.back()
+      return;
+    } else if(this.selectedUserType !== "administrator"){
+      this.commonUtilService.showToast('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
+      this.location.back()
+      return;
+    }
     await this.router.navigate([`/${RouterLinks.HOME}`]);
     if (data.projectId) {// project id will only come if its created alreday for user
       await this.router
@@ -152,8 +170,10 @@ export class DeeplinkRedirectComponent implements OnInit {
           break;
       }
     }else{
+      if(resp && resp.status){
+        this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
+      }
       this.location.back();
-      this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
     }
   }
 }
