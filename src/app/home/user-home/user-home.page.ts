@@ -176,6 +176,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   doRefresh(refresher?) {
     this.refresh = true;
     this.fetchDisplayElements(refresher);
+    this.events.publish(EventTopics.NOTIFICATION_REFRESH);
   }
 
   private async getUserProfileDetails() {

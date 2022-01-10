@@ -118,7 +118,8 @@ export class ApiService {
 
 
   private handleError(result) {
-    switch (result.status) {
+    let status  = result.status <= 0 ? 0 :result.status;
+    switch (status) {
       case 0:
         this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
         break
