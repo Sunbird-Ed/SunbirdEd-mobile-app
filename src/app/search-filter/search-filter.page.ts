@@ -130,4 +130,3 @@ export class SearchFilterPage implements OnInit {
         this.refreshForm(event);
     }
 }
-
