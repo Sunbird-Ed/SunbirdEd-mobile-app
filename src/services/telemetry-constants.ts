@@ -554,7 +554,7 @@ export enum InteractSubtype {
     KEYCLOAK = 'keycloak',
     GOOGLE = 'google',
     APPLE = 'apple',
-    STATE = 'download-clicked',
+    STATE = 'state',
 }
 
 export enum ID {

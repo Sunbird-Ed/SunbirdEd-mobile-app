@@ -621,7 +621,7 @@ export class ProjectDetailPage implements OnDestroy {
           let data = success.result;
 
           if(!data?.observationId){
-            let resultdata: any = await this.getTemplate(data?.solutionDetails?._id,payload);
+            let resultdata: any = await this.getTemplateFromSolutionId(data?.solutionDetails?._id,payload);
             if (
               resultdata.assessment.evidences.length > 1 ||
               resultdata.assessment.evidences[0].sections.length > 1 ||
@@ -811,7 +811,7 @@ export class ProjectDetailPage implements OnDestroy {
 
   getTemplate(id, payload?:any) {
     const config = {
-        url: urlConstants.API_URLS.TEMPLATE_DETAILS + id,
+        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id,
         payload: payload ? payload : {}
     }
 
@@ -824,5 +824,19 @@ export class ProjectDetailPage implements OnDestroy {
     });
     
 }
+
+  getTemplateFromSolutionId(solutionId, payload?: any) {
+    const config = {
+      url: urlConstants.API_URLS.TEMPLATE_DETAILS + solutionId,
+      payload: payload,
+    };
+    return new Promise((resolve, reject) => {
+      this.unnatiService.post(config).subscribe((success) => {
+        resolve(success.result);
+      }, error => {
+        reject(error);
+      })
+    })
+  }
 
 }
