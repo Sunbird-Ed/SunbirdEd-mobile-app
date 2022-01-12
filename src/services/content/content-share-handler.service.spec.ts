@@ -14,6 +14,7 @@ import {
 } from '../telemetry-constants';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { AppGlobalService } from '../app-global-service.service';
+import { Platform } from '@ionic/angular';
 
 describe('ContentShareHandlerService', () => {
 
@@ -30,6 +31,9 @@ describe('ContentShareHandlerService', () => {
         setNativePopupVisible: jest.fn()
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
 
     beforeAll(() => {
         contentShareHandlerService = new ContentShareHandlerService(
@@ -39,7 +43,8 @@ describe('ContentShareHandlerService', () => {
             mockSocialSharing as SocialSharing,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppVersion as AppVersion,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockPlatform as Platform
         );
     });
 

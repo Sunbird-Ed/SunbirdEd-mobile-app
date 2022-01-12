@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { ToastService } from '../../core';
@@ -8,7 +8,7 @@ import { ToastService } from '../../core';
   templateUrl: './observation-solution-entity-listing.component.html',
   styleUrls: ['./observation-solution-entity-listing.component.scss'],
 })
-export class ObservationSolutionEntityListingComponent implements OnInit {
+export class ObservationSolutionEntityListingComponent {
   solutionDetails;
 
   constructor(private router: Router, private toast: ToastService) {
@@ -16,35 +16,8 @@ export class ObservationSolutionEntityListingComponent implements OnInit {
     this.solutionDetails = this.router.getCurrentNavigation().extras.state;
   }
 
-  ngOnInit() {}
 
   goToReports(entity) {
-    // if (!this.solutionDetails.scoringSystem || this.solutionDetails.scoringSystem === 'pointBasedScoring') {
-    // if (this.solutionDetails.scoringSystem === 'pointsBasedScoring' || !this.solutionDetails.isRubricDriven) {
-    // if (!this.solutionDetails.criteriaLevelReport || !this.solutionDetails.isRubricDriven) {
-    //   const queryParams = {
-    //     queryParams: {
-    //       observationId: this.solutionDetails.observationId,
-    //       solutionId: this.solutionDetails.solutionId,
-    //       programId: this.solutionDetails.programId,
-    //       entityId: entity._id,
-    //       entityName: entity.name,
-    //     },
-    //   };
-    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
-    // } else {
-    //   // this.toast.openToast("coming soon")
-    //   this.router.navigate([RouterLinks.GENERIC_REPORT], {
-    //     state: {
-    //       scores: true,
-    //       observation: true,
-    //       pdf: false,
-    //       entityId: entity._id,
-    //       entityType: this.solutionDetails.entityType,
-    //       observationId: this.solutionDetails.observationId,
-    //     },
-    //   });
-    // }
 
     let state = {
       scores: false,

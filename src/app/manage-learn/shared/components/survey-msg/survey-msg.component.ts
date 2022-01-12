@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppHeaderService } from '@app/services';
 import { ModalController, NavParams } from '@ionic/angular';
 
@@ -7,7 +7,7 @@ import { ModalController, NavParams } from '@ionic/angular';
   templateUrl: './survey-msg.component.html',
   styleUrls: ['./survey-msg.component.scss'],
 })
-export class SurveyMsgComponent implements OnInit {
+export class SurveyMsgComponent  {
   text: string;
 
   options = {
@@ -29,7 +29,6 @@ export class SurveyMsgComponent implements OnInit {
   close() {
     this.modal.dismiss()
   }
-  ngOnInit(): void {}
 
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();

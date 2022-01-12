@@ -26,7 +26,7 @@ import {
     LoginHandlerService
 } from '../../../services';
 import { Location } from '@angular/common';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
@@ -659,5 +659,27 @@ describe('GuestEditPage', () => {
         });
 
     });
+
+    it('should subscribe formControl to call ngOnDestroy()', () => {
+        // arrange
+        const formControlSubscriptions: Partial<Subscription> = { unsubscribe: jest.fn() };
+        // act
+        guestEditPage.ngOnDestroy();
+        // assert
+        expect(formControlSubscriptions).not.toBeUndefined();
+    });
+
+    it('should unsubscribe back function', () => {
+        // arrange
+        guestEditPage['unregisterBackButton'] = {
+            unsubscribe: jest.fn(),
+        } as any;
+        // act
+        guestEditPage.ionViewWillLeave();
+        // assert
+        expect(guestEditPage['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+    });
+
+
 
 });

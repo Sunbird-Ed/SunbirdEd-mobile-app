@@ -67,7 +67,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     private event: Events,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
-    private platform: Platform,
+    public platform: Platform,
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
@@ -130,7 +130,11 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
       if (this.categoriesProfileData) {
-        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+        }
       } else {
         this.backButtonFunc.unsubscribe();
       }
@@ -176,13 +180,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  selectUserTypeCard(selectedUserTypeName: string, userType: string) {
-    this.selectCard(selectedUserTypeName, userType);
-    this.generateUserTypeClicktelemetry(userType);
-    if (!this.categoriesProfileData) {
-      setTimeout(() => {
-        this.continue();
-      }, 50);
+  selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
+    if (isActive) {
+      this.selectCard(selectedUserTypeName, userType);
+      this.generateUserTypeClicktelemetry(userType);
+      if (!this.categoriesProfileData) {
+        setTimeout(() => {
+          this.continue();
+        }, 50);
+      }
     }
   }
 
@@ -244,7 +250,6 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  // TODO Remove getCurrentUser as setCurrentProfile is returning uid
   setProfile(profileRequest: Profile) {
     this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
@@ -405,6 +410,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       direction: 'left',
       duration: 500,
       androiddelay: 500,
+      iosdelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
@@ -418,10 +424,10 @@ export class UserTypeSelectionPage implements OnDestroy {
       direction: 'left',
       duration: 500,
       androiddelay: 500,
+      iosdelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
-    // this.nativePageTransitions.slide(options);
     this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
   }
 

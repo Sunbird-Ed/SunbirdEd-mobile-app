@@ -4,6 +4,8 @@ import { StoragePermissionHandlerService } from '@app/services/storage-permissio
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Platform } from '@ionic/angular';
+import 'datatables.net-fixedcolumns';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -13,7 +15,13 @@ export class DashboardComponent implements OnInit {
   @Input() dashletData: any;
   @Input() collectionName: string;
   DashletRowData = { values: [] };
-  columnConfig = { columnConfig: [] };
+  columnConfig = { 
+    columnConfig: [],
+    scrollX: true,
+    fixedColumns:   {
+      left: 1
+    }
+  };
   
 
   @ViewChild('lib', { static: false }) lib: any;
@@ -24,7 +32,8 @@ export class DashboardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
     private fileOpener: FileOpener,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private platform: Platform
 ) {
    
 }
@@ -50,15 +59,10 @@ export class DashboardComponent implements OnInit {
     const appName = await this.appVersion.getAppName();
     await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
       if (result) {
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.TOUCH,
-        //   InteractSubtype.DOWNLOAD_CLICKED,
-        //   Environment.USER,
-        //   PageId.ACTIVITY_DETAIL, undefined,
-        // );
         const expTime = new Date().getTime();
         const filename = this.collectionName.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const downloadDirectory = `${folderPath}Download/`;
         
         this.lib.instance.exportCsv({'strict': true}).then((csvData) => {
           console.log('exportCSVdata', csvData)

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
@@ -24,10 +24,6 @@ export class PercentageColumnChartsComponent implements OnInit {
   //   '26th Feb 2019',
   // ];
 
-  // dataPack1 = [1, 3, 2, 3, 3, 4, 4, 1];
-  // dataPack2 = [2, 3, 3, 4, 4, 5, 5, 6];
-  // dataPack3 = [3, 4, 4, 5, 5, 6, 6, 7];
-  // dataPack4 = [4, 4, 5, 7, 6, 5, 7, 1];
   public barChartData: ChartDataSets[];
   // =
   //   [
@@ -192,6 +188,5 @@ export class PercentageColumnChartsComponent implements OnInit {
 
   // events
   public chartClicked({ event, active }: { event: MouseEvent; active: {}[] }): void {
-    // console.log(event, active);
   }
 }

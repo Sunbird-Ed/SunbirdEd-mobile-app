@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
-import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { RemarksModalComponent } from '../../questionnaire/remarks-modal/remarks-modal.component';
 import { urlConstants } from '../constants/urlConstants';
@@ -10,6 +9,7 @@ import { LoaderService } from './loader/loader.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { ToastService } from './toast/toast.service';
 import { UtilsService } from './utils.service';
+import cloneDeep from 'lodash/cloneDeep';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,7 @@ export class EvidenceService {
   entityDetails: any;
   evidenceIndex: any;
   schoolId: any;
+  tempevidenceSections: any;
   constructor(
     private actionSheet: ActionSheetController,
     private localStorage: LocalStorageService,
@@ -52,9 +53,9 @@ export class EvidenceService {
         ])
         .subscribe(async (translations) => {
           translateObject = translations;
-          console.log(JSON.stringify(translations));
           let action = await this.actionSheet.create({
             header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
+            cssClass: 'actionSheet-custom-class',
             buttons: [
               {
                 text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),
@@ -103,7 +104,6 @@ export class EvidenceService {
             },
           };
           if (selectedECM.canBeNotAllowed) {
-            // action.data.buttons.splice(action.data.buttons.length - 1, 0, notAvailable);TODO:need to verify
             action.buttons.splice(action.buttons.length - 1, 0, notAvailable);
           }
           action.present();
@@ -195,13 +195,16 @@ export class EvidenceService {
       startTime: 0,
       endTime: 0,
       notApplicable: true,
+      remarks:''
     };
 
-    const currentEvidence = selectedECM;
+
+    const currentEvidence = cloneDeep(selectedECM);
     evidence.id = currentEvidence._id;
     evidence.externalId = currentEvidence.externalId;
     evidence.startTime = Date.now();
     evidence.endTime = Date.now();
+    evidence.remarks = selectedECM.remarks;
     for (const section of selectedECM.sections) {
       for (const question of section.questions) {
         let obj = {
@@ -259,5 +262,25 @@ export class EvidenceService {
       value.push(eachInstance);
     }
     return value;
+  }
+
+  pullOutPageQuestion() {
+    let sections = this.tempevidenceSections;
+    sections.forEach((section, sectionIndex) => {
+      let questionsArray = [];
+      section.questions.forEach((question) => {
+        if (question.responseType === 'pageQuestions') {
+          const parentquestionGpsLocation = question.gpsLocation;
+          question.pageQuestions.forEach((pageQuestion) => {
+            pageQuestion.gpsLocation = parentquestionGpsLocation;
+            questionsArray.push(pageQuestion);
+          });
+        } else {
+          questionsArray.push(question);
+        }
+      });
+      this.tempevidenceSections[sectionIndex].questions = questionsArray;
+    });
+    return this.tempevidenceSections;
   }
 }

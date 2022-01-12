@@ -103,8 +103,7 @@ export class DataSyncComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SHARE_TELEMETRY_CLICKED,
       Environment.SETTINGS,
-      PageId.SETTINGS_DATASYNC,
-      undefined);
+      PageId.SETTINGS_DATASYNC);
 
     try {
       await this.telemetryService.sync({
@@ -113,11 +112,12 @@ export class DataSyncComponent implements OnInit {
       }).toPromise();
     } catch (e) {
     }
-
+    
+    const folderPath = this.platform.is('ios') ? cordova.file.cacheDirectory : cordova.file.externalDataDirectory;
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],
-        filePath: cordova.file.externalCacheDirectory + '/tmp'
+        filePath: folderPath + '/tmp'
       })
       .toPromise()
       .then(async (r) => {

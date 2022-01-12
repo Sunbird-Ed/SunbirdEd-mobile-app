@@ -3,19 +3,19 @@
 
     <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
-        <img src="./assets/imgs/ic_burger_menu.svg" class="tool-icon" alt="burger menu">
+        <img src="./assets/imgs/ic_burger_menu.svg" role="button" class="tool-icon" alt="menu">
       </ion-button>
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
-      <ion-button icon-only (click)="emitEvent($event, 'back');">
-        <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
+      <ion-button icon-only (click)="emitEvent($event, 'back');" aria-label="back">
+        <ion-icon class="arrow-icon" name="arrow-back" role="button" aria-label="back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
+    <ion-title class="color f16" role="heading" aria-level="1" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group pr-12" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
-        <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" height="25"
+        <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" role="button" height="25"
           viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
           <title>F2562297-C67D-4A8E-831F-4BBA8FB569A4@1.5x</title>
           <desc>Created with sketchtool.</desc>
@@ -41,61 +41,61 @@
           </g>
         </svg>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('settings') >=0 && !isDownloadingActive"
+      <ion-button aria-label="settings" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('settings') >=0 && !isDownloadingActive"
         (click)="emitEvent($event, 'settings');">
         <ion-icon name="settings"></ion-icon>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
+      <ion-button aria-label="notifications" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
-        <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification">
+        <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification" role="button">
         <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
+      <ion-button aria-label="search" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
-        <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
+        <img src="./assets/imgs/ic_search.png"  role="button" class="tool-icon" alt="search">
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('information') >=0"
+      <ion-button aria-label="information" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('information') >=0"
         (click)="emitEvent($event, 'information');">
-        <img src="./assets/imgs/ic_info_circle.svg" class="tool-icon" alt="information">
+        <img src="./assets/imgs/ic_info_circle.svg" role="button" class="tool-icon" alt="information">
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
+      <ion-button aria-label="person" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
         (click)="emitEvent($event, 'person');">
         <ion-icon name="person"></ion-icon>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter') >=0"
+      <ion-button aria-label="filter" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter') >=0"
         (click)="emitEvent($event, 'filter');">
-        <img src="./assets/imgs/ic_action_filter.svg" class="tool-icon" alt="filter">
+        <img src="./assets/imgs/ic_action_filter.svg" role="button" class="tool-icon" alt="filter">
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter-applied') >=0"
+      <ion-button aria-label="filter applied" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter-applied') >=0"
         (click)="emitEvent($event, 'filter');">
-        <img src="./assets/imgs/ic_action_filter_applied.png" class="tool-icon" alt="filter applied">
+        <img src="./assets/imgs/ic_action_filter_applied.png" role="button" class="tool-icon" alt="filter applied">
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
+      <ion-button aria-label="share" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
-        <ion-icon name="share" class="ion-float-right"></ion-icon>
+        <ion-icon name="share" role="button" aria-label="share" class="ion-float-right"></ion-icon>
       </ion-button>
-      <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-done') >=0" style="font-size: 1.8rem;">
-        <ion-icon name="cloud-done" class="ion-float-right" style="color: green;"></ion-icon>
+      <ion-buttons aria-label="sync done" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-done') >=0" style="font-size: 1.8rem;">
+        <ion-icon name="cloud-done" role="button" class="ion-float-right" aria-label="sync done" style="color: green;"></ion-icon>
       </ion-buttons>
-      <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-offline') >=0"
+      <ion-buttons aria-label="sync offline"  icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-offline') >=0"
         (click)="emitEvent($event, 'sync');" style="font-size: 1.8rem;">
-        <ion-icon name="cloud-upload" class="ion-float-right"></ion-icon>
+        <ion-icon name="cloud-upload" aria-label="sync offline" role="button" class="ion-float-right"></ion-icon>
       </ion-buttons>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
+      <ion-button icon-only aria-label="more" *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" md="ellipsis-vertical"></ion-icon>
+        <ion-icon class="ion-float-end"  role="button" name="ellipsis-vertical"></ion-icon>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
-        (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" name="information-circle-outline"></ion-icon>
+      <ion-button aria-label="group information" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
+        (click)="emitEvent($event, 'groupInfo');" aria-label="group information" style="font-size: 1.8rem;">
+        <ion-icon class="ion-float-end" role="button" name="information-circle-outline"></ion-icon>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
-        (click)="emitEvent($event, 'questionMap');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" name="map"></ion-icon>
+      <ion-button aria-label="Question map" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
+        (click)="emitEvent($event, 'questionMap');" aria-label="Question map" style="font-size: 1.8rem;">
+        <ion-icon class="ion-float-end" role="button" name="map"></ion-icon>
       </ion-button>
-      <ion-button icon-only *ngIf="headerConfig?.showKebabMenu" (click)="showKebabMenu($event)"
+      <ion-button aria-label="menu" icon-only *ngIf="headerConfig?.showKebabMenu" (click)="showKebabMenu($event)"
         style="font-size: 1.8rem; padding: 0 16px;">
-        <img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
+        <img class="menu-icon" role="button" src="assets/imgs/menu.svg" alt="menu">
       </ion-button>
     </ion-buttons>
 
@@ -159,9 +159,9 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
+            <img src="./assets/imgs/my_group.svg" class="tool-icon" aria-hidden="true" alt="my group">
           </span>
-          <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
@@ -170,11 +170,11 @@
 
         <ion-item (click)="switchTheme()">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" alt="help">
+            <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
-          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item"
+          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" role="button"
             menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
-          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item"
+          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" role="button"
             menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
@@ -184,9 +184,9 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
+            <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
-          <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
@@ -195,33 +195,40 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
+            <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app language">
           </span>
           <div class="sb-language">
-            <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+            <div class="sb-menu-item" role="button">{{'LANGUAGE' | translate}}</div>
             <div class="sb-menu-item-language">{{selectedLanguage}}</div>
           </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+            <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
-          <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
+            <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
-          <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
+        </ion-item>
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
+          <span class="sb-menu-icon">
+            <ion-icon name="log-in-outline"></ion-icon>
+          </span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
+            <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
-          <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
 
       </ion-list>
@@ -291,30 +298,26 @@
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
+            <img src="./assets/imgs/my_group.svg" aria-hidden="true" class="tool-icon" alt="my group">
           </span>
-          <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
-          <!-- <div class="new-feature-badge">
-            <div class="square-badge">New</div>
-            <div class="circle-badge"></div>
-          </div> -->
+          <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
-        <!-- <ion-item (click)="switchTheme()">
-        <span class="sb-menu-icon">
-          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
-        </span>
-        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
-        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
-        <div class="new-feature-badge">
-          <div class="square-badge">New</div>
-          <div class="circle-badge"></div>
-        </div>
-      </ion-item> -->
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
+            <span class="sb-menu-icon">
+              <img src="./assets/imgs/Reports.png" aria-hidden="true" class="tool-icon" alt="reports">
+            </span>
+            <span class="sb-menu-item" role="button" menuClose>{{'FRMELEMNTS_LBL_MY_REPORTS' | translate}}</span>
+             <div class="new-feature-badge">
+              <div class="square-badge">New</div>
+              <div class="circle-badge"></div>
+            </div>
+        </ion-item>
+
         <ion-item (click)="switchTabs()">
           <div class="beta-info">
             <span class="sb-menu-icon">
-              <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+              <img src="./assets/imgs/ic_switch.svg" aria-hidden="true" class="tool-icon sb-menu-item-switch" alt="help">
             </span>
             <div><span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item"
                 menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate: {'appName': appName} }}</span>
@@ -323,7 +326,7 @@
                 menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate: {'appName': appName} }}</span>
               <span class="new-feature-badge"
                 *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'">
-                <div class="square-badge">Beta</div>
+                <div class="square-badge" *ngIf="!platform?.is('ios')">Beta</div>
                 <div class="circle-badge"></div>
               </span></div>
           </div>
@@ -331,10 +334,10 @@
 
         <ion-item (click)="switchMode()">
           <span class="sb-menu-icon dark-mode-icon">
-            <img src="./assets/imgs/darkmode.svg" class="tool-icon sb-menu-item-switch" alt="darkmode">
+            <img src="./assets/imgs/darkmode.svg" aria-hidden="true"  class="tool-icon sb-menu-item-switch" alt="darkmode">
           </span>
-          <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
-            <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
+          <span *ngIf="!isDarkMode" class="sb-menu-item" role="button" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
+            <span *ngIf="isDarkMode" class="sb-menu-item" role="button" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
             <div class="onoffswitch">
                 <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
                 <label class="onoffswitch-label" for="myonoffswitch">
@@ -344,53 +347,49 @@
             </div>
       </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')" *ngIf="!platform?.is('ios')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
+            <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
           <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
-          <!-- <div class="new-feature-badge">
-            <div class="square-badge">New</div>
-            <div class="circle-badge"></div>
-          </div> -->
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app langugae">
+            <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app langugae">
           </span>
           <div class="sb-language">
-            <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+            <div class="sb-menu-item" role="button">{{'LANGUAGE' | translate}}</div>
             <div class="sb-menu-item-language">{{selectedLanguage}}</div>
           </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+            <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
-          <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
+            <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
-          <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
+        <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>
-          <span class="sb-menu-item" menuClose>{{'SIGN_IN' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
+        <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
+            <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
-          <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{'LOGOUT' | translate}}</span>
         </ion-item>
 
       </ion-list>

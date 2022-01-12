@@ -33,13 +33,27 @@ import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
-declare const supportfile;
 declare const plugins;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window['sbutility'] = {
+        getBuildConfigValue: jest.fn(() => { }),
+        openPlayStore: jest.fn(() => { }),
+        getDeviceAPILevel: jest.fn(() => { }),
+        checkAppAvailability: jest.fn(() => { }),
+        getDownloadDirectoryPath: jest.fn(() => { }),
+        exportApk: jest.fn(() => { }),
+        getDeviceSpec: jest.fn(() => { }),
+        getUtmInfo: jest.fn(() => { }),
+        clearUtmInfo: jest.fn(() => { }),
+        readFromAssets: jest.fn(() => { }),
+        rm: jest.fn(() => { }),
+        getApkSize: jest.fn(() => { }),
+        getMetaData: jest.fn(() => { }),
+        makeEntryInSunbirdSupportFile: jest.fn(() => { })
+    };
     window.cordova.plugins = {
         notification: {
             local: {
@@ -100,7 +114,8 @@ describe('AppComponent', () => {
         resume: pauseData,
         backButton: {
             subscribeWithPriority: jest.fn()
-        } as Partial<BackButtonEmitter> as BackButtonEmitter
+        } as Partial<BackButtonEmitter> as BackButtonEmitter,
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockPreferences: Partial<SharedPreferences> = {
         addListener: jest.fn(() => { })
@@ -111,7 +126,8 @@ describe('AppComponent', () => {
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
-        styleBlackTranslucent: jest.fn()
+        styleBlackTranslucent: jest.fn(),
+        styleDefault: jest.fn()
     };
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
         getSystemSettings: jest.fn(() => of({}))
@@ -169,7 +185,14 @@ describe('AppComponent', () => {
        stopLoader: jest.fn(),
        startLoader: jest.fn()
     };
-    const mockGooglePlusLogin: Partial<GooglePlus> = {};
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -213,7 +236,6 @@ describe('AppComponent', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
             mockMlLoader as LoaderService,
-            mockGooglePlusLogin as GooglePlus,
         );
     });
 
@@ -279,6 +301,14 @@ describe('AppComponent', () => {
             mockNetworkService.netWorkCheck = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -430,6 +460,14 @@ describe('AppComponent', () => {
             mockDbService.createDb = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -587,6 +625,14 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
 
         afterEach(() => {
@@ -1427,6 +1473,14 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1846,52 +1900,16 @@ describe('AppComponent', () => {
             );
         });
 
-        it('should return a toast for internet changes', () => {
+        it('should handle logout', () => {
             // arrange
             const menuName = {
                 menuItem: 'LOGOUT'
             };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            appComponent.menuItemAction(menuName);
-            // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
-        });
-
-        it('should handle logout', (done) => {
-            // arrange
-            const menuName = {
-                menuItem: 'LOGOUT'
-            };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            };
-            mockPreferences.getBoolean = jest.fn(() => of(true));
-            mockPreferences.putBoolean = jest.fn(() => of(false));
-            mockGooglePlusLogin.disconnect = jest.fn(() => Promise.reject(undefined));
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
-                id: 'googleClientId',
-                field: 'googleClientId',
-                value: 'sample_random_value'
-            }));
-            mockGooglePlusLogin.trySilentLogin = jest.fn(() => Promise.resolve());
-            mockLocalStorageService.deleteAllStorage = jest.fn(() => Promise.resolve({}));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.menuItemAction(menuName);
             // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
-            setTimeout(() => {
-                expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
-                expect(mockGooglePlusLogin.disconnect).toHaveBeenCalled();
-                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalledWith({id: SystemSettingsIds.GOOGLE_CLIENT_ID});
-                expect(mockGooglePlusLogin.trySilentLogin).toHaveBeenCalledWith({webClientId: 'sample_random_value'});
-                done();
-            }, 0);
+            expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
         });
 
         it('should handle inappupdate', () => {
@@ -2074,6 +2092,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2263,6 +2289,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2552,6 +2586,14 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
+            global.window.segmentation = {
+                init: jest.fn(),
+                SBTagService: {
+                    pushTag: jest.fn(),
+                    removeAllTags: jest.fn(),
+                    restoreTags: jest.fn()
+                }
+            };
         });
         afterEach(() => {
             jest.resetAllMocks();

@@ -60,7 +60,8 @@ export class Search {
         'primaryCategory',
         'publisher',
         'mimeType',
-        'audience'
+        'audience',
+        'additionalCategories'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -104,7 +105,8 @@ export class ProfileConstants {
         'organisations',
         'roles',
         'locations',
-        'declarations'
+        'declarations',
+        'externalIds'
     ];
 
     public static readonly CONTACT_TYPE_PHONE = 'phone';
@@ -166,6 +168,7 @@ export class EventTopics {
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
     public static readonly BANNER = 'banner';
+    public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
 }
 
 export class ShareUrl {
@@ -236,6 +239,7 @@ export class PreferenceKey {
     public static readonly IS_NEW_USER = 'is_new_user';
     public static readonly NAVIGATION_SOURCE = 'navigation_source';
     public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
+    public static readonly IS_APPLE_LOGIN = 'is_apple_login';
 }
 
 export enum SwitchableTabsConfig {
@@ -258,6 +262,7 @@ export class GenericAppConfig {
     public static readonly SUPPORT_EMAIL = 'SUPPORT_EMAIL';
     public static readonly VERSION_NAME = 'REAL_VERSION_NAME';
     public static readonly VERSION_CODE = 'VERSION_CODE';
+    public static readonly MAX_COMPATIBILITY_LEVEL = 'MAX_COMPATIBILITY_LEVEL';
 }
 
 export const appLanguages = [
@@ -569,6 +574,7 @@ export class RouterLinks {
     public static readonly PROGRAM = 'program';
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
+    public static readonly TEMPLATE = 'template';
     public static readonly REPORTS = "reports";
     public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
     public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
@@ -776,4 +782,6 @@ export interface MaxAttempt {
     isCloseButtonClicked: boolean;
 }
 
-
+export class OTPTemplates {
+    public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
+}

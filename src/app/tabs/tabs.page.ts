@@ -71,7 +71,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   private async refreshTabs(data?) {
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
     this.tabs = this.container.getAllTabs();
-    // this.tabRef.outlet['navCtrl'].navigateRoot('/tabs/' + this.tabs[0].root);
     if (!data || (data && !data.navigateToCourse)) {
     this.router.navigate(['/tabs/' + this.tabs[0].root]);
     }
@@ -118,12 +117,14 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
       setTimeout(() => {
-        this.tabRef.select('courses');
+        const tab:any = 'courses';
+        this.tabRef.select(tab);
       }, 300);
     });
     this.events.subscribe('to_profile', () => {
       setTimeout(() => {
-        this.tabRef.select('profile');
+        const tab:any = 'profile';
+        this.tabRef.select(tab);
       }, 300);
     });
   }

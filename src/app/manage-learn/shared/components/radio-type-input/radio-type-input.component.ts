@@ -45,8 +45,6 @@ export class RadioTypeInputComponent implements OnInit {
   }
 
   updateData(event){
-    // this.data ={}
-    // this.data = Object.assign({}, this.data)
     this.data.fileName = [...this.data.fileName]
   }
   next(status?:any) {
@@ -65,7 +63,6 @@ export class RadioTypeInputComponent implements OnInit {
   }
 
   async openHint(hint){
-    // this.utils.presentHintModal({hint: hint});
     let hintModal = await this.modalCtrl.create({
       component: HintComponent,
       componentProps: {

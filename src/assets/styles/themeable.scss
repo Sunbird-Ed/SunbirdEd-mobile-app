@@ -3,7 +3,7 @@
 
 html[data-theme="JOYFUL"]{
 
-  --app-primary:#024f9d;
+  --app-primary:#00458F;
   --app-primary-medium:#007AFF;
   --app-primary-light-2:#94CCF5;
   --app-primary-light:#C6E7FF;
@@ -24,8 +24,8 @@ html[data-theme="JOYFUL"]{
   --app-black:#000000; // remove
   --app-dark-gray:#222222;
   --app-gray:#333333;
-  --app-medium-gray:#666666;
-  --app-light-gray:#999999;
+  --app-medium-gray:#4A4A4A;
+  --app-light-gray:#555;
   --app-lighter-gray:#cccccc;
 
   --app-brown:#4F2C0D;
@@ -34,6 +34,7 @@ html[data-theme="JOYFUL"]{
 
   --app-shadow:rgba(0,0,0,0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
   ion-toolbar {
@@ -101,6 +102,7 @@ html[data-theme="JOYFUL"]{
 
   ion-radio {
     --color-checked: var(--app-primary) !important;
+    --color: var(--app-gray) !important;
   }
 
   ion-card, button{
@@ -195,7 +197,7 @@ html[data-theme="JOYFUL"]{
   }
 
   .sb--card{
-    box-shadow: var(--block-style-shadow) !important;
+    box-shadow: var(--block-style-shadow);
   }
 
   .sb--card__title{
@@ -695,6 +697,18 @@ html[data-theme="JOYFUL"]{
           background-color: var(--app-secondary-background) !important;
           box-shadow: var(--block-style-shadow) !important;
         }
+        .expansion-indicator {
+          width: 1.5rem;
+          height: 1.5rem;
+          background-color: var(--app-white);
+          border-radius: 5rem;
+          text-align: center;
+          box-shadow: var(--button-sm-style-shadow);
+          svg {
+            width: 80%;
+            fill: var(--app-gray);
+          }
+        }
       }
       .accordion-item-header-expanded{
         .sbaccordion__panel-header{
@@ -741,6 +755,9 @@ html[data-theme="JOYFUL"]{
       sb-accordion-item{
         .sbaccordion{
           box-shadow: none !important;
+          .sbaccordion__panel{
+            margin-bottom: 1rem !important;
+          }
         }
       }
       .sbchapter__play__btn{
@@ -804,6 +821,7 @@ html[data-theme="JOYFUL"]{
       position: absolute;
       z-index: 0;
       top: 0;
+      left: 0;
       border-bottom-left-radius: 20px;
       background-color: var(--app-primary-header) !important;
       background-image: url(/assets/imgs/header-background.svg);
@@ -1213,11 +1231,9 @@ html[data-theme="JOYFUL"]{
       padding: 0 16px !important;
       font-size: 20px !important;
       text-align: unset !important;
-      margin-top: 28px !important;
       ion-icon{
         height: 30px !important;
         width: 60px !important;
-        top: -20px !important;
       }
     }
 
@@ -1635,7 +1651,11 @@ html[data-theme="JOYFUL"]{
       color: map-get($colors, primary) !important;
       background-color: map-get($colors, light_gray) !important;
     }
-    .df-btn-close{
+    .df-back-btn{
+      color: map-get($colors, primary) !important;
+      background-color: map-get($colors, light_gray) !important;
+    }
+    .df-close-btn{
       color: map-get($colors, black) !important;
       background: var(--app-pink) !important;
       padding: 0.5rem 1rem !important;
@@ -1685,10 +1705,6 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  table.dataTable.no-footer {
-    border-radius: 1.5rem;
-  }
-
   app-sign-in {
     .sign-in-button {
       margin: 1rem;
@@ -1710,5 +1726,102 @@ html[data-theme="JOYFUL"]{
       --background: var(--app-tertiary-background);
     }
   }
+  
+  .header-ios ion-toolbar:last-of-type {
+    --border-width: 0px !important;
+  }
 
+  // ************ iOS start *************
+  .ui-content-ios{
+    z-index: 2;
+    position: relative;
+    top: 45px;
+  }
+  .ui-container-ios {
+    &::part(scroll) {
+      z-index: auto;
+    }
+    &::after {
+      content: '';
+      width: 100%;
+      height: 50px;
+      display: block;
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      border-bottom-left-radius: 20px;
+      background-color: var(--app-primary-header) !important;
+      background-image: url(/assets/imgs/header-background.svg);
+      background-repeat: no-repeat;
+      background-position: bottom center;
+    }
+  }
+
+  // .sc-ion-popover-ios {
+  //   bottom: 0px !important;
+  //   top: unset !important;
+  // }
+
+  .ios ion-segment {
+    background: inherit;
+  }
+
+  .ios ion-split-pane {
+    position: absolute;
+    top: calc(constant(safe-area-inset-top)); //ios 11.2
+    top: calc(env(safe-area-inset-top)); //ios 11.1  
+  }
+
+  .ios ion-menu {
+    position: absolute;
+    top: calc(constant(safe-area-inset-top)); //ios 11.2
+    top: calc(env(safe-area-inset-top)); //ios 11.1  
+
+    ion-content, ion-footer, ion-header {
+      width: calc(100% + 10%);
+    }
+
+  }
+
+  .ios .qr-scanner-modal {
+    background: transparent !important;
+
+    .modal-wrapper {
+      background: transparent !important;
+    }
+  }
+
+  .ios ion-alert {
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: calc(env(safe-area-inset-bottom) + 20px);
+
+      .alert-button.sc-ion-alert-ios {
+        margin-right: 8px;
+        min-width: 45%;
+      }
+    }
+  }
+
+  .ios .central-alert{
+    .alert-wrapper {
+      margin-top: calc(env(safe-area-inset-top) + 20px);
+    }
+
+    .alert-button-group {
+      margin-bottom: 5px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .alert-button.sc-ion-alert-ios {
+        margin: 3px;
+        min-width: 45%;
+      }
+    }
+  }
+
+  // ************ iOS end ***************
 }

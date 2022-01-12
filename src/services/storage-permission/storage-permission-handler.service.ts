@@ -7,6 +7,7 @@ import {
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,17 @@ export class StoragePermissionHandlerService {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion,
-    private permissionService: AndroidPermissionsService
+    private permissionService: AndroidPermissionsService,
+    private platform: Platform
   ) {
   }
 
   async checkForPermissions(pageId): Promise<boolean | undefined> {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
+        resolve(true);
+      });
+    }
     this.appName = await this.appVersion.getAppName();
     return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);

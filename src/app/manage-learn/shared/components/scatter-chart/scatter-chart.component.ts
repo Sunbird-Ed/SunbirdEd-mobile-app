@@ -8,14 +8,12 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ScatterChartComponent implements OnInit {
   @Input() data;
   @Input() questionNumber;
-  // Highcharts = Highcharts; // required
   chartConstructor = 'chart'; // optional string, defaults to 'chart'
   updateFlag = false; // optional boolean
   oneToOneFlag = true; // optional boolean, defaults to false
   runOutsideAngular = false;
   chartObj;
 
-  constructor() {}
 
   ngOnInit() {
     if (this.data && this.data.chart && this.data.chart.data) {
@@ -55,7 +53,6 @@ export class ScatterChartComponent implements OnInit {
       series: this.data ? this.data.chart.data : null,
     };
     setTimeout(() => {
-      // Highcharts.chart('container' + this.questionNumber, this.chartObj);
     }, 1000);
   }
 }

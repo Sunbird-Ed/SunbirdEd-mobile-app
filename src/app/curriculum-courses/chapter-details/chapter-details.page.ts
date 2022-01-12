@@ -7,7 +7,7 @@ import {
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { TocCardType } from '@project-sunbird/common-consumption-v8';
+import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -106,6 +106,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   courseHeirarchy: any;
   private hasInit = false;
   courseBatchesRequest: CourseBatchesRequest;
+  courseCardData: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -150,6 +151,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
     this.corRelationList = this.extrasData.corRelation;
+    this.courseCardData = this.extrasData.courseCardData;
   }
 
   ngOnInit() {
@@ -210,8 +212,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             this.appGlobalService.setEnrolledCourseList(courseList);
           }
           return data.find((element) =>
-            (this.courseContent.batchId && element.batchId === this.courseContent.batchId)
-            || (!this.courseContent.batchId && element.courseId === this.courseContent.identifier));
+            (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
+            || (!this.courseCardData.batchId && element.courseId === this.courseCardData.identifier));
         })
         .catch(e => {
           console.log(e);
@@ -666,7 +668,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         userConsent: this.courseContent.contentData.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this, this.courseContent).toPromise()
         .then(async (data: boolean) => {
           // await this.loader.dismiss();
           this.courseContent.batchId = item.id;
@@ -694,7 +696,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ]
       },
@@ -753,7 +755,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         actionsButtons: [
           {
             btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.courseContent),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color label-uppercase label-bold-font'
           },
         ],
         // handler : this.handleEnrollCoursePopup.bind(this)
@@ -869,23 +871,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       if (response && response.data) {
         this.isDownloadStarted = true;
         this.showCollapsedPopup = false;
-        // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        //   'download-all-button-clicked',
-        //   Environment.HOME,
-        //   PageId.COURSE_DETAIL,
-        //   undefined,
-        //   undefined,
-        //   // todo
-        //   // this.objRollup,
-        //   // this.corRelationList
-        // );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
-        // Cancel Clicked Telemetry
-        // todo
-        // this.generateCancelDownloadTelemetry(this.contentDetail);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -894,10 +883,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         // correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
         correlationData: [],
@@ -931,7 +921,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             });
 
             if (this.queuedIdentifiers.length === 0) {
-              // this.restoreDownloadState();
             }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
@@ -991,12 +980,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               }
             } else {
               this.courseContentData.isAvailableLocally = true;
-              // this.setContentDetails(this.identifier);
             }
           }
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
-            // this.licenseDetails = event.payload.licenseDetails;
             if (event.payload.size) {
               this.courseContent.contentData.size = event.payload.size;
             }

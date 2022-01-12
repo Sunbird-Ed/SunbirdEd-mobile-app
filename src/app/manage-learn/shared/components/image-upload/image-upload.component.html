@@ -1,5 +1,4 @@
 <div class="_flex-box ion-margin-top"  style="flex-wrap: wrap;">
-  <!-- <fa-icon name="camera-retro"></fa-icon> -->
 
   <div *ngIf="datas?.file" class="_cards _flex-box _justify-content-center _flex-direction-column ion-padding" >
 
@@ -17,13 +16,6 @@
     <div class="_overlay" (click)="previewFile(image?.imageName,image?.extension)"></div>
     <img [src]="image?.data">
     <span>
-      <!-- <fa name="file-pdf-o" class="attachmentIcon" *ngIf="pdfFormats.includes(image?.extension)"></fa>
-      <fa name="file-word-o" class="attachmentIcon" *ngIf="wordFormats.includes(image?.extension)"></fa>
-      <fa name="file-audio-o" class="attachmentIcon" *ngIf="audioFormats.includes(image?.extension)"></fa>
-      <fa name="file-video-o" class="attachmentIcon" *ngIf="videoFormats.includes(image?.extension)"></fa>
-      <fa name="file-powerpoint-o" class="attachmentIcon" *ngIf="pptFormats.includes(image?.extension)"></fa>
-      <fa name="file-excel-o" class="attachmentIcon" *ngIf="spreadSheetFormats.includes(image?.extension)"></fa>
-      <fa name="file-picture-o" class="attachmentIcon" *ngIf="imageFormats.includes(image?.extension)"></fa> -->
       <ion-icon name="document" *ngIf="pdfFormats.includes(image?.extension) || wordFormats.includes(image?.extension) || pptFormats.includes(image?.extension) "></ion-icon>
       <ion-icon name="musical-notes" *ngIf="audioFormats.includes(image?.extension)"></ion-icon>
       <ion-icon name="videocam"  *ngIf="videoFormats.includes(image?.extension)"></ion-icon>

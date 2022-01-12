@@ -22,10 +22,9 @@ import {
     WebviewSessionProviderConfig,
     SignInError,
     FrameworkCategoryCode,
-    ProfileType
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
@@ -402,8 +401,6 @@ export class FormAndFrameworkUtilService {
             await this.invokeContentFilterConfigFormApi()
                 .then(fields => {
                     contentFilterConfig = fields;
-                })
-                .catch(error => {
                 });
         }
 
@@ -727,7 +724,7 @@ export class FormAndFrameworkUtilService {
     async getConsentFormConfig() {
         const req: FormRequest = {
             type: 'dynamicForm',
-            subType: 'consentDeclaration_v2',
+            subType: 'consentDeclaration_v3',
             action: 'submit',
             component: 'app'
         };
@@ -754,21 +751,20 @@ export class FormAndFrameworkUtilService {
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
     }
 
+    async getSearchFilters(): Promise<any[]>{
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'search',
+            action: 'facet_filter',
+            component: 'app'
+        };
+        return await this.getFormFields(formRequest);
+    }
+
     async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
         formRequest.rootOrgId = rootOrgId || '*' ;
         const formData  = await this.formService.getForm(formRequest).toPromise() as any;
         return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
-    }
-
-    async getSegmentationCommands() {
-
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: 'segmentation',
-            action: 'get',
-            component: 'app'
-        };
-        return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
     }
 
     public getOrganizationList(channelFacetFilter): Observable<{ orgName: string; rootOrgId: string; }[]> {

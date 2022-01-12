@@ -11,7 +11,7 @@
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
           *ngIf="batches && courseContentData?.contentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
-          <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
+          <button class="enrolled-course-card-button label-uppercase label-bold-font" (click)="navigateToBatchListPage();">
             {{'FRMELEMNTS_LBL_JOIN_TRAINING' | categoryKeyTranslate : courseContentData }}
           </button>
         </div>
@@ -57,15 +57,15 @@
     <div class="cd-flex-container" *ngIf="isAlreadyEnrolled">
       <div style="width: 100%;">
         <button class="cd-chapter-card-button" *ngIf="!isChapterCompleted && !isChapterStarted" (click)="startLearning();">
-          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
           {{'START_LEARNING' | translate}}
         </button>
         <button class="cd-chapter-card-button" *ngIf="isChapterCompleted" (click)="continueLearning();">
-          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
           {{'START_AGAIN' | translate}}
         </button>
         <button class="cd-chapter-card-button" *ngIf="!isChapterCompleted && isChapterStarted" (click)="continueLearning();">
-          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play">
           {{'CONTINUE_LEARNING' | translate}}
         </button>
       </div>
@@ -73,7 +73,7 @@
   </div>
   <div class="cd-container">
     <div class="cd-flex-container">
-      <div class="cd-container-title">{{"CONTENTS" | translate}}</div>
+      <div attr.aria-label="{{'CONTENTS' | translate}}, heading" class="cd-container-title">{{"CONTENTS" | translate}}</div>
       <div class="cd-container-progress" *ngIf="isAlreadyEnrolled">{{viewedContents.length}}/{{childContents.length}} {{"COMPLETED" | translate}}</div>
     </div>
     <div>

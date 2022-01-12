@@ -96,10 +96,8 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     }
 
     handleHeaderEvents($event) {
-        switch ($event.name) {
-            case 'back':
+        if($event.name == 'back') {
                 this.handleBackButton(true);
-                break;
         }
     }
 

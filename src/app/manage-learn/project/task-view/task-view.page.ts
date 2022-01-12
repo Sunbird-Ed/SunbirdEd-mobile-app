@@ -1,17 +1,18 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ViewChild, Inject } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import * as _ from "underscore";
 import { TranslateService } from "@ngx-translate/core";
 import { AlertController } from "@ionic/angular";
 import { Location } from "@angular/common";
-import { statuses } from "../../core/constants/statuses.constant";
+import { statuses,statusType } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
-import { AppHeaderService } from "@app/services";
+import { AppHeaderService, CommonUtilService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
-
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 var environment = {
   db: {
@@ -25,7 +26,7 @@ var environment = {
   templateUrl: "./task-view.page.html",
   styleUrls: ["./task-view.page.scss"],
 })
-export class TaskViewPage implements OnInit {
+export class TaskViewPage {
   parameters;
   @ViewChild("dateTime", { static: false }) sTime;
   editField;
@@ -60,12 +61,14 @@ export class TaskViewPage implements OnInit {
     private networkService: NetworkService,
     private headerService: AppHeaderService,
     private popupService: GenericPopUpService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private navigateService: NavigationService,
+    private commonUtilService: CommonUtilService,
 
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
     this.saveSubTaskChanges = _.debounce(this.saveSubTaskChanges, 800);
-    // this.db.createPouchDB(environment.db.projects);
     params.params.subscribe((parameters) => {
       this.parameters = parameters;
       this.getTask();
@@ -73,7 +76,7 @@ export class TaskViewPage implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  
 
 
   ionViewWillEnter() {
@@ -93,7 +96,6 @@ export class TaskViewPage implements OnInit {
       (success) => {
         this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
-        // this.copyOfProject = { ...this.project };
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
           return item._id == this.parameters.taskId;
         });
@@ -165,6 +167,11 @@ export class TaskViewPage implements OnInit {
         this.task.isEdit = this.copyOfTaskDetails === JSON.stringify(this.task) ? false : true;
         this.project.isEdit = this.task.isEdit ? true : this.project.isEdit;
       }
+      if (JSON.stringify(this.copyOfTaskDetails) !== JSON.stringify(this.task)) {
+        this.project.isEdit = true;
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
+      }
       const isProjectEdit = _.filter(this.project.tasks, (eachTask) => {
         return eachTask.isEdit;
       });
@@ -179,7 +186,6 @@ export class TaskViewPage implements OnInit {
           this.toast.showMessage('FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED', 'success');
           goBack ? this.location.back() : "";
         })
-        .catch((error) => { });
     } else {
       this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
@@ -199,10 +205,23 @@ export class TaskViewPage implements OnInit {
   }
 
   openBodh(link) {
-    // TODO: add service
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResourceSrvc.openBodh(link)
-    //   : this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE", "danger");
+    if(this.commonUtilService.networkInfo.isNetworkAvailable){
+      const id = link.split('/').pop();
+      const req: ContentDetailRequest = {
+        contentId: id,
+        attachFeedback: false,
+        attachContentAccess: false,
+        emitUpdateIfAny: false
+      };
+  
+      this.contentService.getContentDetails(req).toPromise()
+        .then(async (data: Content) => {
+          this.navigateService.navigateToDetailPage(data, { content: data });
+        });
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+    }
+
   }
 
   delete(data) {
@@ -218,6 +237,7 @@ export class TaskViewPage implements OnInit {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
+      cssClass: 'background-theme-color',
       buttons: [
         {
           text: data["CANCEL"],
@@ -285,6 +305,9 @@ export class TaskViewPage implements OnInit {
   markTaskAsCompleted() {
     this.showAttachments = true;
   }
+  closemarkTaskAsCompleted(){
+    this.showAttachments = false;
+  }
   insertAttachment() {
     this.showAttachments = false;
     !this.task.attachments ? (this.task.attachments = []) : "";
@@ -311,7 +334,6 @@ export class TaskViewPage implements OnInit {
 
   async edit(what, placeholder = "", subtask?, subTaskIndex?) {
     let name;
-    // what == "task" || what == "assignName" ? (name = "Edit Task") : (name = "Edit Subtask");
     switch (what) {
       case 'task':
         name = "Edit Task"
@@ -323,7 +345,7 @@ export class TaskViewPage implements OnInit {
         name = "Edit Subtask"
     }
     const alert = await this.alert.create({
-      cssClass: "my-custom-class",
+      cssClass: "central-alert",
       header: name,
       // message: "Message <strong>text</strong>!!!",
       inputs: [

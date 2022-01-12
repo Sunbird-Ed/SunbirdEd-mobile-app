@@ -72,9 +72,9 @@ describe('FaqHelpPage', () => {
     };
     const modalCtrl: Partial<ModalController> = {};
 
-    window['supportfile'] = {
+    window['sbutility'] = {
         removeFile: jest.fn()
-    }
+    };
 
     beforeAll(() => {
         mockRouter.getCurrentNavigation = jest.fn(() => {
@@ -289,7 +289,7 @@ describe('FaqHelpPage', () => {
             faqHelpPage.ionViewDidLeave();
             // assert
             setTimeout(() => {
-                expect(window.supportfile.removeFile).toBeCalled();
+                expect(window.sbutility.removeFile).toBeCalled();
                 expect(window.removeEventListener).toBeCalled();
                 expect(faqHelpPage.loading).toBeUndefined();
                 done();

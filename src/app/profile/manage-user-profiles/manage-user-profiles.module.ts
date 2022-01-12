@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ManageUserProfilesPage } from './manage-user-profiles.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [

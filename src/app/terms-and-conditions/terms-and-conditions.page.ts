@@ -140,7 +140,7 @@ export class TermsAndConditionsPage implements OnInit {
           from: CachedItemRequestSourceFrom.SERVER
         }).toPromise();
 
-        // TODO:
+        
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
@@ -168,7 +168,7 @@ export class TermsAndConditionsPage implements OnInit {
                 if (await tncUpdateHandlerService.isSSOUser(profile)) {
                   await this.consentService.getConsent(profile, true);
                 }
-                categoriesProfileData['status'] = value['status'],
+                categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -182,7 +182,7 @@ export class TermsAndConditionsPage implements OnInit {
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  categoriesProfileData['status'] = value['status'],
+                  categoriesProfileData['status'] = value['status']
                     categoriesProfileData['isUserLocationAvalable'] = false;
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }

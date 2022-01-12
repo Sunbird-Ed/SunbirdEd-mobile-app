@@ -319,7 +319,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
                 && profileDetails.allTncAccepted.groupsTnc.version) {
                 if (profileDetails.allTncAccepted.groupsTnc.version !== this.groupTncVersion) {
                   if (this.groupList.length) {
-                    // this.updateGroupTnc(this.groupTncVersion);
                     this.openAcceptGuidelinesPopup(true);
                   } else {
                     this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
@@ -370,7 +369,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           groups: groupsData
         };
         const groupsUpdateResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
-        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.ACCEPT_GROUP_GUIDELINES);
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', [], ID.ACCEPT_GROUP_GUIDELINES);
         this.fetchGroupList();
       } catch (err) {
         console.log('groupsUpdateResponse err', err);

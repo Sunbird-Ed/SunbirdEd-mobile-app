@@ -41,7 +41,7 @@ export class ProgramListingComponent implements OnInit {
         let payload = await this.utils.getProfileInfo();
         if (payload) {
             const config = {
-                url: urlConstants.API_URLS.PROGRAM_LISTING + 'page=' + this.page + '&limit=' + this.limit + '&search=',
+                url: urlConstants.API_URLS.PROGRAM_LISTING +false+ '&page=' + this.page + '&limit=' + this.limit + '&search=',
                 payload: payload
             }
             this.kendraService.post(config).subscribe(success => {

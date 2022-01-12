@@ -49,6 +49,8 @@ export class SelfDeclaredTeacherEditPage {
   tenantPersonaForm: FieldConfig<any>[] = [];
   appName = '';
   selectedTenant = '';
+  isTenantChanged = false;
+  previousOrgId;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -58,7 +60,7 @@ export class SelfDeclaredTeacherEditPage {
     private router: Router,
     private location: Location,
     private events: Events,
-    private platform: Platform,
+    public platform: Platform,
     private activatedRoute: ActivatedRoute,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -342,12 +344,16 @@ export class SelfDeclaredTeacherEditPage {
 
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
-      if (this.editType === 'add') {
-        const userDetails = await this.profileService.getActiveSessionProfile(
+      const userDetails = await this.profileService.getActiveSessionProfile(
           { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      if (this.editType === 'add') {
         this.generateTncAudit();
         this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
         this.updateConsent(userDetails, declarations[0].orgId);
+      } else if (this.editType === 'edit' && this.isTenantChanged) {
+        this.generateTncAudit();
+        this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+        this.updateConsent(userDetails, declarations[1].orgId, this.previousOrgId);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
@@ -429,7 +435,9 @@ export class SelfDeclaredTeacherEditPage {
         this.selectedTenant = event.tenant;
         this.initTenantSpecificForm(this.selectedTenant, false);
       } else if (event.tenant !== this.selectedTenant) {
+        this.previousOrgId = this.selectedTenant;
         this.selectedTenant = event.tenant;
+        this.isTenantChanged = true;
         this.initTenantSpecificForm(this.selectedTenant, true);
       }
     }
@@ -461,20 +469,54 @@ export class SelfDeclaredTeacherEditPage {
   linkClicked(event) {
     this.commonUtilService.openLink(event);
   }
-  // todo Move this to consent service
-  public updateConsent(profileDetails, orgId) {
-    const request: Consent = {
-      status: ConsentStatus.ACTIVE,
-      userId: profileDetails.uid,
-      consumerId: orgId,
-      objectId: orgId,
-      objectType: 'Organisation'
-    };
-    this.profileService.updateConsent(request).toPromise()
-      .catch((e) => {
-        if (e.code === 'NETWORK_ERROR') {
-          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        }
-      });
+  public updateConsent(profileDetails, currentOrgId, previousOrgId?) {
+    // for edit and if tenantChanged
+    if (this.isTenantChanged) {
+      const req: Consent = {
+        status: ConsentStatus.REVOKED,
+        userId: profileDetails.uid,
+        consumerId: previousOrgId,
+        objectId: previousOrgId,
+        objectType: 'Organisation'
+      };
+      this.profileService.updateConsent(req).toPromise()
+          .then((response) => {
+            if (response && response.consent) {
+              const request: Consent = {
+                status: ConsentStatus.ACTIVE,
+                userId: profileDetails.uid,
+                consumerId: currentOrgId,
+                objectId: currentOrgId,
+                objectType: 'Organisation'
+              };
+              this.profileService.updateConsent(request).toPromise()
+                  .catch((e) => {
+                    if (e.code === 'NETWORK_ERROR') {
+                      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+                    }
+                  });
+            }
+          })
+          .catch((e) => {
+            if (e.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+            }
+          });
+    } else {
+      // for add and updateConsent first time
+      const request: Consent = {
+        status: ConsentStatus.ACTIVE,
+        userId: profileDetails.uid,
+        consumerId: currentOrgId,
+        objectId: currentOrgId,
+        objectType: 'Organisation'
+      };
+      this.profileService.updateConsent(request).toPromise()
+          .catch((e) => {
+            if (e.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+            }
+          });
+    }
   }
 }

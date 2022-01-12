@@ -10,13 +10,10 @@ import {
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
-import { UtilityService } from '@app/services';
-import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
-import {
-  Environment, ID, ImpressionSubtype,
+import { UtilityService, Environment, ID, ImpressionSubtype,
   ImpressionType, InteractType, PageId,
-  TelemetryGeneratorService, InteractSubtype
-} from '@app/services';
+  TelemetryGeneratorService, InteractSubtype } from '@app/services';
+import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 
 @Component({
@@ -243,12 +240,10 @@ export class CreateEditGroupPage {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
-          Environment.GROUP, true, undefined, this.corRelationList);
-        this.location.back();
-        break;
+    if ($event.name === 'back'){
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
+        Environment.GROUP, true, undefined, this.corRelationList);
+      this.location.back();
     }
   }
 }

@@ -1,0 +1,30 @@
+<div class="sb-dt-content">
+    <div class="left" style="overflow: hidden;">
+
+        <div class="sb-dt-title" role="heading" aria-level="1"> {{contentData?.name}}</div>
+        <div class="sb-dt-source" *ngIf="contentData?.owner || contentData?.creator">
+            <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+            <span class="sb-user">{{ contentData?.owner || contentData?.creator}}</span>
+        </div>
+        <div class="sb-dt-class-info" *ngIf="contentData?.gradeLevel || contentData?.subject">
+            <span *ngIf="contentData?.board">
+                <span class="sb-dt-label sb-dt-subject">{{contentData?.board}}</span>
+                <span class="sb-separator-dot"></span>
+            </span>
+            <span *ngIf="contentData?.medium">
+                <span class="sb-dt-label sb-dt-subject">{{contentData?.medium}}</span>
+                <span class="sb-separator-dot"></span>
+            </span>
+            <span *ngIf="contentData?.gradeLevel">
+                <span class="sb-dt-label sb-dt-subject">{{contentData?.gradeLevel}}</span>
+                <span class="sb-separator-dot"></span>
+            </span>
+            <span class="sb-dt-label sb-dt-subject">{{contentData?.subject | csa}}</span>
+        </div>
+    </div>
+    <div class="right">
+        <div class="img-container">
+            <img alt="icon" aria-hidden="true" [src]="commonUtil.convertFileSrc(contentData?.appIcon) || defaultAppIcon">
+        </div>
+    </div>
+</div>

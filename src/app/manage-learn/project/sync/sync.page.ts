@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,7 +23,7 @@ var environment = {
   templateUrl: './sync.page.html',
   styleUrls: ['./sync.page.scss'],
 })
-export class SyncPage implements OnInit, OnDestroy {
+export class SyncPage implements  OnDestroy {
 
   projectId;
   projectDetails;
@@ -78,8 +78,6 @@ export class SyncPage implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
-  }
 
   ngOnDestroy() {
   }
@@ -121,7 +119,7 @@ export class SyncPage implements OnInit, OnDestroy {
       } else {
         this.location.back()
         this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'])
-      };
+      }
     }, error => { })
   }
 
@@ -204,8 +202,6 @@ export class SyncPage implements OnInit, OnDestroy {
       this.syncIndex++;
       this.resetImageUploadVariables()
       this.checkForActions();
-    }).catch(error => {
-
     })
   }
 
@@ -232,8 +228,6 @@ export class SyncPage implements OnInit, OnDestroy {
         }
       }
       this.cloudUpload(this.attachments[this.imageUploadIndex])
-    }).catch(error => {
-
     })
   }
 

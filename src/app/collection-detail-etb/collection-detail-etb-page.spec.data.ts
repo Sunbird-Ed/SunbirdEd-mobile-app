@@ -86,7 +86,7 @@ export const mockcollectionData: Partial<Navigation> = {
     }
 };
 
-export const contentDetailsMcokResponse1: Content = {
+export const contentDetailsMcokResponse1: any = {
     identifier: 'do_21281258639073280011490',
     contentData: {
         ownershipType: [
@@ -263,7 +263,7 @@ export const contentDetailsMcokResponse1: Content = {
     contentAccess: [],
 };
 
-export const contentDetailsMcokResponse2: Content = {
+export const contentDetailsMcokResponse2: any = {
     identifier: 'do_21281258639073280011490',
     contentData: {
         ownershipType: [
@@ -441,7 +441,7 @@ export const contentDetailsMcokResponse2: Content = {
 
 };
 
-export const contentDetailsMcokResponse3: Content = {
+export const contentDetailsMcokResponse3: any = {
     identifier: 'do_21281258639073280011490',
     contentData: {
         ownershipType: [

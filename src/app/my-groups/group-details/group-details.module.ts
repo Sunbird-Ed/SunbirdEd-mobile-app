@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { GroupDetailsPage } from './group-details.page';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ComponentsModule } from '../../components/components.module';
 import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
 import { PipesModule } from '@app/pipes/pipes.module';

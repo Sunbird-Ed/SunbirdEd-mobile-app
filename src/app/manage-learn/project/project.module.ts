@@ -20,8 +20,9 @@ import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { PipesModule } from '@app/pipes/pipes.module';
+import { ProjectTemplatePage } from './project-template/project-template.page';
 
 const routes: Routes = [
   {
@@ -62,6 +63,10 @@ const routes: Routes = [
   {
     path: `${RouterLinks.ATTACHMENTS}/:id`,
     component: AttachmentListPage
+  },
+  {
+    path: `${RouterLinks.TEMPLATE}/:id`,
+    component: ProjectTemplatePage
   }
 ];
 
@@ -69,7 +74,7 @@ const routes: Routes = [
   declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
     ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
-    CategorySelectComponent],
+    CategorySelectComponent,ProjectTemplatePage],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
     AddProgramsComponent, CategorySelectComponent],
   imports: [

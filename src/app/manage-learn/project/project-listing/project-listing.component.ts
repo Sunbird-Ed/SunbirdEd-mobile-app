@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
@@ -8,11 +8,10 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService, UtilsService, ToastService } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { Platform } from '@ionic/angular';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
-import { PopoverController, ToastController } from '@ionic/angular';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
 
@@ -21,7 +20,7 @@ import { GenericPopUpService } from '../../shared';
     templateUrl: './project-listing.component.html',
     styleUrls: ['./project-listing.component.scss'],
 })
-export class ProjectListingComponent implements OnInit {
+export class ProjectListingComponent {
     private backButtonFunc: Subscription;
     page = 1;
     offlineProjectPage = 1;
@@ -49,6 +48,7 @@ export class ProjectListingComponent implements OnInit {
 
     constructor(
         private router: Router,
+        private routerParams : ActivatedRoute,
         private location: Location,
         private headerService: AppHeaderService,
         private platform: Platform,
@@ -65,11 +65,18 @@ export class ProjectListingComponent implements OnInit {
         private popupService: GenericPopUpService,
         private toastService: ToastService
     ) {
-        this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
-            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
-            this.selectedFilter = this.filters[0];
-        });
-
+        routerParams.queryParams.subscribe(params =>{
+            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME','FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
+            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME']];
+            });
+            if( params.selectedFilter ){
+                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[1] : this.filters[2];
+                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 1 : 2;
+            }else{
+                this.selectedFilter = this.filters[0];
+            }
+        })
+       
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
             this.networkFlag = available;
@@ -78,17 +85,29 @@ export class ProjectListingComponent implements OnInit {
         });
     }
 
-    ngOnInit() { }
     async getDownloadedProjects(fields?: any[]): Promise<[]> {
-        let isAprivateProgramQuery;
-        this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
         let query = {
             selector: {
                 downloaded: true,
-                isAPrivateProgram: isAprivateProgramQuery,
-            },
-            limit: 10 * this.offlineProjectPage,
+            }
+          
+          
         };
+        switch (this.selectedFilterIndex) {
+            case 0:
+                query.selector['isAPrivateProgram'] = { $ne: false }
+                query.selector['referenceFrom']={ $ne: 'link' }
+                break;
+             case 1:
+                query.selector['isAPrivateProgram']=false
+                break;
+             case 2:
+                query.selector['referenceFrom']='link'
+                break;
+        
+            default:
+                break;
+        }
         fields ? (query['fields'] = fields) : null;
         try {
             let data: any = await this.db.customQuery(query);
@@ -166,7 +185,6 @@ export class ProjectListingComponent implements OnInit {
         this.projects = [];
         this.page = 1;
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-        // this.initNetworkDetection();
         this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();
         this.headerConfig.actionButtons = [];
@@ -202,8 +220,21 @@ export class ProjectListingComponent implements OnInit {
         }
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
-        if (selectedFilter == 'assignedToMe') {
+
+        let selectedFilter 
+        switch (this.selectedFilterIndex) {
+            case 0:
+                selectedFilter = 'createdByMe'
+                break;
+             case 1:
+                selectedFilter = 'assignedToMe'
+                break;
+            case 2:
+                selectedFilter = 'discoveredByMe'
+            default:
+                break;
+        }
+        if (selectedFilter == 'assignedToMe' || selectedFilter == 'discoveredByMe') {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
@@ -261,12 +292,12 @@ export class ProjectListingComponent implements OnInit {
     onSearch(e) {
         if (this.searchText) {
             let query = this.networkFlag ? this.searchCreatedProjects() : this.searchOfflineProjects();
-            const searchFilter: any = {
+            const searchFilter: any = this.searchText && this.searchText.length ? {
                 title: {
                     $regex: RegExp(this.searchText, 'i')
                 }
-            };
-            query.selector.$and.push(searchFilter);
+            } : null;
+            searchFilter ? query.selector.$and.push(searchFilter) : null;
             this.db.customQuery(query).then(success => {
                 this.projects = success['docs'];
                 if (this.networkFlag) {
@@ -278,7 +309,8 @@ export class ProjectListingComponent implements OnInit {
             })
         } else {
             this.projects = [];
-            this.getDownloadedProjectsList();
+            // this.getDownloadedProjectsList();
+            this.fetchProjectList();
         }
     }
 
@@ -322,10 +354,6 @@ export class ProjectListingComponent implements OnInit {
         return query
     }
     async createProject(data) {
-        // if (!this.networkFlag) {
-        //     this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT'));
-        //     return;
-        // }
         this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
             queryParams: { hasAcceptedTAndC: data },
         });
@@ -412,6 +440,7 @@ export class ProjectListingComponent implements OnInit {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
+                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
                                         this.selectedProgram(project);
                                     })
                                 return;

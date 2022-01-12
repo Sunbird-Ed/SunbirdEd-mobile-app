@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header  [ngClass]="{'container': platform.is('ios')}" >
   <app-search-header (onSearch)="search($event)">
     <ion-back-button></ion-back-button>
   </app-search-header>
@@ -6,7 +6,7 @@
 <ion-content>
   <ion-toolbar class="sb-header-toolbar">
     <ion-buttons class="font-size-20 padding-left-6" (click)="dismissModal()" slot="start">
-      <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
+      <ion-icon slot="start" role="button" name="arrow-back" aria-label="back" class="batches-header-text"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
   <div *ngIf="entityTypes && type == 'entity'">

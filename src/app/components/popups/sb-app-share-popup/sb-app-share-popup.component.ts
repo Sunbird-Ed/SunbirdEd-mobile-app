@@ -43,7 +43,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     public popoverCtrl: PopoverController,
     private social: SocialSharing,
-    private platform: Platform,
+    public platform: Platform,
     private utilityService: UtilityService,
     private appVersion: AppVersion,
     private navParams: NavParams,
@@ -118,7 +118,12 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const appName = await this.appVersion.getAppName();
     const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
-    this.social.share(null, null, null, url);
+    if(this.platform.is('ios')) {
+      this.social.share(null, null, null, this.shareUrl);
+    } else {
+      this.social.share(null, null, null, url);
+    }
+    
     this.popoverCtrl.dismiss();
     this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
   }
@@ -160,7 +165,8 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      destination = cordova.file.externalRootDirectory + 'Download/';
+      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+      destination = folderPath + 'Download/';
     }
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -177,6 +183,11 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
+        resolve(true);
+      });
+    }
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 

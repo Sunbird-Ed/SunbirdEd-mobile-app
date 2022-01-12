@@ -3,8 +3,8 @@ module.exports = function (context) {
   fs.copyFileSync("scripts/application/SunbirdApplication.java", "platforms/android/app/src/main/java/org/sunbird/SunbirdApplication.java");
   var APPLICATION_CLASS = "org.sunbird.SunbirdApplication";
 
-  var fs = context.requireCordovaModule('fs'),
-    path = context.requireCordovaModule('path');
+  var fs = require('fs');
+  var path = require('path');
 
   console.log("Finding Manifest File");
   var platformRoot = path.join(context.opts.projectRoot, 'platforms/android/app/src/main');

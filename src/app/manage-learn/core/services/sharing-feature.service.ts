@@ -7,7 +7,7 @@ import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-da
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { AlertController, Platform, PopoverController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { NetworkService } from './network.service';

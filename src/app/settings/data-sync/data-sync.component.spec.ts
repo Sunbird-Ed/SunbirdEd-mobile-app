@@ -39,7 +39,9 @@ describe('DataSyncComponent', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockLocation: Partial<Location> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
 
     beforeAll(() => {
         dataSyncComponent = new DataSyncComponent(

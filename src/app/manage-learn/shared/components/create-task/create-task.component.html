@@ -1,10 +1,9 @@
 <ion-content class="P0">
   <div class="ecd-header ion-text-center">
-    <!-- <h6 class="M0">{{title | titlecase}}</h6> -->
   </div>
-  <ion-grid class="P0">
+  <ion-grid class="P0 sb-popover-content-details">
     <ion-icon name="close" class="sb-modal-close close-popup" (click)="closePopover()"></ion-icon>
-    <ion-row class="P16">
+    <ion-row class="P16 color-white">
       <h5> {{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
       <section class="W100 MT3V">
         <p>{{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}</p>
@@ -18,7 +17,7 @@
     </ion-row>
     <ion-row class="custom-shadow">
       <ion-col padding size="12">
-        <ion-button expand="block" type="submit" (click)="addTask()">
+        <ion-button expand="block"  (click)="addTask()">
           {{ 'FRMELEMNTS_LBL_ADD_TASK' | translate }}
         </ion-button>
       </ion-col>

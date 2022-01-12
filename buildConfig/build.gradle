@@ -40,7 +40,7 @@ allprojects {
     project.ext {
       defaultBuildToolsVersion="29.0.3" //String
       defaultMinSdkVersion=22 //Integer - Minimum requirement is Android 4.4
-      defaultTargetSdkVersion=29 //Integer - We ALWAYS target the latest by default
+      defaultTargetSdkVersion=30 //Integer - We ALWAYS target the latest by default
       defaultCompileSdkVersion=30 //Integer - We ALWAYS compile with the latest by default
     }
 }

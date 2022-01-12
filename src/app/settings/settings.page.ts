@@ -58,7 +58,7 @@ export class SettingsPage implements OnInit {
     private translate: TranslateService,
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private platform: Platform,
+    public platform: Platform,
     private location: Location,
     private events: Events
   ) {
@@ -98,7 +98,6 @@ export class SettingsPage implements OnInit {
       ImpressionType.VIEW, '',
       PageId.SETTINGS,
       Environment.SETTINGS, '', '', '',
-      undefined,
       undefined
     );
   }
@@ -136,9 +135,7 @@ export class SettingsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
       PageId.SETTINGS,
-      Environment.SETTINGS, null,
-      undefined,
-      undefined
+      Environment.SETTINGS, null
     );
   }
 
@@ -307,13 +304,12 @@ export class SettingsPage implements OnInit {
   }
 
   async debugModeToggle() {
-      console.log('this.debugmode' ,this.debugmode);
       if (this.debugmode) {
         const confirm = await this.popoverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
             sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
-            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_ENABLE", { '%appName': this.appName }),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage('DEBUG_ENABLE', { '%appName': this.appName }),
             actionsButtons: [
               {
                 btntext: this.commonUtilService.translateMessage('DISMISS'),
@@ -331,7 +327,7 @@ export class SettingsPage implements OnInit {
                 this.debugmode = false;
               } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
                 this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
-                this.enableDebugging();
+                this.observeDebugging();
                 this.commonUtilService.showToast('DEBUG_ON_MESSAGE');
               }
             }
@@ -346,7 +342,7 @@ export class SettingsPage implements OnInit {
           component: SbPopoverComponent,
           componentProps: {
             sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
-            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_DISABLE"),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage('DEBUG_DISABLE'),
             actionsButtons: [
               {
                 btntext: this.commonUtilService.translateMessage('DISMISS'),
@@ -366,7 +362,7 @@ export class SettingsPage implements OnInit {
                 this.debugginService.disableDebugging().subscribe((response) => {
                   if (response) {
                     this.commonUtilService.showToast('DEBUG_OFF_MESSAGE');
-                    this.debugmode = false
+                    this.debugmode = false;
                   }
                 });
               }
@@ -378,14 +374,20 @@ export class SettingsPage implements OnInit {
       }
   }
 
-  async enableDebugging() {
+  async observeDebugging() {
     this.debugginService.enableDebugging().subscribe((isDebugMode) => {
       console.log('Debug Mode', isDebugMode);
       if (isDebugMode) {
-        this.debugmode = true
+        this.debugmode = true;
       } else if (!isDebugMode) {
         this.debugmode = false;
       }
     });
+  }
+  isOptionEnabled() {
+    if(this.platform.is('ios')) {
+      return false;
+    }
+    return true;
   }
 }

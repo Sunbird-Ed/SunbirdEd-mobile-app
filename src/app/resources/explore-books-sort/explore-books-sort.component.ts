@@ -1,5 +1,5 @@
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavParams, Platform, ModalController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
@@ -10,7 +10,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
   templateUrl: './explore-books-sort.component.html',
   styleUrls: ['./explore-books-sort.component.scss'],
 })
-export class ExploreBooksSortComponent implements OnInit {
+export class ExploreBooksSortComponent {
   @ViewChild('boardSelect', { static: false }) boardSelect;
   @ViewChild('mediumSelect', { static: false }) mediumSelect;
 
@@ -40,7 +40,6 @@ export class ExploreBooksSortComponent implements OnInit {
     this.initForm();
   }
 
-  ngOnInit() {}
 
   initForm() {
     this.searchForm = this.navParams.get('searchForm');

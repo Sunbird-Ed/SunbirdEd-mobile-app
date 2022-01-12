@@ -32,7 +32,6 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';

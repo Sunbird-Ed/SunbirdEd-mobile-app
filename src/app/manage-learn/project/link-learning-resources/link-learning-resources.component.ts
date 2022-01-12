@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Platform, ModalController } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { LoaderService } from '../../core';
 import * as _ from 'underscore';
@@ -193,20 +192,5 @@ export class LinkLearningResourcesComponent implements OnInit {
   }
 
   openResource(link) {
-    // this.loaderService.startLoader();
-    // let identifier = link.split("/").pop();
-    // const req: ContentDetailRequest = {
-    //    contentId: identifier,
-    //    attachFeedback: false,
-    //    attachContentAccess: false,
-    //    emitUpdateIfAny: false
-    // };
-    // this.contentService.getContentDetails(req).toPromise()
-    //    .then(async (data: Content) => {
-    //       this.loaderService.stopLoader();
-    //       this.navigateService.navigateToDetailPage(data, { content: data });
-    //    }, error => {
-    //       this.loaderService.stopLoader();
-    //    });
   }
 }

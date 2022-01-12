@@ -56,7 +56,7 @@ export class LocalCourseService {
   ) {
   }
 
-  enrollIntoBatch(enrollCourse: EnrollCourse, consentPopoverActionsDelegate?: ConsentPopoverActionsDelegate): Observable<any> {
+  enrollIntoBatch(enrollCourse: EnrollCourse, consentPopoverActionsDelegate?: ConsentPopoverActionsDelegate, course?): Observable<any> {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
@@ -78,9 +78,8 @@ export class LocalCourseService {
             await this.sbProgressLoader.hide({ id: 'login' });
             this.isConsentPopupDisplayed = true;
             if (!this.isMinor()) {
-              await this.consentService.showConsentPopup(enrollCourse);
+              await this.consentService.showConsentPopup(enrollCourse, undefined, course);
             }
-           // this.preferences.putString(PreferenceKey.IS_CONSENT_POPUP_DISPLAY, 'true').toPromise();
 
             if (consentPopoverActionsDelegate) {
               consentPopoverActionsDelegate.onConsentPopoverDismiss();
@@ -112,7 +111,7 @@ export class LocalCourseService {
             if (enrollCourse.userConsent === UserConsent.YES) {
               await this.sbProgressLoader.hide({ id: 'login' });
               if (!this.isMinor()) {
-                await this.consentService.getConsent(enrollCourse);
+                await this.consentService.getConsent(enrollCourse, undefined, course);
               }
             }
           } else {
@@ -200,7 +199,7 @@ export class LocalCourseService {
       channel: course.channel,
       userConsent: course.userConsent
     };
-    this.enrollIntoBatch(enrollCourse).toPromise()
+    this.enrollIntoBatch(enrollCourse, undefined, course).toPromise()
       .then(() => {
         this.zone.run(async () => {
           this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', course));
@@ -344,17 +343,20 @@ export class LocalCourseService {
   }
 
   fetchAssessmentStatus(contentStatusData, content) {
-    let maxAttempts = content.contentData ? content.contentData.maxAttempts : content.maxAttempts;
-    if (!maxAttempts) {
+    let maxAttempts = (content?.contentData) ? content.contentData.maxAttempts : content.maxAttempts;
+    if (!maxAttempts && content.mimeType !== 'application/vnd.sunbird.questionset') {
       maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
     }
-    const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
+    const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number } = {
       isLastAttempt: false,
-      isContentDisabled: false
+      isContentDisabled: false,
+      currentAttempt: 0,
+      maxAttempts
     };
     if (contentStatusData && contentStatusData.contentList) {
       contentStatusData.contentList.forEach((item) => {
         if (item.contentId === content.identifier && item.score) {
+          assesmentsStatus.currentAttempt = item.score.length;
           if (maxAttempts - item.score.length === 1) {
             assesmentsStatus.isLastAttempt = true;
           }

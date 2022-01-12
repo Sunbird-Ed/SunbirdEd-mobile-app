@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService, FormService, FormRequest
+  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService, FormService
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -41,7 +41,6 @@ import {
   ViewMoreActivityActionsDelegate
 } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 @Component({
@@ -89,7 +88,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
-    private platform: Platform,
+    public platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
     private commonUtilService: CommonUtilService,
@@ -143,10 +142,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(true);
-        break;
+    if($event.name === 'back')
+    {
+      this.handleBackButton(true);
     }
   }
 
@@ -404,7 +402,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         // await loader.dismiss();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
-        // this.location.back();
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
         this.fetchGroupDetails();
       } catch (e) {
@@ -451,7 +448,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
         // await loader.dismiss();
         this.isGroupLoading = false;
-        // if (updateMemberResponse) {
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
 
@@ -825,22 +821,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   onActivityCardClick(event) {
     const activity = event.data;
-    if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.navService.navigateToDetailPage(activity, {
-        content: activity,
-        corRelation: this.corRelationList
-      });
-    } else {
-      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-        {
-          loggedinUser: this.loggedinUser,
-          group: this.groupDetails,
-          memberList: this.memberList,
-          activity,
-          isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
-          corRelation: this.corRelationList
-        });
-    }
+    this.navService.navigateToDetailPage(activity, {
+      content: activity,
+      activityData: {
+        group: this.groupDetails,
+        isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
+        activity
+      },
+      corRelation: this.corRelationList,
+    });
+    
   }
 
   async navigateToAddActivityPage() {

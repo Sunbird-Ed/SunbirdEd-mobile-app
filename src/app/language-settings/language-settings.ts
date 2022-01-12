@@ -51,7 +51,7 @@ export class LanguageSettingsPage {
     private events: Events,
     private zone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private platform: Platform,
+    public platform: Platform,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private notification: NotificationService,
@@ -82,7 +82,11 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
-        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
+        }
       }
     });
   }
@@ -295,6 +299,7 @@ export class LanguageSettingsPage {
           direction: 'up',
           duration: 500,
           androiddelay: 500,
+          iosdelay: 500,
           fixedPixelsTop: 0,
           fixedPixelsBottom: 0
         };

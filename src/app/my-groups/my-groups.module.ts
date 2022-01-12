@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { MyGroupsPage } from './my-groups.page';
 import { MyGroupsRoutingModule } from './my-groups-routing.module';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ComponentsModule } from '../components/components.module';
 
 @NgModule({

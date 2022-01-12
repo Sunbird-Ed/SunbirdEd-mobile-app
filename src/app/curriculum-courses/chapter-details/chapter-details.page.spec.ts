@@ -208,6 +208,7 @@ describe('ChapterDetailsPage', () => {
             } as any;
             mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
             mockLocation.back = jest.fn();
+            mockZone.run = jest.fn();
             // act
             chapterDetailsPage.ionViewWillEnter();
             // assert
@@ -270,6 +271,7 @@ describe('ChapterDetailsPage', () => {
             mockLocation.back = jest.fn();
             chapterDetailsPage.guestUser = false;
             mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
+            mockZone.run = jest.fn();
             // act
             chapterDetailsPage.ionViewWillEnter();
             // assert
@@ -336,6 +338,7 @@ describe('ChapterDetailsPage', () => {
                     error: 'error'
                 }
             ]));
+            mockZone.run = jest.fn();
             // act
             chapterDetailsPage.ionViewWillEnter();
             // assert
@@ -1797,7 +1800,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color label-uppercase label-bold-font'
                             })
                         ])
                     })
@@ -1849,7 +1852,7 @@ describe('ChapterDetailsPage', () => {
                         actionsButtons: expect.arrayContaining([
                             expect.objectContaining({
                                 btntext: 'OVERLAY_SIGN_IN',
-                                btnClass: 'popover-color'
+                                btnClass: 'popover-color label-uppercase label-bold-font'
                             })
                         ])
                     })

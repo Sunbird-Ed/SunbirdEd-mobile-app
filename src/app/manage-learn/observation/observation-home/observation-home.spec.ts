@@ -1,19 +1,39 @@
 import { Router } from '@angular/router';
-import { Platform } from '@ionic/angular';
-import { AppHeaderService } from '../../../../services';
-import { LoaderService, UtilsService } from '../../core';
-import { Location } from '@angular/common';
+import { AppHeaderService, CommonUtilService } from '../../../../services';
+import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { ObservationHomeComponent } from './observation-home.component';
 import { of, throwError } from 'rxjs';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { ObservationService } from '../observation.service';
 describe('ObservationHomeComponent', () => {
   let observationHomeComponent: ObservationHomeComponent;
-  const mockLocation: Partial<Location> = {};
-  const mockHeaderService: Partial<AppHeaderService> = {};
-  const mockPlatform: Partial<Platform> = {};
-  const mockUtils: Partial<UtilsService> = {};
-  const mockKendraService: Partial<KendraApiService> = {};
-  const mockloader: Partial<LoaderService> = {};
+  let mockHeaderService: Partial<AppHeaderService> = {};
+  let mockUtils: Partial<UtilsService> = {
+    setProfileData: jest.fn(() => Promise.resolve({ generatedKey: 'sa', userData: 'data' })),
+    closeProfileAlert: jest.fn(),
+  };
+  let mockKendraService: Partial<KendraApiService> = {
+    post: jest.fn(() =>
+      of({
+        result: {
+          data: [
+            {
+              _id: '60110e692d0bbd2f0c3229c3',
+              name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              programId: '600ab53cc7de076e6f993724',
+              solutionId: '600ac0d1c7de076e6f9943b9',
+              programName: 'AP-TEST-PROGRAM-3.6.5',
+            },
+          ],
+        },
+      })
+    ),
+  };
+  let mockloader: Partial<LoaderService> = {
+    startLoader: jest.fn(),
+    stopLoader: jest.fn(),
+  };
   const mockRouter: Partial<Router> = {
     getCurrentNavigation: jest.fn(() => ({
       extras: {
@@ -31,19 +51,37 @@ describe('ObservationHomeComponent', () => {
         },
       },
     })) as any,
+
+    navigate: jest.fn(() => Promise.resolve(true)),
   };
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    networkAvailability$: of(true),
+    networkInfo: { isNetworkAvailable: true },
+  };
+  let mockToastService: Partial<ToastService> = {
+    showMessage: jest.fn(),
+  };
+
+  let mockObsService: Partial<ObservationService> = {};
+  let mockStorage: Partial<LocalStorageService> = {
+    setLocalStorage: jest.fn(),
+  };
+
   beforeAll(() => {
     observationHomeComponent = new ObservationHomeComponent(
       mockHeaderService as AppHeaderService,
       mockRouter as Router,
       mockUtils as UtilsService,
       mockKendraService as KendraApiService,
-      mockloader as LoaderService
+      mockloader as LoaderService,
+      mockStorage as LocalStorageService,
+      mockCommonUtilService as CommonUtilService,
+      mockToastService as ToastService,
+      mockObsService as ObservationService
     );
   });
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetAllMocks();
   });
 
   it('Should instanciate ObservationHomeComponent', () => {
@@ -51,156 +89,132 @@ describe('ObservationHomeComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should return observationList/programsList by invoked ngOnIt', (done) => {
-      // arrange
-      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockKendraService.post = jest.fn(() =>
-        of({
-          result: {
-            data: [
-              {
-                _id: '60110e692d0bbd2f0c3229c3',
-                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-                programId: '600ab53cc7de076e6f993724',
-                solutionId: '600ac0d1c7de076e6f9943b9',
-                programName: 'AP-TEST-PROGRAM-3.6.5',
-              },
-            ],
-          },
-        })
-      );
-      mockloader.startLoader = jest.fn(() => Promise.resolve());
-      mockloader.stopLoader = jest.fn(() => Promise.resolve());
-
-      // act
+    it('should set solution list to empty array', () => {
       observationHomeComponent.ngOnInit();
-      // assert
-      setTimeout(() => {
-        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockKendraService.post).toHaveBeenCalled();
-        expect(observationHomeComponent.solutionList.length).toBe(1);
-        done();
-      }, 0);
-    });
-    it('should show no data if data is not present', (done) => {
-      // arrange
-      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockKendraService.post = jest.fn(() =>
-        of({
-          result: {},
-        })
-      );
-      mockloader.startLoader = jest.fn(() => Promise.resolve());
-      mockloader.stopLoader = jest.fn(() => Promise.resolve());
-
-      // act
-      observationHomeComponent.ngOnInit();
-      // assert
-      setTimeout(() => {
-        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockKendraService.post).toHaveBeenCalled();
-        expect(observationHomeComponent.solutionList.length).toBe(0);
-        done();
-      }, 0);
-    });
-
-    it('show no data message if no api response', (done) => {
-      // arrange
-      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockKendraService.post = jest.fn(() => throwError({}));
-      mockloader.startLoader = jest.fn(() => Promise.resolve());
-      mockloader.stopLoader = jest.fn(() => Promise.resolve());
-
-      // act
-      observationHomeComponent.ngOnInit();
-      // assert
-      setTimeout(() => {
-        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockKendraService.post).toHaveBeenCalled();
-        expect(observationHomeComponent.solutionList.length).toBe(0);
-        done();
-      }, 0);
+      expect(observationHomeComponent.solutionList.length).toBe(0);
     });
   });
 
-  // describe('observationDetails ', () => {
-  //   it('navigate to observation entity page', () => {
-  //     //arrange
-  //     mockRouter.navigate = jest.fn();
+  describe('ionViewWillEnter', () => {
+    it('shoould call get profile', () => {
+      mockHeaderService.getDefaultPageConfig = jest.fn(() => {
+        return {
+          showHeader: true,
+          showBurgerMenu: false,
+          showKebabMenu: false,
+          kebabMenuOptions: [],
+          pageTitle: '',
+          actionButtons: [],
+        };
+      });
+      mockHeaderService.updatePageConfig = jest.fn(() => {});
+      spyOn(observationHomeComponent, 'getProfileInfo');
+      observationHomeComponent.ionViewWillEnter();
+      expect(observationHomeComponent.getProfileInfo).toHaveBeenCalled();
+    });
+  });
 
-  //     // act
-  //     observationHomeComponent.observationDetails({
-  //       _id: '60110e692d0bbd2f0c3229c3',
-  //       name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-  //       description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-  //       programId: '600ab53cc7de076e6f993724',
-  //       solutionId: '600ac0d1c7de076e6f9943b9',
-  //       programName: 'AP-TEST-PROGRAM-3.6.5',
-  //     });
+  describe('getProileInfo', () => {
+    it('should call getPrograms if network is available', (done) => {
+      spyOn(observationHomeComponent, 'getPrograms');
+      spyOn(observationHomeComponent, 'getLocalData');
+      observationHomeComponent.getProfileInfo();
+      setTimeout(() => {
+        expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
+        expect(observationHomeComponent.getLocalData).not.toHaveBeenCalled();
+        done();
+      });
+    });
+    it('should call getLocalData if network is not available', (done) => {
+      observationHomeComponent.networkFlag = false;
+      spyOn(observationHomeComponent, 'getPrograms');
+      spyOn(observationHomeComponent, 'getLocalData');
+      observationHomeComponent.getProfileInfo().then(() => {
+        expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
+        expect(observationHomeComponent.getLocalData).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
 
-  //     //assert
-  //     expect(mockRouter.navigate).toHaveBeenCalledWith(['/observation/observation-details'], {
-  //       queryParams: {
-  //         programId: '600ab53cc7de076e6f993724',
-  //         solutionId: '600ac0d1c7de076e6f9943b9',
-  //         observationId: '60110e692d0bbd2f0c3229c3',
-  //         solutionName: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-  //       },
-  //     });
-  //   });
-  // });
+  describe('getProgram', () => {
+    it('shoudl call api to get obs solutions', (done) => {
+      observationHomeComponent.getPrograms().then(() => {
+        expect(mockKendraService.post).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
 
-  // describe('ionViewWillEnter', () => {
-  //   it('Should update page config', (done) => {
-  //     // arrange
-  //     mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
-  //       showHeader: true,
-  //       showBurgerMenu: true,
-  //       showKebabMenu: false,
-  //       kebabMenuOptions: [],
-  //       pageTitle: '',
-  //       actionButtons: ['search'],
-  //     }));
-  //     mockHeaderService.updatePageConfig = jest.fn();
-  //     mockPlatform.backButton = {
-  //       subscribeWithPriority: jest.fn((_, cb) => {
-  //         setTimeout(() => {
-  //           cb();
-  //         }, 0);
-  //         return {
-  //           unsubscribe: jest.fn(),
-  //         };
-  //       }),
-  //     } as any;
-  //     mockLocation.back = jest.fn();
+  describe('observationDetails', () => {
+    it('shoudl observation-details(entity page)', () => {
+      const solution = {
+        _id: '60110e692d0bbd2f0c3229c3',
+        name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+        description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+        programId: '600ab53cc7de076e6f993724',
+        solutionId: '600ac0d1c7de076e6f9943b9',
+        programName: 'AP-TEST-PROGRAM-3.6.5',
+      };
+      observationHomeComponent.observationDetails(solution);
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+  });
 
-  //     // act
-  //     observationHomeComponent.ionViewWillEnter();
-  //     // assert
-  //     setTimeout(() => {
-  //       expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-  //       expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-  //       // expect(mockPlatform.backButton).not.toBeUndefined();
-  //       // expect(mockLocation.back).toHaveBeenCalled();
-  //       done();
-  //     }, 0);
-  //   });
-  // });
-  // describe('load more', () => {
-  //   it('it should load more data ', (done) => {
-  //     // arrange
-  //     observationHomeComponent.page = 1;
+  describe('load more', () => {
+    it('should load more if network available', () => {
+      spyOn(observationHomeComponent, 'getPrograms');
+      observationHomeComponent.networkFlag = true;
+      observationHomeComponent.loadMore();
+      expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
+    });
 
-  //     // act
-  //     observationHomeComponent.loadMore();
+    it('should not load more if network not available, toast msg should come', () => {
+      spyOn(observationHomeComponent, 'getPrograms');
+      observationHomeComponent.networkFlag = false;
+      observationHomeComponent.loadMore();
+      expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
+      expect(mockToastService.showMessage).toHaveBeenCalled();
+    });
+  });
 
-  //     //assert
-  //     setTimeout(() => {
-  //       // expect(mockAssessmentApiService.post).toHaveBeenCalled();
-  //       expect(observationHomeComponent.page).toBe(2);
-  //       done();
-  //     }, 0);
-  //   });
-  // });
+  describe('on search', () => {
+    it('should call getProgram if network available', () => {
+      spyOn(observationHomeComponent, 'getPrograms');
+      observationHomeComponent.networkFlag = true;
+      observationHomeComponent.onSearch('seacrh');
+      expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
+    });
+
+    it('should open toast msg if network not available', () => {
+      spyOn(observationHomeComponent, 'getPrograms');
+      observationHomeComponent.networkFlag = false;
+      observationHomeComponent.onSearch('text');
+      expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
+      expect(mockToastService.showMessage).toHaveBeenCalled();
+    });
+  });
+
+  describe('ionViewWillLeave', () => {
+    it('should call close profile alert and unsubscribe network subscription', () => {
+      spyOn(observationHomeComponent['_networkSubscription'], 'unsubscribe');
+      observationHomeComponent.ionViewWillLeave();
+      expect(mockUtils.closeProfileAlert).toHaveBeenCalled();
+      expect(observationHomeComponent['_networkSubscription'].unsubscribe).toHaveBeenCalled();
+    });
+  });
+  describe('checkLocalDownloadedSolutions', () => {
+    it('if solution list exists and dont have downloaded solution it should push downloaded solution', () => {
+      observationHomeComponent.downloadedSolutions = [{ programId: 1, solutionId: 'a' }];
+      observationHomeComponent.solutionList = [{ programId: 2, solutionId: 'b' }];
+      observationHomeComponent.checkLocalDownloadedSolutions();
+      expect(observationHomeComponent.solutionList.length).toBe(2);
+    });
+    it('if solution list doesnt exists and downloaded solution is present it should push downloaded solution', () => {
+      observationHomeComponent.downloadedSolutions = [{ programId: 1, solutionId: 'a' }];
+      observationHomeComponent.solutionList = undefined;
+      observationHomeComponent.checkLocalDownloadedSolutions();
+      expect(observationHomeComponent.solutionList.length).toBe(1);
+    });
+  });
 });

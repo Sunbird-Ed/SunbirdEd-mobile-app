@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/component/sb-offline-toast";
+@import "src/assets/styles/_variables.scss";
 
 .text-font {
   .button-inner {
@@ -140,6 +141,8 @@
 }
 
 .sb-arrow-back{
+  padding: 0 !important;
+  transform: rotateY(180deg);
   font-size: 1.5rem;
 }
 
@@ -159,3 +162,22 @@
     padding-left: 1rem !important;
   }
 }
+
+.audience-info {
+  margin-left: 1.4rem;
+  margin-top: 1rem;
+}
+.font-12 {
+  font-size: 12px !important;
+}
+.subtitle-color{
+  color: map-get($colors, granite_gray);
+}
+
+// **** iOS
+.sb-back-transparent-ios {
+  width: 50px;
+  min-height: 100px;
+  background: transparent;
+}
+// **** iOS

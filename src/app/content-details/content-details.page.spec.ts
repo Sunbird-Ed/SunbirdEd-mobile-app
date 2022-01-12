@@ -75,7 +75,9 @@ describe('ContentDetailsPage', () => {
         subscribe: jest.fn(() => 'playConfig')
     };
     const mockPopoverController: Partial<PopoverController> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };
@@ -1965,9 +1967,15 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openConfirmPopUp', () => {
-        it('should return content not downloaded for undefined downloadUrl', (done) => {
+        it('should return content not downloaded for undefined downloadUrl with no internet message', (done) => {
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
             mockCommonUtilService.showToast = jest.fn();
+            mockFileSizePipe.transform = jest.fn(() => '');
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+            } as any)));
             // act
             contentDetailsPage.openConfirmPopUp();
             setTimeout(() => {
@@ -2494,7 +2502,6 @@ describe('ContentDetailsPage', () => {
                 expect(mockRatingHandler.resetRating).toHaveBeenCalled();
                 expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
                 expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
-                expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
                 done();
             }, 1000);
         });

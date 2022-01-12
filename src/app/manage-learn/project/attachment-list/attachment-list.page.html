@@ -8,7 +8,7 @@
     <div [ngSwitch]="type">
       <div *ngSwitchCase="'images'">
         <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
             <ion-card-header class="project-card _capitalize">
               {{task.taskName}}
             </ion-card-header>
@@ -20,7 +20,6 @@
                 <ion-col size="6" *ngFor="let attachment of task.attachments">
                   <img [src]="getImgContent(attachment?.localUrl)"
                     *ngIf="attachment.type.includes('image') && !attachment.url" />
-                    <!-- *ngIf="attachment.type == 'image/jpeg' && !attachment.url" /> -->
                   <ion-icon name="image-outline" *ngIf="attachment.url" style="display: contents;"
                     (click)="openImage(attachment.url)"></ion-icon>
                 </ion-col>
@@ -31,7 +30,7 @@
       </div>
       <div *ngSwitchCase="'files'">
         <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
             <ion-card-header class="project-card _capitalize">
               {{task.taskName}}
             </ion-card-header>

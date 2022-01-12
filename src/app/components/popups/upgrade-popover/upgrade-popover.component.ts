@@ -106,8 +106,7 @@ export class UpgradePopoverComponent {
       InteractType.TOUCH,
       InteractSubtype.UPGRADE_CLICKED,
       Environment.HOME,
-      PageId.UPGRADE_POPUP,
-      undefined
+      PageId.UPGRADE_POPUP
     );
     if (this.upgradeType.type === 'optional') {
       this.popCtrl.dismiss();
