@@ -1,0 +1,34 @@
+<div class="preference-container">
+    <div class="preference-username">
+        {{userName}}
+    </div>
+
+    <div class="preference-message">
+        <div class="preference-label pb-8">
+            <span class="pr-16">{{'YOUR_PREFERENCES' | translate}}</span>
+            <hr>
+        </div>
+        <div class="pb-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
+
+        <div class="preference-label">
+            <hr>
+        </div>
+    </div>
+
+    <div class="preference-data" *ngIf="preferenceData">
+        <ng-container *ngFor="let data of preferenceData">
+            <div class="pb-8" *ngIf="data?.list?.length">
+                <div class="preference-title">{{data.name}}</div>
+                <app-truncated-ellipsis 
+                    [arrayList]= "data.list"
+                    [showCount]="200"
+                    [separatorText]="', '">
+                </app-truncated-ellipsis>
+            </div>
+        </ng-container>
+    </div>
+
+    <div class="change-preference">
+        <button class="sb-btn sb-btn-md sb-btn-primary" (click)="changePreference()">{{'CHANGE_PREFERENCE' | translate}}</button>
+    </div>
+</div>

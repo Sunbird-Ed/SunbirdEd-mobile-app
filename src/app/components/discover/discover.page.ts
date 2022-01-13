@@ -11,9 +11,8 @@ import {
   CorReleationDataType,
   Environment, ImpressionType, InteractType, PageId, TelemetryGeneratorService
 } from '@app/services';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { Subscription } from 'rxjs';
 import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
@@ -22,7 +21,7 @@ import {
   SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
@@ -55,14 +54,15 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements();
+    this.fetchDisplayElements(this.platform.is('ios') ? true : false);
   }
 
   doRefresh(refresher) {
@@ -80,7 +80,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.hideRefresher.emit(false);
-    if (refresher) {
+    if (refresher && refresher.target) {
       refresher.target.complete();
     }
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
@@ -140,13 +140,16 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    const filterConfig = section.dataSrc.params.config.find(((facet) => facet.type === 'filter'));
-    event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+      const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
+      event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+    }
     const params = {
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: true,
-      description: (section && section.description) || ''
+      title: (section && section.landingDetails && section.landingDetails.title) || '',
+      description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
     let corRelationType: string = CorReleationDataType.CATEGORY;
     let interactType: string = InteractType.SELECT_CATEGORY;

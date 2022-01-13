@@ -19,8 +19,7 @@ import {
   TelemetryService,
   TelemetrySyncStat,
   CorrelationData,
-  LogLevel,
-  LogType
+  LogLevel
 } from 'sunbird-sdk';
 import {
   Environment,
@@ -148,12 +147,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        setTimeout(() => {
-          this.handleBackButton();
-        }, 100);
-        break;
+    if($event.name === 'back'){
+      setTimeout(() => {
+        this.handleBackButton();
+      }, 100);
     }
   }
 
@@ -246,7 +243,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       map((contentCount) => contentCount.length)
     )
       .toPromise();
-    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+    (<any>window).sbutility.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()

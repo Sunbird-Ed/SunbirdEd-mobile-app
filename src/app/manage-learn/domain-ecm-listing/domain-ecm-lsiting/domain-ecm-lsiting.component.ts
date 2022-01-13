@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { CommonUtilService,AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
-import { UtilsService, LocalStorageService } from '../../core';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { UtilsService, LocalStorageService, LoaderService, ToastService } from '../../core';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { UpdateTrackerService } from '../../core/services/update-tracker.service';
+import { ObservationService } from '../../observation/observation.service';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-domain-ecm-lsiting',
   templateUrl: './domain-ecm-lsiting.component.html',
   styleUrls: ['./domain-ecm-lsiting.component.scss'],
 })
-export class DomainEcmLsitingComponent implements OnInit {
+export class DomainEcmLsitingComponent {
   entityName: any;
   entityData: any;
   entityEvidences: any;
@@ -22,43 +27,89 @@ export class DomainEcmLsitingComponent implements OnInit {
   evidenceSections: any;
   allAnsweredForEvidence: boolean;
   submissionId: any;
+  downloadedSubmissionList: any;
+  allowMultipleAssessemts: any;
+  private _networkSubscription?: Subscription;
+  networkFlag: boolean;
+  msgs:any
+  extrasState:any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+};
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,
     private localStorage: LocalStorageService,
     private evdnsServ: EvidenceService,
     private platform: Platform,
+    private headerService: AppHeaderService,
     private routerParam: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private observationService: ObservationService,
+    public genericPopup: GenericPopUpService,
+    public loader: LoaderService,
+    public commonUtilService: CommonUtilService,
+    public toast: ToastService,
+    private translate: TranslateService,
+
   ) {
     this.routerParam.queryParams.subscribe((params) => {
-      // this.entityId = params.submisssionId;
       this.submissionId = params.submisssionId;
       this.entityName = params.schoolName;
+      this.allowMultipleAssessemts = params.allowMultipleAssessemts;
     });
+    this.extrasState = this.router.getCurrentNavigation().extras.state;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
+      async (available: boolean) => {
+        this.networkFlag = available;
+      }
+    );
+    this.translate.get(['FRMELEMENTS_MSG_FORM_DOWNLOADING']).subscribe(data => {
+      this.msgs = data;
+    })
+  }
 
   ionViewWillEnter() {
-    this.localStorage
+    if(this.extrasState){
+      this.getAssessmentDetails(this.extrasState);
+    }else{
+      this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((successData) => {
-        this.entityData = successData;
-        this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
-          this.entityData['assessment']['evidences'],
-          this.recentlyUpdatedEntity
-        );
-        this.mapCompletedAndTotalQuestions();
-        this.checkForProgressStatus();
-        this.localStorage
-          .getLocalStorage('generalQuestions_' + this.submissionId)
-          .then((successData) => {
-            this.generalQuestions = successData;
-          })
-          .catch((error) => {});
-      })
-      .catch((error) => {});
+     this.getAssessmentDetails(successData);
+      });
+    }
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+        this.headerConfig.actionButtons = [];
+        this.headerConfig.showHeader = true;
+        this.headerConfig.showBurgerMenu = false;
+        this.headerService.updatePageConfig(this.headerConfig);
+  }
+
+  getAssessmentDetails(successData){
+    this.entityData = successData;
+    if(this.submissionId){
+      this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
+        this.entityData['assessment']['evidences'],
+        this.recentlyUpdatedEntity
+      );
+      this.mapCompletedAndTotalQuestions();
+      this.checkForProgressStatus();
+      this.localStorage
+        .getLocalStorage('generalQuestions_' + this.submissionId)
+        .then((successData) => {
+          this.generalQuestions = successData;
+        });
+        this.fetchDownloaded();
+    }else{
+      this.entityEvidences =  this.entityData['assessment']['evidences'];
+    }
   }
 
   mapCompletedAndTotalQuestions() {
@@ -123,7 +174,6 @@ export class DomainEcmLsitingComponent implements OnInit {
 
   async openEvidence(evidenceIndex) {
     this.utils.setCurrentimageFolderName(this.entityEvidences[evidenceIndex].externalId, this.submissionId);
-    // this.selectedEvidenceIndex = evidenceIndex;
     this.currentEvidence = this.entityData['assessment']['evidences'][evidenceIndex];
     this.evidenceSections = this.currentEvidence['sections'];
     this.checkForEvidenceCompletion();
@@ -136,8 +186,7 @@ export class DomainEcmLsitingComponent implements OnInit {
       this.checkForEvidenceCompletion();
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
-      let action = await this.openAction(entity, evidenceIndex);
-      console.log(action)
+      let action = this.submissionId ?  await this.openAction(entity, evidenceIndex) : null;
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -174,7 +223,9 @@ export class DomainEcmLsitingComponent implements OnInit {
         break;
       }
     }
-    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    if (this.submissionId) {
+     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
+    }
   }
 
   async goToQuestioner(selectedSection) {
@@ -191,7 +242,7 @@ export class DomainEcmLsitingComponent implements OnInit {
     // }
 
     // //
-    if (!this.evidenceSections[selectedSection].progressStatus) {
+    if (!this.evidenceSections[selectedSection].progressStatus && this.submissionId) {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
     }
@@ -202,7 +253,45 @@ export class DomainEcmLsitingComponent implements OnInit {
         evidenceIndex: this.selectedEvidenceIndex,
         sectionIndex: selectedSection,
         schoolName: this.entityName,
-      },
+      }, state: this.extrasState //State is using for Template view for Deeplink.
     });
+  }
+
+  async fetchDownloaded() {
+    this.downloadedSubmissionList = await this.observationService.fetchDownloaded();
+  }
+
+  async pushToLocal() {
+    if (!this.networkFlag) {
+      this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
+      return
+    }
+    let args = {
+      title: 'DOWNLOAD_FORM',
+      yes: 'YES',
+      no: 'NO',
+    };
+    try {
+      const confirmed = await this.genericPopup.confirmBox(args);
+      if (!confirmed) return;
+      
+      this.loader.startLoader(this.msgs['FRMELEMENTS_MSG_FORM_DOWNLOADING'])
+      await this.observationService.pushToDownloads(this.submissionId);
+      this.fetchDownloaded();
+      let successArgs = {
+        title: 'FRMELEMENTS_MSG_FORM_DOWNLOADED',
+        yes: 'OKAY',
+        autoDissmiss: true,
+      };
+      this.loader.stopLoader()
+      await this.genericPopup.confirmBox(successArgs);
+    } catch {
+      this.loader.stopLoader()
+    }
+  }
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+    }
   }
 }

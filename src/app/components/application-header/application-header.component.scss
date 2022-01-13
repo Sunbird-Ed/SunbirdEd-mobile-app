@@ -26,6 +26,7 @@ ion-icon {
     color: map-get($colors, white);
     margin-left: 8px;
     background-color: map-get($colors, bright_red);
+    background-color: #B30012;
     font-size: 8px;
     font-weight: bold;
     height: 12px;
@@ -152,7 +153,7 @@ ion-icon {
   .onoffswitch-inner:after {
       content: "OFF";
       padding-right: 8px;
-      background-color: #ff6979; color: #fff;
+      background-color: #AD0011; color: #fff;
       text-align: right;
   }
   

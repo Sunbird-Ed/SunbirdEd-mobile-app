@@ -25,3 +25,14 @@
     }
   }
 }
+
+.label-margin-bottom {
+  margin-bottom: 3px !important;
+}
+
+.subtitle-color{
+  color: map-get($colors, granite_gray);
+}
+.font-12 {
+  font-size: 12px !important;
+}

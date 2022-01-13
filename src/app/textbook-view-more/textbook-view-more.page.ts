@@ -7,7 +7,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -67,10 +67,9 @@ export class TextbookViewMorePage {
   }
 
   private handleHeaderEvents(event: { name: string }) {
-    switch (event.name) {
-      case 'back':
-        this.location.back();
-        break;
+    if(event.name === 'back')
+    {
+      this.location.back();
     }
   }
 

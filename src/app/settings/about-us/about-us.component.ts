@@ -87,7 +87,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   ionViewDidLeave() {
-    (<any>window).supportfile.removeFile(() => {
+    (<any>window).sbutility.removeFile(() => {
     }, (error) => {
       console.error('error', error);
     });
@@ -110,7 +110,7 @@ export class AboutUsComponent implements OnInit {
       map((contentCount) => contentCount.length)
     ).toPromise();
     let loader = await this.commonUtilService.getLoader();
-    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+    (<any>window).sbutility.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
         .then((res) => {
@@ -150,9 +150,7 @@ export class AboutUsComponent implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.SETTINGS_ABOUT_US,
-      Environment.SETTINGS, '', '', '',
-      undefined,
-      undefined
+      Environment.SETTINGS, '', '', ''
     );
   }
 
@@ -161,9 +159,6 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
-      })
-      .catch(error => {
-        console.log('Error--', error);
       });
   }
 
@@ -172,9 +167,6 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.version = appName + ' v' + versionName + '.' + response;
         return response;
-      })
-      .catch(error => {
-        console.log('Error--', error);
       });
   }
 
@@ -183,7 +175,7 @@ export class AboutUsComponent implements OnInit {
     this.location.back();
   }
 
-  handleBackButton() {
+  private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, false);
       this.location.back();

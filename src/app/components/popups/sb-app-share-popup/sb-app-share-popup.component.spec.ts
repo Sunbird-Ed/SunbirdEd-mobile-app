@@ -15,7 +15,9 @@ describe('SbAppSharePopupComponent', () => {
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mocksocialSharing: Partial<SocialSharing> = {
         share: jest.fn()
     };

@@ -1,0 +1,34 @@
+<ion-card  class="ion-no-margin">
+    <ion-card-content class="ion-no-padding">
+        <div>
+            <div>
+                <div class="ion-padding">
+                    <div class="font-14-new view-credits my-8" role="heading" aria-level="1" (click)="showCertificate()">
+                        <span>
+                            <strong>{{'FRMELEMNTS_LBL_EARNCERT' | translate}}</strong>
+                        </span>
+                        <span *ngIf="showCredits">
+                            <ion-icon name="arrow-up"></ion-icon>
+                        </span>
+                        <span *ngIf="!showCredits">
+                            <ion-icon name="arrow-down"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="showCredits" class="showCertificate">
+                    <div class="ion-padding">
+                        <div>
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <!-- <div *ngFor="let cert of certificateInfo"> -->
+                                    <p *ngIf="showCompletionCertificate"><span style="font-size: 150%" style="color:gray"> > </span>  {{'FRMELEMNTS_LBL_EARNYOURCERT' | translate}}</p>
+                                    <p *ngIf="showMeritCertificate"><span style="font-size: 150%" style="color:gray"> > </span>  {{'FRMELEMNTS_LBL_EARNMCERT' | translate: {'percent': meritCertPercent} }}</p>
+
+                                <!-- </div> -->
+                            </ion-card-title>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-card-content>
+</ion-card>

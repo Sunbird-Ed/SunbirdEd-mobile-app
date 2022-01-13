@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UtilsService } from '../../core';
 
@@ -7,7 +7,7 @@ import { UtilsService } from '../../core';
   templateUrl: './matrix-modal.component.html',
   styleUrls: ['./matrix-modal.component.scss'],
 })
-export class MatrixModalComponent implements OnInit {
+export class MatrixModalComponent  {
 
   @Input() inputIndex: any;
   instanceDetails: any;
@@ -25,7 +25,7 @@ export class MatrixModalComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() { }
+
 
 
   update(): void {

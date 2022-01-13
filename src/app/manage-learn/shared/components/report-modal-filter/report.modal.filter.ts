@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from '@app/app/manage-learn/core';
 import { CommonUtilService, UtilityService } from '@app/services';
-import { ModalController, NavController, NavParams } from '@ionic/angular';
+import { ModalController, NavController, NavParams, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'report-modal-filter',
@@ -12,8 +12,6 @@ export class ReportModalFilter implements OnInit {
   filteredData: any;
   data: any;
   dataType: any;
-  // allQuestions;
-  // filteredQuestions;
 
   constructor(
     public navCtrl: NavController,
@@ -23,12 +21,10 @@ export class ReportModalFilter implements OnInit {
     private toast: ToastService,
     private modalCtrl: ModalController,
     private commonUtilService: CommonUtilService,
-
+    public platform: Platform
   ) {}
 
   ngOnInit() {
-    // this.allQuestions = this.navParams.get('allQuestions');
-    // this.filteredQuestions = this.navParams.get('filteredQuestions');
     this.data = this.navParams.get('data');
     this.filteredData = this.navParams.get('filteredData');
     this.dataType = this.navParams.get('dataType');
@@ -78,7 +74,6 @@ export class ReportModalFilter implements OnInit {
   }
  */
   close() {
-    // this.viewCntrl.dismiss({ action: "cancelled" }); TODO:remove after checking,viewCtrl is not available in i3
     this.modalCtrl.dismiss('cancel');
   }
 }

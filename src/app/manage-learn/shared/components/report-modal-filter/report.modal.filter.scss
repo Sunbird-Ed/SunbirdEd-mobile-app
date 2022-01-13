@@ -1,3 +1,6 @@
 .wrap {
   white-space: normal !important;
 }
+.container {
+  margin-top: env(safe-area-inset-top);
+}

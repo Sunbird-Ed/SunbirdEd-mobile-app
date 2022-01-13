@@ -73,5 +73,15 @@ export class FormConstants {
         subType: 'project',
         action: 'createTask'
     };
-
+    public static ML_HOME_CATEGORIES: FormRequest = {
+        type: 'category',
+        subType: 'targetedCategory',
+        action: 'homeListing'
+    };
+    public static SEGMENTATION: FormRequest = {
+        type: 'config',
+        subType: 'segmentation',
+        action: 'get',
+        component: 'app'
+    };
 }

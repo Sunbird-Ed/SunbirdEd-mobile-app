@@ -1,6 +1,6 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryService, Mode, ContentService,
-   FrameworkService, PageAssembleService } from 'sunbird-sdk';
+   FrameworkService, PageAssembleService, SharedPreferences } from 'sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
   CorReleationDataType, CorrelationData
@@ -59,7 +59,9 @@ describe('QRScannerResultHandler', () => {
   const mockNavigationService: Partial<NavigationService> = {
     navigateToDetailPage: jest.fn()
   };
-
+  const mockPreferences: Partial<SharedPreferences> = {
+    getString: jest.fn(() => { })
+};
 
   beforeAll(() => {
     qRScannerResultHandler = new QRScannerResultHandler(
@@ -67,6 +69,7 @@ describe('QRScannerResultHandler', () => {
       mockTelemetryService as TelemetryService,
       mockPageAssembleService as PageAssembleService,
       mockFrameworkService as FrameworkService,
+      mockPreferences as SharedPreferences,
       mockCommonUtilService as CommonUtilService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
@@ -74,7 +77,7 @@ describe('QRScannerResultHandler', () => {
       mockEvents as Events,
       mockAppglobalService as AppGlobalService,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-      mockNavigationService as NavigationService
+      mockNavigationService as NavigationService,
     );
   });
 
@@ -389,6 +392,7 @@ describe('QRScannerResultHandler', () => {
         mockTelemetryService as TelemetryService,
         mockPageAssembleService as PageAssembleService,
         mockFrameworkService as FrameworkService,
+        mockPreferences as SharedPreferences,
         mockCommonUtilService as CommonUtilService,
         mockTelemetryGeneratorService as TelemetryGeneratorService,
         mockRouter as Router,

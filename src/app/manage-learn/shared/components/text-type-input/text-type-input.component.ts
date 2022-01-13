@@ -33,7 +33,6 @@ export class TextTypeInputComponent implements OnInit {
       this.data.isCompleted = true;
     }
     this.getErrorMsg();
-    // this.checkForValidation();
   }
 
   next(status?: any) {

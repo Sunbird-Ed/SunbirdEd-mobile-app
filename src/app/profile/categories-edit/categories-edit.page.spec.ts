@@ -73,7 +73,9 @@ describe('CategoryEditPage', () => {
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
     mockActivatedRoute.snapshot = {
         queryParams: {
@@ -986,4 +988,27 @@ describe('CategoryEditPage', () => {
             expect(categoryEditPage.btnColor).toBe('#006DE5');
         });
     });
+
+        it('should unsubscribe backButtonFunc', () => {
+            // arrange
+            categoryEditPage['backButtonFunc'] = {
+                unsubscribe: jest.fn(),
+    
+            } as any;
+            // act
+            categoryEditPage.ionViewWillLeave();
+            // assert
+            expect( categoryEditPage['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+        });
+
+        describe('goBack()', () => {
+            it('should initialized edit form data if board length is greaterthan 1', () => {
+                // arrange
+                mockLocation.back = jest.fn();
+                // act
+                categoryEditPage.goBack();
+                // assert
+                expect(mockLocation.back).toHaveBeenCalled();
+            });
+        });
 });

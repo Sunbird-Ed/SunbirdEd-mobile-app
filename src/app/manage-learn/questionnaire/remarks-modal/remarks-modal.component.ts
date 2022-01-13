@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -6,7 +6,7 @@ import { ModalController } from '@ionic/angular';
   templateUrl: './remarks-modal.component.html',
   styleUrls: ['./remarks-modal.component.scss'],
 })
-export class RemarksModalComponent implements OnInit {
+export class RemarksModalComponent {
   @ViewChild('remarkInput',  {static: false}) remarkInput;
   hideBack;
   @Input() data: any;
@@ -15,7 +15,6 @@ export class RemarksModalComponent implements OnInit {
 
   constructor(private modal: ModalController) {}
 
-  ngOnInit() {}
 
   close(): void {
     this.modal.dismiss();

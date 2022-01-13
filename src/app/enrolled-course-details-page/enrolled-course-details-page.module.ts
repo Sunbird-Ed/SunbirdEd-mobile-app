@@ -6,7 +6,7 @@ import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { IonicRatingModule } from 'ionic4-rating';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 import { ContentActionsComponent } from '../components';

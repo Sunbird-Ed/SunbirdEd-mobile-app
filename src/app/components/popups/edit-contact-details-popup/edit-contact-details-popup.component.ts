@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { Platform, NavParams, PopoverController, MenuController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
@@ -11,7 +11,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
   templateUrl: './edit-contact-details-popup.component.html',
   styleUrls: ['./edit-contact-details-popup.component.scss'],
 })
-export class EditContactDetailsPopupComponent implements OnInit {
+export class EditContactDetailsPopupComponent {
 
   // Data passed in by componentProps
   @Input() userId: string;
@@ -46,7 +46,6 @@ export class EditContactDetailsPopupComponent implements OnInit {
     this.initEditForm();
   }
 
-  ngOnInit() { }
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
@@ -163,12 +162,8 @@ export class EditContactDetailsPopupComponent implements OnInit {
       });
   }
 
-  async cancel(event) {
-    if (event.sourceCapabilities) {
-      await this.popOverCtrl.dismiss({ isEdited: false });
-    } else {
-      this.keyboard.hide();
-    }
+  async cancel() {
+    await this.popOverCtrl.dismiss({ isEdited: false });
   }
 
   ionViewWillLeave() {

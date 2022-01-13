@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
@@ -8,7 +8,7 @@ import { AppHeaderService } from '@app/services';
   templateUrl: './imp-suggestions.page.html',
   styleUrls: ['./imp-suggestions.page.scss'],
 })
-export class ImpSuggestionsPage implements OnInit {
+export class ImpSuggestionsPage {
 
   criterias;
   solutionName: string;
@@ -30,8 +30,7 @@ export class ImpSuggestionsPage implements OnInit {
     this.solutionId = this.router.getCurrentNavigation().extras.state.solutionId;
   }
 
-  ngOnInit() {
-  }
+
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();

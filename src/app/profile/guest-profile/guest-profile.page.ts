@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import {
   Framework,
@@ -63,7 +63,8 @@ export class GuestProfilePage implements OnInit {
     public toastController: ToastController,
     private router: Router,
     private profileHandler: ProfileHandler,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    public platform: Platform
   ) { }
 
   async ngOnInit() {
@@ -254,10 +255,8 @@ export class GuestProfilePage implements OnInit {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'download':
-        this.redirectToActiveDownloads();
-        break;
+    if($event.name === 'download'){
+      this.redirectToActiveDownloads();
     }
   }
 

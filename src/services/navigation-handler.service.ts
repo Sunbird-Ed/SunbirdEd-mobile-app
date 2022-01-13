@@ -32,7 +32,8 @@ export class NavigationService {
             }
         } else {
             // for backward compatibility, remove once not requried
-            if (content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
+            if (content.content ? (content.content.contentType.toLowerCase()
+                === CsContentType.COURSE.toLowerCase()) : content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
                 // Trackable
                 this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
@@ -88,14 +89,6 @@ export class NavigationService {
         } else {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         }
-    }
-
-    setNavigationUrl(navigationUrl: string) {
-        this.previousNavigationUrl = navigationUrl;
-    }
-
-    navigateToLastUrl(){
-        this.router.navigate([this.previousNavigationUrl]);
     }
 
 }

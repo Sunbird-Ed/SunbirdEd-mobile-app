@@ -13,7 +13,7 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
-import { IonContent as iContent } from '@ionic/angular';
+import { IonContent as iContent, Platform, NavController } from '@ionic/angular';
 import {
   ChildContentRequest,
   Content,
@@ -37,7 +37,6 @@ import {
   PlayerService,
   Profile,
   ProfileService,
-  TelemetryObject,
   AuditState,
   TrackingEnabled
 } from 'sunbird-sdk';
@@ -52,13 +51,11 @@ import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
-import { Platform, NavController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { map } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
-import { UtilityService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import {ContentInfo} from '@app/services/content/content-info';
 declare const cordova;
@@ -271,7 +268,6 @@ export class QrcoderesultPage implements OnDestroy {
           }).catch((err) => {
             this.showSheenAnimation = false;
           });
-        // this.importContentInBackground([this.identifier], false);
       }
       this.backToPreviusPage = false;
     }
@@ -740,10 +736,11 @@ export class QrcoderesultPage implements OnDestroy {
 
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        destinationFolder: cordova.file.externalDataDirectory,
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : []
       });
@@ -843,10 +840,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
-        break;
+    if($event.name === 'back'){
+      this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
     }
   }
 
@@ -867,14 +862,6 @@ export class QrcoderesultPage implements OnDestroy {
       stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
       latestParentNodes: this.latestParents
     });
-    // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-    //   {
-    //     state: {
-    //       childrenData: this.childrenData, parentId: this.identifier,
-    //       stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
-    //       latestParentNodes: this.latestParents
-    //     }
-    //   });
     const values = new Map();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 
 @Component({
@@ -60,28 +59,6 @@ export class AllEvidenceListComponent implements OnInit {
 
   ionViewDidLoad() {
     this.selectedTab = 'evidence';
-    //TODO:move to ngOninit
-    // const submissionId = this.navParams.get('submissionId');
-    // const observationId = this.navParams.get('observationId');
-    // const entityId = this.navParams.get('entityId');
-    // const questionExternalId = this.navParams.get('questionExternalId');
-    // const entityType = this.navParams.get('entityType');
-    // const surveyEvidence = this.navParams.get('surveyEvidence'); // for survey evidence true/false
-    // const solutionId = this.navParams.get('solutionId');
-    // this.data = this.navParams.get('data');
-    // this.payload = {
-    //   submissionId: submissionId,
-    //   questionId: questionExternalId,
-    //   observationId: observationId,
-    //   entityId: entityId,
-    //   entityType: entityType,
-    //   solutionId: solutionId,
-    // };
-    // if (this.data) {
-    //   this.setAllEvidence();
-    // } else {
-    //   surveyEvidence ? this.getSurveyEvidence() : this.getAllEvidence();
-    // }
   }
 
   onTabChange(tabName) {
@@ -180,30 +157,5 @@ export class AllEvidenceListComponent implements OnInit {
       }
     );
 
-    //TODO:uncomment
-    //   const url = AppConfigs.surveyFeedback.listAllEvidences;
-    //   this.utils.startLoader();
-    //   this.apiService.httpPost(
-    //     url,
-    //     this.payload,
-    //     (success) => {
-    //       this.utils.stopLoader();
-    //       console.log(JSON.stringify(success));
-    //       if (success.result === true && success.data) {
-    //         this.images = success.data.images;
-    //         this.videos = success.data.videos;
-    //         this.documents = success.data.documents;
-    //         this.remarks = success.data.remarks;
-    //         this.audios = success.data.audios;
-    //       } else {
-    //         this.utils.openToast(success.data);
-    //       }
-    //     },
-    //     (error) => {
-    //       this.utils.openToast(error.message);
-    //       this.utils.stopLoader();
-    //     },
-    //     { baseUrl: 'dhiti', version: 'v1' }
-    //   );
   }
 }

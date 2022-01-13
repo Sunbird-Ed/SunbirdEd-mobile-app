@@ -88,7 +88,9 @@ describe('NavigationService', () => {
     it('should navigate to enrolled course detail page if trackable object is not available', () => {
       // arrange
       const content = {
-        contentType: 'Course'
+        content: {
+          contentType: 'Course'
+        }
       };
       // act
       navigationService.navigateToDetailPage(content, {});
@@ -101,6 +103,9 @@ describe('NavigationService', () => {
     it('should navigate to collection detail page if trackable object is not available', () => {
       // arrange
       const content = {
+        content: {
+          contentType: 'Collection'
+        },
         contentType: 'Collection',
         mimeType: 'application/vnd.ekstep.content-collection'
       };
@@ -115,12 +120,10 @@ describe('NavigationService', () => {
     it('should navigate to content detail page if trackable object is not available', () => {
       // arrange
       const content = {
-        contentData: {
-          trackable: {
-          },
-          contentType: 'Resource',
-          mimeType: 'application/pdf'
-        }
+        content: {
+          contentType: 'Resource'
+        },
+        contentType: 'Resource'
       };
       // act
       navigationService.navigateToDetailPage(content, {});
@@ -130,14 +133,17 @@ describe('NavigationService', () => {
       });
     });
 
-    it('should navigate to content detail page if trackable object is not available', () => {
+    it('should navigate directly to content detail page if trackable object is not available', (done) => {
       // arrange
       // act
       navigationService.navigateTo([RouterLinks.CONTENT_DETAILS], {});
       // assert
-      expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS], {
-        state: {}
-      });
+      setTimeout(() => {
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS], {
+          state: {}
+        });
+        done();
+      }, 0);
     });
   });
 
@@ -178,27 +184,5 @@ describe('NavigationService', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
     });
   });
-
-  describe('setNavigationUrl', () => {
-    it('should set navigation url', () => {
-      // arrange
-      const previousUrl = 'some-url';
-      // act
-      navigationService.setNavigationUrl(previousUrl);
-      // assert
-      expect(navigationService.previousNavigationUrl).toEqual(previousUrl)
-    })
-  })
-
-  describe('navigateToLastUrl', () => {
-    it('should redirect to navigation url', () => {
-      // arrange
-      navigationService.previousNavigationUrl = 'some-url';
-      // act
-      navigationService.navigateToLastUrl();
-      // assert
-      expect(mockRouter.navigate).toHaveBeenCalled();
-    })
-  })
 
 });

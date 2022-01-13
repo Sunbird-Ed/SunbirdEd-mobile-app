@@ -115,6 +115,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     if (content.identifier !== rootContentIdentifier) {
       const contentDetailRequest: ContentDetailRequest = {
         contentId: rootContentIdentifier,
+        objectType: this.content.objectType,
         attachFeedback: false,
         attachContentAccess: false,
         emitUpdateIfAny: false
@@ -221,6 +222,11 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
+    if(this.platform.is('ios')) {
+      return new Promise<boolean | undefined>(async (resolve, reject) => {
+        resolve(true);
+      });
+    }
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 

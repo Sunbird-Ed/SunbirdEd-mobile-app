@@ -18,8 +18,11 @@
     font-size: 18px;
   }
   .user-name-text{
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -31,13 +34,10 @@
 }
 
 .preference-container {
-  background-color: var(--app-primary-header);
   margin: 0 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0 .5rem;
   font-size: 12px;
   color: var(--app-gray);
-  box-shadow: 0 0 50px 0 rgba(0,0,0,0.1);
-  border-radius: 1rem;
   .user-preference {
     display: flex;
     align-items: center;
@@ -48,7 +48,9 @@
       width: 30%;
       text-align: center;
       button{
+        float: right;
         color: var(--app-primary);
+        height: 24px !important;
       }
     }
   }
@@ -78,4 +80,12 @@
   width: 100%;
   margin-left: 1rem;
   background-color: var(--app-primary-header);
+}
+
+.preference-info-icon{
+  height: 1rem;
+  padding: 2px;
+  background-color: var(--app-tertiary);
+  border-radius: 50px;
+  margin: 0.5rem;
 }

@@ -6,14 +6,14 @@ import { TranslateService } from "@ngx-translate/core";
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
-// import { IOSFilePicker } from "@ionic-native/file-picker";
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
-import { GenericPopUpService } from '../../TC-generic.popupService';
+import { GenericPopUpService } from '../../generic.popup';
+import { Chooser } from '@ionic-native/chooser/ngx';
 
 @Component({
   selector: 'app-image-upload',
@@ -73,9 +73,9 @@ export class ImageUploadComponent implements OnInit {
     private platform: Platform,
     private translate: TranslateService,
     private filePath: FilePath,
-    // private iosFilePicker: IOSFilePicker,
     private fileOpener: FileOpener,
     private fileChooser: FileChooser,
+    private chooser: Chooser,
     private androidPermissions: AndroidPermissions,
     private diagnostic: Diagnostic,
     private media: Media,
@@ -161,7 +161,7 @@ export class ImageUploadComponent implements OnInit {
           text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            this.isIos ? this.filePickerForIOS() : this.openFilePicker();
+            this.openFilePicker();
           },
         },
         {
@@ -174,28 +174,36 @@ export class ImageUploadComponent implements OnInit {
     await actionSheet.present();
   }
 
-  filePickerForIOS() {
-    // this.iosFilePicker
-    //   .pickFile()
-    //   .then((data) => {
-    //     this.checkForLocalFolder("file://" + data);
-    //   })
-    //   .catch((error) => { });
-  }
 
   // For android
-  openFilePicker() {
-    this.fileChooser
-      .open()
-      .then((filePath) => {
-        this.filePath
-          .resolveNativePath(filePath)
-          .then((data) => {
-            this.checkForLocalFolder(data);
-          })
-          .catch((err) => { });
-      })
-      .catch((e) => console.log(e));
+  async openFilePicker() {
+    
+    try {
+      const file = await this.chooser.getFile();
+      const pathToWrite = this.appFolderPath;
+      const newFileName = this.createFileName(file.name)
+      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+      if (writtenFile.isFile) {
+        this.pushToFileList(newFileName);
+
+        
+      }
+    } catch (error) {
+       
+    }
+
+	  //non working in sdk30 -adnroid 11
+    // this.fileChooser
+    //   .open()
+    //   .then((filePath) => {
+    //     this.filePath
+    //       .resolveNativePath(filePath)
+    //       .then((data) => {
+    //         this.checkForLocalFolder(data);
+    //       })
+    //       .catch((err) => { });
+    //   })
+    //   .catch((e) => console.log(e));
   }
 
   openCamera(): void {
@@ -210,16 +218,13 @@ export class ImageUploadComponent implements OnInit {
       .getPicture(options)
       .then((imagePath) => {
         this.checkForLocalFolder(imagePath);
-        this.saveToLibrary(imagePath);
       })
-      .catch((error) => { });
   }
 
   saveToLibrary(url): void {
     this.photoLibrary
       .saveImage(url, "samiksha")
       .then((data) => { })
-      .catch((error) => { });
   }
 
   checkForLocalFolder(imagePath) {
@@ -297,7 +302,6 @@ export class ImageUploadComponent implements OnInit {
         this.setLocalDatas(fileName);
 
       })
-      .catch((error) => { });
   }
 
   setLocalDatas(fileName) {
@@ -368,6 +372,7 @@ export class ImageUploadComponent implements OnInit {
     let alert = await this.alertCtrl.create({
       // header: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
       message: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],
@@ -386,25 +391,6 @@ export class ImageUploadComponent implements OnInit {
   }
 
   updateLocalImageList() {
-    // this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //   data = JSON.parse(data);
-    //   if(!this.generalQuestion)
-    //   data[this.submissionId][this.evidenceId] = [...data[this.submissionId][this.evidenceId], ...this.allLocalImageList][this.submissionId][this.evidenceId] ;
-    //   else
-    //   data[this.submissionId] = [ ... data[this.submissionId] , ... this.allLocalImageList][this.submissionId] ;
-    //   this.localStorage.setLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList' , JSON.stringify(data))
-    //   // this.utils.setLocalImages(this.allLocalImageList, this.generalQuestion);
-    //   this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //     console.log(data   + " updating");
-    //     this.allLocalImageList = JSON.parse(data)
-    // }).catch(error =>{});
-    // }).catch( data =>{
-    //   this.localStorage.setLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList' , JSON.stringify(this.allLocalImageList));
-    //   this.localStorage.getLocalStorage(this.generalQuestion ? 'genericQuestionsImages' : 'allImageList').then( data =>{
-    //     console.log(data + " setting");
-    //     this.allLocalImageList = JSON.parse(data)
-    // }).catch(error =>{});
-    // })
   }
 
   previewFile(fileName, extension) {
@@ -415,7 +401,6 @@ export class ImageUploadComponent implements OnInit {
       )
       .then(() => console.log("File is opened"))
       .catch((e) => {
-        // this.utils.openToast();
         this.toast.openToast("No file readers available")
       });
   }
@@ -473,8 +458,6 @@ export class ImageUploadComponent implements OnInit {
                   this.fileName
                 );
                 this.mediaObject.startRecord();
-                // this.audio = this.media.create(this.filesPath);
-                // this.audio.startRecord();
                 this.startTimer();
               },
               (error) => { }
@@ -578,18 +561,7 @@ export class ImageUploadComponent implements OnInit {
             console.log("Please accept the permissions to use this feature");
           });
       })
-      .catch((error) => {
-      });
-    // const permissionsArray = [
-    //   this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
-    //   this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
-    //   this.androidPermissions.PERMISSION.RECORD_AUDIO
-    // ]
-    // this.androidPermissions.requestPermissions(permissionsArray).then(success => {
-    //   success.hasPermission ? this.startRecord() : this.utils.openToast("Please accept the permissions to use this feature")
-    // }).catch(error => {
-    //   this.utils.openToast("Please accept the permissions to use this feature")
-    // })
+
   }
 
   stopRecord() {

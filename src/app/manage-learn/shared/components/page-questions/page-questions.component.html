@@ -1,9 +1,7 @@
 <div *ngIf="data?.pageQuestions?.length">
   <ng-container 
     *ngFor="let question of data?.pageQuestions; let j=index" [ngSwitch]="question?.responseType.toLowerCase()">
-    <!-- <ion-item-divider color="light" *ngIf="question?.sectionHeader">
-      <h4 class="bold _flex-box sectionHeader" text-wrap>{{question?.sectionHeader}}</h4>
-    </ion-item-divider> -->
+   
     <div class="_fullScreenCard" *ngIf="checkForVisibility(j)" >
 
       <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"

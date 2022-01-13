@@ -3,10 +3,10 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnInit,
   OnChanges,
 } from "@angular/core";
-import { UtilsService } from '@app/app/manage-learn/core';
+import { UtilsService,ToastService } from '@app/app/manage-learn/core';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-footer-buttons',
@@ -27,10 +27,13 @@ export class FooterButtonsComponent implements OnChanges {
     this._data = JSON.parse(JSON.stringify(data));
   }
   @Input() isFirst: boolean;
+  @Input() isStartBTNEnabled:boolean;
+  @Input() showStartButton : boolean;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
   @Output() backAction = new EventEmitter();
   @Output() openSheetAction = new EventEmitter();
+  @Output() startAction = new EventEmitter();
   @Input() completedQuestionCount = 0;
   @Input() questionCount = 0;
   @Input() isSubmitted;
@@ -41,8 +44,10 @@ export class FooterButtonsComponent implements OnChanges {
   percentage: number = 0;
 
   constructor(
-    private utils: UtilsService
-  ) { }
+    private utils: UtilsService,
+    private translate: TranslateService,
+    private toast : ToastService
+  ) {}
   ngOnChanges() {
     if (this.completedQuestionCount > 0) {
       this.percentage = this.questionCount ? (this.completedQuestionCount / this.questionCount) * 100 : 0;
@@ -61,14 +66,11 @@ export class FooterButtonsComponent implements OnChanges {
   }
 
   gpsFlowChecks(action, status) {
-    // console.log("GPS: "+this.enableGps)
-    // console.log(JSON.stringify(this.data))
     if (this.updatedData.responseType.toLowerCase() === "slider") {
       if (
         !this.updatedData.gpsLocation ||
         JSON.stringify(this._data.value) !== JSON.stringify(this.updatedData.value)
       ) {
-        // this.getGpsLocation(action, status);
       } else if (JSON.stringify(this._data.value) === JSON.stringify(this.updatedData.value)) {
         if (action === "next") {
           this.next(status);
@@ -82,7 +84,6 @@ export class FooterButtonsComponent implements OnChanges {
         // &&
         // this.utils.isPageQuestionComplete(this.updatedData)
       ) {
-        // this.getGpsLocation(action, status);
       } else {
         if (action === "next") {
           this.next(status);
@@ -91,7 +92,6 @@ export class FooterButtonsComponent implements OnChanges {
         }
       }
     } else if (JSON.stringify(this._data.value) !== JSON.stringify(this.updatedData.value)) {
-      // this.getGpsLocation(action, status);
     } else {
       if (action === "next") {
         this.next(status);
@@ -123,4 +123,16 @@ export class FooterButtonsComponent implements OnChanges {
     this.openSheetAction.emit()
   }
 
+  startBtnAction(){
+   if(!this.isStartBTNEnabled){
+    let msg;
+    this.translate.get(['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE']).subscribe((translations) => {
+      msg = translations['FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE'];
+      this.toast.openToast(msg,'','top');
+    });
+   } else{
+     // TODO navigate to observation details page.
+     this.startAction.emit();
+   }
+  }
 }

@@ -994,4 +994,15 @@ describe('AppGlobalService', () => {
         });
 
     });
+
+    describe('setisForumEnabled', () => {
+        it('should return the isForumEnabled', () => {
+            // arrange
+            appGlobalService.isForumEnabled = true;
+            // act
+            // assert
+            expect(appGlobalService.isForumEnabled).toBeTruthy();
+        });
+    });
+
 });

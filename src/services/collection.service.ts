@@ -11,9 +11,10 @@ export class CollectionService {
   ) {
   }
 
-  async fetchCollectionData(id): Promise<Content> {
+  async fetchCollectionData(id, objectType): Promise<Content> {
     const option: ContentDetailRequest = {
       contentId: id,
+      objectType,
       attachFeedback: true,
       emitUpdateIfAny: true,
       attachContentAccess: true

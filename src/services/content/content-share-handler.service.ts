@@ -11,6 +11,7 @@ import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AppGlobalService } from '../app-global-service.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class ContentShareHandlerService {
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion,
-    private appGlobalService: AppGlobalService) {
+    private appGlobalService: AppGlobalService, private platform: Platform) {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
@@ -61,7 +62,7 @@ export class ContentShareHandlerService {
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
-        destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
+        destinationFolder: this.platform.is("ios")?cordova.file.documentsDirectory+"content/":this.storageService.getStorageDestinationDirectoryPath()
       };
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     } else if (shareParams && shareParams.byLink && shareParams.link) {
@@ -76,20 +77,27 @@ export class ContentShareHandlerService {
       if (contentId && !moduleId) {
         contentLink = contentLink + `&contentId=${contentId}`;
       }
+      const shareLinkUrl = await this.getPackageNameWithUTM()
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
         app_name: this.appName,
         content_name: content.contentData.name,
         content_link: contentLink,
-        play_store_url: await this.getPackageNameWithUTM()
+        play_store_url: shareLinkUrl
       });
       this.appGlobalService.isNativePopupVisible = true;
-      this.social.share(null, null, null, shareLink);
+      if(this.platform.is('ios')) {
+        this.social.share(null, null, null, contentLink);
+      } else {
+        this.social.share(null, null, null, shareLink);
+      }
+      
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
+      const folderPath = this.platform.is('ios') ? cordova.file.externalDataDirectory : cordova.file.externalRootDirectory 
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
-        destinationFolder: cordova.file.externalRootDirectory + 'Download/',
+        destinationFolder: folderPath + 'Download/',
         saveLocally: true
       };
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);

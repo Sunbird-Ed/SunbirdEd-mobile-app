@@ -34,7 +34,9 @@ export class UpdateTrackerService {
         assessmentDetails['assessment']['evidences'][selectedEvidenceIndex].sections[
           currentSectionIndex
         ].lastModified = lastUpdated;
-        this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId), assessmentDetails);
+        if (submissionId) {
+          this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId), assessmentDetails);
+        }
       }
     }
     let success = recentlyUpdatedEntity

@@ -5,9 +5,6 @@
   <p class="ion-padding-horizontal" *ngIf="datas?.chart?.totalSubmissions">
     {{ 'FRMELEMNTS_MSG_ASSESSMENTS_DONE' | translate }}-{{ datas?.chart?.totalSubmissions }}
   </p>
-  <!-- <div *ngFor="let entity of datas?.chart?.entities"> -->
-
-  <!-- <h4 text-wrap margin-left margin-top>{{entity.entityName}}</h4> -->
 
   <ion-card
     (click)="isOpenIndex = isOpenIndex == i ? -1 : i"
@@ -35,5 +32,4 @@
     </div>
   </ion-card>
 
-  <!-- </div> -->
 </div>

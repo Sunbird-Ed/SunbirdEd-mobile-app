@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+
 
 export * from './audio-list/audio-list.component';
 export * from './common-header/common-header.component';
@@ -21,3 +21,5 @@ export * from './no-data/no-data.component';
 export * from './chart/chart.component';
 export * from './create-task-form/create-task-form.component';
 export * from './privacy-policy-and-tc/privacy-policy-and-tc.component';
+export * from './project-metadata-card/project-metadata-card.component';
+export * from './project-task-list/project-task-list.component';

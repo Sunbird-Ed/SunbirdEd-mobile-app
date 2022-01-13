@@ -11,7 +11,7 @@ import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentSearchCriteria, ContentSearchResult, ContentService,
   CorrelationData, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, PageAssembleCriteria,
-  PageAssembleFilter, PageAssembleService, PageName, ProfileType, SearchType, SharedPreferences, TelemetryObject,
+  PageAssembleFilter, PageAssembleService, PageName, SearchType, SharedPreferences, TelemetryObject,
   NetworkError, CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, Course, Batch,
   FetchEnrolledCourseRequest, Profile,
   ProfileService, Framework,
@@ -46,7 +46,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -244,10 +244,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.dialCode) {
       this.enableSearch = true;
     }
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
-    });
-    if(this.isFromGroupFlow || this.searchWithBackButton){
+    this.enableHeaderEvents();
+    if (this.isFromGroupFlow || this.searchWithBackButton) {
       this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
@@ -332,9 +330,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
+    this.disableHeaderEvents();
     this.refresher.disabled = true;
   }
 
@@ -342,9 +338,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
+    this.disableHeaderEvents();
   }
 
   private async getAppName() {
@@ -602,6 +596,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         });
         break;
     }
+    this.disableHeaderEvents();
   }
 
   setGrade(reset, grades) {
@@ -652,14 +647,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.profile.syllabus = [data.framework];
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
       case 1:
         this.profile.board = [data.board];
         this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
         this.profile.subject = [];
         this.setGrade(true, data.gradeLevel);
         break;
@@ -699,7 +692,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                   this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                   this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                   this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
                   if (data.board) {
                     data.board = this.findCode(this.boardList, data, 'board');
                   }
@@ -820,7 +812,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source || PageId.SEARCH, undefined);
+      this.source || PageId.SEARCH);
     const filterCriteriaData = this.responseData.filterCriteria;
     filterCriteriaData.facetFilters.forEach(element => {
       this.searchFilterConfig.forEach(item => {
@@ -913,7 +905,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
-    (window as any).cordova.plugins.Keyboard.close();
+    (window as any).Keyboard.hide();
     const facets = this.searchFilterConfig.reduce((acc, filterConfig) => {
       acc.push(filterConfig.code);
       return acc;
@@ -1062,7 +1054,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  // TODO: SDK changes by Swayangjit
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
     const ongoingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
@@ -1287,7 +1278,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           });
           dialCodeResultObj.dialCodeResult.push(collection);
         });
-        // displayDialCodeResult[searchResult.name] = dialCodeResult;
         displayDialCodeResult.push(dialCodeResultObj);
       }
 
@@ -1307,17 +1297,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           }
         });
 
-        if (dialCodeContentResult.length) {
-          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
-          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
-            displayDialCodeResult.push(dialCodeResultObj);
-          } else {
-            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentResult;
-          }
-        }
         if (dialCodeContentCourseResult.length) {
           dialCodeCourseResultObj.dialCodeContentResult = dialCodeContentCourseResult;
-          displayDialCodeResult.push(dialCodeCourseResultObj);
+          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
+            displayDialCodeResult.push(dialCodeCourseResultObj);
+          } else {
+            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentCourseResult;
+          }
+        }
+        if (dialCodeContentResult.length) {
+          dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
+          displayDialCodeResult.push(dialCodeResultObj);
         }
       }
       if (displayDialCodeResult.length && displayDialCodeResult[0].dialCodeResult) {
@@ -1404,7 +1394,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   checkParent(parent, child) {
     const identifier = parent.identifier;
     const contentRequest: ContentDetailRequest = {
-      contentId: identifier
+      contentId: identifier,
+      objectType: parent.objectType
     };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
@@ -1437,7 +1428,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1501,7 +1491,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
             if (this.downloadProgress === 100) {
-              // this.showLoading = false;
               this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
             }
           }
@@ -1521,7 +1510,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
               }, 1000);
             }
           }
-          // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
               if (this.queuedIdentifiers.includes(event.payload.contentId)) {
@@ -1538,7 +1526,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                   undefined,
                   this.corRelationList
                 );
-                // this.showContentDetails(this.childContent);
                 this.events.publish('savedResources:update', {
                   update: true
                 });
@@ -1562,11 +1549,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
-        // TODO - check with Anil for destination folder path
-        destinationFolder: cordova.file.externalDataDirectory,
+        // TODO - check with Anil for destination path
+        destinationFolder: folderPath,
         contentId: value,
         correlationData: this.corRelationList !== undefined ? this.corRelationList : []
       });
@@ -1782,7 +1770,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
           this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-          this.appGlobalService.isDiscoverBackEnabled = false; 
+          this.appGlobalService.isDiscoverBackEnabled = false;
         } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
           break;
         } else {
@@ -1844,12 +1832,28 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
-  tabViewWillEnter() {
-    if(this.isFromGroupFlow || this.searchWithBackButton){
-      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
-    } else {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    private enableHeaderEvents(){
+        if(!this.headerObservable){
+            this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+                this.handleHeaderEvents(eventName);
+            });
+        }
     }
-  }
 
+    private disableHeaderEvents(){
+        if (this.headerObservable) {
+            this.headerObservable.unsubscribe();
+            this.headerObservable = undefined;
+        }
+    }
+
+    tabViewWillEnter() {
+        if (this.isFromGroupFlow || this.searchWithBackButton) {
+            this.headerService.showHeaderWithBackButton
+            (null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
+        } else {
+            this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+        }
+        this.enableHeaderEvents();
+    }
 }

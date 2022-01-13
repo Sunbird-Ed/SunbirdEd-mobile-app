@@ -42,7 +42,7 @@ import { ImportPopoverComponent } from './popups/import-popover/import-popover.c
 import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
@@ -67,11 +67,17 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {DashletModule} from '@project-sunbird/sb-dashlet'
+import {DashletModule} from '@project-sunbird/sb-dashlet';
+import { TocHeaderComponent } from './toc-header/toc-header.component';
+import {RelevantContentCardComponent} from './relevant-content-card/relevant-content-card.component';
+import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-preferences-popup.component';
 
+import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
+import { ContentShareHandlerService } from '@app/services';
+import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -131,7 +137,12 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
-    DashboardComponent
+    DashboardComponent,
+    TocHeaderComponent,
+    RelevantContentCardComponent,
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
   imports: [
     CommonModule,
@@ -191,7 +202,9 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -249,8 +262,13 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
     ContentViewerComponent,
-    DashboardComponent
+    DashboardComponent,
+    TocHeaderComponent,
+    RelevantContentCardComponent,
+    SbPreferencePopupComponent,
+    QrScannerIOSComponent,
+    ShowCertificateComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService]
 })
 export class ComponentsModule { }

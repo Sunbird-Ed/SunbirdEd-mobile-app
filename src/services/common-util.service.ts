@@ -110,7 +110,8 @@ export class CommonUtilService {
                     cssClass: cssToast ? cssToast : ''
                 };
 
-                const toast = await this.toastController.create(toastOptions);
+                let toast = await this.toastController.create(toastOptions);
+                toast = this.addPopupAccessibility(toast, translatedMsg);
                 await toast.present();
             }
         );
@@ -541,7 +542,10 @@ export class CommonUtilService {
     }
 
     isAccessibleForNonStudentRole(profileType) {
-        return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER || profileType === ProfileType.ADMIN;
+        return profileType === ProfileType.TEACHER ||
+            profileType === ProfileType.OTHER ||
+            profileType === ProfileType.ADMIN ||
+            profileType === ProfileType.PARENT;
     }
 
     public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
@@ -551,7 +555,7 @@ export class CommonUtilService {
     }
 
     public async showSettingsPageToast(description: string, appName: string, pageId: string, isOnboardingCompleted: boolean) {
-        const toast = await this.toastController.create({
+        let toast = await this.toastController.create({
             message: this.translateMessage(description, appName),
             cssClass: 'permissionSettingToast',
             buttons: [
@@ -565,6 +569,8 @@ export class CommonUtilService {
             duration: 3000
         });
 
+        toast = this.addPopupAccessibility(toast, this.translateMessage(description, appName));
+        toast.setAttribute
         toast.present();
 
         toast.onWillDismiss().then((res) => {
@@ -731,6 +737,45 @@ export class CommonUtilService {
         'Library-Course' : 'Home-Discover'
         };
         this.telemetryService.populateGlobalCorRelationData([correlationData]);
-      }
+    }
+
+    private getPlatformBasedActiveElement(): HTMLElement {
+        if (this.platform.is('android') && document.activeElement.shadowRoot != null) {
+            return document.activeElement.shadowRoot.childNodes[0] as HTMLElement;
+        } else {
+            return document.activeElement as HTMLElement;
+        }
+    }
+
+    private popupAccessibilityFocus(element: HTMLElement): void {
+        setTimeout(() => {
+            element.setAttribute('tabindex', '0');
+            element.focus();
+        }, 0);
+    }
+
+    public addPopupAccessibility (toast, message, id='sb-generic-toast') {
+        if(!toast || !toast.setAttribute){
+            return toast;
+        }
+
+        toast.setAttribute('aria-label', message);
+        toast.setAttribute('id', id);
+
+        const toastElement = document.getElementById(id) as HTMLElement;
+        const activeElement = this.getPlatformBasedActiveElement();
+
+        // set focus on toast
+        toast.addEventListener('ionToastWillPresent', () => {
+            this.popupAccessibilityFocus(toastElement);
+        });
+
+        // reset focus
+        toast.onDidDismiss().then(() => {
+            this.popupAccessibilityFocus(activeElement);
+        });
+
+        return toast;
+    }
 
 }

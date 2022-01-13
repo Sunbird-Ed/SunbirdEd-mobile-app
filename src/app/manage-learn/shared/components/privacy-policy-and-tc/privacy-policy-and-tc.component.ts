@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { RouterLinks } from '@app/app/app.constant';
 import { UtilityService } from '@app/services';
@@ -8,7 +8,7 @@ import { UtilityService } from '@app/services';
   templateUrl: './privacy-policy-and-tc.component.html',
   styleUrls: ['./privacy-policy-and-tc.component.scss'],
 })
-export class PrivacyPolicyAndTCComponent implements OnInit {
+export class PrivacyPolicyAndTCComponent {
   @Input() header;
   @Input() link;
   @Input() message;
@@ -22,7 +22,6 @@ export class PrivacyPolicyAndTCComponent implements OnInit {
     private utilityService: UtilityService
   ) { }
 
-  ngOnInit() { }
   closePopover() {
     let data = {
       isChecked: this.isChecked,

@@ -1,10 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule , CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
 import { CamelToTitlePipe } from './pipe/camel-to-title.pipe';
-import { UtilsService } from '../core/services/utils.service';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MultipleTypeInputComponent,
@@ -27,7 +25,9 @@ import {
   NoDataComponent,
   ChartComponent,
   CreateTaskFormComponent,
-  PrivacyPolicyAndTCComponent
+  PrivacyPolicyAndTCComponent,
+  ProjectMetadataCardComponent,
+  ProjectTaskListComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -65,7 +65,8 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
-import { GenericPopUpService } from './TC-generic.popupService';
+import { GenericPopUpService } from './generic.popup';
+import { HTTP } from '@ionic-native/http/ngx';
 
 
 @NgModule({
@@ -114,7 +115,9 @@ import { GenericPopUpService } from './TC-generic.popupService';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -163,7 +166,9 @@ import { GenericPopUpService } from './TC-generic.popupService';
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   providers: [
     Camera,
@@ -176,11 +181,12 @@ import { GenericPopUpService } from './TC-generic.popupService';
     Diagnostic,
     Media,
     CommonModule,
-    HttpClientModule, //TODO:remove after api integration
+    HttpClientModule, 
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,
-    GenericPopUpService
+    GenericPopUpService,
+    HTTP
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -197,7 +203,9 @@ import { GenericPopUpService } from './TC-generic.popupService';
     SurveyMsgComponent,
     CreateTaskFormComponent,
     RemarksModalComponent,
-    PrivacyPolicyAndTCComponent
+    PrivacyPolicyAndTCComponent,
+    ProjectMetadataCardComponent,
+    ProjectTaskListComponent
   ],
   
 })

@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'SCAN_QR_CODE' | translate }}</ion-title>
+    <ion-buttons class="sb-hamburger" slot="start">
+      <ion-button icon-only (click)="closeModal()">
+        <ion-icon class="arrow-icon" role="button" aria-label="back" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content no-scroll class="qrscanner" fullscreen>
+  <div class="ui-container" style="position: relative"></div>
+  <div class="ui-content">
+    <div class="text-center">{{ 'SCAN_QR_INSTRUCTION' | translate }}</div>
+    <img class="qr-img" src="assets/imgs/qr_with_book.svg" alt="qr_with_book">
+  </div>
+  <div class="qrscanner-area">
+  </div>
+</ion-content>

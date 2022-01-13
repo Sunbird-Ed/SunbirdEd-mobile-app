@@ -130,7 +130,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private platform: Platform,
+    public platform: Platform,
     private zone: NgZone,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
@@ -292,6 +292,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((data: Course[]) => {
         if (data) {
+          data.sort((a, b) => (a.enrolledDate! > b.enrolledDate! ? -1 : 1));
           this.searchList = data;
           this.loadMoreBtn = false;
           for (const course of data) {
@@ -308,7 +309,7 @@ export class ViewMoreActivityComponent implements OnInit {
 
   getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
-    this.contentService.getContentDetails({ contentId: identifier }).toPromise()
+    this.contentService.getContentDetails({ contentId: identifier, objectType: content.objectType }).toPromise()
       .then((data: Content) => {
         if (Boolean(data.isAvailableLocally)) {
           const contentDetailsParams: NavigationExtras = {

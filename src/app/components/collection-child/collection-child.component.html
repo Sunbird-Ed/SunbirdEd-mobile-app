@@ -26,7 +26,7 @@
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
           <div class="etb-card-item-content">
             <div class="image-position">
-              <img class="content-icon" alt=""
+              <img class="content-icon" alt="content-logo" aria-hidden="true"
                    [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) ||
                commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
               <span class="icon-position" *ngIf="childData?.isAvailableLocally">
@@ -39,7 +39,7 @@
           <div class="etb-card-item-play-container">
             <ion-button class="play-button" shape="round" fill="outline" size="small"
                         (click)="$event.stopPropagation(); $event.preventDefault(); playContent(childData)">
-              <img style="display: inline-block; width: 16px" src="./assets/imgs/play.svg" alt="">
+              <img style="display: inline-block; width: 16px" role="button" src="./assets/imgs/play.svg" alt="play">
               <span class="content-playbutton">{{'PLAY' | translate}}</span>
             </ion-button>
           </div>

@@ -1,9 +1,5 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
-import { TelemetryObject } from 'sunbird-sdk';
-
-import { ProfileConstants } from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';

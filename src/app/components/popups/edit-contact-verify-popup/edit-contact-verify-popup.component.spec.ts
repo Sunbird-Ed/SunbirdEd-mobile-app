@@ -64,7 +64,7 @@ describe('EditContactVerifyPopupComponent', () => {
             mockPopoverCtrl as PopoverController,
             mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
-            mockMenuController as MenuController,
+            mockMenuController as MenuController
         );
     });
 
@@ -89,7 +89,6 @@ describe('EditContactVerifyPopupComponent', () => {
         } as any;
 
         // act
-        editContactVerifyPopupComponent.ngOnInit();
         editContactVerifyPopupComponent.ionViewWillEnter();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(false);

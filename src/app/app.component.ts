@@ -48,7 +48,6 @@ import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 declare const cordova;
 
@@ -82,6 +81,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   eventSubscription: Subscription;
   isTimeAvailable = false;
   isOnBoardingCompleted: boolean;
+  public swipeGesture = this.platform.is('ios')? false : true;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -124,7 +124,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
     private mlloader: LoaderService,
-    private googlePlusLogin: GooglePlus,
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -144,6 +143,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;
+          window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
         });
       this.checkForExperiment();
       this.receiveNotification();
@@ -178,6 +178,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
       this.statusBar.styleBlackTranslucent();
+      if (this.platform.is('ios')) {
+        this.statusBar.styleDefault();
+        if (window['Keyboard']) {
+          window['Keyboard'].hideFormAccessoryBar(false);
+        }
+      }
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
       this.getCampaignParameter();
@@ -201,9 +207,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
-    })
-    cordova.plugins.notification.local.on("click", (notification) => {
-      var objects = notification.data;
+    });
+    cordova.plugins.notification.local.on('click', (notification) => {
       // My data is now available in objects.heading, objects.subheading and so on.
       this.segmentationTagService.localNotificationId = notification.id;
       this.segmentationTagService.handleLocalNotificationTap();
@@ -214,7 +219,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       const corRelationList: Array<CorrelationData> = [];
       this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
 
-      corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      corRelationList.push({
+        id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + ''
+        : '', type: CorReleationDataType.NOTIFICATION_ID
+      });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
@@ -226,9 +234,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
+
   }
 
-  // TODO: make this as private
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
@@ -329,17 +337,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (codePush === null) {
       return;
     }
-    /**
-     * TODO
-     * call the update
-     * if update is set
-     * then check for default-deplyment-key, if matches
-     * then remove emperiment_key and emperiemtn_app_version
-     * if not then
-     * then set emperiment_key and experiemnt_app_version
-     * if update is null
-     * then remove emperiment_key and emperiemtn_app_version
-     */
+
     codePush.getCurrentPackage((update) => {
       if (update) {
         this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
@@ -533,6 +531,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         this.rootPageDisplayed = event.url.indexOf('tabs') !== -1;
+        if (this.platform.is('ios')) {
+          this.swipeGesture = !this.rootPageDisplayed;
+        }
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
@@ -544,7 +545,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          if (this.platform.is('ios')) {
+            this.headerService.showHeaderWithHomeButton();
+          } else {
+            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          }
         }
       } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
         this.headerService.sidebarEvent('back');
@@ -575,10 +580,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.translate.onLangChange.subscribe((params) => {
       if (params.lang === 'ur') {
-        // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'rtl';
       } else {
-        // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'ltr';
       }
     });
@@ -701,8 +704,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async makeEntryInSupportFolder() {
-    return new Promise((resolve => {
-      (window as any).supportfile.makeEntryInSunbirdSupportFile((result) => {
+    return new Promise<void>((resolve => {
+      (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
       }, () => {
@@ -819,7 +822,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            if (this.platform.is('ios')) {
+              this.headerService.showHeaderWithHomeButton();
+            } else {
+              this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+            }
         } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
           this.headerService.sidebarEvent($event);
         } else {
@@ -875,27 +882,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
       case 'LOGOUT':
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        } else {
-          if (await this.preferences.getBoolean(PreferenceKey.IS_GOOGLE_LOGIN).toPromise()) {
-            try {
-              await this.googlePlusLogin.disconnect();
-            } catch (e) {
-              const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
-              await this.googlePlusLogin.trySilentLogin({
-                webClientId: clientId.value
-              }).then(async () => {
-                await this.googlePlusLogin.disconnect();
-              }).catch((err) => {
-                console.log(err);
-              });
-            }
-            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false);
-          }
-          this.logoutHandlerService.onLogout();
-          this.localStorage.deleteAllStorage();
-        }
+        this.logoutHandlerService.onLogout();
         break;
 
       case 'UPDATE':
@@ -923,6 +910,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.router.navigate([RouterLinks.SIGN_IN]);
           }
         }
+        break;
+      case 'MLREPORTS':
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
         break;
     }
   }
@@ -969,8 +959,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.HOME,
           PageId.HOME,
           undefined,
-          utmTelemetry,
-          undefined);
+          utmTelemetry);
         this.utilityService.clearUtmInfo();
       }
     })

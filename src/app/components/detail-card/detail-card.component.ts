@@ -1,15 +1,14 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import {Content, DownloadTracking} from 'sunbird-sdk';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Content, DownloadTracking } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { Observable } from 'rxjs';
-
 
 @Component({
   selector: 'app-detail-card',
   templateUrl: './detail-card.component.html',
   styleUrls: ['./detail-card.component.scss'],
 })
-export class DetailCardComponent implements OnInit {
+export class DetailCardComponent {
   @Input() contentDetail: Content;
   @Input() defaultAppIcon: string;
   @Input() localImage: string;
@@ -22,11 +21,7 @@ export class DetailCardComponent implements OnInit {
   @Output() shareEvent = new EventEmitter();
   text: string;
 
-  constructor(public commonUtil: CommonUtilService) {
-  }
-
-  ngOnInit() {
-  }
+  constructor(public commonUtil: CommonUtilService) {}
 
   downloadAllContents() {
     this.downloadAllContent.emit();

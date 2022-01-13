@@ -1,14 +1,13 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { ModalController, AlertController, PopoverController } from '@ionic/angular';
+import { ModalController, AlertController, PopoverController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategorySelectComponent } from '../category-select/category-select.component';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DbService, LocalStorageService, ToastService, UtilsService } from '../../core';
+import { DbService, LocalStorageService, statusType, ToastService, UtilsService } from '../../core';
 import { localStorageConstants } from '../../core/constants/localStorageConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
@@ -29,6 +28,7 @@ export class CreateProjectPage implements OnInit {
   createProjectAlert;
   hasAcceptedTAndC: boolean;
   project;
+  projectCopy;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
 
@@ -79,8 +79,6 @@ export class CreateProjectPage implements OnInit {
     let emojiRegex: any = /(?:0\u20E3|1\u20E3|2\u20E3|3\u20E3|4\u20E3|5\u20E3|6\u20E3|7\u20E3|8\u20E3|9\u20E3|#\u20E3|\*\u20E3|\uD83C(?:\uDDE6\uD83C(?:\uDDE8|\uDDE9|\uDDEA|\uDDEB|\uDDEC|\uDDEE|\uDDF1|\uDDF2|\uDDF4|\uDDF6|\uDDF7|\uDDF8|\uDDF9|\uDDFA|\uDDFC|\uDDFD|\uDDFF)|\uDDE7\uD83C(?:\uDDE6|\uDDE7|\uDDE9|\uDDEA|\uDDEB|\uDDEC|\uDDED|\uDDEE|\uDDEF|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF6|\uDDF7|\uDDF8|\uDDF9|\uDDFB|\uDDFC|\uDDFE|\uDDFF)|\uDDE8\uD83C(?:\uDDE6|\uDDE8|\uDDE9|\uDDEB|\uDDEC|\uDDED|\uDDEE|\uDDF0|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF5|\uDDF7|\uDDFA|\uDDFB|\uDDFC|\uDDFD|\uDDFE|\uDDFF)|\uDDE9\uD83C(?:\uDDEA|\uDDEC|\uDDEF|\uDDF0|\uDDF2|\uDDF4|\uDDFF)|\uDDEA\uD83C(?:\uDDE6|\uDDE8|\uDDEA|\uDDEC|\uDDED|\uDDF7|\uDDF8|\uDDF9|\uDDFA)|\uDDEB\uD83C(?:\uDDEE|\uDDEF|\uDDF0|\uDDF2|\uDDF4|\uDDF7)|\uDDEC\uD83C(?:\uDDE6|\uDDE7|\uDDE9|\uDDEA|\uDDEB|\uDDEC|\uDDED|\uDDEE|\uDDF1|\uDDF2|\uDDF3|\uDDF5|\uDDF6|\uDDF7|\uDDF8|\uDDF9|\uDDFA|\uDDFC|\uDDFE)|\uDDED\uD83C(?:\uDDF0|\uDDF2|\uDDF3|\uDDF7|\uDDF9|\uDDFA)|\uDDEE\uD83C(?:\uDDE8|\uDDE9|\uDDEA|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF6|\uDDF7|\uDDF8|\uDDF9)|\uDDEF\uD83C(?:\uDDEA|\uDDF2|\uDDF4|\uDDF5)|\uDDF0\uD83C(?:\uDDEA|\uDDEC|\uDDED|\uDDEE|\uDDF2|\uDDF3|\uDDF5|\uDDF7|\uDDFC|\uDDFE|\uDDFF)|\uDDF1\uD83C(?:\uDDE6|\uDDE7|\uDDE8|\uDDEE|\uDDF0|\uDDF7|\uDDF8|\uDDF9|\uDDFA|\uDDFB|\uDDFE)|\uDDF2\uD83C(?:\uDDE6|\uDDE8|\uDDE9|\uDDEA|\uDDEB|\uDDEC|\uDDED|\uDDF0|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF5|\uDDF6|\uDDF7|\uDDF8|\uDDF9|\uDDFA|\uDDFB|\uDDFC|\uDDFD|\uDDFE|\uDDFF)|\uDDF3\uD83C(?:\uDDE6|\uDDE8|\uDDEA|\uDDEB|\uDDEC|\uDDEE|\uDDF1|\uDDF4|\uDDF5|\uDDF7|\uDDFA|\uDDFF)|\uDDF4\uD83C\uDDF2|\uDDF5\uD83C(?:\uDDE6|\uDDEA|\uDDEB|\uDDEC|\uDDED|\uDDF0|\uDDF1|\uDDF2|\uDDF3|\uDDF7|\uDDF8|\uDDF9|\uDDFC|\uDDFE)|\uDDF6\uD83C\uDDE6|\uDDF7\uD83C(?:\uDDEA|\uDDF4|\uDDF8|\uDDFA|\uDDFC)|\uDDF8\uD83C(?:\uDDE6|\uDDE7|\uDDE8|\uDDE9|\uDDEA|\uDDEC|\uDDED|\uDDEE|\uDDEF|\uDDF0|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF7|\uDDF8|\uDDF9|\uDDFB|\uDDFD|\uDDFE|\uDDFF)|\uDDF9\uD83C(?:\uDDE6|\uDDE8|\uDDE9|\uDDEB|\uDDEC|\uDDED|\uDDEF|\uDDF0|\uDDF1|\uDDF2|\uDDF3|\uDDF4|\uDDF7|\uDDF9|\uDDFB|\uDDFC|\uDDFF)|\uDDFA\uD83C(?:\uDDE6|\uDDEC|\uDDF2|\uDDF8|\uDDFE|\uDDFF)|\uDDFB\uD83C(?:\uDDE6|\uDDE8|\uDDEA|\uDDEC|\uDDEE|\uDDF3|\uDDFA)|\uDDFC\uD83C(?:\uDDEB|\uDDF8)|\uDDFD\uD83C\uDDF0|\uDDFE\uD83C(?:\uDDEA|\uDDF9)|\uDDFF\uD83C(?:\uDDE6|\uDDF2|\uDDFC)))|[\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2648-\u2653\u2660\u2663\u2665\u2666\u2668\u267B\u267F\u2692-\u2694\u2696\u2697\u2699\u269B\u269C\u26A0\u26A1\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD79\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED0\uDEE0-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3]|\uD83E[\uDD10-\uDD18\uDD80-\uDD84\uDDC0]/g;
     if (event.detail) {
       let str = event.detail.data;
-      // str = str.replace(new RegExp(this.ranges.join('|'), 'g'), '');
-      // let lastText: any = str.length - 1;
       if (str.match(emojiRegex, '')) {
         str = str.slice(0, -1);
         this.projectForm.value[content.field] = this.projectForm.value[content.field].slice(0, -1);
@@ -115,6 +113,7 @@ export class CreateProjectPage implements OnInit {
     this.db.query({ _id: this.parameters.projectId }).then(
       (success) => {
         this.project = success.docs.length ? success.docs[0] : {};
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         if (this.project.categories.length) {
           this.project.categories.forEach((element) => {
             element.isChecked = true;
@@ -155,7 +154,7 @@ export class CreateProjectPage implements OnInit {
         res.taskData.forEach((element) => {
           if (element.validation) {
             if (element.validation.required) {
-              (element.validation.name = 'required'), validationsArray.push(Validators.required);
+              (element.validation.name = 'required'),  validationsArray.push(Validators.required);
             }
             controls[element.field] = new FormControl('', validationsArray);
           }
@@ -177,7 +176,7 @@ export class CreateProjectPage implements OnInit {
         text = data;
       });
     const alertPopup = await this.alertPopup.create({
-      cssClass: 'my-custom-class',
+      cssClass:'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -208,7 +207,7 @@ export class CreateProjectPage implements OnInit {
         text = data;
       });
     const deleteAlert = await this.alert.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'central-alert',
       // header: text['LABELS.DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type + ' ?',
       buttons: [
@@ -319,7 +318,6 @@ export class CreateProjectPage implements OnInit {
       data.isEdit = true;
       data.isDeleted = true;
       const modifiedData = this.utilsService.setStatusForProject(data);
-      // this.db.createPouchDB();
       this.db
         .create(modifiedData)
         .then((success) => {
@@ -329,8 +327,7 @@ export class CreateProjectPage implements OnInit {
               queryParams: { availableInLocal: true, isCreate: true }, replaceUrl: true,
             })
           );
-        })
-        .catch((error) => { });
+        });
     } else {
       this.button == 'FRMELEMNTS_BTN_SAVE_EDITS'
         ? this.router.navigate(['menu/project-operation', this.projectId], {
@@ -345,13 +342,16 @@ export class CreateProjectPage implements OnInit {
     this.project.title = data.title;
     this.project.description = data.description;
     this.project.categories = data.categories;
-    this.project.isEdit = true;
+    if (JSON.stringify(this.project) !== JSON.stringify(this.projectCopy)) {
+      this.project.isEdit = true;
+      this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+      this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
+    }
     this.db
       .update(this.project)
       .then((success) => {
         this.location.back();
-      })
-      .catch((error) => { });
+      });
   }
 
   async createProjectModal(header, msg, button, button1) {
@@ -360,7 +360,7 @@ export class CreateProjectPage implements OnInit {
       texts = data;
     })
     this.createProjectAlert = await this.alert.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'background-theme-color central-alert',
       header: texts[header],
       message: texts[msg],
       backdropDismiss: false,

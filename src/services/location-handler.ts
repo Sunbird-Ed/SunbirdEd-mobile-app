@@ -30,7 +30,7 @@ export class LocationHandler {
             locationResult = await this.getLocation(PreferenceKey.IP_LOCATION);
         }
 
-        return locationResult;
+        return locationResult || [];
 
     }
 
@@ -80,24 +80,26 @@ export class LocationHandler {
             }
 
         } else {
-            const state = await this.getLocationDetails(Location.TYPE_STATE, location.state);
-            const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
-            locationResult.push(state);
-            locationResult.push(district);
-            let block, cluster, school;
-            if (location.block) {
-                block = await this.getLocationDetails(Location.TYPE_BLOCK, location.block, district.id);
-                locationResult.push(block);
-            }
+            if (location && location.state) {
+                const state = await this.getLocationDetails(Location.TYPE_STATE, location.state);
+                const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
+                locationResult.push(state);
+                locationResult.push(district);
+                let block, cluster, school;
+                if (location.block) {
+                    block = await this.getLocationDetails(Location.TYPE_BLOCK, location.block, district.id);
+                    locationResult.push(block);
+                }
 
-            if (location.block && location.cluster) {
-                cluster = await this.getLocationDetails(Location.TYPE_CLUSTER, location.cluster, block.id);
-                locationResult.push(cluster);
-            }
+                if (location.block && location.cluster) {
+                    cluster = await this.getLocationDetails(Location.TYPE_CLUSTER, location.cluster, block.id);
+                    locationResult.push(cluster);
+                }
 
-            if (location.block && location.cluster && location.school) {
-                school = await this.getLocationDetails(Location.TYPE_SCHOOL, location.school, cluster.id);
-                locationResult.push(school);
+                if (location.block && location.cluster && location.school) {
+                    school = await this.getLocationDetails(Location.TYPE_SCHOOL, location.school, cluster.id);
+                    locationResult.push(school);
+                }
             }
         }
         return locationResult;
@@ -171,5 +173,39 @@ export class LocationHandler {
     async isIpLocationAvailable(): Promise<boolean> {
         const deviceLoc = await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise();
         return !!deviceLoc;
+    }
+
+    async getLocationList(request): Promise<LocationSearchResult[]> {
+        const locationType = request.filters.type;
+        const parentLocationId = request.filters.parentId;
+        const locationFilter = {
+            type: locationType,
+            ...((parentLocationId) ? { parentId: parentLocationId } : {})
+        };
+        let locations: LocationSearchResult[];
+        if (locationType === Location.TYPE_SCHOOL) {
+            const orgSearchRequest = {
+                filters: {
+                  'orgLocation.id': parentLocationId,
+                  isSchool: true
+                }
+              };
+            let schoolDetails = [];
+            await this.frameworkService.searchOrganization(orgSearchRequest).toPromise().then((data) => {
+                schoolDetails = data.content.map((org: Organization) => {
+                    if (org && org.externalId) {
+                        return {code: org.externalId, name: org.orgName , type: Location.TYPE_SCHOOL, id: org.externalId};
+                    }
+                });
+            });
+            locations = schoolDetails;
+        } else {
+            const req: LocationSearchCriteria = {
+                from: CachedItemRequestSourceFrom.CACHE,
+                filters: locationFilter
+            };
+            locations = await this.profileService.searchLocation(req).toPromise();
+        }
+        return locations;
     }
 }

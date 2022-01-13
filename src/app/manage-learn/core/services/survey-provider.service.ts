@@ -10,6 +10,8 @@ import { UpdateLocalSchoolDataService } from './update-local-school-data.service
 import { SurveyMsgComponent } from '../../shared/components/survey-msg/survey-msg.component';
 import { storageKeys } from '../../storageKeys';
 import { DhitiApiService } from './dhiti-api.service';
+import * as moment from 'moment';
+import { CommonUtilService } from '@app/services';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +27,8 @@ export class SurveyProviderService {
     private router: Router,
     private modalCtrl: ModalController,
     private dhiti: DhitiApiService,
-    private toast: ToastController
+    private toast: ToastController,
+    private commonUtilService: CommonUtilService
   ) {}
 
   // get all list
@@ -48,7 +51,7 @@ export class SurveyProviderService {
   async getDetailsByLink(link): Promise<any> {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_LINK + link,
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_ID + '/' + link,
       payload: payload,
     };
 
@@ -62,19 +65,6 @@ export class SurveyProviderService {
         }
       );
     });
-    // TODO:Remove
-    // const url = AppConfigs.surveyFeedback.getDetailsByLink + link;
-    // return new Promise((resolve, reject) => {
-    //   this.apiProvider.httpGet(
-    //     url,
-    //     (success) => {
-    //       resolve(success);
-    //     },
-    //     (err) => {
-    //       reject(err);
-    //     }
-    //   );
-    // });
   }
 
   async getDetailsById(surveyId, solutionId): Promise<any> {
@@ -99,20 +89,6 @@ export class SurveyProviderService {
         }
       );
     });
-
-    // return this.httpClient.get('assets/dummy/surveydetails.json').toPromise();
-    //  const url = AppConfigs.surveyFeedback.getDetailsById + surveyId;
-    //  return new Promise((resolve, reject) => {
-    //    this.apiProvider.httpGet(
-    //      url,
-    //      (success) => {
-    //        resolve(success);
-    //      },
-    //      (err) => {
-    //        reject(err);
-    //      }
-    //    );
-    //  });
   }
 
   storeSurvey(submissionId, survey) {
@@ -140,9 +116,8 @@ export class SurveyProviderService {
   }
 
   async showMsg(option, popToRoot = false) {
-    // popToRoot ? this.app.getRootNav().popToRoot() : null;
     popToRoot ? this.router.navigate(['']) : null;
-    const modal =await  this.modalCtrl.create({
+    const modal = await this.modalCtrl.create({
       component: SurveyMsgComponent,
       componentProps: { option: option },
     });
@@ -150,15 +125,14 @@ export class SurveyProviderService {
   }
 
   viewAllAns(payload) {
-    this.loader.startLoader()
-    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.GET_ALL_ANSWERS 
-      const config = {
-        url: url,
-        payload: payload,
-      };
+    this.loader.startLoader();
+    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.GET_ALL_ANSWERS;
+    const config = {
+      url: url,
+      payload: payload,
+    };
     return new Promise((resolve, reject) => {
-      this.dhiti.post(
-       config).subscribe(
+      this.dhiti.post(config).subscribe(
         (success) => {
           this.loader.stopLoader();
           resolve(success);
@@ -167,8 +141,26 @@ export class SurveyProviderService {
           this.toast.create(error.message);
           this.loader.stopLoader();
           reject();
-        },
+        }
       );
     });
+  }
+
+  createExpiryMsg(survey) {
+    const format = 'Do MMM YY';
+    const today = Date.now();
+    const expiryDate:any = new Date(survey.endDate);
+    const diffTime = expiryDate - today;
+    const diff = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diff == 1)
+      return (survey.generatedExpMsg = this.commonUtilService.translateMessage('FRMELEMENTS_MSG_EXPIRE_IN_ONE_DAY'));
+    if (diff == 2)
+      return (survey.generatedExpMsg = this.commonUtilService.translateMessage('FRMELEMENTS_MSG_EXPIRE_IN_TWO_DAY'));
+    if (diff > 2)
+      return (survey.generatedExpMsg =
+        this.commonUtilService.translateMessage('FRMELEMENTS_MSG_VALID_TILL') + ' ' + moment(survey.endDate).format(format));
+    if (diff <= 0)
+      return (survey.generatedExpMsg =
+        this.commonUtilService.translateMessage('FRMELEMENTS_MSG_EXPIRED_ON') + ' ' + moment(survey.endDate).format(format));
   }
 }

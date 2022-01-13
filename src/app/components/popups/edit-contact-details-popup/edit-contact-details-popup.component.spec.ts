@@ -91,7 +91,6 @@ describe('EditContactDetailsPopupComponent', () => {
 
         } as any;
         // act
-        editContactDetailsPopupComponent.ngOnInit();
         editContactDetailsPopupComponent.initEditForm();
         editContactDetailsPopupComponent.ionViewWillEnter();
         // assert
@@ -110,9 +109,10 @@ describe('EditContactDetailsPopupComponent', () => {
     it('should hide the keyboard when cancel is invoked', () => {
         // arrange
         // act
-        editContactDetailsPopupComponent.cancel({});
+        editContactDetailsPopupComponent.cancel();
         // assert
-        expect(mockKeyBoard.hide).toHaveBeenCalled();
+        expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ isEdited: false });
+
     });
 
     it('should enable MenuDrawer and unsubscribe back function', () => {

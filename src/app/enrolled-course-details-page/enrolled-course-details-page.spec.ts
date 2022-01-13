@@ -76,7 +76,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockCourseUtilService: Partial<CourseUtilService> = {
         showCredits: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
@@ -186,6 +188,9 @@ describe('EnrolledCourseDetailsPage', () => {
         jest.resetAllMocks();
 
         mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        enrolledCourseDetailsPage.accessDiscussionComponent = {
+            fetchForumIds: jest.fn()
+        };
     });
 
     describe('enrolledCourseDetailsPage', () => {
@@ -604,22 +609,6 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('subscribeUtilityEvents()', () => {
-        it('#subscribeUtilityEvents should handle error condition', (done) => {
-            // arrange
-            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
-            mockEvents.subscribe = jest.fn(() => ({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
-            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
-            // assert
-            enrolledCourseDetailsPage.subscribeUtilityEvents();
-            // act
-            setTimeout(() => {
-                expect(enrolledCourseDetailsPage.baseUrl).toBe('');
-                expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
 
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
             // arrange
@@ -1350,9 +1339,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     InteractType.TOUCH,
                     'download-all-button-clicked',
                     Environment.HOME,
-                    PageId.COURSE_DETAIL,
-                    undefined,
-                    undefined,
+                    PageId.COURSE_DETAIL
                 );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();
@@ -1399,7 +1386,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
                                     btntext: 'sample-message',
 
                                 },
@@ -1475,7 +1462,7 @@ describe('EnrolledCourseDetailsPage', () => {
                         componentProps: {
                             actionsButtons: [
                                 {
-                                    btnClass: 'popover-color',
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
                                     btntext: 'sample-message',
 
                                 },
@@ -2042,8 +2029,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
-                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
-                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
@@ -2771,7 +2756,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: jest.fn(() => Promise.resolve({}))
             } as any)));
             mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((x, callback) => callback())
+                subscribeWithPriority: jest.fn((x, callback) => callback()),
+                is: jest.fn()
             };
             enrolledCourseDetailsPage.isConsentPopUp = true;
             // act
@@ -2779,6 +2765,27 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.goBack).not.toBeCalled();
 
+        });
+    });
+
+    describe('navigateToDashboard', () => {
+        it('should navigate to dashboard', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                identifier: 'some-id'
+            } as any
+            enrolledCourseDetailsPage.activityData = {
+                activity: {
+                    name: 'some-name'
+                },
+                group: {
+                    id: 'some-id'
+                }
+            }as any
+            // act
+            enrolledCourseDetailsPage.navigateToDashboard()
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled()
         });
     });
 });

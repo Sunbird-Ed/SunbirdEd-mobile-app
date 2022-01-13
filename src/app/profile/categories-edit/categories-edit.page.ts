@@ -79,6 +79,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   hasFilledLocation = false;
   public supportedProfileAttributes: { [key: string]: string } = {};
   userType: string;
+  shouldUpdatePreference: boolean;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -157,6 +158,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     } else {
       this.showOnlyMandatoryFields = false;
     }
+    this.shouldUpdatePreference = extrasState && extrasState.shouldUpdatePreference ? extrasState.shouldUpdatePreference : false;
     this.initializeForm();
   }
 
@@ -189,7 +191,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
     if (this.isRootPage) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
-        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        if (this.platform.is('ios')) {
+          this.headerService.showHeaderWithHomeButton();
+        } else {
+          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        }
       });
     }
   }
@@ -293,7 +299,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             this.mediumControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
           this.loader.dismiss();
@@ -463,7 +468,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.events.publish('loggedInProfile:update', req.framework);
         const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         await this.refreshSegmentTags();
-        if (this.showOnlyMandatoryFields) {
+        if (this.showOnlyMandatoryFields || this.shouldUpdatePreference) {
           const reqObj: ServerProfileDetailsRequest = {
             userId: this.profile.uid,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
@@ -473,20 +478,25 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             .then(updatedProfile => {
                this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then(async () => {
-                  initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation || isSSOUser) {
-                    if (!isSSOUser) {
-                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
-                    }
-                    this.router.navigate([RouterLinks.TABS]);
-                    this.externalIdVerificationService.showExternalIdVerificationPopup();
+                  if (this.shouldUpdatePreference) {
+                    this.location.back();
                   } else {
-                    const navigationExtras: NavigationExtras = {
-                      state: {
-                        isShowBackButton: false
+                    initTabs(this.container, LOGIN_TEACHER_TABS);
+                    if (this.hasFilledLocation || isSSOUser) {
+                      if (!isSSOUser) {
+                        this.appGlobalService.showYearOfBirthPopup(updatedProfile);
                       }
-                    };
-                    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                      this.router.navigate([RouterLinks.TABS]);
+                      this.events.publish('update_header');
+                      this.externalIdVerificationService.showExternalIdVerificationPopup();
+                    } else {
+                      const navigationExtras: NavigationExtras = {
+                        state: {
+                          isShowBackButton: false
+                        }
+                      };
+                      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                    }
                   }
                 });
             }).catch(() => {
@@ -496,6 +506,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                   this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
                 }
                 this.router.navigate([RouterLinks.TABS]);
+                this.events.publish('update_header');
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 const navigationExtras: NavigationExtras = {
@@ -525,20 +536,20 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
       .then(updatedProfile => {
          // ******* Segmentation
-         var frameworkData = [];
-         Object.keys(updatedProfile.framework).forEach((key) => {
-          if (key !== 'id' && Array.isArray(updatedProfile.framework[key])) {
-            frameworkData.push(updatedProfile.framework[key].map( x => x.replace(/\s/g, '').toLowerCase()));
+        let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
+        Object.keys(segmentDetails).forEach((key) => {
+          if (key !== 'id' && Array.isArray(segmentDetails[key])) {
+            segmentDetails[key] = segmentDetails[key].map(x => x.replace(/\s/g, '').toLowerCase());
           }
-         });
-         window['segmentation'].SBTagService.pushTag(frameworkData, TagPrefixConstants.USER_ATRIBUTE, true);
-         let userLocation = [];
-         (updatedProfile['userLocations'] || []).forEach(element => {
-           userLocation.push({ name: element.name, code: element.code });
-         });
-         window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
-         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-         this.segmentationTagService.evalCriteria();
+        });
+        window['segmentation'].SBTagService.pushTag(segmentDetails, TagPrefixConstants.USER_ATRIBUTE, true);
+        let userLocation = [];
+        (updatedProfile['userLocations'] || []).forEach(element => {
+          userLocation.push({ name: element.name, code: element.code });
+        });
+        window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+        window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
+        this.segmentationTagService.evalCriteria();
       });
   }
 
@@ -607,5 +618,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       }
     });
     return subscriptionArray;
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

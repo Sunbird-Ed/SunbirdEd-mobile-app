@@ -1,6 +1,6 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { ProfileConstants } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { Component, Inject, Input } from '@angular/core';
+import { ProfileConstants, OTPTemplates } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services/';
 import { MenuController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
@@ -9,7 +9,7 @@ import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest }
   templateUrl: './edit-contact-verify-popup.component.html',
   styleUrls: ['./edit-contact-verify-popup.component.scss'],
 })
-export class EditContactVerifyPopupComponent implements OnInit {
+export class EditContactVerifyPopupComponent {
   /**
    * Key may be phone or email depending on the verification flow from which it is called
    */
@@ -37,10 +37,8 @@ export class EditContactVerifyPopupComponent implements OnInit {
     this.title = this.navParams.get('title');
     this.description = this.navParams.get('description');
     this.type = this.navParams.get('type');
-
   }
 
-  ngOnInit() { }
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
@@ -57,13 +55,17 @@ export class EditContactVerifyPopupComponent implements OnInit {
         req = {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_PHONE,
-          otp: this.otp
+          otp: this.otp,
+          ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+          { userId: this.userId })
         };
       } else {
         req = {
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_EMAIL,
-          otp: this.otp
+          otp: this.otp,
+          ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+          { userId: this.userId })
         };
       }
       this.profileService.verifyOTP(req).toPromise()
@@ -98,12 +100,16 @@ export class EditContactVerifyPopupComponent implements OnInit {
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
         req = {
           key: this.key,
-          type: ProfileConstants.CONTACT_TYPE_PHONE
+          type: ProfileConstants.CONTACT_TYPE_PHONE,
+          ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+          { userId: this.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       } else {
         req = {
           key: this.key,
-          type: ProfileConstants.CONTACT_TYPE_EMAIL
+          type: ProfileConstants.CONTACT_TYPE_EMAIL,
+          ...( this.key && this.key.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+          { userId: this.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       }
       let loader = await this.commonUtilService.getLoader();

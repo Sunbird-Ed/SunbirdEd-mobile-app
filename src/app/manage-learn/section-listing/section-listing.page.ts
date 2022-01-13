@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
@@ -7,14 +7,13 @@ import { CommonUtilService } from '@app/services';
 import { Network } from '@ionic-native/network/ngx';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-// import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 
 @Component({
   selector: 'app-section-listing',
   templateUrl: './section-listing.page.html',
   styleUrls: ['./section-listing.page.scss'],
 })
-export class SectionListingPage implements OnInit {
+export class SectionListingPage {
   sectionData: any;
   currentEvidence: any;
   evidenceSections: any;
@@ -27,7 +26,6 @@ export class SectionListingPage implements OnInit {
   allAnsweredForEvidence: boolean;
   networkAvailable: boolean;
   constructor(
-    // private observationSrvc: ObservationService,
     private localStorage: LocalStorageService,
     private utils: UtilsService,
     private updateTracker: UpdateTrackerService,
@@ -48,7 +46,7 @@ export class SectionListingPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+
 
   ionViewWillEnter() {
     this.localStorage
@@ -65,8 +63,7 @@ export class SectionListingPage implements OnInit {
         this.evidenceSections = this.currentEvidence['sections'];
         this.selectedEvidenceName = this.currentEvidence['name'];
         this.checkForEvidenceCompletion();
-      })
-      .catch((error) => {});
+      });
   }
 
   checkForEvidenceCompletion(): void {
@@ -140,7 +137,6 @@ export class SectionListingPage implements OnInit {
             text: translateObject['FRMELEMNTS_LBL_NO'],
             role: 'cancel',
             handler: () => {
-              //console.log('Cancel clicked');
             },
           },
           {
@@ -163,7 +159,6 @@ export class SectionListingPage implements OnInit {
         name: this.entityName,
         selectedEvidenceIndex: this.selectedEvidenceIndex,
       };
-      // this.navCtrl.push(ImageListingPage, params);
       this.router.navigate([RouterLinks.IMAGE_LISTING], { queryParams: params });
     } else {
       this.translate.get('toastMessage.connectToInternet').subscribe((translations) => {
@@ -182,10 +177,6 @@ export class SectionListingPage implements OnInit {
   }
 
   previewSubmission() {
-    // this.submissionId = this.navParams.get('_id');
-    // this.entityName = this.navParams.get('name');
-    // this.selectedEvidenceIndex = this.navParams.get('selectedEvidence');
-    // this.navCtrl.push(PreviewPage, { _id: this.submissionId, name: this.entityName, selectedEvidence: this.selectedEvidenceIndex })
 
     this.router.navigate([RouterLinks.SUBMISSION_PREVIEW], {
       queryParams: {

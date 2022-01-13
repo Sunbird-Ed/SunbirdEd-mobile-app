@@ -21,7 +21,7 @@ import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { VideoConfig } from './faq-help-data';
@@ -151,8 +151,7 @@ export class FaqHelpPage implements OnInit {
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
         faqRequest.faqUrl = res.value;
-      }).catch(err => {
-      });
+      })
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
     if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -182,7 +181,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   async ionViewDidLeave() {
-    (<any>window).supportfile.removeFile(
+    (<any>window).sbutility.removeFile(
       result => ({}),
       error => {
         console.error('error' + error);
@@ -225,12 +224,10 @@ export class FaqHelpPage implements OnInit {
   }
 
   private handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back':
-        setTimeout(() => {
-          this.handleBackButton();
-        }, 100);
-        break;
+    if($event.name === 'back'){
+      setTimeout(() => {
+        this.handleBackButton();
+      }, 100);
     }
   }
   registerDeviceBackButton() {
@@ -274,8 +271,7 @@ export class FaqHelpPage implements OnInit {
       event.data.action,
       Environment.USER,
       PageId.FAQ,
-      telemetryObject,
-      undefined);
+      telemetryObject);
   }
 
   logInteractEvent(event) {
@@ -290,9 +286,7 @@ export class FaqHelpPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
-      PageId.FAQ,
-      undefined,
-      undefined);
+      PageId.FAQ);
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;

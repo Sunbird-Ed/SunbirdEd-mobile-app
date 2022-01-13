@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
 import { FilePath } from "@ionic-native/file-path/ngx";
-// import { IOSFilePicker } from "@ionic-native/file-picker/ngx";
 import { File } from "@ionic-native/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
@@ -94,7 +93,6 @@ export class AttachmentService {
             .then((filePath) => {
               this.copyFile(filePath);
             })
-            .catch((err) => { });
         } else {
           this.copyFile(imagePath);
         }
@@ -137,21 +135,41 @@ export class AttachmentService {
   }
 
   async openFile() {
-    new Promise((resolve) => {
-      if (this.platform.is("ios")) {
-        // resolve(this.filePickerIOS.pickFile());
-      } else {
-        resolve(this.chooser.getFileMetadata());
-      }
-    })
-      .then((res: any) => {
-        return this.filePath.resolveNativePath(res.uri);
-      })
-      .then((filePath) => {
-        this.copyFile(filePath);
-      })
+    try {
+      const file = await this.chooser.getFile();
+      const pathToWrite = this.directoryPath();
+      const newFileName = this.createFileName(file.name)
+      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+      if (writtenFile.isFile) {
+        const data = {
+          name: newFileName,
+          type: this.mimeType(newFileName),
+          isUploaded: false,
+          url: "",
+        };
 
-      .catch((err) => { });
+        this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+        this.actionSheetController.dismiss(data);
+      }
+    } catch (error) {
+       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+    }
+
+    // non working code for sdk30-android 11
+    // new Promise((resolve) => {
+    //   if (this.platform.is('ios')) {
+    //     // resolve(this.filePickerIOS.pickFile());
+    //   } else {
+    //     resolve(this.chooser.getFileMetadata());
+    //   }
+    // })
+    //   .then((res: any) => {
+    //     return this.filePath.resolveNativePath(res.uri);
+    //   })
+    //   .then((filePath) => {
+    //     this.copyFile(filePath);
+    //   })
+    //   .catch((err) => {});
   }
 
   copyFile(filePath) {

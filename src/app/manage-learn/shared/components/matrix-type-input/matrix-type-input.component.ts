@@ -105,10 +105,12 @@ export class MatrixTypeInputComponent implements OnInit {
       this.data.value[instanceIndex] = instanceValue;
       let instanceCompletion = this.checkCompletionOfInstance(this.data.value[instanceIndex], gpsLocation);
       if (instanceCompletion) {
+        this.data.value[instanceIndex].isInstanceCompleted = true
         if (this.data.completedInstance.indexOf(instanceIndex) < 0) {
           this.data.completedInstance.push(instanceIndex);
         }
       } else {
+       this.data.value[instanceIndex].isInstanceCompleted = false
         const index = this.data.completedInstance.indexOf(instanceIndex);
         if (index >= 0) {
           this.data.completedInstance.splice(index, 1);
@@ -122,7 +124,6 @@ export class MatrixTypeInputComponent implements OnInit {
     let isCompleted = true;
     if (data) {
       for (const question of data) {
-        // question.isCompleted = this.utils.isQuestionComplete(question);
         question.gpsLocation = gpsLocation ? gpsLocation : "";
         if (!question.isCompleted) {
           isCompleted = false;
@@ -139,8 +140,6 @@ export class MatrixTypeInputComponent implements OnInit {
 
   deleteInstance(instanceIndex): void {
     this.data.value.splice(instanceIndex, 1);
-    // let instanceCompletion = this.checkCompletionOfInstance(this.data.value[instanceIndex]);
-    // if(instanceCompletion) {
     if (this.data.completedInstance && this.data.completedInstance.length && this.data.completedInstance.indexOf(instanceIndex) >= 0) {
       this.data.completedInstance.splice(instanceIndex, 1);
     }

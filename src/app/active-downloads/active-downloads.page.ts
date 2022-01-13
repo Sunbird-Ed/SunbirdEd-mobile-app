@@ -152,10 +152,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private handleHeaderEvents(event: { name: string }) {
-    switch (event.name) {
-      case 'back':
+    if(event.name =='back') {
         this.location.back();
-        break;
     }
   }
 

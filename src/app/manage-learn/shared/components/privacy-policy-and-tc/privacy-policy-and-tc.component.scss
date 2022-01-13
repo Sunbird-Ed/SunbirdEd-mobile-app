@@ -24,12 +24,11 @@
 
 #main-content {
   overflow-y: scroll;
-  background: map-get($colors, white);
+  // background: map-get($colors, white);
 }
 
 .consent-popover-info {  
   overflow: hidden;
-  padding: 14px;
 }
 
 .flex-container {
@@ -71,6 +70,7 @@
 .footer {
   flex-grow: 0;
   flex-shrink: 0;
+  padding: 0px 10px;
 }
 .save-changes{
   color: white;

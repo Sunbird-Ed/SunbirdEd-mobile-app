@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-hint',
   templateUrl: './hint.component.html',
   styleUrls: ['./hint.component.scss'],
 })
-export class HintComponent implements OnInit {
+export class HintComponent {
   hint: any;
-  constructor(private modalCtrl: ModalController, public navParams: NavParams) {
+  constructor(private modalCtrl: ModalController, public navParams: NavParams, public platform: Platform) {
     this.hint = this.navParams.get('hint');
   }
 
-  ngOnInit() {}
   cancel(): void {
     this.modalCtrl.dismiss();
   }

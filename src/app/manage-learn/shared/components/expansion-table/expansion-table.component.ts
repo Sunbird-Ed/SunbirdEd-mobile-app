@@ -1,14 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'expansion-table',
   templateUrl: './expansion-table.component.html',
   styleUrls: ['./expansion-table.component.scss'],
 })
-export class ExpansionTableComponent implements OnInit {
+export class ExpansionTableComponent {
   @Input() datas;
 
   constructor() {}
 
-  ngOnInit() {}
 }

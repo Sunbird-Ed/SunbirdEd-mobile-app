@@ -8,7 +8,7 @@
   <div class="container-focus sticky-position" *ngIf="!hideSearchOption" [ngClass]="{'pt-0': searchInfolVisibility==='hide', '': searchInfolVisibility==='show'}">
     <div class="search-info pt-8 mx-24">
       <div [@labelVisibility]="searchInfolVisibility">
-        <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
+        <strong class="title" role="heading" aria-level="1">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
         <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appName} }}</p>
       </div>
     </div>
@@ -19,16 +19,16 @@
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
           [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
         </ion-input>
-        <button (click)="handleSearch()" *ngIf="!filterIcon || isFromGroupFlow">
+        <button (click)="handleSearch()" aria-label="search" *ngIf="!filterIcon || isFromGroupFlow">
           <img src="assets/imgs/search.svg" alt="search">
         </button>
-        <button (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
-          <img src="assets/imgs/ic_action_close.svg" alt="search">
+        <button (click)="handleCancel()" aria-label="clear search" *ngIf="filterIcon && searchKeywords">
+          <img src="assets/imgs/ic_action_close.svg" alt="clear search">
         </button>
       </div>
       <div class="filter-btn" *ngIf="filterIcon">
-        <button (click)="showFilter()">
-          <img src="assets/imgs/filter.svg" alt="search">
+        <button (click)="showFilter()" aria-label="search filter">
+          <img src="assets/imgs/filter.svg" alt="search filter">
         </button>
       </div>
     </div>
@@ -117,6 +117,12 @@
         <!-- Course -->
         <div
           *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
+          <div class="pt-8 px-8">
+            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
+              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+            </p>
+          </div>
           <div class="sb-textbook-container">
             <div class="sb-textbook-items">
               <div class="sb-textbook-title-container">
@@ -137,13 +143,6 @@
 
         <div *ngIf="resultlist && !resultlist.isCourse">
           <div class="px-8">
-
-            <div class="pt-8">
-              <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
-                {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
-                <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
-              </p>
-            </div>
             <!-- Collection List -->
             <div class="sb-textbook-title-container">
               <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>

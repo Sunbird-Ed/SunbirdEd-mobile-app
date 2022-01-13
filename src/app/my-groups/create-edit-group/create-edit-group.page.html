@@ -1,7 +1,7 @@
 <ion-content>
   <form [formGroup]="createGroupForm">
-    <p class="cr-title" *ngIf="!groupDetails">{{'CREATE_GROUP' | translate}}</p>
-    <p class="cr-title" *ngIf="groupDetails">{{'EDIT_GROUP' | translate}}</p>
+    <h4 class="cr-title" *ngIf="!groupDetails">{{'CREATE_GROUP' | translate}}</h4>
+    <h4 class="cr-title" *ngIf="groupDetails">{{'EDIT_GROUP' | translate}}</h4>
     <ion-item class="input-item" 
     [ngClass]="{'cr-input-primary': !((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required) ,
       'cr-input-error': ((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)}">
@@ -39,7 +39,7 @@
 
 <ion-footer>
     <div class="padding-16" *ngIf="!groupDetails">
-      <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
+      <button class="sb-btn-large" expand="block" attr.aria-label="create group {{createGroupForm.invalid ? 'disable' : ''}}" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
         <img src="assets/imgs/ic_group_add_white.svg" alt="">
         {{'CREATE_GROUP' | translate}}
       </button>

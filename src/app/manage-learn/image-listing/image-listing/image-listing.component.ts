@@ -57,8 +57,7 @@ export class ImageListingComponent implements OnInit {
         this.evidenceSections = this.currentEvidence['sections'];
         this.selectedEvidenceName = this.currentEvidence['name'];
         this.getAllImages();
-      })
-      .catch((error) => {});
+      });
   }
   uploadImages: any;
   imageList = [];
@@ -105,54 +104,11 @@ export class ImageListingComponent implements OnInit {
       }
     }
     this.uploadImages = imageArray;
-    this.checkIfEcmSumittedByUser();
-  }
-
-  async checkIfEcmSumittedByUser() {
-    this.loader.startLoader();
-    const submissionId = this.submissionId;
-    let url = this.schoolData.survey
-      ? urlConstants.API_URLS.IS_SURVEY_SUBMISSION_ALLOWED
-      : this.schoolData.observation
-      ? urlConstants.API_URLS.IS_OBSERVATION_SUBMISSION_ALLOWED
-      : urlConstants.API_URLS.CHECK_IF_SUBMITTED;
-
-    let payload = await this.utils.getProfileInfo();
-    url = url + submissionId + '?evidenceId=' + this.currentEvidence.externalId;
-    const config = {
-      url: url,
-      payload: payload,
-    };
-
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        if (success.result.allowed) {
-          if (this.uploadImages.length) {
-            this.createImageFromName(this.uploadImages);
-          } else {
-            this.submitEvidence();
-          }
-        } else {
-          this.translate.get('FRMELEMENTS_MSG_SUBMISSION_COMPLETED').subscribe((translations) => {
-            this.toast.openToast(translations);
-          });
-          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
-          this.localStorage.setLocalStorage(
-            this.utils.getAssessmentLocalStorageKey(this.submissionId),
-            this.schoolData
-          );
-          const options = {
-            _id: this.submissionId,
-            name: this.schoolName,
-          };
-          window.history.go(-2);
-        }
-      },
-      (error) => {
-        this.loader.stopLoader();
-      }
-    );
+     if (this.uploadImages.length) {
+       this.createImageFromName(this.uploadImages);
+     } else {
+       this.submitEvidence();
+     }
   }
 
   createImageFromName(imageList) {
@@ -211,16 +167,14 @@ export class ImageListingComponent implements OnInit {
         .then((success) => {
           this.fileTransfer.create();
           this.cloudImageUpload();
-        })
-        .catch((err) => {});
+        });
     } else {
       this.file
         .checkDir(this.file.externalDataDirectory, 'images')
         .then((success) => {
           this.cloudImageUpload();
           this.fileTransfer.create();
-        })
-        .catch((err) => {});
+        });
     }
   }
 
@@ -268,7 +222,6 @@ export class ImageListingComponent implements OnInit {
               });
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
             Details: ${JSON.stringify(err)}`;
-              // this.slack.pushException(errorObject);//TODO:implement
               history.go(-1);
             } else {
               this.cloudImageUpload();
@@ -301,7 +254,7 @@ export class ImageListingComponent implements OnInit {
     const submissionId = this.submissionId;
     const url =
       (this.schoolData.survey
-        ? urlConstants.API_URLS.SURVEY_FEEDBACK_MAKE_SUBMISSION
+        ? urlConstants.API_URLS.SURVEY_FEEDBACK.MAKE_SUBMISSION
         : this.schoolData.observation
         ? urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE
         : urlConstants.API_URLS.SUBMISSION) +
@@ -318,7 +271,6 @@ export class ImageListingComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (response) => {
         if (this.schoolData.observation) {
-          // this.observetionProvider.markObservationAsCompleted(submissionId);//TODO:Not storing in local now
         }
         if (response && response.result && response.result.allowed==false) {
           this.toast.openToastWithClose(this.allStrings['FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED']);
@@ -353,7 +305,6 @@ export class ImageListingComponent implements OnInit {
       endTime: 0,
     };
     this.currentEvidence;
-    // const currentEvidence =   this.currentEvidence
     /*
     !deepclone to avoid structure change in the type:pageQuestion
     !using to take the tempevidnceSections and pullout page questions

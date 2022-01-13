@@ -25,3 +25,15 @@ ion-button{
 ion-footer{
     z-index: -10;
 }
+
+.ios .footer-buttons {
+    background: $white;
+    left: 0;
+    right: 0;
+    position: fixed;
+    top: 85vh;
+}
+
+.ios .declaration-container ::ng-deep .sb-modal {
+    bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+}

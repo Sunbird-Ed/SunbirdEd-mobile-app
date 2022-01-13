@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { statusType,statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService , CommonUtilService} from '@app/services';
@@ -16,8 +16,6 @@ import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
@@ -27,7 +25,7 @@ import { Location } from '@angular/common';
   templateUrl: "./project-detail.page.html",
   styleUrls: ["./project-detail.page.scss"],
 })
-export class ProjectDetailPage implements OnInit, OnDestroy {
+export class ProjectDetailPage implements OnDestroy {
   showDetails: boolean = true;
   statuses = statuses;
   project: any;
@@ -36,32 +34,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   categories = [];
   taskCount: number = 0;
   filters: any = {};
-  schedules = [
-    {
-      title: "FRMELEMNTS_LBL_PAST",
-      value: "past"
-    },
-    {
-      title: "FRMELEMNTS_LBL_TODAY",
-      value: "today"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_WEEK",
-      value: "thisWeek"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_MONTH",
-      value: "thisMonth"
-    },
-    {
-      title: "FRMELEMNTS_LBL_THIS_QUARTER",
-      value: "thisQuarter"
-    },
-    {
-      title: "FRMELEMNTS_LBL_UPCOMING",
-      value: "upcoming"
-    },
-  ];
+  schedules = this.utils.getSchedules();
   sortedTasks;
   programId;
   solutionId;
@@ -105,19 +78,26 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private unnatiService: UnnatiDataService,
     private platform: Platform,
     private ref: ChangeDetectorRef,
-    private navigateService: NavigationService,
     private alertController: AlertController,
     private network: NetworkService,
     private location: Location,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       this.networkFlag = available;
     })
     params.queryParams.subscribe((parameters) => {
+      let data;
+      this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+        data = text;
+      });
+      this._headerConfig = this.headerService.getDefaultPageConfig();
+      this._headerConfig.actionButtons = [];
+      this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+      this._headerConfig.showBurgerMenu = false;
+      this.headerService.updatePageConfig(this._headerConfig);
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -156,20 +136,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
     this.unnatiService.get(config).subscribe(success => {
       this.loader.stopLoader();
-      // let data = success.result;
       this.project = success.result;
       this._headerConfig.actionButtons = []
       this.headerService.updatePageConfig(this._headerConfig);
       this.sortTasks();
       this.programId = (success.result && success.result.programInformation) ? success.result.programInformation.programId : null;
 
-      // this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
-      // this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-      // this.headerService.updatePageConfig(this._headerConfig);
-      // this.project.categories.forEach((category: any) => {
-      //   category.label ? this.categories.push(category.label) : this.categories.push(category.name);
-      // });
-      // this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
     }, error => {
       this.loader.stopLoader();
 
@@ -186,7 +158,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
             !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
             this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-            this.headerService.updatePageConfig(this._headerConfig);
+              this.headerService.updatePageConfig(this._headerConfig);
             this.project.categories.forEach((category: any) => {
               category.label ? this.categories.push(category.label) : this.categories.push(category.name);
             });
@@ -221,8 +193,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       if (this.templateId) {
         this.toast.openToast(this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS'])
       }
-      // this.projectId = success.result._id;
-      // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
       let data = success.result;
       let newCategories = []
       for (const category of data.categories) {
@@ -248,7 +218,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         })
 
       }
-      // TODO:till here
       this.db.create(success.result).then(successData => {
         this.projectId ? this.getProject() :
           this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
@@ -277,11 +246,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     })
   }
 
-  ngOnInit() { }
 
   ionViewWillEnter() {
     this.initApp();
-    // this.getProject();
     this.getDateFilters();
     this.handleBackButton();
   }
@@ -310,11 +277,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
     });
-    this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = [];
-    this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
-    this.headerService.updatePageConfig(this._headerConfig);
   }
 
   ngOnDestroy() {
@@ -345,45 +307,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     let endFullQuarter: any = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0);
     this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
   }
-  sortTasks() {
-    this.taskCount = 0;
-    let completed = 0;
-    let inProgress = 0;
-    this.sortedTasks = JSON.parse(JSON.stringify(this.utils.getTaskSortMeta()));
-    this.project.tasks.forEach((task: any) => {
-
-      if (!task.isDeleted && task.endDate) {
-        this.taskCount = this.taskCount + 1;
-        let ed = JSON.parse(JSON.stringify(task.endDate));
-        ed = moment(ed).format("YYYY-MM-DD");
-
-        if (ed < this.filters.today) {
-          this.sortedTasks["past"].tasks.push(task);
-        } else if (ed == this.filters.today) {
-          this.sortedTasks["today"].tasks.push(task);
-        } else if (ed > this.filters.today && ed <= this.filters.thisWeek) {
-          this.sortedTasks["thisWeek"].tasks.push(task);
-        } else if (ed > this.filters.thisWeek && ed <= this.filters.thisMonth) {
-          this.sortedTasks["thisMonth"].tasks.push(task);
-        } else if (ed > this.filters.thisMonth && ed <= this.filters.thisQuarter) {
-          this.sortedTasks["thisQuarter"].tasks.push(task);
-        }
-        else {
-          this.sortedTasks["upcoming"].tasks.push(task);
-        }
-      } else if (!task.isDeleted && !task.endDate) {
-        this.sortedTasks["upcoming"].tasks.push(task);
-        this.taskCount = this.taskCount + 1;
-      }
-      if (!task.isDeleted) {
-        if (task.status == this.statuses[1].title) {
-          inProgress = inProgress + 1;
-        } else if (task.status == this.statuses[2].title) {
-          completed = completed + 1;
-        }
-      }
-    });
-    this.project = this.utils.setStatusForProject(this.project);
+  async sortTasks() {
+    let projectData:any= await this.utils.getSortTasks(this.project);
+    this.project = projectData.project;
+    this.sortedTasks=projectData.sortedTasks;
+    this.taskCount=projectData.taskCount;
   }
   syn() { }
 
@@ -427,7 +355,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             ? this.createNewProject()
             : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
         } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SYNC', 'danger');
+          this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         }
         break;
       }
@@ -452,13 +380,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_TASK', 'danger');
+        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       }
       case "shareProject": {
         this.network.isNetworkAvailable
           ? this.openSyncSharePopup('shareProject', this.project.title)
-          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+          : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       }
     }
@@ -471,6 +399,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
     this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
+      cssClass:'central-alert',
       message: data["FRMELEMNTS_LBL_SHARE_MSG"],
       buttons: [
         {
@@ -513,6 +442,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
+      cssClass:'central-alert',
       buttons: [
         {
           text: data["CANCEL"],
@@ -545,45 +475,16 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.update("ProjectDelete");
   }
   openResources(task = null) {
-    if (task && task.learningResources && task.learningResources.length === 1) {
-      let link = task.learningResources[0].link;
-      this.openBodh(link);
-      return;
-    }
     if (task) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
-    }
-  }
-  //open openBodh
-  openBodh(link) {
-    if(!this.networkFlag){
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
-      return
-    }
-    this.loader.startLoader();
-    let identifier = link.split("/").pop();
-    const req: ContentDetailRequest = {
-      contentId: identifier,
-      attachFeedback: false,
-      attachContentAccess: false,
-      emitUpdateIfAny: false
-    };
-
-    this.contentService.getContentDetails(req).toPromise()
-      .then(async (data: Content) => {
-        this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
-      }, error => {
-        this.loader.stopLoader();
-      });
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
+      }
   }
 
   //Update the project
-  update(type) {
+  update(type?) {
     this.project.isEdit = true;
-    this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
       .then((success) => {
@@ -597,14 +498,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
-          //TODO: add location service
-          // this.location.back();
         } else if (type == "taskDelete") {
           this.toast.showMessage("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
         }
         this.sortTasks();
       })
-      .catch((error) => { });
   }
   createNewProject(isShare?) {
     this.loader.startLoader();
@@ -648,10 +546,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
                   }, replaceUrl: true
                 });
               })
-              .catch(deleteError => {
-              })
-          })
-          .catch(error => {
           })
       })
       .catch((error) => {
@@ -702,6 +596,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         !this.project.tasks ? (this.project.tasks = []) : "";
+        this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
+        this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
         this.project.tasks.push(data.data);
         this.update("newTask");
       }
@@ -727,7 +623,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let data = success.result;
 
           let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
-          // let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
             queryParams: {
               programId: data.programId,
@@ -738,15 +633,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
               disableObserveAgain: true
             },
           });
-          // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-          //   queryParams: {
-          //     programId: data.programId,
-          //     solutionId: data.solutionId,
-          //     observationId: data.observationId,
-          //     solutionName: data.solutionName,
-          //   },
-          // });
-          // this.iab.create(link, "_system");
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
@@ -805,10 +691,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           }
         }
 
-        /*   if (d._id == t._id && d.submissionStatus != t.submissionDetails.submissionStatus) {
-            t.status = d.status;
-            isChnaged = true;
-          } */
       });
     });
     isChnaged ? this.update('taskStatusUpdated') : null// if any assessment/observatiom task status is changed then only update 
@@ -872,14 +754,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   importProject() {
-    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-    //   queryParams: {
-    //     templateId: this.templateId,
-    //     fromImportPage: this.importProjectClicked
-    //   },
-    //   state: this.templateDetailsPayload,
-    //   replaceUrl: true
-    // });
     this.getProjectsApi();
   }
 

@@ -57,8 +57,12 @@
 }
 
 .permission-toggle {
-  --background: #{map-get($colors, light_gray) !important};
+  --background: #{map-get($colors, light_gray_toggle) !important};
   --background-checked: #{map-get($colors, secondary)};
+}
+
+ion-toggle.ion-color-success.permission-toggle {
+  --ion-color-base: #{map-get($colors, toggle_green) !important};
 }
 
 .toggle-inner {
