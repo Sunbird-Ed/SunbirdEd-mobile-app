@@ -936,4 +936,11 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
+    setAccessibilityFocus(id) {
+        setTimeout(() => {
+            const ele = document.getElementById(id);
+            ele ? ele.focus() : null;
+        }, 100);
+    }
+
 }
