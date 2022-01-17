@@ -196,16 +196,18 @@ export class DistrictMappingPage implements OnDestroy {
         if (typeof this.formGroup.value.children['persona']['subPersona'] === 'string') {
           userType = {
             type: this.formGroup.value['persona'],
-            subType: this.formGroup.value.children['persona']['subPersona']
+            subType: this.formGroup.value.children['persona']['subPersona'] || undefined
           }
           userTypes.push(userType);
         }
         else if (Array.isArray(this.formGroup.value.children['persona']['subPersona'])) {
           for (let i = 0; i < this.formGroup.value.children['persona']['subPersona'].length; i++) {
-            userTypes.push({
-              "type": this.formGroup.value['persona'],
-              "subType": this.formGroup.value.children['persona']['subPersona'][i]
-            })
+            if(this.formGroup.value.children['persona']['subPersona'][i]){
+              userTypes.push({
+                "type": this.formGroup.value['persona'],
+                "subType": this.formGroup.value.children['persona']['subPersona'][i]
+              })
+            }
           }
           userType = userTypes[0];
         }
@@ -429,8 +431,8 @@ export class DistrictMappingPage implements OnDestroy {
                     }
                     personaConfig.default = subPersonaCodes;
                   }
-                  else {
-                    personaConfig.default = this.profile.serverProfile.profileUserType;
+                  else if(this.profile.serverProfile.profileUserType && this.profile.serverProfile.profileUserType.subType){
+                    personaConfig.default = this.profile.serverProfile.profileUserType.subType;
                   }
                 }
                 break;

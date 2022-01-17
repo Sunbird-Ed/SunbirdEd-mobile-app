@@ -265,8 +265,8 @@ private getProfileSettingConfig() {
             } else if (scannedData.includes('/certs/')) {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);
             } else if(scannedData.includes('/manage-learn/')) {
-              alert("in manage learn")
-            }else {
+              this.qrScannerResultHandler.manageLearScan(scannedData);
+            } else {
               this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
               this.showInvalidCodeAlert(scannedData);
             }

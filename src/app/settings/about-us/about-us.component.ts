@@ -53,7 +53,7 @@ export class AboutUsComponent implements OnInit {
     private router: Router,
     private location: Location,
     private appVersion: AppVersion,
-    private platform: Platform,
+    public platform: Platform,
   ) {
   }
 
