@@ -1219,6 +1219,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * @param corRelationList correlation List
    */
   readLessorReadMore(param, objRollup, corRelationList) {
+    if(param === 'read-more-clicked'){
+      this.appGlobalService.setAccessibilityFocus('read-more-content')
+    } else {
+      this.appGlobalService.setAccessibilityFocus('read-more-less-btn');
+    }
     param = 'read-more-clicked' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       param,
