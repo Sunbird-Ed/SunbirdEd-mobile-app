@@ -93,6 +93,7 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   async ionViewWillEnter() {
+    this.initializeLoader();
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
       this.profile.serverProfile ? this.profile.serverProfile : this.profile))
@@ -133,7 +134,6 @@ export class DistrictMappingPage implements OnDestroy {
       undefined,
       correlationList
     );
-    this.initializeLoader();
   }
 
   async initializeLoader() {
@@ -246,7 +246,7 @@ export class DistrictMappingPage implements OnDestroy {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-              this.router.navigate([`/${RouterLinks.TABS}`]);
+              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
               this.events.publish('update_header');
             }
           }
