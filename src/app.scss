@@ -1395,6 +1395,10 @@ app-manage-user-profiles{
 }
 ion-modal.sb-progress-loader {
   z-index: 50000 !important;
+  modal-wrapper {
+    width: 100vw;
+    height: 100vh;
+  }
 }
 .tutorial-popover {
   .popover-wrapper {

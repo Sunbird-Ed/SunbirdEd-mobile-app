@@ -207,7 +207,10 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_rotate.svg" aria-hidden="true" class="tool-icon" alt="tablet">
           </span>
-          <span class="sb-menu-item" role="button" menuClose>{{orientationToSwitch}}</span>
+          <div class="sb-language">
+            <div class="sb-menu-item" role="button">{{'ORIENTATION' | translate}}</div>
+            <div class="sb-menu-item-language">{{orientationToSwitch}}</div>
+          </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
@@ -365,7 +368,10 @@
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_rotate.svg" aria-hidden="true" class="tool-icon" alt="tablet">
           </span>
-          <span class="sb-menu-item" role="button" menuClose>{{orientationToSwitch}}</span>
+          <div class="sb-language">
+            <div class="sb-menu-item" role="button">{{'ORIENTATION' | translate}}</div>
+            <div class="sb-menu-item-language">{{orientationToSwitch}}</div>
+          </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">

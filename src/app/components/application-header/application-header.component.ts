@@ -1,3 +1,4 @@
+import { AppOrientation } from './../../app.constant';
 import {
   ChangeDetectorRef, Component, EventEmitter,
   Inject, Input, NgZone, OnDestroy, OnInit, Output
@@ -70,7 +71,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     unreadCount : 0
   };
   isTablet = false;
-  orientationToSwitch = 'Potrait';
+  orientationToSwitch = AppOrientation.LANDSCAPE;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -508,10 +509,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   private async checkCurrentOrientation() {
     const currentOritentation = await this.preference.getString(PreferenceKey.ORIENTATION).toPromise();
-    if ( currentOritentation === 'Landscape') {
-      this.orientationToSwitch = 'Potrait';
+    if ( currentOritentation === AppOrientation.LANDSCAPE) {
+      this.orientationToSwitch = AppOrientation.POTRAIT;
     } else {
-      this.orientationToSwitch = 'Landscape';
+      this.orientationToSwitch = AppOrientation.LANDSCAPE;
     }
   }
 }

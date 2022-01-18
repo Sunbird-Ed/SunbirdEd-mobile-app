@@ -788,3 +788,8 @@ export interface MaxAttempt {
 export class OTPTemplates {
     public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
 }
+
+export enum AppOrientation {
+    LANDSCAPE = 'Landscape',
+    POTRAIT = 'Potrait'
+}

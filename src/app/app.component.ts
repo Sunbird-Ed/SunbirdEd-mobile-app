@@ -42,7 +42,7 @@ import {
 } from '../services';
 import {
   AppThemes, EventTopics, GenericAppConfig,
-  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
+  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
@@ -236,7 +236,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
-    this.isTablet();
+    this.checkCurrentOrientation();
   }
 
   checkAndroidWebViewVersion() {
@@ -919,13 +919,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
       case 'ORIENTATION':
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
-        if (currentOrientation === 'Landscape') {
+        if (currentOrientation === AppOrientation.LANDSCAPE) {
           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-          this.preferences.putString(PreferenceKey.ORIENTATION, 'Potrait').toPromise();
+          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         } else {
           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-          this.preferences.putString(PreferenceKey.ORIENTATION, 'Landscape').toPromise();
+          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         }
     }
@@ -1056,12 +1056,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.headerService.showStatusBar();
   }
 
-  private isTablet() {
-    if (window['isTablet']) {
+  private async checkCurrentOrientation() {
+    const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
+    if (currentOrientation === AppOrientation.LANDSCAPE) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-      this.preferences.putString(PreferenceKey.ORIENTATION, 'Landscape').toPromise();
+      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
     } else {
-      this.preferences.putString(PreferenceKey.ORIENTATION, 'Potrait').toPromise();
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
     }
   }
 }
