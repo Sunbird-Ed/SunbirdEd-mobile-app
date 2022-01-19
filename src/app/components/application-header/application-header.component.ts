@@ -364,9 +364,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cData,
       ID.BTN_SWITCH
     );
-    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(res => {
+    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(async res => {
       this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       this.events.publish('loggedInProfile:update');
+      if(user.profileUserType && user.profileUserType.type){
+        await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, user.profileUserType.type).toPromise();
+        this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      }
       this.menuCtrl.close();
       this.showSwitchSuccessPopup(user.firstName);
       this.tncUpdateHandlerService.checkForTncUpdate();
