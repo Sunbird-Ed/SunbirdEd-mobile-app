@@ -1,5 +1,5 @@
 export const actions ={
-    PROJECTACTIONS:[
+  PROJECT_ACTIONS:[
         {
           title: "DOWNLOAD",
           icon: "cloud-download",
