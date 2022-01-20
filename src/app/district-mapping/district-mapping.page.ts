@@ -423,7 +423,9 @@ export class DistrictMappingPage implements OnDestroy {
                     }
                     else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
                       for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
-                        subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                        if(this.profile.serverProfile.profileUserTypes[i].subType){
+                          subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                        }
                       }
                     }
                     personaConfig.default = subPersonaCodes;
