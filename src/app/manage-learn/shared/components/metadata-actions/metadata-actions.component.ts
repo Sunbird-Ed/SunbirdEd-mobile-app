@@ -6,7 +6,7 @@ import { Component, OnInit,Input,Output, EventEmitter } from '@angular/core';
   styleUrls: ['./metadata-actions.component.scss'],
 })
 export class MetadataActionsComponent implements OnInit {
-@Input() actionItem:any;
+@Input() actionItems:any;
 @Output() actionEvent = new EventEmitter();
   constructor() { }
 

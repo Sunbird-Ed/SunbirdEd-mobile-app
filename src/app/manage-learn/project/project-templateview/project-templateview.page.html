@@ -2,7 +2,7 @@
 <app-metadata-details translucent="true" [data]="metaData">
   <div class="sb-dt-card-actions">
     <div class="wrapper"> 
-      <app-metadata-actions *ngFor="let actionBtn of actionItems" (actionEvent)="action($event)" [actionItem]="actionBtn"></app-metadata-actions>
+      <app-metadata-actions (actionEvent)="action($event)" [actionItems]="actionItems"></app-metadata-actions>
     </div>
     <div class="sb-course-progress-container">
       <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>

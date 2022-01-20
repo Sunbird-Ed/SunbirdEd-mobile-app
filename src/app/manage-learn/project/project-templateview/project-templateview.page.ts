@@ -99,7 +99,7 @@ export class ProjectTemplateviewPage {
     this.headerService.updatePageConfig(this.headerConfig);
    }
    async getProjectApi() {
-    this.actionItems = await actions.PROJECTACTIONS;
+    this.actionItems = await actions.PROJECT_ACTIONS;
     let payload = await this.utils.getProfileInfo();
 
     const config = {

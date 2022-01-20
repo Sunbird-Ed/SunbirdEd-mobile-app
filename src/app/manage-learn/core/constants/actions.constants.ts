@@ -26,7 +26,7 @@ export const actions ={
         },
         {
           title: "FRMELEMNTS_LBL_SYNC",
-          icon: "sync",
+          icon: "sync-circle",
           action:"sync",
           color:'primary'
         },
