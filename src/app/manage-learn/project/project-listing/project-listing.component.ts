@@ -67,11 +67,11 @@ export class ProjectListingComponent {
     ) {
         routerParams.queryParams.subscribe(params =>{
             this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME','FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
-            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME']];
+            this.filters = [translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME'], translations['FRMELEMNTS_LBL_CREATED_BY_ME']];
             });
             if( params.selectedFilter ){
-                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[1] : this.filters[2];
-                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 1 : 2;
+                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[0] : this.filters[1];
+                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 0 : 1;
             }else{
                 this.selectedFilter = this.filters[0];
             }
