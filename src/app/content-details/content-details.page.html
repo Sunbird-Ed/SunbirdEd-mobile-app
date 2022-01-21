@@ -206,7 +206,7 @@
           </div>
         </ng-template>
 
-        <div *ngIf="showMoreFlag">
+        <div *ngIf="showMoreFlag" id="read-more-content" tabindex="0">
           <div class="sb-info" *ngIf="content?.contentData?.se_mediums; else previousMedium">
             <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.se_mediums | csa}}</div>
@@ -293,14 +293,14 @@
           </div>
 
         </div>
-        <div role="button" class="read-more" *ngIf="content && content.contentData.description &&
-         content.contentData.description.length > 10 || content.contentData.gradeLevel ||
-         content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
-          <div *ngIf="showMoreFlag" (click)="readLessorReadMore('read-less-clicked')">
+        <div role="button" class="read-more" id="read-more-less-btn" tabindex="0" *ngIf="content && content.contentData.description &&
+         content.contentData.description.length > 10 || content.contentData.gradeLevel || content.contentData.subject" 
+         (click)="showMoreFlag = !showMoreFlag; readLessorReadMore(showMoreFlag ? 'read-more-clicked' : 'read-less-clicked')">
+          <div *ngIf="showMoreFlag">
             {{ 'READ_LESS' | translate }}
             <ion-icon name="arrow-up" aria-hidden="true"></ion-icon>
           </div>
-          <div *ngIf="!showMoreFlag" (click)="readLessorReadMore('read-more-clicked')">
+          <div *ngIf="!showMoreFlag">
             {{ 'READ_MORE' | translate }}
           </div>
         </div>
