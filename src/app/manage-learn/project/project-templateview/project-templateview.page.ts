@@ -5,7 +5,7 @@ import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { NetworkService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -55,6 +55,8 @@ export class ProjectTemplateviewPage {
   projectProgress;
   actionItems=[];
   metaData:any;
+  projectSegments;
+  segmentType = "details";
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -64,7 +66,8 @@ export class ProjectTemplateviewPage {
     private network: NetworkService,
     private zone: NgZone,
     private headerService: AppHeaderService,
-    private kendra: KendraApiService
+    private kendra: KendraApiService,
+    private appGlobalService: AppGlobalService
   ) {
 
     params.params.subscribe((parameters) => {
@@ -101,7 +104,6 @@ export class ProjectTemplateviewPage {
    async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
     let payload = await this.utils.getProfileInfo();
-
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + this.id,
       payload: payload,
@@ -117,7 +119,7 @@ export class ProjectTemplateviewPage {
       category.label ? this.categories.push(category.label) : this.categories.push(category.name);
     });
     this.sortTasks();
-    if(this.project.tasks &&this.project.tasks,length)
+    if(this.project.tasks &&this.project.tasks.length)
     this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
@@ -132,6 +134,19 @@ export class ProjectTemplateviewPage {
     this.showDetails = !this.showDetails;
   }
   action(action){
-    console.log(action,"action");
+    // Operation based on action
+  }
+  segmentChanged(event) {
+    this.segmentType = event.detail.value;
+  }
+  openResource(event) {
+    // Open resources
+  }
+  start() {
+    if (this.appGlobalService.isUserLoggedIn()) {
+      // start project and  go to details page 
+    } else{
+      // go to login page
+    }
   }
 }

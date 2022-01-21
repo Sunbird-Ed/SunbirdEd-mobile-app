@@ -2,9 +2,9 @@ export const actions ={
   PROJECT_ACTIONS:[
         {
           title: "DOWNLOAD",
-          icon: "cloud-download",
+          icon: "checkmark-circle",
           action:"download",
-          color:'secondary'
+          color: 'success'
         },
         {
           title: "SHARE",

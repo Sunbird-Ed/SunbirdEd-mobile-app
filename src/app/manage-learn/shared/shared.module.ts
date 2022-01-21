@@ -29,7 +29,10 @@ import {
   ProjectMetadataCardComponent,
   ProjectTaskListComponent,
   MetadataDetailsComponent,
-  MetadataActionsComponent
+  MetadataActionsComponent,
+  ProjectDetailsCardComponent,
+  AccordionListComponent,
+  TaskCardComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -120,7 +123,10 @@ import { HTTP } from '@ionic-native/http/ngx';
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
     MetadataDetailsComponent,
-    MetadataActionsComponent
+    MetadataActionsComponent,
+    ProjectDetailsCardComponent,
+    AccordionListComponent,
+    TaskCardComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -173,7 +179,10 @@ import { HTTP } from '@ionic-native/http/ngx';
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
     MetadataDetailsComponent,
-    MetadataActionsComponent
+    MetadataActionsComponent,
+    ProjectDetailsCardComponent,
+    AccordionListComponent,
+    TaskCardComponent
   ],
   providers: [
     Camera,
