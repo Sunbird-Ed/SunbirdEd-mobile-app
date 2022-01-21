@@ -5,9 +5,11 @@
   margin-top: 15px;
 }
 
-// .view-more {
-//   margin: 20px 20px;
-// }
+.view-more {
+   --background: var(--app-primary-background) !important;
+   --border-color: var(--app-primary-medium) !important;
+   --color: var(--app-primary-medium) !important;
+}
 ion-searchbar ::ng-deep .searchbar-input{
   border-radius: 10px;
   border:1px solid $primary-300;

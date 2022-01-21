@@ -54,10 +54,10 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-button{
-    //--background: var(--app-primary-medium) !important;
-    --color: var(--app-primary-medium) !important;
+    --background: var(--app-primary) !important;
+    --color: var(--app-white) !important;
     --border-radius: 20px !important;
-    --border-color: var(--app-primary-medium) !important;
+    --border-color: var(--app-primary) !important;
     button{
       box-shadow: var(--button-style-shadow) !important;
     }
