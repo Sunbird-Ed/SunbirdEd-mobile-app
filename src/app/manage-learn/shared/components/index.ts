@@ -23,3 +23,5 @@ export * from './create-task-form/create-task-form.component';
 export * from './privacy-policy-and-tc/privacy-policy-and-tc.component';
 export * from './project-metadata-card/project-metadata-card.component';
 export * from './project-task-list/project-task-list.component';
+export * from './metadata-details/metadata-details.component';
+export * from './metadata-actions/metadata-actions.component';
