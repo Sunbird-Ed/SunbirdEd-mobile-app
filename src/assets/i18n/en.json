@@ -1512,6 +1512,10 @@
   "FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND":"Template details not found",
   "FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE":"This content is not available for your role",
   "FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER":"Please login as HT & Other Officials to access this content",
+  "FRMELEMNTS_LBL_SYNC":"Sync",
+  "FRMELEMNTS_LBL_PROJECT_DETAILS":"Project details",
+  "FRMELEMNTS_LBL_TASK_DETAILS":"Task details",
+  "FRMELEMNTS_LBL_START_IMPROVEMENT":"start improvement",
+  "FRMELEMNTS_LBL_MANDATORY":"Mandatory",
   "FRMELEMNTS_BTN_LOAD_MORE_PROJECTS": "Load more projects",
-  "FRMELEMNTS_LBL_SYNC":"Sync"
 }

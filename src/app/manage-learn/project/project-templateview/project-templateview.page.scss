@@ -1,0 +1,21 @@
+.project-segments{
+  margin: 0px 0px 16px;
+  display: flex;
+  .hr-div {
+    padding: 0px 10px 0px 10px;
+  }
+  hr.hr-height {
+    height: 40px;
+    width: 2px;
+    background: black;
+  }
+.segment-card{
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--button-style-shadow) !important;
+    ion-segment-button{
+        margin: 0px 10px;
+        text-transform: none;
+    }
+}
+}

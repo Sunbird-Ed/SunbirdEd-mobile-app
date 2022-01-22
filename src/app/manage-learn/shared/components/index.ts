@@ -25,3 +25,6 @@ export * from './project-metadata-card/project-metadata-card.component';
 export * from './project-task-list/project-task-list.component';
 export * from './metadata-details/metadata-details.component';
 export * from './metadata-actions/metadata-actions.component';
+export * from './project-details-card/project-details-card.component';
+export * from './accordion-list/accordion-list.component';
+export * from './task-card/task-card.component'
