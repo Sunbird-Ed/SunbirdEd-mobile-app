@@ -24,7 +24,6 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { ProjectTemplatePage } from './project-template/project-template.page';
 import { ItemListHeaderComponent } from './item-list-header/item-list-header.component'
-import { ProjectTemplateviewPage } from './project-templateview/project-templateview.page';
 
 const routes: Routes = [
   {
@@ -72,7 +71,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.PROJECT_TEMPLATE}`,
-    component: ProjectTemplateviewPage
+    loadChildren: './project-templateview/project-templateview.module#ProjectTemplateviewPageModule'
   }
 ];
 
@@ -80,7 +79,7 @@ const routes: Routes = [
   declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
     ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
-    CategorySelectComponent,ProjectTemplatePage,ProjectTemplateviewPage, ItemListHeaderComponent],
+    CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
     AddProgramsComponent, CategorySelectComponent],
   imports: [

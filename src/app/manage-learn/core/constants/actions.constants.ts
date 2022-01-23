@@ -20,7 +20,7 @@ export const actions ={
         },
         {
           title: "FRMELEMNTS_LBL_FILES",
-          icon: "folder",
+          icon: "folder-open",
           action:"files",
           color:'primary'
         },
