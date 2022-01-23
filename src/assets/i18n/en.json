@@ -1517,5 +1517,6 @@
   "FRMELEMNTS_LBL_TASK_DETAILS":"Task details",
   "FRMELEMNTS_LBL_START_IMPROVEMENT":"start improvement",
   "FRMELEMNTS_LBL_MANDATORY":"Mandatory",
-  "FRMELEMNTS_BTN_LOAD_MORE_PROJECTS": "Load more projects"
+  "FRMELEMNTS_BTN_LOAD_MORE_PROJECTS": "Load more projects",
+  "FRMELEMNTS_LBL_SYNCED":"Synced"
 }
