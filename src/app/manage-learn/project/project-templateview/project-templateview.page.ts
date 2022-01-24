@@ -7,11 +7,12 @@ import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import { AppHeaderService, AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
-import { NetworkService } from '../../core';
+import { NetworkService, ProjectService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { actions } from '../../core/constants/actions.constants';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
 
 @Component({
   selector: 'app-project-templateview',
@@ -67,16 +68,18 @@ export class ProjectTemplateviewPage {
     private zone: NgZone,
     private headerService: AppHeaderService,
     private kendra: KendraApiService,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private unnatiService:UnnatiDataService,
+    private projectService : ProjectService
   ) {
 
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
     });
     params.queryParams.subscribe((parameters) => {
-      this.isTargeted = true;
-      this.programId = '6182745790fe0d0007802755';
-      this.solutionId = '6182745790fe0d0007802758';
+      this.isTargeted = parameters.isTargeted;
+      this.programId = parameters.programId;
+      this.solutionId = parameters.solutionId;
     });
     this.translate
       .get([
@@ -103,12 +106,7 @@ export class ProjectTemplateviewPage {
    }
    async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
-    let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.TEMPLATE_DETAILS + this.id,
-      payload: payload,
-    };
-    let resp = await this.kendra.post(config).toPromise();
+    let resp  = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
     this.metaData = {
       title : this.project.title,
@@ -142,9 +140,37 @@ export class ProjectTemplateviewPage {
   openResource(event) {
     // Open resources
   }
-  start() {
+  async start() {
     if (this.appGlobalService.isUserLoggedIn()) {
-      // start project and  go to details page 
+      let payload = { programId: this.programId, solutionId: this.solutionId };
+    const config = {
+      url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + this.project._id + '?isATargetedSolution=false',
+      payload: payload,
+    };
+    let resp;
+    try {
+      resp = await this.unnatiService.post(config).toPromise();
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (resp && resp.result) {
+      this.router
+        .navigate([`/${RouterLinks.PROJECT}`], {
+          queryParams: {
+            selectedFilter: this.isTargeted ? 'assignedToMe' : 'discoveredByMe',
+          },
+        })
+        .then(() => {
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            queryParams: {
+              projectId: resp.result._id,
+              programId: this.programId,
+              solutionId: this.solutionId,
+            },
+          });
+        });
+    }
     } else{
       // go to login page
     }

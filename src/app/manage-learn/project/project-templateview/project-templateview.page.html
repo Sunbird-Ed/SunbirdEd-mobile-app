@@ -1,6 +1,6 @@
 <ion-content class="ion-padding">
 <app-metadata-details translucent="true" [data]="metaData">
-  <div class="sb-dt-card-actions">
+  <!-- <div class="sb-dt-card-actions">
     <div class="wrapper"> 
       <app-metadata-actions (actionEvent)="action($event)" [actionItems]="actionItems"></app-metadata-actions>
     </div>
@@ -11,7 +11,7 @@
       </p>
         <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
     </div>
-  </div>
+  </div> -->
 <ion-button (click)="start()" expand="block" class="text-transform-none">{{'FRMELEMNTS_LBL_START_IMPROVEMENT' | translate}}</ion-button>
 </app-metadata-details>
   <div class="project-segments">
@@ -28,8 +28,10 @@
         </ion-segment-button>
       </ion-segment>
   </div>
-  <app-project-details-card [data]="project" *ngIf="segmentType == 'details'">
+  <app-project-details-card [data]="project" [categories]="categories" *ngIf="segmentType == 'details'">
   </app-project-details-card>
-  <app-task-card *ngIf="segmentType == 'tasks' && taskCount" [data]="project?.tasks"></app-task-card>
+  <div  *ngIf="segmentType == 'tasks' && taskCount">
+  <app-task-card *ngFor="let task of project?.tasks" [data]="task"></app-task-card>
+  </div>
   <app-accordion-list [data]="project?.learningResources" (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'"> </app-accordion-list>
 </ion-content>

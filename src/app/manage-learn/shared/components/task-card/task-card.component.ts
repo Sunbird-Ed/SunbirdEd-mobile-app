@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { statusType } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-task-card',
@@ -8,6 +9,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class TaskCardComponent implements OnInit {
 @Input() data :any;
 @Output() actionEvent = new EventEmitter();
+statuses =statusType;
   constructor() { }
 
   ngOnInit() {}
