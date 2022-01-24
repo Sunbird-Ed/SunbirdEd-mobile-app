@@ -195,3 +195,9 @@ ion-button.ios {
 sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
   padding-top: 3rem;
 }
+.segment-button-checked{
+  border-bottom: 4px solid;
+  ion-label{
+    color: #000;
+  }
+}

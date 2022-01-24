@@ -430,8 +430,16 @@ export class ProjectListingComponent {
     }
 
     doAction(id?, project?) {
+        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
+        if(!project._id){
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,project.solutionId], {
+                queryParams: {
+                    data: project
+                },
+            });
+            return;
+        }
         if (project) {
-            const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
             if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
                 this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                     if (data && data.isClicked) {

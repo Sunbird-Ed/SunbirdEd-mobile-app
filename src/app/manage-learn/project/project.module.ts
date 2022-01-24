@@ -75,7 +75,7 @@ const routes: Routes = [
     component: ProjectTemplatePage
   },
   {
-    path: `${RouterLinks.PROJECT_TEMPLATE}`,
+    path: `${RouterLinks.PROJECT_TEMPLATE}/:id`,
     loadChildren: './project-templateview/project-templateview.module#ProjectTemplateviewPageModule'
   }
 ];

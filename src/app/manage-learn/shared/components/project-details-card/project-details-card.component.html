@@ -4,6 +4,13 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_OBJECTIVE' | translate}} : </ion-label>
       {{data?.description}}
     </div>
+    <div class="custom-filed" *ngIf="categories?.length">
+      <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
+      {{categories}}
+    </div>
+    <div class="custom-filed" *ngIf="data?.duration">
+      <ion-label position="fixed"> {{'FRMELEMNTS_LBL_RECOMMENDED_FOR' | translate}} : </ion-label>
+    </div>
     <div class="custom-filed" *ngIf="data?.startDate">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
       {{data?.startDate | date : 'dd/MM/yyyy' }}
@@ -16,9 +23,6 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
       {{data?.duration?.label || data?.duration }}
     </div>
-    <div class="custom-filed" *ngIf="data?.duration">
-      <ion-label position="fixed"> {{'FRMELEMNTS_LBL_RECOMMENDED_FOR' | translate}} : </ion-label>
-      {{data?.duration?.label || data?.duration }}
-    </div>
+  
   </ion-card-content>
 </ion-card>

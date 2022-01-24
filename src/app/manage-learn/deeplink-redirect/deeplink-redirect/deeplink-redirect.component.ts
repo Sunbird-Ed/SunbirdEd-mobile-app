@@ -98,7 +98,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       },500);
       return
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
       queryParams: data,
       skipLocationChange: true,
     });
