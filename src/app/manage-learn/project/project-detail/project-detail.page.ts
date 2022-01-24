@@ -795,6 +795,17 @@ export class ProjectDetailPage implements OnDestroy {
     });
   }
 
+  goToDetails() {
+    this.router.navigate([`${RouterLinks.PROJECT}/projectDetails`], {
+      queryParams: {
+        projectId: this.projectId,
+        fromImportPage: true,
+        programId: this.programId
+      },
+      replaceUrl: false
+    });
+  }
+
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       if (this.fromImportProject) {
