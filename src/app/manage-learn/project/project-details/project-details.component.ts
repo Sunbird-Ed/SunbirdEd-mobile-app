@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import { SyncService } from '../../core/services/sync.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
 
 @Component({
   selector: 'app-project-details',
@@ -48,6 +49,8 @@ export class ProjectDetailsComponent implements OnInit {
     private syncServ: SyncService,
     private share: SharingFeatureService,
     private alert: AlertController,
+    private ref: ChangeDetectorRef,
+    private unnatiService: UnnatiDataService,
 
 
   ) {
@@ -161,8 +164,6 @@ export class ProjectDetailsComponent implements OnInit {
         }
         break;
       case 'synced':
-        break
-      case 'synced':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
       case 'share':
@@ -273,7 +274,8 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
 
-  updateLocalDb() {
+  updateLocalDb(setIsEditTrue = false) {
+    this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
     })
@@ -284,7 +286,65 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   getProjectTaskStatus() {
+    if (!this.projectDetails.tasks && !this.projectDetails.tasks.length) {
+      return
+    }
+    let taskIdArr = this.getAssessmentTypeTaskId()
 
+    if (!taskIdArr.length) {
+      return
+    }
+    if (!this.networkFlag) {
+      return;
+    }
+    const config = {
+      url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.projectDetails._id}`,
+      payload: {
+        taskIds: taskIdArr,
+      },
+    };
+    this.unnatiService.post(config).subscribe(
+      (success) => {
+        if (!success.result) {
+          return;
+        }
+        this.updateAssessmentStatus(success.result);
+      },
+      (error) => {
+      }
+    );
+  }
+
+  updateAssessmentStatus(data) {
+    // if task type is assessment or observation then check if it is submitted and change the status and update in db
+    let isChnaged = false
+    this.projectDetails.tasks.map((t) => {
+      data.map((d) => {
+        if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
+          if (d._id == t._id && d.submissionDetails.status) {
+            // check id matches and task details has submissionDetails
+            if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
+              t.submissionDetails = d.submissionDetails;
+              t.isEdit = true
+              isChnaged = true;
+              t.isEdit = true
+              this.projectDetails.isEdit = true
+            }
+          }
+        }
+
+      });
+    });
+    isChnaged ? this.updateLocalDb(true) : null// if any assessment/observatiom task status is changed then only update 
+    this.ref.detectChanges();
+  }
+
+  getAssessmentTypeTaskId() {
+    const assessmentTypeTaskIds = [];
+    for (const task of this.projectDetails.tasks) {
+      task.type === "assessment" || task.type === "observation" ? assessmentTypeTaskIds.push(task._id) : null;
+    }
+    return assessmentTypeTaskIds;
   }
 
 }

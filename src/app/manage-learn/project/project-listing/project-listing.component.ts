@@ -208,7 +208,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
+            this.selectedFilterIndex == 2 ? this.getCreatedProjects(): this.getProjectList()
         } else {
             this.getDownloadedProjectsList();
         }
@@ -431,15 +431,16 @@ export class ProjectListingComponent {
 
     doAction(id?, project?) {
         const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
-        if(!project._id){
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,project.solutionId], {
-                queryParams: {
-                    data: project
-                },
-            });
-            return;
-        }
+       
         if (project) {
+            if(!project?._id){
+                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,project.solutionId], {
+                    queryParams: {
+                        data: project
+                    },
+                });
+                return;
+            }
             if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
                 this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                     if (data && data.isClicked) {

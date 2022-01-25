@@ -8,11 +8,8 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 import { AppHeaderService, AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { NetworkService, ProjectService } from '../../core';
-import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { KendraApiService } from '../../core/services/kendra-api.service';
 import { actions } from '../../core/constants/actions.constants';
-import { UnnatiDataService } from '../../core/services/unnati-data.service';
 
 @Component({
   selector: 'app-project-templateview',
@@ -67,9 +64,7 @@ export class ProjectTemplateviewPage {
     private network: NetworkService,
     private zone: NgZone,
     private headerService: AppHeaderService,
-    private kendra: KendraApiService,
     private appGlobalService: AppGlobalService,
-    private unnatiService:UnnatiDataService,
     private projectService : ProjectService
   ) {
 
@@ -137,8 +132,8 @@ export class ProjectTemplateviewPage {
   segmentChanged(event) {
     this.segmentType = event.detail.value;
   }
-  openResource(event) {
-    // Open resources
+  openResource(resource) {
+  this.projectService.openResources(resource);
   }
   async start() {
     if (this.appGlobalService.isUserLoggedIn()) {
