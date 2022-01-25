@@ -8,3 +8,18 @@ export const statuses: any = [
     { title: statusType.inProgress },
     { title: statusType.completed }
 ]
+
+export const projectStatus = {
+    started: {
+        label:"Started",
+        value: "started"
+    },
+    inProgress: {
+        label:"In Progress",
+        value: "inProgress"
+    },
+    submitted: {
+        label:"Submitted",
+        value: "submitted"
+    }
+}

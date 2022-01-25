@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UpdateLocalSchoolDataService } from './services/update-local-school-data.service';
-import { LocalStorageService, ProjectService } from './services';
+import { LocalStorageService } from './services';
 import { UpdateTrackerService } from './services/update-tracker.service';
 import { EvidenceService } from './services/evidence.service';
 import { ProjectReportService } from './services/project-report.service';
@@ -20,7 +20,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   providers: [
     UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,
-    ProgramService, AssessmentApiService, DhitiApiService,SharingFeatureService,ProjectService
+    ProgramService, AssessmentApiService, DhitiApiService,SharingFeatureService
   ],
 })
 export class CoreModule {}
