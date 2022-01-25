@@ -7,9 +7,15 @@ import { Component, OnInit,Input } from '@angular/core';
 })
 export class ProjectDetailsCardComponent implements OnInit {
 @Input() data:any;
-@Input() categories:any;
-  constructor() { }
+categories = [];
+constructor() { }
 
-  ngOnInit() {}
-
+  ngOnInit() {
+    this.categories = [];
+    if(this.data.categories && this.data.categories.length){
+      this.data.categories.forEach((category: any) => {
+        category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+      });
+    }
+  }
 }

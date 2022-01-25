@@ -13,7 +13,7 @@ statuses =statusType;
   constructor() { }
 
   ngOnInit() {}
-  onCardClick(){
-    this.actionEvent.emit(this.data);
+  onCardClick(task){
+    this.actionEvent.emit(task);
   }
 }

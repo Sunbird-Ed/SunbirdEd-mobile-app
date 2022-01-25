@@ -143,17 +143,7 @@ export class ProjectTemplateviewPage {
   async start() {
     if (this.appGlobalService.isUserLoggedIn()) {
       let payload = { programId: this.programId, solutionId: this.solutionId };
-    const config = {
-      url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + this.project._id + '?isATargetedSolution=false',
-      payload: payload,
-    };
-    let resp;
-    try {
-      resp = await this.unnatiService.post(config).toPromise();
-    } catch (error) {
-      console.log(error);
-    }
-
+    let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
     if (resp && resp.result) {
       this.router
         .navigate([`/${RouterLinks.PROJECT}`], {
