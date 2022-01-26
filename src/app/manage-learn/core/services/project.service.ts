@@ -1,25 +1,42 @@
-import { Injectable } from '@angular/core';
+import { Injectable,Inject } from '@angular/core';
 import { urlConstants } from '../constants/urlConstants';
 import { KendraApiService } from './kendra-api.service';
+import { UnnatiDataService } from './unnati-data.service';
 import { LoaderService } from '../../core';
 import { UtilsService } from './utils.service';
 import { DbService } from './db.service';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
-
+import { CommonUtilService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ToastService } from '../../core';
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectService {
   filterForReport: any;
+  networkFlag: boolean;
+  private _networkSubscription: Subscription;
 
   constructor(
     private kendra: KendraApiService,
     private utils: UtilsService,
     private loader: LoaderService,
     private db: DbService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private unnatiService: UnnatiDataService,
+    private commonUtilService: CommonUtilService,
+    private toast : ToastService,
+    private navigateService: NavigationService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+  ) { 
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+      this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+        this.networkFlag = available;
+      })
+  }
   async getTemplateBySoluntionId(id) {
     let payload = await this.utils.getProfileInfo();
     const config = {
@@ -27,6 +44,13 @@ export class ProjectService {
       payload: payload,
     };
     return this.kendra.post(config).toPromise();
+  }
+   getTemplateData(payload, id, targeted) {
+    const config = {
+      url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + id + '?isATargetedSolution=' + targeted,
+      payload: payload,
+    };
+    return this.unnatiService.post(config).toPromise();
   }
 
   async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId}) {
@@ -89,5 +113,30 @@ export class ProjectService {
     })
   }
 
-  
+  openResources(resource){
+    let id
+    if (resource.id) {
+      id = resource.id;
+    } else {
+      id = resource.link.split('/').pop()
+    }
+    
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
+      return;
+    }
+    const req: ContentDetailRequest = {
+      contentId: id,
+      attachFeedback: false,
+      attachContentAccess: false,
+      emitUpdateIfAny: false
+    };
+
+    this.contentService
+      .getContentDetails(req)
+      .toPromise()
+      .then(async (data: Content) => {
+        this.navigateService.navigateToDetailPage(data, { content: data });
+      });
+  }
 }

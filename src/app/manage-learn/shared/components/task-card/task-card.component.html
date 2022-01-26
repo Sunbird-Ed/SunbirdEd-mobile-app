@@ -1,20 +1,20 @@
-<ion-card (click)="onCardClick()" class="sb-dt-card task-card">
+<ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngFor="let task of data">
   <ion-row>
     <ion-col size="2">
-      <ion-icon *ngIf="data?.status == statuses['completed']" name="checkmark-circle" class="check-icon" color="success"></ion-icon>
+      <ion-icon *ngIf="task?.status == statuses['completed']" name="checkmark-circle" class="check-icon" color="success"></ion-icon>
     </ion-col>
     <ion-col size="10">
       <div class="display-flex-space-btn">
-        <div>{{data?.name}}</div>
+        <div>{{task?.name}}</div>
         <div class="mandatory-ribben-label">
           {{'FRMELEMNTS_LBL_MANDATORY' | translate}}
         </div>
       </div>
       <div class="display-flex-space-btn">
-        <div>{{data?.status}}</div>
+        <div>{{task?.status}}</div>
       </div>
       <div  class="display-flex-space-btn"> 
-        <div> {{(data?.endDate) ? (data.endDate | date : 'dd/MM/yyyy') : ""}}</div>
+        <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
         <div>
           <ion-label class="link-label">
            {{'FRMELEMNTS_BTN_VIEW_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>

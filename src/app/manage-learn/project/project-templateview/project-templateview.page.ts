@@ -8,11 +8,8 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 import { AppHeaderService, AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { NetworkService, ProjectService } from '../../core';
-import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { KendraApiService } from '../../core/services/kendra-api.service';
 import { actions } from '../../core/constants/actions.constants';
-import { UnnatiDataService } from '../../core/services/unnati-data.service';
 
 @Component({
   selector: 'app-project-templateview',
@@ -67,9 +64,7 @@ export class ProjectTemplateviewPage {
     private network: NetworkService,
     private zone: NgZone,
     private headerService: AppHeaderService,
-    private kendra: KendraApiService,
     private appGlobalService: AppGlobalService,
-    private unnatiService:UnnatiDataService,
     private projectService : ProjectService
   ) {
 
@@ -137,23 +132,13 @@ export class ProjectTemplateviewPage {
   segmentChanged(event) {
     this.segmentType = event.detail.value;
   }
-  openResource(event) {
-    // Open resources
+  openResource(resource) {
+  this.projectService.openResources(resource);
   }
   async start() {
     if (this.appGlobalService.isUserLoggedIn()) {
       let payload = { programId: this.programId, solutionId: this.solutionId };
-    const config = {
-      url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + this.project._id + '?isATargetedSolution=false',
-      payload: payload,
-    };
-    let resp;
-    try {
-      resp = await this.unnatiService.post(config).toPromise();
-    } catch (error) {
-      console.log(error);
-    }
-
+    let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
     if (resp && resp.result) {
       this.router
         .navigate([`/${RouterLinks.PROJECT}`], {
