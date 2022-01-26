@@ -12,7 +12,7 @@ constructor() { }
 
   ngOnInit() {
     this.categories = [];
-    if(this.data.categories && this.data.categories.length){
+    if(this.data?.categories && this.data?.categories?.length){
       this.data.categories.forEach((category: any) => {
         category.label ? this.categories.push(category.label) : this.categories.push(category.name);
       });

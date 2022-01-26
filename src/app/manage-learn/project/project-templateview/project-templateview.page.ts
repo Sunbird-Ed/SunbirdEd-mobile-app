@@ -1,6 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController} from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
@@ -51,8 +51,8 @@ export class ProjectTemplateviewPage {
     actionButtons: [],
   };
   projectProgress;
-  actionItems=[];
-  metaData:any;
+  actionItems = [];
+  metaData: any;
   projectSegments;
   segmentType = "details";
   constructor(
@@ -65,7 +65,7 @@ export class ProjectTemplateviewPage {
     private zone: NgZone,
     private headerService: AppHeaderService,
     private appGlobalService: AppGlobalService,
-    private projectService : ProjectService
+    private projectService: ProjectService
   ) {
 
     params.params.subscribe((parameters) => {
@@ -89,31 +89,31 @@ export class ProjectTemplateviewPage {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
-     this.getProjectApi();
-   }
+    this.getProjectApi();
+  }
 
-   ionViewWillEnter(){
+  ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-   }
-   async getProjectApi() {
+  }
+  async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
-    let resp  = await this.projectService.getTemplateBySoluntionId(this.id);
+    let resp = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
     this.metaData = {
-      title : this.project.title,
-      subTitle:this.project.programName ? this.project.programName :''
+      title: this.project.title,
+      subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
     this.categories = [];
     this.project.categories.forEach((category: any) => {
       category.label ? this.categories.push(category.label) : this.categories.push(category.name);
     });
     this.sortTasks();
-    if(this.project.tasks &&this.project.tasks.length)
-    this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
+    if (this.project.tasks && this.project.tasks.length)
+      this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
   async sortTasks() {
@@ -126,16 +126,30 @@ export class ProjectTemplateviewPage {
   toggle() {
     this.showDetails = !this.showDetails;
   }
-  action(action){
+  action(action) {
     // Operation based on action
   }
   segmentChanged(event) {
     this.segmentType = event.detail.value;
   }
   openResource(resource) {
-  this.projectService.openResources(resource);
+    this.projectService.openResources(resource);
   }
   async start() {
+    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+    //   queryParams: {
+    //     projectId: this.projectId,
+    //     programId: this.programId,
+    //     solutionId: this.solutionId,
+    //   },
+    // });
+    // const payload = {
+    //   projectId: this.projectId,
+    //   solutionId: this.solutionId,
+    //   isProfileInfoRequired: true,
+    //   programId: this.programId
+    // }
+    // this.projectService.getProjectDetails(payload);
     if (this.appGlobalService.isUserLoggedIn()) {
       let payload = { programId: this.programId, solutionId: this.solutionId };
     let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
@@ -147,13 +161,13 @@ export class ProjectTemplateviewPage {
           },
         })
         .then(() => {
-          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-            queryParams: {
-              projectId: resp.result._id,
-              programId: this.programId,
-              solutionId: this.solutionId,
-            },
-          });
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      queryParams: {
+        projectId: resp.result._id,
+        programId: this.programId,
+        solutionId: this.solutionId,
+      },
+    });
         });
     }
     } else{

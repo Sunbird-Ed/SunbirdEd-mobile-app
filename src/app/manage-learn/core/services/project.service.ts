@@ -56,7 +56,7 @@ export class ProjectService {
   async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
-    const url = `/${projectId}?${solutionId ? ('solutionId=' + solutionId) : ''}`;
+    const url = `${projectId ? '/' + projectId : ''}?${solutionId ? ('solutionId=' + solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: payload
