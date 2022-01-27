@@ -12,6 +12,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-project-details',
@@ -35,6 +36,7 @@ export class ProjectDetailsComponent implements OnInit {
   networkFlag: boolean;
   private _networkSubscription: Subscription;
   shareTaskId
+  _appHeaderSubscription: Subscription;
 
   constructor(
     public params: ActivatedRoute,
@@ -51,6 +53,7 @@ export class ProjectDetailsComponent implements OnInit {
     private alert: AlertController,
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
+    private location: Location
 
 
   ) {
@@ -82,12 +85,24 @@ export class ProjectDetailsComponent implements OnInit {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
+      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+            this.location.back();
+      });
+  }
+
+  ngOnDestroy() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
   }
 
   setHeaderConfig() {
-    this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = [];
-    this._headerConfig.showBurgerMenu = false;
+    this._headerConfig ={
+      showHeader: true,
+      showBurgerMenu: false,
+      pageTitle: '',
+      actionButtons: [],
+    };
     this.headerService.updatePageConfig(this._headerConfig);
   }
 

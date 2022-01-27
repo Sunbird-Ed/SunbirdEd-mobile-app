@@ -225,6 +225,7 @@ export class ProjectListingComponent {
                 break;
             case 1:
                 selectedFilter = 'discoveredByMe';
+                break;
             case 2:
                 selectedFilter = 'createdByMe';
                 break;
@@ -236,7 +237,7 @@ export class ProjectListingComponent {
         }
         const config = {
             url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
-            payload: selectedFilter == 'assignedToMe' ? this.payload : ''
+            payload: selectedFilter !== 'createdByMe' ? this.payload : ''
         }
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();

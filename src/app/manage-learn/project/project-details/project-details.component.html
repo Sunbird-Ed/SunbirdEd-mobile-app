@@ -5,14 +5,14 @@
       <div class="wrapper">
         <app-metadata-actions (actionEvent)="onAction($event)" [actionItems]="projectActions"></app-metadata-actions>
       </div>
-      <div class="sb-course-progress-container" *ngIf="taskCount">
+      <div class="sb-course-progress-container" >
         <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
         </p>
         <p>{{projectProgress?.completedTasks}} / {{taskCount}} {{'COMPLETED' | translate}}
         </p>
         <ion-progress-bar
           [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}"
-          value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
+          value=".5" class="progress-bar-style"></ion-progress-bar>
       </div>
     </div>
     <ion-button (click)="start()" expand="block" class="text-transform-none">{{'FRMELEMNTS_LBL_START_IMPROVEMENT' |

@@ -141,37 +141,38 @@ export class ProjectTemplateviewPage {
     //     projectId: this.projectId,
     //     programId: this.programId,
     //     solutionId: this.solutionId,
+    //     type: 'assignedToMe',
     //   },
     // });
-    // const payload = {
-    //   projectId: this.projectId,
-    //   solutionId: this.solutionId,
-    //   isProfileInfoRequired: true,
-    //   programId: this.programId
+    const payload = {
+      projectId: this.projectId,
+      solutionId: this.solutionId,
+      isProfileInfoRequired: true,
+      programId: this.programId
+    }
+    this.projectService.getProjectDetails(payload);
+    // if (this.appGlobalService.isUserLoggedIn()) {
+    //   let payload = { programId: this.programId, solutionId: this.solutionId };
+    // let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
+    // if (resp && resp.result) {
+    //   this.router
+    //     .navigate([`/${RouterLinks.PROJECT}`], {
+    //       queryParams: {
+    //         selectedFilter: this.isTargeted ? 'assignedToMe' : 'discoveredByMe',
+    //       },
+    //     })
+    //     .then(() => {
+    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+    //   queryParams: {
+    //     projectId: resp.result._id,
+    //     programId: this.programId,
+    //     solutionId: this.solutionId,
+    //   },
+    // });
+    //     });
     // }
-    // this.projectService.getProjectDetails(payload);
-    if (this.appGlobalService.isUserLoggedIn()) {
-      let payload = { programId: this.programId, solutionId: this.solutionId };
-    let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
-    if (resp && resp.result) {
-      this.router
-        .navigate([`/${RouterLinks.PROJECT}`], {
-          queryParams: {
-            selectedFilter: this.isTargeted ? 'assignedToMe' : 'discoveredByMe',
-          },
-        })
-        .then(() => {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      queryParams: {
-        projectId: resp.result._id,
-        programId: this.programId,
-        solutionId: this.solutionId,
-      },
-    });
-        });
-    }
-    } else{
-      // go to login page
-    }
+    // } else{
+    //   // go to login page
+    // }
   }
 }
