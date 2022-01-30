@@ -16,6 +16,7 @@
         <ion-progress-bar
           [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}"
           [value]="projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks"
+          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks, 'in-progress': projectCompletionPercent?.completedTasks < projectCompletionPercent?.totalTasks}"
           class="progress-bar-style"></ion-progress-bar>
       </div>
 
@@ -23,7 +24,7 @@
     <ion-button (click)="submitImprovment()"
       *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted"
       expand="block" class="ion-text-capitalize ion-margin-top"
-      [ngClass]="{'button-disabled':(projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks)<1)}"
+      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks<1}"
       [disabled]="(projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks)<1">
       {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
     </ion-button>
@@ -51,5 +52,5 @@
     </app-accordion-list>
   </div>
 
-  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails"></app-task-card>
+  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails" [viewOnly]="projectDetails?.status === allStatusTypes.submitted" ></app-task-card>
 </ion-content>

@@ -153,7 +153,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   setActionButtons() {
-    const defaultOptions = actions.PROJECT_ACTIONS;
+    let defaultOptions = actions.PROJECT_ACTIONS;
     if (this.projectDetails.isNew || this.projectDetails.isEdit) {
       const indexOfSync = defaultOptions.length - 1;
       defaultOptions[indexOfSync] = actions.SYNC_ACTION;
@@ -161,7 +161,20 @@ export class ProjectDetailsComponent implements OnInit {
     if (this.projectDetails.downloaded) {
       defaultOptions[0] = actions.DOWNLOADED_ACTION
     }
+    if(this.projectDetails.status === statusType.submitted){
+      defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+    }
     this.projectActions = defaultOptions;
+  }
+
+  doSyncAction() {
+    if (this.network.isNetworkAvailable) {
+      this.projectDetails.isNew
+        ? this.createNewProject()
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
+    }
   }
 
   onAction(event) {
@@ -175,13 +188,7 @@ export class ProjectDetailsComponent implements OnInit {
       case 'downloaded':
         break;
       case 'sync':
-        if (this.network.isNetworkAvailable) {
-          this.projectDetails.isNew
-            ? this.createNewProject()
-            : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
-        } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-        }
+        this.doSyncAction();
         break;
       case 'synced':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
@@ -375,7 +382,9 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
-    
+    this.projectDetails.status = statusType.submitted;
+    this.updateLocalDb(true);
+    this.doSyncAction();
   }
 
 }
