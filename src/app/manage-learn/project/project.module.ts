@@ -33,10 +33,6 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.DETAILS}`,
-    component: ProjectDetailPage
-  },
-  {
-    path: `projectDetails`,
     component: ProjectDetailsComponent
   },
   {

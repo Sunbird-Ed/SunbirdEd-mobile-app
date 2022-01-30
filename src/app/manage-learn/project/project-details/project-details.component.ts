@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
-import { LoaderService, ToastService, NetworkService } from '../../core';
+import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType } from '../../core';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -13,6 +13,7 @@ import { SharingFeatureService } from '../../core/services/sharing-feature.servi
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
+import * as _ from 'underscore';
 
 @Component({
   selector: 'app-project-details',
@@ -37,6 +38,8 @@ export class ProjectDetailsComponent implements OnInit {
   private _networkSubscription: Subscription;
   shareTaskId
   _appHeaderSubscription: Subscription;
+  projectCompletionPercent;
+  allStatusTypes = statusType;
 
   constructor(
     public params: ActivatedRoute,
@@ -53,7 +56,8 @@ export class ProjectDetailsComponent implements OnInit {
     private alert: AlertController,
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
-    private location: Location
+    private location: Location,
+    private projectServ: ProjectService
 
 
   ) {
@@ -120,6 +124,7 @@ export class ProjectDetailsComponent implements OnInit {
             });
             console.log(this.projectDetails);
             this.setCardMetaData();
+            this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
           } else {
             this.getProjectsApi();
@@ -297,7 +302,14 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   getProjectsApi() {
-
+    const payload = {
+      projectId: this.projectId,
+      solutionId: this.solutionId,
+      isProfileInfoRequired: false,
+      programId: this.programId,
+      templateId: this.templateId
+    };
+    this.projectServ.getProjectDetails(payload);
   }
 
   getProjectTaskStatus() {
@@ -360,6 +372,10 @@ export class ProjectDetailsComponent implements OnInit {
       task.type === "assessment" || task.type === "observation" ? assessmentTypeTaskIds.push(task._id) : null;
     }
     return assessmentTypeTaskIds;
+  }
+
+  submitImprovment() {
+    
   }
 
 }

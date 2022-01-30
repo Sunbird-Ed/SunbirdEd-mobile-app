@@ -1,4 +1,4 @@
-import { Injectable,Inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { urlConstants } from '../constants/urlConstants';
 import { KendraApiService } from './kendra-api.service';
 import { UnnatiDataService } from './unnati-data.service';
@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ToastService } from '../../core';
+import { statusType } from '../constants';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,14 +30,14 @@ export class ProjectService {
     private router: Router,
     private unnatiService: UnnatiDataService,
     private commonUtilService: CommonUtilService,
-    private toast : ToastService,
+    private toast: ToastService,
     private navigateService: NavigationService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-  ) { 
+  ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-      this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
-      })
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.networkFlag = available;
+    })
   }
   async getTemplateBySoluntionId(id) {
     let payload = await this.utils.getProfileInfo();
@@ -45,7 +47,7 @@ export class ProjectService {
     };
     return this.kendra.post(config).toPromise();
   }
-   getTemplateData(payload, id, targeted) {
+  getTemplateData(payload, id, targeted) {
     const config = {
       url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + id + '?isATargetedSolution=' + targeted,
       payload: payload,
@@ -53,7 +55,7 @@ export class ProjectService {
     return this.unnatiService.post(config).toPromise();
   }
 
-  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId, templateId=''}) {
+  async getProjectDetails({ projectId = '', solutionId, isProfileInfoRequired = false, programId, templateId = '' }) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
@@ -103,7 +105,7 @@ export class ProjectService {
     })
   }
 
-  navigateToProjectDetails({projectId,programId, solutionId}) {
+  navigateToProjectDetails({ projectId, programId, solutionId }) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: projectId,
@@ -113,14 +115,14 @@ export class ProjectService {
     })
   }
 
-  openResources(resource){
+  openResources(resource) {
     let id
     if (resource.id) {
       id = resource.id;
     } else {
       id = resource.link.split('/').pop()
     }
-    
+
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
@@ -138,5 +140,20 @@ export class ProjectService {
       .then(async (data: Content) => {
         this.navigateService.navigateToDetailPage(data, { content: data });
       });
+  }
+
+  getProjectCompletionPercentage({ tasks }) {
+    const tasksCount = tasks?.length;
+    if (!tasksCount) {
+      return { completedTasks: 0, totalTasks: 0 };
+    }
+    let completedTaskCount = 0;
+    for (const task of tasks) {
+      if (task.status === statusType.completed) {
+        completedTaskCount++
+      }
+    }
+    const payload = { completedTasks: completedTaskCount, totalTasks: tasksCount }
+    return payload;
   }
 }
