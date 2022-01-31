@@ -47,6 +47,13 @@ export class ProjectService {
     };
     return this.kendra.post(config).toPromise();
   }
+  async getTemplateByExternalId(id){
+    const config = {
+        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id,
+    }
+    return this.unnatiService.post(config).toPromise();
+  }
+
   getTemplateData(payload, id, targeted) {
     const config = {
       url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + id + '?isATargetedSolution=' + targeted,
@@ -156,5 +163,56 @@ export class ProjectService {
     }
     const payload = { completedTasks: completedTaskCount, totalTasks: tasksCount }
     return payload;
+  }
+
+  async startAssessment(projectId,id){
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+      return;
+    }
+    let payload = await this.utils.getProfileInfo();
+     const config = {
+       url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${id}`,
+       payload:payload
+     };
+     this.unnatiService.post(config).subscribe(success =>{
+      if (!success.result) {
+        this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+        return;
+      }
+      let data = success.result;
+      if(!data?.observationId){
+        this.getTemplateBySoluntionId(data?.solutionDetails?._id).then(resultdata =>{
+          if (
+            resultdata.assessment.evidences.length > 1 ||
+            resultdata.assessment.evidences[0].sections.length > 1 ||
+            (resultdata.solution.criteriaLevelReport && resultdata.solution.isRubricDriven)
+          ) {
+            this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: resultdata });
+          } else {
+            this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+              queryParams: {
+                evidenceIndex: 0,
+                sectionIndex: 0,
+              },
+                state: resultdata,
+            });
+          }
+          return;
+        })
+      }
+
+      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+        queryParams: {
+          programId: data.programId,
+          solutionId: data.solutionId,
+          observationId: data.observationId,
+          entityId: data.entityId,
+          entityName: data.entityName,
+        },
+      });
+     }, (error) => {
+      this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+    })
   }
 }

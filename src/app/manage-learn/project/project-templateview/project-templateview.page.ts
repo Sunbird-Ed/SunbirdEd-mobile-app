@@ -122,20 +122,15 @@ export class ProjectTemplateviewPage {
       this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
   async getTemplateByExternalId() {
-      const config = {
-      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.id,
+    let resp = await this.projectService.getTemplateByExternalId(this.id);
+    this.project = resp.result;
+     if(this.project._id){
+      this.buttonLabel='FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
     }
-    this.unnatiService.get(config).subscribe(success => {
-      this.project = success.result;
-      if(this.project._id){
-        this.buttonLabel='FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
-      }
-      this.metaData = {
-        title: this.project.title,
-        subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
-      }
-    }, (error: any) => {
-    });
+    this.metaData = {
+      title: this.project.title,
+      subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
+    }
   }
   toggle() {
     this.showDetails = !this.showDetails;
