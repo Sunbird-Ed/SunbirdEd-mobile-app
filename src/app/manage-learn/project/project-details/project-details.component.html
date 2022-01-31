@@ -21,13 +21,22 @@
       </div>
 
     </div>
-    <ion-button (click)="submitImprovment()"
-      *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted"
-      expand="block" class="ion-text-capitalize ion-margin-top"
-      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks<1}"
-      [disabled]="(projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks)<1">
+    <ion-button (click)="submitProjectConfirmation()"
+      *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted" expand="block"
+      class="ion-text-capitalize ion-margin-top"
+      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks}"
+      [disabled]="(projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
       {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
     </ion-button>
+
+    <div class="sb-course-complete-container ion-padding" *ngIf="projectDetails?.status === allStatusTypes.submitted">
+      <div class="img-container">
+        <img class="success-badge" src='assets/imgs/Badge green.svg' alt="completed">
+      </div>
+      <div class="text-container">
+        <p><strong>{{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT_SUCCESS_MESSAGE' | translate }}</strong></p>
+      </div>
+    </div>
   </app-metadata-details>
 
   <div class="project-segments">
@@ -52,5 +61,6 @@
     </app-accordion-list>
   </div>
 
-  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails" [viewOnly]="projectDetails?.status === allStatusTypes.submitted" ></app-task-card>
+  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails"
+    [viewOnly]="projectDetails?.status === allStatusTypes.submitted"></app-task-card>
 </ion-content>
