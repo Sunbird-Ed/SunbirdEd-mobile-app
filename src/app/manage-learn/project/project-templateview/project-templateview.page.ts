@@ -204,13 +204,4 @@ export class ProjectTemplateviewPage {
     //   // go to login page
     // }
   }
-
-  async closeTemplate() {
-    if(!this.type){
-      this.router.navigate([`/${RouterLinks.HOME}`]);
-    }else{
-      this.location.back();
-    }
-      
-  }
 }
