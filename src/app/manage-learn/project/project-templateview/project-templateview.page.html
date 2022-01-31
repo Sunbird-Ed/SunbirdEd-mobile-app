@@ -12,7 +12,7 @@
         <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
     </div>
   </div> -->
-    <ion-button (click)="start()" expand="block" class="ion-text-capitalize ion-margin-top">{{'FRMELEMNTS_LBL_START_IMPROVEMENT' |
+    <ion-button (click)="doAction()" expand="block" class="ion-text-capitalize ion-margin-top">{{buttonLabel |
       translate}}</ion-button>
   </app-metadata-details>
   <div class="project-segments">
@@ -31,7 +31,7 @@
   </div>
   <app-project-details-card [data]="project" *ngIf="segmentType == 'details'">
   </app-project-details-card>
-  <div *ngIf="segmentType == 'tasks' && taskCount">
+  <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
     <app-task-card [data]="project"></app-task-card>
   </div>
   <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
