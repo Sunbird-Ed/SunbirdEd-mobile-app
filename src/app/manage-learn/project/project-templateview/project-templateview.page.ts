@@ -10,6 +10,10 @@ import { Subscription } from 'rxjs';
 import { NetworkService, ProjectService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { GenericPopUpService } from '../../shared';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-project-templateview',
@@ -55,7 +59,9 @@ export class ProjectTemplateviewPage {
   metaData: any;
   projectSegments;
   segmentType = "details";
-  constructor(
+  type;
+  buttonLabel ='FRMELEMNTS_LBL_START_IMPROVEMENT';
+    constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
     private router: Router,
@@ -65,7 +71,10 @@ export class ProjectTemplateviewPage {
     private zone: NgZone,
     private headerService: AppHeaderService,
     private appGlobalService: AppGlobalService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private unnatiService: UnnatiDataService,
+    private popupService: GenericPopUpService,
+    private location : Location
   ) {
 
     params.params.subscribe((parameters) => {
@@ -75,7 +84,10 @@ export class ProjectTemplateviewPage {
       this.isTargeted = parameters.isTargeted;
       this.programId = parameters.programId;
       this.solutionId = parameters.solutionId;
+      this.type = parameters.type;
+      this.type == 'improvement' ? this.getTemplateByExternalId(): this.getProjectApi();
     });
+    this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
     this.translate
       .get([
         'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG',
@@ -89,7 +101,6 @@ export class ProjectTemplateviewPage {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
-    this.getProjectApi();
   }
 
   ionViewWillEnter() {
@@ -107,33 +118,55 @@ export class ProjectTemplateviewPage {
       title: this.project.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
-    this.categories = [];
-    this.project.categories.forEach((category: any) => {
-      category.label ? this.categories.push(category.label) : this.categories.push(category.name);
-    });
-    this.sortTasks();
     if (this.project.tasks && this.project.tasks.length)
       this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
-
-  async sortTasks() {
-    let projectData: any = await this.utils.getSortTasks(this.project);
-    this.project = projectData.project;
-    this.sortedTasks = projectData.sortedTasks;
-    this.taskCount = projectData.taskCount;
+  async getTemplateByExternalId() {
+      const config = {
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.id,
+    }
+    this.unnatiService.get(config).subscribe(success => {
+      this.project = success.result;
+      if(this.project._id){
+        this.buttonLabel='FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+      }
+      this.metaData = {
+        title: this.project.title,
+        subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
+      }
+    }, (error: any) => {
+    });
   }
-
   toggle() {
     this.showDetails = !this.showDetails;
-  }
-  action(action) {
-    // Operation based on action
   }
   segmentChanged(event) {
     this.segmentType = event.detail.value;
   }
   openResource(resource) {
     this.projectService.openResources(resource);
+  }
+  doAction(){
+    if(!this.project.hasAcceptedTAndC && !this.isTargeted){
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+        if (data && data.isClicked) {
+                  this.project.hasAcceptedTAndC = data.isChecked;
+                  this.start();
+        }
+      })
+    }else{
+      this.start();
+    }
+  }
+  gotoDetails(){
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      replaceUrl:true,
+      queryParams: {
+          projectId: this.project._id,
+          programId: this.project.programId,
+          solutionId: this.project.solutionId
+      },
+  });
   }
   async start() {
     // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
@@ -145,10 +178,11 @@ export class ProjectTemplateviewPage {
     //   },
     // });
     const payload = {
-      projectId: this.projectId,
-      solutionId: this.solutionId,
+      projectId: this.project._id,
+      programId: this.project.programId,
+      solutionId: this.project.solutionId,
       isProfileInfoRequired: true,
-      programId: this.programId
+      hasAcceptedTAndC : this.project.hasAcceptedTAndC
     }
     this.projectService.getProjectDetails(payload);
     // if (this.appGlobalService.isUserLoggedIn()) {
@@ -174,5 +208,14 @@ export class ProjectTemplateviewPage {
     // } else{
     //   // go to login page
     // }
+  }
+
+  async closeTemplate() {
+    if(!this.type){
+      this.router.navigate([`/${RouterLinks.HOME}`]);
+    }else{
+      this.location.back();
+    }
+      
   }
 }

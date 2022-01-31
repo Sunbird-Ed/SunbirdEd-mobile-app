@@ -41,10 +41,9 @@ export class ImpSuggestionsPage {
 }
 
   goToTemplateDetails(criteria, project) {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,project.externalId], {
       queryParams: {
-        viewOnlyMode: true,
-        templateId: project.externalId
+        type:'improvement'
       },
       state: {
         "referenceFrom": "observation",
