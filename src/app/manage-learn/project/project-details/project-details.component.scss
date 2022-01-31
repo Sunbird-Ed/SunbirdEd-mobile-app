@@ -1,0 +1,11 @@
+
+.button-disabled {
+    --background: #707070 !important;
+}
+.completed {
+    --progress-background: var(--app-green) !important;
+}
+
+.in-progress {
+    --progress-background: var(--app-quaternary-medium) !important;
+}

@@ -42,5 +42,19 @@ export const actions = {
     icon: "checkmark-circle",
     action: "downloaded",
     color: 'success'
-  }
+  },
+  SUBMITTED_PROJECT_ACTIONS: [
+    {
+      title: "SHARE",
+      icon: "share",
+      action: "share",
+      color: 'primary'
+    },
+    {
+      title: "FRMELEMNTS_LBL_FILES",
+      icon: "folder-open",
+      action: "files",
+      color: 'primary'
+    }
+  ]
 }

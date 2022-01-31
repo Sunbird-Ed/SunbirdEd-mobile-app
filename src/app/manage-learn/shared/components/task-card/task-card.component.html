@@ -1,4 +1,4 @@
-<ion-card (click)="enableClickEvent && onCardClick(task)" class="sb-dt-card task-card" *ngFor="let task of data?.tasks">
+<ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngFor="let task of data?.tasks">
   <ion-row>
     <ion-col size="1">
       <ion-icon *ngIf="task?.status == statuses['completed']" name="checkmark-circle" class="check-icon" color="success"></ion-icon>
@@ -16,21 +16,21 @@
       <div  class="display-flex-space-btn"> 
         <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
         <div class="viewBtn">
-          <ion-label class="link-label"  *ngIf="task?.type =='simple'"  (click)="$event.stopPropagation();enableClickEvent && openTask(task)"> 
+          <ion-label class="link-label"  *ngIf="task?.type =='simple'"  (click)="$event.stopPropagation();openTask(task)"> 
            {{'FRMELEMNTS_BTN_VIEW_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>
           </ion-label>
           <ion-button size="small" *ngIf="task?.type=='content'&&task?.learningResources?.length"
-            (click)="$event.stopPropagation(); enableClickEvent && openResources(task)">
+            (click)="$event.stopPropagation();openResources(task)">
             {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
           </ion-button>
           <ion-button size="small"
             *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
-            (click)="$event.stopPropagation(); enableClickEvent && startAssessment(task)">
+            (click)="$event.stopPropagation();startAssessment(task)">
             {{'START' | translate}} {{task?.type}}
           </ion-button>
           <ion-button size="small"
             *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
-            (click)="$event.stopPropagation(); enableClickEvent && checkReport(task)">
+            (click)="$event.stopPropagation(); checkReport(task)">
             {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
           </ion-button>
         </div>

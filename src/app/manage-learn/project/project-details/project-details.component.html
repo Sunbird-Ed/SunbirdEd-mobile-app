@@ -5,18 +5,29 @@
       <div class="wrapper">
         <app-metadata-actions (actionEvent)="onAction($event)" [actionItems]="projectActions"></app-metadata-actions>
       </div>
-      <div class="sb-course-progress-container" >
+
+      <div class="sb-course-progress-container"
+        *ngIf="projectDetails?.status?.length &&  projectDetails?.status !== allStatusTypes.submitted">
         <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
         </p>
-        <p>{{projectProgress?.completedTasks}} / {{taskCount}} {{'COMPLETED' | translate}}
+        <p>{{projectCompletionPercent?.completedTasks}} / {{projectCompletionPercent?.totalTasks}} {{'COMPLETED' |
+          translate}}
         </p>
         <ion-progress-bar
           [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}"
-          value=".5" class="progress-bar-style"></ion-progress-bar>
+          [value]="projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks"
+          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks, 'in-progress': projectCompletionPercent?.completedTasks < projectCompletionPercent?.totalTasks}"
+          class="progress-bar-style"></ion-progress-bar>
       </div>
+
     </div>
-    <ion-button (click)="start()" expand="block" class="text-transform-none">{{'FRMELEMNTS_LBL_START_IMPROVEMENT' |
-      translate}}</ion-button>
+    <ion-button (click)="submitImprovment()"
+      *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted"
+      expand="block" class="ion-text-capitalize ion-margin-top"
+      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks<1}"
+      [disabled]="(projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks)<1">
+      {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
+    </ion-button>
   </app-metadata-details>
 
   <div class="project-segments">
@@ -33,9 +44,13 @@
       </ion-segment-button>
     </ion-segment>
   </div>
+  <div *ngIf="segmentType == 'details'">
+    <app-project-details-card [data]="projectDetails">
+    </app-project-details-card>
+    <app-accordion-list [data]="projectDetails?.learningResources" (actionEvent)="openResource($event)"
+      [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" *ngIf="projectDetails?.learningResources?.length">
+    </app-accordion-list>
+  </div>
 
-  <app-project-details-card [data]="projectDetails" *ngIf="segmentType == 'details'">
-  </app-project-details-card>
-  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails?.tasks"></app-task-card>
-  <app-accordion-list [data]="projectDetails?.learningResources" (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'"> </app-accordion-list>
+  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails" [viewOnly]="projectDetails?.status === allStatusTypes.submitted" ></app-task-card>
 </ion-content>

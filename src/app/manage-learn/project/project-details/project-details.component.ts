@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
-import { LoaderService, ToastService, NetworkService } from '../../core';
+import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType } from '../../core';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -13,6 +13,7 @@ import { SharingFeatureService } from '../../core/services/sharing-feature.servi
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
+import * as _ from 'underscore';
 
 @Component({
   selector: 'app-project-details',
@@ -37,6 +38,8 @@ export class ProjectDetailsComponent implements OnInit {
   private _networkSubscription: Subscription;
   shareTaskId
   _appHeaderSubscription: Subscription;
+  projectCompletionPercent;
+  allStatusTypes = statusType;
 
   constructor(
     public params: ActivatedRoute,
@@ -53,7 +56,8 @@ export class ProjectDetailsComponent implements OnInit {
     private alert: AlertController,
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
-    private location: Location
+    private location: Location,
+    private projectServ: ProjectService
 
 
   ) {
@@ -120,6 +124,7 @@ export class ProjectDetailsComponent implements OnInit {
             });
             console.log(this.projectDetails);
             this.setCardMetaData();
+            this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
           } else {
             this.getProjectsApi();
@@ -148,7 +153,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   setActionButtons() {
-    const defaultOptions = actions.PROJECT_ACTIONS;
+    let defaultOptions = actions.PROJECT_ACTIONS;
     if (this.projectDetails.isNew || this.projectDetails.isEdit) {
       const indexOfSync = defaultOptions.length - 1;
       defaultOptions[indexOfSync] = actions.SYNC_ACTION;
@@ -156,7 +161,20 @@ export class ProjectDetailsComponent implements OnInit {
     if (this.projectDetails.downloaded) {
       defaultOptions[0] = actions.DOWNLOADED_ACTION
     }
+    if(this.projectDetails.status === statusType.submitted){
+      defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+    }
     this.projectActions = defaultOptions;
+  }
+
+  doSyncAction() {
+    if (this.network.isNetworkAvailable) {
+      this.projectDetails.isNew
+        ? this.createNewProject()
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
+    }
   }
 
   onAction(event) {
@@ -170,13 +188,7 @@ export class ProjectDetailsComponent implements OnInit {
       case 'downloaded':
         break;
       case 'sync':
-        if (this.network.isNetworkAvailable) {
-          this.projectDetails.isNew
-            ? this.createNewProject()
-            : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
-        } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-        }
+        this.doSyncAction();
         break;
       case 'synced':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
@@ -297,7 +309,14 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   getProjectsApi() {
-
+    const payload = {
+      projectId: this.projectId,
+      solutionId: this.solutionId,
+      isProfileInfoRequired: false,
+      programId: this.programId,
+      templateId: this.templateId
+    };
+    this.projectServ.getProjectDetails(payload);
   }
 
   getProjectTaskStatus() {
@@ -360,6 +379,12 @@ export class ProjectDetailsComponent implements OnInit {
       task.type === "assessment" || task.type === "observation" ? assessmentTypeTaskIds.push(task._id) : null;
     }
     return assessmentTypeTaskIds;
+  }
+
+  submitImprovment() {
+    this.projectDetails.status = statusType.submitted;
+    this.updateLocalDb(true);
+    this.doSyncAction();
   }
 
 }

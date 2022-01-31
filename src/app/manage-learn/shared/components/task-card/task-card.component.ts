@@ -13,8 +13,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./task-card.component.scss'],
 })
 export class TaskCardComponent implements OnInit {
-@Input() project :any;
-@Input() enableClickEvent : boolean = false;
+@Input() data :any;
+@Output() actionEvent = new EventEmitter();
+@Input() viewOnly: boolean = false;
 statuses =statusType;
 networkFlag: boolean;
 private _networkSubscription: Subscription;
@@ -32,8 +33,10 @@ allStrings;
     }
 
   ngOnInit() {}
-  openTask(task){
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, task._id]);
+  onCardClick(task){
+    !this.viewOnly ? 
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id]): null;
+
   }
   async startAssessment(task) {
     if (!this.networkFlag) {
@@ -42,7 +45,7 @@ allStrings;
     }
     let payload = await this.utils.getProfileInfo();
      const config = {
-       url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+       url: urlConstants.API_URLS.START_ASSESSMENT + `${this.data._id}?taskId=${task._id}`,
        payload:payload
      };
      this.unnatiService.post(config).subscribe(
@@ -90,7 +93,7 @@ allStrings;
  }
 
  getProjectTaskStatus() {
-  if (!this.project.tasks && !this.project.tasks.length) {
+  if (!this.data.tasks && !this.data.tasks.length) {
     return
   }
   let taskIdArr = this.getAssessmentTypeTaskId()
@@ -102,7 +105,7 @@ allStrings;
      return;
   }
   const config = {
-    url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.project._id}`,
+    url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.data._id}`,
     payload: {
       taskIds: taskIdArr,
     },
@@ -122,7 +125,7 @@ allStrings;
  updateAssessmentStatus(data) {
   // if task type is assessment or observation then check if it is submitted and change the status and update in db
   let isChnaged = false
-  this.project.tasks.map((t) => {
+  this.data.tasks.map((t) => {
     data.map((d) => {
       if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
         if (d._id == t._id && d.submissionDetails.status) {
@@ -132,7 +135,7 @@ allStrings;
             t.isEdit = true
             isChnaged = true;
             t.isEdit = true
-            this.project.isEdit = true
+            this.data.isEdit = true
           }
         }
       }
@@ -144,7 +147,7 @@ allStrings;
 
 getAssessmentTypeTaskId() {
   const assessmentTypeTaskIds = [];
-  for (const task of this.project.tasks) {
+  for (const task of this.data.tasks) {
     task.type === "assessment" || task.type === "observation" ? assessmentTypeTaskIds.push(task._id) : null;
   }
   return assessmentTypeTaskIds;
@@ -154,6 +157,5 @@ getAssessmentTypeTaskId() {
 
   }
   openResources(task){
-
-  }
+}
 }

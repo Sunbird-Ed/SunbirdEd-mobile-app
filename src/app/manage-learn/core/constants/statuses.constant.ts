@@ -1,7 +1,9 @@
 export const statusType = {
-    notStarted: "notStarted",
-    inProgress: "inProgress",
-    completed: "completed"
+    notStarted: 'notStarted',
+    inProgress: 'inProgress',
+    completed: 'completed',
+    started: 'started',
+    submitted: ' submitted'
 }
 export const statuses: any = [
     { title: statusType.notStarted },
@@ -11,15 +13,15 @@ export const statuses: any = [
 
 export const projectStatus = {
     started: {
-        label:"Started",
+        label: "Started",
         value: "started"
     },
     inProgress: {
-        label:"In Progress",
+        label: "In Progress",
         value: "inProgress"
     },
     submitted: {
-        label:"Submitted",
+        label: "Submitted",
         value: "submitted"
     }
 }
