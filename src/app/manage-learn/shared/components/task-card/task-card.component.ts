@@ -2,8 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { ProjectService, statusType } from '@app/app/manage-learn/core';
-import { CommonUtilService } from '@app/services';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-card',
@@ -15,17 +13,9 @@ export class TaskCardComponent implements OnInit {
 @Output() actionEvent = new EventEmitter();
 @Input() viewOnly: boolean = false;
 statuses =statusType;
-networkFlag: boolean;
-private _networkSubscription: Subscription;
 allStrings;
   constructor( private router : Router,
-    private commonUtilService : CommonUtilService,
-    private projectService :ProjectService ) { 
-      this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-      this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
-      })
-    }
+    private projectService :ProjectService) { }
 
   ngOnInit() {}
   onCardClick(task){
