@@ -1,3 +1,4 @@
+import { AppOrientation } from './../app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -8,7 +9,7 @@ import { Events } from '@app/util/events';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics, ProfileConstants, RouterLinks, ShareItemType } from '../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ShareItemType, PreferenceKey } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {
@@ -21,7 +22,8 @@ import {
   UpdateContentStateRequest,
   TelemetryErrorCode,
   ErrorType, SunbirdSdk, ProfileService, ContentService,
-  PlayerService
+  PlayerService,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -64,6 +66,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -233,8 +236,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ionViewWillLeave() {
     this.statusBar.show();
-    this.screenOrientation.unlock();
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
+    if (currentOrientation === AppOrientation.LANDSCAPE) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+    } else {
+      this.screenOrientation.unlock();
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
 
     if (this.events) {
       this.events.unsubscribe('endGenieCanvas');
