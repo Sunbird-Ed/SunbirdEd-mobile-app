@@ -1,3 +1,4 @@
+import { AppOrientation } from './../../app.constant';
 import {
   ChangeDetectorRef, Component, EventEmitter,
   Inject, Input, NgZone, OnDestroy, OnInit, Output
@@ -68,7 +69,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   showLoginButton = false;
   notificationCount = {
     unreadCount : 0
-  }
+  };
+  isTablet = false;
+  orientationToSwitch = AppOrientation.LANDSCAPE;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -101,9 +104,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
     });
     this.events.subscribe('onPreferenceChange:showReport', res => {
-      this.showReports= res
-    })
+      this.showReports = res;
+    });
     this.getUnreadNotifications();
+    this.isTablet = window['isTablet'];
+    this.events.subscribe(EventTopics.ORIENTATION, () => {
+      this.checkCurrentOrientation();
+    });
   }
 
   ngOnInit() {
@@ -502,5 +509,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.showLoginButton = (this.commonUtilService.isAccessibleForNonStudentRole(profileType)
             && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
         (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
+  }
+
+  private async checkCurrentOrientation() {
+    const currentOritentation = await this.preference.getString(PreferenceKey.ORIENTATION).toPromise();
+    if ( currentOritentation === AppOrientation.LANDSCAPE) {
+      this.orientationToSwitch = AppOrientation.POTRAIT;
+    } else {
+      this.orientationToSwitch = AppOrientation.LANDSCAPE;
+    }
   }
 }
