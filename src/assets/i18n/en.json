@@ -1520,5 +1520,8 @@
   "FRMELEMNTS_BTN_LOAD_MORE_PROJECTS": "Load more projects",
   "FRMELEMNTS_LBL_SYNCED":"Synced",
   "FRMELEMNTS_LBL_RECOMMENDED_FOR": "Recommended for",
-  "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT":"Submit improvement"
+  "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT":"Submit improvement",
+  "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT_SUCCESS_MESSAGE":"You have completed this project successfully.",
+  "FRMELEMNTS_LBL_SUBMIT_PROJECT":"Submit Project",
+  "FRMELEMNTS_MSG_SUBMIT_PROJECT":"Are you sure you want to submit your improvement project?"
 }
