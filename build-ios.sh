@@ -67,7 +67,7 @@ ionic cordova plugin rm sb-cordova-plugin-db
 ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 ionic cordova plugin rm cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
-ionic cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.311620532095-tpps5l8ubg3a1c7lmkpjiuvp074puagh
+ionic cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
 ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
 ionic cordova plugin add https://github.com/apache/cordova-plugin-file-transfer.git
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
