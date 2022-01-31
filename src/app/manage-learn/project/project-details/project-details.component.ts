@@ -387,4 +387,33 @@ export class ProjectDetailsComponent implements OnInit {
     this.doSyncAction();
   }
 
+  async submitProjectConfirmation() {
+    let data;
+    this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_PROJECT", "NO", "YES"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      cssClass: 'central-alert',
+      header: data['FRMELEMNTS_LBL_SUBMIT_PROJECT'],
+      message: data["FRMELEMNTS_MSG_SUBMIT_PROJECT"],
+      buttons: [
+        {
+          text: data["NO"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {
+            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+          },
+        },
+        {
+          text: data["YES"],
+          handler: () => {
+            this.submitImprovment();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
 }
