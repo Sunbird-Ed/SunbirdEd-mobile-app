@@ -622,11 +622,12 @@ export class UtilsService {
                       obj["school"] = org.externalId;
                     }
                   }
-                   const roles = []
-                   for (const userRole of profileData["profileUserTypes"]) {
-                    userRole.subType ? roles.push(userRole.subType.toUpperCase()) : roles.push(userRole.type.toUpperCase());
-                   }   
-                   obj['role'] = roles.toString()
+                  
+                  obj["role"] =
+                  profileData["profileUserType"] &&
+                    profileData["profileUserType"]["subType"]
+                    ? profileData["profileUserType"]["subType"].toUpperCase()
+                    : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);
                 });
               })
