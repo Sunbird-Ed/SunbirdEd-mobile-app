@@ -47,7 +47,7 @@ export class ApiService {
   get(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const headers = this.setHeaders(session);
+        const headers = session ? this.setHeaders(session) : '';
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.get(this.baseUrl + requestParam.url, '', headers).then(
             data => {
@@ -63,19 +63,23 @@ export class ApiService {
   checkTokenValidation(): Observable<any> {
     return this.authService.getSession().pipe(
       mergeMap(tokens => {
-        const token = jwt_decode(tokens.access_token);
-        const tokenExpiryTime = moment(token.exp * 1000);
-        const currentTime = moment(Date.now());
-        const duration = moment.duration(tokenExpiryTime.diff(currentTime));
-        const hourDifference = duration.asHours();
-        if (hourDifference < 2) {
-          return this.authService.refreshSession().pipe(
-            mergeMap(refreshData => {
-              return this.authService.getSession()
-            })
-          )
-        } else {
-          return this.authService.getSession()
+        if(tokens){
+          const token = jwt_decode(tokens.access_token);
+          const tokenExpiryTime = moment(token.exp * 1000);
+          const currentTime = moment(Date.now());
+          const duration = moment.duration(tokenExpiryTime.diff(currentTime));
+          const hourDifference = duration.asHours();
+          if (hourDifference < 2) {
+            return this.authService.refreshSession().pipe(
+              mergeMap(refreshData => {
+                return this.authService.getSession()
+              })
+            )
+          } else {
+            return this.authService.getSession()
+          }
+        }else{
+          return;
         }
       })
     )
@@ -89,7 +93,7 @@ export class ApiService {
   post(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const headers = this.setHeaders(session);
+        const headers = session ? this.setHeaders(session) :'';
           let body = requestParam.payload ? requestParam.payload : {};
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.post(this.baseUrl + requestParam.url, body, headers).then(

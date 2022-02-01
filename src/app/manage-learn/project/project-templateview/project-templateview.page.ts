@@ -47,7 +47,6 @@ export class ProjectTemplateviewPage {
   shareTaskId;
   networkFlag: boolean;
   id;
-  private _networkSubscription: Subscription;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -153,16 +152,6 @@ export class ProjectTemplateviewPage {
       this.start();
     }
   }
-  gotoDetails(){
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      replaceUrl:true,
-      queryParams: {
-          projectId: this.project._id,
-          programId: this.project.programId,
-          solutionId: this.project.solutionId
-      },
-  });
-  }
   async start() {
     // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
     //   queryParams: {
@@ -172,14 +161,27 @@ export class ProjectTemplateviewPage {
     //     type: 'assignedToMe',
     //   },
     // });
-    const payload = {
-      projectId: this.project._id,
-      programId: this.project.programId,
-      solutionId: this.project.solutionId,
-      isProfileInfoRequired: true,
-      hasAcceptedTAndC : this.project.hasAcceptedTAndC
+    if (this.appGlobalService.isUserLoggedIn()) {
+    if(this.project._id){
+      const navObj = {
+        projectId:this.project._id,
+        programId: this.project.programId ?this.project.programId : this.project.programInformation.programId,
+        solutionId: this.project.solutionId
+      }
+      this.projectService.navigateToProjectDetails(navObj);
+    }else{
+      const payload = {
+        projectId: this.project._id,
+        programId: this.project.programId,
+        solutionId: this.project.solutionId,
+        isProfileInfoRequired: true,
+        hasAcceptedTAndC : this.project.hasAcceptedTAndC
+      }
+      this.projectService.getProjectDetails(payload);
     }
-    this.projectService.getProjectDetails(payload);
+  }else{
+   this.router.navigate([RouterLinks.SIGN_IN]);
+  }
     // if (this.appGlobalService.isUserLoggedIn()) {
     //   let payload = { programId: this.programId, solutionId: this.solutionId };
     // let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
