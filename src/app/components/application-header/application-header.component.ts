@@ -1,3 +1,4 @@
+import { AppOrientation } from './../../app.constant';
 import {
   ChangeDetectorRef, Component, EventEmitter,
   Inject, Input, NgZone, OnDestroy, OnInit, Output
@@ -68,7 +69,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   showLoginButton = false;
   notificationCount = {
     unreadCount : 0
-  }
+  };
+  isTablet = false;
+  orientationToSwitch = AppOrientation.LANDSCAPE;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -101,9 +104,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
     });
     this.events.subscribe('onPreferenceChange:showReport', res => {
-      this.showReports= res
-    })
+      this.showReports = res;
+    });
     this.getUnreadNotifications();
+    this.isTablet = window['isTablet'];
+    this.events.subscribe(EventTopics.ORIENTATION, () => {
+      this.checkCurrentOrientation();
+    });
   }
 
   ngOnInit() {
@@ -364,9 +371,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cData,
       ID.BTN_SWITCH
     );
-    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(res => {
+    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(async res => {
       this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       this.events.publish('loggedInProfile:update');
+      if(user.profileUserType && user.profileUserType.type){
+        await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, user.profileUserType.type).toPromise();
+        this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      }
       this.menuCtrl.close();
       this.showSwitchSuccessPopup(user.firstName);
       this.tncUpdateHandlerService.checkForTncUpdate();
@@ -498,5 +509,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.showLoginButton = (this.commonUtilService.isAccessibleForNonStudentRole(profileType)
             && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
         (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
+  }
+
+  private async checkCurrentOrientation() {
+    const currentOritentation = await this.preference.getString(PreferenceKey.ORIENTATION).toPromise();
+    if ( currentOritentation === AppOrientation.LANDSCAPE) {
+      this.orientationToSwitch = AppOrientation.POTRAIT;
+    } else {
+      this.orientationToSwitch = AppOrientation.LANDSCAPE;
+    }
   }
 }

@@ -163,4 +163,5 @@
     <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
     </plugin>
+    <plugin name="uk.co.workingedge.phonegap.plugin.istablet" spec="^1.2.0" />
 </widget>

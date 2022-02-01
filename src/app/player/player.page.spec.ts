@@ -144,8 +144,10 @@ describe('PlayerPage', () => {
             mockAlertCtrl.create = jest.fn(() => Promise.resolve({
                 present: jest.fn()
             })) as any;
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
             playerPage.showConfirm();
             setTimeout(() =>{
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalled();
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
