@@ -173,7 +173,7 @@ export class ProjectTemplateviewPage {
     //   },
     // });
     const payload = {
-      projectId: this.project._id,
+      projectId: this.project.projectId,
       programId: this.project.programId,
       solutionId: this.project.solutionId,
       isProfileInfoRequired: true,
