@@ -42,9 +42,6 @@ export class ImpSuggestionsPage {
 
   goToTemplateDetails(criteria, project) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,project.externalId], {
-      queryParams: {
-        type:'improvement'
-      },
       state: {
         "referenceFrom": "observation",
         "submissions": {

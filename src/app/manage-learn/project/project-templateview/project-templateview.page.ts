@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -20,7 +20,7 @@ import { Location } from '@angular/common';
   templateUrl: './project-templateview.page.html',
   styleUrls: ['./project-templateview.page.scss'],
 })
-export class ProjectTemplateviewPage {
+export class ProjectTemplateviewPage implements OnInit {
   showDetails: boolean = true;
   statuses = statuses;
   project: any;
@@ -60,8 +60,9 @@ export class ProjectTemplateviewPage {
   projectSegments;
   segmentType = "details";
   type;
-  buttonLabel ='FRMELEMNTS_LBL_START_IMPROVEMENT';
-    constructor(
+  buttonLabel = 'FRMELEMNTS_LBL_START_IMPROVEMENT';
+  stateData;
+  constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
     private router: Router,
@@ -74,7 +75,7 @@ export class ProjectTemplateviewPage {
     private projectService: ProjectService,
     private unnatiService: UnnatiDataService,
     private popupService: GenericPopUpService,
-    private location : Location
+    private location: Location
   ) {
 
     params.params.subscribe((parameters) => {
@@ -84,9 +85,10 @@ export class ProjectTemplateviewPage {
       this.isTargeted = parameters.isTargeted;
       this.programId = parameters.programId;
       this.solutionId = parameters.solutionId;
-      this.type = parameters.type;
-      this.type == 'improvement' ? this.getTemplateByExternalId(): this.getProjectApi();
+      // this.type = parameters.type;
+      // this.type == 'improvement' ? this.getTemplateByExternalId(): this.getProjectApi();
     });
+    this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
     this.translate
       .get([
@@ -103,12 +105,30 @@ export class ProjectTemplateviewPage {
       });
   }
 
-  ionViewWillEnter() {
+  templateDetailsInit() {
+    switch (this.stateData?.referenceFrom) {
+      case 'observation':
+        this.templateId = this.id;
+        this.getTemplateByExternalId();
+        break
+      case 'link':
+        break
+      default:
+        this.getProjectApi();
+
+    }
+  }
+
+  ngOnInit() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+  }
+
+  ionViewWillEnter() {
+    this.templateDetailsInit();
   }
   async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
@@ -123,9 +143,10 @@ export class ProjectTemplateviewPage {
   }
   async getTemplateByExternalId() {
     let resp = await this.projectService.getTemplateByExternalId(this.id);
-    this.project = resp.result;
-     if(this.project._id){
-      this.buttonLabel='FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+    this.programId = resp?.result?.programInformation?.programId || null;
+    this.project = resp?.result;
+    if (this.project?.projectId) {
+      this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
     }
     this.metaData = {
       title: this.project.title,
@@ -141,27 +162,27 @@ export class ProjectTemplateviewPage {
   openResource(resource) {
     this.projectService.openResources(resource);
   }
-  doAction(){
-    if(this.type == 'improvement' && !this.project.hasAcceptedTAndC && !this.isTargeted){
+  doAction() {
+    if (this.type == 'improvement' && !this.project.hasAcceptedTAndC && !this.isTargeted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
         if (data && data.isClicked) {
-                  this.project.hasAcceptedTAndC = data.isChecked;
-                  this.start();
+          this.project.hasAcceptedTAndC = data.isChecked;
+          this.start();
         }
       })
-    }else{
+    } else {
       this.start();
     }
   }
-  gotoDetails(){
+  gotoDetails() {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      replaceUrl:true,
+      replaceUrl: true,
       queryParams: {
-          projectId: this.project._id,
-          programId: this.project.programId,
-          solutionId: this.project.solutionId
+        projectId: this.project._id,
+        programId: this.project.programId,
+        solutionId: this.project.solutionId
       },
-  });
+    });
   }
   async start() {
     // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
@@ -172,14 +193,27 @@ export class ProjectTemplateviewPage {
     //     type: 'assignedToMe',
     //   },
     // });
-    const payload = {
-      projectId: this.project.projectId,
-      programId: this.project.programId,
-      solutionId: this.project.solutionId,
-      isProfileInfoRequired: true,
-      hasAcceptedTAndC : this.project.hasAcceptedTAndC
+    if (this.project.projectId) {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+        queryParams: {
+          projectId: this.project.projectId,
+          programId: this.programId,
+          solutionId: this.solutionId,
+        },
+      });
+    } else {
+      const payload = {
+        projectId: this.project.projectId,
+        programId: this.project.programId,
+        solutionId: this.project.solutionId,
+        isProfileInfoRequired: true,
+        hasAcceptedTAndC: this.project.hasAcceptedTAndC,
+        detailsPayload: this.stateData ? this.stateData : null,
+        templateId: this.templateId
+      }
+      this.projectService.getProjectDetails(payload);
     }
-    this.projectService.getProjectDetails(payload);
+
     // if (this.appGlobalService.isUserLoggedIn()) {
     //   let payload = { programId: this.programId, solutionId: this.solutionId };
     // let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);

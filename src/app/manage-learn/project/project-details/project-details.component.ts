@@ -157,6 +157,9 @@ export class ProjectDetailsComponent implements OnInit {
     if (this.projectDetails.isNew || this.projectDetails.isEdit) {
       const indexOfSync = defaultOptions.length - 1;
       defaultOptions[indexOfSync] = actions.SYNC_ACTION;
+    } else {
+      const indexOfSync = defaultOptions.length - 1;
+      defaultOptions[indexOfSync] = actions.SYNCED_ACTION;
     }
     if (this.projectDetails.downloaded) {
       defaultOptions[0] = actions.DOWNLOADED_ACTION
@@ -191,7 +194,6 @@ export class ProjectDetailsComponent implements OnInit {
         this.doSyncAction();
         break;
       case 'synced':
-        this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
       case 'share':
         this.network.isNetworkAvailable

@@ -35,3 +35,11 @@
       white-space: normal;
     }
   }
+
+  .add-task {
+    --background: var(--app-primary-light-2) !important;
+    background-color: var(--app-primary-light-2);
+    .icon {
+        color: var(--app-primary-background) !important
+    }
+  }

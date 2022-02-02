@@ -37,6 +37,12 @@ export const actions = {
     action: "sync",
     color: 'primary'
   },
+  SYNCED_ACTION: {
+    title: "FRMELEMNTS_LBL_SYNCED",
+    icon: "sync-circle",
+    action: "synced",
+    color: 'success'
+  },
   DOWNLOADED_ACTION: {
     title: "FRMELEMNTS_LBL_DOWNLOADED",
     icon: "checkmark-circle",

@@ -62,13 +62,13 @@ export class ProjectService {
     return this.unnatiService.post(config).toPromise();
   }
 
-  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId, templateId='',hasAcceptedTAndC=false}) {
+  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId, templateId='',hasAcceptedTAndC=false, detailsPayload =null}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
-      payload: payload
+      payload: detailsPayload ? detailsPayload : payload
     }
     this.kendra.post(config).subscribe(success => {
       this.loader.stopLoader();
