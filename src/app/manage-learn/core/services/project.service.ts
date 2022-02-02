@@ -215,4 +215,41 @@ export class ProjectService {
       this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
     })
   }
+
+  async checkReport(projectId,taskId){
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+      return;
+    }
+
+     let payload = await this.utils.getProfileInfo();
+     const config = {
+       url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${taskId}`,
+       payload: payload
+
+     };
+     this.unnatiService.get(config).subscribe(
+       (success) => {
+         if (!success.result) {
+           this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+           return;
+         }
+         let data = success.result;
+
+         this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+           queryParams: {
+             programId: data.programId,
+             solutionId: data.solutionId,
+             observationId: data.observationId,
+             entityId: data.entityId,
+             entityName: data.entityName,
+           },
+         });
+
+       },
+       (error) => {
+         this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+       }
+     );
+  }
 }

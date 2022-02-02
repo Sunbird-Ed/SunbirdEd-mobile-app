@@ -47,7 +47,6 @@ export class ProjectTemplateviewPage implements OnInit {
   shareTaskId;
   networkFlag: boolean;
   id;
-  private _networkSubscription: Subscription;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -213,6 +212,30 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
+
+    // if (this.appGlobalService.isUserLoggedIn()) {
+    //   if (this.project._id) {
+    //     const navObj = {
+    //       projectId: this.project._id,
+    //       programId: this.project.programId ? this.project.programId : this.project.programInformation.programId,
+    //       solutionId: this.project.solutionId
+    //     }
+    //     this.projectService.navigateToProjectDetails(navObj);
+    //   } else {
+    //     const payload = {
+    //       projectId: this.project._id,
+    //       programId: this.project.programId,
+    //       solutionId: this.project.solutionId,
+    //       isProfileInfoRequired: true,
+    //       hasAcceptedTAndC: this.project.hasAcceptedTAndC
+    //     }
+    //     this.projectService.getProjectDetails(payload);
+    //   }
+    // } else {
+    //   this.router.navigate([RouterLinks.SIGN_IN]);
+    // }
+
+
 
     // if (this.appGlobalService.isUserLoggedIn()) {
     //   let payload = { programId: this.programId, solutionId: this.solutionId };

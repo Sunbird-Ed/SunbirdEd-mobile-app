@@ -11,6 +11,20 @@ export const statuses: any = [
     { title: statusType.completed }
 ]
 
+export const taskStatus = {
+    notStarted: {
+        label: "Not started",
+        value: "notStarted"
+    },
+    inProgress: {
+        label: "In Progress",
+        value: "inProgress"
+    },
+    completed: {
+        label: "Completed",
+        value: "completed"
+    }
+} 
 export const projectStatus = {
     started: {
         label: "Started",

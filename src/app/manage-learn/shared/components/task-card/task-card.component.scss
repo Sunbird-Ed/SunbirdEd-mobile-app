@@ -35,4 +35,9 @@
     border-radius: 4px;
     font-weight: 500;
     }
+
+    .action-btn{
+    --background: var(--joyful-light-yellow) !important;
+    color: var(--app-primary) !important;
+    }
 }

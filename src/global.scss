@@ -62,10 +62,16 @@
 }
 
 // Discussion Forum
-.discussion-forum{
+.discussion-forum-content{
   background-color: map-get($colors, light_gray_8c);
-  min-height: 90vh !important;
-  height: 90vh !important;
+  // min-height: 90vh !important;
+  // height: 90vh !important;
+  .df-cancel-btn{
+    color: $primary-color !important;
+  }
+  .open-btn{
+    color: $gray-800 !important;
+  }
   .topic-list-container{
     height: calc(100vh - 175px) !important;
   }

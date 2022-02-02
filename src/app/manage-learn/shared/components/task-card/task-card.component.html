@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="display-flex-space-btn">
-        <div>{{task?.status}}</div>
+        <div> {{statuses[task?.status]?.label}}</div>
       </div>
       <div  class="display-flex-space-btn"> 
         <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
@@ -19,22 +19,21 @@
           <ion-label class="link-label"  *ngIf="task?.type =='simple'"  (click)="$event.stopPropagation();openTask(task)"> 
            {{'FRMELEMNTS_BTN_VIEW_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>
           </ion-label>
-          <ion-button size="small" *ngIf="task?.type=='content'&&task?.learningResources?.length"
+          <ion-button size="small" class="action-btn" *ngIf="task?.type=='content'&&task?.learningResources?.length"
             (click)="$event.stopPropagation();openResources(task)">
             {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
           </ion-button>
-          <ion-button size="small"
+          <ion-button size="small" class="action-btn"
             *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
             (click)="$event.stopPropagation();startAssessment(task)">
             {{'START' | translate}} {{task?.type}}
           </ion-button>
-          <ion-button size="small"
+          <ion-button size="small" class="action-btn"
             *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
             (click)="$event.stopPropagation(); checkReport(task)">
             {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
           </ion-button>
         </div>
-
       </div>
     </ion-col>
   </ion-row>

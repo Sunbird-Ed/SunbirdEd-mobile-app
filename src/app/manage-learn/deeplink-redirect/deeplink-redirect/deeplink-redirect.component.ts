@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastService, UtilsService } from '../../core';
+import { ProjectService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
@@ -37,7 +37,8 @@ export class DeeplinkRedirectComponent implements OnInit {
     private toast: ToastService,
     private location: Location,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private projectService : ProjectService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -62,7 +63,7 @@ export class DeeplinkRedirectComponent implements OnInit {
         this.verifyLink(this.data.create_observation_id);
         break;
       case 'projectLink':
-        this.verifyLink(this.data.create_project_id);
+        this.appGlobalService.isUserLoggedIn() ?  this.verifyLink(this.data.create_project_id) : this.getTemplateData(this.data.create_project_id);
         break;
       default:
         break;
@@ -155,7 +156,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     let payload = await this.utils.getProfileInfo();
 
     const config = {
-      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link,
+      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
       payload: payload,
     };
     let resp = await this.kendra.post(config).toPromise();
@@ -175,5 +176,15 @@ export class DeeplinkRedirectComponent implements OnInit {
       }
       this.location.back();
     }
+  }
+  // Non logged in users
+  getTemplateData(id){
+    this.projectService.getTemplateByExternalId(id).then(data =>{
+      console.log(data,"data");
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
+        queryParams: data,
+        skipLocationChange: true,
+      });
+    })
   }
 }
