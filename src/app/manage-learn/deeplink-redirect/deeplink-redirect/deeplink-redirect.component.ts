@@ -86,7 +86,7 @@ export class DeeplinkRedirectComponent implements OnInit {
         .navigate([`/${RouterLinks.PROJECT}`], {
           queryParams: {
             selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
-          },
+          },replaceUrl: true
         })
       setTimeout(() => {
         this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
@@ -102,6 +102,9 @@ export class DeeplinkRedirectComponent implements OnInit {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
       queryParams: data,
       skipLocationChange: true,
+      state: {
+        "referenceFrom": "link",
+    }
     });
   }
 

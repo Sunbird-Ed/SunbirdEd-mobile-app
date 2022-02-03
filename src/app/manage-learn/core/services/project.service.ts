@@ -62,7 +62,8 @@ export class ProjectService {
     return this.unnatiService.post(config).toPromise();
   }
 
-  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, programId, templateId='',hasAcceptedTAndC=false, detailsPayload =null}) {
+  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, 
+  programId, templateId='',hasAcceptedTAndC=false, detailsPayload =null, replaceUrl=true}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
@@ -99,7 +100,8 @@ export class ProjectService {
       const navObj = {
         projectId: success.result._id,
         programId: programId,
-        solutionId: solutionId
+        solutionId: solutionId,
+        replaceUrl:replaceUrl
       }
       this.db.create(success.result).then(successData => {
         this.navigateToProjectDetails(navObj);
@@ -113,13 +115,13 @@ export class ProjectService {
     })
   }
 
-  navigateToProjectDetails({ projectId, programId, solutionId }) {
+  navigateToProjectDetails({ projectId, programId, solutionId , replaceUrl}) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: projectId,
         programId: programId,
         solutionId: solutionId,
-      }, replaceUrl: true
+      }, replaceUrl: replaceUrl
     })
   }
 
@@ -251,5 +253,36 @@ export class ProjectService {
          this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
        }
      );
+  }
+
+  async mapProjectToUser({programId, solutionId, templateId, isATargetedSolution}) {
+    let payload = { programId: programId, solutionId: solutionId };
+    const config = {
+      url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + templateId + '?isATargetedSolution=false',
+      payload: payload,
+    };
+    let importProject;
+    try {
+      importProject = await this.getTemplateData(payload,templateId,isATargetedSolution);
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (importProject && importProject.result) {
+      this.router
+        .navigate([`/${RouterLinks.PROJECT}`], {
+          queryParams: {
+            selectedFilter: isATargetedSolution? 'assignedToMe' : 'discoveredByMe',
+          },
+        }).then(() => {
+          const params = {
+            projectId: importProject.result._id,
+            programId: programId,
+            solutionId: solutionId,
+            replaceUrl: false
+          }
+          this.getProjectDetails(params)
+        })
+    }
   }
 }

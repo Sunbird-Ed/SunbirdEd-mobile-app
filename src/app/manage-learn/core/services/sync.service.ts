@@ -12,6 +12,7 @@ import { ToastService } from './toast/toast.service';
 import { UnnatiDataService } from './unnati-data.service';
 import { LoaderService } from './loader/loader.service';
 import { DbService } from './db.service';
+import { statusType } from '../constants';
 var environment = {
   db: {
     projects: "project.db",
@@ -193,6 +194,8 @@ export class SyncService {
     delete payload.solutionInformation;
     delete payload.programInformation;
     delete payload.userId;
+    payload.status = statusType.notStarted ? statusType.started : payload.status;
+    payload.status = statusType.completed ? statusType.submitted : payload.status;
     return payload
   }
 

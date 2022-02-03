@@ -111,6 +111,7 @@ export class ProjectTemplateviewPage implements OnInit {
         this.getTemplateByExternalId();
         break
       case 'link':
+        this.getProjectApi();
         break
       default:
         this.getProjectApi();
@@ -192,6 +193,16 @@ export class ProjectTemplateviewPage implements OnInit {
     //     type: 'assignedToMe',
     //   },
     // });
+    if( this.stateData.referenceFrom === 'link') {
+      const payload = {
+        templateId: this.project._id,
+        programId: this.programId,
+        solutionId: this.solutionId,
+        isATargetedSolution: false
+      }
+      this.projectService.mapProjectToUser(payload);
+      return
+    }
     if (this.project.projectId) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
         queryParams: {
