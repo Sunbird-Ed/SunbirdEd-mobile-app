@@ -63,4 +63,16 @@
 
   <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails"
     [viewOnly]="projectDetails?.status === allStatusTypes.submitted"></app-task-card>
+
+    <ion-card class="add-task" (click)="addNewTask()" *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="flex-box">
+              <ion-icon name="add-circle" class="icon"></ion-icon>
+              <ion-label class="label ion-margin-start">{{'FRMELEMNTS_LBL_ADD_YOUR_TASK' | translate}}</ion-label>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+      
+    </ion-card>
 </ion-content>

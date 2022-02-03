@@ -14,7 +14,7 @@ import { PopoverController, AlertController, Platform, ModalController } from '@
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
-
+import { CreateTaskFormComponent } from '../../shared';
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
@@ -57,7 +57,8 @@ export class ProjectDetailsComponent implements OnInit {
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
     private location: Location,
-    private projectServ: ProjectService
+    private projectServ: ProjectService,
+    private modal: ModalController
 
 
   ) {
@@ -110,6 +111,11 @@ export class ProjectDetailsComponent implements OnInit {
     this.headerService.updatePageConfig(this._headerConfig);
   }
 
+  refreshTheActions(){
+    this.setActionButtons();
+    this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
+  }
+
   getProject() {
     if (this.projectId) {
       this.db.query({ _id: this.projectId }).then(
@@ -122,7 +128,6 @@ export class ProjectDetailsComponent implements OnInit {
             this.projectDetails.categories.forEach((category: any) => {
               category.label ? this.categories.push(category.label) : this.categories.push(category.name);
             });
-            console.log(this.projectDetails);
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
@@ -416,6 +421,24 @@ export class ProjectDetailsComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  async addNewTask() {
+    const modal = await this.modal.create({
+      component: CreateTaskFormComponent,
+      cssClass: "create-task-modal",
+    });
+    modal.onDidDismiss().then((data) => {
+      if (data.data) {
+        !this.projectDetails.tasks ? (this.projectDetails.tasks = []) : "";
+        this.projectDetails.status =  this.projectDetails.status ? this.projectDetails.status : statusType.notStarted;
+        this.projectDetails.status =  this.projectDetails.status == statusType.notStarted ? statusType.inProgress:this.projectDetails.status;
+        this.projectDetails.tasks.push(data.data);
+        this.updateLocalDb(true);
+        this.refreshTheActions();
+      }
+    });
+    return await modal.present();
   }
 
 }
