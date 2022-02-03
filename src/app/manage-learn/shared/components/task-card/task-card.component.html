@@ -1,4 +1,5 @@
-<ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngFor="let task of data?.tasks">
+<div *ngFor="let task of data?.tasks">
+<ion-card (click)="onCardClick(task)" class="sb-dt-card task-card"  *ngIf="!task?.isDeleted">
   <ion-row>
     <ion-col size="1">
       <ion-icon *ngIf="task?.status == statuses['completed']" name="checkmark-circle" class="check-icon" color="success"></ion-icon>
@@ -9,6 +10,12 @@
         <div class="mandatory-ribben-label" *ngIf="!task.isDeletable">
           {{'FRMELEMNTS_LBL_MANDATORY' | translate}}
         </div>
+       <div *ngIf="!viewOnly">
+         <ion-buttons>
+        <ion-icon  name="ellipsis-vertical-outline" class="action-icon" color="primary" (click)="$event.stopPropagation();openPopover($event,task)">
+        </ion-icon>
+        </ion-buttons>
+         </div>
       </div>
       <div class="display-flex-space-btn">
         <div> {{statuses[task?.status]?.label}}</div>
@@ -38,3 +45,4 @@
     </ion-col>
   </ion-row>
 </ion-card>
+</div>

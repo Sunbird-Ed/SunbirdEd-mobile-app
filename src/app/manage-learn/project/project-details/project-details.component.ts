@@ -178,7 +178,7 @@ export class ProjectDetailsComponent implements OnInit {
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
-        ? this.createNewProject()
+        ? this.projectServ.createNewProject()
         : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
@@ -202,7 +202,7 @@ export class ProjectDetailsComponent implements OnInit {
         break;
       case 'share':
         this.network.isNetworkAvailable
-          ? this.openSyncSharePopup('shareProject', this.projectDetails.title)
+          ? this.projectServ.openSyncSharePopup('shareProject', this.projectDetails.title,this.projectDetails)
           : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       case 'files':
@@ -214,98 +214,6 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
-  createNewProject(isShare?) {
-    this.loader.startLoader();
-    const projectDetails = JSON.parse(JSON.stringify(this.projectDetails));
-    this.syncServ
-      .createNewProject(true, projectDetails)
-      .then((success) => {
-        const { _id, _rev } = this.projectDetails;
-        this.projectDetails._id = success.result.projectId;
-        this.projectDetails.programId = success.result.programId;
-        this.projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-        this.projectId = this.projectDetails._id;
-        this.projectDetails.isNew = false;
-        delete this.projectDetails._rev;
-        this.loader.stopLoader();
-        this.db
-          .create(this.projectDetails)
-          .then((success) => {
-            this.projectDetails._rev = success.rev;
-            this.db
-              .delete(_id, _rev)
-              .then(res => {
-                setTimeout(() => {
-                  const queryParam = {
-                    projectId: this.projectId,
-                    taskId: this.shareTaskId
-                  }
-                  if (isShare) {
-                    queryParam['share'] = true
-                  }
-                  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], {
-                    queryParams: queryParam
-                  })
-                }, 0)
-                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-                  queryParams: {
-                    projectId: this.projectDetails._id,
-                    programId: this.programId,
-                    solutionId: this.solutionId,
-                    // fromImportPage: this.importProjectClicked
-                  }, replaceUrl: true
-                });
-              })
-          })
-      })
-      .catch((error) => {
-        this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
-        this.loader.stopLoader();
-      });
-  }
-
-  async openSyncSharePopup(type, name, taskId?) {
-    let data;
-    this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
-      data = text;
-    });
-    this.shareTaskId = taskId ? taskId : null;
-    const alert = await this.alert.create({
-      cssClass: 'central-alert',
-      message: data["FRMELEMNTS_LBL_SHARE_MSG"],
-      buttons: [
-        {
-          text: data["FRMELEMNTS_BTN_DNTSYNC"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => {
-            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
-          },
-        },
-        {
-          text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
-          handler: () => {
-            if (this.projectDetails.isEdit || this.projectDetails.isNew) {
-              this.projectDetails.isNew
-                ? this.createNewProject(true)
-                : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
-            } else {
-              type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.projectDetails.title);
-            }
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  getPdfUrl(fileName, taskId?) {
-    let task_id = taskId ? taskId : '';
-    const config = {
-      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectDetails._id + '?tasks=' + task_id,
-    };
-    this.share.getFileUrl(config, fileName);
-  }
 
 
   updateLocalDb(setIsEditTrue = false) {
