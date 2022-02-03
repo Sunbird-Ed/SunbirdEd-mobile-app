@@ -13,6 +13,10 @@ import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ToastService } from '../../core';
 import { statusType } from '../constants';
+import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { SharingFeatureService } from './sharing-feature.service';
+import { SyncService } from './sync.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +25,9 @@ export class ProjectService {
   filterForReport: any;
   networkFlag: boolean;
   private _networkSubscription: Subscription;
-
+  project;
+  projectId;
+  shareTaskId;
   constructor(
     private kendra: KendraApiService,
     private utils: UtilsService,
@@ -32,7 +38,11 @@ export class ProjectService {
     private commonUtilService: CommonUtilService,
     private toast: ToastService,
     private navigateService: NavigationService,
+    private alert : AlertController,
+    private translate : TranslateService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private share: SharingFeatureService,
+    private syncService :SyncService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
@@ -251,5 +261,103 @@ export class ProjectService {
          this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
        }
      );
+  }
+
+  async openSyncSharePopup(type, name,project, taskId?) {
+    if(this.networkFlag){
+      let data;
+      this.project = project;
+      this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
+        data = text;
+      });
+      this.shareTaskId = taskId ? taskId : null;
+      const alert = await this.alert.create({
+        cssClass:'central-alert',
+        message: data["FRMELEMNTS_LBL_SHARE_MSG"],
+        buttons: [
+          {
+            text: data["FRMELEMNTS_BTN_DNTSYNC"],
+            role: "cancel",
+            cssClass: "secondary",
+            handler: (blah) => {
+              this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+            },
+          },
+          {
+            text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
+            handler: () => {
+              if (project.isEdit || project.isNew) {
+                project.isNew
+                  ? this.createNewProject(true)
+                  : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+              } else {
+                type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
+              }
+            },
+          },
+        ],
+      });
+      await alert.present();
+    }else{
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
+    }
+  }
+
+  getPdfUrl(fileName, taskId?) {
+    let task_id = taskId ? taskId : '';
+    const config = {
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
+    };
+    this.share.getFileUrl(config, fileName);
+  }
+
+  createNewProject(isShare?) {
+    this.loader.startLoader();
+    const projectDetails = JSON.parse(JSON.stringify(this.project));
+    this.syncService
+      .createNewProject(true, projectDetails)
+      .then((success) => {
+        const { _id, _rev } = this.project;
+        projectDetails._id = success.result.projectId;
+        projectDetails.programId = success.result.programId;
+        projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
+        this.projectId = projectDetails._id;
+        projectDetails.isNew = false;
+        delete projectDetails._rev;
+        this.loader.stopLoader();
+        this.db
+          .create(projectDetails)
+          .then((success) => {
+            projectDetails._rev = success.rev;
+            this.db
+              .delete(_id, _rev)
+              .then(res => {
+                setTimeout(() => {
+                  const queryParam = {
+                    projectId: this.projectId,
+                    taskId: this.shareTaskId
+                  }
+                  if (isShare) {
+                    queryParam['share'] = true
+                  }
+                  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], {
+                    queryParams: queryParam
+                  })
+                }, 0)
+                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                  queryParams: {
+                    projectId: projectDetails._id,
+                    programId: projectDetails.programId,
+                    solutionId: projectDetails.solutionId,
+                    // fromImportPage: this.importProjectClicked
+                  }, replaceUrl: true
+                });
+              })
+          })
+      })
+      .catch((error) => {
+        this.toast.showMessage('FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', "danger");
+        this.loader.stopLoader();
+      });
   }
 }

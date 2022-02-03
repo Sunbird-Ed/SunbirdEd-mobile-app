@@ -5,6 +5,9 @@
         display: flex;
          justify-content: space-between;
          margin: 5px 0px;
+         .action-icon{
+            font-size: 20px;
+         }
          .link-label{
             color: var(--app-primary);
              font-size: 16px;
