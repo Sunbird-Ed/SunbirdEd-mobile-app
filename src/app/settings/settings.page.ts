@@ -149,7 +149,7 @@ export class SettingsPage implements OnInit {
       component: SbPopoverComponent,
       componentProps: {
         isNotShowCloseIcon: false,
-        sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_HEADING'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
         sbPopoverHtmlContent: '<div class="text-left font-weight-normal padding-left-10 padding-right-10">'
           + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
         actionsButtons: [
@@ -272,7 +272,7 @@ export class SettingsPage implements OnInit {
         const successPopover = await this.popoverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
-            sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_HEADING'),
+            sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
             icon: null,
             actionsButtons: [
               {

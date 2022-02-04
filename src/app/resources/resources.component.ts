@@ -870,7 +870,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -889,7 +889,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

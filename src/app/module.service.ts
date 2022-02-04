@@ -20,14 +20,14 @@ const HOME_TAB = {
 const COURSE_TAB = {
     root: 'courses',
     icon: 'courses',
-    label: 'COURSES_BNAV',
+    label: 'COURSES',
     index: 2
 };
 
 const COURSE_TAB_DISABLED = {
     root: '',
     icon: 'courses',
-    label: 'COURSES_BNAV',
+    label: 'COURSES',
     index: 2,
     disabled: true
 };

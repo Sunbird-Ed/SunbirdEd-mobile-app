@@ -158,7 +158,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
+            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI');
         });
     });
 

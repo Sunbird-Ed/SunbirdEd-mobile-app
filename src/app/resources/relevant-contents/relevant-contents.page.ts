@@ -179,7 +179,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
         { content: item, corRelation: corRelationList }
       );
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
