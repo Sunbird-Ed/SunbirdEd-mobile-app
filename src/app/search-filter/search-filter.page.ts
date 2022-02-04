@@ -4,7 +4,7 @@ import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService, FormAndFrameworkUtilService} from '@app/services';
+import {CommonUtilService, FormAndFrameworkUtilService, SearchFilterService} from '@app/services';
 import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
@@ -18,6 +18,7 @@ export class SearchFilterPage implements OnInit {
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
     @Input('existingSearchFilters') existingSearchFilters: {[key:string]:boolean};
+    @Input('formAPIFacets') formAPIFacets;
 
     public config: FieldConfig<any>[];
 
@@ -36,7 +37,8 @@ export class SearchFilterPage implements OnInit {
         private modalController: ModalController,
         private commonUtilService: CommonUtilService,
         private filterFormConfigMapper: FilterFormConfigMapper,
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private searchFilterService: SearchFilterService
     ) {
     }
 
@@ -87,7 +89,12 @@ export class SearchFilterPage implements OnInit {
             const selection = formValue[facetFilter.name];
             if (selection) {
                 facetFilter.values.forEach(f => {
-                    f.apply = !!(selection.indexOf(f.name) !== -1);
+                    //single select type == string || multiple select type == Array
+                    if(typeof selection === 'string'){
+                        f.apply = (f.name === selection)
+                    } else {
+                        f.apply = !!(selection.indexOf(f.name) !== -1);
+                    }
                 });
             }
         });
@@ -99,6 +106,10 @@ export class SearchFilterPage implements OnInit {
 
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
+            if(contentSearchResult && contentSearchResult.filterCriteria && contentSearchResult.filterCriteria.facetFilters){
+                contentSearchResult.filterCriteria.facetFilters =
+                await this.searchFilterService.reformFilterValues(contentSearchResult.filterCriteria.facetFilters);
+            }
             this.appliedFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(contentSearchResult.filterCriteria);
             this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
