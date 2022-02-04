@@ -18,7 +18,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot): any {
 
-        if (!this.onboardingConfigurationService.nextOnboardingStep('language-setting')) {
+        if (!this.onboardingConfigurationService.nextOnboardingStep('user-type-selection')) {
             const navigationExtras: NavigationExtras = {
                 state: {
                     forwardMigration: true
@@ -26,7 +26,6 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
             };
             this.router.navigate(['/', 'profile-settings'], navigationExtras);
         }
-        
 
         if (route.queryParams.onReload === 'true') {
             this.guardActivated = true;

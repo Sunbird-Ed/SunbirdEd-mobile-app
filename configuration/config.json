@@ -3,19 +3,16 @@
         {
             "name": "language-setting",
             "skip": false,
-            "required": true,
             "default": { "code" :"en", "label": "English" }
         },
         {
             "name": "user-type-selection",
             "skip": false,
-            "required": true,
             "default": "teacher"
         },
         {
             "name": "profile-settings",
             "skip": false,
-            "required": true,
             "default": [
                 "board",
                 "medium",
@@ -25,7 +22,6 @@
         {
             "name": "district-mapping",
             "skip": false,
-            "required": true,
             "default": [
                 "state",
                 "city"

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { PreferenceKey } from "@app/app/app.constant";
 import { SharedPreferences } from 'sunbird-sdk';
-import onboarding from './../assets/onboarding/onboarding-config.json';
+import onboarding from './../assets/configuration/config.json';
 
 interface OnBoardingConfig {
     name: string;
@@ -32,9 +32,7 @@ export class OnboardingConfigurationService {
             case 'language-setting':
                 if (config) {
                     console.log('Configuration inside if', config.required);
-                    if (!config.required) {
-                        return false;
-                    } else if (config.skip) {
+                    if (config.skip) {
                         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, config.default.code).toPromise();
                         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, config.default.label).toPromise();
                         return false;
@@ -48,9 +46,7 @@ export class OnboardingConfigurationService {
             case 'user-type-selection':
                 if (config) {
                     console.log('Configuration inside if', config.required);
-                    if (!config.required) {
-                        return false;
-                    } else if (config.skip) {
+                    if (config.skip) {
                         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, config.default).toPromise()
                         return false;
                     } else {

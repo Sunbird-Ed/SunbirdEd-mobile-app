@@ -36,5 +36,5 @@ function copyFolderRecursiveSync(source, target) {
 
 module.exports = function (context) {
   copyFolderRecursiveSync('buildConfig/data', 'platforms/android/app');
-  copyFolderRecursiveSync('onboarding', 'src/assets');
+  copyFolderRecursiveSync('configuration', 'src/assets');
 }
