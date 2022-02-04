@@ -85,6 +85,7 @@ import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show
 import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 
 declare const cordova;
@@ -223,7 +224,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private screenOrientation: ScreenOrientation
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -594,7 +596,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
-    this.playContent(true);
+    if (this.content.mimeType === 'video/mp4') {
+      this.playContent(true, true);
+    }
   }
   getImageContent() {
     if(this.platform.is('ios')) {
@@ -1121,7 +1125,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Play content
    */
-  private playContent(isStreaming: boolean) {
+  private playContent(isStreaming: boolean, loadPlayer: boolean = false) {
     if (this.apiLevel < 21 && this.appAvailability === 'false' && !this.isIOS) {
       this.showPopupDialog();
     } else {
@@ -1137,7 +1141,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming,
-        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent, this.maxAttemptAssessment, (val) => this.handlePlayer(val));
+        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent, this.maxAttemptAssessment, 
+        loadPlayer ? (val) => this.handlePlayer(val) : undefined);
       this.downloadAndPlay = false;
     }
   }
@@ -1228,6 +1233,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             isLastAttempt: event.edata.isLastAttempt
           };
           this.commonUtilService.handleAssessmentStatus(attemptInfo);
+        }
+      } else if (event.edata['type'] === 'FULLSCREEN') {
+        if (this.screenOrientation.type === 'portrait-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        } else if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
         }
       }
     } else if (event.type === 'ended') {
