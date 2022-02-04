@@ -1,0 +1,34 @@
+{
+    "onboarding": [
+        {
+            "name": "language-setting",
+            "skip": false,
+            "default": { "code" :"en", "label": "English" }
+        },
+        {
+            "name": "user-type-selection",
+            "skip": false,
+            "default": "teacher"
+        },
+        {
+            "name": "profile-settings",
+            "skip": false,
+            "default": [
+                "board",
+                "medium",
+                "grade"
+            ]
+        },
+        {
+            "name": "district-mapping",
+            "skip": false,
+            "default": [
+                "state",
+                "city"
+            ]
+        }
+    ],
+    "tabs": [
+        
+    ]
+}
