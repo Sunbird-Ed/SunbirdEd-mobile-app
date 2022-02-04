@@ -312,6 +312,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (section.dataSrc && section.dataSrc.params && section.dataSrc.params.config) {
       const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
       event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+
+      const filterIdentifierList = section.dataSrc.params.config.find(((facet) => (facet.type === 'filterConfigIdentifier' && facet.code === section.code)));
+      const filterVal = filterIdentifierList && filterIdentifierList.values && filterIdentifierList.values.find(v=>{
+        if(v.code && event.data[0].name) {
+          return v.code.toLowerCase().replace(/ /g, '') === event.data[0].name.toLowerCase().replace(/ /g, '')
+        }
+        return false;
+      });
+      event.data[0].value['filterIdentifier'] = filterVal ? filterVal.filterIdentifier : undefined;
     }
     const params = {
       code: section.code,

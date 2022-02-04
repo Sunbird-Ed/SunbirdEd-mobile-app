@@ -29,7 +29,7 @@ export class SearchFilterService {
         try{
             this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(formRequest);
         } catch {
-            formRequest[subType] = 'default';
+            formRequest.subType = 'default';
             this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(formRequest);
         }
         return this.facetFilterFormConfig;
