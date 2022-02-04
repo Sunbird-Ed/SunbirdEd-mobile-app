@@ -989,6 +989,12 @@ html[data-theme="JOYFUL"]{
         }
 
       }
+      .cfe-multiselect-modal-item {
+        .container input:checked~.checkmark {
+          background-color: var(--app-primary) !important;
+        }
+      }
+
     }
 
     sb-textbox {

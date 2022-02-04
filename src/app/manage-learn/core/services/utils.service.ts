@@ -622,12 +622,12 @@ export class UtilsService {
                       obj["school"] = org.externalId;
                     }
                   }
-
+                  
                   obj["role"] =
-                    profileData["profileUserType"] &&
-                      profileData["profileUserType"]["subType"]
-                      ? profileData["profileUserType"]["subType"].toUpperCase()
-                      : profileData["profileUserType"]["type"].toUpperCase();
+                  profileData["profileUserType"] &&
+                    profileData["profileUserType"]["subType"]
+                    ? profileData["profileUserType"]["subType"].toUpperCase()
+                    : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);
                 });
               })
