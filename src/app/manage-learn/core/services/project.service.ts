@@ -320,7 +320,7 @@ export class ProjectService {
             handler: () => {
               if (project.isEdit || project.isNew) {
                 project.isNew
-                  ? this.createNewProject(true)
+                  ? this.createNewProject(project,true)
                   : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
               } else {
                 type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
@@ -343,13 +343,13 @@ export class ProjectService {
     this.share.getFileUrl(config, fileName);
   }
 
-  createNewProject(isShare?) {
+  createNewProject(project, isShare?) {
     this.loader.startLoader();
-    const projectDetails = JSON.parse(JSON.stringify(this.project));
+    const projectDetails = JSON.parse(JSON.stringify(project));
     this.syncService
       .createNewProject(true, projectDetails)
       .then((success) => {
-        const { _id, _rev } = this.project;
+        const { _id, _rev } = project;
         projectDetails._id = success.result.projectId;
         projectDetails.programId = success.result.programId;
         projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;

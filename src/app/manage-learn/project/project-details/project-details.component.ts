@@ -178,7 +178,7 @@ export class ProjectDetailsComponent implements OnInit {
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
-        ? this.projectServ.createNewProject()
+        ? this.projectServ.createNewProject(this.projectDetails)
         : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
