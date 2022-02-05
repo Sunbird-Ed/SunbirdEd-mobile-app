@@ -41,13 +41,17 @@ export class ApiService {
       'X-App-Id': this.apiUtils.appName,
       'deviceId': this.deviceInfo.getDeviceID(),
     }
+    if(!session?.access_token){
+      delete headers['X-authenticated-user-token'];
+      delete headers['x-auth-token']
+    }
     return headers;
   }
 
   get(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const headers = session ? this.setHeaders(session) : '';
+        const headers = session ? this.setHeaders(session) : {};
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.get(this.baseUrl + requestParam.url, '', headers).then(
             data => {
@@ -79,7 +83,7 @@ export class ApiService {
             return this.authService.getSession()
           }
         }else{
-          return;
+          return observableOf({})
         }
       })
     )
@@ -90,10 +94,11 @@ export class ApiService {
       this.authToken = `Bearer ${resp}`;
     });
   }
+
   post(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const headers = session ? this.setHeaders(session) :'';
+        const headers = session ? this.setHeaders(session) :{};
           let body = requestParam.payload ? requestParam.payload : {};
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.post(this.baseUrl + requestParam.url, body, headers).then(

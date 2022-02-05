@@ -163,17 +163,21 @@ export class ProjectService {
   }
 
   getProjectCompletionPercentage({ tasks }) {
-    const tasksCount = tasks?.length;
+    let tasksCount = tasks?.length;
     if (!tasksCount) {
       return { completedTasks: 0, totalTasks: 0 };
     }
     let completedTaskCount = 0;
+    let validTaskCount = 0;
     for (const task of tasks) {
-      if (task.status === statusType.completed) {
+      if(!task.isDeleted){
+        validTaskCount++;
+      }
+      if (task.status === statusType.completed && !task.isDeleted) {
         completedTaskCount++
       }
     }
-    const payload = { completedTasks: completedTaskCount, totalTasks: tasksCount }
+    const payload = { completedTasks: completedTaskCount, totalTasks: validTaskCount }
     return payload;
   }
 

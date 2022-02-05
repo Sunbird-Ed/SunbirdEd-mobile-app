@@ -181,7 +181,12 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
   // Non logged in users
-  getTemplateData(id){
+  async getTemplateData(id){
+    // const response = await this.projectService.getTemplateByExternalId(id);
+    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
+    //   queryParams: data,
+    //   skipLocationChange: true,
+    // });
     this.projectService.getTemplateByExternalId(id).then(data =>{
       console.log(data,"data");
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {

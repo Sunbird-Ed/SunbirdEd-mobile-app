@@ -214,6 +214,17 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
+  onTaskAction(event) {
+    switch(event.type){
+      case 'deleteTask':
+        this.projectDetails.tasks[event.taskIndex].isDeleted = true;
+        this.projectDetails.tasks[event.taskIndex].isEdit = true;
+        this.refreshTheActions();
+        this.updateLocalDb(true);
+        break
+    }
+  }
+
 
 
   updateLocalDb(setIsEditTrue = false) {

@@ -1525,5 +1525,6 @@
   "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT_SUCCESS_MESSAGE":"You have completed this project successfully.",
   "FRMELEMNTS_LBL_SUBMIT_PROJECT":"Submit Project",
   "FRMELEMNTS_MSG_SUBMIT_PROJECT":"Are you sure you want to submit your improvement project?",
-  "FRMELEMNTS_LBL_ADD_YOUR_TASK":"Add your own task."
+  "FRMELEMNTS_LBL_ADD_YOUR_TASK":"Add your own task.",
+  "FRMELEMNTS_BTN_VIEW_TASK_DETAILS": "View task details"
 }
