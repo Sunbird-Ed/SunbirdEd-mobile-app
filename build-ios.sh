@@ -55,7 +55,7 @@ mkdir platforms
 npm uninstall code-push
 npm uninstall cordova-plugin-dialogs
 npm install @ionic-native/ionic-webview@5.33.1
-npm install cordova-plugin-inappbrowser@5.0.0
+npm install cordova-plugin-inappbrowser
 npm install com.telerik.plugins.nativepagetransitions@0.7.0
 
 ionic cordova plugin rm cordova-plugin-sunbirdsplash
@@ -73,6 +73,8 @@ ionic cordova plugin add https://github.com/apache/cordova-plugin-file-transfer.
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 ionic cordova plugin add cordova-plugin-sign-in-with-apple
 ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=$URL_SCHEME --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=$DEEPLINK_HOST
+ionic cordova plugin rm cordova-plugin-inappupdatemanager   
+ionic cordova plugin add https://github.com/subranil/cordova-plugin-inappupdatemanager.git
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add ios
