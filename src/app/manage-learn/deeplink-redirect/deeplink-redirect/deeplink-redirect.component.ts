@@ -23,6 +23,10 @@ export class DeeplinkRedirectComponent implements OnInit {
   link: any;
   extra: string;
   selectedUserType;
+  permittedUsers = [
+    'administrator',
+    'teacher'
+  ]
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -73,9 +77,9 @@ export class DeeplinkRedirectComponent implements OnInit {
   async redirectProject(data) {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.commonUtilService.showToast("FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER");
-      this.location.back()
+      this.location.back();
       return;
-    } else if(this.selectedUserType !== "administrator"){
+    } else if(!this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ){
       this.commonUtilService.showToast('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
       this.location.back()
       return;
@@ -99,8 +103,13 @@ export class DeeplinkRedirectComponent implements OnInit {
       },500);
       return
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
-      queryParams: data,
+    this.goToTemplateDetails(data)
+
+  }
+
+  goToTemplateDetails(params) {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, params.solutionId], {
+      queryParams: params,
       skipLocationChange: true,
       state: {
         "referenceFrom": "link",
@@ -180,6 +189,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       this.location.back();
     }
   }
+  
   // Non logged in users
   async getTemplateData(id){
     // const response = await this.projectService.getTemplateByExternalId(id);
@@ -189,7 +199,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     // });
     this.projectService.getTemplateByExternalId(id).then(data =>{
       console.log(data,"data");
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,id], {
         queryParams: data,
         skipLocationChange: true,
       });

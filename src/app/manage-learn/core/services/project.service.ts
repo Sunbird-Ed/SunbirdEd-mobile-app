@@ -153,13 +153,17 @@ export class ProjectService {
       attachContentAccess: false,
       emitUpdateIfAny: false
     };
-
+    this.loader.startLoader();
     this.contentService
       .getContentDetails(req)
       .toPromise()
       .then(async (data: Content) => {
+        this.loader.stopLoader();
         this.navigateService.navigateToDetailPage(data, { content: data });
-      });
+      })
+      .catch(error => {
+        this.loader.stopLoader();
+      })
   }
 
   getProjectCompletionPercentage({ tasks }) {

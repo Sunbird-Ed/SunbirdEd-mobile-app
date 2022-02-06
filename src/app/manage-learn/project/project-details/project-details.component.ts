@@ -225,7 +225,9 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
-
+  openResource(resource) {
+    this.projectServ.openResources(resource);
+  }
 
   updateLocalDb(setIsEditTrue = false) {
     this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;
