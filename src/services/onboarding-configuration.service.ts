@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { PreferenceKey } from "@app/app/app.constant";
 import { SharedPreferences } from 'sunbird-sdk';
-import onboarding from './../assets/configuration/config.json';
+import onboarding from './../assets/configurations/config.json';
 
 interface OnBoardingConfig {
     name: string;
