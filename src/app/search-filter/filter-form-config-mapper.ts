@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FilterValue } from 'sunbird-sdk';
 import { IFacetFilterFieldTemplateConfig } from 'common-form-elements';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { SearchFilterService } from '@app/services';
 import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
 
 interface FilterFormConfigWithDefaults {
@@ -23,7 +23,7 @@ export class FilterFormConfigMapper {
     private searchFilterFormConfig: any[];
 
     constructor(
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private searchFilterService: SearchFilterService,
         private translateJsonPipe: TranslateJsonPipe
     ) {
         this.fetchSearchFormAPI();
@@ -41,12 +41,12 @@ export class FilterFormConfigMapper {
     }
 
     private async fetchSearchFormAPI(){
-        this.searchFilterFormConfig = await this.formAndFrameworkUtilService.getSearchFilters();
+        this.searchFilterFormConfig = await this.searchFilterService.getFacetFormAPIConfig();
     }
 
     async map(facetFilters: { [key: string]: FilterValue[] }, existingFilters={}): Promise<FilterFormConfigWithDefaults> {
         if(!this.searchFilterFormConfig || !this.searchFilterFormConfig.length){
-            this.searchFilterFormConfig = await this.formAndFrameworkUtilService.getSearchFilters();
+            this.searchFilterFormConfig = await this.searchFilterService.getFacetFormAPIConfig();
         }
         const mappedFilters: FilterFormConfigWithDefaults = {config:[], defaults:{}};
         this.searchFilterFormConfig.sort((a, b)=>{
