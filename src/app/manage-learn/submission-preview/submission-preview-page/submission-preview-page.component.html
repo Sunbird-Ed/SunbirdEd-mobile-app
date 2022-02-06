@@ -13,7 +13,7 @@
                 question?.responseType !== 'matrix' && question?.responseType !== 'pageQuestions' && question?.value
               "
             >
-              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+              <!-- <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3> -->
               <p *ngIf="question?.responseType !== 'radio' && question?.responseType !== 'multiselect'">
                 Ans. {{ question?.value }}
               </p>
@@ -29,7 +29,7 @@
                 question?.responseType === 'matrix' && question?.responseType !== 'pageQuestions' && question?.value
               "
             >
-              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+              <!-- <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3> -->
               <div *ngFor="let instance of question.value; let j = index" class="instanceQuest">
                 <h5 class="instacnce">{{ question?.instanceIdentifier }} {{ j + 1 }}</h5>
                 <div *ngFor="let answer of instance; let k = index" class="matrixQuestion">
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div *ngIf="question?.responseType === 'pageQuestions'">
-              <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3>
+              <!-- <h3>Q{{ i + 1 }}. {{ question?.question[0] }}</h3> -->
 
               <div *ngFor="let answer of question.pageQuestions; let k = index" class="matrixQuestion">
                 <div *ngIf="answer?.responseType === 'matrix'; else notMatrix">

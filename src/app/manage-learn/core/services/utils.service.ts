@@ -37,6 +37,7 @@ export class UtilsService {
   sortedTasks;
   filters: any = {};
   statuses = statuses;
+  numberTasksCompleted =0;
   constructor(
     @Inject("PROFILE_SERVICE") private profileService: ProfileService,
     @Inject("AUTH_SERVICE") public authService: AuthService,
@@ -716,4 +717,15 @@ async getSortTasks(project:any) {
   return data;
 }
 
+getCompletedTaskCount(tasks){
+  // const completedList = _.filter(tasks, function(el) {
+  //   return !el.isDeleted && el.status === statusType.completed;
+  // });
+  let data ={
+    completedTasks : 3,
+    progress: 3 / 7
+  }
+  console.log(data,"data prgress");
+return data;
+}
 }
