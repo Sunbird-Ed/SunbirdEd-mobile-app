@@ -469,6 +469,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           role: 'cancel',
           handler: () => {
             this.isExitPopupShown = false;
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, 
+              InteractSubtype.CANCEL_CLICKED, 
+              Environment.PLAYER,
+              PageId.PLAYER_PAGE);
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
               'TOUCH', 'ALERT_CANCEL', 'EXIT', { type, stageId });
           }
@@ -476,6 +480,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         {
           text: this.commonUtilService.translateMessage('OKAY'),
           handler: async() => {
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, 
+              InteractSubtype.OK_CLICKED, 
+              Environment.PLAYER,
+              PageId.PLAYER_PAGE);
             if (this.playerType === 'sunbird-old-player') {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
