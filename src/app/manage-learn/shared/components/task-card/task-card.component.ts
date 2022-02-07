@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { DbService, ProjectService, taskStatus } from '@app/app/manage-learn/core';
+import { DbService, ProjectService, statusType, taskStatus } from '@app/app/manage-learn/core';
 import { menuConstants } from '@app/app/manage-learn/core/constants/menuConstants';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,7 +31,13 @@ export class TaskCardComponent implements OnInit {
   ngOnInit() { }
 
   onCardClick(task) {
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id]);
+    const viewOnlyMode = (this.data.status === statusType.submitted);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id], {
+      queryParams: { viewOnlyMode: viewOnlyMode },
+      state: {
+        projectDetails: this.data
+      }
+    });
 
   }
   startAssessment(task) {
@@ -48,15 +54,15 @@ export class TaskCardComponent implements OnInit {
   async openPopover(ev: any, taskIndex) {
     let menu;
     const selectedTask = this.data.tasks[taskIndex];
-      menu = JSON.parse(JSON.stringify(menuConstants.TASK));
-      if (selectedTask.isDeletable) {
-        let deleteOption = {
-          TITLE: 'DELETE',
-          VALUE: 'deleteTask',
-          ICON: 'trash'
-        }
-        menu.push(deleteOption);
+    menu = JSON.parse(JSON.stringify(menuConstants.TASK));
+    if (selectedTask.isDeletable) {
+      let deleteOption = {
+        TITLE: 'DELETE',
+        VALUE: 'deleteTask',
+        ICON: 'trash'
       }
+      menu.push(deleteOption);
+    }
     const popover = await this.popoverController.create({
       component: PopoverComponent,
       componentProps: { menus: menu },
@@ -73,7 +79,7 @@ export class TaskCardComponent implements OnInit {
             this.projectService.openSyncSharePopup("shareTask", selectedTask.name, this.data, selectedTask._id);
             break;
           case 'deleteTask':
-            this.askPermissionToDelete(data.data,taskIndex);
+            this.askPermissionToDelete(data.data, taskIndex);
             break
         }
 
@@ -81,6 +87,7 @@ export class TaskCardComponent implements OnInit {
     });
     return await popover.present();
   }
+
   async askPermissionToDelete(type, index) {
     let data;
     this.translate.get(["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
