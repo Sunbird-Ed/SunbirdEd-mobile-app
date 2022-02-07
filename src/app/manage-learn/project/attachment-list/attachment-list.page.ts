@@ -26,7 +26,7 @@ export class AttachmentListPage implements OnInit {
     actionButtons: []
   };
   private win: any = window;
-  attachments = [];
+  attachments:any = [];
   projectId;
   path;
   type = "images";
@@ -40,7 +40,12 @@ export class AttachmentListPage implements OnInit {
       name: "FRMELEMNTS_LBL_FILES",
       value: "files",
       type: "application/pdf"
-    }
+    },
+    {
+      name: "FRMELEMNTS_LBL_REMARKS",
+      value: "remarks",
+      type: "remarks"
+    },
   ];
   project;
   projectcopy;
@@ -97,8 +102,17 @@ export class AttachmentListPage implements OnInit {
       this.projectcopy = { ...this.project }
       if (this.project.tasks && this.project.tasks.length) {
         for (const task of this.project.tasks) {
-          const attachments = []
+          const attachments = [];
+          const remarks=[];
           if (!task.isDeleted) {
+            console.log("task",task);
+            if(task.remarks){
+              let remarksObj = {
+                taskName: task.name,
+                remarks: task.remarks,
+              }
+              remarks.push({ ...remarksObj})
+            }
             if (task.attachments && task.attachments.length) {
               for (const element of task.attachments) {
                 if (compare(element.type, tab.type)) {
@@ -111,12 +125,13 @@ export class AttachmentListPage implements OnInit {
               if (attachments.length) {
                 let attachmentObj = {
                   taskName: task.name,
-                  remarks: task.remarks,
                   attachments: attachments
                 }
                 this.attachments.push({ ...attachmentObj });
               }
-
+              if(remarks.length){
+                this.attachments.remarks = remarks
+              }
             }
           }
         }

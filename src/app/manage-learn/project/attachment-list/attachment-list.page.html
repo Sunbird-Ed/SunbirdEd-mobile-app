@@ -44,6 +44,22 @@
       </div>
     </div>
   </div>
+  <div *ngIf="type == 'remarks'">
+    <div *ngFor="let remarks of attachments?.remarks">
+      <ion-card class="attachments-card">
+        <ion-card-header class="project-card _capitalize">
+          {{remarks?.taskName}}
+        </ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col size="12" *ngIf="remarks?.remarks">
+              {{remarks?.remarks}}
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
   <div *ngIf="!attachments?.length">
     <app-no-data></app-no-data>
   </div>

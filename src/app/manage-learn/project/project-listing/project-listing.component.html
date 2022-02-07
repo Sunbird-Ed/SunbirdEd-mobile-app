@@ -43,7 +43,7 @@
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
     </div> -->
   </app-item-list-card>
-  <app-no-data *ngIf="!projects?.length"></app-no-data>
+  <app-no-data *ngIf="!projects?.length" [message]="noDataFound" [color]="'#3880ff'"></app-no-data>
 </ion-content>
 <ion-button class="view-more" fill="outline" (click)="loadMore()"
   *ngIf="projects?.length && count > currentOnlineProjectLength">
