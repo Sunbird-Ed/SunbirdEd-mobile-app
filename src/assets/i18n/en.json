@@ -1525,5 +1525,8 @@
   "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT_SUCCESS_MESSAGE":"You have completed this project successfully.",
   "FRMELEMNTS_LBL_SUBMIT_PROJECT":"Submit Project",
   "FRMELEMNTS_MSG_SUBMIT_PROJECT":"Are you sure you want to submit your improvement project?",
-  "FRMELEMNTS_LBL_ADD_YOUR_TASK":"Add your own task."
+  "FRMELEMNTS_LBL_ADD_YOUR_TASK":"Add your own task.",
+  "FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND":"There are no projects assigned to your profile.",
+  "FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND":"Click on create new project tab above to create your first improvement project",
+  "FRMELEMNTS_LBL_DISCOVERED_PROJECT_NOT_FOUND":"There are no projects discovered by you"
 }
