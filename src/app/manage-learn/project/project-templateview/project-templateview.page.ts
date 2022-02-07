@@ -10,6 +10,8 @@ import {  ProjectService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
+import { AppGlobalService } from '@app/services';
+
 @Component({
   selector: 'app-project-templateview',
   templateUrl: './project-templateview.page.html',
@@ -65,6 +67,8 @@ export class ProjectTemplateviewPage implements OnInit {
     private headerService: AppHeaderService,
     private projectService: ProjectService,
     private popupService: GenericPopUpService,
+    private appGlobalService: AppGlobalService,
+
   ) {
 
     params.params.subscribe((parameters) => {
@@ -94,16 +98,30 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   templateDetailsInit() {
-    switch (this.stateData?.referenceFrom) {
-      case 'observation':
-        this.templateId = this.id;
-        this.getTemplateByExternalId();
-        break
-      case 'link':
-        this.getProjectApi();
-        break
-      default:
-        this.getProjectApi();
+    if(this.appGlobalService.isUserLoggedIn()){
+      switch (this.stateData?.referenceFrom) {
+        case 'observation':
+          this.templateId = this.id;
+          this.getTemplateByExternalId();
+          break
+        case 'link':
+          this.getProjectApi();
+          break
+        default:
+          this.getProjectApi();
+      }
+    } else {
+      const extraPramas = `?link=${this.id}`
+      this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
+        this.project = data?.result;
+        debugger
+        this.metaData = {
+          title: this.project.title,
+          subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
+        }
+      }).catch(error => {
+        
+      })
     }
   }
 
@@ -181,6 +199,10 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
+    if(!this.appGlobalService.isUserLoggedIn()){
+      this.triggerLogin();
+      return
+    }
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
     } else if (this.project.projectId) {
@@ -219,7 +241,6 @@ export class ProjectTemplateviewPage implements OnInit {
             solutionId: this.project.solutionId,
             isProfileInfoRequired: true,
             hasAcceptedTAndC: this.project.hasAcceptedTAndC,
-            detailsPayload: this.stateData ? this.stateData : null,
             templateId: this.templateId,
             replaceUrl: false
           }
@@ -234,6 +255,10 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.mapProjectToUser(payload);
     }
+  }
+
+  triggerLogin() {
+    this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: false}});
   }
 
 }
