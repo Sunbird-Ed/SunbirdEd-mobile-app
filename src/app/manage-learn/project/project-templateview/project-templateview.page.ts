@@ -1,20 +1,15 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
-import { AppHeaderService, AppGlobalService } from '@app/services';
-import { Subscription } from 'rxjs';
-import { NetworkService, ProjectService } from '../../core';
+import { AppHeaderService } from '@app/services';
+import {  ProjectService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
-import { urlConstants } from '../../core/constants/urlConstants';
-import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { GenericPopUpService } from '../../shared';
-import { Location } from '@angular/common';
-
 @Component({
   selector: 'app-project-templateview',
   templateUrl: './project-templateview.page.html',
@@ -34,8 +29,6 @@ export class ProjectTemplateviewPage implements OnInit {
   sortedTasks;
   programId;
   solutionId;
-  private backButtonFunc: Subscription;
-
   isNotSynced: boolean;
   locationChangeTriggered: boolean = false;
   allStrings;
@@ -61,20 +54,17 @@ export class ProjectTemplateviewPage implements OnInit {
   type;
   buttonLabel = 'FRMELEMNTS_LBL_START_IMPROVEMENT';
   stateData;
+  isATargetedSolution;
+
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
     private router: Router,
     private utils: UtilsService,
     private translate: TranslateService,
-    private network: NetworkService,
-    private zone: NgZone,
     private headerService: AppHeaderService,
-    private appGlobalService: AppGlobalService,
     private projectService: ProjectService,
-    private unnatiService: UnnatiDataService,
     private popupService: GenericPopUpService,
-    private location: Location
   ) {
 
     params.params.subscribe((parameters) => {
@@ -84,8 +74,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.isTargeted = parameters.isTargeted;
       this.programId = parameters.programId;
       this.solutionId = parameters.solutionId;
-      // this.type = parameters.type;
-      // this.type == 'improvement' ? this.getTemplateByExternalId(): this.getProjectApi();
+      this.isATargetedSolution = (parameters.isATargetedSolution === 'true');
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
@@ -115,7 +104,6 @@ export class ProjectTemplateviewPage implements OnInit {
         break
       default:
         this.getProjectApi();
-
     }
   }
 
@@ -130,6 +118,7 @@ export class ProjectTemplateviewPage implements OnInit {
   ionViewWillEnter() {
     this.templateDetailsInit();
   }
+
   async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
@@ -141,6 +130,7 @@ export class ProjectTemplateviewPage implements OnInit {
     if (this.project.tasks && this.project.tasks.length)
       this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
+
   async getTemplateByExternalId() {
     let resp = await this.projectService.getTemplateByExternalId(this.id);
     this.programId = resp?.result?.programInformation?.programId || null;
@@ -153,15 +143,19 @@ export class ProjectTemplateviewPage implements OnInit {
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
   }
+
   toggle() {
     this.showDetails = !this.showDetails;
   }
+
   segmentChanged(event) {
     this.segmentType = event.detail.value;
   }
+
   openResource(resource) {
     this.projectService.openResources(resource);
   }
+
   doAction() {
     if (this.type == 'improvement' && !this.project.hasAcceptedTAndC && !this.isTargeted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
@@ -174,6 +168,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.start();
     }
   }
+
   gotoDetails() {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       replaceUrl: true,
@@ -184,26 +179,11 @@ export class ProjectTemplateviewPage implements OnInit {
       },
     });
   }
+
   async start() {
-    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-    //   queryParams: {
-    //     projectId: this.projectId,
-    //     programId: this.programId,
-    //     solutionId: this.solutionId,
-    //     type: 'assignedToMe',
-    //   },
-    // });
-    if( this.stateData.referenceFrom === 'link') {
-      const payload = {
-        templateId: this.project._id,
-        programId: this.programId,
-        solutionId: this.solutionId,
-        isATargetedSolution: false
-      }
-      this.projectService.mapProjectToUser(payload);
-      return
-    }
-    if (this.project.projectId) {
+    if (this.stateData?.referenceFrom === 'link') {
+      this.startProjectsFromLink();
+    } else if (this.project.projectId) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
         queryParams: {
           projectId: this.project.projectId,
@@ -223,53 +203,37 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
-
-    // if (this.appGlobalService.isUserLoggedIn()) {
-    //   if (this.project._id) {
-    //     const navObj = {
-    //       projectId: this.project._id,
-    //       programId: this.project.programId ? this.project.programId : this.project.programInformation.programId,
-    //       solutionId: this.project.solutionId
-    //     }
-    //     this.projectService.navigateToProjectDetails(navObj);
-    //   } else {
-    //     const payload = {
-    //       projectId: this.project._id,
-    //       programId: this.project.programId,
-    //       solutionId: this.project.solutionId,
-    //       isProfileInfoRequired: true,
-    //       hasAcceptedTAndC: this.project.hasAcceptedTAndC
-    //     }
-    //     this.projectService.getProjectDetails(payload);
-    //   }
-    // } else {
-    //   this.router.navigate([RouterLinks.SIGN_IN]);
-    // }
-
-
-
-    // if (this.appGlobalService.isUserLoggedIn()) {
-    //   let payload = { programId: this.programId, solutionId: this.solutionId };
-    // let resp = await this.projectService.getTemplateData(payload,this.project._id,this.isTargeted);
-    // if (resp && resp.result) {
-    //   this.router
-    //     .navigate([`/${RouterLinks.PROJECT}`], {
-    //       queryParams: {
-    //         selectedFilter: this.isTargeted ? 'assignedToMe' : 'discoveredByMe',
-    //       },
-    //     })
-    //     .then(() => {
-    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-    //   queryParams: {
-    //     projectId: resp.result._id,
-    //     programId: this.programId,
-    //     solutionId: this.solutionId,
-    //   },
-    // });
-    //     });
-    // }
-    // } else{
-    //   // go to login page
-    // }
   }
+
+  startProjectsFromLink() {
+    if (this.isATargetedSolution) {
+      this.router
+        .navigate([`/${RouterLinks.PROJECT}`], {
+          queryParams: {
+            selectedFilter: 'assignedToMe',
+          },
+        }).then(() => {
+          const payload = {
+            projectId: this.project.projectId,
+            programId: this.project.programId,
+            solutionId: this.project.solutionId,
+            isProfileInfoRequired: true,
+            hasAcceptedTAndC: this.project.hasAcceptedTAndC,
+            detailsPayload: this.stateData ? this.stateData : null,
+            templateId: this.templateId,
+            replaceUrl: false
+          }
+          this.projectService.getProjectDetails(payload);
+        })
+    } else {
+      const payload = {
+        templateId: this.project._id,
+        programId: this.programId,
+        solutionId: this.solutionId,
+        isATargetedSolution: false
+      }
+      this.projectService.mapProjectToUser(payload);
+    }
+  }
+
 }

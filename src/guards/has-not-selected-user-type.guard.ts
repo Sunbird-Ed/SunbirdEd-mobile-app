@@ -3,6 +3,7 @@ import { Router, ActivatedRoute, Resolve, NavigationExtras, ActivatedRouteSnapsh
 import { SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import {SplashScreenService} from '@app/services';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 @Injectable()
 export class HasNotSelectedUserTypeGuard implements Resolve<any> {
@@ -11,10 +12,21 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         private router: Router,
         private activatedRoute: ActivatedRoute,
-        private splashScreenService: SplashScreenService
+        private splashScreenService: SplashScreenService,
+        private onboardingConfigurationService: OnboardingConfigurationService
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): any {
+
+        if (!this.onboardingConfigurationService.nextOnboardingStep('user-type-selection')) {
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    forwardMigration: true
+                }
+            };
+            this.router.navigate(['/', 'profile-settings'], navigationExtras);
+        }
+
         if (route.queryParams.onReload === 'true') {
             this.guardActivated = true;
         }

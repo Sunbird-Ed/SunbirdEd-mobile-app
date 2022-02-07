@@ -153,27 +153,35 @@ export class ProjectService {
       attachContentAccess: false,
       emitUpdateIfAny: false
     };
-
+    this.loader.startLoader();
     this.contentService
       .getContentDetails(req)
       .toPromise()
       .then(async (data: Content) => {
+        this.loader.stopLoader();
         this.navigateService.navigateToDetailPage(data, { content: data });
-      });
+      })
+      .catch(error => {
+        this.loader.stopLoader();
+      })
   }
 
   getProjectCompletionPercentage({ tasks }) {
-    const tasksCount = tasks?.length;
+    let tasksCount = tasks?.length;
     if (!tasksCount) {
       return { completedTasks: 0, totalTasks: 0 };
     }
     let completedTaskCount = 0;
+    let validTaskCount = 0;
     for (const task of tasks) {
-      if (task.status === statusType.completed) {
+      if(!task.isDeleted){
+        validTaskCount++;
+      }
+      if (task.status === statusType.completed && !task.isDeleted) {
         completedTaskCount++
       }
     }
-    const payload = { completedTasks: completedTaskCount, totalTasks: tasksCount }
+    const payload = { completedTasks: completedTaskCount, totalTasks: validTaskCount }
     return payload;
   }
 
@@ -320,7 +328,7 @@ export class ProjectService {
             handler: () => {
               if (project.isEdit || project.isNew) {
                 project.isNew
-                  ? this.createNewProject(true)
+                  ? this.createNewProject(project,true)
                   : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
               } else {
                 type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
@@ -343,13 +351,13 @@ export class ProjectService {
     this.share.getFileUrl(config, fileName);
   }
 
-  createNewProject(isShare?) {
+  createNewProject(project, isShare?) {
     this.loader.startLoader();
-    const projectDetails = JSON.parse(JSON.stringify(this.project));
+    const projectDetails = JSON.parse(JSON.stringify(project));
     this.syncService
       .createNewProject(true, projectDetails)
       .then((success) => {
-        const { _id, _rev } = this.project;
+        const { _id, _rev } = project;
         projectDetails._id = success.result.projectId;
         projectDetails.programId = success.result.programId;
         projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;

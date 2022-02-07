@@ -178,7 +178,7 @@ export class ProjectDetailsComponent implements OnInit {
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
-        ? this.projectServ.createNewProject()
+        ? this.projectServ.createNewProject(this.projectDetails)
         : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
@@ -214,7 +214,20 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
+  onTaskAction(event) {
+    switch(event.type){
+      case 'deleteTask':
+        this.projectDetails.tasks[event.taskIndex].isDeleted = true;
+        this.projectDetails.tasks[event.taskIndex].isEdit = true;
+        this.refreshTheActions();
+        this.updateLocalDb(true);
+        break
+    }
+  }
 
+  openResource(resource) {
+    this.projectServ.openResources(resource);
+  }
 
   updateLocalDb(setIsEditTrue = false) {
     this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;

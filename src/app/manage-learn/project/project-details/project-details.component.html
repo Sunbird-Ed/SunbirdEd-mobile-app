@@ -61,7 +61,7 @@
     </app-accordion-list>
   </div>
 
-  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails"
+  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails" (actionEvent)="onTaskAction($event)"
     [viewOnly]="projectDetails?.status === allStatusTypes.submitted"></app-task-card>
 
     <ion-card class="add-task" (click)="addNewTask()" *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
