@@ -16,15 +16,15 @@
     <preference name="AndroidLaunchMode" value="singleInstance" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-    <hook src="scripts/copyGradleFiles.js" type="before_build" />
-    <hook src="scripts/copyBundledData.js" type="before_build" />
-    <hook src="scripts/application/add_application.js" type="before_run" />
-    <hook src="scripts/copyGradleFiles.js" type="before_run" />
-    <hook src="scripts/copyBundledData.js" type="before_run" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
     <platform name="android">
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_build" />
+        <hook src="scripts/copyBundledData.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_run" />
+        <hook src="scripts/copyBundledData.js" type="before_run" />
+        <hook src="scripts/application/add_application.js" type="before_run" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
@@ -73,8 +73,20 @@
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
     </platform>
     <platform name="ios">
+       <hook src="scripts/ios/ios.js" type="after_prepare" />
+        <preference name="WKWebViewOnly" value="true" />
+        <edit-config file="*-Info.plist" mode="overwrite" target="UIBackgroundModes">
+            <array />
+        </edit-config>
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+            <string>App uses camera permissions to scan QR codes and upload evidences</string>
+        </edit-config>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />

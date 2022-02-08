@@ -48,7 +48,7 @@ export class ProjectListingComponent {
 
     constructor(
         private router: Router,
-        private routerParams : ActivatedRoute,
+        private routerParams: ActivatedRoute,
         private location: Location,
         private headerService: AppHeaderService,
         private platform: Platform,
@@ -65,18 +65,18 @@ export class ProjectListingComponent {
         private popupService: GenericPopUpService,
         private toastService: ToastService
     ) {
-        routerParams.queryParams.subscribe(params =>{
-            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME','FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
-            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME']];
+        routerParams.queryParams.subscribe(params => {
+            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME', 'FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
+                this.filters = [translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME'], translations['FRMELEMNTS_LBL_CREATED_BY_ME']];
             });
-            if( params.selectedFilter ){
-                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[1] : this.filters[2];
-                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 1 : 2;
-            }else{
+            if (params.selectedFilter) {
+                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[0] : this.filters[1];
+                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 0 : 1;
+            } else {
                 this.selectedFilter = this.filters[0];
             }
         })
-       
+
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
             this.networkFlag = available;
@@ -90,21 +90,18 @@ export class ProjectListingComponent {
             selector: {
                 downloaded: true,
             }
-          
-          
         };
         switch (this.selectedFilterIndex) {
             case 0:
+                query.selector['isAPrivateProgram'] = false
+                break;
+            case 1:
+                query.selector['referenceFrom'] = 'link'
+                break;
+            case 2:
                 query.selector['isAPrivateProgram'] = { $ne: false }
-                query.selector['referenceFrom']={ $ne: 'link' }
+                query.selector['referenceFrom'] = { $ne: 'link' }
                 break;
-             case 1:
-                query.selector['isAPrivateProgram']=false
-                break;
-             case 2:
-                query.selector['referenceFrom']='link'
-                break;
-        
             default:
                 break;
         }
@@ -208,7 +205,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
+            this.selectedFilterIndex == 2 ? this.getCreatedProjects() : this.getProjectList()
         } else {
             this.getDownloadedProjectsList();
         }
@@ -221,16 +218,17 @@ export class ProjectListingComponent {
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
 
-        let selectedFilter 
+        let selectedFilter;
         switch (this.selectedFilterIndex) {
             case 0:
-                selectedFilter = 'createdByMe'
+                selectedFilter = 'assignedToMe';
                 break;
-             case 1:
-                selectedFilter = 'assignedToMe'
+            case 1:
+                selectedFilter = 'discoveredByMe';
                 break;
             case 2:
-                selectedFilter = 'discoveredByMe'
+                selectedFilter = 'createdByMe';
+                break;
             default:
                 break;
         }
@@ -239,7 +237,7 @@ export class ProjectListingComponent {
         }
         const config = {
             url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
-            payload: selectedFilter == 'assignedToMe' ? this.payload : ''
+            payload: selectedFilter !== 'createdByMe' ? this.payload : ''
         }
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
@@ -271,15 +269,26 @@ export class ProjectListingComponent {
     }
 
     selectedProgram(project) {
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-            queryParams: {
-                projectId: project._id,
-                programId: project.programId,
-                solutionId: project.solutionId,
-                type: selectedFilter,
-            },
-        });
+        const selectedFilter = this.selectedFilterIndex !== 0 ? 'createdByMe' : 'assignedToMe';
+        if (!project?._id) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, project.solutionId], {
+                queryParams: {
+                    // data: project
+                    // projectId: project?._id && ,
+                    programId: project.programId,
+                    solutionId: project.solutionId,
+                },
+            });
+        } else {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                queryParams: {
+                    projectId: project._id,
+                    programId: project.programId,
+                    solutionId: project.solutionId,
+                    type: selectedFilter,
+                },
+            });
+        }
     }
 
     loadMore() {
@@ -430,8 +439,9 @@ export class ProjectListingComponent {
     }
 
     doAction(id?, project?) {
+        const selectedFilter = this.selectedFilterIndex === 0 ? 'assignedToMe' : 'createdByMe';
+
         if (project) {
-            const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
             if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
                 this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                     if (data && data.isClicked) {
@@ -440,7 +450,7 @@ export class ProjectListingComponent {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
-                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
+                                        !this.networkFlag ? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') : '';
                                         this.selectedProgram(project);
                                     })
                                 return;

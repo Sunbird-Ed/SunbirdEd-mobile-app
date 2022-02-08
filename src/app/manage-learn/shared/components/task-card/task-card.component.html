@@ -1,0 +1,51 @@
+<div *ngFor="let task of data?.tasks;let i = index">
+  <ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngIf="!task?.isDeleted">
+    <ion-row>
+      <ion-col size="1">
+        <ion-icon *ngIf="task?.status == statuses['completed']" name="checkmark-circle" class="check-icon"
+          color="success"></ion-icon>
+      </ion-col>
+      <ion-col size="11">
+        <div class="display-flex-space-btn">
+          <div style="flex:1">{{task?.name}}</div>
+          <div class="mandatory-ribben-label" *ngIf="!task.isDeletable">
+            {{'FRMELEMNTS_LBL_MANDATORY' | translate}}
+          </div>
+          <div *ngIf="!viewOnly" class="options">
+            <ion-buttons>
+              <ion-icon name="ellipsis-vertical-outline" class="action-icon" color="primary"
+                (click)="$event.stopPropagation();openPopover($event,i)">
+              </ion-icon>
+            </ion-buttons>
+          </div>
+        </div>
+        <div class="display-flex-space-btn">
+          <div> {{statuses[task?.status]?.label}}</div>
+        </div>
+        <div class="last-row">
+          <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
+          <div class="viewBtn">
+            <ion-label class="link-label" *ngIf="task?.type =='simple'"
+              (click)="$event.stopPropagation();openTask(task)">
+              {{'FRMELEMNTS_BTN_VIEW_TASK_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>
+            </ion-label>
+            <ion-button size="small" class="action-btn" *ngIf="task?.type=='content'&&task?.learningResources?.length"
+              (click)="$event.stopPropagation();openResources(task)">
+              {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
+            </ion-button>
+            <ion-button size="small" class="action-btn"
+              *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
+              (click)="$event.stopPropagation();startAssessment(task)">
+              {{'START' | translate}} {{task?.type}}
+            </ion-button>
+            <ion-button size="small" class="action-btn"
+              *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
+              (click)="$event.stopPropagation(); checkReport(task)">
+              {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
+            </ion-button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</div>
