@@ -93,10 +93,6 @@
             <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
-        <div *ngIf="organisationName">
-            <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
-            <span>{{organisationName}}</span>
-        </div>
         <div class="container MT10 MB10 edit-options">
             <ion-button shape="round" aria-label="Edit Role, Block, District, State"  (click)="onEditProfileClicked()"
                 class="custom-round ion-text-capitalize">
