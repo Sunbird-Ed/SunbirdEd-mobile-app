@@ -1505,7 +1505,7 @@
   "HI": "Hi",
   "ACTIVITY_DASHBOARD": "Activity dashboard",
   "FRMELEMNTS_LBL_MY_REPORTS": "My reports",
-  "FRMELEMNTS_LBL_EARNCERT": "Earn a certificate",
+  "FRMELEMNTS_LBL_EARNCERT": "Certificate criteria",
   "FRMELEMNTS_LBL_EARNMCERT" : "Certificate will be issued if you score above {{percent}}% in your assessment", 
   "FRMELEMNTS_LBL_EARNYOURCERT" : "Completion certificate will be issued upon 100% completion",
   "FRMELEMNTS_MSG_INVALID_LINK":"Invalid Link, please try with other link",
