@@ -54,9 +54,9 @@ export class ProjectReportComponent {
       key: 'total',
     },
     {
-      name: 'Projects Completed',
+      name: 'Projects Submitted',
       img: '../../assets/imgs/reports-page/note.svg',
-      key: 'completed',
+      key: 'submitted',
     },
     {
       name: 'Projects In Progress',
@@ -64,9 +64,9 @@ export class ProjectReportComponent {
       key: 'inProgress',
     },
     {
-      name: 'Projects Overdue',
+      name: 'Projects started',
       img: '../../assets/imgs/reports-page/Note 3.svg',
-      key: 'overdue',
+      key: 'started',
     },
   ];
   ionViewWillEnter() {
@@ -149,11 +149,11 @@ export class ProjectReportComponent {
 
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
-      if (key == 'completed') {
+      if (key == 'submitted') {
         color.push({ color: '#b4e3aa', pos: count });
       }
 
-      if (key == 'notStarted') {
+      if (key == 'started') {
         color.push({ color: '#e86d6d', pos: count });
       }
       count++;
@@ -181,11 +181,11 @@ export class ProjectReportComponent {
       x['value'] = ((obj[key] / obj.total) * 100).toFixed(1) + '%';
       x['y'] = obj[key];
       x['z'] = 0;
-      if (key == 'completed') {
+      if (key == 'submitted') {
         x['color'] = '#b4e3aa';
       }
 
-      if (key == 'notStarted') {
+      if (key == 'started') {
         x['color'] = '#e86d6d  ';
       }
 

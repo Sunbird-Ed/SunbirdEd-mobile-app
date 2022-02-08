@@ -100,16 +100,16 @@ export class SyncService {
   }
 
 
-  createNewProject(showLoader: boolean = false, project?): Promise<any> {
+  createNewProject(showLoader: boolean = false, project = {}): Promise<any> {
     if(showLoader){
       this.loader.startLoader()
     }
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
-    delete payload._rev;
     delete payload._id;
+    const actualPayload = this.processPayload(payload);
     const config = {
       url: urlConstants.API_URLS.CREATE_PROJECT,
-      payload: payload
+      payload: actualPayload
     }
     return new Promise((resolve, reject) => {
       this.unnatiServ.post(config).subscribe(success => {
@@ -134,11 +134,11 @@ export class SyncService {
     return doc
   }
 
-  deleteSpecificKey(tasks, key) {
+  deleteSpecificKey(tasks = [], key) {
     for (const task of tasks) {
       delete task[key];
-      if (task.children && task.children.length) {
-        for (const subTask of task.children) {
+      if (task?.children && task?.children?.length) {
+        for (const subTask of task?.children) {
           delete subTask[key]
         }
       }
@@ -194,8 +194,9 @@ export class SyncService {
     delete payload.solutionInformation;
     delete payload.programInformation;
     delete payload.userId;
-    payload.status = statusType.notStarted ? statusType.started : payload.status;
-    payload.status = statusType.completed ? statusType.submitted : payload.status;
+    delete payload.downloaded;
+    payload.status = (payload.status === statusType.notStarted) ? statusType.started : payload.status;
+    payload.status = (payload.status === statusType.completed) ? statusType.inProgress : payload.status;
     return payload
   }
 

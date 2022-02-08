@@ -50,9 +50,6 @@ export class ProjectDetailsComponent implements OnInit {
     private toast: ToastService,
     private commonUtilService: CommonUtilService,
     private router: Router,
-    private loader: LoaderService,
-    private syncServ: SyncService,
-    private share: SharingFeatureService,
     private alert: AlertController,
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
@@ -168,6 +165,8 @@ export class ProjectDetailsComponent implements OnInit {
     }
     if (this.projectDetails.downloaded) {
       defaultOptions[0] = actions.DOWNLOADED_ACTION
+    } else {
+      defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
     if(this.projectDetails.status === statusType.submitted){
       defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
@@ -330,7 +329,6 @@ export class ProjectDetailsComponent implements OnInit {
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => {
-            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
           },
         },
         {
