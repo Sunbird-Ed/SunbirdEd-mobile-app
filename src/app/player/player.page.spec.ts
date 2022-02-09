@@ -2,7 +2,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, TelemetryErrorCode, ErrorType, InteractType } from '@project-sunbird/sunbird-sdk';
+import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, TelemetryErrorCode,
+     ErrorType, InteractType, SharedPreferences, PlayerService  } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
@@ -19,7 +20,6 @@ import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../ap
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { IterableDiffers } from '@angular/core';
-import { url } from 'inspector';
 import { Environment, InteractSubtype } from '../../services';
 
 
@@ -101,12 +101,14 @@ describe('PlayerPage', () => {
 
     const mockprofileService: Partial<ProfileService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
             mockprofileService as ProfileService,
             mockContentService as ContentService,
             mockPlayerService as PlayerService,
+            mockSharedPreferences as SharedPreferences,
             mockCanvasPlayerService as CanvasPlayerService,
             mockPlatform as Platform,
             mockScreenOrientation as ScreenOrientation,
@@ -942,6 +944,7 @@ describe('PlayerPage', () => {
                 it('should unsubscribe backButtonSubscription', () => {
                     // arrange
                     mockStatusBar.show = jest.fn();
+                    mockSharedPreferences.getString = jest.fn(() => of("Landscape"));
                     mockScreenOrientation.unlock = jest.fn();
                     playerPage['events'] = {
                         unsubscribe: jest.fn(),
@@ -985,7 +988,7 @@ describe('PlayerPage', () => {
                             ContentUtil.getTelemetryObject(playerPage.config['metadata']['contentData']),
                             undefined,
                             ContentUtil.generateRollUp(playerPage.config['metadata']['hierarchyInfo'], playerPage.config['metadata']['identifier']))
-                    }, 100);;
+                    }, 100);
                     });
 
             });
@@ -1000,7 +1003,7 @@ describe('PlayerPage', () => {
                     mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
                     mockLocation.back = jest.fn();
                     //act
-                    playerPage.openPDF(url);
+                    playerPage.openPDF("https://sample/openPdfUrl");
                     //assert
                     setTimeout(() => {
                         expect(mockCommonUtilService.getLoader).toHaveBeenCalled();

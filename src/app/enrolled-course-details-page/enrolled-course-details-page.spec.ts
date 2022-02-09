@@ -299,7 +299,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.handleUnenrollButton();
             // assert
-            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
         });
 
         it('should be set updatedCourseCardData and set showUnenrollButton to true', () => {
@@ -317,7 +317,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.handleUnenrollButton();
             // assert
-            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
         });
 
         it('should set showUnenrollButton to false', () => {
@@ -2387,6 +2387,7 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
                 return Promise.resolve();
             });
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             // assert
             enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
@@ -2431,6 +2432,7 @@ describe('EnrolledCourseDetailsPage', () => {
             });
             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             // act
             enrolledCourseDetailsPage.ionViewWillEnter();
             // assert
@@ -2666,7 +2668,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
@@ -2708,7 +2709,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
