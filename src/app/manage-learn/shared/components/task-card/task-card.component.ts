@@ -18,7 +18,9 @@ export class TaskCardComponent implements OnInit {
   @Output() actionEvent = new EventEmitter();
   @Input() viewOnly: boolean = false;
   statuses = taskStatus;
+  upperLimit=2;
   allStrings;
+  showLoadMore: boolean = false;
 
   constructor(private router: Router,
     private projectService: ProjectService,
@@ -28,7 +30,11 @@ export class TaskCardComponent implements OnInit {
     private db: DbService,
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    if(this.data?.tasks?.length > 2){
+      this.showLoadMore = true;
+    }
+   }
 
   onCardClick(task) {
     const viewOnlyMode = (this.data.status === statusType.submitted);
@@ -116,6 +122,11 @@ export class TaskCardComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  loadMore() {
+    this.upperLimit = this.data?.tasks?.length;
+    this.showLoadMore = false;
   }
 
 }

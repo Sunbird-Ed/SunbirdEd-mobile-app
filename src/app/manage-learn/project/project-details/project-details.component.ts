@@ -187,9 +187,9 @@ export class ProjectDetailsComponent implements OnInit {
   onAction(event) {
     switch (event) {
       case 'download':
-        debugger
         this.projectDetails.downloaded = true;
         this.updateLocalDb();
+        this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
         this.setActionButtons();
         break;
       case 'downloaded':

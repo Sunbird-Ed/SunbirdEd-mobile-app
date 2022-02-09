@@ -32,7 +32,7 @@
   <app-project-details-card [data]="project" *ngIf="segmentType == 'details'">
   </app-project-details-card>
   <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
-    <app-task-card [data]="project"></app-task-card>
+    <app-task-card [data]="project" [viewOnly] ="true"></app-task-card>
   </div>
   <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
     (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'"> </app-accordion-list>

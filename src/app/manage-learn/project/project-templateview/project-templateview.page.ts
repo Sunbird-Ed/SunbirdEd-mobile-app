@@ -114,7 +114,6 @@ export class ProjectTemplateviewPage implements OnInit {
       const extraPramas = `?link=${this.id}`
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
-        debugger
         this.metaData = {
           title: this.project.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -247,13 +246,16 @@ export class ProjectTemplateviewPage implements OnInit {
           this.projectService.getProjectDetails(payload);
         })
     } else {
-      const payload = {
-        templateId: this.project._id,
-        programId: this.programId,
-        solutionId: this.solutionId,
-        isATargetedSolution: false
-      }
-      this.projectService.mapProjectToUser(payload);
+      this.projectService.acceptDataSharingPrivacyPolicy().then(data => {
+        const payload = {
+          templateId: this.project._id,
+          programId: this.programId,
+          solutionId: this.solutionId,
+          isATargetedSolution: false,
+          hasAcceptedTAndC: data
+        }
+        this.projectService.mapProjectToUser(payload);
+      })
     }
   }
 
