@@ -175,11 +175,11 @@ export class ProjectDetailsComponent implements OnInit {
     this.projectActions = defaultOptions;
   }
 
-  doSyncAction() {
+  doSyncAction(doSubmit = false) {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
         ? this.projectServ.createNewProject(this.projectDetails)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmitted:doSubmit } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -312,7 +312,7 @@ export class ProjectDetailsComponent implements OnInit {
   submitImprovment() {
     this.projectDetails.status = statusType.submitted;
     this.updateLocalDb(true);
-    this.doSyncAction();
+    this.doSyncAction(true);
   }
 
   async submitProjectConfirmation() {
@@ -330,7 +330,7 @@ export class ProjectDetailsComponent implements OnInit {
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => {
-            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+            // this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
           },
         },
         {

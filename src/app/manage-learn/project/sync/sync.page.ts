@@ -36,6 +36,7 @@ export class SyncPage implements  OnDestroy {
   taskId;
   fileName;
   isShare;
+  isSubmitted: boolean = false;
   syncCompletedProjects = []
   constructor(
     private routerparam: ActivatedRoute,
@@ -53,7 +54,8 @@ export class SyncPage implements  OnDestroy {
         "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED",
         "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG",
         "FRMELEMNTS_MSG_SYNC_FAILED",
-        "FRMELEMNTS_MSG_OFFLINE"
+        "FRMELEMNTS_MSG_OFFLINE",
+        "FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED"
       ])
       .subscribe((data) => {
         this.allStrings = data
@@ -67,6 +69,7 @@ export class SyncPage implements  OnDestroy {
           this.isShare = params.share;
           this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
+          this.isSubmitted = params.isSubmitted == 'true' ? true : false;
         } else {
           //sync mutiple projects
           this.getAllUnSyncedProject();
@@ -135,7 +138,7 @@ export class SyncPage implements  OnDestroy {
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
-      this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED']);
+      this.isSubmitted ? this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED']) : this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED']);
       if (this.isShare) {
         this.getPdfUrl(this.fileName, this.taskId);
       }
