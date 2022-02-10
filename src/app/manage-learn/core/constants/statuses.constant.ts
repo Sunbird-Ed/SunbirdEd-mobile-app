@@ -3,7 +3,7 @@ export const statusType = {
     inProgress: 'inProgress',
     completed: 'completed',
     started: 'started',
-    submitted: ' submitted'
+    submitted: 'submitted'
 }
 export const statuses: any = [
     { title: statusType.notStarted },

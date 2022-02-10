@@ -50,9 +50,6 @@ export class ProjectDetailsComponent implements OnInit {
     private toast: ToastService,
     private commonUtilService: CommonUtilService,
     private router: Router,
-    private loader: LoaderService,
-    private syncServ: SyncService,
-    private share: SharingFeatureService,
     private alert: AlertController,
     private ref: ChangeDetectorRef,
     private unnatiService: UnnatiDataService,
@@ -168,6 +165,8 @@ export class ProjectDetailsComponent implements OnInit {
     }
     if (this.projectDetails.downloaded) {
       defaultOptions[0] = actions.DOWNLOADED_ACTION
+    } else {
+      defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
     if(this.projectDetails.status === statusType.submitted){
       defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
@@ -175,11 +174,11 @@ export class ProjectDetailsComponent implements OnInit {
     this.projectActions = defaultOptions;
   }
 
-  doSyncAction(doSubmit = false) {
+  doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
         ? this.projectServ.createNewProject(this.projectDetails)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmitted:doSubmit } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId} });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -312,7 +311,7 @@ export class ProjectDetailsComponent implements OnInit {
   submitImprovment() {
     this.projectDetails.status = statusType.submitted;
     this.updateLocalDb(true);
-    this.doSyncAction(true);
+    this.doSyncAction();
   }
 
   async submitProjectConfirmation() {
@@ -329,9 +328,7 @@ export class ProjectDetailsComponent implements OnInit {
           text: data["NO"],
           role: "cancel",
           cssClass: "secondary",
-          handler: (blah) => {
-            // this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
-          },
+          handler: (blah) => {},
         },
         {
           text: data["YES"],

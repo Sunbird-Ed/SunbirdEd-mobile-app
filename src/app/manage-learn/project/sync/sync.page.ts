@@ -5,7 +5,7 @@ import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { NetworkService } from '../../core/services/network.service';
-import { ToastService } from '../../core';
+import { statusType, ToastService } from '../../core';
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
@@ -36,7 +36,6 @@ export class SyncPage implements  OnDestroy {
   taskId;
   fileName;
   isShare;
-  isSubmitted: boolean = false;
   syncCompletedProjects = []
   constructor(
     private routerparam: ActivatedRoute,
@@ -69,7 +68,6 @@ export class SyncPage implements  OnDestroy {
           this.isShare = params.share;
           this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
-          this.isSubmitted = params.isSubmitted == 'true' ? true : false;
         } else {
           //sync mutiple projects
           this.getAllUnSyncedProject();
@@ -101,7 +99,8 @@ export class SyncPage implements  OnDestroy {
         this.checkForActions();
       } else {
         this.location.back()
-        this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'], 'danger')
+        this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED']);
+        // this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'], 'danger')
       }
     }, error => { })
   }
@@ -138,12 +137,17 @@ export class SyncPage implements  OnDestroy {
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
-      this.isSubmitted ? this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED']) : this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED']);
+      this.showSuccessToast();
       if (this.isShare) {
         this.getPdfUrl(this.fileName, this.taskId);
       }
       this.location.back();
     }
+  }
+
+  showSuccessToast() {
+    const toast = this.allProjects[this.syncIndex].status === statusType.submitted ? this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED'] : this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'] ;
+    this.toast.showMessage(toast);
   }
 
   calculateProgressPercentage() {

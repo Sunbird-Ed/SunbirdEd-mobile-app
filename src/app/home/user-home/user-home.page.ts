@@ -818,7 +818,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile.syllabus[0];
+      const board = this.profile?.board?.length  ?  this.profile?.board[0]: null;
       let role = this.profile.profileType.toLowerCase();
       if (this.profile.serverProfile) {
         role = this.profile.serverProfile.profileUserType.type.toLowerCase();
@@ -844,11 +844,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data || !event.data.length) {
       return;
     }
+    const metaInfo = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_PROJECT' :'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS';
     const selectedPill = event.data[0].value.name;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage(metaInfo),
         metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,

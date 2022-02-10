@@ -57,9 +57,9 @@ export class ProjectService {
     };
     return this.kendra.post(config).toPromise();
   }
-  async getTemplateByExternalId(id){
+  async getTemplateByExternalId(id, extraParams?){
     const config = {
-        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id,
+        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id +extraParams,
     }
     return this.unnatiService.post(config).toPromise();
   }
