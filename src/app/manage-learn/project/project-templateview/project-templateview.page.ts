@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import { AppHeaderService } from '@app/services';
-import {  ProjectService } from '../../core';
+import {  ProjectService, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
@@ -68,7 +68,8 @@ export class ProjectTemplateviewPage implements OnInit {
     private projectService: ProjectService,
     private popupService: GenericPopUpService,
     private appGlobalService: AppGlobalService,
-
+    private alert: AlertController,
+    private toast :ToastService
   ) {
 
     params.params.subscribe((parameters) => {
@@ -114,7 +115,6 @@ export class ProjectTemplateviewPage implements OnInit {
       const extraPramas = `?link=${this.id}`
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
-        debugger
         this.metaData = {
           title: this.project.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -175,7 +175,11 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   doAction() {
-    if (this.type == 'improvement' && !this.project.hasAcceptedTAndC && !this.isTargeted) {
+    if(this.templateDetailsPayload.referenceFrom == "observation" && !this.project?.projectId){
+      this.startProjectConfirmation();
+      return;
+    }
+    if ( !this.project.hasAcceptedTAndC && !this.isTargeted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
         if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
@@ -225,6 +229,7 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
+    !this.isTargeted ? this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success'):'';
   }
 
   startProjectsFromLink() {
@@ -247,13 +252,16 @@ export class ProjectTemplateviewPage implements OnInit {
           this.projectService.getProjectDetails(payload);
         })
     } else {
-      const payload = {
-        templateId: this.project._id,
-        programId: this.programId,
-        solutionId: this.solutionId,
-        isATargetedSolution: false
-      }
-      this.projectService.mapProjectToUser(payload);
+      this.projectService.acceptDataSharingPrivacyPolicy().then(data => {
+        const payload = {
+          templateId: this.project._id,
+          programId: this.programId,
+          solutionId: this.solutionId,
+          isATargetedSolution: false,
+          hasAcceptedTAndC: data
+        }
+        this.projectService.mapProjectToUser(payload);
+      })
     }
   }
 
@@ -261,4 +269,29 @@ export class ProjectTemplateviewPage implements OnInit {
     this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: false}});
   }
 
+  async startProjectConfirmation() {
+    let data;
+    this.translate.get(["FRMELEMNTS_BTN_IMPORT_PROJECT", "FRMELEMNTS_LBL_WANT_TO_START", "NO", "YES"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      cssClass: 'central-alert',
+      header: data['FRMELEMNTS_BTN_IMPORT_PROJECT'],
+      message: data["FRMELEMNTS_LBL_WANT_TO_START"],
+      buttons: [
+        {
+          text: data["YES"],
+          handler: () => {
+          this.start();
+          },
+        }, {
+          text: data["NO"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {},
+        },
+      ],
+    });
+    await alert.present();
+  }
 }

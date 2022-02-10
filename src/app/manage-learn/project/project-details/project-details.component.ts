@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
-import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType } from '../../core';
+import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType, UtilsService } from '../../core';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -40,7 +40,7 @@ export class ProjectDetailsComponent implements OnInit {
   _appHeaderSubscription: Subscription;
   projectCompletionPercent;
   allStatusTypes = statusType;
-
+  taskCount=0;
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -55,9 +55,8 @@ export class ProjectDetailsComponent implements OnInit {
     private unnatiService: UnnatiDataService,
     private location: Location,
     private projectServ: ProjectService,
-    private modal: ModalController
-
-
+    private modal: ModalController,
+    private utils : UtilsService
   ) {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
@@ -128,6 +127,8 @@ export class ProjectDetailsComponent implements OnInit {
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
+            this.taskCount =  this.utils.getTaskCount(this.projectDetails);
+            console.log( this.taskCount ," this.taskCount ");
           } else {
             this.getProjectsApi();
           }
@@ -187,9 +188,9 @@ export class ProjectDetailsComponent implements OnInit {
   onAction(event) {
     switch (event) {
       case 'download':
-        debugger
         this.projectDetails.downloaded = true;
         this.updateLocalDb();
+        this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
         this.setActionButtons();
         break;
       case 'downloaded':
@@ -220,6 +221,8 @@ export class ProjectDetailsComponent implements OnInit {
         this.projectDetails.tasks[event.taskIndex].isEdit = true;
         this.refreshTheActions();
         this.updateLocalDb(true);
+        this.taskCount =  this.utils.getTaskCount(this.projectDetails);
+            console.log( this.taskCount ," this.taskCount ");
         break
     }
   }

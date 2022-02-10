@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { DbService, ProjectService, statusType, taskStatus } from '@app/app/manage-learn/core';
+import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '@app/app/manage-learn/core';
 import { menuConstants } from '@app/app/manage-learn/core/constants/menuConstants';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,9 @@ export class TaskCardComponent implements OnInit {
   @Output() actionEvent = new EventEmitter();
   @Input() viewOnly: boolean = false;
   statuses = taskStatus;
+  upperLimit=2;
   allStrings;
+  showLoadMore: boolean = false;
 
   constructor(private router: Router,
     private projectService: ProjectService,
@@ -26,9 +28,18 @@ export class TaskCardComponent implements OnInit {
     private translate: TranslateService,
     private alert: AlertController,
     private db: DbService,
+    private util: UtilsService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    // if (this.data?.tasks?.length > 2) {
+    //   this.showLoadMore = true;
+    // }
+    let count = this.util.getTaskCount(this.data);
+    if (count > 2) {
+      this.showLoadMore = true;
+    }
+   }
 
   onCardClick(task) {
     const viewOnlyMode = (this.data.status === statusType.submitted);
@@ -116,6 +127,11 @@ export class TaskCardComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  loadMore() {
+    this.upperLimit = this.data?.tasks?.length;
+    this.showLoadMore = false;
   }
 
 }

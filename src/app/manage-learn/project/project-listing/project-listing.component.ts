@@ -181,6 +181,7 @@ export class ProjectListingComponent {
         this.clearFields();
         this.projects = [];
         this.page = 1;
+        this.currentOnlineProjectLength = 0;
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();

@@ -23,9 +23,9 @@
     </div>
     <ion-button (click)="submitProjectConfirmation()"
       *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted" expand="block"
-      class="ion-text-capitalize ion-margin-top"
+      class="ion-text-none ion-margin-top"
       [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks}"
-      [disabled]="(projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
+      [disabled]="!taskCount || (projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
       {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
     </ion-button>
 

@@ -17,6 +17,7 @@ import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SharingFeatureService } from './sharing-feature.service';
 import { SyncService } from './sync.service';
+import { GenericPopUpService } from '../../shared';
 
 @Injectable({
   providedIn: 'root',
@@ -38,11 +39,12 @@ export class ProjectService {
     private commonUtilService: CommonUtilService,
     private toast: ToastService,
     private navigateService: NavigationService,
-    private alert : AlertController,
-    private translate : TranslateService,
+    private alert: AlertController,
+    private translate: TranslateService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private share: SharingFeatureService,
-    private syncService :SyncService
+    private syncService: SyncService,
+    private popupService: GenericPopUpService
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
@@ -57,9 +59,9 @@ export class ProjectService {
     };
     return this.kendra.post(config).toPromise();
   }
-  async getTemplateByExternalId(id, extraParams?){
+  async getTemplateByExternalId(id, extraParams?) {
     const config = {
-        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id +extraParams,
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id + (extraParams ? extraParams : ''),
     }
     return this.unnatiService.post(config).toPromise();
   }
@@ -72,8 +74,8 @@ export class ProjectService {
     return this.unnatiService.post(config).toPromise();
   }
 
-  async getProjectDetails({projectId = '', solutionId, isProfileInfoRequired = false, 
-  programId, templateId='',hasAcceptedTAndC=false, detailsPayload =null, replaceUrl=true}) {
+  async getProjectDetails({ projectId = '', solutionId, isProfileInfoRequired = false,
+    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true }) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
@@ -111,7 +113,7 @@ export class ProjectService {
         projectId: success.result._id,
         programId: programId,
         solutionId: solutionId,
-        replaceUrl:replaceUrl
+        replaceUrl: replaceUrl
       }
       this.db.create(success.result).then(successData => {
         this.navigateToProjectDetails(navObj);
@@ -125,7 +127,7 @@ export class ProjectService {
     })
   }
 
-  navigateToProjectDetails({ projectId, programId, solutionId , replaceUrl}) {
+  navigateToProjectDetails({ projectId, programId, solutionId, replaceUrl }) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: projectId,
@@ -174,7 +176,7 @@ export class ProjectService {
     let completedTaskCount = 0;
     let validTaskCount = 0;
     for (const task of tasks) {
-      if(!task.isDeleted){
+      if (!task.isDeleted) {
         validTaskCount++;
       }
       if (task.status === statusType.completed && !task.isDeleted) {
@@ -185,24 +187,24 @@ export class ProjectService {
     return payload;
   }
 
-  async startAssessment(projectId,id){
+  async startAssessment(projectId, id) {
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
     }
     let payload = await this.utils.getProfileInfo();
-     const config = {
-       url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${id}`,
-       payload:payload
-     };
-     this.unnatiService.post(config).subscribe(success =>{
+    const config = {
+      url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${id}`,
+      payload: payload
+    };
+    this.unnatiService.post(config).subscribe(success => {
       if (!success.result) {
         this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
         return;
       }
       let data = success.result;
-      if(!data?.observationId){
-        this.getTemplateBySoluntionId(data?.solutionDetails?._id).then(resultdata =>{
+      if (!data?.observationId) {
+        this.getTemplateBySoluntionId(data?.solutionDetails?._id).then(resultdata => {
           if (
             resultdata.assessment.evidences.length > 1 ||
             resultdata.assessment.evidences[0].sections.length > 1 ||
@@ -215,7 +217,7 @@ export class ProjectService {
                 evidenceIndex: 0,
                 sectionIndex: 0,
               },
-                state: resultdata,
+              state: resultdata,
             });
           }
           return;
@@ -231,49 +233,49 @@ export class ProjectService {
           entityName: data.entityName,
         },
       });
-     }, (error) => {
+    }, (error) => {
       this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
     })
   }
 
-  async checkReport(projectId,taskId){
+  async checkReport(projectId, taskId) {
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
     }
 
-     let payload = await this.utils.getProfileInfo();
-     const config = {
-       url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${taskId}`,
-       payload: payload
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${taskId}`,
+      payload: payload
 
-     };
-     this.unnatiService.get(config).subscribe(
-       (success) => {
-         if (!success.result) {
-           this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
-           return;
-         }
-         let data = success.result;
+    };
+    this.unnatiService.get(config).subscribe(
+      (success) => {
+        if (!success.result) {
+          this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+          return;
+        }
+        let data = success.result;
 
-         this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
-           queryParams: {
-             programId: data.programId,
-             solutionId: data.solutionId,
-             observationId: data.observationId,
-             entityId: data.entityId,
-             entityName: data.entityName,
-           },
-         });
+        this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+          queryParams: {
+            programId: data.programId,
+            solutionId: data.solutionId,
+            observationId: data.observationId,
+            entityId: data.entityId,
+            entityName: data.entityName,
+          },
+        });
 
-       },
-       (error) => {
-         this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
-       }
-     );
+      },
+      (error) => {
+        this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
+      }
+    );
   }
 
-  async mapProjectToUser({programId, solutionId, templateId, isATargetedSolution}) {
+  async mapProjectToUser({ programId, solutionId, templateId, isATargetedSolution, hasAcceptedTAndC }) {
     let payload = { programId: programId, solutionId: solutionId };
     const config = {
       url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + templateId + '?isATargetedSolution=false',
@@ -281,7 +283,7 @@ export class ProjectService {
     };
     let importProject;
     try {
-      importProject = await this.getTemplateData(payload,templateId,isATargetedSolution);
+      importProject = await this.getTemplateData(payload, templateId, isATargetedSolution);
     } catch (error) {
       console.log(error);
     }
@@ -290,21 +292,22 @@ export class ProjectService {
       this.router
         .navigate([`/${RouterLinks.PROJECT}`], {
           queryParams: {
-            selectedFilter: isATargetedSolution? 'assignedToMe' : 'discoveredByMe',
+            selectedFilter: isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
           },
         }).then(() => {
           const params = {
             projectId: importProject.result._id,
             programId: programId,
             solutionId: solutionId,
-            replaceUrl: false
+            replaceUrl: false,
+            hasAcceptedTAndC: hasAcceptedTAndC
           }
           this.getProjectDetails(params)
         })
     }
   }
-  async openSyncSharePopup(type, name,project, taskId?) {
-    if(this.networkFlag){
+  async openSyncSharePopup(type, name, project, taskId?) {
+    if (this.networkFlag) {
       let data;
       this.project = project;
       this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
@@ -312,7 +315,7 @@ export class ProjectService {
       });
       this.shareTaskId = taskId ? taskId : null;
       const alert = await this.alert.create({
-        cssClass:'central-alert',
+        cssClass: 'central-alert',
         message: data["FRMELEMNTS_LBL_SHARE_MSG"],
         buttons: [
           {
@@ -328,7 +331,7 @@ export class ProjectService {
             handler: () => {
               if (project.isEdit || project.isNew) {
                 project.isNew
-                  ? this.createNewProject(project,true)
+                  ? this.createNewProject(project, true)
                   : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
               } else {
                 type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
@@ -338,7 +341,7 @@ export class ProjectService {
         ],
       });
       await alert.present();
-    }else{
+    } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
     }
   }
@@ -399,5 +402,13 @@ export class ProjectService {
         this.toast.showMessage('FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', "danger");
         this.loader.stopLoader();
       });
+  }
+
+  acceptDataSharingPrivacyPolicy() {
+    return new Promise((resolve, reject) => {
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+        data && data.isClicked ? resolve(data.isChecked) : reject();
+      })
+    })
   }
 }

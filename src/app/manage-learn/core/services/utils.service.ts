@@ -623,12 +623,12 @@ export class UtilsService {
                       obj["school"] = org.externalId;
                     }
                   }
-
+                  
                   obj["role"] =
-                    profileData["profileUserType"] &&
-                      profileData["profileUserType"]["subType"]
-                      ? profileData["profileUserType"]["subType"].toUpperCase()
-                      : profileData["profileUserType"]["type"].toUpperCase();
+                  profileData["profileUserType"] &&
+                    profileData["profileUserType"]["subType"]
+                    ? profileData["profileUserType"]["subType"].toUpperCase()
+                    : profileData["profileUserType"]["type"].toUpperCase();
                   resolve(obj);
                 });
               })
@@ -728,4 +728,13 @@ getCompletedTaskCount(tasks){
   console.log(data,"data prgress");
 return data;
 }
+  getTaskCount(project: any) {
+    this.taskCount =0;
+    project.tasks.forEach((task: any) => {
+      if (!task.isDeleted) {
+        this.taskCount = this.taskCount + 1;
+      }
+    });
+    return this.taskCount;
+  }
 }
