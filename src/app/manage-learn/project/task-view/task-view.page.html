@@ -1,6 +1,6 @@
 <ion-content *ngIf="task" class="ion-padding background-theme-color">
   <div [ngClass]="{'disablePage' : viewOnlyMode}">
-    <div class="heading-name" (click)="task?.isDeletable; edit('task',task?.name)">
+    <div class="heading-name" (click)="edit('task',task?.name)">
       <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
       <ion-icon name="create" color="primary" class="iconAdj"> </ion-icon>
     </div>
@@ -55,7 +55,7 @@
           <ion-col size="1">
             <ion-icon name="radio-button-off" color="primary"></ion-icon>
           </ion-col>
-          <ion-col size="10" class="subtask-title" (click)="subtask.isDeletable; edit('subtask',subtask.name,subtask,subTaskIndex)"
+          <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
             *ngIf="editField != 'subtaskName'">
             {{subtask.name}}
           </ion-col>

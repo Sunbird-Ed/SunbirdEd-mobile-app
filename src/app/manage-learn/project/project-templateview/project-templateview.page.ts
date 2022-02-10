@@ -175,7 +175,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   doAction() {
-    if(this.templateDetailsPayload.referenceFrom == "observation" && !this.project?.projectId){
+    if(this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId){
       this.startProjectConfirmation();
       return;
     }
@@ -229,7 +229,6 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
-    !this.isTargeted ? this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success'):'';
   }
 
   startProjectsFromLink() {
@@ -283,6 +282,7 @@ export class ProjectTemplateviewPage implements OnInit {
           text: data["YES"],
           handler: () => {
           this.start();
+          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
           },
         }, {
           text: data["NO"],

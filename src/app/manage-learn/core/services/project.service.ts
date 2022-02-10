@@ -197,31 +197,31 @@ export class ProjectService {
       url: urlConstants.API_URLS.START_ASSESSMENT + `${projectId}?taskId=${id}`,
       payload: payload
     };
-    this.unnatiService.post(config).subscribe(success => {
+    this.unnatiService.post(config).subscribe(async success => {
       if (!success.result) {
         this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
         return;
       }
       let data = success.result;
       if (!data?.observationId) {
-        this.getTemplateBySoluntionId(data?.solutionDetails?._id).then(resultdata => {
+        const response  = await this.getTemplateBySoluntionId(data?.solutionDetails?._id);
+          const result = response.result;
           if (
-            resultdata.assessment.evidences.length > 1 ||
-            resultdata.assessment.evidences[0].sections.length > 1 ||
-            (resultdata.solution.criteriaLevelReport && resultdata.solution.isRubricDriven)
+            result.assessment.evidences.length > 1 ||
+            result.assessment.evidences[0].sections.length > 1 ||
+            (result.solution.criteriaLevelReport && result.solution.isRubricDriven)
           ) {
-            this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: resultdata });
+            this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: result });
           } else {
             this.router.navigate([RouterLinks.QUESTIONNAIRE], {
               queryParams: {
                 evidenceIndex: 0,
                 sectionIndex: 0,
               },
-              state: resultdata,
+              state: result,
             });
           }
           return;
-        })
       }
 
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
