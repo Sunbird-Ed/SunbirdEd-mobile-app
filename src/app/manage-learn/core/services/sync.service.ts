@@ -100,13 +100,16 @@ export class SyncService {
   }
 
 
-  createNewProject(showLoader: boolean = false, project = {}): Promise<any> {
+  createNewProject(showLoader: boolean = false, projectDetails = {}): Promise<any> {
     if(showLoader){
       this.loader.startLoader()
     }
+    const project = { ...projectDetails};
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._id;
     const actualPayload = this.processPayload(payload);
+    //Else in submitted status projects, the sync API will Fail while redirecting to sync page
+    actualPayload.status = statusType.started;
     const config = {
       url: urlConstants.API_URLS.CREATE_PROJECT,
       payload: actualPayload
