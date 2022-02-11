@@ -351,14 +351,24 @@ export class TaskViewPage {
     let name;
     switch (what) {
       case 'task':
-        name = "Edit Task"
+        if(this.task.isDeletable){
+          name = "Edit Task";
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
         break
-      case 'assignName':
+      case 'subtask':
         name = " Edit Assignee’s Name"
         break
-      default:
-        name = "Edit Subtask"
+        case 'subtask':
+        if(subtask.isDeletable){
+          name = "Edit Subtask"
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
+        break
     }
+  }
+
+ async openEditModal(what,name,placeholder,subtask,subTaskIndex){
     const alert = await this.alert.create({
       cssClass: "central-alert",
       header: name,

@@ -12,7 +12,7 @@
         <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
     </div>
   </div> -->
-    <ion-button (click)="doAction()" expand="block" class="ion-text-capitalize ion-margin-top">{{buttonLabel |
+    <ion-button (click)="doAction()" expand="block" class="ion-text-none ion-margin-top">{{buttonLabel |
       translate}}</ion-button>
   </app-metadata-details>
   <div class="project-segments">

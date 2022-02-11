@@ -59,7 +59,7 @@
             *ngIf="editField != 'subtaskName'">
             {{subtask.name}}
           </ion-col>
-          <ion-col size="1" style="margin: auto; text-align: center">
+          <ion-col size="1" style="margin: auto; text-align: center" *ngIf="subtask.isDeletable">
             <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px"
               (click)="askPermissionToDelete(subtask,'subtask')" />
           </ion-col>

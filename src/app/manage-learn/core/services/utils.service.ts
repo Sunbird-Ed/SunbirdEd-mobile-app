@@ -728,4 +728,13 @@ getCompletedTaskCount(tasks){
   console.log(data,"data prgress");
 return data;
 }
+  getTaskCount(project: any) {
+    let taskCount=[];
+    if(project?.tasks?.length){
+       taskCount = _.filter(project.tasks, function(el) {
+     return !el.isDeleted;
+    });
+    }
+    return taskCount?.length;
+  }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { DbService, ProjectService, statusType, taskStatus } from '@app/app/manage-learn/core';
+import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '@app/app/manage-learn/core';
 import { menuConstants } from '@app/app/manage-learn/core/constants/menuConstants';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,10 +28,12 @@ export class TaskCardComponent implements OnInit {
     private translate: TranslateService,
     private alert: AlertController,
     private db: DbService,
+    private util: UtilsService
   ) { }
 
   ngOnInit() {
-    if(this.data?.tasks?.length > 2){
+    let count = this.util.getTaskCount(this.data);
+    if (count > 2) {
       this.showLoadMore = true;
     }
    }

@@ -54,7 +54,7 @@ export class SyncPage implements  OnDestroy {
         "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG",
         "FRMELEMNTS_MSG_SYNC_FAILED",
         "FRMELEMNTS_MSG_OFFLINE",
-        "FRMELEMNTS_MSG_SUCCESSFULLY_SUBITTED"
+        "FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED"
       ])
       .subscribe((data) => {
         this.allStrings = data
@@ -146,7 +146,7 @@ export class SyncPage implements  OnDestroy {
   }
 
   showSuccessToast() {
-    const toast = this.allProjects[this.syncIndex].status === statusType.submitted ? this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SUBITTED'] : this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'] ;
+    const toast = this.allProjects[this.syncIndex].status === statusType.submitted ? this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SUBMITTED'] : this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'] ;
     this.toast.showMessage(toast);
   }
 

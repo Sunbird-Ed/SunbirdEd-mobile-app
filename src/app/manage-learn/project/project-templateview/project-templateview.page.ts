@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import { AppHeaderService } from '@app/services';
-import {  ProjectService } from '../../core';
+import {  ProjectService, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
@@ -68,7 +68,8 @@ export class ProjectTemplateviewPage implements OnInit {
     private projectService: ProjectService,
     private popupService: GenericPopUpService,
     private appGlobalService: AppGlobalService,
-
+    private alert: AlertController,
+    private toast :ToastService
   ) {
 
     params.params.subscribe((parameters) => {
@@ -174,11 +175,16 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   doAction() {
-    if (this.type == 'improvement' && !this.project.hasAcceptedTAndC && !this.isTargeted) {
+    if(this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId){
+      this.startProjectConfirmation();
+      return;
+    }
+    if ( !this.project.hasAcceptedTAndC && !this.isTargeted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
         if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
           this.start();
+          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
         }
       })
     } else {
@@ -263,4 +269,30 @@ export class ProjectTemplateviewPage implements OnInit {
     this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: false}});
   }
 
+  async startProjectConfirmation() {
+    let data;
+    this.translate.get(["FRMELEMNTS_BTN_IMPORT_PROJECT", "FRMELEMNTS_LBL_WANT_TO_START", "NO", "YES"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      cssClass: 'central-alert',
+      header: data['FRMELEMNTS_BTN_IMPORT_PROJECT'],
+      message: data["FRMELEMNTS_LBL_WANT_TO_START"],
+      buttons: [
+        {
+          text: data["YES"],
+          handler: () => {
+          this.start();
+          this.toast.showMessage('FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS','success');
+          },
+        }, {
+          text: data["NO"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {},
+        },
+      ],
+    });
+    await alert.present();
+  }
 }

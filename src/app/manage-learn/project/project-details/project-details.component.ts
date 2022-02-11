@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
-import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType } from '../../core';
+import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType, UtilsService } from '../../core';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -40,7 +40,7 @@ export class ProjectDetailsComponent implements OnInit {
   _appHeaderSubscription: Subscription;
   projectCompletionPercent;
   allStatusTypes = statusType;
-
+  taskCount=0;
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -55,9 +55,8 @@ export class ProjectDetailsComponent implements OnInit {
     private unnatiService: UnnatiDataService,
     private location: Location,
     private projectServ: ProjectService,
-    private modal: ModalController
-
-
+    private modal: ModalController,
+    private utils : UtilsService
   ) {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
@@ -128,6 +127,7 @@ export class ProjectDetailsComponent implements OnInit {
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
+            this.taskCount =  this.utils.getTaskCount(this.projectDetails);
           } else {
             this.getProjectsApi();
           }
@@ -178,7 +178,7 @@ export class ProjectDetailsComponent implements OnInit {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
         ? this.projectServ.createNewProject(this.projectDetails)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId} });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -187,10 +187,14 @@ export class ProjectDetailsComponent implements OnInit {
   onAction(event) {
     switch (event) {
       case 'download':
-        this.projectDetails.downloaded = true;
-        this.updateLocalDb();
-        this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
-        this.setActionButtons();
+        if (this.network.isNetworkAvailable) {
+          this.projectDetails.downloaded = true;
+          this.updateLocalDb();
+          this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
+          this.setActionButtons();
+        } else {
+          this.toast.showMessage(' FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE', 'success');
+        }
         break;
       case 'downloaded':
         break;
@@ -220,6 +224,7 @@ export class ProjectDetailsComponent implements OnInit {
         this.projectDetails.tasks[event.taskIndex].isEdit = true;
         this.refreshTheActions();
         this.updateLocalDb(true);
+        this.taskCount =  this.utils.getTaskCount(this.projectDetails);
         break
     }
   }
@@ -232,6 +237,7 @@ export class ProjectDetailsComponent implements OnInit {
     this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
+      this.taskCount =  this.utils.getTaskCount(this.projectDetails);
     })
   }
 
@@ -328,8 +334,7 @@ export class ProjectDetailsComponent implements OnInit {
           text: data["NO"],
           role: "cancel",
           cssClass: "secondary",
-          handler: (blah) => {
-          },
+          handler: (blah) => {},
         },
         {
           text: data["YES"],
