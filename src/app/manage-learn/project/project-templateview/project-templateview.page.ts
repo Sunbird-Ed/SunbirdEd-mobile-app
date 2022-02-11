@@ -184,6 +184,7 @@ export class ProjectTemplateviewPage implements OnInit {
         if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
           this.start();
+          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
         }
       })
     } else {
@@ -282,7 +283,7 @@ export class ProjectTemplateviewPage implements OnInit {
           text: data["YES"],
           handler: () => {
           this.start();
-          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
+          this.toast.showMessage('FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS','success');
           },
         }, {
           text: data["NO"],

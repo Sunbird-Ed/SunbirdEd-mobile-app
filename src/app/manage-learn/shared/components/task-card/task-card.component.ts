@@ -32,9 +32,6 @@ export class TaskCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // if (this.data?.tasks?.length > 2) {
-    //   this.showLoadMore = true;
-    // }
     let count = this.util.getTaskCount(this.data);
     if (count > 2) {
       this.showLoadMore = true;

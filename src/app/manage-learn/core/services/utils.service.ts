@@ -729,12 +729,12 @@ getCompletedTaskCount(tasks){
 return data;
 }
   getTaskCount(project: any) {
-    this.taskCount =0;
-    project.tasks.forEach((task: any) => {
-      if (!task.isDeleted) {
-        this.taskCount = this.taskCount + 1;
-      }
+    let taskCount=[];
+    if(project?.tasks?.length){
+       taskCount = _.filter(project.tasks, function(el) {
+     return !el.isDeleted;
     });
-    return this.taskCount;
+    }
+    return taskCount?.length;
   }
 }

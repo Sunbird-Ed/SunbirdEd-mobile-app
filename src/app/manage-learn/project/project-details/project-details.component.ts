@@ -128,7 +128,6 @@ export class ProjectDetailsComponent implements OnInit {
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
             this.taskCount =  this.utils.getTaskCount(this.projectDetails);
-            console.log( this.taskCount ," this.taskCount ");
           } else {
             this.getProjectsApi();
           }
@@ -222,7 +221,6 @@ export class ProjectDetailsComponent implements OnInit {
         this.refreshTheActions();
         this.updateLocalDb(true);
         this.taskCount =  this.utils.getTaskCount(this.projectDetails);
-            console.log( this.taskCount ," this.taskCount ");
         break
     }
   }
@@ -235,6 +233,7 @@ export class ProjectDetailsComponent implements OnInit {
     this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
+      this.taskCount =  this.utils.getTaskCount(this.projectDetails);
     })
   }
 
