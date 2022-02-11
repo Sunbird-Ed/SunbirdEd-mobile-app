@@ -1536,5 +1536,6 @@
   "FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY":"You have downloaded the project successfully!",
   "FRMELEMNTS_BTN_LOAD_MORE_TASKS": "Load more tasks",
   "FRMELEMNTS_LBL_WANT_TO_START":"Are you sure you want to start and import this project",
-  "FRMELEMNTS_LBL_PROJECT_STARTED":"You have started project successfully"
+  "FRMELEMNTS_LBL_PROJECT_STARTED":"You have started project successfully",
+  "FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE":"Download failed. Check your network connection and try again"
 }

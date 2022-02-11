@@ -187,10 +187,14 @@ export class ProjectDetailsComponent implements OnInit {
   onAction(event) {
     switch (event) {
       case 'download':
-        this.projectDetails.downloaded = true;
-        this.updateLocalDb();
-        this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
-        this.setActionButtons();
+        if (this.network.isNetworkAvailable) {
+          this.projectDetails.downloaded = true;
+          this.updateLocalDb();
+          this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
+          this.setActionButtons();
+        } else {
+          this.toast.showMessage(' FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE', 'success');
+        }
         break;
       case 'downloaded':
         break;

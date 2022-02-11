@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class NoDataComponent {
   @Input() message = 'NO_DATA_FOUND';
-  @Input() color = '#000'
+  @Input() color = 'text-black';
   constructor() { }
 
 
