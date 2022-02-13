@@ -1537,5 +1537,7 @@
   "FRMELEMNTS_BTN_LOAD_MORE_TASKS": "Load more tasks",
   "FRMELEMNTS_LBL_WANT_TO_START":"Are you sure you want to start and import this project",
   "FRMELEMNTS_LBL_PROJECT_STARTED":"You have started project successfully",
-  "FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE":"Download failed. Check your network connection and try again"
+  "FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE":"Download failed. Check your network connection and try again",
+  "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT": "Only registered users can take project",
+  "FRMELEMENTS_MSG_PROJECT_ALREADY_SYNCED" :"Your project has been completed and synced, no further syncs are allowed to this project"
 }

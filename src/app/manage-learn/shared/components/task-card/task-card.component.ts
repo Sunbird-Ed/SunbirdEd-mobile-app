@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '@app/app/manage-learn/core';
@@ -12,6 +12,7 @@ import * as _ from 'underscore';
   selector: 'app-task-card',
   templateUrl: './task-card.component.html',
   styleUrls: ['./task-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush    
 })
 export class TaskCardComponent implements OnInit {
   @Input() data: any;
@@ -116,7 +117,7 @@ export class TaskCardComponent implements OnInit {
           handler: () => {
             const obj = {
               type: type,
-              taskIndex: index
+              taskId: this.data.tasks[index]._id
             }
             this.actionEvent.emit(obj);
           },

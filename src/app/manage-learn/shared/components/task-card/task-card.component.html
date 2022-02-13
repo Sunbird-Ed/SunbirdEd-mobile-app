@@ -49,7 +49,7 @@
     </ion-row>
   </ion-card>
 </div>
-<div *ngIf="showLoadMore">
+<div *ngIf="upperLimit < data.tasks.length">
   <ion-button class="view-more  _full-width" fill="outline" (click)="loadMore()">
   {{ 'FRMELEMNTS_BTN_LOAD_MORE_TASKS' | translate }}
 </ion-button>

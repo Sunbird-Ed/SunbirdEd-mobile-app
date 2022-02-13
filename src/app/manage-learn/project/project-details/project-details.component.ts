@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
 import { CreateTaskFormComponent } from '../../shared';
+
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
@@ -40,7 +41,9 @@ export class ProjectDetailsComponent implements OnInit {
   _appHeaderSubscription: Subscription;
   projectCompletionPercent;
   allStatusTypes = statusType;
-  taskCount=0;
+  taskCount = 0;
+  projectDetailsCopy;
+
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -56,7 +59,8 @@ export class ProjectDetailsComponent implements OnInit {
     private location: Location,
     private projectServ: ProjectService,
     private modal: ModalController,
-    private utils : UtilsService
+    private utils: UtilsService,
+    private ngZone: NgZone
   ) {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
@@ -86,9 +90,9 @@ export class ProjectDetailsComponent implements OnInit {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
-      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-            this.location.back();
-      });
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.location.back();
+    });
   }
 
   ngOnDestroy() {
@@ -98,7 +102,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   setHeaderConfig() {
-    this._headerConfig ={
+    this._headerConfig = {
       showHeader: true,
       showBurgerMenu: false,
       pageTitle: '',
@@ -107,9 +111,10 @@ export class ProjectDetailsComponent implements OnInit {
     this.headerService.updatePageConfig(this._headerConfig);
   }
 
-  refreshTheActions(){
+  refreshTheActions() {
     this.setActionButtons();
     this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
+    this.getAllActiveTasks();
   }
 
   getProject() {
@@ -127,7 +132,8 @@ export class ProjectDetailsComponent implements OnInit {
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
             this.getProjectTaskStatus();
-            this.taskCount =  this.utils.getTaskCount(this.projectDetails);
+            this.taskCount = this.utils.getTaskCount(this.projectDetails);
+            this.getAllActiveTasks();
           } else {
             this.getProjectsApi();
           }
@@ -141,6 +147,17 @@ export class ProjectDetailsComponent implements OnInit {
       this.getProjectsApi();
     }
 
+  }
+
+  getAllActiveTasks() {
+    const profileDetailsCopy = { ...this.projectDetails }
+    let activeTask =    _.filter(this.projectDetails.tasks, function(el) {
+      return !el.isDeleted;
+   });
+   profileDetailsCopy.tasks = activeTask;
+   this.ngZone.run(() => {
+    this.projectDetailsCopy = profileDetailsCopy;
+   })
   }
 
   setCardMetaData() {
@@ -168,7 +185,7 @@ export class ProjectDetailsComponent implements OnInit {
     } else {
       defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
-    if(this.projectDetails.status === statusType.submitted){
+    if (this.projectDetails.status === statusType.submitted) {
       defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
     }
     this.projectActions = defaultOptions;
@@ -178,7 +195,7 @@ export class ProjectDetailsComponent implements OnInit {
     if (this.network.isNetworkAvailable) {
       this.projectDetails.isNew
         ? this.projectServ.createNewProject(this.projectDetails)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId} });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -205,7 +222,7 @@ export class ProjectDetailsComponent implements OnInit {
         break;
       case 'share':
         this.network.isNetworkAvailable
-          ? this.projectServ.openSyncSharePopup('shareProject', this.projectDetails.title,this.projectDetails)
+          ? this.projectServ.openSyncSharePopup('shareProject', this.projectDetails.title, this.projectDetails)
           : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
         break;
       case 'files':
@@ -218,13 +235,20 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onTaskAction(event) {
-    switch(event.type){
+    switch (event.type) {
       case 'deleteTask':
-        this.projectDetails.tasks[event.taskIndex].isDeleted = true;
-        this.projectDetails.tasks[event.taskIndex].isEdit = true;
+        let index = 0;
+        for (const task of this.projectDetails.tasks) {
+          if(event.taskId === task._id){
+            break;
+          }
+          index++
+        }
+        this.projectDetails.tasks[index].isDeleted = true;
+        this.projectDetails.tasks[index].isEdit = true;
         this.refreshTheActions();
         this.updateLocalDb(true);
-        this.taskCount =  this.utils.getTaskCount(this.projectDetails);
+        this.taskCount = this.utils.getTaskCount(this.projectDetails);
         break
     }
   }
@@ -237,7 +261,7 @@ export class ProjectDetailsComponent implements OnInit {
     this.projectDetails.isEdit = setIsEditTrue ? true : this.projectDetails.isEdit;
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
-      this.taskCount =  this.utils.getTaskCount(this.projectDetails);
+      this.taskCount = this.utils.getTaskCount(this.projectDetails);
     })
   }
 
@@ -334,7 +358,7 @@ export class ProjectDetailsComponent implements OnInit {
           text: data["NO"],
           role: "cancel",
           cssClass: "secondary",
-          handler: (blah) => {},
+          handler: (blah) => { },
         },
         {
           text: data["YES"],
@@ -355,8 +379,8 @@ export class ProjectDetailsComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         !this.projectDetails.tasks ? (this.projectDetails.tasks = []) : "";
-        this.projectDetails.status =  this.projectDetails.status ? this.projectDetails.status : statusType.notStarted;
-        this.projectDetails.status =  this.projectDetails.status == statusType.notStarted ? statusType.inProgress:this.projectDetails.status;
+        this.projectDetails.status = this.projectDetails.status ? this.projectDetails.status : statusType.notStarted;
+        this.projectDetails.status = this.projectDetails.status == statusType.notStarted ? statusType.inProgress : this.projectDetails.status;
         this.projectDetails.tasks.push(data.data);
         this.updateLocalDb(true);
         this.refreshTheActions();

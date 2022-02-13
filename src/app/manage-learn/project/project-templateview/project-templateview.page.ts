@@ -179,17 +179,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.startProjectConfirmation();
       return;
     }
-    if ( !this.project.hasAcceptedTAndC && !this.isTargeted) {
-      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
-        if (data && data.isClicked) {
-          this.project.hasAcceptedTAndC = data.isChecked;
-          this.start();
-          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
-        }
-      })
-    } else {
       this.start();
-    }
   }
 
   gotoDetails() {
@@ -226,7 +216,8 @@ export class ProjectTemplateviewPage implements OnInit {
         isProfileInfoRequired: true,
         hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         detailsPayload: this.stateData ? this.stateData : null,
-        templateId: this.templateId
+        templateId: this.templateId,
+        replaceUrl: true
       }
       this.projectService.getProjectDetails(payload);
     }

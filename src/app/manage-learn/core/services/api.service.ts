@@ -136,7 +136,8 @@ export class ApiService {
         this.toast.showMessage('Session expired', 'danger')
         break
       default:
-        this.toast.showMessage(result.error ? result.error.message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')
+        const errorMessage = result.error ? JSON.parse(result.error).message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG'
+        this.toast.showMessage(errorMessage, 'danger')
 
     }
     return (error: any): Observable<any> => {
