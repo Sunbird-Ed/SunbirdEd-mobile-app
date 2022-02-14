@@ -52,9 +52,11 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
-import { ContentEventType } from '@project-sunbird/sunbird-sdk';
+import { ContentEventType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -134,6 +136,9 @@ describe('ContentDetailsPage', () => {
             restoreTags: jest.fn()
         }
     };
+    const mockPlayerService: Partial<PlayerService> = {};
+    const mockSantizer: Partial<DomSanitizer> = {};
+    const mockScreenOrientation: Partial<ScreenOrientation> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -144,6 +149,7 @@ describe('ContentDetailsPage', () => {
             mockDownloadService as DownloadService,
             mockPreferences as SharedPreferences,
             mockCourseService as CourseService,
+            mockPlayerService as PlayerService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -169,7 +175,9 @@ describe('ContentDetailsPage', () => {
             mockFileTransfer as FileTransfer,
             mockSbProgressLoader as SbProgressLoader,
             mockLocalCourseService as LocalCourseService,
-            mockFormFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormFrameworkUtilService as FormAndFrameworkUtilService,
+            mockSantizer as DomSanitizer,
+            mockScreenOrientation as ScreenOrientation
         );
     });
     beforeEach(() => {
