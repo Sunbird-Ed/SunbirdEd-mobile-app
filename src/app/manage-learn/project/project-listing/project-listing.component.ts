@@ -246,9 +246,11 @@ export class ProjectListingComponent {
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
             this.projects = this.projects.concat(success.result.data);
-            this.projects.map((p) => {
-                if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
-            });
+            if (offilineIdsArr){
+                this.projects.map((p) => {
+                    if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+                });
+            }
             this.count = success.result.count;
             this.currentOnlineProjectLength = this.currentOnlineProjectLength + success.result.data.length;
             this.description = success.result.description;
@@ -281,6 +283,7 @@ export class ProjectListingComponent {
                     // projectId: project?._id && ,
                     programId: project.programId,
                     solutionId: project.solutionId,
+                    type: selectedFilter,
                 },
             });
         } else {

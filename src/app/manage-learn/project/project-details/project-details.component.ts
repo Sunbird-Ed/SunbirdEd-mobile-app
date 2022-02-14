@@ -210,7 +210,7 @@ export class ProjectDetailsComponent implements OnInit {
           this.toast.showMessage('FRMELEMNTS_MSG_DOWNLOADED_SUCCESSFULLY', 'success');
           this.setActionButtons();
         } else {
-          this.toast.showMessage(' FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE', 'success');
+          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE', 'danger');
         }
         break;
       case 'downloaded':

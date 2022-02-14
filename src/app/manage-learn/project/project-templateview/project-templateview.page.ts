@@ -57,7 +57,7 @@ export class ProjectTemplateviewPage implements OnInit {
   buttonLabel = 'FRMELEMNTS_LBL_START_IMPROVEMENT';
   stateData;
   isATargetedSolution;
-
+  isAssignedProject : boolean = false;
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -80,6 +80,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.programId = parameters.programId;
       this.solutionId = parameters.solutionId;
       this.isATargetedSolution = (parameters.isATargetedSolution === 'true');
+      this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
@@ -179,7 +180,17 @@ export class ProjectTemplateviewPage implements OnInit {
       this.startProjectConfirmation();
       return;
     }
+    if ( !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted) {
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+        if (data && data.isClicked) {
+          this.project.hasAcceptedTAndC = data.isChecked;
+          this.start();
+          this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
+        }
+      })
+    } else {
       this.start();
+    }
   }
 
   gotoDetails() {
@@ -243,16 +254,14 @@ export class ProjectTemplateviewPage implements OnInit {
           this.projectService.getProjectDetails(payload);
         })
     } else {
-      this.projectService.acceptDataSharingPrivacyPolicy().then(data => {
         const payload = {
           templateId: this.project._id,
           programId: this.programId,
           solutionId: this.solutionId,
           isATargetedSolution: false,
-          hasAcceptedTAndC: data
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC
         }
         this.projectService.mapProjectToUser(payload);
-      })
     }
   }
 
