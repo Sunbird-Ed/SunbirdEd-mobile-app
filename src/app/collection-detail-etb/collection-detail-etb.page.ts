@@ -1155,7 +1155,7 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-
+    this.events.unsubscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN);
   }
   async showDeletePopOver() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
