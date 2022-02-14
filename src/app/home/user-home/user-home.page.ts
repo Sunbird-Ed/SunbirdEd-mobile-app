@@ -389,7 +389,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

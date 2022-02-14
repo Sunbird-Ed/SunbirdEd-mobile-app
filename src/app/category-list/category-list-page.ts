@@ -412,7 +412,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
+            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
         }
     }
 
@@ -440,7 +440,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
             this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
+            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
         }
     }
 

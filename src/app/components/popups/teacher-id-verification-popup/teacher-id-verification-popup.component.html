@@ -40,7 +40,7 @@
                 <p>{{ tenantMessages?.fieldLabel }}</p>
                 <ion-input type="text"
                     [ngClass]="{'sb-input-danger': showTeacherIdIncorrectErr,'sb-input-black': !showTeacherIdIncorrectErr}"
-                    placeholder="{{'TEACHER_ID_PLACEHOLDER' | translate}}" formControlName="teacherId"
+                    placeholder="{{'ID_PLACEHOLDER' | translate}}" formControlName="teacherId"
                     [(ngModel)]="teacherModelId" name="teacherId"> </ion-input>
                 <p class="error" *ngIf="showTeacherIdIncorrectErr">{{ tenantMessages.incorrectIDLabel }}
                 </p>
@@ -62,7 +62,7 @@
         </div>
 
         <div class="sb-popover-footer MT30">
-            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-success W50" (click)="cancelPopup('TEACHER_PROFILE_VERIFIED')">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-success W50" (click)="cancelPopup('PROFILE_VERIFIED')">
                 {{ 'OKAY' | translate }}</button>
         </div>
     </section>
@@ -73,7 +73,7 @@
         </div>
 
         <div class="sb-popover-footer MT30">
-            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-error W50" (click)="cancelPopup('TEACHER_PROFILE_FAILED')">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-error W50" (click)="cancelPopup('PROFILE_FAILED')">
                 {{ 'OKAY' | translate }}</button>
         </div>
     </section>
