@@ -314,12 +314,14 @@ export class ProjectDetailsComponent implements OnInit {
         if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
           if (d._id == t._id && d.submissionDetails.status) {
             // check id matches and task details has submissionDetails
-            if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
+            if (!t.submissionDetails || JSON.stringify(t.submissionDetails)  != JSON.stringify(d.submissionDetails.status) ) {
               t.submissionDetails = d.submissionDetails;
+              t.status = d.submissionDetails.status;
               t.isEdit = true
               isChnaged = true;
               t.isEdit = true
               this.projectDetails.isEdit = true
+              this.refreshTheActions();
             }
           }
         }

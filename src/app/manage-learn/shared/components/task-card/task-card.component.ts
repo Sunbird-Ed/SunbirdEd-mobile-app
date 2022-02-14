@@ -49,8 +49,21 @@ export class TaskCardComponent implements OnInit {
     });
 
   }
-  startAssessment(task) {
-    this.projectService.startAssessment(this.data._id, task._id);
+  onObservatonActionButtonClick(task, index) {
+    const submissionDetails = this.data?.tasks[index]?.submissionDetails;
+    if(submissionDetails?.observationId) {
+      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+        queryParams: {
+          programId: submissionDetails.programId,
+          solutionId: submissionDetails.solutionId,
+          observationId: submissionDetails.observationId,
+          entityId: submissionDetails.entityId,
+          entityName: submissionDetails.entityName,
+        },
+      });
+    } else {
+      this.projectService.startAssessment(this.data._id, task._id);
+    }
   }
 
   checkReport(task) {

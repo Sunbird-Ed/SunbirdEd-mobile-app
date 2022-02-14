@@ -140,7 +140,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async getTemplateDetails(data) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
       payload: payload,
@@ -168,7 +168,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     const config = {
       url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',

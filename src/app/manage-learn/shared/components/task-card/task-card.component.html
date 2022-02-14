@@ -35,12 +35,12 @@
             </ion-button>
             <ion-button size="small" class="action-btn"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
-              (click)="$event.stopPropagation();startAssessment(task)">
+              (click)="$event.stopPropagation();onObservatonActionButtonClick(task, i)">
               {{'START' | translate}} {{task?.type}}
             </ion-button>
             <ion-button size="small" class="action-btn"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
-              (click)="$event.stopPropagation(); checkReport(task)">
+              (click)="$event.stopPropagation(); onObservatonActionButtonClick(task, i)">
               {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
             </ion-button>
           </div>
