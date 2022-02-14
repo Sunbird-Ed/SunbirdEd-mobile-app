@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { DbService, ProjectService, taskStatus } from '@app/app/manage-learn/core';
+import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '@app/app/manage-learn/core';
 import { menuConstants } from '@app/app/manage-learn/core/constants/menuConstants';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,13 +12,16 @@ import * as _ from 'underscore';
   selector: 'app-task-card',
   templateUrl: './task-card.component.html',
   styleUrls: ['./task-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush    
 })
 export class TaskCardComponent implements OnInit {
   @Input() data: any;
   @Output() actionEvent = new EventEmitter();
   @Input() viewOnly: boolean = false;
   statuses = taskStatus;
+  upperLimit=2;
   allStrings;
+  showLoadMore: boolean = false;
 
   constructor(private router: Router,
     private projectService: ProjectService,
@@ -26,16 +29,41 @@ export class TaskCardComponent implements OnInit {
     private translate: TranslateService,
     private alert: AlertController,
     private db: DbService,
+    private util: UtilsService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    let count = this.util.getTaskCount(this.data);
+    if (count > 2) {
+      this.showLoadMore = true;
+    }
+   }
 
   onCardClick(task) {
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id]);
+    const viewOnlyMode = (this.data.status === statusType.submitted);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id], {
+      queryParams: { viewOnlyMode: viewOnlyMode },
+      state: {
+        projectDetails: this.data
+      }
+    });
 
   }
-  startAssessment(task) {
-    this.projectService.startAssessment(this.data._id, task._id);
+  onObservatonActionButtonClick(task, index) {
+    const submissionDetails = this.data?.tasks[index]?.submissionDetails;
+    if(submissionDetails?.observationId) {
+      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+        queryParams: {
+          programId: submissionDetails.programId,
+          solutionId: submissionDetails.solutionId,
+          observationId: submissionDetails.observationId,
+          entityId: submissionDetails.entityId,
+          entityName: submissionDetails.entityName,
+        },
+      });
+    } else {
+      this.projectService.startAssessment(this.data._id, task._id);
+    }
   }
 
   checkReport(task) {
@@ -48,15 +76,15 @@ export class TaskCardComponent implements OnInit {
   async openPopover(ev: any, taskIndex) {
     let menu;
     const selectedTask = this.data.tasks[taskIndex];
-      menu = JSON.parse(JSON.stringify(menuConstants.TASK));
-      if (selectedTask.isDeletable) {
-        let deleteOption = {
-          TITLE: 'DELETE',
-          VALUE: 'deleteTask',
-          ICON: 'trash'
-        }
-        menu.push(deleteOption);
+    menu = JSON.parse(JSON.stringify(menuConstants.TASK));
+    if (selectedTask.isDeletable) {
+      let deleteOption = {
+        TITLE: 'DELETE',
+        VALUE: 'deleteTask',
+        ICON: 'trash'
       }
+      menu.push(deleteOption);
+    }
     const popover = await this.popoverController.create({
       component: PopoverComponent,
       componentProps: { menus: menu },
@@ -73,7 +101,7 @@ export class TaskCardComponent implements OnInit {
             this.projectService.openSyncSharePopup("shareTask", selectedTask.name, this.data, selectedTask._id);
             break;
           case 'deleteTask':
-            this.askPermissionToDelete(data.data,taskIndex);
+            this.askPermissionToDelete(data.data, taskIndex);
             break
         }
 
@@ -81,6 +109,7 @@ export class TaskCardComponent implements OnInit {
     });
     return await popover.present();
   }
+
   async askPermissionToDelete(type, index) {
     let data;
     this.translate.get(["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
@@ -101,7 +130,7 @@ export class TaskCardComponent implements OnInit {
           handler: () => {
             const obj = {
               type: type,
-              taskIndex: index
+              taskId: this.data.tasks[index]._id
             }
             this.actionEvent.emit(obj);
           },
@@ -109,6 +138,11 @@ export class TaskCardComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  loadMore() {
+    this.upperLimit = this.data?.tasks?.length;
+    this.showLoadMore = false;
   }
 
 }

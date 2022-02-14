@@ -915,7 +915,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         break;
       case 'MLREPORTS':
-        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
+        this.router.navigate([RouterLinks.REPORTS], {});
         break;
       case 'ORIENTATION':
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();

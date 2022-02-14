@@ -49,6 +49,12 @@ export const actions = {
     action: "downloaded",
     color: 'success'
   },
+  NOT_DOWNLOADED: {
+      title: "DOWNLOAD",
+      icon: "cloud-download",
+      action: "download",
+      color: 'primary'
+  },
   SUBMITTED_PROJECT_ACTIONS: [
     {
       title: "SHARE",

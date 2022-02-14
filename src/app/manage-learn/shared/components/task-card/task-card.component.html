@@ -1,4 +1,4 @@
-<div *ngFor="let task of data?.tasks;let i = index">
+<div *ngFor="let task of data?.tasks | slice:0:upperLimit ;let i = index">
   <ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngIf="!task?.isDeleted">
     <ion-row>
       <ion-col size="1">
@@ -35,12 +35,12 @@
             </ion-button>
             <ion-button size="small" class="action-btn"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
-              (click)="$event.stopPropagation();startAssessment(task)">
+              (click)="$event.stopPropagation();onObservatonActionButtonClick(task, i)">
               {{'START' | translate}} {{task?.type}}
             </ion-button>
             <ion-button size="small" class="action-btn"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
-              (click)="$event.stopPropagation(); checkReport(task)">
+              (click)="$event.stopPropagation(); onObservatonActionButtonClick(task, i)">
               {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
             </ion-button>
           </div>
@@ -48,4 +48,9 @@
       </ion-col>
     </ion-row>
   </ion-card>
+</div>
+<div *ngIf="upperLimit < data.tasks.length">
+  <ion-button class="view-more  _full-width" fill="outline" (click)="loadMore()">
+  {{ 'FRMELEMNTS_BTN_LOAD_MORE_TASKS' | translate }}
+</ion-button>
 </div>

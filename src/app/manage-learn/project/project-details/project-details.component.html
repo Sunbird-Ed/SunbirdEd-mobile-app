@@ -23,9 +23,9 @@
     </div>
     <ion-button (click)="submitProjectConfirmation()"
       *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted" expand="block"
-      class="ion-text-capitalize ion-margin-top"
-      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks}"
-      [disabled]="(projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
+      class="ion-text-none ion-margin-top"
+      [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks || !taskCount}"
+      [disabled]="!taskCount || (projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
       {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
     </ion-button>
 
@@ -61,8 +61,8 @@
     </app-accordion-list>
   </div>
 
-  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetails" (actionEvent)="onTaskAction($event)"
-    [viewOnly]="projectDetails?.status === allStatusTypes.submitted"></app-task-card>
+  <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetailsCopy" (actionEvent)="onTaskAction($event)"
+    [viewOnly]="projectDetailsCopy?.status === allStatusTypes.submitted"></app-task-card>
 
     <ion-card class="add-task" (click)="addNewTask()" *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
       <ion-card-content>

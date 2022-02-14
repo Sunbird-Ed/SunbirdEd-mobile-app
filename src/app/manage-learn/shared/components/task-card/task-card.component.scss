@@ -56,3 +56,13 @@
         justify-content: flex-end;
     }
 }
+.view-more {
+    --background: transparent !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    width: 100%;
+    text-transform: none;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 10px 0;
+ }

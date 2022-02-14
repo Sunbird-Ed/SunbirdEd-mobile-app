@@ -67,7 +67,9 @@ export class DeeplinkRedirectComponent implements OnInit {
         this.verifyLink(this.data.create_observation_id);
         break;
       case 'projectLink':
-        this.appGlobalService.isUserLoggedIn() ?  this.verifyLink(this.data.create_project_id) : this.getTemplateData(this.data.create_project_id);
+        this.appGlobalService.isUserLoggedIn() ?  
+        this.verifyLink(this.data.create_project_id) :     
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,this.data.create_project_id], {replaceUrl: true});
         break;
       default:
         break;
@@ -111,6 +113,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, params.solutionId], {
       queryParams: params,
       skipLocationChange: true,
+      replaceUrl: true,
       state: {
         "referenceFrom": "link",
     }
@@ -137,7 +140,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async getTemplateDetails(data) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
       payload: payload,
@@ -165,7 +168,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     const config = {
       url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
@@ -190,19 +193,5 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
   
-  // Non logged in users
-  async getTemplateData(id){
-    // const response = await this.projectService.getTemplateByExternalId(id);
-    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data.solutionId], {
-    //   queryParams: data,
-    //   skipLocationChange: true,
-    // });
-    this.projectService.getTemplateByExternalId(id).then(data =>{
-      console.log(data,"data");
-      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,id], {
-        queryParams: data,
-        skipLocationChange: true,
-      });
-    })
-  }
+
 }

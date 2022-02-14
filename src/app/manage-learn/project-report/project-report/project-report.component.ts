@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AlertController, IonSelect, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../core';
+import { statusType, UtilsService } from '../../core';
 import { ProjectReportService } from '../../core/services/project-report.service';
 import { FilterModalComponent } from '../../shared/components/filter-modal/filter-modal.component';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -54,9 +54,9 @@ export class ProjectReportComponent {
       key: 'total',
     },
     {
-      name: 'Projects Completed',
+      name: 'Projects Submitted',
       img: '../../assets/imgs/reports-page/note.svg',
-      key: 'completed',
+      key: 'submitted',
     },
     {
       name: 'Projects In Progress',
@@ -64,9 +64,9 @@ export class ProjectReportComponent {
       key: 'inProgress',
     },
     {
-      name: 'Projects Overdue',
+      name: 'Projects started',
       img: '../../assets/imgs/reports-page/Note 3.svg',
-      key: 'overdue',
+      key: 'started',
     },
   ];
   ionViewWillEnter() {
@@ -149,12 +149,12 @@ export class ProjectReportComponent {
 
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
-      if (key == 'completed') {
-        color.push({ color: '#b4e3aa', pos: count });
+      if (key == statusType.completed ) {
+        color.push({ color: '#29621B', pos: count });
       }
 
-      if (key == 'notStarted') {
-        color.push({ color: '#e86d6d', pos: count });
+      if (key == statusType.notStarted) {
+        color.push({ color: '#DA090D', pos: count });
       }
       count++;
     }
@@ -181,11 +181,11 @@ export class ProjectReportComponent {
       x['value'] = ((obj[key] / obj.total) * 100).toFixed(1) + '%';
       x['y'] = obj[key];
       x['z'] = 0;
-      if (key == 'completed') {
+      if (key == 'submitted') {
         x['color'] = '#b4e3aa';
       }
 
-      if (key == 'notStarted') {
+      if (key == 'started') {
         x['color'] = '#e86d6d  ';
       }
 

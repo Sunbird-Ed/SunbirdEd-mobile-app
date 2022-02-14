@@ -29,7 +29,7 @@ export class ProjectListingComponent {
     limit = 10;
     offset = 0;
     currentOnlineProjectLength = 0;
-
+    noDataFound='';
     searchText: string = '';
     headerConfig = {
         showHeader: true,
@@ -181,6 +181,7 @@ export class ProjectListingComponent {
         this.clearFields();
         this.projects = [];
         this.page = 1;
+        this.currentOnlineProjectLength = 0;
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -222,12 +223,15 @@ export class ProjectListingComponent {
         switch (this.selectedFilterIndex) {
             case 0:
                 selectedFilter = 'assignedToMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND';
                 break;
             case 1:
                 selectedFilter = 'discoveredByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_DISCOVERED_PROJECT_NOT_FOUND';
                 break;
             case 2:
                 selectedFilter = 'createdByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND';
                 break;
             default:
                 break;
@@ -242,9 +246,11 @@ export class ProjectListingComponent {
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
             this.projects = this.projects.concat(success.result.data);
-            this.projects.map((p) => {
-                if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
-            });
+            if (offilineIdsArr){
+                this.projects.map((p) => {
+                    if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+                });
+            }
             this.count = success.result.count;
             this.currentOnlineProjectLength = this.currentOnlineProjectLength + success.result.data.length;
             this.description = success.result.description;
@@ -277,6 +283,7 @@ export class ProjectListingComponent {
                     // projectId: project?._id && ,
                     programId: project.programId,
                     solutionId: project.solutionId,
+                    type: selectedFilter,
                 },
             });
         } else {
