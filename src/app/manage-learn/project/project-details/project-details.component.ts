@@ -43,6 +43,7 @@ export class ProjectDetailsComponent implements OnInit {
   allStatusTypes = statusType;
   taskCount = 0;
   projectDetailsCopy;
+  taskNoDataFound="FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS"
 
   constructor(
     public params: ActivatedRoute,
