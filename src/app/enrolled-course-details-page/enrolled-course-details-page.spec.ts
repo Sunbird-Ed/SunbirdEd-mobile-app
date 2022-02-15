@@ -191,7 +191,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     describe('enrolledCourseDetailsPage', () => {
         it('should create a instance of enrolledCourseDetailsPage', () => {
-            mockEvents = jest.fn(()=>{})
+          //  mockEvents = jest.fn(()=>{})
             expect(enrolledCourseDetailsPage).toBeTruthy();
         });
     });
