@@ -62,7 +62,7 @@ export class ConsentService {
             .then((data) => {
             })
             .catch(async (e) => {
-                if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND' && e.response.responseCode === 404) {
+                if (e.response.body.params.err === 'UOS_UCNSTRED0013' && e.response.responseCode === 404) {
                     await this.showConsentPopup(userDetails, isOrgConsent, course);
                 } else if (e.code === 'NETWORK_ERROR') {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');

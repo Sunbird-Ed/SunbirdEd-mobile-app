@@ -191,7 +191,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     describe('enrolledCourseDetailsPage', () => {
         it('should create a instance of enrolledCourseDetailsPage', () => {
-            mockEvents = jest.fn(()=>{})
+          //  mockEvents = jest.fn(()=>{})
             expect(enrolledCourseDetailsPage).toBeTruthy();
         });
     });
@@ -2305,7 +2305,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 response: {
                     body: {
                         params: {
-                            err: 'USER_CONSENT_NOT_FOUND'
+                            err: 'UOS_UCNSTRED0013'
                         }
                     }
                 }
