@@ -7,7 +7,7 @@
   </ion-refresher>
   <div class="container-focus sticky-position" *ngIf="!hideSearchOption" [ngClass]="{'pt-0': searchInfolVisibility==='hide', '': searchInfolVisibility==='show'}">
     <div class="search-info pt-8 mx-24">
-      <div [@labelVisibility]="searchInfolVisibility">
+      <div [@labelVisibility]="searchInfolVisibility" [attr.aria-hidden] = "searchInfolVisibility === 'hide'">
         <strong class="title" role="heading" aria-level="1">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
         <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appName} }}</p>
       </div>
@@ -142,9 +142,9 @@
         </div>
 
         <div *ngIf="resultlist && !resultlist.isCourse">
-          <div class="px-8">
+          <div>
             <!-- Collection List -->
-            <div class="sb-textbook-title-container">
+            <div class="sb-textbook-title-container px-8">
               <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
             </div>
             <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
@@ -153,7 +153,7 @@
                 <div *ngFor="let content of result.content; let last = last, let i = index"
                   class="content-list ion-no-padding">
                   <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT"
-                    [layoutConfig]="{layout: 'v3'}"
+                    [layoutConfig]="{layout: 'v4'}"
                     (click)="openContent(result, content, i);" [cardImg]="result?.appIcon || defaultAppIcon"
                     [moreInfoLabel]="'Section'" [section]="content.name">
                   </sb-library-card>
@@ -168,7 +168,7 @@
               <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
                 class="content-list">
                 <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
-                  [layoutConfig]="{layout: 'v3'}"
+                  [layoutConfig]="{layout: 'v4'}"
                   (click)="openContent(content, content, i + ((resultlist && resultlist.dialCodeResult) ? resultlist.dialCodeResult.length : 0) )"
                   [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
@@ -204,7 +204,7 @@
       <div class="sc-container">
         <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
           <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
-            [layoutConfig]="{layout: 'v3'}"
+            [layoutConfig]="{layout: 'v4'}"
             (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
           </sb-library-card>
         </div>

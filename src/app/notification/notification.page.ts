@@ -1,9 +1,9 @@
-import { CorReleationDataType, ImpressionSubtype } from './../../services/telemetry-constants';
+import { ImpressionSubtype } from './../../services/telemetry-constants';
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, CorrelationData } from 'sunbird-sdk';
-import { Observable, Subscription } from 'rxjs';
+import { Notification, UserFeedStatus } from 'sunbird-sdk';
+import {  Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -15,8 +15,9 @@ import {
   InteractSubtype,
   ImpressionType
 } from '@app/services/telemetry-constants';
-import { map, tap } from 'rxjs/operators';
 import { NotificationService } from '../../services/notification.service';
+import { Events } from '@app/util/events';
+import { EventTopics } from '../app.constant';
 
 @Component({
   selector: 'app-notification',
@@ -25,11 +26,19 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class NotificationPage implements OnInit {
 
-  notificationList$: Observable<Notification[]> ;
-  unreadNotificationList$: Observable<Notification[]>;
+  notificationList = [] ;
+  unreadNotificationList = [];
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;
   private loader?: any;
+  inAppNotificationConfig = { 
+    title: 'Notification',
+    subTitle: ' New Notification (s)',
+    clearText: 'Clear',
+    moreText: 'See more',
+    lessText: 'See less',
+    minNotificationViewCount: 5
+  }
 
   constructor(
     private notificationService: NotificationService,
@@ -38,7 +47,7 @@ export class NotificationPage implements OnInit {
     private platform: Platform,
     private location: Location,
     private commonUtilService: CommonUtilService,
-
+    private events: Events
   ) { }
 
   ionViewWillEnter() {
@@ -54,35 +63,29 @@ export class NotificationPage implements OnInit {
 
   ngOnInit() {
     this.fetchNotificationList();
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
+      this.fetchNotificationList();
+    });
   }
 
   private async fetchNotificationList() {
     this.loader = await this.commonUtilService.getLoader();
-    this.notificationList$ = (this.notificationService.fetchNotificationList() as any).pipe(
-      tap(() => {
-        if (this.loader) {
-          this.loader.dismiss();
-          this.loader = undefined;
-        }
-      })
-    );
-    const corRelationList: Array<CorrelationData> = [];
-    this.unreadNotificationList$ = this.notificationList$.pipe(
-      map((notifications) => notifications.filter((n: any) => !n.data.isRead)),
-        tap((notifications) => {
-          corRelationList.push(
-              {id: notifications.length.toString(),
-                type: CorReleationDataType.NEW_NOTIFICATION});
-        })
-    );
+    this.loader.present();
+    await this.notificationService.fetchNotificationList().then((data) => {
+      this.loader.dismiss();
+      this.notificationList = data.feeds;
+      console.log('notification list', this.notificationList);
+      this.unreadNotificationList = this.notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+      this.inAppNotificationConfig.subTitle = this.unreadNotificationList.length + ' New Notification (s)';
+    })
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,
       ImpressionSubtype.HOME,
       PageId.NOTIFICATION,
-      Environment.HOME, '', '', '', undefined,
-      corRelationList
+      Environment.HOME, '', '', '', undefined
     );
   }
+
 
   async clearAllNotifications() {
     if (!this.loader) {
@@ -98,6 +101,7 @@ export class NotificationPage implements OnInit {
   }
 
   async removeNotification(notification: Notification, swipeDirection: string) {
+    console.log('removeNotification clicked')
     if (!this.loader) {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
@@ -133,6 +137,7 @@ export class NotificationPage implements OnInit {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.events.publish(EventTopics.NOTIFICATION_REFRESH);
   }
 
   private handleHeaderEvents(event) {
@@ -141,5 +146,6 @@ export class NotificationPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
     }
   }
+
 
 }

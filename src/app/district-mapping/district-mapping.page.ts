@@ -93,6 +93,7 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   async ionViewWillEnter() {
+    this.initializeLoader();
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
       this.profile.serverProfile ? this.profile.serverProfile : this.profile))
@@ -133,7 +134,6 @@ export class DistrictMappingPage implements OnDestroy {
       undefined,
       correlationList
     );
-    this.initializeLoader();
   }
 
   async initializeLoader() {
@@ -189,16 +189,36 @@ export class DistrictMappingPage implements OnDestroy {
         return;
       }
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
+      const userTypes = [];
+      if (this.formGroup.value['persona'] && this.formGroup.value.children['persona'] && this.formGroup.value.children['persona']['subPersona'] && this.formGroup.value.children['persona']['subPersona'].length) {
+        if (typeof this.formGroup.value.children['persona']['subPersona'] === 'string') {
+          userTypes.push({
+            type: this.formGroup.value['persona'],
+            subType: this.formGroup.value.children['persona']['subPersona'] || undefined
+          });
+        }
+        else if (Array.isArray(this.formGroup.value.children['persona']['subPersona'])) {
+          for (let i = 0; i < this.formGroup.value.children['persona']['subPersona'].length; i++) {
+            if(this.formGroup.value.children['persona']['subPersona'][i]){
+              userTypes.push({
+                "type": this.formGroup.value['persona'],
+                "subType": this.formGroup.value.children['persona']['subPersona'][i]
+              })
+            }
+          }
+        }
+      }
+      else{
+        userTypes.push({
+          "type" : this.formGroup.value['persona']
+        });
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        profileUserType: {
-          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
-          ...((this.formGroup.value.children['persona']['subPersona'] ?
-            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
-        }
+        profileUserTypes: userTypes
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -226,7 +246,7 @@ export class DistrictMappingPage implements OnDestroy {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-              this.router.navigate([`/${RouterLinks.TABS}`]);
+              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
               this.events.publish('update_header');
             }
           }
@@ -392,7 +412,27 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
+                  if(personaConfig.templateOptions.multiple){
+                    const subPersonaCodes = [];
+                    if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
+                      if(typeof this.profile.serverProfile.profileUserType === 'string'){
+                        subPersonaCodes.push(this.profile.serverProfile.profileUserType);
+                      } else if(this.profile.serverProfile.profileUserType.subType){
+                        subPersonaCodes.push(this.profile.serverProfile.profileUserType.subType);
+                      }
+                    }
+                    else if(this.profile.serverProfile.profileUserTypes && this.profile.serverProfile.profileUserTypes.length){
+                      for( let i =0; i< this.profile.serverProfile.profileUserTypes.length; i++){
+                        if(this.profile.serverProfile.profileUserTypes[i].subType){
+                          subPersonaCodes.push(this.profile.serverProfile.profileUserTypes[i].subType);
+                        }
+                      }
+                    }
+                    personaConfig.default = subPersonaCodes;
+                  }
+                  else if(this.profile.serverProfile.profileUserType && this.profile.serverProfile.profileUserType.subType){
+                    personaConfig.default = this.profile.serverProfile.profileUserType.subType;
+                  }
                 }
                 break;
               }

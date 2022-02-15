@@ -17,16 +17,19 @@
       <ion-icon *ngIf="isOpenIndex == i" name="arrow-up" class="ion-padding-horizontal"></ion-icon>
     </div>
     <div *ngIf="isOpenIndex == i" class="ion-padding">
-      <table>
-        <tr class="_flex-box">
-          <td text-wrap style="flex: 1"></td>
-          <td class="_flex-box" class="assess" *ngFor="let head of datas?.chart?.heading">
+      <table class="table-view">
+        <tr>
+          <th></th>
+          <th *ngFor="let head of datas?.chart?.heading">
             {{ head }}
-          </td>
+          </th>
         </tr>
-        <tr *ngFor="let criteria of item.criterias" class="_flex-box _justify-content-space-between _noWrap">
-          <td class="ion-text-wrap" style="flex: 1">{{ criteria?.name }}</td>
-          <td class="_flex-box" *ngFor="let level of criteria?.levels">: {{ level }}</td>
+        <tr *ngFor="let criteria of item.criterias">
+          <td class="ion-text-wrap level-name">{{ criteria?.name }}</td>
+          <td class="level-score" *ngFor="let level of criteria?.levelsWithScores">
+            <p>{{ level.level }}</p>
+            <p>{{ level.score }}</p>
+          </td>
         </tr>
       </table>
     </div>

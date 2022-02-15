@@ -1,3 +1,4 @@
+import { AppOrientation } from './../app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -8,7 +9,7 @@ import { Events } from '@app/util/events';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics, ProfileConstants, RouterLinks, ShareItemType } from '../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ShareItemType, PreferenceKey } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {
@@ -20,7 +21,9 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk, ProfileService, ContentService
+  ErrorType, SunbirdSdk, ProfileService, ContentService,
+  PlayerService,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -62,6 +65,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -110,6 +115,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       this.config = await this.getNewPlayerConfiguration();
@@ -230,8 +236,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ionViewWillLeave() {
     this.statusBar.show();
-    this.screenOrientation.unlock();
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
+    if (currentOrientation === AppOrientation.LANDSCAPE) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+    } else {
+      this.screenOrientation.unlock();
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
 
     if (this.events) {
       this.events.unsubscribe('endGenieCanvas');
@@ -252,9 +263,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async playerEvents(event) {
     if (event.edata) {
+      const userId: string = this.appGlobalService.getCurrentUser().uid;
+      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const contentId: string = this.content.identifier;
+      if (event.edata['type'] === 'END') {
+        const saveState: string = JSON.stringify(event.metaData);
+        this.playerService.savePlayerState(userId, parentId, contentId, saveState);
+      }
       if (event.edata['type'] === 'END' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
         this.courseService.syncAssessmentEvents().subscribe();
       } else if (event.edata['type'] === 'EXIT') {
+        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
             this.showConfirm();
@@ -323,7 +342,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
-       nextContent,
+        ...this.config['config'],
+        nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
@@ -331,7 +351,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showExit: true,
           showPrint: true
         }
-      }
+      };
 
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
         let questionSet;
@@ -408,6 +428,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
 
     if (this.navigateBackToContentDetails) {
+      window.history.go(-1);
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
@@ -443,6 +464,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
       this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
         'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    } else {
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(true, Environment.PLAYER, PageId.PLAYER);
     }
 
     const alert = await this.alertCtrl.create({
@@ -454,6 +477,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           role: 'cancel',
           handler: () => {
             this.isExitPopupShown = false;
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, 
+              InteractSubtype.CANCEL_CLICKED, 
+              Environment.PLAYER,
+              PageId.PLAYER_PAGE);
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
               'TOUCH', 'ALERT_CANCEL', 'EXIT', { type, stageId });
           }
@@ -461,6 +488,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         {
           text: this.commonUtilService.translateMessage('OKAY'),
           handler: async() => {
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, 
+              InteractSubtype.OK_CLICKED, 
+              Environment.PLAYER,
+              PageId.PLAYER_PAGE);
             if (this.playerType === 'sunbird-old-player') {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
@@ -533,9 +564,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   playerTelemetryEvents(event) {
-    SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-      (res) => console.log('response after telemetry', res),
-    );
+    if (event) {
+      SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+        (res) => console.log('response after telemetry', res),
+        );
+    }
   }
 
   private isJSON(input): boolean {

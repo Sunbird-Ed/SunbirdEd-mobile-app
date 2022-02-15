@@ -42,12 +42,13 @@ import {
 } from '../services';
 import {
   AppThemes, EventTopics, GenericAppConfig,
-  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
+  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const cordova;
 
@@ -124,6 +125,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
     private mlloader: LoaderService,
+    private screenOrientation: ScreenOrientation
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -234,7 +236,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
-
+    this.checkCurrentOrientation();
   }
 
   checkAndroidWebViewVersion() {
@@ -814,6 +816,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
+        || (routeUrl.indexOf(`${RouterLinks.SETTINGS}/${RouterLinks.DATA_SYNC}`) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
         return;
@@ -912,8 +915,19 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         break;
       case 'MLREPORTS':
-        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`]);
+        this.router.navigate([RouterLinks.REPORTS], {});
         break;
+      case 'ORIENTATION':
+        const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
+        if (currentOrientation === AppOrientation.LANDSCAPE) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
+          this.events.publish(EventTopics.ORIENTATION);
+        } else {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
+          this.events.publish(EventTopics.ORIENTATION);
+        }
     }
   }
 
@@ -1041,4 +1055,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
       this.headerService.showStatusBar();
   }
+
+  private async checkCurrentOrientation() {
+    const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
+    if (currentOrientation === AppOrientation.LANDSCAPE) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
+    } else {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
+    }
+  }
 }
+

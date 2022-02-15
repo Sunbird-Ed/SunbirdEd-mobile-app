@@ -43,6 +43,7 @@ export const mockProfileData = {
     profileUserType: {
         type: 'teacher'
     },
+    profileUserTypes: [{type: 'teacher'}, {type: 'student'}],
     declarations: [{
         orgId: 'sample_org_id',
         persona: 'sample_persona',

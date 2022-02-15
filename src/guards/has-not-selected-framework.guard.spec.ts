@@ -3,6 +3,7 @@ import { AppGlobalService, SplashScreenService, UtilityService } from '@app/serv
 import { AuthService, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { Platform } from '@ionic/angular';
 
 describe('HasNotSelectedFrameworkGuard', () => {
     let hasNotSelectedFrameworkGuard: HasNotSelectedFrameworkGuard;
@@ -26,7 +27,9 @@ describe('HasNotSelectedFrameworkGuard', () => {
         handleSunbirdSplashScreenActions: jest.fn()
     };
 
-
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'android')
+    };
 
     beforeAll(() => {
         hasNotSelectedFrameworkGuard = new HasNotSelectedFrameworkGuard(
@@ -34,7 +37,8 @@ describe('HasNotSelectedFrameworkGuard', () => {
             mockAppGlobalService as AppGlobalService,
             mockUtilityService as UtilityService,
             mockRouter as Router,
-            mockSplashScreenService as SplashScreenService
+            mockPlatform as Platform,
+            mockSplashScreenService as SplashScreenService,
         );
     });
 

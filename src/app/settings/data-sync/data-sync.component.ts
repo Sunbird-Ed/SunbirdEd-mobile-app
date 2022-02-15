@@ -1,5 +1,6 @@
+import { AppHeaderService } from './../../../services/app-header.service';
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, OnDestroy } from '@angular/core';
 import {
   CommonUtilService, Environment,
   ImpressionType,
@@ -22,13 +23,14 @@ declare const cordova;
   styleUrls: ['./data-sync.component.scss'],
 })
 
-export class DataSyncComponent implements OnInit {
+export class DataSyncComponent implements OnInit, OnDestroy {
 
   lastSyncDateTime?: Observable<string | undefined>;
   dataSyncType?: TelemetryAutoSyncModes;
   OPTIONS = TelemetryAutoSyncModes;
   backButtonFunc: Subscription;
   loader: any;
+  headerObservable: any;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -39,7 +41,8 @@ export class DataSyncComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
-    private platform: Platform
+    private platform: Platform,
+    private appHeaderService: AppHeaderService
   ) {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
       map((ts) => {
@@ -53,6 +56,11 @@ export class DataSyncComponent implements OnInit {
         this.changeDetectionRef.detectChanges();
       })
     );
+  }
+  ngOnDestroy(): void {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
   }
 
   private async init() {
@@ -75,6 +83,12 @@ export class DataSyncComponent implements OnInit {
       Environment.SETTINGS, '', '', ''
     );
     this.handleBackButton();
+  }
+
+  ionViewWillEnter() {
+    this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
+      this.handleNavBackButton(eventName);
+    });
   }
 
   onSelected() {
@@ -191,5 +205,12 @@ export class DataSyncComponent implements OnInit {
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
+  }
+
+  private handleNavBackButton(eventName: any) {
+    if (eventName.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(false, Environment.SETTINGS, PageId.SETTINGS_DATASYNC);
+      this.location.back();
+    }
   }
 }

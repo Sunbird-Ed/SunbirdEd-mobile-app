@@ -169,6 +169,7 @@ export class EventTopics {
     public static readonly TAB_CHANGE = 'tab.change';
     public static readonly BANNER = 'banner';
     public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
+    public static readonly ORIENTATION = 'orientation';
 }
 
 export class ShareUrl {
@@ -240,6 +241,7 @@ export class PreferenceKey {
     public static readonly NAVIGATION_SOURCE = 'navigation_source';
     public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
     public static readonly IS_APPLE_LOGIN = 'is_apple_login';
+    public static readonly ORIENTATION = 'orientation';
 }
 
 export enum SwitchableTabsConfig {
@@ -444,6 +446,7 @@ export class ActionType {
     public static readonly EXT_URL = 'extURL';
     public static readonly CONTENT_URL = 'contentURL';
     public static readonly CERTIFICATE = 'certificateUpdate';
+    public static readonly SEARCH = 'search';
 }
 
 export class RouterLinks {
@@ -575,6 +578,7 @@ export class RouterLinks {
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
     public static readonly TEMPLATE = 'template';
+    public static readonly PROJECT_TEMPLATE = 'project-templateview';
     public static readonly REPORTS = "reports";
     public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
     public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
@@ -784,4 +788,9 @@ export interface MaxAttempt {
 
 export class OTPTemplates {
     public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
+}
+
+export enum AppOrientation {
+    LANDSCAPE = 'Landscape',
+    POTRAIT = 'Potrait'
 }

@@ -27,6 +27,7 @@ import {
   GetContentStateRequest,
   NetworkError,
   ProfileService,
+  Profile,
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
@@ -247,6 +248,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   activityData: ActivityData;
   showCertificateDetails= false;
   certificateDetails: any;
+  isCourseMentor = false;
+  profile?: Profile;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -314,7 +317,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
     this.generateDataForDF();
   }
-
+  isCourseMentorValidation() {
+    for( let i=0; i<this.profile.serverProfile.roles.length; i++){
+    if (this.profile.serverProfile.roles[i].role === 'COURSE_MENTOR') {
+    this.isCourseMentor = true;
+    }
+  }
+}
   showDeletePopup() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(async () => {
       if (await this.onboardingSkippedBackAction()) {
@@ -331,7 +340,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
   }
 
-  subscribeUtilityEvents() {
+  subscribeUtilityEvents() {   
     this.utilityService.getBuildConfigValue('BASE_URL')
       .then(response => {
         this.baseUrl = response;
@@ -351,6 +360,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       delete this.batchDetails;
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
       this.isBatchNotStarted = false; // this is needed to change behaviour onclick of individual content
+      this.segmentType = 'info';
+      this.getLocalCourseAndUnitProgress();
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
@@ -430,7 +441,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         console.log(e);
         return undefined;
       });
-
     if (this.updatedCourseCardData && !this.courseCardData.batch) {
       this.courseCardData.batch = this.updatedCourseCardData.batch;
       this.courseCardData.batchId = this.updatedCourseCardData.batchId;
@@ -832,7 +842,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
           this.batchDetails = data;
           this.showCertificateDetails = this.batchDetails.cert_templates ? true : false;
-          this.certificateDetails = this.batchDetails.cert_templates ? this.batchDetails.cert_templates : '';
+          for (var key in this.batchDetails.cert_templates) {
+            this.certificateDetails = this.batchDetails.cert_templates; 
+            if (this.certificateDetails) {
+              this.isCertifiedCourse = true;
+              if (this.certificateDetails[key].description) {
+                this.certificateDescription = this.certificateDetails[key].description;
+              }
+            } else {
+              this.isCertifiedCourse = false;
+            }
+          }
           if (this.batchRemaningTimingIntervalRef) {
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
@@ -840,15 +860,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
             this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
-          }
-          this.handleUnenrollButton();
-          if (data.cert_templates && Object.keys(data.cert_templates).length) {
-            this.isCertifiedCourse = true;
-            if (data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
-              this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
-            }
-          } else {
-            this.isCertifiedCourse = false;
           }
           this.saveContentContext(this.appGlobalService.getUserId(),
             this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
@@ -1151,9 +1162,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     };
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
+        if (data && data.length) {
+          data.forEach((batch) => {
+            this.showCertificateDetails = !!batch.cert_templates;
+          });
+        }
         this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];
+        if(!this.isAlreadyEnrolled && this.batches && this.batches.length){
+          const batchDetails = this.batches[0];
+          this.showCertificateDetails = batchDetails.cert_templates ? true : false;
+          this.certificateDetails = batchDetails.cert_templates ? batchDetails.cert_templates : '';
+        }
         if (data && data.length > 1) {
           this.batchCount = data.length;
         } else if (data && data.length === 1) {
@@ -1357,6 +1378,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+      this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
@@ -1403,9 +1425,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    if (this.isAlreadyEnrolled) {
-      await this.checkDataSharingStatus();
-    }
     window['segmentation'].SBTagService.pushTag(
       window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
       TagPrefixConstants.CONTENT_ID,
@@ -1416,6 +1435,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
+    this.isCourseMentorValidation();
   }
 
   editDataSettings() {
@@ -1460,6 +1480,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (!this.corRelationList) {
       this.corRelationList = [];
     }
+    this.corRelationList = this.corRelationList.filter(x => x.type !== CorReleationDataType.COURSE_BATCH)
     this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
     this.corRelationList.push({ id: this.identifier || '', type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
@@ -1478,7 +1499,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.courseCardData = course;
             this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
             this.fetchForumIdReq.type = 'batch';
-            
+
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
           }
@@ -1620,9 +1641,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
+    if(this.isCourseMentor) {
+      this.commonUtilService.showToast('Course Mentor cannot join/leave any course');
+    }
+    else{
     const loader = await this.commonUtilService.getLoader();
     const reqvalues = new Map();
-    reqvalues['enrollReq'] = this.courseBatchesRequest;
+    reqvalues['enrollReq'] = this.courseBatchesRequest; 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
@@ -1632,7 +1657,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       return;
     }
 
-    if (!this.localCourseService.isEnrollable(this.batches, this.course)) {
+    if (!this.localCourseService.isEnrollable(this.batches, this.course) && !this.isCourseMentor) {
       return;
     }
 
@@ -1656,6 +1681,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         }
       });
     }
+  }
   }
 
   async share() {
@@ -1816,7 +1842,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         }
       }
-      if (unitLevelViewedContents.length) {
+      if (unitLevelViewedContents.length && this.isAlreadyEnrolled) {
         collection.progressPercentage = Math.round((unitLevelViewedContents.length / leafNodeIds.length) * 100);
       }
     });
@@ -1829,7 +1855,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     } else {
       this.course.progress = 0;
     }
-
+    this.handleUnenrollButton();
     if (!this.course.progress || this.course.progress !== 100) {
       this.appGlobalService.generateCourseCompleteTelemetry = true;
     }
@@ -1924,6 +1950,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             });
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
+            this.populateCorRelationData(this.courseCardData.batchId)
           });
         }, (error) => {
           this.zone.run(async () => {
@@ -2001,12 +2028,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     if (this.updatedCourseCardData) {
       this.showUnenrollButton = (batchDetails !== 2 &&
-        (this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1 || this.course.progress < 100) &&
+        (this.course.progress < 100 && this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1) &&
         enrollmentType !== 'invite-only');
     } else {
       this.showUnenrollButton = (
         (batchDetails !== 2 &&
-          (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
+          (this.course.progress < 100 && this.courseCardData.status === 0 || this.courseCardData.status === 1) &&
           enrollmentType !== 'invite-only')
       );
     }
@@ -2048,7 +2075,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
 
     if (this.course.createdBy !== this.userId) {
-      if (!this.isAlreadyEnrolled) {
+      if (!this.isAlreadyEnrolled && !this.isCourseMentor) {
         this.joinTraining();
         return false;
       } else if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
@@ -2163,6 +2190,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       await this.profileService.getConsent(request).toPromise()
         .then((data) => {
           if (data) {
+            if (this.isAlreadyEnrolled && data.consents.length === 0) {
+              this.showShareData = true;
+              this.dataSharingStatus = 'REVOKED';
+              this.isDataShare = true;
+            }
             this.dataSharingStatus = data.consents[0].status;
             this.lastUpdateOn = data.consents[0].lastUpdatedOn;
             this.localCourseService.setConsentPopupVisibility(false);

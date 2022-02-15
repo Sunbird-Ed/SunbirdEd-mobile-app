@@ -284,8 +284,8 @@ export class ProjectOperationPage  {
     }
     if(!newProject &&  JSON.stringify(this.template) !== JSON.stringify(this.templateCopy)){
       this.template.isEdit = true;
-      this.template.status =  this.template.status ? this.template.status : statusType.notStarted;
-      this.template.status =  this.template.status == statusType.notStarted ? statusType.inProgress:this.template.status;
+      this.template.status =  this.template.status ? this.template.status : statusType.started;
+      // this.template.status =  this.template.status == statusType.notStarted ? statusType.inProgress:this.template.status;
     }
     this.template.isDeleted = false;
     this.db.update(this.template).then(success => {

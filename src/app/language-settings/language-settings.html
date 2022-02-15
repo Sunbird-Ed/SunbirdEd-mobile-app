@@ -7,19 +7,20 @@
     </div>
 
     <div class="language-container">
-      <div class="language-card" tabindex="0" role="button" attr.aria-label="{{lang?.label | translate}}" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
+      <div class="language-card" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}"
+      tabindex="0" [attr.aria-label]="lang.code === language ? lang?.name + ', selected' : lang?.name" role="button">
         <label class="language-selection" [for]="'language-selection' + lang.code">
-          <span class="label-text" [attr.aria-label]="isLanguageSelected ?
-            'selected ' + lang?.label : lang?.label">
+          <span class="label-text">
             {{lang?.label | translate}}
           </span>
           <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
         </label>
       </div>
+      <div class="bottom-section"></div>
     </div>
 
     <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
-            [style.background-color]="btnColor" [hidden]="!isLanguageSelected" (click)="continue()">
+            [style.background-color]="btnColor" [attr.aria-label]="'Continue'" role="button" tabindex="0" [hidden]="!isLanguageSelected" (click)="continue()">
       <span>{{ 'CONTINUE' | translate }}</span>
       <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected" alt="">
     </button>

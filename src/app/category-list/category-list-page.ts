@@ -1,10 +1,12 @@
+import { PreferenceKey } from './../app.constant';
+import { forEach } from 'lodash/forEach';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
     CommonUtilService,
     CorReleationDataType,
     Environment,
-    FormAndFrameworkUtilService,
+    SearchFilterService,
     ImpressionType,
     InteractSubtype,
     InteractType,
@@ -55,6 +57,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 [field in keyof ContentData]: 'asc' | 'desc';
             }[];
             groupBy?: keyof ContentData;
+            groupSortBy?: any
         };
         showNavigationPill?: boolean;
         filterPillBy?: string;
@@ -102,6 +105,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         pillBgColor: getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary'),
         pillTextColor: getComputedStyle(document.querySelector('html')).getPropertyValue('--app-white')
     }
+    formAPIFacets;
 
     private shouldGenerateImpressionTelemetry = true;
     private corRelationList = [];
@@ -113,6 +117,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private preFetchedFilterCriteria: ContentSearchCriteria;
     profile: Profile;
     private existingSearchFilters = {};
+    filterIdentifier: any;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -125,7 +130,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         private navService: NavigationService,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private scrollService: ScrollToService,
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private searchFilterService: SearchFilterService,
         private modalController: ModalController
     ) {
         const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -144,6 +149,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
                 ]);
             }
+            this.filterIdentifier = extrasState.formField.filterIdentifier;
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
             this.categoryDescription = extrasState.description || '';
@@ -167,8 +173,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
         if (!this.supportedFacets) {
-            this.supportedFacets = (await this.formAndFrameworkUtilService
-                .getSearchFilters()).reduce((acc, filterConfig) => {
+            this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier);
+            this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
                     acc.push(filterConfig.code);
                     return acc;
                 }, []);
@@ -197,9 +203,26 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true) {
+    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true, onSelectedFilter?: any) {
         this.showSheenAnimation = true;
         this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+        if (onSelectedFilter) {
+            const selectedData = [];
+            onSelectedFilter.forEach((selectedFilter) => {
+                selectedData.push(selectedFilter.name);
+            });
+            this.formField.aggregate.groupSortBy.forEach((data) => {
+                data.name.preference = selectedData;
+            });
+        }
+
+        if (this.profile.subject.length >= 1) {
+            this.formField.aggregate.groupSortBy.forEach((sortData) => {
+                if (sortData.name.preference) {
+                    sortData.name.preference.push(this.profile.subject);
+                }
+            });
+        }
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
             .aggregate({
@@ -232,6 +255,12 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     ],
                 } as AggregatorConfigField<'CONTENTS'>]).toPromise()).result);
         (this as any)['filterCriteria'] = temp[0].meta.filterCriteria;
+
+        if(this.filterCriteria && this.filterCriteria.facetFilters){
+            this.filterCriteria.facetFilters =
+            await this.searchFilterService.reformFilterValues(this.filterCriteria.facetFilters, this.formAPIFacets);
+        }
+
         this.facetFilters = (this.filterCriteria.facetFilters || []).reduce((acc, f) => {
             acc[f.name] = f.values;
             return acc;
@@ -430,7 +459,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             componentProps: {
                 initialFilterCriteria: inputFilterCriteria,
                 defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
-                existingSearchFilters: this.existingSearchFilters
+                existingSearchFilters: this.existingSearchFilters,
+                formAPIFacets: this.formAPIFacets
             }
         });
         await openFiltersPage.present();
@@ -445,7 +475,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === primaryFacetFilter.code);
-
+        const onSelectedFilter = [];
         if (facetFilter) {
             facetFilter.values.forEach(facetFilterValue => {
                 if (toApply.find(apply => facetFilterValue.name === apply.name)) {
@@ -454,12 +484,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     facetFilterValue.apply = false;
                 }
             });
+            toApply.forEach((selectedValue) => {
+                onSelectedFilter.push(selectedValue.name);
+            });
 
-            await this.applyFilter(appliedFilterCriteria);
+            await this.applyFilter(appliedFilterCriteria, true, toApply);
         }
     }
 
-    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true) {
+    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true, onSelectedFilter?) {
         const tempSearchCriteria: ContentSearchCriteria = {
             ...appliedFilterCriteria,
             mode: 'hard',
@@ -473,7 +506,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             }
         });
-        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter);
+        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter, onSelectedFilter);
     }
 
     async pillFilterHandler(pill){

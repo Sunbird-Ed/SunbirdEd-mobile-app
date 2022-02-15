@@ -8,6 +8,7 @@ import { Location } from '@angular/common';
 import {of} from 'rxjs';
 import { FormAndFrameworkUtilService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
+import { mockFormValue } from '../faq-report-issue/faq-report-issue.page.spec.data';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -146,7 +147,10 @@ describe('SearchFilterPage', () => {
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             mockContentService.searchContent = jest.fn(() => of({filterCriteria: sampleFilterCriteria}));
-
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
             // act
             searchFilterPage.ngOnInit();
             searchFilterPage.valueChanged({
@@ -158,6 +162,7 @@ describe('SearchFilterPage', () => {
 
             setTimeout(() => {
                 expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             });
         });
     });

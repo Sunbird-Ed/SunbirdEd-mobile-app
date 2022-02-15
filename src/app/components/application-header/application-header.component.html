@@ -48,7 +48,7 @@
       <ion-button aria-label="notifications" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
         <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification" role="button">
-        <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
+        <ion-badge class="badge-container" *ngIf="notificationCount.unreadCount">{{notificationCount.unreadCount}}</ion-badge>
       </ion-button>
       <ion-button aria-label="search" icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
@@ -203,6 +203,16 @@
           </div>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'ORIENTATION')" *ngIf="isTablet">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/ic_rotate.svg" aria-hidden="true" class="tool-icon" alt="tablet">
+          </span>
+          <div class="sb-language">
+            <div class="sb-menu-item" role="button">{{'ORIENTATION' | translate}}</div>
+            <div class="sb-menu-item-language">{{orientationToSwitch}}</div>
+          </div>
+        </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
@@ -352,6 +362,16 @@
             <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
           <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
+        </ion-item>
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'ORIENTATION')" *ngIf="isTablet">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/ic_rotate.svg" aria-hidden="true" class="tool-icon" alt="tablet">
+          </span>
+          <div class="sb-language">
+            <div class="sb-menu-item" role="button">{{'ORIENTATION' | translate}}</div>
+            <div class="sb-menu-item-language">{{orientationToSwitch}}</div>
+          </div>
         </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">

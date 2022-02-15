@@ -127,25 +127,19 @@ export class ProjectDetailPage implements OnDestroy {
     });
   }
 
-  getTemplateDetails() {
+  async getTemplateDetails() {
     this.loader.startLoader();
-    const config = {
-      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.templateId,
-      // payload:  {}
-    }
-
-    this.unnatiService.get(config).subscribe(success => {
+    try {
+      let data: any = await this.getTemplate(this.templateId);
       this.loader.stopLoader();
-      this.project = success.result;
+      this.project = data;
       this._headerConfig.actionButtons = []
       this.headerService.updatePageConfig(this._headerConfig);
       this.sortTasks();
-      this.programId = (success.result && success.result.programInformation) ? success.result.programInformation.programId : null;
-
-    }, error => {
-      this.loader.stopLoader();
-
-    })
+      this.programId = (data && data.programInformation) ? data.programInformation.programId : null;
+    }
+    catch (error) {
+    }
   }
 
   getProject() {
@@ -189,6 +183,8 @@ export class ProjectDetailPage implements OnDestroy {
     }
     this.templateDetailsPayload ? config.payload = this.templateDetailsPayload : null;
     this.unnatiService.post(config).subscribe(success => {
+      console.log("getproject");
+      console.log(success);
       this.loader.stopLoader();
       if (this.templateId) {
         this.toast.openToast(this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS'])
@@ -605,24 +601,45 @@ export class ProjectDetailPage implements OnDestroy {
     return await modal.present();
   }
 
-  startAssessment(task) {
+  async startAssessment(task) {
      if (!this.networkFlag) {
        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
        return;
      }
-    if (this.project.entityId) {
+
+     let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+        payload:payload
       };
-      this.unnatiService.get(config).subscribe(
-        (success) => {
+      this.unnatiService.post(config).subscribe(
+       async (success) => {
           if (!success.result) {
             this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
             return;
           }
           let data = success.result;
 
-          let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
+          if(!data?.observationId){
+            let resultdata: any = await this.getTemplateFromSolutionId(data?.solutionDetails?._id,payload);
+            if (
+              resultdata.assessment.evidences.length > 1 ||
+              resultdata.assessment.evidences[0].sections.length > 1 ||
+              (resultdata.solution.criteriaLevelReport && resultdata.solution.isRubricDriven)
+            ) {
+              this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], { state: resultdata });
+            } else {
+              this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+                queryParams: {
+                  evidenceIndex: 0,
+                  sectionIndex: 0,
+                },
+                  state: resultdata,
+              });
+            }
+            return;
+          }
+
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
             queryParams: {
               programId: data.programId,
@@ -630,7 +647,6 @@ export class ProjectDetailPage implements OnDestroy {
               observationId: data.observationId,
               entityId: data.entityId,
               entityName: data.entityName,
-              disableObserveAgain: true
             },
           });
         },
@@ -638,9 +654,6 @@ export class ProjectDetailPage implements OnDestroy {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
         }
       );
-    } else {
-      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
-    }
   }
 
   getProjectTaskStatus() {
@@ -710,7 +723,7 @@ export class ProjectDetailPage implements OnDestroy {
        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
        return;
      }
-    if (this.project.entityId) {
+
       let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
@@ -725,22 +738,14 @@ export class ProjectDetailPage implements OnDestroy {
           }
           let data = success.result;
 
-          let state = {
-            scores: false,
-            observation: true,
-            entityId: data.entityId,
-            entityType: data.entityType,
-            observationId: data.observationId,
-          };
-          if (data.solutionDetails && data.solutionDetails.isRubricDriven) {
-            state.scores = true;
-          }
-          if (data.solutionDetails && !data.solutionDetails.criteriaLevelReport) {
-            state['filter'] = { questionId: [] };
-            state['criteriaWise'] = false;
-          }
-          this.router.navigate([RouterLinks.GENERIC_REPORT], {
-            state: state,
+          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+            queryParams: {
+              programId: data.programId,
+              solutionId: data.solutionId,
+              observationId: data.observationId,
+              entityId: data.entityId,
+              entityName: data.entityName,
+            },
           });
 
         },
@@ -748,9 +753,6 @@ export class ProjectDetailPage implements OnDestroy {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
         }
       );
-    } else {
-      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
-    }
   }
 
   importProject() {
@@ -793,6 +795,17 @@ export class ProjectDetailPage implements OnDestroy {
     });
   }
 
+  goToDetails() {
+    this.router.navigate([`${RouterLinks.PROJECT}/projectDetails`], {
+      queryParams: {
+        projectId: this.projectId,
+        fromImportPage: true,
+        programId: this.programId
+      },
+      replaceUrl: false
+    });
+  }
+
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       if (this.fromImportProject) {
@@ -806,4 +819,35 @@ export class ProjectDetailPage implements OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
   }
+
+  getTemplate(id, payload?:any) {
+    const config = {
+        url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id,
+        payload: payload ? payload : {}
+    }
+
+    return new Promise((resolve, reject) => {
+      this.unnatiService.get(config).subscribe(success => {
+        resolve(success.result);
+      }, (error: any) => {
+        reject(error);
+      });
+    });
+    
+}
+
+  getTemplateFromSolutionId(solutionId, payload?: any) {
+    const config = {
+      url: urlConstants.API_URLS.TEMPLATE_DETAILS + solutionId,
+      payload: payload,
+    };
+    return new Promise((resolve, reject) => {
+      this.unnatiService.post(config).subscribe((success) => {
+        resolve(success.result);
+      }, error => {
+        reject(error);
+      })
+    })
+  }
+
 }

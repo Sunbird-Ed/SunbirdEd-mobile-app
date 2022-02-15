@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService } from '@project-sunbird/sunbird-sdk';
+import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, TelemetryErrorCode, ErrorType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
@@ -19,6 +19,8 @@ import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../ap
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { IterableDiffers } from '@angular/core';
+import { url } from 'inspector';
+import { Environment, InteractSubtype } from '../../services';
 
 
 
@@ -98,11 +100,13 @@ describe('PlayerPage', () => {
     const mockContentService: Partial<ContentService> = {};
 
     const mockprofileService: Partial<ProfileService> = {};
+    const mockPlayerService: Partial<PlayerService> = {};
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
             mockprofileService as ProfileService,
             mockContentService as ContentService,
+            mockPlayerService as PlayerService,
             mockCanvasPlayerService as CanvasPlayerService,
             mockPlatform as Platform,
             mockScreenOrientation as ScreenOrientation,
@@ -140,8 +144,10 @@ describe('PlayerPage', () => {
             mockAlertCtrl.create = jest.fn(() => Promise.resolve({
                 present: jest.fn()
             })) as any;
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
             playerPage.showConfirm();
             setTimeout(() =>{
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalled();
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
@@ -739,6 +745,8 @@ describe('PlayerPage', () => {
     });
     describe('pdfPlayerEvents', () => {
         it('should sync assessment events', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockPlayerService.savePlayerState = jest.fn();
             mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
             const event = {
                 edata: {
@@ -755,6 +763,8 @@ describe('PlayerPage', () => {
             expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
         });
         it('should exit the player', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockPlayerService.deletePlayerSaveState = jest.fn();
             const event = {
                 edata: {
                     type: 'EXIT'
@@ -772,50 +782,8 @@ describe('PlayerPage', () => {
                 done();
             }, 50);
         });
-
-        it('should call show confirm, when player is qunl' , () =>{
-            const event = {
-                edata: {
-                    type: 'EXIT'
-                }
-            };
-
-            playerPage.config = {
-                context: {
-                    dispatcher: {
-                        // dispatch: jest.fn()
-                    },
-                    pdata: {
-                        pid: 'sunbird.app.contentplayer'
-                    },
-                    objectRollup: {
-                        l1: 'li'
-                    }
-                },
-                config: {
-                    sideMenu: {
-                        showDownload: false,
-                        showPrint: false,
-                        showReplay: false,
-                        showExit: true,
-                        showShare: true
-                     }
-                },
-                metadata: {
-                    identifier: 'li',
-                    mimeType: 'application/vnd.sunbird.questionset',
-                    isAvailableLocally: true,
-                    contentData: {
-                        isAvailableLocally: true,
-                        basePath: 'basePath',
-                        streamingUrl: 'streamingurl'
-                    }
-                }
-            };
-            
-            playerPage.playerEvents(event);
-        })
         it('should call the download service to download the pdf', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
@@ -838,6 +806,7 @@ describe('PlayerPage', () => {
 
         });
         it('should call the download service to download the pdf for catch part', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
@@ -861,6 +830,7 @@ describe('PlayerPage', () => {
 
         });
         it('should call the download service to download the pdf for catch part(user-permission-denied)', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
@@ -884,6 +854,7 @@ describe('PlayerPage', () => {
 
         });
         it('should call the download service to download the pdf for catch part(download-failed)', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
@@ -907,6 +878,7 @@ describe('PlayerPage', () => {
 
         });
         it('should handle the share event', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             const event = {
                 edata: {
                     type: 'SHARE'
@@ -923,6 +895,7 @@ describe('PlayerPage', () => {
 
         });
         it('should handle the content compatibility error', (done) => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             const event = {
                 edata: {
                     type: 'compatibility-error'
@@ -936,6 +909,7 @@ describe('PlayerPage', () => {
             }, 50);
         });
         it('should handle the exdata event', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             const event = {
                 edata: {
                     type: 'exdata',
@@ -949,7 +923,7 @@ describe('PlayerPage', () => {
         });
     });
 
-        describe('ngOnDestroy', () => {
+    describe('ngOnDestroy', () => {
         it('should unsubscribe pauseSubscription', () => {
             // arrange
             playerPage['pauseSubscription'] = {
@@ -988,21 +962,58 @@ describe('PlayerPage', () => {
 
             });
 
-            describe('ionViewWillEnter', () => {
-                it('should hide statusbar', () => {
-                    // arrange
-                   
-                    mockScreenOrientation.lock = jest.fn();
-                    mockStatusBar.hide = jest.fn();
-                    // act
-                    playerPage.ionViewWillEnter();
-                    // assert 
-                    setTimeout(() => {
-                    expect( mockStatusBar.hide).toHaveBeenCalled();
-                    expect( mockScreenOrientation.lock).toHaveBeenCalled();
-                }, 100);;
-                });
+                describe('ionViewWillEnter', () => {
+                    it('should hide statusbar', () => {
+                        // arrange
+                    
+                        mockScreenOrientation.lock = jest.fn();
+                        mockStatusBar.hide = jest.fn();
+                        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                        mockCourseService.syncAssessmentEvents = of({
+                            subscribe: jest.fn()
+                        }) as any;
+                        // act
+                        playerPage.ionViewWillEnter();
+                        // assert 
+                        setTimeout(() => {
+                        expect( mockStatusBar.hide).toHaveBeenCalled();
+                        expect( mockScreenOrientation.lock).toHaveBeenCalled();
+                        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                            InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                            Environment.PLAYER,
+                            PageId.PLAYER,
+                            ContentUtil.getTelemetryObject(playerPage.config['metadata']['contentData']),
+                            undefined,
+                            ContentUtil.generateRollUp(playerPage.config['metadata']['hierarchyInfo'], playerPage.config['metadata']['identifier']))
+                    }, 100);;
+                    });
 
             });
+
+            describe('openPDF' , () =>{
+                it('should create a loader and dismiss' , () =>{
+                    //arrange
+                    mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                        present: jest.fn(),
+                        dismiss: jest.fn(() => Promise.resolve())   
+                    }));
+                    mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+                    mockLocation.back = jest.fn();
+                    //act
+                    playerPage.openPDF(url);
+                    //assert
+                    setTimeout(() => {
+                        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                        expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                            Environment.PLAYER,
+                            TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                            ErrorType.SYSTEM,
+                            PageId.PLAYER,
+                            JSON.stringify(e)
+                        );
+                        expect(mockLocation.back).toHaveBeenCalled();
+                    }, 0);
+                } )
+            })
 
 });

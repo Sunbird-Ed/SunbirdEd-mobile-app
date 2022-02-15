@@ -1,6 +1,6 @@
 <!-- New content details -->
 <ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
-  <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
+  <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'">
     <div *ngIf="contentDownloadable[content?.identifier]">
       <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
@@ -74,6 +74,19 @@
           <div class="sb-common-footer-text">{{'PLEASE_DOWNLOAD_TO_PLAY' | translate}}</div>
         </div>
       </div>
+    </div>
+  </div>
+  <div *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType === 'sunbird-video-player'" class="sb-play-container sb-player-container">
+    <div class="sb-overlay-container">
+      <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+        <div class="sb-circle">
+          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+        </div>
+      </div>
+    </div>
+    <div *ngIf="playerType === 'sunbird-video-player'"  style="height:46vh;width:100%;">
+      <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
+        (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
     </div>
   </div>
   <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
@@ -206,7 +219,7 @@
           </div>
         </ng-template>
 
-        <div *ngIf="showMoreFlag">
+        <div *ngIf="showMoreFlag" id="read-more-content" tabindex="0">
           <div class="sb-info" *ngIf="content?.contentData?.se_mediums; else previousMedium">
             <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.se_mediums | csa}}</div>
@@ -293,14 +306,14 @@
           </div>
 
         </div>
-        <div role="button" class="read-more" *ngIf="content && content.contentData.description &&
-         content.contentData.description.length > 10 || content.contentData.gradeLevel ||
-         content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
-          <div *ngIf="showMoreFlag" (click)="readLessorReadMore('read-less-clicked')">
+        <div role="button" class="read-more" id="read-more-less-btn" tabindex="0" *ngIf="content && content.contentData.description &&
+         content.contentData.description.length > 10 || content.contentData.gradeLevel || content.contentData.subject" 
+         (click)="showMoreFlag = !showMoreFlag; readLessorReadMore(showMoreFlag ? 'read-more-clicked' : 'read-less-clicked')">
+          <div *ngIf="showMoreFlag">
             {{ 'READ_LESS' | translate }}
             <ion-icon name="arrow-up" aria-hidden="true"></ion-icon>
           </div>
-          <div *ngIf="!showMoreFlag" (click)="readLessorReadMore('read-more-clicked')">
+          <div *ngIf="!showMoreFlag">
             {{ 'READ_MORE' | translate }}
           </div>
         </div>
@@ -311,7 +324,7 @@
 </ion-content>
 
 <!-- Page footer -->
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)"
+<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" tabindex="1" role="dialog"
   [downloadProgress]="downloadProgress" [contentName]="content?.contentData?.name" [isUpdateAvail]="isUpdateAvail"
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">

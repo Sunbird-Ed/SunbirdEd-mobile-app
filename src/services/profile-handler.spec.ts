@@ -108,4 +108,22 @@ describe('ProfileHandler', () => {
         });
     });
 
+    describe('getSubPersona', () => {
+        it('should get label', () =>{
+            const subPersonaLabelArray = [
+                {
+                    value: 'hm',
+                    label: 'HM'
+                }
+            ]
+            subPersonaLabelArray.push({ value: 'sample', label : 'SAMPLE'});
+            expect(subPersonaLabelArray).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({label: 'SAMPLE'})
+                ])
+            );
+            
+        })
+    })
+
 });
