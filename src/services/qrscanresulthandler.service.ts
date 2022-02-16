@@ -46,6 +46,10 @@ export class QRScannerResultHandler {
   selectedUserType?: any;
   guestUser: boolean = false;
 
+  permittedUsers = [
+    'administrator',
+    'teacher'
+  ]
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -309,14 +313,15 @@ export class QRScannerResultHandler {
 
   async manageLearScan(scannedData) {
     this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    if (scannedData.includes('/create-project/') && this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ) {
+      this.navigateHandler(scannedData);
+      return;
+    }
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.commonUtilService.showToast("FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER");
       return;
     }
-    if (scannedData.includes('/create-project/') && this.selectedUserType == "administrator") {
-      this.navigateHandler(scannedData);
-      return;
-    } else if ((scannedData.includes('/create-observation/')) && (this.selectedUserType == "administrator" || this.selectedUserType == "teacher")) {
+    if ((scannedData.includes('/create-observation/')) && this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ) {
       this.navigateHandler(scannedData);
       return;
     } else {

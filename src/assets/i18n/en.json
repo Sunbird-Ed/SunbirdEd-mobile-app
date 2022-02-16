@@ -1507,6 +1507,13 @@
   "FRMELEMNTS_LBL_WANT_TO_START":"Are you sure you want to start and import this project",
   "FRMELEMNTS_LBL_PROJECT_STARTED":"You have started project successfully",
   "FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE":"Download failed. Check your network connection and try again",
+  "FRMELEMNTS_LBL_TOTAL_PROJECTS":"Total Projects",
+  "FRMELEMNTS_LBL_PROJECTS_SUBMITTED":"Projects Submitted",
+  "FRMELEMNTS_LBL_PROJECTS_IN_PROGRESS":"Projects In Progress",
+  "FRMELEMNTS_LBL_PROJECTS_STARTED":"Projects Started",
+  "FRMELEMNTS_LBL_WEEKLY":"Weekly",
+  "FRMELEMNTS_LBL_MONTHLY":"Monthly",
+  "FRMELEMNTS_LBL_QUARTERLY":"Quarterly",
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT": "Only registered users can take project",
   "FRMELEMENTS_MSG_PROJECT_ALREADY_SYNCED" :"Your project has been completed and synced, no further syncs are allowed to this project"
 }
