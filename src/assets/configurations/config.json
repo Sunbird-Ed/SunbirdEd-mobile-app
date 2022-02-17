@@ -7,12 +7,12 @@
         },
         {
             "name": "user-type-selection",
-            "skip": true,
+            "skip": false,
             "default": "teacher"
         },
         {
             "name": "profile-settings",
-            "skip": true,
+            "skip": false,
             "default": {
                 "syllabus": ["ekstep_ncert_k-12"],
                 "board": ["cbse"],
