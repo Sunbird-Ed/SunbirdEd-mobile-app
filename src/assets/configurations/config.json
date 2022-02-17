@@ -7,17 +7,18 @@
         },
         {
             "name": "user-type-selection",
-            "skip": false,
+            "skip": true,
             "default": "teacher"
         },
         {
             "name": "profile-settings",
-            "skip": false,
-            "default": [
-                "board",
-                "medium",
-                "grade"
-            ]
+            "skip": true,
+            "default": {
+                "syllabus": ["ekstep_ncert_k-12"],
+                "board": ["cbse"],
+                "medium": ["english"],
+                "grade": ["class5", "class6"]
+            }
         },
         {
             "name": "district-mapping",
