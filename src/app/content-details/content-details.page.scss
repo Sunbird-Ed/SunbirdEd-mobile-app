@@ -182,10 +182,11 @@
 }
 // **** iOS
 
-sb-player-end-page svg:first-of-type {
-  height: 45%;
-  width: 45%;
-}
+// svg images are breaking in andriod app
+// sb-player-end-page svg:first-of-type {
+//   height: 45%;
+//   width: 45%;
+// }
 
 sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
   display: none;
