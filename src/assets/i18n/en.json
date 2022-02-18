@@ -578,7 +578,7 @@
   "FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE": "Select image source",
   "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile",
   "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED": "Attached successfully ",
-  "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED": "The project is synced successfully",
+  "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED": "Your project has been synced successfully",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "Thanks for your feedback. We may not be able to respond to every suggestion sent to us, but your feedback is valuable. It helps make {{app_name}} better for everyone.",
   "FRMELEMNTS_MSG_UNABLE_TO_ENROLL": "You could not leave the batch now. Try again later",
   "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully",
