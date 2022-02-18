@@ -312,13 +312,13 @@
 										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" class="data-list">
-										<ion-radio-group [value]="dataSharingStatus">
-										  <ion-item class="ds-item" class="list-info" [disabled]="true">
+										<ion-radio-group [(ngModel)]="dataSharingStatus">
+										  <ion-item class="ds-item" class="list-info">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
-										  <ion-item class="ds-item" class="list-info" [disabled]="true">
+										  <ion-item class="ds-item" class="list-info">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
