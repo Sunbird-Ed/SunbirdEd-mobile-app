@@ -1,0 +1,29 @@
+<ion-content>
+  <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
+  <div class="text-area-container">
+    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}">
+    </ion-textarea>
+  </div>
+  <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
+  <div class="sb-dt-card-actions">
+    <div class="wrapper">
+      <app-metadata-actions (actionEvent)="onAction($event)" [actionItems]="actionItems"></app-metadata-actions>
+    </div>
+  </div>
+
+  <div *ngFor="let attachment of data?.attachments" class="attachments-list">
+    <div class="attachment-label">
+      <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image'"></ion-icon>
+      <ion-icon name="link-outline" slot="start" *ngIf="attachment?.type == 'link'"></ion-icon>
+      <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'pdf'"></ion-icon>
+      <span>{{attachment?.name ||  attachment?.url}} </span>
+    </div>
+    <div>
+      <button slot="icon-only" (click)="deleteConfirm(attachment)">
+        <ion-icon name="close-circle" slot="end"></ion-icon>
+        <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+        </p>
+      </button>
+    </div>
+  </div>
+</ion-content>

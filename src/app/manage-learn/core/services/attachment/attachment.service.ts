@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
+import { AddLinkModalComponent } from "@app/app/manage-learn/shared";
 import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
 import { FilePath } from "@ionic-native/file-path/ngx";
 import { File } from "@ionic-native/file/ngx";
-import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
+import { ActionSheetController, ModalController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 
@@ -23,7 +24,8 @@ export class AttachmentService {
     private filePath: FilePath,
     private chooser: Chooser,
     // private filePickerIOS: IOSFilePicker,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private modal : ModalController
   ) {
     this.translate
       .get([
@@ -117,6 +119,7 @@ export class AttachmentService {
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
         this.actionSheetController.dismiss(data);
+        return data;
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -150,6 +153,7 @@ export class AttachmentService {
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
         this.actionSheetController.dismiss(data);
+        return data;
       }
     } catch (error) {
        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -202,5 +206,36 @@ export class AttachmentService {
 
   deleteFile(fileName) {
     return this.file.removeFile(this.directoryPath(), fileName);
+  }
+
+  async openAttachmentSource(type){
+    let data:any ='';
+    switch(type){
+      case 'openCamera':
+      data =  await this.takePicture(this.camera.PictureSourceType.CAMERA);
+      console.log(data,"camera");
+      break;
+      case 'openGallery' :
+      data =  await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+      console.log(data,"camera");
+      break;
+      case 'openFiles' : 
+      data = await this.openFile();
+      console.log(data,"camera");
+      break;
+      case 'openLink' :
+      data= await this.openLinkModal();
+      console.log(data,"camera");
+      break;
+    }
+    if(data)
+    return data;
+  }
+  async openLinkModal(){
+    const modal = await this.modal.create({
+      component: AddLinkModalComponent,
+      cssClass: 'my-custom-class'
+    });
+    return await modal.present();
   }
 }

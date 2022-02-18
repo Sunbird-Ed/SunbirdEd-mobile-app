@@ -1,0 +1,43 @@
+.text-area-container{
+    border: 2px solid #666666;
+    border-radius: 8px;
+    margin: 0px 15px;
+}
+.attachments-list{
+    background-color: #fff;
+    color: #000;
+    padding: 10px 10px 5px 10px;
+    justify-content: space-between;
+    display: flex;
+    border-radius: 8px;
+    margin: 10px 10px;
+    max-height: 50px;
+    font-weight: 600;
+    .attachment-label{
+        ion-icon{
+            font-size: 20px;
+            position: absolute;
+        }
+       span{
+           margin-left:25px
+       }
+
+    }
+
+    button{
+        background: transparent;
+        box-shadow: none !important;
+        margin-top: -7px;
+    p{
+        margin-bottom: 0px;
+        font-size: 12px !important;
+        margin-top: -5px;
+        text-align: center;
+        font-weight: 600;
+    }
+    }
+    ion-icon{
+        font-size: 20px;
+        color: #000;
+    }
+}

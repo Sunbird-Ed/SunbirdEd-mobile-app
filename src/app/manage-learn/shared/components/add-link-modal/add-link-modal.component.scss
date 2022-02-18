@@ -1,0 +1,17 @@
+.link-modal{
+    h5{
+        color: var(--primary-color);
+        margin: 30px 45px;
+    }
+    .text-area-container{
+        margin: 15px 15px;
+        border: 1px solid #666666;
+        padding: 10px;
+        border-radius: 16px;
+    }
+    .action-btns{
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 15px;
+    }
+}
