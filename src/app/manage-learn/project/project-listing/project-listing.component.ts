@@ -356,11 +356,11 @@ export class ProjectListingComponent {
                         isDeleted: {
                             $ne: true
                         },
-                        Downloaded: {
+                        downloaded: {
                             $ne: false
                         },
                         isNew: {
-                            $ne: false
+                            $eq: true
                         }
                     }
                 ],
