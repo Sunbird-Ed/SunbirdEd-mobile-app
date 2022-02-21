@@ -98,53 +98,6 @@ export class AttachmentListingPage implements OnInit {
     }
   }
   getAttachments(tab) {
-    this.attachments = [];
-    this.db.query({ _id: this.projectId }).then(success => {
-      this.project = success.docs.length ? success.docs[0] : {};
-      this.projectcopy = { ...this.project }
-      if (this.project.tasks && this.project.tasks.length) {
-        for (const task of this.project.tasks) {
-          const attachments = [];
-          const remarks=[];
-          if (!task.isDeleted) {
-            console.log("task",task);
-            if(task.remarks){
-              let remarksObj = {
-                taskName: task.name,
-                remarks: task.remarks,
-              }
-              remarks.push({ ...remarksObj})
-            }
-            if (task.attachments && task.attachments.length) {
-              for (const element of task.attachments) {
-                if (compare(element.type, tab.type)) {
-                  element.localUrl = this.win.Ionic.WebView.convertFileSrc(
-                    this.path+ element.name
-                  );
-                  attachments.push(element);
-                }
-              }
-              if (attachments.length) {
-                let attachmentObj = {
-                  taskName: task.name,
-                  attachments: attachments
-                }
-                this.attachments.push({ ...attachmentObj });
-              }
-              if(remarks.length){
-                this.attachments.remarks = remarks
-              }
-            }
-          }
-        }
-      }
-      function compare(fileType, tabType): boolean {
-        tabType = tabType.substr(0, tabType.indexOf("/"));
-        fileType = fileType.substr(0, fileType.indexOf("/"));
-        return tabType == fileType;
-      }
-    }, error => {
-    })
   }
 
   getImgContent(file) {
