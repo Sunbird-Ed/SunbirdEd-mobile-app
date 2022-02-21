@@ -26,7 +26,7 @@
           <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
           <div class="viewBtn">
             <ion-label class="link-label" *ngIf="task?.type =='simple'"
-              (click)="$event.stopPropagation();openTask(task)">
+              (click)="$event.stopPropagation();onCardClick(task)">
               {{'FRMELEMNTS_BTN_VIEW_TASK_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>
             </ion-label>
             <ion-button size="small" class="action-btn" *ngIf="task?.type=='content'&&task?.learningResources?.length"

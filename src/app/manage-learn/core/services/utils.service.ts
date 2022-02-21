@@ -116,7 +116,6 @@ export class UtilsService {
         return obj;
       case "subTask":
         delete obj.children;
-        delete obj.isDeletable;
         return obj;
     }
   }
