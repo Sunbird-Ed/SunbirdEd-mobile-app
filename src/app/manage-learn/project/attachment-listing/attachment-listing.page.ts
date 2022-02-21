@@ -11,6 +11,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
+import { UtilsService } from '../../core';
 
 @Component({
   selector: 'app-attachment-listing',
@@ -30,23 +31,7 @@ export class AttachmentListingPage implements OnInit {
   projectId;
   path;
   type = "images";
-  tabs = [
-    {
-      name: "FRMELEMNTS_LBL_IMAGES",
-      value: "images",
-      type: 'image/jpeg'
-    },
-    {
-      name: "FRMELEMNTS_LBL_FILES",
-      value: "files",
-      type: "application/pdf"
-    },
-    {
-      name: "FRMELEMNTS_LBL_LINKS",
-      value: "links",
-      type: "link"
-    },
-  ];
+  tabs;
   project;
   projectcopy;
   tabsLength;
@@ -61,15 +46,17 @@ export class AttachmentListingPage implements OnInit {
     public transfer: FileTransfer,
     public fileOpener: FileOpener,
     private photoViewer: PhotoViewer,
-    private routeParam: ActivatedRoute
+    private routeParam: ActivatedRoute,
+    private util: UtilsService
   ) {
     routeParam.params.subscribe(parameters => {
       this.projectId = parameters.id;
-      this.getAttachments(this.tabs[0]);
+      this.tabs = this.util.getTabs();
     })
   }
 
   ngOnInit() {
+    this.getAttachments(this.tabs[0]);
     this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
     this.tabsLength = this.tabs.length;
   }

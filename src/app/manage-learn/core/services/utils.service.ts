@@ -737,4 +737,25 @@ return data;
     }
     return taskCount?.length;
   }
+
+  getTabs(){
+    let tabs = [
+      {
+        name: "FRMELEMNTS_LBL_IMAGES",
+        value: "images",
+        type: 'image/jpeg'
+      },
+      {
+        name: "FRMELEMNTS_LBL_FILES",
+        value: "files",
+        type: "application/pdf"
+      },
+      {
+        name: "FRMELEMNTS_LBL_LINKS",
+        value: "links",
+        type: "link"
+      },
+    ];
+    return tabs;
+  }
 }

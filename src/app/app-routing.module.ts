@@ -127,11 +127,6 @@ const routes: Routes = [
     loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
   },
   { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
-  {
-    path: RouterLinks.ATTACHMENTS_LISTING,
-    loadChildren: () => import('./manage-learn/project/attachment-listing/attachment-listing.module').then( m => m.AttachmentListingPageModule)
-  },
-
 ];
 
 @NgModule({
