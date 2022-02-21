@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { Router, ActivatedRoute, Resolve, NavigationExtras, ActivatedRouteSnapshot } from '@angular/router';
-import { SharedPreferences } from 'sunbird-sdk';
+import { ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import {SplashScreenService} from '@app/services';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
@@ -41,17 +41,17 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         }
 
         this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((selectedUser) => {
-            if (selectedUser) {
-                const navigationExtras: NavigationExtras = {
-                    state: {
-                        forwardMigration: true
-                    }
-                };
-                this.router.navigate(['/', 'profile-settings'], navigationExtras);
-            } else {
+            if (!selectedUser || selectedUser === ProfileType.ADMIN)  {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
                 return true;
             }
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    forwardMigration: true
+                }
+            };
+            this.router.navigate(['/', 'profile-settings'], navigationExtras);
+            return false;
         });
     }
 }
