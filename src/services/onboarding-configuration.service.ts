@@ -2,14 +2,13 @@ import { Inject, Injectable } from "@angular/core";
 import { OnboardingScreenType, PreferenceKey, ProfileConstants } from "@app/app/app.constant";
 import { GUEST_TEACHER_TABS, initTabs } from "@app/app/module.service";
 import { Events } from '@app/util/events';
-import { Profile, ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
+import { DeviceRegisterService, Profile, ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService, CommonUtilService, ContainerService } from ".";
 import onboarding from './../assets/configurations/config.json';
 import { SegmentationTagService } from "./segmentation-tag/segmentation-tag.service";
 
 interface OnBoardingConfig {
     name: string;
-    required: boolean;
     skip: boolean;
     default: any;
 }
@@ -24,6 +23,7 @@ export class OnboardingConfigurationService {
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
         private events: Events,
         private segmentationTagService: SegmentationTagService,
         private container: ContainerService,
@@ -33,25 +33,24 @@ export class OnboardingConfigurationService {
         this.onBoardingConfig = onboarding;
     }
 
-    async skipOnboardingStep(currentPage) {
+    public async skipOnboardingStep(currentPage) {
+        if(!this.onBoardingConfig || !this.onBoardingConfig.onboarding){
+            return false;
+        }
+
         const config = this.onBoardingConfig.onboarding.find(obj => {
-            return obj.name === currentPage;
+            return (obj && obj.name === currentPage);
         });
         console.log('Configuration :', config);
         if (!config || !config.skip || !config.default) {
             return false;
         }
 
-        return await this.nextOnboardingStep(currentPage, config);
+        return await this.nextOnboardingStep(config);
     }
 
-    async nextOnboardingStep(currentPage, config?) {
+    private async nextOnboardingStep(config) {
         let skipOnboarding = false;
-        if (!config) {
-            config = this.onBoardingConfig.onboarding.find(obj => {
-                return obj.name === currentPage;
-            });
-        }
 
         switch (config.name) {
 
@@ -77,6 +76,11 @@ export class OnboardingConfigurationService {
                 if (!this.isProfileComplete(profile)) {
                     await this.setDefaultFrameworkDetails(config.default);
                 }
+                skipOnboarding = true;
+                break;
+
+            case OnboardingScreenType.DISTRICT_MAPPING:
+                this.setDistrictMappingDetails(config);
                 skipOnboarding = true;
                 break;
 
@@ -124,6 +128,19 @@ export class OnboardingConfigurationService {
             && profile.board && profile.board.length
             && profile.grade && profile.grade.length
             && profile.medium && profile.medium.length;
+    }
+
+    setDistrictMappingDetails(config) {
+        const req = {
+            userDeclaredLocation: {
+                ...config.default, 
+                declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
+            }
+        };
+        this.deviceRegisterService.registerDevice(req).toPromise();
+        this.sharedPreferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+        this.commonUtilService.handleToTopicBasedNotification();
+        this.appGlobalService.setOnBoardingCompleted();
     }
 
 }

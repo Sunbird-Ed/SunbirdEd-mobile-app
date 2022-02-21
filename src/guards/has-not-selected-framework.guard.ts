@@ -5,11 +5,12 @@ import { Platform } from '@ionic/angular';
 import { ProfileService } from 'sunbird-sdk';
 import { OnboardingScreenType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import {
-    AppGlobalService, 
-    SplashScreenService, 
-    OnboardingConfigurationService, 
+    AppGlobalService,
+    SplashScreenService,
+    OnboardingConfigurationService,
     CommonUtilService
 } from '@app/services';
+import { Events } from '@app/util/events';
 
 @Injectable()
 export class HasNotSelectedFrameworkGuard implements Resolve<any> {
@@ -21,7 +22,8 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         private platform: Platform,
         private splashScreenService: SplashScreenService,
         private onboardingConfigurationService: OnboardingConfigurationService,
-        private commonUtilService: CommonUtilService
+        private commonUtilService: CommonUtilService,
+        private events: Events,
     ) {
     }
 
@@ -34,7 +36,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
     }
 
     async resolve(): Promise<any> {
-        if(await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.PROFILE_SETTINGS)){
+        if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.PROFILE_SETTINGS)) {
             this.navigateToNext();
             return false;
         }
@@ -42,28 +44,44 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         if (this.guardActivated) {
             return true;
         }
-        if(this.platform.is('ios')) {
+
+        if (this.platform.is('ios')) {
             this.router.navigate(['/', 'user-type-selection']);
             return false;
         }
+
         this.guardActivated = true;
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (!HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
             this.splashScreenService.handleSunbirdSplashScreenActions();
             return true;
-        } else {
-            this.navigateToNext();
-            return false;
         }
+
+        this.navigateToNext();
+        return false;
     }
 
-    async navigateToNext(){
+    async navigateToNext() {
         this.appGlobalService.isProfileSettingsCompleted = true;
         this.splashScreenService.handleSunbirdSplashScreenActions();
 
         if (await this.commonUtilService.isDeviceLocationAvailable()) {
             this.appGlobalService.setOnBoardingCompleted();
             this.router.navigate([`/${RouterLinks.TABS}`]);
+        } else {
+            this.navigateToDistrictMapping();
+        }
+    }
+
+    private async navigateToDistrictMapping() {
+        if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.DISTRICT_MAPPING)) {
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    loginMode: 'guest'
+                }
+            };
+            this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+            this.events.publish('update_header');
         } else {
             const navigationExtras: NavigationExtras = {
                 state: {
