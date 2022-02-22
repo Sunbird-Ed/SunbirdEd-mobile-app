@@ -72,7 +72,8 @@ describe('collectionDetailEtbPage', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         networkInfo: {} as any,
-        showToast: jest.fn()
+        showToast: jest.fn(),
+        appendTypeToPrimaryCategory: jest.fn(() => 'digitaltextbook-detail')
     };
     const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateBackClickedTelemetry: jest.fn(),
@@ -410,7 +411,7 @@ describe('collectionDetailEtbPage', () => {
                 rollUp: mockObjRollup,
                 correlationList: mockCorRelationList,
                 hierachyInfo: undefined,
-            }, PageId.COLLECTION_DETAIL);
+            }, collectionDetailEtbPage.pageId);
         });
 
         it('should navigate back if deletion is complete', () => {
@@ -446,7 +447,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
                 InteractSubtype.DOWNLOAD_CLICKED,
                 Environment.HOME,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 mockTelemetryObject,
                 undefined,
                 mockObjRollup,
@@ -526,7 +527,7 @@ describe('collectionDetailEtbPage', () => {
                 InteractType.TOUCH,
                 InteractSubtype.UNIT_CLICKED,
                 Environment.HOME,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 mockTelemetryObject,
                 values,
                 {},
@@ -559,7 +560,7 @@ describe('collectionDetailEtbPage', () => {
                 InteractType.TOUCH,
                 InteractSubtype.UNIT_CLICKED,
                 Environment.HOME,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 mockTelemetryObject,
                 values,
                 {},
@@ -615,7 +616,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
                 CsContentType.TEXTBOOK,
                 Mode.PLAY,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 Environment.HOME,
                 mockTelemetryObject,
                 {},
@@ -649,7 +650,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
                CsPrimaryCategory.DIGITAL_TEXTBOOK,
                 Mode.PLAY,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 Environment.HOME,
                 { id: 'do_12345', type: undefined, version: '1' },
                 {},
@@ -671,7 +672,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
                 CsContentType.TEXTBOOK,
                 Mode.PLAY,
-                PageId.COLLECTION_DETAIL,
+                collectionDetailEtbPage.pageId,
                 Environment.HOME,
                 mockTelemetryObject,
                 {},
@@ -692,7 +693,7 @@ describe('collectionDetailEtbPage', () => {
         // assert
         expect(subscribeWithPriorityData).toBeTruthy();
         expect(mocktelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-            PageId.COLLECTION_DETAIL,
+            collectionDetailEtbPage.pageId,
             Environment.HOME,
             false,
             'do_212911645382959104165',
@@ -923,7 +924,7 @@ describe('collectionDetailEtbPage', () => {
                 expect(mockContentService.importContent).toHaveBeenCalled();
                 expect(mockzone.run).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generateDownloadAllClickTelemetry).toHaveBeenCalledWith(
-                    'collection-detail',
+                    collectionDetailEtbPage.pageId,
                     undefined,
                     ['do-123'],
                     2
@@ -932,7 +933,7 @@ describe('collectionDetailEtbPage', () => {
                     Environment.HOME,
                     TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                     ErrorType.SYSTEM,
-                    PageId.COLLECTION_DETAIL,
+                    collectionDetailEtbPage.pageId,
                     '{"parentIdentifier":"do_212911645382959104165","faultyIdentifiers":["do-234"]}'
                 );
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('UNABLE_TO_FETCH_CONTENT');
