@@ -16,7 +16,7 @@
                 <div class="card-container" role="button" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
                     <img class="thumbnail" alt="" src="assets/imgs/{{ userTypeConfig?.image }}" [ngClass]="{'coming-soon-image': !userTypeConfig?.isActive}" />
-                    <h4 class="card-title py-16 sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.name }}</h4>
+                    <h4 class="card-title sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.name }}</h4>
                     <h6 *ngIf="!userTypeConfig?.isActive" class="coming-soon-title">{{ 'FRMELEMNTS_MSG_COMING_SOON' | translate }}</h6>
                 </div>
             </div>
