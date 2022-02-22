@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { EventTopics } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services';
 import PouchDB from 'pouchdb';
 import cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import PouchDBFind from 'pouchdb-find';
+import { Events } from '@app/util/events';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +12,10 @@ import PouchDBFind from 'pouchdb-find';
 export class DbService {
   pdb: any;
 
-  constructor(private appGlobalService: AppGlobalService) {
+  constructor(private appGlobalService: AppGlobalService, private events: Events) {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+      this.createDb();
+    });
   }
 
   async createDb() {

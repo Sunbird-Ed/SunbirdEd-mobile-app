@@ -199,9 +199,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       .then((appName: any) => {
         this.appLabel = appName;
       });
-    if(!this.guestUser){
-      this.mlDb.createDb();
-    }  
     // impression telemetry
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,
