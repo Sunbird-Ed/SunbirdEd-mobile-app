@@ -71,7 +71,6 @@ import { FormConstants } from '@app/app/form.constants';
 import { SbPopoverComponent } from '../../components/popups';
 import { PopoverController } from '@ionic/angular'
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
-import { DbService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-user-home',
@@ -144,7 +143,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
-    private mlDb: DbService
   ) {
   }
 
