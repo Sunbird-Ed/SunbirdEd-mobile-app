@@ -1,5 +1,4 @@
 import { PreferenceKey } from './../app.constant';
-import { forEach } from 'lodash/forEach';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
