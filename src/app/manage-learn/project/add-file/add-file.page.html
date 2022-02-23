@@ -1,7 +1,7 @@
 <ion-content>
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
   <div class="text-area-container">
-    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}">
+    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks">
     </ion-textarea>
   </div>
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
@@ -11,12 +11,15 @@
     </div>
   </div>
 
-  <div *ngFor="let attachment of data?.attachments" class="attachments-list">
-    <div class="attachment-label">
-      <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image'"></ion-icon>
-      <ion-icon name="link-outline" slot="start" *ngIf="attachment?.type == 'link'"></ion-icon>
-      <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'pdf'"></ion-icon>
-      <span>{{attachment?.name ||  attachment?.url}} </span>
+  <div *ngFor="let attachment of attachments" class="attachments-list">
+    <div class="attachment-label" *ngIf="attachment?.type != 'link'">
+      <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image/jpeg'"></ion-icon>
+      <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'application/pdf'"></ion-icon>
+      <span>{{attachment?.name || attachment?.url}} </span>
+    </div>
+    <div class="attachment-label" *ngIf="attachment?.type == 'link'">
+        <ion-icon name="link-outline" slot="start"></ion-icon>
+        <span>{{attachment?.name || attachment?.url}} </span>
     </div>
     <div>
       <button slot="icon-only" (click)="deleteConfirm(attachment)">
@@ -26,4 +29,9 @@
       </button>
     </div>
   </div>
+
+  <ion-button (click)="submit()" expand="block">
+    {{"FRMELEMNTS_LBL_ATTACH_FILES" | translate}}
+  </ion-button>
+  <app-add-link-modal *ngIf="isLinkModalOpen" (eventEmit)="linkEvent($event)"> </app-add-link-modal>
 </ion-content>

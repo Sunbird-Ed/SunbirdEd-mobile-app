@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import { AddLinkModalComponent } from "@app/app/manage-learn/shared";
 import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
@@ -14,7 +14,7 @@ import { FILE_EXTENSION_HEADERS } from "../../constants";
 export class AttachmentService {
   mediaType: string;
   texts: any;
-
+  actionEvent = new EventEmitter();
   constructor(
     private camera: Camera,
     private file: File,
@@ -118,8 +118,8 @@ export class AttachmentService {
         };
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+        this.actionEvent.emit(data);
         this.actionSheetController.dismiss(data);
-        return data;
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -152,11 +152,11 @@ export class AttachmentService {
         };
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+        this.actionEvent.emit(data);
         this.actionSheetController.dismiss(data);
-        return data;
       }
     } catch (error) {
-       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
 
     // non working code for sdk30-android 11
@@ -208,28 +208,19 @@ export class AttachmentService {
     return this.file.removeFile(this.directoryPath(), fileName);
   }
 
-  async openAttachmentSource(type){
+  async openAttachmentSource(type) {
     let data:any ='';
     switch(type){
       case 'openCamera':
-      data =  await this.takePicture(this.camera.PictureSourceType.CAMERA);
-      console.log(data,"camera");
+       this.takePicture(this.camera.PictureSourceType.CAMERA);
       break;
-      case 'openGallery' :
-      data =  await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-      console.log(data,"camera");
+      case 'openGallery':
+       this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
       break;
-      case 'openFiles' : 
-      data = await this.openFile();
-      console.log(data,"camera");
-      break;
-      case 'openLink' :
-      data= await this.openLinkModal();
-      console.log(data,"camera");
+      case 'openFiles':
+        this.openFile();
       break;
     }
-    if(data)
-    return data;
   }
   async openLinkModal(){
     const modal = await this.modal.create({

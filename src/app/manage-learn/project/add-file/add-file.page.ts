@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { AttachmentService, DbService } from '../../core';
+import { AttachmentService, DbService, ProjectService } from '../../core';
 import { actions } from '../../core/constants/actions.constants';
 import * as _ from "underscore";
 
@@ -16,32 +16,18 @@ import * as _ from "underscore";
 export class AddFilePage implements OnInit {
   description: string;
   parameters;
+  isLinkModalOpen: boolean = false;
   actionItems = actions.FILE_UPLOAD_OPTIONS;
   _appHeaderSubscription: Subscription;
+  headerObservable: any;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: [],
     pageTitle: ''
   };
-  attachments= [
-    {
-      "type": "link",
-      "url": "https://youtu.be/55l-aZ7_F24"
-    },
-    {
-      "type": "link",
-      "url": "https://youtu.be/55l-aZ7_F24"
-    },
-    {
-      "type": "image",
-      "name": "image.png"
-    },
-    {
-      "type": "pdf",
-      "name": "pdf.pdf"
-    }
-  ]
+  remarks: '';
+  attachments: any = [];
   projectId;
   taskId;
   project;
@@ -49,59 +35,70 @@ export class AddFilePage implements OnInit {
   viewOnlyMode: boolean = false;
   projectCopy;
   copyOfTaskDetails;
+  unregisterBackButton: Subscription;
   constructor(
     private routerParams: ActivatedRoute,
     private headerService: AppHeaderService,
     private translate: TranslateService,
     private alert: AlertController,
     private db: DbService,
-    private attachmentService : AttachmentService
+    private attachmentService: AttachmentService,
+    private platform: Platform,
+    private projectService: ProjectService
   ) {
-    
+
     routerParams.params.subscribe(urlParams => {
       this.projectId = urlParams.id;
-      console.log(this.projectId,"urlParams",urlParams);
-
+      this.getProject();
     })
     routerParams.queryParams.subscribe(params => {
       this.description = params.taskId ? actions.TASK_FILE_DESCRIPTION.label : actions.PROJECT_FILE_DESCRIPTION.label;
       this.taskId = params.taskId;
       this.viewOnlyMode = params.viewOnlyMode;
-      console.log(params,"params",this.taskId );
     })
-    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      console.log(eventName,"eventName");
-      this.handleHeaderEvents(eventName);
-    });
+    attachmentService.actionEvent.subscribe(attachmentAction => {
+      if (attachmentAction) {
+      this.attachments.push(attachmentAction);
+      }
+    })
   }
 
   ngOnInit() {
 
   }
+  async ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      if (eventName.name == 'back') {
+        this.handleDeviceBackButton();
+      }
+    });
+  
+  }
   getProject() {
-    this.db.query({ _id: this.parameters.id }).then(
+    this.db.query({ _id: this.projectId }).then(
       (success) => {
         if (success?.docs.length) {
-          this.project = success.docs[0]
+          this.project = success.docs[0];
         }
-        // this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
+        this.remarks = this.project.remarks;
+        this.attachments = this.project?.attachments ? this.project?.attachments : [];
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
-      (error) => { }
+      (error) => {
+}
     );
   }
 
   getTask() {
     let task = _.findIndex(this.projectCopy.tasks, (item) => {
-      return item._id == this.parameters.taskId;
+      return item._id == this.taskId;
     });
-    console.log(task,"index of task");
     this.task = this.project.tasks[task];
-    console.log(this.task,"this.task of task");
-
     this.copyOfTaskDetails = JSON.stringify(this.task);
-    this.attachments = [];
+    this.attachments = this.task.attachments;
+    this.remarks = this.project.remarks;
     this.setHeaderConfig();
   }
   setHeaderConfig(){
@@ -112,10 +109,13 @@ export class AddFilePage implements OnInit {
     this.headerConfig.pageTitle = this.taskId? this.task.name : this.project.title;
     this.headerService.updatePageConfig(this.headerConfig);
   }
-  private handleHeaderEvents(event: { name: string }) {
-    if (event.name == 'back') {
-      alert('want to close?');
-    }
+  handleDeviceBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.handleBackButton();
+    });
+  }
+  handleBackButton() {
+   // handle event
   }
 
   ngOnDestroy() {
@@ -130,8 +130,7 @@ export class AddFilePage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      header: data['FRMELEMNTS_BTN_IMPORT_PROJECT'] + `<ion-button>Default</ion-button>`,
-      message: data["FRMELEMNTS_LBL_WANT_TO_START"],
+      header: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
       buttons: [
         {
           text: data["OK"],
@@ -152,11 +151,48 @@ export class AddFilePage implements OnInit {
   delete(item) {
 
   }
-  onAction(event){
-    this.attachmentService.openAttachmentSource(event).then(resp =>{
-      console.log(resp,"resp");
-    },error =>{
-      console.log(error,"error");
-    })
+  onAction(event) {
+    if (event == 'openLink') {
+      this.toggleLinkModal();
+      return;
+    }
+    this.attachmentService.openAttachmentSource(event);
+  }
+
+  submit() {
+    if (this.taskId) {
+      this.task.attachments = this.attachments;
+      this.task.remarks = this.remarks;
+      if (JSON.stringify(this.copyOfTaskDetails) !== JSON.stringify(this.task)) {
+        this.task.isEdit = true;
+        this.project.isEdit = true;
+        this.update();
+      }
+    } else {
+      this.project.remarks
+      this.project.attachments = this.attachments;
+      this.project.remarks = this.remarks;
+      if (JSON.stringify(this.projectCopy) !== JSON.stringify(this.project)) {
+        this.project.isEdit = true;
+        this.update();
+      }
+    }
+  }
+  linkEvent(event) {
+    if(event){
+      this.attachments = this.attachments.concat(this.projectService.getLinks(event));
+    }
+    this.toggleLinkModal();
+  }
+  toggleLinkModal() {
+    this.isLinkModalOpen = !this.isLinkModalOpen;
+  }
+  update() {
+    this.db
+      .update(this.project)
+      .then((success) => {
+        this.project._rev = success.rev;
+        this.attachments = [];
+      })
   }
 }
