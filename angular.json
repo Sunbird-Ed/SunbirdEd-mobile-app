@@ -274,7 +274,7 @@
       "styleext": "scss"
     },
     "@schematics/angular:component": {
-      "styleext": "scss"
+      "style": "scss"
     }
   }
 }

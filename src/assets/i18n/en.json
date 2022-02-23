@@ -1514,5 +1514,8 @@
   "OK":"OKAY",
   "FRMELEMNTS_MSG_COPY_PASTE_LINKS_BELOW":"Copy and paste your links in the box below",
   "FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER":"Add links here, please seperate multiple links using space or comma (,)",
-  "FRMELEMNTS_BTN_ADD_LINK":"Add links"
+  "FRMELEMNTS_BTN_ADD_LINK":"Add links",
+  "FRMELEMNTS_LBL_LINKS": "Links",
+  "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
+  "FRMELEMNTS_LBL_EVIDENCE": "evidence"
 }

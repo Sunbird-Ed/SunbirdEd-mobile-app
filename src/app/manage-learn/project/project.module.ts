@@ -26,6 +26,7 @@ import { ProjectTemplatePage } from './project-template/project-template.page';
 import { ItemListHeaderComponent } from './item-list-header/item-list-header.component'
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { AddFilePage } from './add-file/add-file.page';
+import { AttachmentListingPage } from './attachment-listing/attachment-listing.page';
 
 const routes: Routes = [
   {
@@ -65,7 +66,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.ATTACHMENTS}/:id`,
-    component: AttachmentListPage
+    component: AttachmentListingPage
   },
   {
     path: `${RouterLinks.TEMPLATE}/:id`,
@@ -83,7 +84,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
-    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, 
+    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListingPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
     CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
