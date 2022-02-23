@@ -384,6 +384,7 @@ export class ProjectDetailsComponent implements OnInit {
         this.projectDetails.status = this.projectDetails.status ? this.projectDetails.status : statusType.notStarted;
         this.projectDetails.status = this.projectDetails.status == statusType.notStarted ? statusType.inProgress : this.projectDetails.status;
         this.projectDetails.tasks.push(data.data);
+        this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", 'success');
         this.updateLocalDb(true);
         this.refreshTheActions();
       }
