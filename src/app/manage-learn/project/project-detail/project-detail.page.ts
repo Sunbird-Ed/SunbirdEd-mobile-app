@@ -130,7 +130,7 @@ export class ProjectDetailPage implements OnDestroy {
   async getTemplateDetails() {
     this.loader.startLoader();
     try {
-      let data: any = await this.getTemplate(this.templateId);
+      let data: any = await this.getTemplate(encodeURIComponent(this.templateId));
       this.loader.stopLoader();
       this.project = data;
       this._headerConfig.actionButtons = []
