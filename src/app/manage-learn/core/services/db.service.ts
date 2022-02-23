@@ -132,16 +132,12 @@ export class DbService {
   bulkCreate(data): Promise<any> {
     const entries = this.formatDataForBulkCreate(data);
     return new Promise((resolve, reject) => {
-      this.createDb().then(isInitialized => {
-        if(isInitialized) {
           this.pdb.bulkDocs(entries).then(success => {
             // success.ok ? resolve(success) : reject()
             resolve(success);
           }).catch(error => {
             reject()
           })
-        }
-      })
     })
   }
 
