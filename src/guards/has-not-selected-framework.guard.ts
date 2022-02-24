@@ -85,7 +85,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         } else {
             const navigationExtras: NavigationExtras = {
                 state: {
-                    isShowBackButton: true
+                    isShowBackButton: (this.onboardingConfigurationService.initialOnboardingScreenName !== OnboardingScreenType.DISTRICT_MAPPING)
                 }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);

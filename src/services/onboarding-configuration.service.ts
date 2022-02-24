@@ -19,6 +19,7 @@ interface OnBoardingConfig {
 export class OnboardingConfigurationService {
 
     onBoardingConfig: { onboarding: Array<OnBoardingConfig> };
+    initialOnboardingScreenName;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
@@ -31,12 +32,25 @@ export class OnboardingConfigurationService {
         private commonUtilService: CommonUtilService,
     ) {
         this.onBoardingConfig = onboarding;
+        this.checkInitialScreen();
+    }
+
+    // checking initial onboarding screen to handle back button
+    private checkInitialScreen() {
+        if (this.initialOnboardingScreenName === undefined) {
+            const initialScreen = this.onBoardingConfig && this.onBoardingConfig.onboarding &&
+                this.onBoardingConfig.onboarding.find(obj => (obj && !obj.skip));
+            if (initialScreen) {
+                this.initialOnboardingScreenName = initialScreen.name;
+            }
+        }
     }
 
     public async skipOnboardingStep(currentPage) {
         if(!this.onBoardingConfig || !this.onBoardingConfig.onboarding){
             return false;
         }
+        this.checkInitialScreen();
 
         const config = this.onBoardingConfig.onboarding.find(obj => {
             return (obj && obj.name === currentPage);

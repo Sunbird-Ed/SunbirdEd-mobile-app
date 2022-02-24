@@ -6,7 +6,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import {
   Environment,
@@ -35,6 +35,7 @@ import {
   AppHeaderService,
   CommonUtilService,
   ContainerService,
+  OnboardingConfigurationService,
   SunbirdQRScanner,
   TelemetryGeneratorService
 } from 'services';
@@ -107,6 +108,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     return this.profileSettingsForm.get('grade') as FormControl;
   }
 
+  isInitialScreen = false;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -128,7 +131,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private activatedRoute: ActivatedRoute,
     private profileHandler: ProfileHandler,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([]),
@@ -191,6 +195,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       window.history.pushState({}, '', userTypeSelectionRoute.toString());
       window.history.pushState({}, '', languageSettingRoute.toString());
       this.hideBackButton = false;
+    }
+
+    if(this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.PROFILE_SETTINGS) {
+      this.isInitialScreen = true;
     }
   }
 
@@ -271,6 +279,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     if (activePortal) {
       activePortal.dismiss();
+    } else if (this.isInitialScreen && this.showQRScanner) {
+      this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
     } else if (!this.hideBackButton) {
       this.location.back();
     }
