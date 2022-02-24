@@ -135,14 +135,24 @@ export class SolutionListingComponent {
     if (data.projectId) {
       projectId = data.projectId;
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      queryParams: {
-        projectId: projectId,
-        programId: this.programId,
-        solutionId: data._id,
-        type: 'assignedToMe',
-      },
-    });
+    if (!projectId) {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data._id], {
+          queryParams: {
+              programId: this.programId,
+              solutionId: data._id,
+              type: 'assignedToMe',
+          },
+      });
+  } else {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+          queryParams: {
+              projectId: projectId,
+              programId: this.programId,
+              solutionId: data._id,
+              type: 'assignedToMe'
+          },
+      });
+  }
   }
   redirectObservaiton(data) {
     let observationId = '';
