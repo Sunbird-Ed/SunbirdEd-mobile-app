@@ -59,6 +59,7 @@ export class TaskCardComponent implements OnInit {
           observationId: submissionDetails.observationId,
           entityId: submissionDetails.entityId,
           entityName: submissionDetails.entityName,
+          disableObserveAgain: this.data.status === statusType.submitted,
         },
       });
     } else {
