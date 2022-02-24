@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks, SwitchableTabsConfig } from '@app/app/app.constant';
-import { GUEST_HOME_SEARCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs,
-  LOGGEDIN_HOME_SEARCH_TABS, LOGIN_ADMIN_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { initTabs } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { PageId } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -11,6 +10,25 @@ import { ContainerService } from '@app/services/container.services';
 import { IonTabs, ToastController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
+import tabConfig from '../../assets/configurations/config.json';
+
+interface ICON {
+  active: string;
+  inactive: string;
+  disabled?: string;
+}
+interface TabConfig {
+  name: string;
+  root: string;
+  icon?: ICON;
+  label: string;
+  index: number;
+  isSelected?: boolean;
+  status: string;
+  disabled: boolean;
+  theme: string;
+  userTypeAdmin?: string;
+}
 
 @Component({
   selector: 'app-tabs',
@@ -32,6 +50,8 @@ export class TabsPage implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appLabel: any;
   olderWebView = false;
+  tabList: { tab: Array<TabConfig> };
+  selectedTab: string;
 
   constructor(
     private container: ContainerService,
@@ -69,6 +89,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   private async refreshTabs(data?) {
+    this.selectedTab = '';
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
     this.tabs = this.container.getAllTabs();
     if (!data || (data && !data.navigateToCourse)) {
@@ -134,6 +155,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
+    this.selectedTab = event.tab;
     this.setQRTabRoot(event.tab);
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
@@ -166,33 +188,36 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   private setQRTabRoot(tab: string) {
-    if (this.tabs && this.tabs[2]) {
-      this.tabs[2].root = tab;
+    if (this.tabs && this.tabs.find((ele) => ele.name === 'qrscanner')) {
+      const objIndex = this.tabs.findIndex((obj => obj.name === 'qrscanner'));
+      this.tabs[objIndex].root = tab;
     }
   }
 
   private async getInitialTabs(session): Promise<any[]> {
-    const config = {
-      'GUEST_TEACHER': {
-        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: GUEST_TEACHER_TABS,
-        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: GUEST_HOME_SEARCH_TABS
-      },
-      'GUEST_STUDENT': {
-        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: GUEST_STUDENT_TABS,
-        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: GUEST_HOME_SEARCH_TABS
-      },
-      'LOGIN_USER': {
-        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: LOGIN_TEACHER_TABS,
-        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: LOGGEDIN_HOME_SEARCH_TABS
-      },
-      'LOGIN_ADMIN': {
-        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: LOGIN_ADMIN_TABS,
-        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: LOGIN_ADMIN_TABS
-      }
-    };
     const defaultSwitchableTabsConfig = SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG;
     const selectedSwitchableTabsConfig = (await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise()) ||
       defaultSwitchableTabsConfig;
+    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    await this.initializeTabs(selectedSwitchableTabsConfig, selectedUserType);
+    const config = {
+      'GUEST_TEACHER': {
+        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: this.tabList,
+        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: this.tabList
+      },
+      'GUEST_STUDENT': {
+        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: this.tabList,
+        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: this.tabList
+      },
+      'LOGIN_USER': {
+        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: this.tabList,
+        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: this.tabList
+      },
+      'LOGIN_ADMIN': {
+        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: this.tabList,
+        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: this.tabList
+      }
+    };
 
 
     if (!session) {
@@ -203,11 +228,33 @@ export class TabsPage implements OnInit, AfterViewInit {
         return config['GUEST_STUDENT'][selectedSwitchableTabsConfig];
       }
     } else {
-      const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
       return selectedUserType === ProfileType.ADMIN ?
         config['LOGIN_ADMIN'][selectedSwitchableTabsConfig] :
         config['LOGIN_USER'][selectedSwitchableTabsConfig];
     }
+  }
+
+  private async initializeTabs(theme: string, userType: string) {
+    if (userType === ProfileType.ADMIN) {
+      this.tabList = tabConfig.tabs.filter((tab) => tab && tab.userTypeAdmin);
+    } else if (theme === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
+      if (this.appGlobalService.isUserLoggedIn()) {
+        this.findAllTabs('NEW', 'logIn');
+      } else {
+        this.findAllTabs('NEW', 'guest');
+      }
+    } else {
+      if (this.appGlobalService.isUserLoggedIn()) {
+        this.findAllTabs('OLD', 'logIn');
+      } else {
+        this.findAllTabs('OLD', 'guest');
+      }
+    }
+  }
+
+  findAllTabs(theme: string, status: string) {
+    this.tabList = tabConfig.tabs.filter((tab) =>
+    (tab.theme === theme || tab.theme === 'ALL') && (tab.status === 'ALL' || tab.status === status));
   }
 
 }

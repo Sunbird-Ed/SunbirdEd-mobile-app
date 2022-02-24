@@ -3,7 +3,10 @@
         {
             "name": "language-setting",
             "skip": false,
-            "default": { "code" :"en", "label": "English" }
+            "default": {
+                "code": "en",
+                "label": "English"
+            }
         },
         {
             "name": "user-type-selection",
@@ -28,7 +31,52 @@
             ]
         }
     ],
-    "tabs": [
-        
+    "homeTabs": [
+        {
+            "root": "home",
+            "name": "home",
+            "icon": "assets/imgs/tab_home.svg",
+            "label": "FRMELEMNTS_LBL_TAB_HOME",
+            "index": 1,
+            "isSelected": true,
+            "display": "revert",
+            "disabled": false
+        },
+        {
+            "root": "search",
+            "name": "discover",
+            "icon": "assets/imgs/tab_search.svg",
+            "label": "DISCOVER_BNAV",
+            "index": 2,
+            "display": "none",
+            "disabled": false
+        },
+        {
+            "root": "",
+            "name": "qrscanner",
+            "icon": "assets/imgs/ic_qr_scanner.svg",
+            "label": "",
+            "index": 3,
+            "disply": "revert",
+            "disabled": false
+        },
+        {
+            "root": "download-manager",
+            "name": "download",
+            "icon": "assets/imgs/tab_download.svg",
+            "label": "DOWNLOAD_BNAV",
+            "index": 4,
+            "display": "none",
+            "disabled": false
+        },
+        {
+            "root": "guest-profile",
+            "name": "profile",
+            "label": "PROFILE_BNAV",
+            "disabled": false,
+            "icon": "assets/imgs/tab_profile.svg",
+            "index": 5,
+            "display": "revert"
+        }
     ]
 }
