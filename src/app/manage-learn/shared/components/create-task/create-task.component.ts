@@ -37,7 +37,12 @@ export class CreateTaskComponent implements OnInit {
   }
 
   addTask() {
-    this.newTask.name ? this.popOverCtrl.dismiss(this.newTask) : this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
+    if(this.newTask.name){
+      this.toast.showMessage('FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL', 'success');
+      this.popOverCtrl.dismiss(this.newTask)
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger')
+    }
   }
 
   share() {
