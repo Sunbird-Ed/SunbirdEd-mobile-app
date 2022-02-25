@@ -71,10 +71,10 @@ export const actions = {
   ],
 
   TASK_FILE_DESCRIPTION:{
-    label:'would you like to add any remarks or attach any files before you mark your task complete?'
+    label:'FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION'
   },
   PROJECT_FILE_DESCRIPTION:{
-    label:'would you like to add any remarks or attach any files before you mark your task complete?'
+    label:'FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION'
   },
   FILE_UPLOAD_OPTIONS:[
     {

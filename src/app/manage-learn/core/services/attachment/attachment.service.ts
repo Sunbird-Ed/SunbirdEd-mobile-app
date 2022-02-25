@@ -1,10 +1,9 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { AddLinkModalComponent } from "@app/app/manage-learn/shared";
+import { Injectable } from "@angular/core";
 import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
 import { FilePath } from "@ionic-native/file-path/ngx";
 import { File } from "@ionic-native/file/ngx";
-import { ActionSheetController, ModalController, Platform, ToastController } from "@ionic/angular";
+import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 
@@ -14,7 +13,7 @@ import { FILE_EXTENSION_HEADERS } from "../../constants";
 export class AttachmentService {
   mediaType: string;
   texts: any;
-  actionEvent = new EventEmitter();
+  payload : any;
   constructor(
     private camera: Camera,
     private file: File,
@@ -24,8 +23,7 @@ export class AttachmentService {
     private filePath: FilePath,
     private chooser: Chooser,
     // private filePickerIOS: IOSFilePicker,
-    private translate: TranslateService,
-    private modal : ModalController
+    private translate: TranslateService
   ) {
     this.translate
       .get([
@@ -117,9 +115,9 @@ export class AttachmentService {
           url: "",
         };
 
+        this.payload.push(data);
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionEvent.emit(data);
-        this.actionSheetController.dismiss(data);
+        // this.actionSheetController.dismiss(data);
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -150,9 +148,8 @@ export class AttachmentService {
           isUploaded: false,
           url: "",
         };
-
+        this.payload.push(data);
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionEvent.emit(data);
         this.actionSheetController.dismiss(data);
       }
     } catch (error) {
@@ -208,8 +205,9 @@ export class AttachmentService {
     return this.file.removeFile(this.directoryPath(), fileName);
   }
 
-  async openAttachmentSource(type) {
+  async openAttachmentSource(type,payload) {
     let data:any ='';
+    this.payload = payload;
     switch(type){
       case 'openCamera':
        this.takePicture(this.camera.PictureSourceType.CAMERA);
@@ -221,12 +219,5 @@ export class AttachmentService {
         this.openFile();
       break;
     }
-  }
-  async openLinkModal(){
-    const modal = await this.modal.create({
-      component: AddLinkModalComponent,
-      cssClass: 'my-custom-class'
-    });
-    return await modal.present();
   }
 }

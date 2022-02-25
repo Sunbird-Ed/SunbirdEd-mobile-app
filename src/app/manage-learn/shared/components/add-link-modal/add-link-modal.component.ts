@@ -6,7 +6,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./add-link-modal.component.scss'],
 })
 export class AddLinkModalComponent implements OnInit {
-  links;
+  links:string;
   @Output() eventEmit = new EventEmitter();
   constructor() { }
 
@@ -15,6 +15,8 @@ export class AddLinkModalComponent implements OnInit {
     this.eventEmit.emit();
   }
   submit() {
-    this.eventEmit.emit(this.links);
+    if(this.links){
+      this.eventEmit.emit(this.links);
+    }
   }
 }

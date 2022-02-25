@@ -1,4 +1,7 @@
 <ion-content>
+  <h5 class="page-header-content">{{ description | translate }}
+    </h5>
+<div class="ion-padding">
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
   <div class="text-area-container">
     <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks">
@@ -31,7 +34,8 @@
   </div>
 
   <ion-button (click)="submit()" expand="block">
-    {{"FRMELEMNTS_LBL_ATTACH_FILES" | translate}}
+    {{button | translate}}
   </ion-button>
-  <app-add-link-modal *ngIf="isLinkModalOpen" (eventEmit)="linkEvent($event)"> </app-add-link-modal>
+</div>
 </ion-content>
+<app-add-link-modal *ngIf="isLinkModalOpen" (eventEmit)="linkEvent($event)"> </app-add-link-modal>

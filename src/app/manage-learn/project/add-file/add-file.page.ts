@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService } from '@app/services';
 import { AlertController, Platform } from '@ionic/angular';
@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { AttachmentService, DbService, ProjectService } from '../../core';
 import { actions } from '../../core/constants/actions.constants';
 import * as _ from "underscore";
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-add-file',
@@ -27,6 +28,7 @@ export class AddFilePage implements OnInit {
     pageTitle: ''
   };
   remarks: '';
+  button:string;
   attachments: any = [];
   projectId;
   taskId;
@@ -44,9 +46,10 @@ export class AddFilePage implements OnInit {
     private db: DbService,
     private attachmentService: AttachmentService,
     private platform: Platform,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private location :Location,
+    private zone : NgZone
   ) {
-
     routerParams.params.subscribe(urlParams => {
       this.projectId = urlParams.id;
       this.getProject();
@@ -54,26 +57,20 @@ export class AddFilePage implements OnInit {
     routerParams.queryParams.subscribe(params => {
       this.description = params.taskId ? actions.TASK_FILE_DESCRIPTION.label : actions.PROJECT_FILE_DESCRIPTION.label;
       this.taskId = params.taskId;
-      this.viewOnlyMode = params.viewOnlyMode;
-    })
-    attachmentService.actionEvent.subscribe(attachmentAction => {
-      if (attachmentAction) {
-      this.attachments.push(attachmentAction);
-      }
     })
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
   async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      if (eventName.name == 'back') {
-        this.handleDeviceBackButton();
-      }
-    });
-  
+    this.handleDeviceBackButton();
+    this.zone.run(() => {
+      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+        if (eventName.name === 'back') {
+           this.pageExitConfirm();
+        }
+      });
+    })
   }
   getProject() {
     this.db.query({ _id: this.projectId }).then(
@@ -81,13 +78,10 @@ export class AddFilePage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
         }
-        this.projectCopy = JSON.parse(JSON.stringify(this.project));
-        this.remarks = this.project.remarks;
-        this.attachments = this.project?.attachments ? this.project?.attachments : [];
+        this.projectCopy = { ... this.project};
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
-      (error) => {
-}
+      (error) => {}
     );
   }
 
@@ -96,9 +90,7 @@ export class AddFilePage implements OnInit {
       return item._id == this.taskId;
     });
     this.task = this.project.tasks[task];
-    this.copyOfTaskDetails = JSON.stringify(this.task);
-    this.attachments = this.task.attachments;
-    this.remarks = this.project.remarks;
+    this.copyOfTaskDetails = { ... this.project};
     this.setHeaderConfig();
   }
   setHeaderConfig(){
@@ -107,15 +99,15 @@ export class AddFilePage implements OnInit {
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerConfig.pageTitle = this.taskId? this.task.name : this.project.title;
+    this.button =this.taskId? 'FRMELEMNTS_LBL_ATTACH_FILES': "FRMELEMNTS_LBL_SUBMIT_PROJECT";
+    this.attachments = this.taskId ? this.task?.attachments ? this.task.attachments : [] :  this.project?.attachments ? this.project?.attachments : [];
+    this.remarks = this.taskId? this.taskId.remarks :  this.project?.remarks;
     this.headerService.updatePageConfig(this.headerConfig);
   }
   handleDeviceBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.handleBackButton();
+      this.pageExitConfirm();
     });
-  }
-  handleBackButton() {
-   // handle event
   }
 
   ngOnDestroy() {
@@ -130,7 +122,7 @@ export class AddFilePage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      header: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
+      message: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
       buttons: [
         {
           text: data["OK"],
@@ -156,7 +148,7 @@ export class AddFilePage implements OnInit {
       this.toggleLinkModal();
       return;
     }
-    this.attachmentService.openAttachmentSource(event);
+    this.attachmentService.openAttachmentSource(event,this.attachments);
   }
 
   submit() {
@@ -193,6 +185,32 @@ export class AddFilePage implements OnInit {
       .then((success) => {
         this.project._rev = success.rev;
         this.attachments = [];
+        this.location.back();
       })
+  }
+  async pageExitConfirm(){
+    let data;
+    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE","FRMELEMNTS_BTN_YES_PAGE", "NO"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      cssClass: 'attachment-delete-alert',
+      header: data['FRMELEMNTS_BTN_EXIT_PAGE'],
+      message:data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
+      buttons: [
+        {
+          text: data["FRMELEMNTS_BTN_YES_PAGE"],
+          handler: () => {
+           this.location.back();
+          },
+        }, {
+          text: data["NO"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => { },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

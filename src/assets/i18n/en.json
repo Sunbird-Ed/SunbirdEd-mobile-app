@@ -1517,5 +1517,10 @@
   "FRMELEMNTS_BTN_ADD_LINK":"Add links",
   "FRMELEMNTS_LBL_LINKS": "Links",
   "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
-  "FRMELEMNTS_LBL_EVIDENCE": "evidence"
+  "FRMELEMNTS_LBL_EVIDENCE": "evidence",
+  "FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION":"would you like to add any remarks or attach any files before you mark your task complete?",
+  "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION":"Would you like to add any remarks or attach any files before you submit your Project?",
+  "FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM":"You will lose the attachments if you go back.Are you sure you want to go back?",
+  "FRMELEMNTS_BTN_EXIT_PAGE":"Exit page",
+  "FRMELEMNTS_BTN_YES_PAGE":"Yes exit"
 }

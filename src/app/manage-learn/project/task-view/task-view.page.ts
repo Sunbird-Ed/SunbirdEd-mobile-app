@@ -318,9 +318,6 @@ export class TaskViewPage {
     });
   }
 
-  // markTaskAsCompleted() {
-  //   this.showAttachments = true;
-  // }
   closemarkTaskAsCompleted(){
     this.showAttachments = false;
   }

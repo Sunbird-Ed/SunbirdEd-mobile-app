@@ -262,7 +262,7 @@ export class ProjectDetailsComponent implements OnInit {
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
       this.taskCount = this.utils.getTaskCount(this.projectDetails);
-      this.projectDetails.status = statusType.submitted ?  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`,this.projectDetails._id]) :'';
+      this.projectDetails.status == statusType.submitted ?  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`,this.projectDetails._id]) :'';
     })
   }
 
