@@ -48,15 +48,16 @@ export class DeeplinkRedirectComponent implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.data = extrasState.data;
+      this.switch(this.extra);
+    }else {
+      this.location.back();
     }
   }
 
-  ionViewDidLoad() {}
   ngOnInit() {
     this.translate.get(['message.canNotOpenLink']).subscribe((translations) => {
       this.translateObject = translations;
     });
-    this.switch(this.extra);
   }
 
   async switch(key) {
