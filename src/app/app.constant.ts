@@ -164,6 +164,7 @@ export class EventTopics {
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
     public static readonly DEEPLINK_COLLECTION_PAGE_OPEN = 'DEEPLINK_COLLECTION_PAGE_OPEN';
+    public static readonly DEEPLINK_COURSE_PAGE_OPEN = 'DEEPLINK_COURSE_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
@@ -596,6 +597,7 @@ export class RouterLinks {
     public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
     public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
     public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+    public static readonly ATTACHMENTS_LISTING = 'attachment-listing';
 
 
     public static readonly SOLUTIONS = 'solutions';
@@ -793,4 +795,11 @@ export class OTPTemplates {
 export enum AppOrientation {
     LANDSCAPE = 'Landscape',
     POTRAIT = 'Potrait'
+}
+
+export class OnboardingScreenType {
+    public static readonly LANGUAGE_SETTINGS = 'language-setting';
+    public static readonly USER_TYPE_SELECTION = 'user-type-selection';
+    public static readonly PROFILE_SETTINGS = 'profile-settings';
+    public static readonly DISTRICT_MAPPING = 'district-mapping';
 }

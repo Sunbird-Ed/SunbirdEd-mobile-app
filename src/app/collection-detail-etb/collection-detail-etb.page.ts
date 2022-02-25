@@ -383,7 +383,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.subscribeSdkEvent();
     });
     this.ionContent.ionScroll.subscribe((event) => {
-      this.scrollPosition = event.scrollTop;
+      this.scrollPosition = event['scrollTop'];
     });
 
     this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, (data) => {
@@ -1155,7 +1155,7 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-
+    this.events.unsubscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN);
   }
   async showDeletePopOver() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {

@@ -59,6 +59,12 @@ export const mockProfileData = {
     framework: {
         medium: ['English', 'Bengali'],
         board: ['CBSE'],
+    },
+    serverProfile: {
+        roles: [
+            'teacher',
+        'headmaster'
+        ]
     }
 };
 

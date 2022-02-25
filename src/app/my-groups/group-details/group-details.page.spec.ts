@@ -2412,7 +2412,7 @@ describe('GroupDetailsPage', () => {
                     fields: [
                         {
                             index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
+                            title: 'COURSES',
                             desc: 'ACTIVITY_COURSE_DESC',
                             activityType: 'Content',
                             isEnabled: true,
@@ -2426,7 +2426,7 @@ describe('GroupDetailsPage', () => {
                 }
             })) as any;
             groupDetailsPage.activityList = [];
-            mockCommonUtilService.translateMessage = jest.fn(() => 'ACTIVITY_COURSE_TITLE');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'COURSES');
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -2446,7 +2446,7 @@ describe('GroupDetailsPage', () => {
                             supportedActivityList: [
                                 {
                                     index: 0,
-                                    title: 'ACTIVITY_COURSE_TITLE',
+                                    title: 'COURSES',
                                     desc: 'ACTIVITY_COURSE_DESC',
                                     activityType: 'Content',
                                     isEnabled: true,
@@ -2472,7 +2472,7 @@ describe('GroupDetailsPage', () => {
                     fields: [
                         {
                             index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
+                            title: 'COURSES',
                             desc: 'ACTIVITY_COURSE_DESC',
                             activityType: 'Content',
                             isEnabled: true,
@@ -2511,7 +2511,7 @@ describe('GroupDetailsPage', () => {
                     fields: [
                         {
                             index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
+                            title: 'COURSES',
                             desc: 'ACTIVITY_COURSE_DESC',
                             activityType: 'Content',
                             isEnabled: true,
@@ -2562,7 +2562,7 @@ describe('GroupDetailsPage', () => {
                                 },
                                 index: 0,
                                 isEnabled: true,
-                                title: 'ACTIVITY_COURSE_TITLE',
+                                title: 'COURSES',
                             },
                         ],
                     });

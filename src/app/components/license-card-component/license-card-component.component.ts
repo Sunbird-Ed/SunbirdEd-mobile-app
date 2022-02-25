@@ -27,9 +27,11 @@ export class LicenseCardComponentComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.objId = this.content.identifier;
-        this.objType = this.content.contentType;
-        this.objVer = this.content.pkgVersion;
+        if(this.content){
+            this.objId = this.content.identifier;
+            this.objType = this.content.contentType;
+            this.objVer = this.content.pkgVersion;
+        }
     }
 
     showLicensce() {
