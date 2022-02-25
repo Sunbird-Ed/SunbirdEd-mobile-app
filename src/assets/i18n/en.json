@@ -1509,6 +1509,7 @@
   "FRMELEMNTS_LBL_PROJECT_DOWNLOAD_OFFLINE":"Download failed. Check your network connection and try again",
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT": "Only registered users can take project",
   "FRMELEMENTS_MSG_PROJECT_ALREADY_SYNCED" :"Your project has been completed and synced, no further syncs are allowed to this project",
+  "FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS": "Please create and complete the tasks to submit the project, You can do that by click on the Add your own task button below.",
   "FRMELEMNTS_LBL_LINKS": "Links",
   "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
   "FRMELEMNTS_LBL_EVIDENCE": "evidence"
