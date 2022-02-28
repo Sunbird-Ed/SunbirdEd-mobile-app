@@ -480,7 +480,6 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockApiUtilService.initilizeML = jest.fn();
-            mockDbService.createDb = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
             global.window.segmentation = {

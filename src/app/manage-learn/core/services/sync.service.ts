@@ -107,6 +107,7 @@ export class SyncService {
     const project = { ...projectDetails};
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._id;
+    delete payload.tasks;
     const actualPayload = this.processPayload(payload);
     //Else in submitted status projects, the sync API will Fail while redirecting to sync page
     actualPayload.status = statusType.started;
