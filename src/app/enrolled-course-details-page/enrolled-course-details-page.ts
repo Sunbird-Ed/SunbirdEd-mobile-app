@@ -2220,7 +2220,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         })
         .catch(async (e) => {
-          if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'UOS_UCNSTRED0013'
+          if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
             && this.course.userConsent === UserConsent.YES) {
             if (!this.isConsentPopUp) {
               this.isConsentPopUp = true;
