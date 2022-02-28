@@ -2305,7 +2305,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 response: {
                     body: {
                         params: {
-                            err: 'UOS_UCNSTRED0013'
+                            err: 'USER_CONSENT_NOT_FOUND'
                         }
                     }
                 }
