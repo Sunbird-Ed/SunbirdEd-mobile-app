@@ -1378,7 +1378,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-      this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.isMinor = this.profile && this.profile.serverProfile && this.profile.serverProfile.isMinor;
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
