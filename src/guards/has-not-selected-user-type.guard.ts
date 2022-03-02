@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Router, ActivatedRoute, Resolve, NavigationExtras, ActivatedRouteSnapshot } from '@angular/router';
-import { SharedPreferences } from 'sunbird-sdk';
-import { OnboardingScreenType, PreferenceKey } from '@app/app/app.constant';
+import { ProfileType, SharedPreferences } from 'sunbird-sdk';
+import { OnboardingScreenType, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import {SplashScreenService} from '@app/services';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
@@ -18,8 +18,13 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
 
     async resolve(route: ActivatedRouteSnapshot): Promise<any> {
 
-        if(await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.USER_TYPE_SELECTION)){
-            this.navigateToProfileSettings();
+        if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.USER_TYPE_SELECTION)) {
+            if (await this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise() === ProfileType.ADMIN) {
+                this.router.navigate([RouterLinks.SIGN_IN], { state: { hideBackBtn: true } });
+                this.splashScreenService.handleSunbirdSplashScreenActions();
+            } else {
+                this.navigateToProfileSettings();
+            }
             return false;
         }
 
@@ -51,6 +56,6 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
                 forwardMigration: true
             }
         };
-        this.router.navigate(['/', 'profile-settings'], navigationExtras);
+        this.router.navigate(['/', RouterLinks.PROFILE_SETTINGS], navigationExtras);
     }
 }

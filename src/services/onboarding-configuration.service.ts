@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@angular/core";
 import { OnboardingScreenType, PreferenceKey, ProfileConstants } from "@app/app/app.constant";
 import { GUEST_TEACHER_TABS, initTabs } from "@app/app/module.service";
 import { Events } from '@app/util/events';
-import { DeviceRegisterService, Profile, ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
+import { DeviceRegisterService, Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService, CommonUtilService, ContainerService } from ".";
 import onboarding from './../assets/configurations/config.json';
 import { SegmentationTagService } from "./segmentation-tag/segmentation-tag.service";
@@ -46,7 +46,7 @@ export class OnboardingConfigurationService {
         }
     }
 
-    public async skipOnboardingStep(currentPage) {
+    public async skipOnboardingStep(currentPage, isUserLoggedIn = false) {
         if(!this.onBoardingConfig || !this.onBoardingConfig.onboarding){
             return false;
         }
@@ -55,16 +55,19 @@ export class OnboardingConfigurationService {
         const config = this.onBoardingConfig.onboarding.find(obj => {
             return (obj && obj.name === currentPage);
         });
-        console.log('Configuration :', config);
+
         if (!config || !config.skip || !config.default) {
             return false;
         }
-
-        return await this.nextOnboardingStep(config);
+        if (isUserLoggedIn) {
+            return await this.loggedInUserOnboardingStep(config);
+        } else {
+            return await this.guestOnboardingStep(config);
+        }
     }
 
-    private async nextOnboardingStep(config) {
-        let skipOnboarding = false;
+    private async guestOnboardingStep(config) {
+        let skipOnboarding = true;
 
         switch (config.name) {
 
@@ -74,15 +77,23 @@ export class OnboardingConfigurationService {
                     this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, config.default.code).toPromise();
                     this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE, config.default.label).toPromise();
                 }
-                skipOnboarding = true;
                 break;
 
             case OnboardingScreenType.USER_TYPE_SELECTION:
                 const selectedUser = await this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
                 if (!selectedUser) {
+                    const profile = this.appGlobalService.getCurrentUser();
+                    const profileRequest: Profile = {
+                        uid: profile.uid,
+                        handle: 'Guest1',
+                        profileType: config.default,
+                        source: ProfileSource.LOCAL
+                    };
+                    await this.profileService.updateProfile(profileRequest).toPromise();
+                    await this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise();
+                    this.sharedPreferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, profile.uid).toPromise().then();
                     this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, config.default).toPromise();
                 }
-                skipOnboarding = true;
                 break;
 
             case OnboardingScreenType.PROFILE_SETTINGS:
@@ -90,15 +101,38 @@ export class OnboardingConfigurationService {
                 if (!this.isProfileComplete(profile)) {
                     await this.setDefaultFrameworkDetails(config.default);
                 }
-                skipOnboarding = true;
                 break;
 
             case OnboardingScreenType.DISTRICT_MAPPING:
                 this.setDistrictMappingDetails(config);
-                skipOnboarding = true;
                 break;
 
             default:
+                skipOnboarding = false;
+                break;
+        }
+
+        return skipOnboarding;
+    }
+
+    private async loggedInUserOnboardingStep(config) {
+        let skipOnboarding = true;
+
+        switch (config.name) {
+            case OnboardingScreenType.USER_TYPE_SELECTION:
+                //todo
+                break;
+
+            case OnboardingScreenType.PROFILE_SETTINGS:
+                //todo
+                break;
+
+            case OnboardingScreenType.DISTRICT_MAPPING:
+                //todo
+                break;
+
+            default:
+                skipOnboarding = false;
                 break;
         }
 
@@ -144,7 +178,7 @@ export class OnboardingConfigurationService {
             && profile.medium && profile.medium.length;
     }
 
-    setDistrictMappingDetails(config) {
+    private setDistrictMappingDetails(config) {
         const req = {
             userDeclaredLocation: {
                 ...config.default, 
