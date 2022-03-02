@@ -104,8 +104,8 @@ export class SyncService {
     if(showLoader){
       this.loader.startLoader()
     }
-    const project = { ...projectDetails};
-    const payload = this.removeKeys(project, ['isNew', 'isEdit']);
+    const project = { ...projectDetails };
+    const payload = this.removeKeys(project, ['isNew', 'isEdit', 'submissionDetails']);
     delete payload._id;
     const actualPayload = this.processPayload(payload);
     //Else in submitted status projects, the sync API will Fail while redirecting to sync page
@@ -182,6 +182,14 @@ export class SyncService {
 
   getAllAttachmentOfProject(project) {
     let attachments = [];
+    // project leve attachments
+    if (project.attachments && project.attachments.length) {
+      for (const attachment of project.attachments) {
+        !attachment['sourcePath'] ? attachments.push(attachment) : null;
+      }
+    }
+
+    // Task leve attachments
     for (const task of project.tasks) {
       if (task.attachments && task.attachments.length) {
         for (const attachment of task.attachments) {

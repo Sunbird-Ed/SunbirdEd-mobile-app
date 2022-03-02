@@ -1,7 +1,7 @@
 <ion-content *ngIf="project" class="ion-padding">
   <div class="project-segments segment-wrapper">
     <ion-segment [(ngModel)]="type" (ionChange)="segmentChanged($event)" class="segment-card">
-      <ion-segment-button value="{{tab.value}}" *ngFor="let tab of tabs;let i=index">
+      <ion-segment-button value="{{tab.type}}" *ngFor="let tab of tabs;let i=index">
         <ion-label>{{tab.name | translate}}</ion-label>
         <!-- <div class="verticalLine"></div> -->
       </ion-segment-button>
@@ -13,7 +13,7 @@
   </app-item-list-header>
   <div *ngIf="attachments?.length">
     <div [ngSwitch]="type">
-      <div *ngSwitchCase="'images'">
+      <div *ngSwitchCase="'image/jpeg'">
         <div *ngFor="let task of attachments">
           <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
             <ion-card-header class="project-card _capitalize">
@@ -30,6 +30,8 @@
                     <ion-card-content>
                       <img [src]="getImgContent(attachment?.localUrl)"
                         *ngIf="attachment.type.includes('image') && !attachment.url" />
+                        <img [src]="attachment?.url"
+                        *ngIf="attachment.type.includes('image') && attachment.url" />
                     </ion-card-content>
                   </ion-card>
                   <!-- <ion-icon name="image-outline" *ngIf="attachment.url" style="display: contents;"

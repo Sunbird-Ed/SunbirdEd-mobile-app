@@ -11,7 +11,8 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { UtilsService } from '../../core';
+import { statusType, UtilsService } from '../../core';
+import * as _ from "underscore";
 
 @Component({
   selector: 'app-attachment-listing',
@@ -27,14 +28,16 @@ export class AttachmentListingPage implements OnInit {
     actionButtons: []
   };
   private win: any = window;
-  attachments:any = [];
+  attachments: any = [];
+  projectAttachments: any = [];
   projectId;
   path;
-  type = "images";
+  type = "image/jpeg";
   tabs;
   project;
   projectcopy;
   tabsLength;
+  statuses = statusType;
   constructor(
     private db: DbService,
     private platform: Platform,
@@ -49,17 +52,17 @@ export class AttachmentListingPage implements OnInit {
     private routeParam: ActivatedRoute,
     private util: UtilsService
   ) {
+    this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
     routeParam.params.subscribe(parameters => {
       this.projectId = parameters.id;
       this.tabs = this.util.getTabs();
+      this.tabsLength = this.tabs.length;
+      this.attachments = [];
+      this.getProject();
     })
   }
 
-  ngOnInit() {
-    this.getAttachments(this.tabs[0]);
-    this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
-    this.tabsLength = this.tabs.length;
-  }
+  ngOnInit() { }
   ionViewWillEnter() {
     let data;
     this.translate.get(["FRMELEMNTS_LBL_ATTACHMENTS"]).subscribe((text) => {
@@ -79,27 +82,63 @@ export class AttachmentListingPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
-
   segmentChanged(event) {
     this.type = event.detail.value;
-    switch(this.type){
-      case "images":{ 
-        this.getAttachments(this.tabs[0]);
-        break; 
-      } 
-      case "files":{ 
-        this.getAttachments(this.tabs[1]);
-        break; 
-      } 
-      case "links":{ 
-        this.getAttachments(this.tabs[2]);
-        break; 
-      } 
-    }
+    this.attachments = [];
+    this.getAttachments(this.type);
   }
   getAttachments(tab) {
+    this.attachments = [];
+    if (this.project.status == this.statuses.submitted && this.project.attachments.length) {
+      let evidence = {
+        projectName: this.project.title,
+        remarks: this.project.remarks,
+        attachments: []
+      }
+      this.project.attachments.forEach(attachment => {
+        if (attachment.type == tab) {
+          this.getEvidences(attachment, evidence);
+        }
+      });
+      this.attachments.push(evidence);
+    }
+    if (this.project.tasks && this.project.tasks.length) {
+      this.project.tasks.forEach(task => {
+          let evidence = {
+            taskName: task.name,
+            remarks: task.remarks,
+            attachments: []
+          }
+        if (task.attachments && task.attachments.length) {
+          task.attachments.forEach(attachment => {
+            if (attachment.type == tab) {
+              this.getEvidences(attachment, evidence);
+            }
+          });
+        }
+        this.attachments.push(evidence);
+      });
+    }
   }
 
+  getEvidences(attachment, evidence) {
+    attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
+      this.path+ attachment.name
+    ) : '';
+    evidence.attachments.push(attachment);
+  }
+
+  getProject() {
+    this.db.query({ _id: this.projectId }).then(
+      (success) => {
+        if (success?.docs.length) {
+          this.project = success.docs[0];
+          this.getAttachments(this.tabs[0].type);
+        }
+      },
+      (error) => { }
+    );
+  }
   getImgContent(file) {
     return this.sanitizer.bypassSecurityTrustUrl(file);
   }

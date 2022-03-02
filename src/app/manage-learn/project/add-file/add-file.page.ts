@@ -141,7 +141,7 @@ export class AddFilePage implements OnInit {
   }
 
   delete(item) {
-
+  this.task.attachments.splice(this.task.attachments.findIndex(attachment => attachment.name == item.name), 1);
   }
   onAction(event) {
     if (event == 'openLink') {
