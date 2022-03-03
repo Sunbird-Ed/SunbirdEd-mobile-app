@@ -13,7 +13,7 @@ import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, NetworkService, statusType, ToastService } from '../../core';
+import { LoaderService, NetworkService, ProjectService, statusType, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
 import cloneDeep from 'lodash/cloneDeep';
@@ -64,6 +64,7 @@ export class ProjectOperationPage  {
     private syncServ: SyncService,
     private networkService: NetworkService,
     private toast: ToastService,
+    private projectServ: ProjectService,
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -341,10 +342,12 @@ export class ProjectOperationPage  {
   }
 
   newProjectCreate() {
-    this.template.isNew = true;
-    this.template.downloaded = true;
+    // this.template.isNew = true;
+    // this.template.downloaded = true;
 
-    this.update(true);
+    // this.update(true);
+
+    this.projectServ.createNewProject(this.template, false);
   }
   ionViewWillLeave() {
     if(this.viewProjectAlert ){
