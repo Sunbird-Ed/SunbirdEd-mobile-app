@@ -718,7 +718,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      if (this.appGlobalService.isOnBoardingCompleted) {
+        this.router.navigate([`/${RouterLinks.TABS}`]);
+      } else {
+        this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      }
     } else if (this.resultLength === 1) {
       window.history.go(-2);
     } else {
