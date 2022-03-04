@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
-import { PreferenceKey } from "@app/app/app.constant";
-import { SharedPreferences } from 'sunbird-sdk';
+import { PreferenceKey, SwitchableTabsConfig } from '@app/app/app.constant';
+import { ProfileType, SharedPreferences } from 'sunbird-sdk';
+import { AppGlobalService } from '@app/services';
 import onboarding from './../assets/configurations/config.json';
 
 interface OnBoardingConfig {
@@ -9,6 +10,23 @@ interface OnBoardingConfig {
     skip: boolean;
     default: any;
 }
+interface ICON {
+    active: string;
+    inactive: string;
+    disabled?: string;
+  }
+interface TabConfig {
+    name: string;
+    root: string;
+    icon?: ICON;
+    label: string;
+    index: number;
+    isSelected?: boolean;
+    status: string;
+    disabled: boolean;
+    theme: string;
+    userTypeAdmin?: string;
+  }
 
 @Injectable({
     providedIn: 'root'
@@ -16,9 +34,11 @@ interface OnBoardingConfig {
 export class OnboardingConfigurationService {
 
     onBoardingConfig: { onboarding: Array<OnBoardingConfig> };
+    tabList: { tab: Array<TabConfig> };
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+        private appGlobalService: AppGlobalService
     ) {
         this.onBoardingConfig = onboarding;
     }
@@ -61,5 +81,28 @@ export class OnboardingConfigurationService {
                 break;
         }
     }
+
+    initializedTabs(theme: string, userType: string) {
+        if (userType === ProfileType.ADMIN) {
+            return this.tabList = onboarding.tabs.filter((tab) => tab && tab.userTypeAdmin);
+          } else if (theme === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
+            if (this.appGlobalService.isUserLoggedIn()) {
+              return this.findAllTabs('NEW', 'logIn');
+            } else {
+              return this.findAllTabs('NEW', 'guest');
+            }
+          } else {
+            if (this.appGlobalService.isUserLoggedIn()) {
+              return this.findAllTabs('OLD', 'logIn');
+            } else {
+              return this.findAllTabs('OLD', 'guest');
+            }
+          }
+    }
+
+    findAllTabs(theme: string, status: string) {
+        return this.tabList = onboarding.tabs.filter((tab) =>
+        (tab.theme === theme || tab.theme === 'ALL') && (tab.status === 'ALL' || tab.status === status));
+      }
 
 }
