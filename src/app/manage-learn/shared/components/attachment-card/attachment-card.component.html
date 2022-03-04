@@ -1,0 +1,29 @@
+<ion-card class="attachments-card" *ngIf="data?.attachments?.length">
+  <ion-card-header class="project-card _capitalize">
+    {{data.title | titlecase}}
+  </ion-card-header>
+  <ion-card-content>
+    <ion-row>
+      <ion-col size="12" *ngIf="data?.remarks">
+        {{data.remarks}}
+      </ion-col>
+      <ion-col size="6" class="img-wrapper" *ngFor="let attachment of data.attachments| slice:0:limit; let i=index;">
+        <ion-card>
+          <div *ngIf="!viewOnly"><ion-icon class="close-icon" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon></div>
+          <ion-card-content>
+            <img [src]="getImgContent(attachment?.localUrl)"
+              *ngIf="attachment.type.includes('image') && !attachment.url" />
+              <img [src]="attachment?.url"
+              *ngIf="attachment.type.includes('image') && attachment.url" />
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-card-content>
+  <div class="button-flex-div">
+    <ion-button class="view-more" expand="block" fill="outline" (click)="loadMore()"
+      *ngIf="data?.attachments?.length>2">
+      {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate | uppercase }}
+    </ion-button>
+  </div>
+</ion-card>

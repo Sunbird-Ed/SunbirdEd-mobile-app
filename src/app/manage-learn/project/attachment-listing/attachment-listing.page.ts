@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppHeaderService } from '@app/services';
 import { DbService } from '../../core/services/db.service';
-import { Platform } from "@ionic/angular";
+import { AlertController, Platform } from "@ionic/angular";
 import { File } from "@ionic-native/file/ngx";
-import { DomSanitizer } from "@angular/platform-browser";
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,8 +27,7 @@ export class AttachmentListingPage implements OnInit {
     actionButtons: []
   };
   private win: any = window;
-  attachments: any = [];
-  projectAttachments: any = [];
+  attachments: any;
   projectId;
   path;
   type = "image/jpeg";
@@ -38,11 +36,11 @@ export class AttachmentListingPage implements OnInit {
   projectcopy;
   tabsLength;
   statuses = statusType;
+  viewOnly: boolean = false;
   constructor(
     private db: DbService,
     private platform: Platform,
     private file: File,
-    private sanitizer: DomSanitizer,
     private location: Location,
     private headerService: AppHeaderService,
     private translate: TranslateService,
@@ -50,14 +48,18 @@ export class AttachmentListingPage implements OnInit {
     public fileOpener: FileOpener,
     private photoViewer: PhotoViewer,
     private routeParam: ActivatedRoute,
-    private util: UtilsService
+    private util: UtilsService,
+    private alert: AlertController
   ) {
     this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
     routeParam.params.subscribe(parameters => {
       this.projectId = parameters.id;
       this.tabs = this.util.getTabs();
       this.tabsLength = this.tabs.length;
-      this.attachments = [];
+      this.attachments = {
+        project: [],
+        tasks: []
+      };
       this.getProject();
     })
   }
@@ -84,46 +86,52 @@ export class AttachmentListingPage implements OnInit {
   }
   segmentChanged(event) {
     this.type = event.detail.value;
-    this.attachments = [];
+    this.attachments = {
+      project: [],
+      tasks: []
+    };
     this.getAttachments(this.type);
   }
   getAttachments(tab) {
-    this.attachments = [];
     if (this.project.status == this.statuses.submitted && this.project.attachments.length) {
       let evidence = {
-        projectName: this.project.title,
+        title: this.project.title,
         remarks: this.project.remarks,
         attachments: []
       }
       this.project.attachments.forEach(attachment => {
         if (attachment.type == tab) {
-          this.getEvidences(attachment, evidence);
+          attachment.type != 'link' ? this.getEvidences(attachment, evidence) : evidence.attachments.push(attachment);
         }
       });
-      this.attachments.push(evidence);
+      if (evidence.attachments.length) {
+        this.attachments.project.push(evidence);
+      }
     }
     if (this.project.tasks && this.project.tasks.length) {
       this.project.tasks.forEach(task => {
-          let evidence = {
-            taskName: task.name,
-            remarks: task.remarks,
-            attachments: []
-          }
+        let evidence = {
+          title: task.name,
+          remarks: task.remarks,
+          attachments: []
+        }
         if (task.attachments && task.attachments.length) {
           task.attachments.forEach(attachment => {
             if (attachment.type == tab) {
-              this.getEvidences(attachment, evidence);
+              attachment.type != 'link' ? this.getEvidences(attachment, evidence) : evidence.attachments.push(attachment);
             }
           });
         }
-        this.attachments.push(evidence);
+        if (evidence.attachments.length) {
+          this.attachments.tasks.push(evidence);
+        }
       });
     }
   }
 
   getEvidences(attachment, evidence) {
     attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
-      this.path+ attachment.name
+      this.path + attachment.name
     ) : '';
     evidence.attachments.push(attachment);
   }
@@ -133,14 +141,12 @@ export class AttachmentListingPage implements OnInit {
       (success) => {
         if (success?.docs.length) {
           this.project = success.docs[0];
+          this.viewOnly = this.project.status == statusType.submitted ? true : false;
           this.getAttachments(this.tabs[0].type);
         }
       },
       (error) => { }
     );
-  }
-  getImgContent(file) {
-    return this.sanitizer.bypassSecurityTrustUrl(file);
   }
 
   viewDocument(attachment) {
@@ -163,5 +169,37 @@ export class AttachmentListingPage implements OnInit {
     this.fileOpener.open(this.path + '/' + attachment.name, attachment.type)
       .then(() => { console.log('File is opened'); })
       .catch(e => console.log('Error opening file', e));
+  }
+  async deleteConfirmation(attachment, index) {
+    let data;
+    this.translate.get(['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM', 'OK', 'CANCEL']).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      cssClass: 'attachment-delete-alert',
+      message: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
+      buttons: [
+        {
+          text: data['OK'],
+          handler: () => {
+            this.deleteAttachment(attachment, index);
+          },
+        }, {
+          text: data['CANCEL'],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {
+
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+  deleteImage(event) {
+    this.deleteConfirmation(event.data, event.index);
+  }
+  deleteAttachment(attachment, index) {
+    attachment.splice(index, 1);
   }
 }

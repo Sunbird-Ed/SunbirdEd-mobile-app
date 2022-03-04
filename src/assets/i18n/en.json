@@ -1493,7 +1493,7 @@
   "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT":"Submit improvement",
   "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT_SUCCESS_MESSAGE":"You have completed and submitted this project successfully.",
   "FRMELEMNTS_LBL_SUBMIT_PROJECT":"Submit Project",
-  "FRMELEMNTS_MSG_SUBMIT_PROJECT":"Are you sure you want to submit your improvement project?",
+  "FRMELEMNTS_MSG_SUBMIT_PROJECT":"Are you sure you want to submit your improvement project? Once submitted no further edits can be made to the project.",
   "FRMELEMNTS_LBL_ADD_YOUR_TASK":"Add your own task.",
   "FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND":"There are no projects assigned to your profile.",
   "FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND":"Click on create new project tab above to create your first improvement project",
@@ -1523,5 +1523,6 @@
   "FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS": "Please create and complete the tasks to submit the project, You can do that by click on the Add your own task button below.",
   "FRMELEMNTS_LBL_LINKS": "Links",
   "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
+  "FRMELEMNTS_LBL_PROJECT_LEVEL":"Project level",
   "FRMELEMNTS_LBL_EVIDENCE": "evidence"
 }

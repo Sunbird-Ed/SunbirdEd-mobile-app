@@ -39,8 +39,49 @@ img{
     font-size: 20px;
     float: right;
     margin: 8px;
-    color: black;
+    color:  var(--blue);
+ }
+ .close-icon-files{
+   font-size: 20px;
+   float: right;
+   margin: 5px 5px;
+   color:  var(--blue);
  }
  .img-wrapper{
     margin-top: 4px;
  }
+ .attachment-list{
+   border-radius: 8px;
+    color: var(--blue);
+    padding: 5px 5px;
+    display: flex;
+    margin: 10px 0px;
+    justify-content: space-between;
+   span{
+      margin-left: 30px;
+   }
+   button{
+      background: transparent;
+      box-shadow: none !important;
+      /* margin-top: -7px; */
+      color: var(--blue);
+      font-size: 12px;
+      p{
+         margin-bottom: 0px;
+         font-size: 8px !important;
+         margin-top: -5px;
+         text-align: center;
+         font-weight: 600;
+       }
+       ion-icon{
+         font-size: 20px;
+       }
+   }
+   .prefix-attachment{
+      font-size: 20px;
+      position: absolute;
+    }
+ }
+
+
+ 

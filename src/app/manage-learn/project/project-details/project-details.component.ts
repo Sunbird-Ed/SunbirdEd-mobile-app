@@ -61,7 +61,8 @@ export class ProjectDetailsComponent implements OnInit {
     private projectServ: ProjectService,
     private modal: ModalController,
     private utils: UtilsService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private share: SharingFeatureService
   ) {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
@@ -263,8 +264,6 @@ export class ProjectDetailsComponent implements OnInit {
     this.db.update(this.projectDetails).then(success => {
       this.projectDetails._rev = success.rev;
       this.taskCount = this.utils.getTaskCount(this.projectDetails);
-      // Project submission is pending so below code commented
-      // this.projectDetails.status == statusType.submitted ?  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`,this.projectDetails._id]) :'';
     })
   }
 
@@ -344,36 +343,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
-    this.projectDetails.status = statusType.submitted;
-    this.updateLocalDb(true);
-    this.doSyncAction();
-  }
-
-  async submitProjectConfirmation() {
-    let data;
-    this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_PROJECT", "NO", "YES"]).subscribe((text) => {
-      data = text;
-    });
-    const alert = await this.alert.create({
-      cssClass: 'central-alert',
-      header: data['FRMELEMNTS_LBL_SUBMIT_PROJECT'],
-      message: data["FRMELEMNTS_MSG_SUBMIT_PROJECT"],
-      buttons: [
-        {
-          text: data["NO"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => { },
-        },
-        {
-          text: data["YES"],
-          handler: () => {
-            this.submitImprovment();
-          },
-        },
-      ],
-    });
-    await alert.present();
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`, this.projectDetails._id])
   }
 
   async addNewTask() {
