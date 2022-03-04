@@ -25,7 +25,7 @@ describe('HasNotSelectedUserTypeGuard', () => {
     };
 
     const mockOnBoardingConfigurationService: Partial<OnboardingConfigurationService> = {
-        nextOnboardingStep: jest.fn()
+        skipOnboardingStep: jest.fn(()=> Promise.resolve(false))
     }
 
 
@@ -52,30 +52,36 @@ describe('HasNotSelectedUserTypeGuard', () => {
 
     describe('resolve', () => {
 
-        it('should return true if route has onReload property true', () => {
+        it('should return true if route has onReload property true', (done) => {
             // arrange
             mockActivatedRoute.snapshot = { params: { comingFrom: false } } as any;
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
             // act
             const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'true' } } as any);
             // assert
-            expect(response).toBeTruthy();
-            expect(hasNotSelectedUserTypeGuard['guardActivated']).toBeTruthy();
-            expect(mockOnBoardingConfigurationService.nextOnboardingStep).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+                expect(hasNotSelectedUserTypeGuard['guardActivated']).toBeTruthy();
+                expect(response).toBeTruthy();
+                done()
+            }, 0);
 
         });
 
-        it('should return true if route has comingFrom property UserTypeSelection', () => {
+        it('should return true if route has comingFrom property UserTypeSelection', (done) => {
             // arrange
             mockActivatedRoute.snapshot = { params: { comingFrom: 'UserTypeSelection' } } as any;
             hasNotSelectedUserTypeGuard['guardActivated'] = false;
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
             // act
             const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'false' } } as any);
             // assert
-            expect(response).toBeTruthy();
-            expect(hasNotSelectedUserTypeGuard['guardActivated']).toBeTruthy();
-            expect(mockOnBoardingConfigurationService.nextOnboardingStep).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+                expect(hasNotSelectedUserTypeGuard['guardActivated']).toBeTruthy();
+                expect(response).toBeTruthy();
+                done();
+            }, 0);
 
         });
 
@@ -83,7 +89,7 @@ describe('HasNotSelectedUserTypeGuard', () => {
             // arrange
             mockActivatedRoute.snapshot = { params: { comingFrom: 'UserTypeSelection1' } } as any;
             hasNotSelectedUserTypeGuard['guardActivated'] = false;
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
 
             // act
             hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'false' } } as any);
@@ -103,7 +109,7 @@ describe('HasNotSelectedUserTypeGuard', () => {
             mockActivatedRoute.snapshot = { params: { comingFrom: 'UserTypeSelection1' } } as any;
             hasNotSelectedUserTypeGuard['guardActivated'] = false;
             mockSharedPreference.getString = jest.fn(() => of(undefined));
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
 
             // act
             hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'false' } } as any);

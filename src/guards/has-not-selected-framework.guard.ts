@@ -61,7 +61,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         return false;
     }
 
-    async navigateToNext() {
+    private async navigateToNext() {
         this.appGlobalService.isProfileSettingsCompleted = true;
         this.splashScreenService.handleSunbirdSplashScreenActions();
 
