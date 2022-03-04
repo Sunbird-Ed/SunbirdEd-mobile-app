@@ -3,7 +3,7 @@ import { ModalController, AlertController, PopoverController, Platform } from '@
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategorySelectComponent } from '../category-select/category-select.component';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,8 @@ import { DbService, LocalStorageService, statusType, ToastService, UtilsService 
 import { localStorageConstants } from '../../core/constants/localStorageConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-create-project',
@@ -60,7 +62,8 @@ export class CreateProjectPage implements OnInit {
     private toast: ToastService,
     private utilsService: UtilsService,
     private ngZone: NgZone,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
   ) {
     route.queryParams.subscribe((parameters) => {
       this.hasAcceptedTAndC = parameters.hasAcceptedTAndC == 'false' ? false : true;
@@ -128,13 +131,25 @@ export class CreateProjectPage implements OnInit {
   getForm() {
     this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then((projectData) => {
       this.projectFormData = projectData;
-      this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then((taskData) => {
-        let taskForm = {
-          taskData,
-        };
-        this.projectFormData.push(taskForm);
+      // this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then((taskData) => {
+      //  if(taskData){
+      //   let taskForm = {
+      //     taskData,
+      //   };
+      //   this.projectFormData.push(taskForm);
+      //  }
+      //   this.prepareForm();
+      // });
+      this.prepareForm();
+    }, async (error) => {
+      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.PROJECT_CREATE_META
+      );
+      if (createProjectMeta.length) {
+        this.projectFormData = createProjectMeta;
+        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
         this.prepareForm();
-      });
+      }
     });
   }
   public prepareForm() {
@@ -151,14 +166,16 @@ export class CreateProjectPage implements OnInit {
           }
         }
       } else {
-        res.taskData.forEach((element) => {
-          if (element.validation) {
-            if (element.validation.required) {
-              (element.validation.name = 'required'),  validationsArray.push(Validators.required);
+        if(res.taskData && res.taskData.length){
+          res.taskData.forEach((element) => {
+            if (element.validation) {
+              if (element.validation.required) {
+                (element.validation.name = 'required'), validationsArray.push(Validators.required);
+              }
+              controls[element.field] = new FormControl('', validationsArray);
             }
-            controls[element.field] = new FormControl('', validationsArray);
-          }
-        });
+          });
+        }
       }
     });
     this.projectForm = this.fb.group(controls);

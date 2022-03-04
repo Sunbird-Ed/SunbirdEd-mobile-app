@@ -11,6 +11,8 @@
       {{categories}}
     </ion-col>
   </ion-row>
+  <ion-button (click)="goToDetails()"> Go to Template page
+  </ion-button>
   
   <app-project-task-list *ngIf="sortedTasks" 
   [sortedTasks]="sortedTasks" [schedules]="schedules" [viewOnlyMode]="viewOnlyMode"

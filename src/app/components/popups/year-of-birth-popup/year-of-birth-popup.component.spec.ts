@@ -31,7 +31,8 @@ describe('YearOfBirthPopupComponent', () => {
 
     it('should return list of year', () => {
         yearOfBirthPopupComponent.ngOnInit();
-        expect(yearOfBirthPopupComponent.birthYearOptions).toHaveLength(100);
+        const yearsLength = yearOfBirthPopupComponent.birthYearOptions.length;
+        expect(yearsLength).toBeGreaterThan(100);
     });
 
     describe('submit', () => {

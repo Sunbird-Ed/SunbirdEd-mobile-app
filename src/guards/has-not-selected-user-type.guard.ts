@@ -1,8 +1,9 @@
 import { Injectable, Inject } from '@angular/core';
 import { Router, ActivatedRoute, Resolve, NavigationExtras, ActivatedRouteSnapshot } from '@angular/router';
-import { SharedPreferences } from 'sunbird-sdk';
+import { ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import {SplashScreenService} from '@app/services';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 @Injectable()
 export class HasNotSelectedUserTypeGuard implements Resolve<any> {
@@ -11,10 +12,21 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         private router: Router,
         private activatedRoute: ActivatedRoute,
-        private splashScreenService: SplashScreenService
+        private splashScreenService: SplashScreenService,
+        private onboardingConfigurationService: OnboardingConfigurationService
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): any {
+
+        if (!this.onboardingConfigurationService.nextOnboardingStep('user-type-selection')) {
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    forwardMigration: true
+                }
+            };
+            this.router.navigate(['/', 'profile-settings'], navigationExtras);
+        }
+
         if (route.queryParams.onReload === 'true') {
             this.guardActivated = true;
         }
@@ -29,17 +41,17 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         }
 
         this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((selectedUser) => {
-            if (selectedUser) {
-                const navigationExtras: NavigationExtras = {
-                    state: {
-                        forwardMigration: true
-                    }
-                };
-                this.router.navigate(['/', 'profile-settings'], navigationExtras);
-            } else {
+            if (!selectedUser || selectedUser === ProfileType.ADMIN)  {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
                 return true;
             }
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    forwardMigration: true
+                }
+            };
+            this.router.navigate(['/', 'profile-settings'], navigationExtras);
+            return false;
         });
     }
 }

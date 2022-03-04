@@ -58,7 +58,6 @@ import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
@@ -70,7 +69,6 @@ import {
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
-import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 import { ActivityData } from '../my-groups/group.interface';
@@ -277,16 +275,23 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService,
     private sbProgressLoader: SbProgressLoader,
-    private contentPlayerHandler: ContentPlayerHandler,
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
-    private discussionTelemetryService: DiscussionTelemetryService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
 
     const extrasState = this.router.getCurrentNavigation().extras.state;
+    this.setExtrasData(extrasState);
+    this.events.subscribe(EventTopics.DEEPLINK_COURSE_PAGE_OPEN, (data) => {
+      if (data.content) {
+        this.refreshCourseDetails(data);
+      }
+    });
+  }
+
+  private setExtrasData(extrasState) {
     if (extrasState) {
       this.courseCardData = extrasState.content;
       this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
@@ -300,10 +305,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
-      if(extrasState.activityData){
-        this.activityData = extrasState.activityData
-      }
+      this.activityData = extrasState.activityData || undefined;
     }
+  }
+
+  async refreshCourseDetails(data){
+    // For Deeplink scenario on same page
+    this.ionViewWillLeave();
+    this.ngOnDestroy();
+
+    this.setExtrasData(data);
+    this.ngOnInit();
+    await this.ionViewWillEnter();
+    this.ionViewDidEnter();
   }
 
   /**
@@ -317,13 +331,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
     this.generateDataForDF();
   }
-  isCourseMentorValidation() {
-    for( let i=0; i<this.profile.serverProfile.roles.length; i++){
-    if (this.profile.serverProfile.roles[i].role === 'COURSE_MENTOR') {
-    this.isCourseMentor = true;
-    }
-  }
-}
+
   showDeletePopup() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(async () => {
       if (await this.onboardingSkippedBackAction()) {
@@ -1378,7 +1386,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-      this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.isMinor = this.profile && this.profile.serverProfile && this.profile.serverProfile.isMinor;
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
@@ -1430,12 +1439,23 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       TagPrefixConstants.CONTENT_ID,
       window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
     );
+    this.isCourseMentorValidation();
   }
 
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
-    this.isCourseMentorValidation();
+  }
+
+  isCourseMentorValidation() {
+    if (this.profile.serverProfile && this.profile.serverProfile.roles && this.profile.serverProfile.roles.length) {
+      for (let i = 0; i < this.profile.serverProfile.roles.length; i++) {
+        if (this.profile.serverProfile.roles[i].role === 'COURSE_MENTOR') {
+          this.isCourseMentor = true;
+          break;
+        }
+      }
+    }
   }
 
   editDataSettings() {
@@ -2387,8 +2407,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     {
       state: {
         hierarchyData: this.courseHeirarchy,
-        activity: this.activityData.activity,
-        group: this.activityData.group,
+        activity: this.activityData && this.activityData.activity,
+        group: this.activityData && this.activityData.group,
         loggedinUser: this.userId
       }
     });

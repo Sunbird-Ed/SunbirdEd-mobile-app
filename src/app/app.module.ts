@@ -83,6 +83,7 @@ import { SbSearchFilterModule } from 'common-form-elements';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -371,10 +372,7 @@ export const sunbirdSdkFactory =
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
-          profileApiPath: '/api/user/v1',
-          profileApiPath_V2: '/api/user/v2',
-          profileApiPath_V3: '/api/user/v3',
-          profileApiPath_V4: '/api/user/v4',
+          profileApiPath:'/api/user/v1',
           profileApiPath_V5: '/api/user/v5',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
@@ -524,6 +522,7 @@ declare const sbutility;
     LoginNavigationHandlerService,
     GooglePlus,
     StoragePermissionHandlerService,
+    OnboardingConfigurationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

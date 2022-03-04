@@ -93,7 +93,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    this.db.createDb();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
       if (res && res.selectedLanguage) {
         this.fetchDisplayElements();
@@ -315,7 +314,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item }); 
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

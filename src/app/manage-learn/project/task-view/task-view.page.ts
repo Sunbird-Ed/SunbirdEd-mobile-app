@@ -14,6 +14,7 @@ import { GenericPopUpService } from '../../shared';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
+
 var environment = {
   db: {
     projects: "project.db",
@@ -47,6 +48,8 @@ export class TaskViewPage {
     showBurgerMenu: false,
     actionButtons: []
   };
+  viewOnlyMode: boolean = false;
+  stateData;
 
   constructor(
     private router: Router,
@@ -64,16 +67,22 @@ export class TaskViewPage {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private navigateService: NavigationService,
     private commonUtilService: CommonUtilService,
-
+    private routereParams: ActivatedRoute
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
     this.saveSubTaskChanges = _.debounce(this.saveSubTaskChanges, 800);
+    routereParams.queryParams.subscribe(params => {
+      this.viewOnlyMode = (params.viewOnlyMode === 'true');
+    })
     params.params.subscribe((parameters) => {
       this.parameters = parameters;
       this.getTask();
       this.prepareSubTaskMeta();
     });
+    this.stateData = this.router.getCurrentNavigation().extras.state;
+
+
   }
 
   
@@ -94,7 +103,13 @@ export class TaskViewPage {
   getTask() {
     this.db.query({ _id: this.parameters.id }).then(
       (success) => {
-        this.project = success.docs.length ? success.docs[0] : success.docs;
+        if(success?.docs.length){
+          this.project = success.docs[0]
+        } else {
+          this.viewOnlyMode = true;
+          this.project = this.stateData.projectDetails;
+        }
+        // this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
           return item._id == this.parameters.taskId;
@@ -336,14 +351,21 @@ export class TaskViewPage {
     let name;
     switch (what) {
       case 'task':
-        name = "Edit Task"
+        if(this.task.isDeletable){
+          name = "Edit Task";
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
         break
-      case 'assignName':
-        name = " Edit Assignee’s Name"
-        break
-      default:
-        name = "Edit Subtask"
+      case 'subtask':
+        if(subtask.isDeletable){
+          name = "Edit Subtask"
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
+      break
     }
+  }
+
+ async openEditModal(what,name,placeholder,subtask,subTaskIndex){
     const alert = await this.alert.create({
       cssClass: "central-alert",
       header: name,

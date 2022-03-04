@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastService, UtilsService } from '../../core';
+import { ProjectService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
@@ -23,6 +23,10 @@ export class DeeplinkRedirectComponent implements OnInit {
   link: any;
   extra: string;
   selectedUserType;
+  permittedUsers = [
+    'administrator',
+    'teacher'
+  ]
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -37,21 +41,23 @@ export class DeeplinkRedirectComponent implements OnInit {
     private toast: ToastService,
     private location: Location,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private projectService : ProjectService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.data = extrasState.data;
+      this.switch(this.extra);
+    }else {
+      this.location.back();
     }
   }
 
-  ionViewDidLoad() {}
   ngOnInit() {
     this.translate.get(['message.canNotOpenLink']).subscribe((translations) => {
       this.translateObject = translations;
     });
-    this.switch(this.extra);
   }
 
   async switch(key) {
@@ -62,7 +68,9 @@ export class DeeplinkRedirectComponent implements OnInit {
         this.verifyLink(this.data.create_observation_id);
         break;
       case 'projectLink':
-        this.verifyLink(this.data.create_project_id);
+        this.appGlobalService.isUserLoggedIn() ?  
+        this.verifyLink(this.data.create_project_id) :     
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,this.data.create_project_id], {replaceUrl: true});
         break;
       default:
         break;
@@ -72,20 +80,20 @@ export class DeeplinkRedirectComponent implements OnInit {
   async redirectProject(data) {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.commonUtilService.showToast("FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER");
-      this.location.back()
+      this.location.back();
       return;
-    } else if(this.selectedUserType !== "administrator"){
+    } else if(!this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ){
       this.commonUtilService.showToast('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
       this.location.back()
       return;
     }
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    await this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
     if (data.projectId) {// project id will only come if its created alreday for user
       await this.router
         .navigate([`/${RouterLinks.PROJECT}`], {
           queryParams: {
             selectedFilter: data.isATargetedSolution ? 'assignedToMe' : 'discoveredByMe',
-          },
+          },replaceUrl: true
         })
       setTimeout(() => {
         this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
@@ -98,9 +106,18 @@ export class DeeplinkRedirectComponent implements OnInit {
       },500);
       return
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TEMPLATE}`, data.solutionId], {
-      queryParams: data,
+    this.goToTemplateDetails(data)
+
+  }
+
+  goToTemplateDetails(params) {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, params.solutionId], {
+      queryParams: params,
       skipLocationChange: true,
+      replaceUrl: true,
+      state: {
+        "referenceFrom": "link",
+    }
     });
   }
 
@@ -124,7 +141,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async getTemplateDetails(data) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
       payload: payload,
@@ -152,10 +169,10 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     const config = {
-      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link,
+      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
       payload: payload,
     };
     let resp = await this.kendra.post(config).toPromise();
@@ -176,4 +193,6 @@ export class DeeplinkRedirectComponent implements OnInit {
       this.location.back();
     }
   }
+  
+
 }

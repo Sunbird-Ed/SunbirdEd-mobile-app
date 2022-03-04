@@ -312,6 +312,17 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (section.dataSrc && section.dataSrc.params && section.dataSrc.params.config) {
       const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
       event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+
+      if(!event.data[0].value['filterIdentifier']){
+        const filterIdentifierList = section.dataSrc.params.config.find(((facet) => (facet.type === 'filterConfigIdentifier' && facet.code === section.code)));
+        const filterVal = filterIdentifierList && filterIdentifierList.values && filterIdentifierList.values.find(v=>{
+          if(v.code && event.data[0].name) {
+            return v.code.toLowerCase().replace(/ /g, '') === event.data[0].name.toLowerCase().replace(/ /g, '')
+          }
+          return false;
+        });
+        event.data[0].value['filterIdentifier'] = filterVal ? filterVal.filterIdentifier : undefined;
+      }
     }
     const params = {
       code: section.code,
@@ -378,7 +389,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -809,7 +820,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile.syllabus[0];
+      const board = this.profile?.syllabus?.length  ?  this.profile?.syllabus[0]: null;
       let role = this.profile.profileType.toLowerCase();
       if (this.profile.serverProfile) {
         role = this.profile.serverProfile.profileUserType.type.toLowerCase();
@@ -835,12 +846,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data || !event.data.length) {
       return;
     }
+    const title = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_PROJECT' :'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS';
+    const meta = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT': 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION';
     const selectedPill = event.data[0].value.name;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
-        metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage(title),
+        metaInfo: this.commonUtilService.translateMessage(meta),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -864,6 +877,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'observation':
         this.router.navigate([RouterLinks.OBSERVATION], {});
         break;
+      case 'project':
+        this.router.navigate([RouterLinks.PROJECT], {});
+        break;  
       default:
         break;
     }
