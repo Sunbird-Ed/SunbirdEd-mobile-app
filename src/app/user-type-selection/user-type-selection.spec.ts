@@ -13,7 +13,8 @@ import {
     ContainerService,
     AppHeaderService,
     AuditProps,
-    AuditType
+    AuditType,
+    OnboardingConfigurationService
 } from '../../services';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
@@ -92,6 +93,7 @@ describe('UserTypeSelectionPage', () => {
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {};
     const mockProfileHandler: Partial<ProfileHandler> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {};
 
     beforeAll(() => {
         userTypeSelectionPage = new UserTypeSelectionPage(
@@ -111,7 +113,8 @@ describe('UserTypeSelectionPage', () => {
             mockNativePageTransitions as NativePageTransitions,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockProfileHandler as ProfileHandler,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 

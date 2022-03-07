@@ -3,7 +3,10 @@
         {
             "name": "language-setting",
             "skip": false,
-            "default": { "code" :"en", "label": "English" }
+            "default": {
+                "code": "en",
+                "label": "English"
+            }
         },
         {
             "name": "user-type-selection",
@@ -13,19 +16,31 @@
         {
             "name": "profile-settings",
             "skip": false,
-            "default": [
-                "board",
-                "medium",
-                "grade"
-            ]
+            "default": {
+                "syllabus": [
+                    "ekstep_ncert_k-12"
+                ],
+                "board": [
+                    "cbse"
+                ],
+                "medium": [
+                    "english"
+                ],
+                "grade": [
+                    "class5",
+                    "class6"
+                ]
+            }
         },
         {
             "name": "district-mapping",
             "skip": false,
-            "default": [
-                "state",
-                "city"
-            ]
+            "default": {
+                "state": "Andaman & Nicobar Islands",
+                "stateId": "1e01c46f-6b5a-4aa4-8cce-aae729c7670c",
+                "district": "Nicobars",
+                "districtId": "6daef899-1e83-4b87-9c67-779985c3fd41"
+            }
         }
     ],
     "tabs": [

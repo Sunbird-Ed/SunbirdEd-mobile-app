@@ -37,12 +37,12 @@ import {
   AppHeaderService, AppRatingService, CommonUtilService,
   FormAndFrameworkUtilService,
   LocalCourseService,
-  LoginHandlerService, SplashScreenService, TelemetryGeneratorService,
+  LoginHandlerService, OnboardingConfigurationService, SplashScreenService, TelemetryGeneratorService,
   UtilityService
 } from '../services';
 import {
   AppThemes, EventTopics, GenericAppConfig,
-  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation
+  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation, OnboardingScreenType
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
@@ -125,7 +125,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
     private mlloader: LoaderService,
-    private screenOrientation: ScreenOrientation
+    private screenOrientation: ScreenOrientation,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -469,6 +470,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
+        this.db.createDb();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
@@ -542,7 +544,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH && !this.appGlobalService.isDiscoverBackEnabled)
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
-        || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
+        || this.router.url.startsWith(RouterLinks.HOME_TAB)
+        || (this.router.url === `/${RouterLinks.USER_TYPE_SELECTION}` && this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.USER_TYPE_SELECTION)
+        || (this.router.url === `/${RouterLinks.PROFILE_SETTINGS}` && this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.PROFILE_SETTINGS)
+        ) {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
