@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationExtras, Resolve, Router } from '@angular/router';
-import { PreferenceKey } from '@app/app/app.constant';
+import { OnboardingScreenType, PreferenceKey } from '@app/app/app.constant';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { SharedPreferences } from 'sunbird-sdk';
@@ -15,14 +15,11 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         private onboardingConfigurationService: OnboardingConfigurationService
     ) { }
 
-    resolve(route: ActivatedRouteSnapshot): any {
-        if (!this.onboardingConfigurationService.nextOnboardingStep('language-setting')) {
-            const navigationExtras: NavigationExtras = {
-                state: {
-                    forwardMigration: true
-                }
-            };
-            this.router.navigate(['/', 'user-type-selection'], navigationExtras);
+    async resolve(route: ActivatedRouteSnapshot): Promise<any> {
+
+        if(await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.LANGUAGE_SETTINGS)){
+            this.navigateToUserTypeSelection();
+            return false;
         }
 
         if (route.queryParams.onReload === 'true') {
@@ -34,18 +31,21 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         }
 
         this.guardActivated = true;
-        this.sharedPreferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then((selectedLanguage) => {
-            if (selectedLanguage) {
-                const navigationExtras: NavigationExtras = {
-                    state: {
-                        forwardMigration: true
-                    }
-                };
-                this.router.navigate(['/', 'user-type-selection'], navigationExtras);
-            } else {
-                this.splashScreenService.handleSunbirdSplashScreenActions();
-                return true;
+        const selectedLanguage = await this.sharedPreferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+        if (selectedLanguage) {
+            this.navigateToUserTypeSelection();
+            return false;
+        }
+        this.splashScreenService.handleSunbirdSplashScreenActions();
+        return true;
+    }
+
+    private navigateToUserTypeSelection(){
+        const navigationExtras: NavigationExtras = {
+            state: {
+                forwardMigration: true
             }
-        });
+        };
+        this.router.navigate(['/', 'user-type-selection'], navigationExtras);
     }
 }

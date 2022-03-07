@@ -4,6 +4,8 @@ import { AuthService, ProfileService, SharedPreferences } from '@project-sunbird
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { CommonUtilService, OnboardingConfigurationService } from '../services';
+import { Events } from '@app/util/events';
 
 describe('HasNotSelectedFrameworkGuard', () => {
     let hasNotSelectedFrameworkGuard: HasNotSelectedFrameworkGuard;
@@ -13,6 +15,7 @@ describe('HasNotSelectedFrameworkGuard', () => {
     };
 
     const mockAppGlobalService: Partial<AppGlobalService> = {
+        setOnBoardingCompleted: jest.fn()
     };
 
     const mockUtilityService: Partial<UtilityService> = {
@@ -30,15 +33,25 @@ describe('HasNotSelectedFrameworkGuard', () => {
     const mockPlatform: Partial<Platform> = {
         is: jest.fn(platform => platform === 'android')
     };
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        skipOnboardingStep: jest.fn(()=> Promise.resolve(false))
+    };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        isDeviceLocationAvailable: jest.fn(()=>Promise.resolve(true))
+    };
+    const mockEvents: Partial<Events> = {};
+
 
     beforeAll(() => {
         hasNotSelectedFrameworkGuard = new HasNotSelectedFrameworkGuard(
             mockProfileService as ProfileService,
             mockAppGlobalService as AppGlobalService,
-            mockUtilityService as UtilityService,
             mockRouter as Router,
             mockPlatform as Platform,
             mockSplashScreenService as SplashScreenService,
+            mockOnboardingConfigurationService as OnboardingConfigurationService,
+            mockCommonUtilService as CommonUtilService,
+            mockEvents as Events,
         );
     });
 
@@ -66,6 +79,8 @@ describe('HasNotSelectedFrameworkGuard', () => {
         it('should navigate to tabs page if onboarding is complete', (done) => {
             // arrange
             hasNotSelectedFrameworkGuard['guardActivated'] = false;
+            mockOnboardingConfigurationService.skipOnboardingStep = jest.fn(()=>Promise.resolve(true));
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(()=>Promise.resolve(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({
                 syllabus: ['od_k12'],
                 board: ['State(Odisha)'],
@@ -76,7 +91,7 @@ describe('HasNotSelectedFrameworkGuard', () => {
             hasNotSelectedFrameworkGuard.resolve();
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toBeCalledWith(['/', 'tabs']);
+                expect(mockRouter.navigate).toBeCalledWith(['/tabs']);
                 done();
             }, 0);
         });
