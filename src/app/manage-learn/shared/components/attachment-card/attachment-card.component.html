@@ -8,13 +8,14 @@
         {{data.remarks}}
       </ion-col>
       <ion-col size="6" class="img-wrapper" *ngFor="let attachment of data.attachments| slice:0:limit; let i=index;">
-        <div *ngIf="!viewOnly"><ion-icon class="close-icon" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon></div>
         <ion-card>
           <ion-card-content>
+            <div *ngIf="!viewOnly">
+              <ion-icon class="close-icon" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon>
+            </div>
             <img [src]="getImgContent(attachment?.localUrl)"
               *ngIf="attachment.type.includes('image') && !attachment.url" />
-              <img [src]="attachment?.url"
-              *ngIf="attachment.type.includes('image') && attachment.url" />
+            <img [src]="attachment?.url" *ngIf="attachment.type.includes('image') && attachment.url" />
           </ion-card-content>
         </ion-card>
       </ion-col>
