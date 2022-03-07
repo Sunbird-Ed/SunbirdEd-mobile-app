@@ -15,13 +15,14 @@ export class AttachmentCardComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+console.log(this.data,"data");
+  }
 
   getImgContent(file) {
     return this.sanitizer.bypassSecurityTrustUrl(file);
   }
   delete(data, index) {
-    alert("dd");
     console.log('delete in component',data, index);
     this.deleteAttachment.emit({ data: data, index: index });
   }

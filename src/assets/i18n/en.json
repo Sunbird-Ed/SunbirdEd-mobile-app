@@ -1524,5 +1524,6 @@
   "FRMELEMNTS_LBL_LINKS": "Links",
   "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
   "FRMELEMNTS_LBL_PROJECT_LEVEL":"Project level",
-  "FRMELEMNTS_LBL_EVIDENCE": "evidence"
+  "FRMELEMNTS_LBL_EVIDENCE": "evidence",
+  "FRMELEMNTS_LBL_FILES_ATTACHED":"Files attached successfully !"
 }

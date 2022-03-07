@@ -38,7 +38,7 @@ export class AddFilePage implements OnInit {
   viewOnlyMode: boolean = false;
   projectCopy;
   copyOfTaskDetails;
-  exitPage: boolean = true;
+  exitPage: boolean = false;
   taskIndex;
   unregisterBackButton: Subscription;
   constructor(
@@ -76,7 +76,9 @@ export class AddFilePage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
         }
-        this.projectCopy = { ...this.project };
+        this.projectCopy = JSON.parse(JSON.stringify(this.project ));
+
+
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
       (error) => {}
@@ -88,7 +90,8 @@ export class AddFilePage implements OnInit {
       return item._id == this.taskId;
     });
     this.task = this.project.tasks[this.taskIndex];
-    this.copyOfTaskDetails = { ...this.task };
+    this.copyOfTaskDetails = JSON.parse(JSON.stringify(this.task ));
+
     this.setHeaderConfig();
   }
   setHeaderConfig() {
@@ -155,12 +158,14 @@ this.task.isEdit = true;
 
   submit() {
     if (this.taskId) {
-      if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
+      this.task.attachments = this.attachments; 
       this.task.remarks = this.remarks;
+      if (JSON.stringify(this.copyOfTaskDetails) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
         this.exitPage = true;
         this.update('submit');
+        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED','success')
       }
     } else {
       this.submitProjectConfirmation();
@@ -198,7 +203,7 @@ this.task.isEdit = true;
   }
   async pageExitConfirm() {
     let data;
-    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE", "FRMELEMNTS_BTN_YES_PAGE", "NO"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE","FRMELEMNTS_BTN_YES_PAGE", "FRMELEMNTS_LBL_YES", "NO"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
@@ -207,7 +212,7 @@ this.task.isEdit = true;
       message:data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
       buttons: [
         {
-          text: data["FRMELEMNTS_BTN_YES_PAGE"],
+          text: this.taskId ? data["FRMELEMNTS_BTN_YES_PAGE"] : data["FRMELEMNTS_LBL_YES"],
           handler: () => {
            this.location.back();
             this.exitPage = true;
