@@ -115,6 +115,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
