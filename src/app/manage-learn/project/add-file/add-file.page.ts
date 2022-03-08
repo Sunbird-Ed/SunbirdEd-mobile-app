@@ -37,7 +37,6 @@ export class AddFilePage implements OnInit {
   task;
   viewOnlyMode: boolean = false;
   projectCopy;
-  copyOfTaskDetails;
   exitPage: boolean = false;
   taskIndex;
   unregisterBackButton: Subscription;
@@ -77,8 +76,6 @@ export class AddFilePage implements OnInit {
           this.project = success.docs[0];
         }
         this.projectCopy = JSON.parse(JSON.stringify(this.project ));
-
-
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
       (error) => {}
@@ -90,8 +87,6 @@ export class AddFilePage implements OnInit {
       return item._id == this.taskId;
     });
     this.task = this.project.tasks[this.taskIndex];
-    this.copyOfTaskDetails = JSON.parse(JSON.stringify(this.task ));
-
     this.setHeaderConfig();
   }
   setHeaderConfig() {
@@ -141,9 +136,8 @@ export class AddFilePage implements OnInit {
   }
 
   delete(index) {
-  this.attachments.splice(index, 1);
-this.task.isEdit = true;
-    
+    this.attachments.splice(index, 1);
+    this.task.isEdit = true;
     this.exitPage = false;
     this.update('delete');
   }
@@ -160,12 +154,14 @@ this.task.isEdit = true;
     if (this.taskId) {
       this.task.attachments = this.attachments; 
       this.task.remarks = this.remarks;
-      if (JSON.stringify(this.copyOfTaskDetails) !== JSON.stringify(this.task)) {
+      if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
         this.exitPage = true;
         this.update('submit');
         this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED','success')
+      }else{
+        this.location.back();
       }
     } else {
       this.submitProjectConfirmation();

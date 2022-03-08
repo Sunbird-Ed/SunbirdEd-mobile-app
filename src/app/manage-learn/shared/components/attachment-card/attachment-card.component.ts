@@ -15,9 +15,7 @@ export class AttachmentCardComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  ngOnInit() { 
-console.log(this.data,"data");
-  }
+  ngOnInit() {}
 
   getImgContent(file) {
     return this.sanitizer.bypassSecurityTrustUrl(file);
