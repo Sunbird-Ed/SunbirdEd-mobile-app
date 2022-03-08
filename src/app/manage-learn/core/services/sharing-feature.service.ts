@@ -104,7 +104,7 @@ export class SharingFeatureService {
         this.loader.stopLoader();
         return;
       }
-      let fileName = name + '.pdf';
+      let fileName = name.replace(/[^A-Z0-9]/ig, "_") + '.pdf';
       const ft = this.fileTransfer.create();
       ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
       .then(
