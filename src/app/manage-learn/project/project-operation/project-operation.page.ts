@@ -342,13 +342,13 @@ export class ProjectOperationPage  {
   }
 
   newProjectCreate() {
-    // this.template.isNew = true;
-    // this.template.downloaded = true;
-
-    // this.update(true);
+    this.template.isAPrivateProgram = true;
+    this.template.link = "";
+    this.template.isDeleted = false;
 
     this.projectServ.createNewProject(this.template, false);
   }
+  
   ionViewWillLeave() {
     if(this.viewProjectAlert ){
      this.viewProjectAlert.dismiss();
