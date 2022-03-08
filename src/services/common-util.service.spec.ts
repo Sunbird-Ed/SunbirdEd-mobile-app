@@ -764,4 +764,23 @@ describe('CommonUtilService', () => {
 
   });
 
+  describe('fetchPrimaryCategory', () => {
+    it('should fetch primaryCategory from content and return trim and lowerCaseData', () => {
+      // arrange
+      // act
+      jest.spyOn(commonUtilService, 'appendTypeToPrimaryCategory').getMockImplementation();
+      commonUtilService.appendTypeToPrimaryCategory({primaryCategory: 'Digital Textbook'});
+      // assert
+      expect(commonUtilService.appendTypeToPrimaryCategory).toHaveReturnedWith('digitaltextbook-detail');
+    });
+
+    it('should fetch from contentType is primaryCategory is not available', () => {
+      // arrange
+      jest.spyOn(commonUtilService, 'appendTypeToPrimaryCategory').getMockImplementation();
+      // act
+      commonUtilService.appendTypeToPrimaryCategory({contentType: 'Digital Textbook'});
+      // assert
+      expect(commonUtilService.appendTypeToPrimaryCategory).toHaveReturnedWith('digitaltextbook-detail');
+    });
+})
 });

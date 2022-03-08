@@ -103,7 +103,8 @@ describe('EnrolledCourseDetailsPage', () => {
         translateMessage: jest.fn(),
         networkInfo: {
             isNetworkAvailable: true
-        }
+        },
+        appendTypeToPrimaryCategory: jest.fn(() => 'sample-details')
     };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -663,6 +664,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
             mockLocation.back = jest.fn();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.appendTypeToPrimaryCategory = jest.fn(() => 'course-detail');
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
@@ -686,6 +688,7 @@ describe('EnrolledCourseDetailsPage', () => {
             spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.appendTypeToPrimaryCategory = jest.fn(() => 'course-detail');
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
