@@ -19,13 +19,14 @@ import { AddEntityComponent } from './add-entity/add-entity.component';
 import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
-import { AttachmentListPage } from './attachment-list/attachment-list.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { ProjectTemplatePage } from './project-template/project-template.page';
 import { ItemListHeaderComponent } from './item-list-header/item-list-header.component'
 import { ProjectDetailsComponent } from './project-details/project-details.component';
+import { AddFilePage } from './add-file/add-file.page';
 import { AttachmentListingPage } from './attachment-listing/attachment-listing.page';
+import { DeactivateGuard } from '../core/guards/deactivate.guard';
 
 const routes: Routes = [
   {
@@ -74,14 +75,18 @@ const routes: Routes = [
   {
     path: `${RouterLinks.PROJECT_TEMPLATE}/:id`,
     loadChildren: './project-templateview/project-templateview.module#ProjectTemplateviewPageModule'
-  }
+  },
+  {
+    path: `${RouterLinks.ADD_FILE}/:id`,
+    component:AddFilePage, canDeactivate:[DeactivateGuard] 
+  },
 ];
 
 @NgModule({
   declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
     ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListingPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
-    CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent],
+    CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
     AddProgramsComponent, CategorySelectComponent],
   imports: [

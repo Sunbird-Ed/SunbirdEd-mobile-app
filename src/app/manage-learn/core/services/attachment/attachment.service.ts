@@ -13,7 +13,8 @@ import { FILE_EXTENSION_HEADERS } from "../../constants";
 export class AttachmentService {
   mediaType: string;
   texts: any;
-
+  payload : any;
+  actionSheetOpen : boolean = false;
   constructor(
     private camera: Camera,
     private file: File,
@@ -41,6 +42,7 @@ export class AttachmentService {
   }
 
   async selectImage() {
+    this.actionSheetOpen = true
     const actionSheet = await this.actionSheetController.create({
       header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
       cssClass: 'sb-popover',
@@ -116,7 +118,7 @@ export class AttachmentService {
         };
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetController.dismiss(data);
+        this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -147,12 +149,11 @@ export class AttachmentService {
           isUploaded: false,
           url: "",
         };
-
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetController.dismiss(data);
+        this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
       }
     } catch (error) {
-       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
 
     // non working code for sdk30-android 11
@@ -202,5 +203,22 @@ export class AttachmentService {
 
   deleteFile(fileName) {
     return this.file.removeFile(this.directoryPath(), fileName);
+  }
+
+  async openAttachmentSource(type,payload) {
+    let data:any ='';
+    this.actionSheetOpen = false;
+    this.payload = payload;
+    switch(type){
+      case 'openCamera':
+       this.takePicture(this.camera.PictureSourceType.CAMERA);
+      break;
+      case 'openGallery':
+       this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+      break;
+      case 'openFiles':
+        this.openFile();
+      break;
+    }
   }
 }

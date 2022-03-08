@@ -1,82 +1,143 @@
 <ion-content *ngIf="project" class="ion-padding">
   <div class="project-segments segment-wrapper">
     <ion-segment [(ngModel)]="type" (ionChange)="segmentChanged($event)" class="segment-card">
-      <ion-segment-button value="{{tab.value}}" *ngFor="let tab of tabs;let i=index">
+      <ion-segment-button value="{{tab.type}}" *ngFor="let tab of tabs;let i=index">
         <ion-label>{{tab.name | translate}}</ion-label>
         <!-- <div class="verticalLine"></div> -->
       </ion-segment-button>
     </ion-segment>
   </div>
-  <app-item-list-header *ngIf="attachments?.length"
-    headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
-    class="header">
-  </app-item-list-header>
-  <div *ngIf="attachments?.length">
-    <div [ngSwitch]="type">
-      <div *ngSwitchCase="'images'">
-        <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
-            <ion-card-header class="project-card _capitalize">
-              {{task.taskName | titlecase}}
-            </ion-card-header>
-            <ion-card-content>
-              <ion-row>
-                <ion-col size="6" *ngIf="task?.remarks">
-                  {{task.remarks}}
-                </ion-col>
-                <ion-col size="6" class="img-wrapper" *ngFor="let attachment of task.attachments; let i=index;">
-                  <ion-card>
-                    <div><ion-icon class="close-icon" name="close-circle"></ion-icon></div>
-                    <ion-card-content>
-                      <img [src]="getImgContent(attachment?.localUrl)"
-                        *ngIf="attachment.type.includes('image') && !attachment.url" />
-                    </ion-card-content>
-                  </ion-card>
-                  <!-- <ion-icon name="image-outline" *ngIf="attachment.url" style="display: contents;"
-                    (click)="openImage(attachment.url)"></ion-icon> -->
-                </ion-col>
-              </ion-row>
-            </ion-card-content>
-            <div class="button-flex-div">
-              <ion-button class="view-more" expand="block" fill="outline" (click)="loadMore()"
-                *ngIf="task?.attachments?.length>2">
-                {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate | uppercase }}
-              </ion-button>
-            </div>
-          </ion-card>
-        </div>
+
+  <div [ngSwitch]="type">
+    <div *ngSwitchCase="'image/jpeg'">
+      <app-item-list-header *ngIf="attachments?.project?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header>
+      <app-attachment-card *ngIf="attachments?.project?.length" [data]="attachments?.project" [viewOnly]="viewOnly"
+        (deleteAttachment)="deleteImage($event)">
+      </app-attachment-card>
+      <app-item-list-header *ngIf="attachments?.tasks?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header>
+      <div *ngIf="attachments?.tasks?.length">
+        <app-attachment-card *ngFor="let task of attachments?.tasks" [data]="task" [viewOnly]="viewOnly"
+          (deleteAttachment)="deleteImage($event)">
+        </app-attachment-card>
       </div>
-      <div *ngSwitchCase="'files'">
-        <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
-            <ion-card-header class="project-card _capitalize">
-              {{task.taskName}}
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list *ngFor="let attachment of task.attachments" (click)="viewDocument(attachment)">
-                <h5 *ngIf="attachment.type == 'application/pdf'">{{attachment.name}} </h5>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-        </div>
+    </div>
+
+    <div *ngSwitchCase="'application/pdf'">
+      <!-- <app-item-list-header *ngIf="attachments?.project?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header> -->
+      <div *ngFor="let project of attachments?.project">
+        <ion-card class="attachments-card" *ngIf="project?.attachments?.length">
+          <ion-card-header class="project-card _capitalize">
+            {{project.title}}
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list *ngFor="let attachment of project.attachments; let i = index" (click)="viewDocument(attachment)"
+              class="attachment-list">
+              <h5>
+                <ion-icon class="prefix-attachment" name="document" slot="start"></ion-icon>
+                <span>{{attachment.name}} </span>
+              </h5>
+              <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(project.attachments,i)">
+                <ion-icon name="close-circle" slot="end"></ion-icon>
+                <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+                </p>
+              </button>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </div>
-      <div *ngSwitchCase="'links'">
-        <div *ngFor="let task of attachments">
-          <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
-            <ion-card-header class="project-card _capitalize">
-              {{task.taskName}}
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list *ngFor="let attachment of task.attachments" (click)="viewDocument(attachment)">
-                <h5 *ngIf="attachment.type == 'application/pdf'">{{attachment.name}} </h5>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-        </div>
+      <!-- <app-item-list-header *ngIf="attachments?.tasks?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header> -->
+      <div *ngFor="let task of attachments?.tasks">
+        <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card-header class="project-card _capitalize">
+            {{task.title}}
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list *ngFor="let attachment of task.attachments; let i = index" (click)="viewDocument(attachment)"
+              class="attachment-list">
+              <h5>
+                <ion-icon class="prefix-attachment" name="document" slot="start"></ion-icon>
+                <span>{{attachment.name}} </span>
+              </h5>
+              <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(task.attachments,i)">
+                <ion-icon name="close-circle" slot="end"></ion-icon>
+                <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+                </p>
+              </button>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'link'">
+      <!-- <app-item-list-header *ngIf="attachments?.project?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header> -->
+      <div *ngFor="let project of attachments?.project">
+        <ion-card class="attachments-card" *ngIf="project?.attachments?.length">
+          <div>
+            <ion-icon class="close-icon" name="close-circle" *ngIf="!viewOnly"></ion-icon>
+          </div>
+          <ion-card-header class="project-card _capitalize">
+            {{project.title}}
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list *ngFor="let attachment of project.attachments; let i = index" class="attachment-list"
+              (click)="viewDocument(attachment)">
+              <h5>
+                <ion-icon name="link-outline" class="prefix-attachment" slot="start"></ion-icon>
+                <span>{{attachment.name}}</span>
+              </h5>
+              <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(project.attachments,i)">
+                <ion-icon name="close-circle" slot="end"></ion-icon>
+                <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+                </p>
+              </button>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <!-- <app-item-list-header *ngIf="attachments?.tasks?.length"
+        headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header> -->
+      <div *ngFor="let task of attachments?.tasks">
+        <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
+          <ion-card-header class="project-card _capitalize">
+            {{task.title}}
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list *ngFor="let attachment of task.attachments; let i = index" class="attachment-list"
+              (click)="viewDocument(attachment)">
+              <h5>
+                <ion-icon name="link-outline" class="prefix-attachment" slot="start"></ion-icon>
+                <span> {{attachment.name}}</span>
+              </h5>
+              <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(task.attachments,i)">
+                <ion-icon name="close-circle" slot="end"></ion-icon>
+                <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+                </p>
+              </button>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </div>
     </div>
   </div>
-  <div *ngIf="!attachments?.length">
+  <div *ngIf="!attachments?.project?.length && !attachments?.tasks?.length">
     <app-no-data></app-no-data>
   </div>
 </ion-content>
