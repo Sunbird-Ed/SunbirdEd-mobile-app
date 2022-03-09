@@ -185,7 +185,9 @@ export class SyncService {
     // project leve attachments
     if (project.attachments && project.attachments.length) {
       for (const attachment of project.attachments) {
-        !attachment['sourcePath'] ? attachments.push(attachment) : null;
+        if (attachment.type != 'link') {
+          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+        }
       }
     }
 
@@ -193,7 +195,9 @@ export class SyncService {
     for (const task of project.tasks) {
       if (task.attachments && task.attachments.length) {
         for (const attachment of task.attachments) {
-          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          if (attachment.type != 'link') {
+            !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          }
         }
       }
     }

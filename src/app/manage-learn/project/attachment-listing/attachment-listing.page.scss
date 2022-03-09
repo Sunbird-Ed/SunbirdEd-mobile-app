@@ -11,6 +11,13 @@
     margin-bottom: 15px;
    }
 }
+.segments{
+display: flex;
+}
+.partition{
+   border: 1px solid $gray;
+    margin: 5px 5px;
+}
 .segment-wrapper{
     margin-top: 8%;
 }

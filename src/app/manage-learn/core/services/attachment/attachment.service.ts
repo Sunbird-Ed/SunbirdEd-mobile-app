@@ -138,7 +138,7 @@ export class AttachmentService {
 
   async openFile() {
     try {
-      const file = await this.chooser.getFile();
+      const file = await this.chooser.getFile('application/pdf');
       const pathToWrite = this.directoryPath();
       const newFileName = this.createFileName(file.name)
       const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)

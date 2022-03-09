@@ -84,19 +84,19 @@ export const actions = {
       color: 'primary'
     },
     {
-      title: "GALLERY",
+      title: "FRMELEMNTS_LBL_GALLERY",
       icon: "images",
       action: "openGallery",
       color: 'primary'
     },
     {
-      title: "FILES",
+      title: "FRMELEMNTS_LBL_FILES",
       icon: "document", 
       action: "openFiles",
       color: 'primary'
     },
     {
-      title: "LINKS",
+      title: "FRMELEMNTS_LBL_LINKS",
       icon: "link-outline", 
       action: "openLink",
       color: 'primary'

@@ -742,17 +742,17 @@ return data;
     let tabs = [
       {
         name: "FRMELEMNTS_LBL_IMAGES",
-        value: "images",
+        value: "image",
         type: 'image/jpeg'
       },
       {
         name: "FRMELEMNTS_LBL_FILES",
-        value: "files",
+        value: "file",
         type: "application/pdf"
       },
       {
         name: "FRMELEMNTS_LBL_LINKS",
-        value: "links",
+        value: "link",
         type: "link"
       },
     ];

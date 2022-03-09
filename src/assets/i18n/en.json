@@ -1525,5 +1525,9 @@
   "FRMELEMNTS_LBL_TASK_LEVEL": "Task level",
   "FRMELEMNTS_LBL_PROJECT_LEVEL":"Project level",
   "FRMELEMNTS_LBL_EVIDENCE": "evidence",
-  "FRMELEMNTS_LBL_FILES_ATTACHED":"Files attached successfully !"
+  "FRMELEMNTS_LBL_FILES_ATTACHED":"Files attached successfully !",
+  "FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION" :"Are you sure you want to delete this",
+  "FRMELEMNTS_BTN_LOAD_MORE_IMAGES":"Load more images",
+  "FRMELEMNTS_LBL_GALLERY":"Gallery"
+  
 }

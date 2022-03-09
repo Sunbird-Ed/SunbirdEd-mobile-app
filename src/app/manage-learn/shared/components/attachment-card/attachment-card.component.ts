@@ -21,7 +21,6 @@ export class AttachmentCardComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustUrl(file);
   }
   delete(data, index) {
-    console.log('delete in component',data, index);
     this.deleteAttachment.emit({ data: data, index: index });
   }
   loadMore(){

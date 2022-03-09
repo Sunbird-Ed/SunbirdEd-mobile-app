@@ -37,6 +37,7 @@ export class AttachmentListingPage implements OnInit {
   tabsLength;
   statuses = statusType;
   viewOnly: boolean = false;
+  selectedTab;
   constructor(
     private db: DbService,
     private platform: Platform,
@@ -56,8 +57,9 @@ export class AttachmentListingPage implements OnInit {
       this.projectId = parameters.id;
       this.tabs = this.util.getTabs();
       this.tabsLength = this.tabs.length;
+      this.selectedTab =  this.tabs[0].value;
       this.attachments = {
-        project: [],
+        project: {},
         tasks: []
       };
       this.getProject();
@@ -86,17 +88,22 @@ export class AttachmentListingPage implements OnInit {
   }
   segmentChanged(event) {
     this.type = event.detail.value;
+    this.tabs.find(tab=> {
+     if(tab.type ==  this.type){
+      this.selectedTab = tab.value;
+     }
+    })
     this.attachments = {
-      project: [],
+      project:{},
       tasks: []
     };
     this.getAttachments(this.type);
   }
   getAttachments(tab) {
-    if (this.project.status == this.statuses.submitted && this.project.attachments.length) {
+    if (this.project.status == this.statuses.submitted && this.project.attachments && this.project.attachments.length) {
       let evidence = {
         title: this.project.title,
-        remarks: this.project.remarks,
+        remarks: this.project.remarks ?  this.project.remarks :'',
         attachments: []
       }
       this.project.attachments.forEach(attachment => {
@@ -104,15 +111,15 @@ export class AttachmentListingPage implements OnInit {
           attachment.type != 'link' ? this.getEvidences(attachment, evidence) : evidence.attachments.push(attachment);
         }
       });
-      if (evidence.attachments.length) {
-        this.attachments.project.push(evidence);
+      if ((tab == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+        this.attachments.project=evidence;
       }
     }
     if (this.project.tasks && this.project.tasks.length) {
       this.project.tasks.forEach(task => {
         let evidence = {
           title: task.name,
-          remarks: task.remarks,
+          remarks: task.remarks ? task.remarks :'',
           attachments: []
         }
         if (task.attachments && task.attachments.length) {
@@ -122,7 +129,7 @@ export class AttachmentListingPage implements OnInit {
             }
           });
         }
-        if (evidence.attachments.length) {
+        if ((tab == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
           this.attachments.tasks.push(evidence);
         }
       });
@@ -172,20 +179,20 @@ export class AttachmentListingPage implements OnInit {
   }
   async deleteConfirmation(attachment, index) {
     let data;
-    this.translate.get(['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM', 'OK', 'CANCEL']).subscribe((text) => {
+    this.translate.get(['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION', 'YES', 'NO']).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
+      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION']+ ' ' + this.selectedTab,
       buttons: [
         {
-          text: data['OK'],
+          text: data['YES'],
           handler: () => {
             this.deleteAttachment(attachment, index);
           },
         }, {
-          text: data['CANCEL'],
+          text: data['NO'],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => {

@@ -1,4 +1,4 @@
-<ion-card class="attachments-card" *ngIf="data?.attachments?.length">
+<ion-card class="attachments-card" *ngIf="data?.attachments?.length || data?.remarks">
   <ion-card-header class="project-card _capitalize">
     {{data.title | titlecase}}
   </ion-card-header>
@@ -10,8 +10,8 @@
       <ion-col size="6" class="img-wrapper" *ngFor="let attachment of data.attachments| slice:0:limit; let i=index;">
         <ion-card>
           <ion-card-content>
-            <div *ngIf="!viewOnly">
-              <ion-icon class="close-icon" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon>
+            <div >
+              <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon>
             </div>
             <img [src]="getImgContent(attachment?.localUrl)"
               *ngIf="attachment.type.includes('image') && !attachment.url" />
@@ -24,7 +24,7 @@
   <div class="button-flex-div">
     <ion-button class="view-more" expand="block" fill="outline" (click)="loadMore()"
       *ngIf="data?.attachments?.length>2 && limit <=2 ">
-      {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate | uppercase }}
+      {{ 'FRMELEMNTS_BTN_LOAD_MORE_IMAGES' | translate | uppercase }}
     </ion-button>
   </div>
 </ion-card>
