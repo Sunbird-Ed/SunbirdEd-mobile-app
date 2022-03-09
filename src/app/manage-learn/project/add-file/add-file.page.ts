@@ -37,7 +37,6 @@ export class AddFilePage implements OnInit {
   task;
   viewOnlyMode: boolean = false;
   projectCopy;
-  exitPage: boolean = false;
   taskIndex;
   unregisterBackButton: Subscription;
   constructor(
@@ -138,7 +137,6 @@ export class AddFilePage implements OnInit {
   delete(index) {
     this.attachments.splice(index, 1);
     this.task.isEdit = true;
-    this.exitPage = false;
     this.update('delete');
   }
   onAction(event) {
@@ -147,7 +145,6 @@ export class AddFilePage implements OnInit {
       return;
     }
     this.attachmentService.openAttachmentSource(event, this.attachments);
-    this.exitPage = false;
   }
 
   submit() {
@@ -157,7 +154,6 @@ export class AddFilePage implements OnInit {
       if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
-        this.exitPage = true;
         this.update('submit');
         this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED','success')
       }else{
@@ -209,10 +205,7 @@ export class AddFilePage implements OnInit {
       buttons: [
         {
           text: this.taskId ? data["FRMELEMNTS_BTN_YES_PAGE"] : data["FRMELEMNTS_LBL_YES"],
-          handler: () => {
-           this.location.back();
-            this.exitPage = true;
-          },
+          handler: () => {},
         }, {
           text: data["NO"],
           role: "cancel",
@@ -223,6 +216,12 @@ export class AddFilePage implements OnInit {
       ],
     });
     await alert.present();
+    let resp = await alert.onDidDismiss();
+    if (resp.role == 'cancel') {
+      return false;
+    } else {
+      return true;
+    }
   }
   async submitProjectConfirmation() {
     let data;
@@ -255,7 +254,6 @@ export class AddFilePage implements OnInit {
     this.project.attachments = this.attachments;
     this.project.remarks = this.remarks;
     this.project.status = statusType.submitted;
-    this.exitPage = true;
     this.update('submit');
   }
 }
