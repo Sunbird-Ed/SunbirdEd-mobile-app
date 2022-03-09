@@ -14,9 +14,8 @@
           translate}}
         </p>
         <ion-progress-bar
-          [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}"
           [value]="projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks"
-          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks && projectCompletionPercent?.totalTasks !==0, 'in-progress': projectCompletionPercent?.completedTasks < projectCompletionPercent?.totalTasks || taskCount==0}"
+          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks && projectCompletionPercent?.totalTasks !==0, 'in-progress': projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks && projectCompletionPercent?.totalTasks !==0, 'zeroTask': projectCompletionPercent?.totalTasks == 0}"
           class="progress-bar-style"></ion-progress-bar>
       </div>
 
