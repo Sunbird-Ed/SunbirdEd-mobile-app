@@ -2,15 +2,16 @@ import { CategoryListPage } from './category-list-page';
 import { CommonUtilService } from '../../services/common-util.service';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { NavigationService } from '../../services/navigation-handler.service';
-import { ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ContentService, CourseService, FormService, ProfileService,  ContentSearchCriteria} from '@project-sunbird/sunbird-sdk';
 import { ScrollToService } from '../../services/scroll-to.service';
 import { Environment, FormAndFrameworkUtilService, ImpressionType, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../services';
 import { ContentUtil } from '@app/util/content-util';
 import { RouterLinks } from '@app/app/app.constant';
 import { ModalController } from '@ionic/angular';
 import { access } from 'fs';
+import { doesNotReject } from 'assert';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
@@ -161,8 +162,26 @@ describe('CategoryListPage', () => {
         describe('ngOnInit' , () => {
             it('should get Appname' , () => {
                 //arrange
-                const acc = [];
+                const acc = ['sample'];
                 acc.push('sample');
+                const formAPIFacets =[
+                    {
+                        "code": "primaryCategory",
+                        "type": "dropdown",
+                        "name": "Content Type",
+                        "placeholder": "Select Content Type",
+                        "multiple": true,
+                        "index": 0
+                    },
+                    {
+                        "code": "subject",
+                        "type": "dropdown",
+                        "name": "Subject",
+                        "placeholder": "Select Subject",
+                        "multiple": true,
+                        "index": 1
+                    }
+                ];
                 mockCommonUtilService.getAppName = jest.fn();
                 //act
                 categoryListPage.ngOnInit();
@@ -354,6 +373,90 @@ describe('CategoryListPage', () => {
         });
     });
 
+    describe('pillFilterHandler', () =>{
+        it('should return  nothing if pill is false', (done) => {
+            //arrange
+            const pill = [
+                                             {
+                                                 name: 'sample_string',
+                                                 code: 'sample_code',
+                                                 values: [{
+                                                     name: 'audience',
+                                                    apply: true
+                                                }]
+                                             }
+                        ];
+            
+                        jest.spyOn(categoryListPage, 'pillFilterHandler').mockImplementation(() => {
+                            return;
+                        });
+            //act
+            categoryListPage.pillFilterHandler(pill);
+            //assert
+            setTimeout(() => {
+            expect(categoryListPage.pillFilterHandler).toHaveBeenCalledWith(pill);
+            expect(pill).toBeFalsy();
+            expect(categoryListPage.facetFilters).toBeTruthy();
+            done();
+            }, 0);
+        });
+        it('sholud check facet filter', (done) => {
+            //arrange
+            const pill = [
+                {
+                    name: 'sample_string',
+                    code: 'sample_code',
+                    values: [{
+                        name: 'audience',
+                       apply: true
+                   }]
+                }
+];
+            //act 
+            categoryListPage.pillFilterHandler(pill);
+            //assert
+            expect(categoryListPage.facetFilters).toBeTruthy();
+        });
+    });
+
+    describe('navigateToFilterFormPage', () => {
+        it('should navigate to formFilter page', (done) => {
+            //arrange
+        const isDataEmpty = true;
+        const inputFilterCriteria: ContentSearchCriteria = categoryListPage.deduceFilterCriteria(isDataEmpty);
+        mockModalController.create = jest.fn(() => (Promise.resolve(
+                     {
+                         present: jest.fn(() => Promise.resolve({})),
+                         onDidDismiss: jest.fn(() => Promise.resolve({
+                             data: {
+                                 appliedFilterCriteria: {
+                                     facetFilters: [
+                                         {
+                                             name: 'sample_string',
+                                             code: 'sample_code',
+                                             values: [{
+                                                 name: 'audience',
+                                                 apply: true
+                                             }]
+                                         }
+                                     ]
+                                 }
+        
+                             },
+                         })),
+                     } as any
+                 )));
+       
+        //act
+        categoryListPage.navigateToFilterFormPage();
+        //assert
+        setTimeout(() => {
+                     expect(mockModalController.create).toHaveBeenCalled();
+                     done();
+                 });
+        });
+    });
+
     // it('should navigate to formFilter page', (done) => {
     //     // arrange
     //     mockModalController.create = jest.fn(() => (Promise.resolve(
@@ -401,5 +504,56 @@ describe('CategoryListPage', () => {
             block: 'center',
             behavior: 'smooth'
         });
+    });
+
+    describe('deduceFilterCriteria', () => {
+        it('While resent filter criteria satisfied', (done) =>{
+            //arrange
+            const isDataEmpty = true;
+            jest.spyOn(categoryListPage, 'deduceFilterCriteria').mockImplementation(() => {
+                return;
+            });
+            //act
+            categoryListPage.deduceFilterCriteria(isDataEmpty);
+            //assert
+            expect(categoryListPage.deduceFilterCriteria).toHaveBeenCalledWith(isDataEmpty);
+            expect(categoryListPage['resentFilterCriteria']).toBeFalsy();
+            expect(categoryListPage['filterCriteria']);
+        });
+
+        it('While prefetched filter criteria satisfied', (done) =>{
+            //arrange
+            const isDataEmpty = true;
+            jest.spyOn(categoryListPage, 'deduceFilterCriteria').mockImplementation(() => {
+                return;
+            });
+            //act
+            categoryListPage.deduceFilterCriteria(isDataEmpty);
+            //assert
+            expect(categoryListPage.deduceFilterCriteria).toHaveBeenCalledWith(isDataEmpty);
+            expect(categoryListPage['preFetchedFilterCriteria']).toBeFalsy();
+        });
+    });
+
+    it('Should reload the drop down', () => {
+        //arrange
+        const item = {
+            content: {},
+            isAvailableLocally: true
+        };
+        const index =0;
+        //act
+        categoryListPage.reloadDropdown(index, item);
+        //assert
+        expect(item);
+    });
+
+    it('should call clearAllSubscription on ngOnDestroy', () => {
+        // arrange
+        const formControlSubscriptions: Partial<Subscription[]> = [];
+        // act
+        categoryListPage.ngOnDestroy();
+        // assert
+        expect(formControlSubscriptions.forEach(s => s.unsubscribe()));
     });
 });

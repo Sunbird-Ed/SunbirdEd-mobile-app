@@ -1,12 +1,12 @@
 import { SearchFilterPage } from './search-filter.page';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { ContentService } from 'sunbird-sdk';
+import {ContentService} from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
 import {of} from 'rxjs';
-import { FormAndFrameworkUtilService } from '../../services';
+import { FormAndFrameworkUtilService, SearchFilterService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
 import { mockFormValue } from '../faq-report-issue/faq-report-issue.page.spec.data';
 
@@ -18,8 +18,8 @@ describe('SearchFilterPage', () => {
         }
     };
     const mockRouter: Partial<Router> = {
-        navigate: () => Promise.resolve(),
-        getCurrentNavigation: jest.fn(() => mockRouterExtras),
+        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
+        navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
@@ -36,6 +36,7 @@ describe('SearchFilterPage', () => {
         changeChannelIdToName: jest.fn(()=>Promise.resolve(FilterCriteriaData)),
         changeChannelNameToId: jest.fn(()=>Promise.resolve(FilterCriteriaData))
     };
+    const mockSearchFilterService: Partial<SearchFilterService> ={};
 
     JSON.parse = jest.fn().mockImplementationOnce(() => {
         return FilterCriteriaData;
@@ -50,7 +51,8 @@ describe('SearchFilterPage', () => {
             mockModalController as ModalController,
             mockCommonUtilService as CommonUtilService,
             new FilterFormConfigMapper(mockCommonUtilService),
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockSearchFilterService as SearchFilterService
         );
     });
 
@@ -136,7 +138,11 @@ describe('SearchFilterPage', () => {
             searchFilterPage.cancel();
             // assert
             setTimeout(() => {
-                expect(mockModalController.dismiss).toHaveBeenCalled();
+                
+                return Promise.resolve(
+                    expect(mockModalController.dismiss).toHaveBeenCalled()
+                )
+
             });
         });
     });
