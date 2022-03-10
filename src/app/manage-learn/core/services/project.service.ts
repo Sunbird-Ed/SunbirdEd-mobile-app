@@ -129,7 +129,7 @@ export class ProjectService {
 
   navigateToProjectDetails({ projectId, programId, solutionId, replaceUrl }) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      skipLocationChange: true,
+      skipLocationChange: replaceUrl,
       queryParams: {
         projectId: projectId,
         programId: programId,
