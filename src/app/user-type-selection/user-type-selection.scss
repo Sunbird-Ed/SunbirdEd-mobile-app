@@ -8,14 +8,13 @@
     font-weight: 700 !important;
     font-size: 1.4rem;
     color: map-get($colors, secondary_black);
-    margin-top: 2px;
     text-align: center;
-    //margin-top: 10px !important;
   }
 
   .thumbnail {
     width: 100%;
     height: auto;
+    max-width: 150px;
   }
 
   .icon-check {

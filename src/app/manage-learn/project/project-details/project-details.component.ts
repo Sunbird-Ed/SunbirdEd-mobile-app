@@ -314,7 +314,7 @@ export class ProjectDetailsComponent implements OnInit {
         if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
           if (d._id == t._id && d.submissionDetails.status) {
             // check id matches and task details has submissionDetails
-            if (!t.submissionDetails || JSON.stringify(t.submissionDetails)  != JSON.stringify(d.submissionDetails.status) ) {
+            if (!t.submissionDetails || JSON.stringify(t.submissionDetails)  != JSON.stringify(d.submissionDetails) ) {
               t.submissionDetails = d.submissionDetails;
               t.status = d.submissionDetails.status;
               t.isEdit = true
@@ -384,6 +384,7 @@ export class ProjectDetailsComponent implements OnInit {
         this.projectDetails.status = this.projectDetails.status ? this.projectDetails.status : statusType.notStarted;
         this.projectDetails.status = this.projectDetails.status == statusType.notStarted ? statusType.inProgress : this.projectDetails.status;
         this.projectDetails.tasks.push(data.data);
+        this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", 'success');
         this.updateLocalDb(true);
         this.refreshTheActions();
       }

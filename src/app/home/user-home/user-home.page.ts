@@ -820,7 +820,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile?.board?.length  ?  this.profile?.board[0]: null;
+      const board = this.profile?.syllabus?.length  ?  this.profile?.syllabus[0]: null;
       let role = this.profile.profileType.toLowerCase();
       if (this.profile.serverProfile) {
         role = this.profile.serverProfile.profileUserType.type.toLowerCase();

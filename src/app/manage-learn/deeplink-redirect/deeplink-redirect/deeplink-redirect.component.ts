@@ -48,15 +48,16 @@ export class DeeplinkRedirectComponent implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.data = extrasState.data;
+      this.switch(this.extra);
+    }else {
+      this.location.back();
     }
   }
 
-  ionViewDidLoad() {}
   ngOnInit() {
     this.translate.get(['message.canNotOpenLink']).subscribe((translations) => {
       this.translateObject = translations;
     });
-    this.switch(this.extra);
   }
 
   async switch(key) {
@@ -86,7 +87,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       this.location.back()
       return;
     }
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    await this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
     if (data.projectId) {// project id will only come if its created alreday for user
       await this.router
         .navigate([`/${RouterLinks.PROJECT}`], {

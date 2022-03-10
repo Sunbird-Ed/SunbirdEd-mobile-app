@@ -1387,6 +1387,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.isMinor = this.profile && this.profile.serverProfile && this.profile.serverProfile.isMinor;
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
@@ -2220,7 +2221,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
         })
         .catch(async (e) => {
-          if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'UOS_UCNSTRED0013'
+          if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
             && this.course.userConsent === UserConsent.YES) {
             if (!this.isConsentPopUp) {
               this.isConsentPopUp = true;

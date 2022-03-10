@@ -116,7 +116,6 @@ export class UtilsService {
         return obj;
       case "subTask":
         delete obj.children;
-        delete obj.isDeletable;
         return obj;
     }
   }
@@ -623,12 +622,11 @@ export class UtilsService {
                       obj["school"] = org.externalId;
                     }
                   }
-                  
-                  obj["role"] =
-                  profileData["profileUserType"] &&
-                    profileData["profileUserType"]["subType"]
-                    ? profileData["profileUserType"]["subType"].toUpperCase()
-                    : profileData["profileUserType"]["type"].toUpperCase();
+                  const roles = [];
+                  for (const userRole of profileData['profileUserTypes']) {
+                   userRole.subType ? roles.push(userRole.subType.toUpperCase()) : roles.push(userRole.type.toUpperCase());
+                  }
+                  obj['role'] = roles.toString();
                   resolve(obj);
                 });
               })
