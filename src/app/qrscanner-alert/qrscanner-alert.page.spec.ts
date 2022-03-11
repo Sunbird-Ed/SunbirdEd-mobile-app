@@ -1,4 +1,3 @@
-import { Component, Input } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { QRScannerAlert } from './qrscanner-alert.page';
 
@@ -26,7 +25,6 @@ describe('QRScannerAlert', () => {
         expect(qrscannerAlert.showOnlyPrimaryBtn).toBeFalsy();
 
     });
-   
 
     describe('tryAgain', () => {
         it('should not invoke tryAgain() of callback', () => {
@@ -73,5 +71,4 @@ describe('QRScannerAlert', () => {
             expect(qrscannerAlert.callback.cancel).toHaveBeenCalled();
         });
     });
-
 });
