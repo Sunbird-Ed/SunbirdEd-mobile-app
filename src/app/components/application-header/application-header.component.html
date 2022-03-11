@@ -313,7 +313,7 @@
           <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="isLoggedIn && showReports">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="showReports">
             <span class="sb-menu-icon">
               <img src="./assets/imgs/Reports.png" aria-hidden="true" class="tool-icon" alt="reports">
             </span>
