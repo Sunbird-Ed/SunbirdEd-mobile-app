@@ -6,6 +6,7 @@ import { File } from "@ionic-native/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
+import { localStorageConstants } from "../../constants/localStorageConstants";
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,8 @@ export class AttachmentService {
         "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
+        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT",
+
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -139,19 +142,25 @@ export class AttachmentService {
   async openFile() {
     try {
       const file = await this.chooser.getFile();
-      const pathToWrite = this.directoryPath();
-      const newFileName = this.createFileName(file.name)
-      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
-      if (writtenFile.isFile) {
-        const data = {
-          name: newFileName,
-          type: this.mimeType(newFileName),
-          isUploaded: false,
-          url: "",
-        };
-        this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
+      let sizeOftheFile:number = file.data.length
+      if(sizeOftheFile > localStorageConstants.FILE_LIMIT){
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+      }else{
+        const pathToWrite = this.directoryPath();
+        const newFileName = this.createFileName(file.name)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+        if (writtenFile.isFile) {
+          const data = {
+            name: newFileName,
+            type: this.mimeType(newFileName),
+            isUploaded: false,
+            url: "",
+          };
+          this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+          this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
+        }
       }
+     
     } catch (error) {
       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
