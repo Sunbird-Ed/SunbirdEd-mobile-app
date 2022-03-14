@@ -273,7 +273,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
-  pageId: string;
+  pageId: string = PageId.COLLECTION_DETAIL;
   collectionTocData: Content;
   TocCardType = TocCardType;
   activeContent;
@@ -339,7 +339,7 @@ export class CollectionDetailEtbPage implements OnInit {
     } else {
       this.isDepthChild = false;
     }
-    this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.content);
+    this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.content) || this.pageId;
     this.identifier = this.cardData.contentId || this.cardData.identifier;
     window['segmentation'].SBTagService.pushTag(
       window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],

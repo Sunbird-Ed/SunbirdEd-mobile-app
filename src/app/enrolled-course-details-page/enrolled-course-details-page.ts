@@ -222,7 +222,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   nextContent: Content;
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
-  pageId: string;
+  pageId: string = PageId.COURSE_DETAIL;
   showShareData = false;
   isDataShare = false;
   isShared: any;
@@ -306,7 +306,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
       this.activityData = extrasState.activityData || undefined;
-      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.courseCardData);
+      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.courseCardData) || this.pageId;
     }
   }
 
@@ -947,7 +947,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
     contentContextMap['isCertified'] = this.isCertifiedCourse;
-    const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+    const leafNodeIds = this.courseHeirarchy ? this.courseHeirarchy.contentData.leafNodes : '';
     contentContextMap['leafNodeIds'] = leafNodeIds;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
@@ -1326,8 +1326,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
           this.showChildrenLoader = false;
         });
-      }).catch(() => {
+      }).catch((err) => {
         this.zone.run(async () => {
+          console.log('errrrr', err);
           this.showChildrenLoader = false;
         });
       });
