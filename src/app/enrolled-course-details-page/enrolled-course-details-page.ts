@@ -947,7 +947,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
     contentContextMap['isCertified'] = this.isCertifiedCourse;
-    const leafNodeIds = this.courseHeirarchy ? this.courseHeirarchy.contentData.leafNodes : '';
+    const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
     contentContextMap['leafNodeIds'] = leafNodeIds;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
@@ -1326,9 +1326,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
           this.showChildrenLoader = false;
         });
-      }).catch((err) => {
+      }).catch(() => {
         this.zone.run(async () => {
-          console.log('errrrr', err);
           this.showChildrenLoader = false;
         });
       });
