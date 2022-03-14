@@ -144,6 +144,7 @@ export class AttachmentService {
       const file = await this.chooser.getFile();
       let sizeOftheFile:number = file.data.length
       if(sizeOftheFile > localStorageConstants.FILE_LIMIT){
+        this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
       }else{
         const pathToWrite = this.directoryPath();
