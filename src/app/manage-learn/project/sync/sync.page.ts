@@ -254,7 +254,7 @@ export class SyncPage implements  OnDestroy {
     })
   }
 
-  getPdfUrl(fileName, taskId?) {
+  getPdfUrl(fileName=this.allProjects[this.syncIndex]?.title, taskId?) {
    let task_id = taskId ? taskId : '';
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + task_id,
