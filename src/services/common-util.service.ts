@@ -798,7 +798,7 @@ export class CommonUtilService {
     }
 
     public appendTypeToPrimaryCategory(content, type = "detail"): string {
-        const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType;
-        return (primaryCategory.replace(/\s/g, '')+'-'+type).toLowerCase();
+        const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType ? content.contentType : '';
+        return primaryCategory ? (primaryCategory.replace(/\s/g, '')+'-'+type).toLowerCase() : '';
       }
 }
