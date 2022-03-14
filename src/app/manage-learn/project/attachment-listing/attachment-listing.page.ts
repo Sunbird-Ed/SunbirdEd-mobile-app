@@ -57,7 +57,7 @@ export class AttachmentListingPage implements OnInit {
       this.projectId = parameters.id;
       this.tabs = this.util.getTabs();
       this.tabsLength = this.tabs.length;
-      this.selectedTab =  this.tabs[0].value;
+      this.selectedTab = this.tabs[0].value;
       this.attachments = {
         project: {},
         tasks: []
@@ -88,13 +88,13 @@ export class AttachmentListingPage implements OnInit {
   }
   segmentChanged(event) {
     this.type = event.detail.value;
-    this.tabs.find(tab=> {
-     if(tab.type ==  this.type){
-      this.selectedTab = tab.value;
-     }
+    this.tabs.find(tab => {
+      if (tab.type == this.type) {
+        this.selectedTab = tab.value;
+      }
     })
     this.attachments = {
-      project:{},
+      project: {},
       tasks: []
     };
     this.getAttachments(this.type);
@@ -103,7 +103,7 @@ export class AttachmentListingPage implements OnInit {
     if (this.project.status == this.statuses.submitted && this.project.attachments && this.project.attachments.length) {
       let evidence = {
         title: this.project.title,
-        remarks: this.project.remarks ?  this.project.remarks :'',
+        remarks: this.project.remarks ? this.project.remarks : '',
         attachments: []
       }
       this.project.attachments.forEach(attachment => {
@@ -119,7 +119,7 @@ export class AttachmentListingPage implements OnInit {
       this.project.tasks.forEach(task => {
         let evidence = {
           title: task.name,
-          remarks: task.remarks ? task.remarks :'',
+          remarks: task.remarks ? task.remarks : '',
           attachments: []
         }
         if (task.attachments && task.attachments.length) {
@@ -184,7 +184,7 @@ export class AttachmentListingPage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION']+ ' ' + this.selectedTab,
+      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab,
       buttons: [
         {
           text: data['YES'],
@@ -207,6 +207,38 @@ export class AttachmentListingPage implements OnInit {
     this.deleteConfirmation(event.data, event.index);
   }
   deleteAttachment(attachment, index) {
+    if (this.project.attachments && this.project.attachments.length) {
+      let i = _.findIndex(this.project.attachments, (item) => {
+        return item.namr == attachment.name;
+      });
+      this.project.attachments.splice(i, 1);
+    }
+    if (this.project.tasks && this.project.tasks.length) {
+      this.project.tasks.forEach(task => {
+        if(task.attachments && task.attachments.length){
+          let i = _.findIndex(task.attachments, (item) => {
+            return item.namr == attachment.name;
+          });
+          task.attachments.splice(i, 1);
+        }
+      });
+    }
     attachment.splice(index, 1);
+    console.log(attachment, "attachment", this.project);
+    this.updateLocalDb();
+  }
+  attachmentAction(event, attachment) {
+    if (event.action == 'delete') {
+      this.deleteConfirmation(attachment, event.index);
+    } else if (event.action == 'view') {
+      this.viewDocument(event.attachment)
+    }
+  }
+  updateLocalDb() {
+    console.log(this.project, "this.project");
+    this.project.isEdit = true;
+    this.db.update(this.project).then(success => {
+      this.project._rev = success.rev;
+    })
   }
 }

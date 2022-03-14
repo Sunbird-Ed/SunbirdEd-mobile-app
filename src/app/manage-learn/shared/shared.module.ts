@@ -34,7 +34,8 @@ import {
   AccordionListComponent,
   TaskCardComponent,
   AddLinkModalComponent,
-  AttachmentCardComponent
+  AttachmentCardComponent,
+  AttachmentListsComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -130,7 +131,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     AccordionListComponent,
     TaskCardComponent,
     AddLinkModalComponent,
-    AttachmentCardComponent
+    AttachmentCardComponent,
+    AttachmentListsComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -188,7 +190,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     AccordionListComponent,
     TaskCardComponent,
     AddLinkModalComponent,
-    AttachmentCardComponent
+    AttachmentCardComponent,
+    AttachmentListsComponent
   ],
   providers: [
     Camera,

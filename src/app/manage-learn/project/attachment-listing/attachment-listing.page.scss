@@ -1,16 +1,6 @@
 @import "../../../../assets/styles/variables";
 @import "../../../../assets/styles/base/variables";
-.attachments-card{
-    border-radius: 16px;
-    background: $white-color;
-   ion-card-header{
-    font-size: 16px;
-    border-bottom: 1px solid $gray-200;
-    padding: 10px;
-    font-weight:900;
-    margin-bottom: 15px;
-   }
-}
+
 .segments{
 display: flex;
 }
@@ -21,10 +11,7 @@ display: flex;
 .segment-wrapper{
     margin-top: 8%;
 }
-img{
-    width: 120px;
-    height: 85px;
-}
+
 .view-more {
     --background: var(--app-primary-background) !important;
     --border-color: var(--app-primary-medium) !important;
@@ -35,59 +22,8 @@ img{
  ion-card{
     margin: 0 0 10px 0;
  }
- .button-flex-div{
-    display: flex;
-    justify-content: center;
- }
  .header{
     margin-left: 0px;
- }
- .close-icon{
-    font-size: 20px;
-    float: right;
-    margin: 8px;
-    color:  var(--blue);
- }
- .close-icon-files{
-   font-size: 20px;
-   float: right;
-   margin: 5px 5px;
-   color:  var(--blue);
- }
- .img-wrapper{
-    margin-top: 4px;
- }
- .attachment-list{
-   border-radius: 8px;
-    color: var(--blue);
-    padding: 5px 5px;
-    display: flex;
-    margin: 10px 0px;
-    justify-content: space-between;
-   span{
-      margin-left: 30px;
-   }
-   button{
-      background: transparent;
-      box-shadow: none !important;
-      /* margin-top: -7px; */
-      color: var(--blue);
-      font-size: 12px;
-      p{
-         margin-bottom: 0px;
-         font-size: 8px !important;
-         margin-top: -5px;
-         text-align: center;
-         font-weight: 600;
-       }
-       ion-icon{
-         font-size: 20px;
-       }
-   }
-   .prefix-attachment{
-      font-size: 20px;
-      position: absolute;
-    }
  }
 
 

@@ -39,6 +39,7 @@ export class AddFilePage implements OnInit {
   projectCopy;
   taskIndex;
   unregisterBackButton: Subscription;
+  canExit = false;
   constructor(
     private routerParams: ActivatedRoute,
     private router: Router,
@@ -148,6 +149,7 @@ export class AddFilePage implements OnInit {
   }
 
   submit() {
+    this.canExit = true;
     if (this.taskId) {
       this.task.attachments = this.attachments; 
       this.task.remarks = this.remarks;
@@ -160,7 +162,11 @@ export class AddFilePage implements OnInit {
         this.location.back();
       }
     } else {
+      if (this.network.isNetworkAvailable) {
       this.submitProjectConfirmation();
+    } else{
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN','danger')
+      }
     }
   }
   linkEvent(event) {
@@ -194,6 +200,7 @@ export class AddFilePage implements OnInit {
     }
   }
   async pageExitConfirm() {
+  if(!this.canExit){
     let data;
     this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE","FRMELEMNTS_BTN_YES_PAGE", "FRMELEMNTS_LBL_YES", "NO"]).subscribe((text) => {
       data = text;
@@ -222,6 +229,9 @@ export class AddFilePage implements OnInit {
     } else {
       return true;
     }
+  }else{
+    return true;
+  }
   }
   async submitProjectConfirmation() {
     let data;
@@ -249,11 +259,19 @@ export class AddFilePage implements OnInit {
     });
     await alert.present();
   }
-
   submitProject() {
+    setTimeout(() => {
     this.project.attachments = this.attachments;
     this.project.remarks = this.remarks;
     this.project.status = statusType.submitted;
     this.update('submit');
+    }, 0)
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      queryParams: {
+        projectId:  this.project._id,
+        programId:  this.project.programId,
+        solutionId:  this.project.solutionId,
+      }, replaceUrl: true
+    }); 
   }
 }

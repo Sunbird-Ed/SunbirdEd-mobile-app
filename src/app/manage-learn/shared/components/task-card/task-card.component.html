@@ -11,7 +11,7 @@
           <div class="mandatory-ribben-label" *ngIf="!task.isDeletable">
             {{'FRMELEMNTS_LBL_MANDATORY' | translate}}
           </div>
-          <div *ngIf="!viewOnly" class="options">
+          <div class="options">
             <ion-buttons>
               <ion-icon name="ellipsis-vertical-outline" class="action-icon" color="primary"
                 (click)="$event.stopPropagation();openPopover($event,i)">

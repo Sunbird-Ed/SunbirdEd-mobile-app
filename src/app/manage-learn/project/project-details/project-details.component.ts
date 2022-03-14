@@ -343,6 +343,9 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
+    if (!this.network.isNetworkAvailable) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
+    }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`, this.projectDetails._id])
   }
 

@@ -16,7 +16,7 @@
       headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
       class="header">
     </app-item-list-header>
-    <app-attachment-card *ngIf="attachments?.project" [data]="attachments?.project" [viewOnly]="viewOnly"
+    <app-attachment-card *ngIf="attachments?.project"  [data]="attachments?.project" [viewOnly]="viewOnly"
       (deleteAttachment)="deleteImage($event)">
     </app-attachment-card>
     <app-item-list-header *ngIf="attachments?.tasks?.length"
@@ -36,57 +36,17 @@
         headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
         class="header">
       </app-item-list-header>
-        <ion-card class="attachments-card" *ngIf="project?.attachments?.length">
-          <ion-card-header class="project-card _capitalize">
-            {{attachments?.project?.title}}
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list *ngFor="let attachment of attachments?.project?.attachments; let i = index" (click)="viewDocument(attachment)"
-              class="attachment-list">
-              <h5>
-                <ion-icon class="prefix-attachment" *ngIf="type == 'application/pdf'" name="document" slot="start">
-                </ion-icon>
-                <ion-icon class="prefix-attachment" *ngIf="type == 'link'" name="link-outline" slot="start"></ion-icon>
-                <span>{{attachment.name}} </span>
-              </h5>
-              <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(project.attachments,i)">
-                <ion-icon name="close-circle" slot="end"></ion-icon>
-                <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
-                </p>
-              </button>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
+       <app-attachment-lists  *ngIf="project?.attachments?.length" [type]="type" [title]="attachments?.project?.title" [attachments]="attachments?.project?.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event,project.attachments)"> </app-attachment-lists>
     </div>
     <app-item-list-header *ngIf="attachments?.tasks?.length"
       headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
       class="header">
     </app-item-list-header>
     <div *ngFor="let task of attachments?.tasks">
-      <ion-card class="attachments-card" *ngIf="task?.attachments?.length">
-        <ion-card-header class="project-card _capitalize">
-          {{task.title}}
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list *ngFor="let attachment of task.attachments; let i = index" (click)="viewDocument(attachment)"
-            class="attachment-list">
-            <h5>
-              <ion-icon class="prefix-attachment" *ngIf="type == 'application/pdf'" name="document" slot="start">
-              </ion-icon>
-              <ion-icon class="prefix-attachment" *ngIf="type == 'link'" name="link-outline" slot="start"></ion-icon>
-              <span>{{attachment.name}} </span>
-            </h5>
-            <button slot="icon-only" *ngIf="!viewOnly" (click)="deleteConfirmation(task.attachments,i)">
-              <ion-icon name="close-circle" slot="end"></ion-icon>
-              <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
-              </p>
-            </button>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+      <app-attachment-lists  *ngIf="task?.attachments?.length" [type]="type" [title]="task.title" [attachments]="task.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event,task.attachments)"> </app-attachment-lists>
     </div>
   </div>
-  <div *ngIf="!attachments?.project?.length && !attachments?.tasks?.length">
-    <app-no-data></app-no-data>
+  <div *ngIf="!attachments?.project?.attachments?.length && !attachments?.tasks?.length">
+    <app-no-data [message]="'FRMELEMENTS_NO_EVIDENCES_FOR_FILE'" [color]="'text-primary'"></app-no-data>
   </div>
 </ion-content>

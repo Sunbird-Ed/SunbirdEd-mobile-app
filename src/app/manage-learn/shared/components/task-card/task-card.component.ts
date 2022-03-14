@@ -75,8 +75,17 @@ export class TaskCardComponent implements OnInit {
   }
 
   async openPopover(ev: any, taskIndex) {
-    let menu;
+    let menu:any =[];
     const selectedTask = this.data.tasks[taskIndex];
+    if(this.viewOnly){
+      let shareOption = {
+        TITLE: 'FRMELEMNTS_LBL_SHARE',
+        VALUE: 'shareTask',
+        ICON: 'share'
+    }
+    menu.push(shareOption);
+  }
+  if(!this.viewOnly){
     menu = JSON.parse(JSON.stringify(menuConstants.TASK));
     if (selectedTask.isDeletable) {
       let deleteOption = {
@@ -86,6 +95,7 @@ export class TaskCardComponent implements OnInit {
       }
       menu.push(deleteOption);
     }
+  }
     const popover = await this.popoverController.create({
       component: PopoverComponent,
       componentProps: { menus: menu },

@@ -1517,7 +1517,7 @@
   "FRMELEMNTS_BTN_ADD_LINK":"Add links",
   "FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION":"would you like to add any remarks or attach any files before you mark your task complete?",
   "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION":"Would you like to add any remarks or attach any files before you submit your Project?",
-  "FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM":"You will lose the attachments if you go back.Are you sure you want to go back?",
+  "FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM":"You will lose the attachments if you go back. Are you sure you want to go back?",
   "FRMELEMNTS_BTN_EXIT_PAGE":"Exit page",
   "FRMELEMNTS_BTN_YES_PAGE":"Yes exit",
   "FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS": "Please create and complete the tasks to submit the project, You can do that by clicking on the Add your own task button below.",
@@ -1528,6 +1528,7 @@
   "FRMELEMNTS_LBL_FILES_ATTACHED":"Files attached successfully !",
   "FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION" :"Are you sure you want to delete this",
   "FRMELEMNTS_BTN_LOAD_MORE_IMAGES":"Load more images",
-  "FRMELEMNTS_LBL_GALLERY":"Gallery"
-  
+  "FRMELEMNTS_LBL_GALLERY":"Gallery",
+  "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT":"You have attached a file that exceeds the limit",
+  "FRMELEMENTS_NO_EVIDENCES_FOR_FILE":"No files found for this project"
 }
