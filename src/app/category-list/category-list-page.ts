@@ -211,17 +211,21 @@ export class CategoryListPage implements OnInit, OnDestroy {
             onSelectedFilter.forEach((selectedFilter) => {
                 selectedData.push(selectedFilter.name);
             });
-            this.formField.aggregate.groupSortBy.forEach((data) => {
-                data.name.preference = selectedData;
-            });
+            if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
+                this.formField.aggregate.groupSortBy.forEach((data) => {
+                    data.name.preference = selectedData;
+             });
+            }
         }
 
         if (this.profile.subject.length >= 1) {
-            this.formField.aggregate.groupSortBy.forEach((sortData) => {
-                if (sortData.name.preference) {
-                    sortData.name.preference.push(this.profile.subject);
-                }
-            });
+            if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
+                this.formField.aggregate.groupSortBy.forEach((sortData) => {
+                    if (sortData.name.preference) {
+                        sortData.name.preference.push(this.profile.subject);
+                    }
+                });
+            }
         }
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
