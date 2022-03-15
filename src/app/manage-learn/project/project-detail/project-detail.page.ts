@@ -130,7 +130,7 @@ export class ProjectDetailPage implements OnDestroy {
   async getTemplateDetails() {
     this.loader.startLoader();
     try {
-      let data: any = await this.getTemplate(this.templateId);
+      let data: any = await this.getTemplate(encodeURIComponent(this.templateId));
       this.loader.stopLoader();
       this.project = data;
       this._headerConfig.actionButtons = []
@@ -176,7 +176,7 @@ export class ProjectDetailPage implements OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
+    const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + encodeURIComponent(this.templateId) : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: this.projectType == 'assignedToMe' ? payload : {}
