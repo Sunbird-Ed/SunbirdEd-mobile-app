@@ -11,7 +11,7 @@
         <ion-card>
           <ion-card-content>
             <div >
-              <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(data.attachments,i)"></ion-icon>
+              <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(attachment,i)"></ion-icon>
             </div>
             <img [src]="getImgContent(attachment?.localUrl)"
               *ngIf="attachment.type.includes('image') && !attachment.url" />

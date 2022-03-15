@@ -88,7 +88,7 @@
       </ion-card>
     </div>
 
-    <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="doAction()"
+    <ion-button expand="block" shape="round" (click)="doAction()"
       class="custom-btn-txt-transform-none" *ngIf="!task?.learningResources?.length">
       {{'FRMELEMNTS_LBL_ADD_FILES' | translate}}
     </ion-button>
@@ -100,7 +100,7 @@
         </ion-button>
       </ion-col>
       <ion-col size="7">
-        <ion-button class="roundedButton custom-btn-txt-transform-none" [disabled]="!enableMarkButton" expand="block"
+        <ion-button class="roundedButton custom-btn-txt-transform-none"  expand="block"
           shape="round" (click)="doAction()">
           {{'FRMELEMNTS_LBL_ADD_FILES' | translate}}
         </ion-button>

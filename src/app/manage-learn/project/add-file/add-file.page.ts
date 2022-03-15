@@ -112,7 +112,7 @@ export class AddFilePage implements OnInit {
   }
   async deleteConfirm(index) {
     let data;
-    this.translate.get(["FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM", "CANCEL", "OK"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM", "NO", "FRMELEMNTS_LBL_YES"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
@@ -120,12 +120,12 @@ export class AddFilePage implements OnInit {
       message: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
       buttons: [
         {
-          text: data["OK"],
+          text: data["FRMELEMNTS_LBL_YES"],
           handler: () => {
             this.delete(index);
           },
         }, {
-          text: data["CANCEL"],
+          text: data["NO"],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => { },

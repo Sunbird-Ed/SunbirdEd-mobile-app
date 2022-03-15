@@ -12,7 +12,7 @@
   </div>
 
   <div *ngIf="type == 'image/jpeg'">
-    <app-item-list-header *ngIf="attachments?.project?.attachments?.length"
+    <app-item-list-header *ngIf="attachments?.project?.attachments?.length || attachments?.project?.remarks"
       headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
       class="header">
     </app-item-list-header>
@@ -36,14 +36,14 @@
         headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
         class="header">
       </app-item-list-header>
-       <app-attachment-lists  *ngIf="project?.attachments?.length" [type]="type" [title]="attachments?.project?.title" [attachments]="attachments?.project?.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event,project.attachments)"> </app-attachment-lists>
+       <app-attachment-lists  *ngIf="project?.attachments?.length" [type]="type" [title]="attachments?.project?.title" [attachments]="attachments?.project?.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
     </div>
     <app-item-list-header *ngIf="attachments?.tasks?.length"
       headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
       class="header">
     </app-item-list-header>
     <div *ngFor="let task of attachments?.tasks">
-      <app-attachment-lists  *ngIf="task?.attachments?.length" [type]="type" [title]="task.title" [attachments]="task.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event,task.attachments)"> </app-attachment-lists>
+      <app-attachment-lists  *ngIf="task?.attachments?.length" [type]="type" [title]="task.title" [attachments]="task.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
     </div>
   </div>
   <div *ngIf="!attachments?.project?.attachments?.length && !attachments?.tasks?.length">

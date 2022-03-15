@@ -147,6 +147,7 @@ export class TaskViewPage {
   }
   public addSubtask() {
     if (this.newSubtask.name) {
+      this.newSubtask.isDeletable = true;
       !this.task.children ? (this.task.children = []) : "";
       this.task.children.push(this.newSubtask);
       this.enableTaskMarkButton();

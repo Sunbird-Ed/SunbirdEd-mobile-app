@@ -93,25 +93,27 @@ export class AttachmentListingPage implements OnInit {
         this.selectedTab = tab.value;
       }
     })
+    this.getAttachments();
+  }
+  getAttachments() {
     this.attachments = {
       project: {},
       tasks: []
     };
-    this.getAttachments(this.type);
-  }
-  getAttachments(tab) {
-    if (this.project.status == this.statuses.submitted && this.project.attachments && this.project.attachments.length) {
+    if (this.project.status == this.statuses.submitted) {
       let evidence = {
         title: this.project.title,
         remarks: this.project.remarks ? this.project.remarks : '',
         attachments: []
       }
-      this.project.attachments.forEach(attachment => {
-        if (attachment.type == tab) {
-          attachment.type != 'link' ? this.getEvidences(attachment, evidence) : evidence.attachments.push(attachment);
-        }
-      });
-      if ((tab == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+      if(this.project.attachments && this.project.attachments.length){
+        this.project.attachments.forEach(attachment => {
+          if (attachment.type == this.type) {
+           this.getEvidences(attachment, evidence)
+          }
+        });
+      }
+      if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
       }
     }
@@ -124,12 +126,12 @@ export class AttachmentListingPage implements OnInit {
         }
         if (task.attachments && task.attachments.length) {
           task.attachments.forEach(attachment => {
-            if (attachment.type == tab) {
-              attachment.type != 'link' ? this.getEvidences(attachment, evidence) : evidence.attachments.push(attachment);
+            if (attachment.type == this.type) {
+              this.getEvidences(attachment, evidence);
             }
           });
         }
-        if ((tab == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+        if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
           this.attachments.tasks.push(evidence);
         }
       });
@@ -137,9 +139,11 @@ export class AttachmentListingPage implements OnInit {
   }
 
   getEvidences(attachment, evidence) {
-    attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
-      this.path + attachment.name
-    ) : '';
+    if(attachment.type != 'link'){
+      attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
+        this.path + attachment.name
+      ) : '';
+    }
     evidence.attachments.push(attachment);
   }
 
@@ -149,7 +153,8 @@ export class AttachmentListingPage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
           this.viewOnly = this.project.status == statusType.submitted ? true : false;
-          this.getAttachments(this.tabs[0].type);
+          this.type=this.tabs[0].type;
+          this.getAttachments();
         }
       },
       (error) => { }
@@ -207,35 +212,32 @@ export class AttachmentListingPage implements OnInit {
     this.deleteConfirmation(event.data, event.index);
   }
   deleteAttachment(attachment, index) {
-    if (this.project.attachments && this.project.attachments.length) {
-      let i = _.findIndex(this.project.attachments, (item) => {
-        return item.namr == attachment.name;
-      });
-      this.project.attachments.splice(i, 1);
-    }
     if (this.project.tasks && this.project.tasks.length) {
       this.project.tasks.forEach(task => {
         if(task.attachments && task.attachments.length){
           let i = _.findIndex(task.attachments, (item) => {
-            return item.namr == attachment.name;
+          if(item.type == this.type){
+              return item.name == attachment.name;
+          }
           });
-          task.attachments.splice(i, 1);
+          if(i >= 0){
+            task.attachments.splice(i, 1);
+          }
         }
+        return;
       });
     }
-    attachment.splice(index, 1);
-    console.log(attachment, "attachment", this.project);
     this.updateLocalDb();
+    this.getAttachments();
   }
-  attachmentAction(event, attachment) {
+  attachmentAction(event) {
     if (event.action == 'delete') {
-      this.deleteConfirmation(attachment, event.index);
+      this.deleteConfirmation(event.attachment, event.index);
     } else if (event.action == 'view') {
       this.viewDocument(event.attachment)
     }
   }
   updateLocalDb() {
-    console.log(this.project, "this.project");
     this.project.isEdit = true;
     this.db.update(this.project).then(success => {
       this.project._rev = success.rev;

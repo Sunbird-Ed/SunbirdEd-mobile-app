@@ -14,10 +14,11 @@ export class AttachmentListsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
-  deleteConfirmation(index) {
+  deleteConfirmation(index,attachment) {
     let params = {
       index: index,
-      action: "delete"
+      action: "delete",
+      attachment:attachment
     }
     this.eventAction.emit(params);
   }
