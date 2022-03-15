@@ -28,8 +28,8 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   questions: any;
   schoolName: string;
   submissionId: any;
-  selectedEvidenceIndex: any;
-  selectedSectionIndex: any;
+  selectedEvidenceIndex: any = 0;
+  selectedSectionIndex: any = 0;
   start: number = 0;
   end: number = 1;
   schoolData: any;
