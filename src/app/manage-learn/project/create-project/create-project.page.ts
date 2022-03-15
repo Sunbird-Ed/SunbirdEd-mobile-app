@@ -29,7 +29,7 @@ export class CreateProjectPage implements OnInit {
   projectId;
   createProjectAlert;
   hasAcceptedTAndC: boolean;
-  project;
+  project: any = {};
   projectCopy;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
@@ -71,7 +71,6 @@ export class CreateProjectPage implements OnInit {
         this.parameters = parameters;
         this.showTask = false;
         this.button = 'FRMELEMNTS_BTN_SAVE_EDITS';
-        this.getProjectFromLocal();
       } else {
         this.showTask = true;
       }
@@ -113,44 +112,37 @@ export class CreateProjectPage implements OnInit {
   }
 
   getProjectFromLocal() {
-    this.db.query({ _id: this.parameters.projectId }).then(
-      (success) => {
-        this.project = success.docs.length ? success.docs[0] : {};
-        this.projectCopy = JSON.parse(JSON.stringify(this.project));
-        if (this.project.categories.length) {
-          this.project.categories.forEach((element) => {
-            element.isChecked = true;
-          });
-          this.selectedCategories = this.project.categories;
+    if (this.parameters?.projectId) {
+      this.db.query({ _id: this.parameters.projectId }).then(
+        (success) => {
+          this.project = success.docs.length ? success.docs[0] : {};
+          this.projectCopy = JSON.parse(JSON.stringify(this.project));
+          if (this.project.categories.length) {
+            this.project.categories.forEach((element) => {
+              element.isChecked = true;
+            });
+            this.selectedCategories = this.project.categories;
+          }
+          this.prepareForm();
+        },
+        (error) => {
+          this.prepareForm();
         }
-      },
-      (error) => { }
-    );
+      );
+    } else {
+      this.prepareForm();
+    }
   }
 
-  getForm() {
-    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then((projectData) => {
-      this.projectFormData = projectData;
-      // this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then((taskData) => {
-      //  if(taskData){
-      //   let taskForm = {
-      //     taskData,
-      //   };
-      //   this.projectFormData.push(taskForm);
-      //  }
-      //   this.prepareForm();
-      // });
-      this.prepareForm();
-    }, async (error) => {
-      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
-        FormConstants.PROJECT_CREATE_META
-      );
-      if (createProjectMeta.length) {
-        this.projectFormData = createProjectMeta;
-        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
-        this.prepareForm();
-      }
-    });
+  async getForm() {
+    const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+      FormConstants.PROJECT_CREATE_META
+    );
+    if (createProjectMeta.length) {
+      this.projectFormData = createProjectMeta;
+      this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+      this.getProjectFromLocal();
+    }
   }
   public prepareForm() {
     const controls = {};
@@ -166,7 +158,7 @@ export class CreateProjectPage implements OnInit {
           }
         }
       } else {
-        if(res.taskData && res.taskData.length){
+        if (res.taskData && res.taskData.length) {
           res.taskData.forEach((element) => {
             if (element.validation) {
               if (element.validation.required) {
@@ -193,7 +185,7 @@ export class CreateProjectPage implements OnInit {
         text = data;
       });
     const alertPopup = await this.alertPopup.create({
-      cssClass:'central-alert',
+      cssClass: 'central-alert',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
@@ -361,8 +353,8 @@ export class CreateProjectPage implements OnInit {
     this.project.categories = data.categories;
     if (JSON.stringify(this.project) !== JSON.stringify(this.projectCopy)) {
       this.project.isEdit = true;
-      this.project.status =  this.project.status ? this.project.status : statusType.notStarted;
-      this.project.status =  this.project.status == statusType.notStarted ? statusType.inProgress:this.project.status;
+      this.project.status = this.project.status ? this.project.status : statusType.notStarted;
+      this.project.status = this.project.status == statusType.notStarted ? statusType.inProgress : this.project.status;
     }
     this.db
       .update(this.project)

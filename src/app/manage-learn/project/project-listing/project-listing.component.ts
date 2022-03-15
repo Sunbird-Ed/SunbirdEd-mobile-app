@@ -206,7 +206,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex == 2 ? this.getCreatedProjects() : this.getProjectList()
+            this.selectedFilterIndex !== 0 ? this.getProjectList() : this.getCreatedProjects()
         } else {
             this.getDownloadedProjectsList();
         }
