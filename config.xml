@@ -84,7 +84,6 @@
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
         <preference name="AllowInlineMediaPlayback" value="true" />
-        <preference name="AllowsInlineMediaPlayback" value="true" />
         <preference name="<MediaPlaybackRequiresUserAction" value="false" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
