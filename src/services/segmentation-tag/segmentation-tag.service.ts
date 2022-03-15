@@ -182,6 +182,27 @@ export class SegmentationTagService {
         }
         this.executeCommand(invalidcomd, true);
     }
+
+    createSegmentTags(res) {
+        const tagObj = {
+          board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
+          grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
+          medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
+        };
+        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        this.evalCriteria();
+      }
+    
+      refreshSegmentTags(profile) {
+        const tagObj = {
+            board: profile.board,
+            grade: profile.grade,
+            syllabus: profile.syllabus,
+            medium: profile.medium,
+          };
+        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        this.evalCriteria();
+    }
 }
 
 function SEGMENTATION(SEGMENTATION: any) {

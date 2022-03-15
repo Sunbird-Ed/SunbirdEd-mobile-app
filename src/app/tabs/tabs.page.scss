@@ -24,7 +24,7 @@ ion-tabs {
     line-height: 20px;
   }
 
-  ion-tab-button:nth-child(3) {
+  ion-tab-button.qrscanner {
     filter: none;
     border: none;
 
@@ -89,90 +89,8 @@ ion-tabs {
   ion-tab-button {
     --color-selected: #{$blue};
     background: transparent;
-
-    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/tab_course.svg);
-    }
-    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/tab_library.svg);
-    }
-    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
-      background-image: url(/assets/imgs/ic_home.png);
-    }
-    ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
-      background-image: url(/assets/imgs/ic_chat.png);
-    }
-    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/tab_profile.svg);
-    }
-    ion-icon[ng-reflect-name="qrscanner"], ion-icon[aria-label="qrscanner"] {
-      background-image: url(/assets/imgs/ic_qr_scanner.svg);
-      background-size: 46px;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/tab_download.svg);
-    }
-    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
-      background-image: url(/assets/imgs/tab_home.svg);
-    }
-    ion-icon[ng-reflect-name="discover"], ion-icon[aria-label="discover"] {
-      background-image: url(/assets/imgs/tab_search.svg);
-    }
   }
-  ion-tab-button.tab-disabled {
-    pointer-events: all;
-    ion-icon[ng-reflect-name="courses"],
-    ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/ic_courses_disabled.png);
-    }
-    ion-icon[ng-reflect-name="resources"],
-    ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/ic_library_disabled.png);
-    }
-    ion-icon[ng-reflect-name="home"],
-    ion-icon[aria-label="home"] {
-      background-image: url(/assets/imgs/ic_home.png);
-    }
-    ion-icon[ng-reflect-name="downloads"],
-    ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/ic_download_disabled.png);
-    }
-  }
-  ion-tab-button.tab-selected {
-    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/tab_course_selected.svg);
-      filter: invert(1);
-    }
-    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/tab_library_selected.svg);
-    }
-    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
-      background-image: url(/assets/imgs/ic_home_blue.png);
-    }
-    ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
-      background-image: url(/assets/imgs/ic_chat_blue.png);
-    }
-    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/tab_profile_selected.svg);
-    }
-    ion-icon[ng-reflect-name="qrscanner"], ion-icon[aria-label="qrscanner"] {
-      background-image: url(/assets/imgs/ic_qr_scanner.svg);
-      background-size: 46px;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/tab_download_selected.svg);
-    }
-    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
-      background-image: url(/assets/imgs/tab_home_selected.svg);
-    }
-    ion-icon[ng-reflect-name="discover"], ion-icon[aria-label="discover"] {
-      background-image: url(/assets/imgs/tab_search_selected.svg);
-    }
-  }
+  
   .tab-button[aria-selected="true"] {
     color: $primary-color;
   }
