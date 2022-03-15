@@ -97,7 +97,7 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  ngOnDestroy() {
+  ionViewWillEnter() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
     }

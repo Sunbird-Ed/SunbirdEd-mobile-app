@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AttachmentService, DbService, NetworkService, ProjectService, statusType, ToastService, UtilsService } from '../../core';
@@ -29,7 +29,7 @@ export class AddFilePage implements OnInit {
     pageTitle: ''
   };
   remarks: '';
-  button:string;
+  button: string;
   attachments: any = [];
   projectId;
   taskId;
@@ -48,7 +48,6 @@ export class AddFilePage implements OnInit {
     private alert: AlertController,
     private db: DbService,
     private attachmentService: AttachmentService,
-    private platform: Platform,
     private projectService: ProjectService,
     private location: Location,
     private network: NetworkService,
@@ -65,9 +64,22 @@ export class AddFilePage implements OnInit {
     })
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+  }
+
+  handleHeaderEvents($event) {
+    if ($event.name == 'back') {
+      if (JSON.stringify(this.projectCopy) !== JSON.stringify(this.project) ||
+        JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
+        this.pageExitConfirm();
+      } else {
+        this.location.back()
+      }
+    }
   }
   getProject() {
     this.db.query({ _id: this.projectId }).then(
@@ -75,10 +87,10 @@ export class AddFilePage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
         }
-        this.projectCopy = JSON.parse(JSON.stringify(this.project ));
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
-      (error) => {}
+      (error) => { }
     );
   }
 
@@ -89,27 +101,37 @@ export class AddFilePage implements OnInit {
     this.task = this.project.tasks[this.taskIndex];
     this.setHeaderConfig();
   }
+
+  updateRemarks() {
+    if (this.taskId) {
+      this.task.remarks = this.remarks;
+    } else {
+      this.project.remarks = this.remarks
+    }
+  }
+
   setHeaderConfig() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
-    this.headerConfig.pageTitle = this.taskId? this.task.name : this.project.title;
-    this.button =this.taskId? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_PROJECT";
-     if(this.taskId){
-    this.attachments = this.task?.attachments ? this.task.attachments : [];
-     }else{
+    this.headerConfig.pageTitle = this.taskId ? this.task.name : this.project.title;
+    this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_PROJECT";
+    if (this.taskId) {
+      this.attachments = this.task?.attachments ? this.task.attachments : [];
+    } else {
       this.attachments = this.project?.attachments ? this.project?.attachments : [];
-     }
-    this.remarks = this.taskId? this.task.remarks : this.project?.remarks;
+    }
+    this.remarks = this.taskId ? this.task.remarks : this.project?.remarks;
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
     }
   }
+
   async deleteConfirm(index) {
     let data;
     this.translate.get(["FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM", "NO", "FRMELEMNTS_LBL_YES"]).subscribe((text) => {
@@ -140,6 +162,7 @@ export class AddFilePage implements OnInit {
     this.task.isEdit = true;
     this.update('delete');
   }
+
   onAction(event) {
     if (event == 'openLink') {
       this.toggleLinkModal();
@@ -151,33 +174,36 @@ export class AddFilePage implements OnInit {
   submit() {
     this.canExit = true;
     if (this.taskId) {
-      this.task.attachments = this.attachments; 
+      this.task.attachments = this.attachments;
       this.task.remarks = this.remarks;
       if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
         this.update('submit');
-        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED','success')
-      }else{
+        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
+      } else {
         this.location.back();
       }
     } else {
       if (this.network.isNetworkAvailable) {
-      this.submitProjectConfirmation();
-    } else{
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN','danger')
+        this.submitProjectConfirmation();
+      } else {
+        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
       }
     }
   }
+
   linkEvent(event) {
     if (event) {
       this.attachments = this.attachments.concat(this.projectService.getLinks(event));
     }
     this.toggleLinkModal();
   }
+
   toggleLinkModal() {
     this.isLinkModalOpen = !this.isLinkModalOpen;
   }
+
   update(type) {
     this.project.isEdit = true;
     this.db
@@ -190,6 +216,7 @@ export class AddFilePage implements OnInit {
         }
       })
   }
+
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
@@ -199,20 +226,20 @@ export class AddFilePage implements OnInit {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
   }
+
   async pageExitConfirm() {
-  if(!this.canExit){
     let data;
-    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE","FRMELEMNTS_BTN_YES_PAGE", "FRMELEMNTS_LBL_YES", "NO"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE", "FRMELEMNTS_BTN_YES_PAGE", "FRMELEMNTS_LBL_YES", "NO"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
       header: data['FRMELEMNTS_BTN_EXIT_PAGE'],
-      message:data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
+      message: data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
       buttons: [
         {
           text: this.taskId ? data["FRMELEMNTS_BTN_YES_PAGE"] : data["FRMELEMNTS_LBL_YES"],
-          handler: () => {},
+          handler: () => { },
         }, {
           text: data["NO"],
           role: "cancel",
@@ -224,15 +251,11 @@ export class AddFilePage implements OnInit {
     });
     await alert.present();
     let resp = await alert.onDidDismiss();
-    if (resp.role == 'cancel') {
-      return false;
-    } else {
-      return true;
+    if (resp.role !== 'cancel') {
+      this.location.back();
     }
-  }else{
-    return true;
   }
-  }
+
   async submitProjectConfirmation() {
     let data;
     this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_PROJECT", "CANCEL", "FRMELEMNTS_BTN_SUBMIT"]).subscribe((text) => {
@@ -259,19 +282,20 @@ export class AddFilePage implements OnInit {
     });
     await alert.present();
   }
+  
   submitProject() {
     setTimeout(() => {
-    this.project.attachments = this.attachments;
-    this.project.remarks = this.remarks;
-    this.project.status = statusType.submitted;
-    this.update('submit');
+      this.project.attachments = this.attachments;
+      this.project.remarks = this.remarks;
+      this.project.status = statusType.submitted;
+      this.update('submit');
     }, 0)
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
-        projectId:  this.project._id,
-        programId:  this.project.programId,
-        solutionId:  this.project.solutionId,
+        projectId: this.project._id,
+        programId: this.project.programId,
+        solutionId: this.project.solutionId,
       }, replaceUrl: true
-    }); 
+    });
   }
 }

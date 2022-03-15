@@ -26,7 +26,6 @@ import { ItemListHeaderComponent } from './item-list-header/item-list-header.com
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { AddFilePage } from './add-file/add-file.page';
 import { AttachmentListingPage } from './attachment-listing/attachment-listing.page';
-import { DeactivateGuard } from '../core/guards/deactivate.guard';
 
 const routes: Routes = [
   {
@@ -78,7 +77,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.ADD_FILE}/:id`,
-    component:AddFilePage, canDeactivate:[DeactivateGuard] 
+    component:AddFilePage
   },
 ];
 

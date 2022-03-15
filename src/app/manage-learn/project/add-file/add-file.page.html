@@ -4,7 +4,7 @@
 <div class="ion-padding">
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}"></app-item-list-header>
   <div class="text-area-container">
-    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks">
+    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks" (ngModelChange)="updateRemarks()">
     </ion-textarea>
   </div>
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
