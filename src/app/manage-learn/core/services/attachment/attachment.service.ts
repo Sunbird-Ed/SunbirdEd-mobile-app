@@ -35,6 +35,7 @@ export class AttachmentService {
         "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
+        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"
       ])
       .subscribe((data) => {
         this.texts = data;

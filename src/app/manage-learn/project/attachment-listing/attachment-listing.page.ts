@@ -107,11 +107,7 @@ export class AttachmentListingPage implements OnInit {
         attachments: []
       }
       if(this.project.attachments && this.project.attachments.length){
-        this.project.attachments.forEach(attachment => {
-          if (attachment.type == this.type) {
-           this.getEvidences(attachment, evidence)
-          }
-        });
+        this.getEvidences(this.project.attachments, evidence);
       }
       if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
@@ -125,11 +121,7 @@ export class AttachmentListingPage implements OnInit {
           attachments: []
         }
         if (task.attachments && task.attachments.length) {
-          task.attachments.forEach(attachment => {
-            if (attachment.type == this.type) {
-              this.getEvidences(attachment, evidence);
-            }
-          });
+          this.getEvidences(task.attachments, evidence);
         }
         if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
           this.attachments.tasks.push(evidence);
@@ -138,13 +130,17 @@ export class AttachmentListingPage implements OnInit {
     }
   }
 
-  getEvidences(attachment, evidence) {
-    if(attachment.type != 'link'){
-      attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
-        this.path + attachment.name
-      ) : '';
-    }
-    evidence.attachments.push(attachment);
+  getEvidences(attachments, evidence) {
+    attachments.forEach(attachment => {
+      if (attachment.type == this.type) {
+        if(attachment.type != 'link'){
+          attachment.localUrl = !attachment.url ? this.win.Ionic.WebView.convertFileSrc(
+            this.path + attachment.name
+          ) : '';
+        }
+        evidence.attachments.push(attachment);
+      }
+    });
   }
 
   getProject() {
@@ -182,7 +178,7 @@ export class AttachmentListingPage implements OnInit {
       .then(() => { console.log('File is opened'); })
       .catch(e => console.log('Error opening file', e));
   }
-  async deleteConfirmation(attachment, index) {
+  async deleteConfirmation(attachment) {
     let data;
     this.translate.get(['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION', 'YES', 'NO']).subscribe((text) => {
       data = text;
@@ -194,7 +190,7 @@ export class AttachmentListingPage implements OnInit {
         {
           text: data['YES'],
           handler: () => {
-            this.deleteAttachment(attachment, index);
+            this.deleteAttachment(attachment);
           },
         }, {
           text: data['NO'],
@@ -209,12 +205,13 @@ export class AttachmentListingPage implements OnInit {
     await alert.present();
   }
   deleteImage(event) {
-    this.deleteConfirmation(event.data, event.index);
+    this.deleteConfirmation(event.data);
   }
-  deleteAttachment(attachment, index) {
+  deleteAttachment(attachment) {
     if (this.project.tasks && this.project.tasks.length) {
+      let loopAgain : boolean = true;
       this.project.tasks.forEach(task => {
-        if(task.attachments && task.attachments.length){
+        if(loopAgain && task.attachments && task.attachments.length){
           let i = _.findIndex(task.attachments, (item) => {
           if(item.type == this.type){
               return item.name == attachment.name;
@@ -222,9 +219,9 @@ export class AttachmentListingPage implements OnInit {
           });
           if(i >= 0){
             task.attachments.splice(i, 1);
+           loopAgain = false;
           }
         }
-        return;
       });
     }
     this.updateLocalDb();
@@ -232,7 +229,7 @@ export class AttachmentListingPage implements OnInit {
   }
   attachmentAction(event) {
     if (event.action == 'delete') {
-      this.deleteConfirmation(event.attachment, event.index);
+      this.deleteConfirmation(event.attachment);
     } else if (event.action == 'view') {
       this.viewDocument(event.attachment)
     }

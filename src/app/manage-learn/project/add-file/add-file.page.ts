@@ -9,6 +9,7 @@ import { actions } from '../../core/constants/actions.constants';
 import * as _ from "underscore";
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-add-file',
@@ -53,6 +54,8 @@ export class AddFilePage implements OnInit {
     private network: NetworkService,
     private projectServ: ProjectService,
     private toast: ToastService,
+    private popupService: GenericPopUpService,
+
   ) {
     routerParams.params.subscribe(urlParams => {
       this.projectId = urlParams.id;
@@ -164,11 +167,27 @@ export class AddFilePage implements OnInit {
   }
 
   onAction(event) {
-    if (event == 'openLink') {
-      this.toggleLinkModal();
-      return;
+    if(!this.taskId){
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+        if (data.isClicked) {
+          if(data.isChecked){
+            if (event == 'openLink') {
+              this.toggleLinkModal();
+              return;
+            }
+            this.attachmentService.openAttachmentSource(event, this.attachments);
+          }else{
+            this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+          }
+        }
+      })
+    }else{
+      if (event == 'openLink') {
+        this.toggleLinkModal();
+        return;
+      }
+      this.attachmentService.openAttachmentSource(event, this.attachments);
     }
-    this.attachmentService.openAttachmentSource(event, this.attachments);
   }
 
   submit() {

@@ -301,6 +301,10 @@ export class ProjectOperationPage  {
           text: texts[button],
           cssClass: 'secondary',
           handler: (blah) => {
+            if(isNew){
+              this.projectServ.createNewProject(this.template, false);
+              return;
+            }
             this.showSkip ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
               queryParams: {
                 projectId: project._id,
@@ -334,8 +338,7 @@ export class ProjectOperationPage  {
 
   newProjectCreate() {
     this.template.isDeleted = false;
-
-    this.projectServ.createNewProject(this.template, false);
+    this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) 
   }
 
   ionViewWillLeave() {
