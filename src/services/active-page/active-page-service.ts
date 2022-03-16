@@ -1,8 +1,6 @@
 import { RouterLinks } from '@app/app/app.constant';
 import { PageId } from '../telemetry-constants';
-import { Injectable } from "@angular/core";
 
-@Injectable()
 export class ActivePageService {
 
   constructor() { }
