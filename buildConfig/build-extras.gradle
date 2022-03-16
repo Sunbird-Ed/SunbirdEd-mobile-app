@@ -62,7 +62,7 @@ android {
     defaultConfig {
         minSdkVersion 22
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "3.9.$ext.buildNumber"
+        versionName "4.7.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
@@ -140,6 +140,27 @@ android {
             buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
             buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
             buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
+        }
+
+        preprod {
+            applicationId "${production_app_id}"
+            flavorDimensions "default"
+            resValue("string", "deeplink_base_url", "${preprod_deeplink_base_url}")
+            resValue("string", "deeplink_ncert_url", "${preprod_deeplink_ncert_url}")
+            resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
+            resValue("string", "custom_scheme_url", "${preprod_custom_scheme}")
+            buildConfigField 'String', 'BASE_URL', "\"${preprod_base_url}\""
+            buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${preprod_merge_account_base_url}\""
+            buildConfigField 'String', 'PRODUCER_ID', "\"${preprod_producer_id}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${preprod_channel_id}\""
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${preprod_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${preprod_mobile_app_secret}\""
+            buildConfigField "String", "OAUTH_REDIRECT_URL","\"${preprod_oauth_redirect_url}\""
+            buildConfigField 'String', 'TOU_BASE_URL', "\"${preprod_tou_base_url}\""
+            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${preprod_survey_base_url}\""
+            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${preprod_projects_base_url}\""
         }
 
         production {
