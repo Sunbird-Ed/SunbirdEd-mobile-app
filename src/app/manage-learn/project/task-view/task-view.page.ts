@@ -356,14 +356,11 @@ export class TaskViewPage {
          }
         break
       case 'subtask':
-        name = " Edit Assignee’s Name"
-        break
-        case 'subtask':
         if(subtask.isDeletable){
           name = "Edit Subtask"
           this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
          }
-        break
+      break
     }
   }
 

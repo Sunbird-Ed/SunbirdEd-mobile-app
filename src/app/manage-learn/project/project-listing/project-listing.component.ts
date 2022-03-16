@@ -206,7 +206,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex == 2 ? this.getCreatedProjects() : this.getProjectList()
+            this.selectedFilterIndex !== 0 ? this.getProjectList() : this.getCreatedProjects()
         } else {
             this.getDownloadedProjectsList();
         }
@@ -246,11 +246,11 @@ export class ProjectListingComponent {
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
             this.projects = this.projects.concat(success.result.data);
-            if (offilineIdsArr){
-                this.projects.map((p) => {
-                    if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
-                });
-            }
+            // if (offilineIdsArr){
+            //     this.projects.map((p) => {
+            //         if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+            //     });
+            // }
             this.count = success.result.count;
             this.currentOnlineProjectLength = this.currentOnlineProjectLength + success.result.data.length;
             this.description = success.result.description;
@@ -356,11 +356,11 @@ export class ProjectListingComponent {
                         isDeleted: {
                             $ne: true
                         },
-                        Downloaded: {
+                        downloaded: {
                             $ne: false
                         },
                         isNew: {
-                            $ne: false
+                            $eq: true
                         }
                     }
                 ],

@@ -10,7 +10,7 @@ describe('HasNotSelectedLanguageGuard', () => {
     let hasNotSelectedLanguageGuard: HasNotSelectedLanguageGuard;
 
     const mockSharedPreference: Partial<SharedPreferences> = {
-        getString: jest.fn(() => of('teacher'))
+        getString: jest.fn(() => of('en'))
     };
 
     const mockRouter: Partial<Router> = {
@@ -22,9 +22,8 @@ describe('HasNotSelectedLanguageGuard', () => {
     };
 
     const mockOnBoardingConfigurationService: Partial<OnboardingConfigurationService> = {
-        nextOnboardingStep: jest.fn()
-    }
-
+        skipOnboardingStep: jest.fn(()=> Promise.resolve(false))
+    };
 
 
     beforeAll(() => {
@@ -48,34 +47,34 @@ describe('HasNotSelectedLanguageGuard', () => {
 
     describe('resolve', () => {
 
-        it('should return true if route has onReload property true', () => {
+        it('should return true if route has onReload property true and skipOnboarding as false', (done) => {
             // arrange
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
             // act
             const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);
             // assert
-            expect(response).toBeTruthy();
-            expect(hasNotSelectedLanguageGuard['guardActivated']).toBeTruthy();
-            expect(mockOnBoardingConfigurationService.nextOnboardingStep).toHaveBeenCalled();
-
+            expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(hasNotSelectedLanguageGuard['guardActivated']).toBeTruthy();
+                expect(response).toBeTruthy();
+                done();
+            }, 0);
         });
 
 
-        it('should  navigate to user type selection page if selected user type is available', (done) => {
+        it('should  navigate to user type selection page if selected language is available', (done) => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
 
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
             // assert
             setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'user-type-selection'], {
                     state: {
                         forwardMigration: true
                     }
                 });
-                expect(mockOnBoardingConfigurationService.nextOnboardingStep).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -84,15 +83,14 @@ describe('HasNotSelectedLanguageGuard', () => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
             mockSharedPreference.getString = jest.fn(() => of(undefined));
-            mockOnBoardingConfigurationService.nextOnboardingStep = jest.fn();
 
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
 
             setTimeout(() => {
                 // assert
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
                 expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
-                expect(mockOnBoardingConfigurationService.nextOnboardingStep).toHaveBeenCalled();
                 done();
             }, 0);
         });

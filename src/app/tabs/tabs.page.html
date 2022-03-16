@@ -1,8 +1,9 @@
 <ion-tabs (ionTabsDidChange)="ionTabsDidChange($event)" #tabRef>
   <ion-tab-bar slot="bottom" [ngClass]="{'rm-before': olderWebView}" >
-    <ion-tab-button [tab]="tab.root" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled"
-      [ngClass]="{'disabled': tab.disabled}" (click)="tab.label === '' ? openScanner(tab) : onTabClick(tab)">
-      <ion-icon [name]="tab.icon" [id] = "tab.label === '' ? 'qrScannerIcon' : ''"></ion-icon>
+    <ion-tab-button [tab]="tab.root" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled" [style.display]="!tab.is_visable ? 'none' : ''"
+      [ngClass]="{'disabled': tab.disabled}" (click)="tab.label === '' ? openScanner(tab) : onTabClick(tab)" class= "{{tab.name}}">
+      <ion-icon [src]="(tab.root === selectedTab) ? tab?.icon?.active : 
+      (tab.isSelected && !selectedTab) ? tab?.icon?.active : tab?.icon?.inactive"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

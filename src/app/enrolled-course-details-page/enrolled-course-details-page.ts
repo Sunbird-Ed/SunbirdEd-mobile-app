@@ -222,7 +222,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   nextContent: Content;
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
-  pageId = PageId.COURSE_DETAIL;
+  pageId: string = PageId.COURSE_DETAIL;
   showShareData = false;
   isDataShare = false;
   isShared: any;
@@ -306,6 +306,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
       this.activityData = extrasState.activityData || undefined;
+      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.courseCardData) || this.pageId;
     }
   }
 
@@ -345,7 +346,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       correlationList: this.corRelationList,
       hierachyInfo: undefined
     };
-    this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
+    this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, this.pageId);
   }
 
   subscribeUtilityEvents() {   
@@ -529,7 +530,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             content: this.course,
             rating: this.userRating,
             comment: this.ratingComment,
-            pageId: PageId.COURSE_DETAIL
+            pageId: this.pageId
           },
           cssClass: 'sb-popover info',
         });
@@ -567,7 +568,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.course,
         batchDetails: this.batchDetails,
-        pageName: PageId.COURSE_DETAIL,
+        pageName: this.pageId,
         corRelationList: this.corRelationList,
         objRollup: this.telemetryObject,
         showUnenrollButton: this.showUnenrollButton
@@ -669,6 +670,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               undefined,
               this.objRollup,
               this.corRelationList);
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.UNENROL_SUCCESS,
+                Environment.HOME,
+                this.pageId,
+                this.telemetryObject,
+                undefined,
+                this.objRollup,
+                this.corRelationList);
           });
         }, (error) => {
           this.zone.run(async () => {
@@ -682,6 +692,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               undefined,
               this.objRollup,
               this.corRelationList);
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.UNENROL_FAILURE,
+                Environment.HOME,
+                this.pageId,
+                this.telemetryObject,
+                undefined,
+                this.objRollup,
+                this.corRelationList);
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
@@ -736,6 +755,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objRollup,
       this.corRelationList
     );
+    this.telemetryGeneratorService.generatefastLoadingTelemetry(
+      InteractSubtype.FAST_LOADING_INITIATED,
+      this.pageId,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
     this.contentService.getContentHeirarchy(request).toPromise()
       .then((content: Content) => {
         /* setting child content here */
@@ -746,6 +773,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
           InteractSubtype.FAST_LOADING_FINISHED,
           PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList
+        );
+        this.telemetryGeneratorService.generatefastLoadingTelemetry(
+          InteractSubtype.FAST_LOADING_FINISHED,
+          this.pageId,
           this.telemetryObject,
           undefined,
           this.objRollup,
@@ -775,6 +810,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objType = this.course.contentType;
       this.objVer = this.course.pkgVersion;
       this.showLoading = false;
+      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.course);
 
       this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
       if (!this.didViewLoad) {
@@ -1013,6 +1049,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
                 this.objRollup,
                 this.corRelationList
               );
+              this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
+                this.pageId,
+                this.course,
+                this.queuedIdentifiers,
+                identifiers.length,
+                this.objRollup,
+                this.corRelationList
+              );
             }
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
@@ -1025,6 +1069,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
                 TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                 ErrorType.SYSTEM,
                 PageId.COURSE_DETAIL,
+                JSON.stringify(stackTrace),
+              );
+              this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
+                TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                ErrorType.SYSTEM,
+                this.pageId,
                 JSON.stringify(stackTrace),
               );
             }
@@ -1093,6 +1143,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           'download-all-button-clicked',
           Environment.HOME,
           PageId.COURSE_DETAIL
+        );
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+          'download-all-button-clicked',
+          Environment.HOME,
+          this.pageId
         );
         this.events.publish('header:decreasezIndex');
         this.importContent(this.downloadIdentifiers, true, true);
@@ -1222,6 +1277,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       undefined,
       this.corRelationList
     );
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UNIT_CLICKED,
+      Environment.HOME,
+      this.pageId,
+      ContentUtil.getTelemetryObject(content),
+      values,
+      undefined,
+      this.corRelationList
+    );
   }
   // to check whether the card is toggled or not
   isGroupShown(group) {
@@ -1313,6 +1378,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objRollup,
       this.corRelationList
     );
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.START_CLICKED,
+      Environment.HOME,
+      this.pageId,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
 
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
     const doNotShow = await this.preferences.getBoolean(key).toPromise();
@@ -1353,6 +1427,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objRollup,
       this.corRelationList
     );
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.RESUME_CLICKED,
+      Environment.HOME,
+      this.pageId,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
   }
 
   /**
@@ -1387,6 +1470,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.isMinor = this.profile && this.profile.serverProfile && this.profile.serverProfile.isMinor;
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
@@ -1470,6 +1554,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.COURSE_DETAIL,
+        Environment.HOME,
+        false,
+        this.identifier,
+        this.corRelationList,
+        this.objRollup,
+        this.telemetryObject
+      );
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        this.pageId,
         Environment.HOME,
         false,
         this.identifier,
@@ -1670,6 +1763,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.ENROLL_CLICKED, Environment.HOME,
+        this.pageId, this.telemetryObject, reqvalues, this.objRollup);
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -1709,7 +1805,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.content,
         corRelationList: this.corRelationList,
-        pageId: PageId.COURSE_DETAIL,
+        pageId: this.pageId,
         shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
@@ -1758,11 +1854,24 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       objectVersion,
       this.objRollup,
       this.corRelationList);
+      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL,
+        '', this.pageId,
+        Environment.HOME,
+        objectId,
+        objectType,
+        objectVersion,
+        this.objRollup,
+        this.corRelationList);
   }
 
   generateStartEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
+      telemetryObject,
+      this.objRollup,
+      this.corRelationList
+    );
+    this.telemetryGeneratorService.generateStartTelemetry(this.pageId,
       telemetryObject,
       this.objRollup,
       this.corRelationList
@@ -1778,13 +1887,20 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       telemetryObject,
       this.objRollup,
       this.corRelationList);
+      this.telemetryGeneratorService.generateEndTelemetry(objectType || CsPrimaryCategory.COURSE,
+        Mode.PLAY,
+        this.pageId,
+        Environment.HOME,
+        telemetryObject,
+        this.objRollup,
+        this.corRelationList);
   }
 
   /**
    * Opens up popup for the credits.
    */
   viewCredits() {
-    this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
+    this.courseUtilService.showCredits(this.course, this.pageId, undefined, this.corRelationList);
   }
 
   getContentState(returnRefresh: boolean) {
@@ -1906,6 +2022,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         cdata,
         this.telemetryObject.rollup
       );
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.COURSE,
+        AuditState.AUDIT_UPDATED,
+        ['progress'],
+        this.commonUtilService.appendTypeToPrimaryCategory(this.content, '-progress'),
+        this.telemetryObject.id,
+        this.telemetryObject.type,
+        this.telemetryObject.version,
+        cdata,
+        this.telemetryObject.rollup
+      );
     }
   }
 
@@ -1920,6 +2047,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
+          this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
+            true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.handleNavBackButton();
 
         if (await this.onboardingSkippedBackAction()) {
@@ -1944,6 +2073,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         Environment.HOME,
         PageId.COURSE_BATCHES, undefined,
         this.localCourseService.prepareRequestValue(enrollCourseRequest));
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+          InteractSubtype.ENROLL_CLICKED,
+          Environment.HOME,
+          this.commonUtilService.appendTypeToPrimaryCategory(this.content, '-batches'), undefined,
+          this.localCourseService.prepareRequestValue(enrollCourseRequest));
 
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
@@ -2038,6 +2172,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objRollup,
       this.corRelationList
     );
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      event.detail.value === 'modules' ? InteractSubtype.TRAINING_MODULE_CLICKED : InteractSubtype.TRAINING_INFO_CLICKED,
+      Environment.HOME,
+      this.pageId,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
   }
 
   // check wheather to show Unenroll button in overflow menu or not
@@ -2114,6 +2258,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         undefined,
         this.objRollup,
         this.corRelationList);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.TRAINING_MODULE_CLICKED,
+          Environment.HOME,
+          this.pageId,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList);
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,
@@ -2343,6 +2496,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               Environment.HOME,
               PageId.COURSE_DETAIL, undefined,
               reqvalues, undefined, this.corRelationList);
+              this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+                'ongoing-batch-popup',
+                Environment.HOME,
+                this.pageId, undefined,
+                reqvalues, undefined, this.corRelationList);
             const popover = await this.popoverCtrl.create({
               component: EnrollmentDetailsComponent,
               componentProps: {

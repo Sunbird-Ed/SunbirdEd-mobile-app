@@ -190,6 +190,10 @@ export const notificationServiceV2 = () => {
   return SunbirdSdk.instance.notificationServiceV2;
 };
 
+export const certificateService = () => {
+  return SunbirdSdk.instance.certificateService;
+};
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -296,7 +300,11 @@ export function sdkDriverFactory(): any {
   },{
     provide: 'NOTIFICATION_SERVICE_V2',
     useFactory: notificationServiceV2
-  },];
+  },
+  {
+    provide: 'CERTIFICATE_SERVICE',
+    useFactory: certificateService
+  }];
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
@@ -372,7 +380,7 @@ export const sunbirdSdkFactory =
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
-          profileApiPath:'/api/user/v5',
+          profileApiPath:'/api/user/v1',
           profileApiPath_V5: '/api/user/v5',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
@@ -397,6 +405,11 @@ export const sunbirdSdkFactory =
           telemetryLogMinAllowedOffset: 86400000
         },
         sharedPreferencesConfig: {
+        },
+        certificateServiceConfig: {
+          apiPath: 'api/certreg/v2',
+          apiPathLegacy: 'api/certreg/v1',
+          rcApiPath: 'api/rc/${schemaName}/v1',
         },
         playerConfig: {
           showEndPage: false,

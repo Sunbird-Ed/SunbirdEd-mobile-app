@@ -133,6 +133,7 @@ export class ProjectService {
         projectId: projectId,
         programId: programId,
         solutionId: solutionId,
+        from:'service'
       }, replaceUrl: replaceUrl
     })
   }
@@ -364,6 +365,7 @@ export class ProjectService {
         projectDetails._id = success.result.projectId;
         projectDetails.programId = success.result.programId;
         projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
+        projectDetails.tasks = project.tasks;
         this.projectId = projectDetails._id;
         projectDetails.isNew = false;
         delete projectDetails._rev;

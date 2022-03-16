@@ -196,7 +196,7 @@
 				class="card-content-bottom-0 card-content-top-0">
 				<ion-segment class="d-flex" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info" class="flex-5">
-						<ion-label class="font-12 text-transform-none">{{'FRMELEMNTS_LBL_TRAINING_INFO' | categoryKeyTranslate : course }}</ion-label>
+						<ion-label class="font-12 text-transform-none">{{'FRMELEMNTS_LBL_TRAINING_DETAILS' | categoryKeyTranslate : course }}</ion-label>
 					</ion-segment-button>
 					<div class="hr-div">
 						<hr class="hr-height">
@@ -312,13 +312,13 @@
 										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" class="data-list">
-										<ion-radio-group [value]="dataSharingStatus">
-										  <ion-item class="ds-item" class="list-info" [disabled]="true">
+										<ion-radio-group [(ngModel)]="dataSharingStatus">
+										  <ion-item class="ds-item" class="list-info">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
-										  <ion-item class="ds-item" class="list-info" [disabled]="true">
+										  <ion-item class="ds-item" class="list-info">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
