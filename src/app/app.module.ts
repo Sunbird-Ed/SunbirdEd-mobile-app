@@ -407,9 +407,9 @@ export const sunbirdSdkFactory =
         sharedPreferencesConfig: {
         },
         certificateServiceConfig: {
-          apiPath: 'api/certreg/v2',
-          apiPathLegacy: 'api/certreg/v1',
-          rcApiPath: 'api/rc/${schemaName}/v1',
+          apiPath: '/api/certreg/v2',
+          apiPathLegacy: '/api/certreg/v1',
+          rcApiPath: '/api/rc/${schemaName}/v1',
         },
         playerConfig: {
           showEndPage: false,
