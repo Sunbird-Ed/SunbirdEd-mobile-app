@@ -1,0 +1,21 @@
+<ion-card class="attachments-card" *ngIf="attachments?.length">
+  <ion-card-header class="project-card _capitalize">
+    {{title}}
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list *ngFor="let attachment of attachments; let i = index" (click)="viewDocument(attachment)"
+      class="attachment-list">
+      <h5>
+        <ion-icon class="prefix-attachment" *ngIf="type == 'application/pdf'" name="document" slot="start">
+        </ion-icon>
+        <ion-icon class="prefix-attachment" *ngIf="type == 'link'" name="link-outline" slot="start"></ion-icon>
+        <span>{{attachment.name}} </span>
+      </h5>
+      <button slot="icon-only" *ngIf="!viewOnly" (click)="$event.stopPropagation();deleteConfirmation(i,attachment)">
+        <ion-icon name="close-circle" slot="end"></ion-icon>
+        <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+        </p>
+      </button>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

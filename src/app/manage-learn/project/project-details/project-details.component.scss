@@ -8,7 +8,9 @@
 .completed {
     --progress-background: var(--app-green) !important;
 }
-
+.zeroTask{
+  --progress-background: var(--app-lighter-gray) !important;
+}
 .in-progress {
     --progress-background: var(--app-quaternary-medium) !important;
 }

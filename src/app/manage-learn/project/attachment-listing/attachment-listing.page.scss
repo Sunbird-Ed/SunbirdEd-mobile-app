@@ -1,0 +1,30 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+
+.segments{
+display: flex;
+}
+.partition{
+   border: 1px solid $gray;
+    margin: 5px 5px;
+}
+.segment-wrapper{
+    margin-top: 8%;
+}
+
+.view-more {
+    --background: var(--app-primary-background) !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    width: 90%;
+    border-radius: 5px !important;
+ }
+ ion-card{
+    margin: 0 0 10px 0;
+ }
+ .header{
+    margin-left: 0px;
+ }
+
+
+ 
