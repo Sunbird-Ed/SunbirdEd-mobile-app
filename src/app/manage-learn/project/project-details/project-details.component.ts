@@ -92,12 +92,13 @@ export class ProjectDetailsComponent implements OnInit {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
+  }
+  ionViewWillEnter() {
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.location.back();
     });
   }
-
-  ionViewWillEnter() {
+  ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
     }
