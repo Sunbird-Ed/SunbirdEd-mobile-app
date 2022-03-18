@@ -88,7 +88,7 @@
       </ion-card>
     </div>
 
-    <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="doAction()"
+    <ion-button expand="block" shape="round" (click)="doAction()"
       class="custom-btn-txt-transform-none" *ngIf="!task?.learningResources?.length">
       {{'FRMELEMNTS_LBL_ADD_FILES' | translate}}
     </ion-button>
@@ -100,7 +100,7 @@
         </ion-button>
       </ion-col>
       <ion-col size="7">
-        <ion-button class="roundedButton custom-btn-txt-transform-none" [disabled]="!enableMarkButton" expand="block"
+        <ion-button class="roundedButton custom-btn-txt-transform-none"  expand="block"
           shape="round" (click)="doAction()">
           {{'FRMELEMNTS_LBL_ADD_FILES' | translate}}
         </ion-button>
@@ -109,35 +109,3 @@
   </div>
 
 </ion-content>
-
-<div *ngIf="showAttachments" class="custom-popup" [ngClass]="{'disablePage' : viewOnlyMode}">
-  <div class="pop-container">
-    <div class="pop-msg">
-      <ion-icon name="close" (click)="closemarkTaskAsCompleted()" class="close-attach-popup"></ion-icon>
-      <h4> {{'FRMELEMNTS_LBL_CONDUCT_SELF_ASSESSMENT' | translate}} </h4>
-      <ion-textarea placeholder="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}" [(ngModel)]="task.remarks">
-      </ion-textarea>
-
-      <ion-item *ngFor="let attach of attachments" lines="none">
-        <ion-icon color="primary" name="attach"></ion-icon>
-        <ion-label> {{attach.name}} </ion-label>
-      </ion-item>
-    </div>
-    <!-- <div class="pop-btn">
-      <ion-button expand="block" (click)="insertAttachment()">
-        {{'FRMELEMNTS_LBL_CONTINUE' | translate}}
-      </ion-button> -->
-    <ion-row>
-      <ion-col size="6">
-        <ion-button class="custom-btn-txt-transform-none" color="primary" size="block" (click)="openAction()">
-          {{'FRMELEMNTS_LBL_ATTACH_FILES' | translate}}
-        </ion-button>
-      </ion-col>
-      <ion-col size="6">
-        <ion-button class="custom-btn-txt-transform-none" color="primary" size="block" (click)="insertAttachment()">
-          {{'FRMELEMNTS_LBL_CONTINUE' | translate}}
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </div>
-</div>

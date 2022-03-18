@@ -1,0 +1,41 @@
+<ion-content>
+  <h5 class="page-header-content">{{ description | translate }}
+    </h5>
+<div class="ion-padding">
+  <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}"></app-item-list-header>
+  <div class="text-area-container">
+    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks" (ngModelChange)="updateRemarks()">
+    </ion-textarea>
+  </div>
+  <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
+  <div class="sb-dt-card-actions">
+    <div class="wrapper">
+      <app-metadata-actions (actionEvent)="onAction($event)" [actionItems]="actionItems"></app-metadata-actions>
+    </div>
+  </div>
+
+  <div *ngFor="let attachment of attachments; let i = index" class="attachments-list">
+    <div class="attachment-label" *ngIf="attachment?.type != 'link'">
+      <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image/jpeg'"></ion-icon>
+      <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'application/pdf'"></ion-icon>
+      <span>{{attachment?.name || attachment?.url}} </span>
+    </div>
+    <div class="attachment-label" *ngIf="attachment?.type == 'link'">
+        <ion-icon name="link-outline" slot="start"></ion-icon>
+        <span>{{attachment?.name || attachment?.url}} </span>
+    </div>
+    <div>
+      <button slot="icon-only" (click)="deleteConfirm(i)">
+        <ion-icon name="close-circle" slot="end"></ion-icon>
+        <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+        </p>
+      </button>
+    </div>
+  </div>
+
+  <ion-button (click)="submit()" expand="block" class="text-transform-none">
+    {{button | translate}}
+  </ion-button>
+</div>
+</ion-content>
+<app-add-link-modal *ngIf="isLinkModalOpen" (eventEmit)="linkEvent($event)"> </app-add-link-modal>

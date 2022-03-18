@@ -597,6 +597,8 @@ export class RouterLinks {
     public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
     public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
     public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+    public static readonly ADD_FILE='add-file';
+    public static readonly ATTACHMENTS_LISTING = 'attachment-listing';
 
 
     public static readonly SOLUTIONS = 'solutions';

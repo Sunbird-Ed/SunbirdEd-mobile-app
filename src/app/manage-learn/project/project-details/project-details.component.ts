@@ -43,6 +43,7 @@ export class ProjectDetailsComponent implements OnInit {
   allStatusTypes = statusType;
   taskCount = 0;
   projectDetailsCopy;
+  taskNoDataFound="FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS"
 
   constructor(
     public params: ActivatedRoute,
@@ -60,7 +61,8 @@ export class ProjectDetailsComponent implements OnInit {
     private projectServ: ProjectService,
     private modal: ModalController,
     private utils: UtilsService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private share: SharingFeatureService
   ) {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
@@ -95,7 +97,7 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  ngOnDestroy() {
+  ionViewWillEnter() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
     }
@@ -341,36 +343,10 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
-    this.projectDetails.status = statusType.submitted;
-    this.updateLocalDb(true);
-    this.doSyncAction();
-  }
-
-  async submitProjectConfirmation() {
-    let data;
-    this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_PROJECT", "NO", "YES"]).subscribe((text) => {
-      data = text;
-    });
-    const alert = await this.alert.create({
-      cssClass: 'central-alert',
-      header: data['FRMELEMNTS_LBL_SUBMIT_PROJECT'],
-      message: data["FRMELEMNTS_MSG_SUBMIT_PROJECT"],
-      buttons: [
-        {
-          text: data["NO"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => { },
-        },
-        {
-          text: data["YES"],
-          handler: () => {
-            this.submitImprovment();
-          },
-        },
-      ],
-    });
-    await alert.present();
+    if (!this.network.isNetworkAvailable) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
+    }
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`, this.projectDetails._id])
   }
 
   async addNewTask() {

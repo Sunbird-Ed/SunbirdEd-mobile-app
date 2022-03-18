@@ -7,5 +7,6 @@ export const localStorageConstants = {
     FIRST_TIME: "FirstTime",
     USER_DETAILS:"usersInfo",
     SELECTED_LANGUAGE: "selectedLanguage",
-    LIBRARY_CATEGORIES:"libraryCategories"
+    LIBRARY_CATEGORIES:"libraryCategories",
+    FILE_LIMIT:30000000
 };

@@ -1,0 +1,52 @@
+<ion-content *ngIf="project" class="ion-padding">
+  <div class="project-segments segment-wrapper">
+    <ion-segment [(ngModel)]="type" (ionChange)="segmentChanged($event)" class="segment-card">
+      <div *ngFor="let tab of tabs;let i=index; let last = last" class="segments">
+        <ion-segment-button value="{{tab.type}}">
+          <ion-label>{{tab.name | translate}}</ion-label>
+        </ion-segment-button>
+        <div class="partition" *ngIf="!last">
+        </div>
+      </div>
+    </ion-segment>
+  </div>
+
+  <div *ngIf="type == 'image/jpeg'">
+    <app-item-list-header *ngIf="attachments?.project?.attachments?.length || attachments?.project?.remarks"
+      headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+      class="header">
+    </app-item-list-header>
+    <app-attachment-card *ngIf="attachments?.project"  [data]="attachments?.project" [viewOnly]="viewOnly"
+      (deleteAttachment)="deleteImage($event)">
+    </app-attachment-card>
+    <app-item-list-header *ngIf="attachments?.tasks?.length"
+      headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+      class="header">
+    </app-item-list-header>
+    <div *ngIf="attachments?.tasks?.length">
+      <app-attachment-card *ngFor="let task of attachments?.tasks" [data]="task" [viewOnly]="viewOnly"
+        (deleteAttachment)="deleteImage($event)">
+      </app-attachment-card>
+    </div>
+  </div>
+
+  <div *ngIf="type != 'image/jpeg'">
+    <div *ngIf="attachments?.project?.attachments?.length">
+      <app-item-list-header
+        headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+        class="header">
+      </app-item-list-header>
+       <app-attachment-lists  *ngIf="project?.attachments?.length" [type]="type" [title]="attachments?.project?.title" [attachments]="attachments?.project?.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
+    </div>
+    <app-item-list-header *ngIf="attachments?.tasks?.length"
+      headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
+      class="header">
+    </app-item-list-header>
+    <div *ngFor="let task of attachments?.tasks">
+      <app-attachment-lists  *ngIf="task?.attachments?.length" [type]="type" [title]="task.title" [attachments]="task.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
+    </div>
+  </div>
+  <div *ngIf="!attachments?.project?.attachments?.length && !attachments?.tasks?.length">
+    <app-no-data [message]="'FRMELEMENTS_NO_EVIDENCES_FOR_FILE'" [color]="'text-primary'"></app-no-data>
+  </div>
+</ion-content>
