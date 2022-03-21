@@ -14,14 +14,13 @@
           translate}}
         </p>
         <ion-progress-bar
-          [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}"
           [value]="projectCompletionPercent?.completedTasks/projectCompletionPercent?.totalTasks"
-          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks, 'in-progress': projectCompletionPercent?.completedTasks < projectCompletionPercent?.totalTasks}"
+          [ngClass]="{'completed':projectCompletionPercent?.completedTasks===projectCompletionPercent?.totalTasks && projectCompletionPercent?.totalTasks !==0, 'in-progress': projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks && projectCompletionPercent?.totalTasks !==0, 'zeroTask': projectCompletionPercent?.totalTasks == 0}"
           class="progress-bar-style"></ion-progress-bar>
       </div>
 
     </div>
-    <ion-button (click)="submitProjectConfirmation()"
+    <ion-button (click)="submitImprovment()"
       *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted" expand="block"
       class="ion-text-none ion-margin-top"
       [ngClass]="{'button-disabled':projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks || !taskCount}"
@@ -63,6 +62,8 @@
 
   <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetailsCopy" (actionEvent)="onTaskAction($event)"
     [viewOnly]="projectDetailsCopy?.status === allStatusTypes.submitted"></app-task-card>
+
+    <app-no-data class="ion-padding" *ngIf="segmentType == 'tasks' && taskCount==0 && (projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted)" [message]="taskNoDataFound" [color]="'text-primary'"></app-no-data>
 
     <ion-card class="add-task" (click)="addNewTask()" *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
       <ion-card-content>

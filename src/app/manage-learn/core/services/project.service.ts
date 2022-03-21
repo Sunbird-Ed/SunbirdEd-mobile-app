@@ -129,7 +129,6 @@ export class ProjectService {
 
   navigateToProjectDetails({ projectId, programId, solutionId, replaceUrl }) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      skipLocationChange: true,
       queryParams: {
         projectId: projectId,
         programId: programId,
@@ -413,5 +412,22 @@ export class ProjectService {
         data && data.isClicked ? resolve(data.isChecked) : reject();
       })
     })
+  }
+
+  getLinks(links) {
+    let formattedLinks = links.replace(/[ ]/g, ',').split(',');
+    let linkArray = [];
+    formattedLinks.forEach(element => {
+      if(element){
+        let link = {
+          name: element,
+          type: 'link',
+          isUploaded: false,
+          url: "",
+        };
+        linkArray.push(link);
+      }
+    });
+    return linkArray.length ? linkArray : links;
   }
 }

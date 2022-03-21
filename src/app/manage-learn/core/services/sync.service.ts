@@ -104,8 +104,8 @@ export class SyncService {
     if(showLoader){
       this.loader.startLoader()
     }
-    const project = { ...projectDetails};
-    const payload = this.removeKeys(project, ['isNew', 'isEdit']);
+    const project = { ...projectDetails };
+    const payload = this.removeKeys(project, ['isNew', 'isEdit', 'submissionDetails']);
     delete payload._id;
     delete payload.tasks;
     const actualPayload = this.processPayload(payload);
@@ -183,10 +183,22 @@ export class SyncService {
 
   getAllAttachmentOfProject(project) {
     let attachments = [];
+    // project leve attachments
+    if (project.attachments && project.attachments.length) {
+      for (const attachment of project.attachments) {
+        if (attachment.type != 'link') {
+          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+        }
+      }
+    }
+
+    // Task leve attachments
     for (const task of project.tasks) {
       if (task.attachments && task.attachments.length) {
         for (const attachment of task.attachments) {
-          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          if (attachment.type != 'link') {
+            !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          }
         }
       }
     }

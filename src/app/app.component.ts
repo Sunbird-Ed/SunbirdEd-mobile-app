@@ -821,6 +821,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.SETTINGS}/${RouterLinks.DATA_SYNC}`) !== -1)
+        || (routeUrl.indexOf(`${RouterLinks.ADD_FILE}/`) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
         return;
