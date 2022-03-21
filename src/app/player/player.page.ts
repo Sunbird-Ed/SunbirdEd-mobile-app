@@ -124,8 +124,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
-      // this.config['metadata']['streamingUrl'] = 'file://' + this.config['metadata']['streamingUrl'];
-       console.log('config', this.config);
        this.playerType = 'sunbird-video-player';
     } else {
       this.playerType = 'sunbird-old-player';
