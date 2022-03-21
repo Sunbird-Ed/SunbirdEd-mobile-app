@@ -76,7 +76,8 @@
       </div>
     </div>
   </div>
-  <div *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType === 'sunbird-video-player'" class="sb-play-container sb-player-container">
+  <div *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType === 'sunbird-video-player'" 
+  class="sb-play-container sb-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
     <div class="sb-overlay-container">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
@@ -84,7 +85,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="playerType === 'sunbird-video-player'"  style="height:46vh;width:100%;">
+    <div *ngIf="playerType === 'sunbird-video-player'"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
       <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
         (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
     </div>
