@@ -106,7 +106,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
@@ -125,6 +124,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
+      // this.config['metadata']['streamingUrl'] = 'file://' + this.config['metadata']['streamingUrl'];
+       console.log('config', this.config);
        this.playerType = 'sunbird-video-player';
     } else {
       this.playerType = 'sunbird-old-player';
