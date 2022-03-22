@@ -1,4 +1,4 @@
-import {CourseService} from '@project-sunbird/sunbird-sdk';
+import {CertificateService, CourseService} from '@project-sunbird/sunbird-sdk';
 import {CertificateDownloadService} from 'sb-svg2pdf';
 import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '@app/services';
 import {Router} from '@angular/router';
@@ -9,15 +9,13 @@ import {ElementRef} from '@angular/core';
 import {EMPTY, of} from 'rxjs';
 
 describe('CertificateViewPage', () => {
-    const mockCourseService: Partial<CourseService> = {
-        certificateManager: {
-            getCertificate: jest.fn(() => of('data:image/svg+xml,<svg height="100" width="100">\n' +
-            '  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />\n' +
-            '  Sorry, your browser does not support inline SVG.  \n' +
-                '</svg>')),
-            downloadCertificate: jest.fn(() => of({ path: 'SOME_DOWNLOAD_PATH' }))
-        } as any
-    };
+    const mockCertificateService: Partial<CertificateService> = {
+        getCertificate: jest.fn(() => of('data:image/svg+xml,<svg height="100" width="100">\n' +
+        '  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />\n' +
+        '  Sorry, your browser does not support inline SVG.  \n' +
+            '</svg>')),
+        downloadCertificate: jest.fn(() => of({ path: 'SOME_DOWNLOAD_PATH' }))
+    } as any;
     const mockCertificateDownloadService: Partial<CertificateDownloadService> = {
         buildBlob: jest.fn(() => Promise.resolve(new Blob())),
     };
@@ -66,11 +64,12 @@ describe('CertificateViewPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
     };
+    
     let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {
         certificateViewPage = new CertificateViewPage(
-            mockCourseService as CourseService,
+            mockCertificateService as CertificateService,
             mockCertificateDownloadService as CertificateDownloadService,
             mockAppHeaderService as AppHeaderService,
             mockCommonUtilService as CommonUtilService,
@@ -107,7 +106,7 @@ describe('CertificateViewPage', () => {
             certificateViewPage.ngAfterViewInit();
 
             setTimeout(() => {
-                expect(mockCourseService.certificateManager.getCertificate).toHaveBeenCalled();
+                expect(mockCertificateService.getCertificate).toHaveBeenCalled();
                 expect(certificateViewPage.certificateContainer.nativeElement.innerHTML).toBeTruthy();
                 done();
             });

@@ -8,7 +8,7 @@ import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
-import { CertificateService, CourseService, InteractType } from 'sunbird-sdk';
+import { CertificateService, InteractType } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-certificate-view',
@@ -42,7 +42,6 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   onPopupOpen = false;
 
   constructor(
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
     private appHeaderService: AppHeaderService,
