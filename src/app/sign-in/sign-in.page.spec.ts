@@ -37,7 +37,10 @@ describe('SignInPage', () => {
     let signInPage: SignInPage;
     const mockAuthService: Partial<AuthService> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
-    const mockAppHeaderService: Partial<AppHeaderService> = {};
+    const mockAppHeaderService: Partial<AppHeaderService> = {
+        hideHeader: jest.fn(),
+        showHeaderWithBackButton: jest.fn()
+    };
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
@@ -46,7 +49,8 @@ describe('SignInPage', () => {
             extras: {
                 state: {
                     navigateToCourse: true,
-                    source: 'user'
+                    source: 'user',
+                    hideBackBtn: true
                 }
             }
         }))
@@ -94,7 +98,6 @@ describe('SignInPage', () => {
         // act
         signInPage.ngOnInit();
         // assert
-        expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         setTimeout(() => {
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             done();
@@ -109,7 +112,7 @@ describe('SignInPage', () => {
         signInPage.loginWithKeyCloak();
         // assert
         setTimeout(() => {
-            expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith({navigateToCourse: true, source: 'user'});
+            expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith({navigateToCourse: true, source: 'user', hideBackBtn: true});
             expect(mockLocation.back).toHaveBeenCalled();
             done();
         }, 0);
