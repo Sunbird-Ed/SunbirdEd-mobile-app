@@ -18,8 +18,7 @@ describe('SearchFilterService', () => {
     });
 
     it('Should create instatance', () => {
-        expect(searchFilterService).toBeTruthy;
-
+        expect(searchFilterService).toBeTruthy();
     });
 
     describe('fetchFacetFilterFormConfig', () => {
@@ -116,8 +115,8 @@ describe('SearchFilterService', () => {
                         }]
                 }
             }]));
-        //act
-        searchFilterService.fetchFacetFilterFormConfig(subType).then(() => {
+            //act
+            searchFilterService.fetchFacetFilterFormConfig(subType).then(() => {
             //assert
             expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest);
             done();
@@ -167,7 +166,6 @@ describe('SearchFilterService', () => {
             done();
         });
         });
-        
     }) 
 
 describe('reformFilterValues', () => {
@@ -206,7 +204,6 @@ describe('reformFilterValues', () => {
         expect(searchFilterService.getFacetFormAPIConfig).not.toHaveBeenCalled();
         done();
         });
-        
     });
 
     it('Should get Facet Values if form API Facet is false', (done) => {
@@ -236,17 +233,16 @@ describe('reformFilterValues', () => {
         const formAPIFacets = searchFilterService['facetFilterFormConfig'];
         //act
         searchFilterService.reformFilterValues(facetFilters, formAPIFacets).then(() => {
-            //assert
+        //assert
         expect(searchFilterService.getFacetFormAPIConfig).toHaveBeenCalled();
         done();
         });
-        
     });
 });
 
 describe('compareAndAssignValue', () => {
     it('should return initialfacet if values is undefined', () => {
-        //arrange
+    //arrange
     const initialFacet = {name: "se_mediums", values: Array(3)}, 
     replaceableFacet = {code: "se_mediums", type: "dropdown", name: "language codes", placeholder: "Select Medium", multiple: true, index: 1};
     const compareAndAssignValue = jest.fn();
@@ -255,8 +251,9 @@ describe('compareAndAssignValue', () => {
     //assert
     expect(compareAndAssignValue).toHaveBeenCalledWith(initialFacet,replaceableFacet);
     });
+
     it('should return initialfacet if values is defined', () => {
-        //arrange
+    //arrange
     const initialFacet = {name: "subject", values: [
     {name: "general science", count: 1, apply: false},
     {name: "physical science", count: 1, apply: false},
@@ -287,6 +284,5 @@ describe('compareAndAssignValue', () => {
     //assert
     expect(compareAndAssignValue).toHaveBeenCalledWith(initialFacet,replaceableFacet);
     });
-});  
-
+}); 
 });

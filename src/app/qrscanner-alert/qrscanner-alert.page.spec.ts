@@ -1,8 +1,6 @@
 import { Platform } from '@ionic/angular';
 import { QRScannerAlert } from './qrscanner-alert.page';
 
-
-
 describe('QRScannerAlert', () => {
     let qrscannerAlert : QRScannerAlert;
     const mockPlatform: Partial<Platform> = {};
@@ -17,13 +15,10 @@ describe('QRScannerAlert', () => {
         jest.clearAllMocks();
         jest.resetAllMocks();
     });
-
     it('Should create instatance', () => {
-        qrscannerAlert.cancelKey = 'hide';
-        expect(qrscannerAlert).toBeTruthy;
-        expect(true).toEqual(true);
-        expect(qrscannerAlert.showOnlyPrimaryBtn).toBeFalsy();
-
+        qrscannerAlert['cancelKey'] = 'hide';
+        expect(qrscannerAlert).toBeTruthy();
+        expect(qrscannerAlert.cancelKey).toEqual('hide');
     });
 
     describe('tryAgain', () => {

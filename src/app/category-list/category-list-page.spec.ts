@@ -217,7 +217,6 @@ describe('CategoryListPage', () => {
                 }
             }, 'Mathematics');
             // assert
-
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.VIEW_MORE_CLICKED,
@@ -272,7 +271,6 @@ describe('CategoryListPage', () => {
                 }
             }, 'Mathematics');
             // assert
-
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.VIEW_MORE_CLICKED,
@@ -300,7 +298,6 @@ describe('CategoryListPage', () => {
                 }
             });
             const rollUp = ContentUtil.generateRollUp(undefined, 'sample_id');
-
             // act
             categoryListPage.navigateToDetailPage({
                 data: {
@@ -343,7 +340,6 @@ describe('CategoryListPage', () => {
                 }
             });
             const rollUp = ContentUtil.generateRollUp(undefined, 'sample_id');
-
             // act
             categoryListPage.navigateToDetailPage({
                 data: {
@@ -370,90 +366,6 @@ describe('CategoryListPage', () => {
                 []
             );
             expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalled();
-        });
-    });
-
-    describe('pillFilterHandler', () =>{
-        it('should return  nothing if pill is false', (done) => {
-            //arrange
-            const pill = [
-                                             {
-                                                 name: 'sample_string',
-                                                 code: 'sample_code',
-                                                 values: [{
-                                                     name: 'audience',
-                                                    apply: true
-                                                }]
-                                             }
-                        ];
-            
-                        jest.spyOn(categoryListPage, 'pillFilterHandler').mockImplementation(() => {
-                            return;
-                        });
-            //act
-            categoryListPage.pillFilterHandler(pill);
-            //assert
-            setTimeout(() => {
-            expect(categoryListPage.pillFilterHandler).toHaveBeenCalledWith(pill);
-            expect(pill).toBeFalsy();
-            expect(categoryListPage.facetFilters).toBeTruthy();
-            done();
-            }, 0);
-        });
-        it('sholud check facet filter', (done) => {
-            //arrange
-            const pill = [
-                {
-                    name: 'sample_string',
-                    code: 'sample_code',
-                    values: [{
-                        name: 'audience',
-                       apply: true
-                   }]
-                }
-];
-            //act 
-            categoryListPage.pillFilterHandler(pill);
-            //assert
-            expect(categoryListPage.facetFilters).toBeTruthy();
-        });
-    });
-
-    describe('navigateToFilterFormPage', () => {
-        it('should navigate to formFilter page', (done) => {
-            //arrange
-        const isDataEmpty = true;
-        const inputFilterCriteria: ContentSearchCriteria = categoryListPage.deduceFilterCriteria(isDataEmpty);
-        mockModalController.create = jest.fn(() => (Promise.resolve(
-                     {
-                         present: jest.fn(() => Promise.resolve({})),
-                         onDidDismiss: jest.fn(() => Promise.resolve({
-                             data: {
-                                 appliedFilterCriteria: {
-                                     facetFilters: [
-                                         {
-                                             name: 'sample_string',
-                                             code: 'sample_code',
-                                             values: [{
-                                                 name: 'audience',
-                                                 apply: true
-                                             }]
-                                         }
-                                     ]
-                                 }
-        
-                             },
-                         })),
-                     } as any
-                 )));
-       
-        //act
-        categoryListPage.navigateToFilterFormPage();
-        //assert
-        setTimeout(() => {
-                     expect(mockModalController.create).toHaveBeenCalled();
-                     done();
-                 });
         });
     });
 
@@ -505,36 +417,6 @@ describe('CategoryListPage', () => {
             behavior: 'smooth'
         });
     });
-
-    describe('deduceFilterCriteria', () => {
-        it('While resent filter criteria satisfied', (done) =>{
-            //arrange
-            const isDataEmpty = true;
-            jest.spyOn(categoryListPage, 'deduceFilterCriteria').mockImplementation(() => {
-                return;
-            });
-            //act
-            categoryListPage.deduceFilterCriteria(isDataEmpty);
-            //assert
-            expect(categoryListPage.deduceFilterCriteria).toHaveBeenCalledWith(isDataEmpty);
-            expect(categoryListPage['resentFilterCriteria']).toBeFalsy();
-            expect(categoryListPage['filterCriteria']);
-        });
-
-        it('While prefetched filter criteria satisfied', (done) =>{
-            //arrange
-            const isDataEmpty = true;
-            jest.spyOn(categoryListPage, 'deduceFilterCriteria').mockImplementation(() => {
-                return;
-            });
-            //act
-            categoryListPage.deduceFilterCriteria(isDataEmpty);
-            //assert
-            expect(categoryListPage.deduceFilterCriteria).toHaveBeenCalledWith(isDataEmpty);
-            expect(categoryListPage['preFetchedFilterCriteria']).toBeFalsy();
-        });
-    });
-
     it('Should reload the drop down', () => {
         //arrange
         const item = {
@@ -547,7 +429,6 @@ describe('CategoryListPage', () => {
         //assert
         expect(item);
     });
-
     it('should call clearAllSubscription on ngOnDestroy', () => {
         // arrange
         const formControlSubscriptions: Partial<Subscription[]> = [];
