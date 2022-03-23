@@ -1,0 +1,53 @@
+@import "src/assets/styles/_variables.scss";
+.page-header-content{
+    color: var(--app-light-gray) !important;
+    font-weight: bold !important;
+    margin: 15px 15px 0px 15px;
+}
+.text-area-container{
+    border: 2px solid $gray-400;
+    border-radius: 8px;
+    margin: 0px 15px;
+}
+.attachments-list{
+    background-color: $white-color;
+    color: $black-color;
+    padding: 10px 10px 5px 10px;
+    justify-content: space-between;
+    display: flex;
+    border-radius: 8px;
+    margin: 10px 10px;
+    height: auto;
+    font-weight: 600;
+    .attachment-label{
+        ion-icon{
+            font-size: 20px;
+            position: absolute;
+        }
+       span{
+           margin-left:25px;
+           word-break: break-all;
+       }
+
+    }
+
+    button{
+        background: transparent;
+        box-shadow: none !important;
+        margin-top: -7px;
+    p{
+        margin-bottom: 0px;
+        font-size: 12px !important;
+        margin-top: -5px;
+        text-align: center;
+        font-weight: 600;
+    }
+    }
+    ion-icon{
+        font-size: 20px;
+        color: $black-color;
+    }
+}
+.text-transform-none {
+    text-transform: none !important;
+  }

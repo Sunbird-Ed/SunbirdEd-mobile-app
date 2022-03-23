@@ -2163,7 +2163,19 @@ app-user-home{
   }
 }
 
-app-metadata-details{
+app-add-file {
+  .icon-style{
+    border-radius: 50%;
+    padding: 10px;
+    background-image: linear-gradient( #dce7f3 50%, #adc3dd 100% );
+    box-shadow: 1px 3px 4px #666666;
+  }
+  .btn-space-btwn{
+    display: flex;
+    justify-content: space-between;
+  }
+}
+app-metadata-details,app-add-file {
   .progress-bar-style{
     height: 10px;
     border-radius: 16px;
@@ -2306,5 +2318,12 @@ app-metadata-details{
         margin: 0px 10px;
         text-transform: none;
     }
+}
+.attachment-delete-alert{
+  background-color: red;
+  ion-button{
+    color:#adc3dd;
+    --color:green;
+  }
 }
 }

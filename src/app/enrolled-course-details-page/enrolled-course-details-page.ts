@@ -222,7 +222,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   nextContent: Content;
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
-  pageId: string;
+  pageId: string = PageId.COURSE_DETAIL;
   showShareData = false;
   isDataShare = false;
   isShared: any;
@@ -306,7 +306,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
       this.skipCheckRetiredOpenBatch = extrasState.skipCheckRetiredOpenBatch;
       this.activityData = extrasState.activityData || undefined;
-      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.courseCardData);
+      this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.courseCardData) || this.pageId;
     }
   }
 
