@@ -32,6 +32,7 @@ import { ContentFilterConfig, RouterLinks } from '@app/app/app.constant';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
+import { CertificateService } from '@project-sunbird/sunbird-sdk';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -128,6 +129,10 @@ describe('Profile.page', () => {
         getSubPersona: jest.fn()
     };
 
+    const mockCertificateService: Partial<CertificateService> = {
+        getCertificates: jest.fn()
+    };
+
     global.window.segmentation = {
         init: jest.fn(),
         SBTagService: {
@@ -148,6 +153,7 @@ describe('Profile.page', () => {
             mockCourseService as CourseService,
             mockFormService as FormService,
             mockFrameworkService as FrameworkService,
+            mockCertificateService as CertificateService,
             mockNgZone as NgZone,
             mockRouter as Router,
             mockPopoverController as PopoverController,

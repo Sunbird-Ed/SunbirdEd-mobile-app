@@ -517,18 +517,12 @@ export class ProfilePage implements OnInit {
         size: this.learnerPassbookCount? this.learnerPassbookCount : null
       };
       console.log('in getLearnerPassbook req', getCertsReq);
-      this.certificateService.getCertificates(getCertsReq).toPromise()
-      .then((newCerts) => {
-        console.log('newCerts', newCerts);
-      }).catch((e) => {
-        console.log('newCerts err', e);
-      })
 
       await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
-        // this.learnerPassbookCount = response.count || null;
-        this.learnerPassbookCount = null;
+        console.log('newmergedCerts', response);
+        this.learnerPassbookCount = response.certRegCount || null;
 
-        this.learnerPassbook = response
+        this.learnerPassbook = response.certificates
           .map((learnerCertificate: CsLearnerCertificate) => {
             const oneCert: any = {
               issuingAuthority: learnerCertificate.issuerName,
@@ -543,17 +537,18 @@ export class ProfilePage implements OnInit {
                 identifier: learnerCertificate.id,
                 issuedOn: learnerCertificate.issuedOn,
                 name: learnerCertificate.issuerName,
-                type: learnerCertificate.type
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             } else {
               oneCert.issuedCertificate = {
                 identifier: learnerCertificate.id,
                 name: learnerCertificate.issuerName,
                 issuedOn: learnerCertificate.issuedOn,
-                type: learnerCertificate.type
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             }
-            console.log('oneCert', oneCert);
             return oneCert;
           });
       });
