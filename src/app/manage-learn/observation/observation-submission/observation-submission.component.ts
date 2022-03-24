@@ -80,7 +80,7 @@ export class ObservationSubmissionComponent implements OnInit {
       this.programId = params.programId;
       this.entityId = params.entityId;
       this.entityName = params.entityName;
-      this.disableObserveAgain = params.disableObserveAgain;
+      this.disableObserveAgain = params.disableObserveAgain == "true";
       let data = {
         observationId: this.observationId,
         entityId: this.entityId
