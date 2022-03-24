@@ -82,7 +82,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
-    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage,
+    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
     CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
