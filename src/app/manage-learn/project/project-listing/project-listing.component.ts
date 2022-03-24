@@ -73,7 +73,7 @@ export class ProjectListingComponent {
                 this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[0] : this.filters[1];
                 this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 0 : 1;
             } else {
-                this.selectedFilter = this.filters[0];
+                this.selectedFilter = this.filters[this.selectedFilterIndex]
             }
         })
 
