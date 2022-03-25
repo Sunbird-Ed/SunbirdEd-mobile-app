@@ -5,7 +5,8 @@ import {
     FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-    LoginHandlerService
+    LoginHandlerService,
+    UtilityService
 } from '@app/services';
 import {
     WebviewStateSessionProviderConfig,
@@ -43,6 +44,7 @@ import { Platform } from '@ionic/angular';
 export class SignInPage implements OnInit {
     appName = '';
     skipNavigation: any;
+    isGoogleServiceAvailable = false;
 
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -58,7 +60,8 @@ export class SignInPage implements OnInit {
         private googlePlusLogin: GooglePlus,
         private location: Location,
         private signInWithApple: SignInWithApple,
-        public platform: Platform
+        public platform: Platform,
+        private utilityService: UtilityService
     ) {
         this.skipNavigation = this.router.getCurrentNavigation().extras.state;
     }
@@ -66,6 +69,7 @@ export class SignInPage implements OnInit {
     async ngOnInit() {
         this.appHeaderService.showHeaderWithBackButton();
         this.appName = await this.commonUtilService.getAppName();
+        this.isGoogleServiceAvailable = (await this.utilityService.isGoogleServiceAvailable() === 'true') && !this.platform.is('ios');
     }
 
     loginWithKeyCloak() {

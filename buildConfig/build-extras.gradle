@@ -140,6 +140,7 @@ android {
             buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
             buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
             buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
+            buildConfigField 'String', 'SUPPORTING_DEVICE', "\"${staging_supporting_device}\""
         }
 
         production {

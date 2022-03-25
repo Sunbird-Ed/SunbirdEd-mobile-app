@@ -266,4 +266,14 @@ export class UtilityService {
             });
         });
     }
+
+    isGoogleServiceAvailable(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            sbutility.getGoogleService((res) => {
+                resolve(res);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
 }
