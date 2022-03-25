@@ -536,7 +536,6 @@ export class ProfilePage implements OnInit {
             return oneCert;
           });
       });
-      console.log(' this.learnerPassbook',  this.learnerPassbook);
     } catch (error) {
       console.log('Learner Passbook API Error', error);
     }
