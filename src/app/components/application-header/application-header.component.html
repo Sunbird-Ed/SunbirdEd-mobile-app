@@ -113,8 +113,9 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <div class="menu-section">
+    <div class="menu-section"> 
       <section *ngIf="isLoggedIn" class="menu-container">
+        
         <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
           <section class="user-container">
 
@@ -247,8 +248,7 @@
   <ion-footer class="side-menu-footer">
     {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
   </ion-footer>
-</ion-menu>
-
+</ion-menu> 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true"
   [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header *ngIf="!isLoggedIn">
@@ -259,8 +259,7 @@
       </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content>
-
+  <ion-content> 
     <div class="menu-section">
       <section *ngIf="isLoggedIn" class="menu-container">
         <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
@@ -305,6 +304,7 @@
       </section>
 
       <ion-list class="sb-menu-list" lines="none">
+       
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
@@ -390,7 +390,12 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
-
+        <ion-item (click)="signin()" *ngIf="!isLoggedIn">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/login.png" aria-hidden="true" class="tool-icon" alt="my group">
+          </span>
+          <span class="sb-menu-item" role="button" menuClose>Login</span>
+        </ion-item>
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
@@ -404,7 +409,7 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
-
+      
         <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
