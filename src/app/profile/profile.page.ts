@@ -43,10 +43,7 @@ import {
   ProfileType,
   Batch,
   GetLearnerCerificateRequest,
-  GenerateOtpRequest,
-  CertificateService,
-  CSGetLearnerCerificateRequest,
-  CsLearnerCertificate
+  GenerateOtpRequest
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -149,7 +146,6 @@ export class ProfilePage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private zone: NgZone,
     private router: Router,
     private popoverCtrl: PopoverController,
@@ -511,49 +507,32 @@ export class ProfilePage implements OnInit {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
       this.learnerPassbookCount ? request.size = this.learnerPassbookCount : null;
-      const getCertsReq: CSGetLearnerCerificateRequest = {
-        userId: this.profile.userId || this.profile.id,
-        schemaName: 'certificate',
-        size: this.learnerPassbookCount? this.learnerPassbookCount : null
-      };
-      console.log('in getLearnerPassbook req', getCertsReq);
-      this.certificateService.getCertificates(getCertsReq).toPromise()
-      .then((newCerts) => {
-        console.log('newCerts', newCerts);
-      }).catch((e) => {
-        console.log('newCerts err', e);
-      })
+      await this.courseService.getLearnerCertificates(request).toPromise().then(response => {
+        this.learnerPassbookCount = response.count;
 
-      await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
-        // this.learnerPassbookCount = response.count || null;
-        this.learnerPassbookCount = null;
-
-        this.learnerPassbook = response
-          .map((learnerCertificate: CsLearnerCertificate) => {
+        this.learnerPassbook = response.content.filter((learnerCertificate: any) => (learnerCertificate &&
+          learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
+          .map((learnerCertificate: any) => {
             const oneCert: any = {
-              issuingAuthority: learnerCertificate.issuerName,
-              issuedOn: learnerCertificate.issuedOn,
-              courseName: learnerCertificate.trainingName,
-              courseId: learnerCertificate.courseId,
+              issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
+              issuedOn: learnerCertificate._source.data.issuedOn,
+              courseName: learnerCertificate._source.data.badge.name,
+              courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
             };
-            if (learnerCertificate.pdfUrl) {
+            if (learnerCertificate._source.pdfUrl) {
               oneCert.certificate = {
-                url: learnerCertificate.pdfUrl || undefined,
-                id: learnerCertificate.id || undefined,
-                identifier: learnerCertificate.id,
-                issuedOn: learnerCertificate.issuedOn,
-                name: learnerCertificate.issuerName,
-                type: learnerCertificate.type
+                url: learnerCertificate._source.pdfUrl || undefined,
+                id: learnerCertificate._id || undefined,
+                issuedOn: learnerCertificate._source.data.issuedOn,
+                name: learnerCertificate._source.data.badge.issuer.name
               };
             } else {
               oneCert.issuedCertificate = {
-                identifier: learnerCertificate.id,
-                name: learnerCertificate.issuerName,
-                issuedOn: learnerCertificate.issuedOn,
-                type: learnerCertificate.type
+                identifier: learnerCertificate._id,
+                name: learnerCertificate._source.data.badge.issuer.name,
+                issuedOn: learnerCertificate._source.data.issuedOn
               };
             }
-            console.log('oneCert', oneCert);
             return oneCert;
           });
       });
