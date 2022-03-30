@@ -78,6 +78,7 @@ android {
         buildConfigField "boolean", "DISPLAY_ONBOARDING_CATEGORY_PAGE", "${display_onboarding_category_page}"
         buildConfigField "boolean", "OPEN_RAPDISCOVERY_ENABLED", "${open_rapdiscovery_enabled}"
         buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
+        buildConfigField 'String', 'SUPPORTING_DEVICE', "\"${supporting_device}\""
     }
 
     signingConfigs {
@@ -140,7 +141,6 @@ android {
             buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
             buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
             buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
-            buildConfigField 'String', 'SUPPORTING_DEVICE', "\"${staging_supporting_device}\""
         }
 
         production {

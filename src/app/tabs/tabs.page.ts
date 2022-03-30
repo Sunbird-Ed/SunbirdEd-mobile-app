@@ -219,7 +219,7 @@ export class TabsPage implements OnInit, AfterViewInit {
 
  async findDisableTab() {
   const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
-  if ((deviceName === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+  if ((deviceName.toLowerCase() === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
       this.disableTab = 'qrscanner';
   }
  }
