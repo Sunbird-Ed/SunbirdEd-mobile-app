@@ -35,7 +35,8 @@ export class AttachmentService {
         "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
-        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"
+        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT",
+        "FRMELEMNTS_MSG_SELECT_PDF_FILES"
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -140,6 +141,10 @@ export class AttachmentService {
   async openFile() {
     try {
       const file = await this.chooser.getFile('application/pdf');
+      if(file.mediaType != 'application/pdf'){
+        this.presentToast(this.texts["FRMELEMNTS_MSG_SELECT_PDF_FILES"]);
+        return;
+      }
       let sizeOftheFile:number = file.data.length
       if(sizeOftheFile > localStorageConstants.FILE_LIMIT){
         this.actionSheetController.dismiss();
