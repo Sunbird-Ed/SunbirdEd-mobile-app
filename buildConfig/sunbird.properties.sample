@@ -24,6 +24,7 @@ staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
 staging_deeplink_ncert_url = STAGING_DEEPLINK_NCERT_URL
 staging_deeplink_igot_url = STAGING_DEEPLINK_IGOT_URL
 staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
+supporting_device = ANY_DEVICES
 // Production envornment properties.
 production_base_url = PRODUCTION_BASE_URL
 production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
