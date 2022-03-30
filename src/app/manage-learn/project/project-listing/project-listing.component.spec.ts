@@ -1,65 +1,82 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { ProjectListingComponent } from './project-listing.component';
-import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, ToastService } from "../../core";
-import { UtilsService } from '../../core';
-import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { Platform, PopoverController, ToastController } from '@ionic/angular';
-import { DbService } from '../../core/services/db.service';
-import { HttpClient } from '@angular/common/http';
-import { AppHeaderService } from '../../../../services/app-header.service';
-import { RouterLinks } from '../../../app.constant';
+import { Router, ActivatedRoute} from '@angular/router';
+import { AppHeaderService, CommonUtilService } from '@app/services';
+import { of} from 'rxjs';
 import { Location } from '@angular/common';
-import { CommonUtilService } from '../../../../services';
-import { KendraApiService } from '../../core/services/kendra-api.service';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { LoaderService, UtilsService, ToastService } from "../../core";
+import { DbService } from '../../core/services/db.service';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
+import { ProjectListingComponent } from './project-listing.component'
 
-xdescribe('ProjectListingComponent', () => {
-    let component: ProjectListingComponent;
-    let mockUnnatiDataService: Partial<UnnatiDataService> = {};
-    const mockLoaderService: Partial<LoaderService> = {};
-    const mockUtilsService: Partial<UtilsService> = {};
-    const mockRouter: Partial<Router> = {};
-    const mockAppHeaderService: Partial<AppHeaderService> = {};
-    const mockRouterLinks: Partial<RouterLinks> = {};
-    const mockPlatform: Partial<Platform> = {};
-    const mockDbService: Partial<DbService> = {};
-    const mockKendraApiService: Partial<KendraApiService> = {};
-    const mockTranslateService: Partial<TranslateService> = {
-        get: jest.fn(() => of(''))
-    };
-    const mockUtilService: Partial<UtilsService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockSyncService: Partial<SyncService> = {};
-    const mockPopOverController: Partial<PopoverController> = {};
-    const mockToastController: Partial<ToastController> = {};
-    const mockGenericPopupService: Partial<GenericPopUpService> = {};
-    const mockToastService: Partial<ToastService> = {};
-    let mockHttpClient: Partial<HttpClient> = {};
+describe('ProjectListingComponent', () => {
+    let projectListingComponent : ProjectListingComponent;
+    const mockRouter: Partial<Router> = {
+        getCurrentNavigation: jest.fn(() => ({
+        extras: {
+          state: {
+            ongoingBatches: [],
+            upcommingBatches: [],
+            course: {},
+            objRollup: {},
+            corRelationList: [],
+            telemetryObject: {
+              id: '',
+              type: '',
+              version: '',
+            },
+          },
+        },
+      })) as any};
+    const mockRouterParams: Partial<ActivatedRoute> = {queryParams: of({})};
     const mockLocation: Partial<Location> = {};
-
-    beforeAll(() => {
-        component = new ProjectListingComponent(
+    const mockHeaderService: Partial<AppHeaderService> = {};
+    const mockPlatform: Partial<Platform> = {};
+    const mockUnnatiService: Partial<UnnatiDataService> = {};
+    const mockKendra: Partial<KendraApiService> = {};
+    const mockLoader: Partial<LoaderService> = {};
+    const mockTranslate: Partial<TranslateService> = {get: jest.fn(() => of(''))};
+    const mockUtils: Partial<UtilsService> = {
+        setProfileData: jest.fn(() => Promise.resolve({ generatedKey: 'sa', userData: 'data' })),
+        closeProfileAlert: jest.fn(),
+        getProfileData: jest.fn(),
+        getProfileInfo: jest.fn(),
+        getUniqueKey: jest.fn(),
+      };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        networkAvailability$: of(true),
+        networkInfo: { isNetworkAvailable: true }
+    };
+    const mockSyncService: Partial<SyncService> = {};
+    const mockDB: Partial<DbService> = {};
+    const mockPopOverCtrl:Partial<PopoverController> = {};
+    const mockToastController: Partial<ToastController> = {};
+    const mockPopUpService: Partial<GenericPopUpService> = {};
+    const mockToastService: Partial<ToastService> = {};
+    
+    beforeAll(() =>{
+        projectListingComponent = new ProjectListingComponent(
             mockRouter as Router,
+            mockRouterParams as ActivatedRoute,
             mockLocation as Location,
-            mockAppHeaderService as AppHeaderService,
+            mockHeaderService as AppHeaderService,
             mockPlatform as Platform,
-            mockUnnatiDataService as UnnatiDataService,
-            mockKendraApiService as KendraApiService,
-            mockLoaderService as LoaderService,
-            mockTranslateService as TranslateService,
-            mockUtilService as UtilsService,
+            mockUnnatiService as UnnatiDataService,
+            mockKendra as KendraApiService,
+            mockLoader as LoaderService,
+            mockTranslate as TranslateService,
+            mockUtils as UtilsService,
             mockCommonUtilService as CommonUtilService,
             mockSyncService as SyncService,
-            mockDbService as DbService,
-            mockPopOverController as PopoverController,
+            mockDB as DbService,
+            mockPopOverCtrl as PopoverController,
             mockToastController as ToastController,
-            mockGenericPopupService as GenericPopUpService,
-            mockToastService as ToastService );
+            mockPopUpService as GenericPopUpService,
+            mockToastService as ToastService
+        )
     });
 
     beforeEach(() => {
@@ -67,10 +84,40 @@ xdescribe('ProjectListingComponent', () => {
         jest.resetAllMocks();
     });
 
-    it('Should be intiate Project listing compnent', () => {
-        expect(ProjectListingComponent).toBeTruthy();
+    it('Should create instatance', () => {
+        expect(projectListingComponent).toBeTruthy();
     });
 
+    it('ionViewWillEnter', () => {
+      //arrange
+      projectListingComponent['projects'] = [];
+      projectListingComponent['page'] = 1;
+      projectListingComponent['currentOnlineProjectLength'] = 0;
+      mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
+                     showHeader: true,
+                     showBurgerMenu: true,
+                     pageTitle: 'string',
+                     actionButtons: ['true'],
+                 }));
+      mockHeaderService.updatePageConfig = jest.fn();
+      mockPlatform.backButton = {
+                     subscribeWithPriority: jest.fn((_, cb) => {
+                         setTimeout(() => {
+                             cb();
+                         }, 0);
+                         return {
+                             unsubscribe: jest.fn()
+                         };
+                     }),
+                 } as any;
+      mockLocation.back = jest.fn();
+      //act
+      projectListingComponent.ionViewWillEnter();
+      //assert
+      expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+      expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+      expect(mockPlatform.backButton).not.toBeUndefined();
+    });
     // describe('ionViewWillEnter', () => {
     //     it('Should return list of projects / projectsList by invoked ionViewWillEnter', (done) => {
     //         // arrange 
