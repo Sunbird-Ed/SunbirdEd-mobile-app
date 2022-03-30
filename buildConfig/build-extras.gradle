@@ -78,6 +78,7 @@ android {
         buildConfigField "boolean", "DISPLAY_ONBOARDING_CATEGORY_PAGE", "${display_onboarding_category_page}"
         buildConfigField "boolean", "OPEN_RAPDISCOVERY_ENABLED", "${open_rapdiscovery_enabled}"
         buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
+        buildConfigField 'String', 'SUPPORTING_DEVICE', "\"${supporting_device}\""
     }
 
     signingConfigs {
