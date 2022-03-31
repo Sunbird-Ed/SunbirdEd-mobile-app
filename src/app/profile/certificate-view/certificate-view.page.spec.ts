@@ -1,4 +1,4 @@
-import {CourseService} from '@project-sunbird/sunbird-sdk';
+import {CertificateService, CourseService} from '@project-sunbird/sunbird-sdk';
 import {CertificateDownloadService} from 'sb-svg2pdf';
 import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '@app/services';
 import {Router} from '@angular/router';
@@ -66,6 +66,7 @@ describe('CertificateViewPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
     };
+    
     let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {

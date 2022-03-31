@@ -8,7 +8,7 @@ import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
-import { CertificateService, CourseService, InteractType } from 'sunbird-sdk';
+import { CourseService, InteractType } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-certificate-view',
@@ -43,7 +43,6 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
     private appHeaderService: AppHeaderService,
     private commonUtilService: CommonUtilService,
@@ -150,7 +149,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     loader.present();
 
-    await this.certificateService.getCertificate(this.pageData).pipe(
+    await this.courseService.certificateManager.getCertificate(this.pageData).pipe(
       tap(this.initCertificateTemplate.bind(this)),
     ).toPromise();
 
@@ -203,7 +202,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           }
         })();
 
-        const { path } = await this.certificateService.downloadCertificate(downloadRequest).toPromise();
+        const { path } = await this.courseService.certificateManager.downloadCertificate(downloadRequest).toPromise();
         await this.fileOpener.open(path, downloadRequest.mimeType);
       } catch (e) {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));

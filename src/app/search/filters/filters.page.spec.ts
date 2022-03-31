@@ -96,6 +96,8 @@ describe('FiltersPage', () => {
         expect(filtersPage).toBeTruthy();
     });
 
+    
+
     describe('applyInterimFilter', () => {
         it('should invoke searchContent API', (done) => {
             // arrange
@@ -159,5 +161,16 @@ describe('FiltersPage', () => {
             });
 
         });
+    });
+
+    
+
+    it('ngOnDestroy', () => {
+      //arrange
+      mockEvents.publish = jest.fn(() => []);
+      //act
+      filtersPage.ngOnDestroy();
+      //assert
+      expect(mockEvents.publish).toBeCalled();
     });
 });
