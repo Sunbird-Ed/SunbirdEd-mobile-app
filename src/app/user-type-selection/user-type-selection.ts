@@ -32,6 +32,7 @@ import {
   SharedPreferences,
   UpdateServerProfileInfoRequest
 } from 'sunbird-sdk';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -76,7 +77,8 @@ export class UserTypeSelectionPage implements OnDestroy {
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private profileHandler: ProfileHandler,
     private loginHandlerService: LoginHandlerService,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private externalIdVerificationService: ExternalIdVerificationService,
   ) {
   }
 
@@ -388,17 +390,24 @@ export class UserTypeSelectionPage implements OnDestroy {
           if (!isSSOUser) {
             this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
           }
-          this.router.navigate([RouterLinks.TABS]);
+          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+            window.history.go(-this.categoriesProfileData.noOfStepsToCourseToc);
+          } else {
+            this.router.navigate([RouterLinks.TABS]);
+          }
+          this.externalIdVerificationService.showExternalIdVerificationPopup();
         } else {
           const navigationExtras: NavigationExtras = {
             state: {
-              isShowBackButton: false
+              isShowBackButton: false,
+              noOfStepsToCourseToc: this.categoriesProfileData.noOfStepsToCourseToc + 1
             }
           };
           this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
       }
     } else {
+      this.categoriesProfileData['noOfStepsToCourseToc'] = this.categoriesProfileData.noOfStepsToCourseToc + 1;
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
         state: this.categoriesProfileData
       });
