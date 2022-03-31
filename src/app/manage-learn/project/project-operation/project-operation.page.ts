@@ -302,7 +302,7 @@ export class ProjectOperationPage  {
           cssClass: 'secondary',
           handler: (blah) => {
             if(isNew){
-              this.projectServ.createNewProject(this.template, false);
+              this.networkService.isNetworkAvailable ? this.projectServ.createNewProject(this.template, false) : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
               return;
             }
             this.showSkip ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
