@@ -6,14 +6,15 @@ import { File } from "@ionic-native/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
-
+import { localStorageConstants } from "../../constants/localStorageConstants";
 @Injectable({
   providedIn: 'root'
 })
 export class AttachmentService {
   mediaType: string;
   texts: any;
-
+  payload : any;
+  actionSheetOpen : boolean = false;
   constructor(
     private camera: Camera,
     private file: File,
@@ -34,6 +35,7 @@ export class AttachmentService {
         "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
+        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -41,6 +43,7 @@ export class AttachmentService {
   }
 
   async selectImage() {
+    this.actionSheetOpen = true
     const actionSheet = await this.actionSheetController.create({
       header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
       cssClass: 'sb-popover',
@@ -116,7 +119,7 @@ export class AttachmentService {
         };
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetController.dismiss(data);
+        this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -136,23 +139,29 @@ export class AttachmentService {
 
   async openFile() {
     try {
-      const file = await this.chooser.getFile();
-      const pathToWrite = this.directoryPath();
-      const newFileName = this.createFileName(file.name)
-      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
-      if (writtenFile.isFile) {
-        const data = {
-          name: newFileName,
-          type: this.mimeType(newFileName),
-          isUploaded: false,
-          url: "",
-        };
-
-        this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetController.dismiss(data);
+      const file = await this.chooser.getFile('application/pdf');
+      let sizeOftheFile:number = file.data.length
+      if(sizeOftheFile > localStorageConstants.FILE_LIMIT){
+        this.actionSheetController.dismiss();
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+      }else{
+        const pathToWrite = this.directoryPath();
+        const newFileName = this.createFileName(file.name)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+        if (writtenFile.isFile) {
+          const data = {
+            name: newFileName,
+            type: this.mimeType(newFileName),
+            isUploaded: false,
+            url: "",
+          };
+          this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+          this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
+        }
       }
+     
     } catch (error) {
-       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
 
     // non working code for sdk30-android 11
@@ -202,5 +211,22 @@ export class AttachmentService {
 
   deleteFile(fileName) {
     return this.file.removeFile(this.directoryPath(), fileName);
+  }
+
+  async openAttachmentSource(type,payload) {
+    let data:any ='';
+    this.actionSheetOpen = false;
+    this.payload = payload;
+    switch(type){
+      case 'openCamera':
+       this.takePicture(this.camera.PictureSourceType.CAMERA);
+      break;
+      case 'openGallery':
+       this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+      break;
+      case 'openFiles':
+        this.openFile();
+      break;
+    }
   }
 }

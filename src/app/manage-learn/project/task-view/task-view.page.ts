@@ -13,6 +13,7 @@ import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { RouterLinks } from "@app/app/app.constant";
 
 
 var environment = {
@@ -146,6 +147,7 @@ export class TaskViewPage {
   }
   public addSubtask() {
     if (this.newSubtask.name) {
+      this.newSubtask.isDeletable = true;
       !this.task.children ? (this.task.children = []) : "";
       this.task.children.push(this.newSubtask);
       this.enableTaskMarkButton();
@@ -317,9 +319,6 @@ export class TaskViewPage {
     });
   }
 
-  markTaskAsCompleted() {
-    this.showAttachments = true;
-  }
   closemarkTaskAsCompleted(){
     this.showAttachments = false;
   }
@@ -342,7 +341,7 @@ export class TaskViewPage {
   doAction() {
     this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
       if (data.isClicked) {
-        data.isChecked ? this.markTaskAsCompleted() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+        data.isChecked ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`,this.parameters.id],{queryParams:{taskId:this.task._id}}) : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
       }
     })
   }
