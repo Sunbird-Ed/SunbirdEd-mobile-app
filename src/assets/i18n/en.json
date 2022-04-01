@@ -1515,5 +1515,11 @@
   "FRMELEMNTS_LBL_MONTHLY":"Monthly",
   "FRMELEMNTS_LBL_QUARTERLY":"Quarterly",
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT": "Only registered users can take project",
-  "FRMELEMENTS_MSG_PROJECT_ALREADY_SYNCED" :"Your project has been completed and synced, no further syncs are allowed to this project"
+  "FRMELEMENTS_MSG_PROJECT_ALREADY_SYNCED" :"Your project has been completed and synced, no further syncs are allowed to this project",
+  "CERTIFICATE_VERIFIED": "Certificate verified",
+  "CERTIFICATE_ISSUED_TO": "Certificate issued to",
+  "SUCCESSFULLY_COMPLETING_COURSE": "For successfully completing the course",
+  "ON_APPNAME_ON": "On {{appName}} on",
+  "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed"
+
 }
