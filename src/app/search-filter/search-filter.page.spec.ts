@@ -1,13 +1,14 @@
 import { SearchFilterPage } from './search-filter.page';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import {ContentService} from 'sunbird-sdk';
+import { ContentService } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
-import {of} from 'rxjs';
+import { of } from 'rxjs';
 import { FormAndFrameworkUtilService, SearchFilterService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
+import { ContentSearchCriteria, SearchType } from '@project-sunbird/sunbird-sdk';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -32,10 +33,10 @@ describe('SearchFilterPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockModalController: Partial<ModalController> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-        changeChannelIdToName: jest.fn(()=>Promise.resolve(FilterCriteriaData)),
-        changeChannelNameToId: jest.fn(()=>Promise.resolve(FilterCriteriaData))
+        changeChannelIdToName: jest.fn(() => Promise.resolve(FilterCriteriaData)),
+        changeChannelNameToId: jest.fn(() => Promise.resolve(FilterCriteriaData))
     };
-    const mockSearchFilterService: Partial<SearchFilterService> ={};
+    const mockSearchFilterService: Partial<SearchFilterService> = {};
 
     JSON.parse = jest.fn().mockImplementationOnce(() => {
         return FilterCriteriaData;
@@ -97,7 +98,7 @@ describe('SearchFilterPage', () => {
     describe('when form is cancelled', () => {
         it('should dismiss current modal', () => {
             // arrange
-            mockModalController.dismiss = jest.fn(() => {}) as any;
+            mockModalController.dismiss = jest.fn(() => { }) as any;
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             // act
             searchFilterPage.cancel();
@@ -110,7 +111,7 @@ describe('SearchFilterPage', () => {
         });
     });
 
-    describe('when form is reset', () => {
+    describe('resetFilter', () => {
         it('should delegate form reset to SbSearchFacetFilterComponent', () => {
             // arrange
             searchFilterPage.searchFilterComponent = {
@@ -126,7 +127,7 @@ describe('SearchFilterPage', () => {
     describe('when form is applied', () => {
         it('should dismiss current modal return selections', () => {
             // arrange
-            mockModalController.dismiss = jest.fn(() => {}) as any;
+            mockModalController.dismiss = jest.fn(() => { }) as any;
             searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
             // act
             searchFilterPage.ngOnInit();
@@ -138,20 +139,19 @@ describe('SearchFilterPage', () => {
                 }));
             }, 0);
         });
-    });    
+    });
 
     describe('when a selection is made', () => {
-        it('should refresh form with new facets from search results', () => {
+        it('should change isPageLoadedFirstTime to false if it is true', () => {
             // arrange
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
-            mockContentService.searchContent = jest.fn(() => of({filterCriteria: sampleFilterCriteria}));
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())
             }));
             // act
-            searchFilterPage.ngOnInit();
             searchFilterPage.valueChanged({
                 board: 'sample_board_2',
                 medium: [
@@ -164,5 +164,53 @@ describe('SearchFilterPage', () => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             });
         });
+
+        it('should not do anything if the event return false', () => {
+            //arrange
+            const event = false;
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            expect(!event).toBe(true);
+        });
+
+        it('should call refresh form', () => {
+            //arrange
+            const event = {
+                se_mediums: [], se_gradeLevels: [], channel: [], mimeType: [], additionalCategories: []
+            };
+            const searchCriteria: ContentSearchCriteria = {
+                facetFilters: [
+                    {
+                        name: "se_mediums",
+                        values: [
+                            { name: "tamil", count: 42, apply: false }
+                        ]
+                    },
+                    {
+                        name: "audience",
+                        values: [
+                            { name: "parent", count: 5, apply: false }
+                        ]
+                    }
+                ],
+            };
+            const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            searchFilterPage['isPageLoadedFirstTime'] = false;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            setTimeout(() => {
+                expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+            });
+        })
     });
 });
