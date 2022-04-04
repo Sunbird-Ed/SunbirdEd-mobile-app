@@ -189,6 +189,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   playerType: any = null;
   config: any;
   nextContentToBePlayed: any;
+  isPlayerPlaying = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -261,6 +262,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
+      this.nextContentToBePlayed = extras.content;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
@@ -596,7 +598,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
-    if (this.content.mimeType === 'video/mp4') {
+    if (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') {
       this.playContent(true, true);
     }
   }
@@ -715,6 +717,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   popToPreviousPage(isNavBack?) {
     this.appGlobalService.showCourseCompletePopup = false;
+    if (this.screenOrientation.type === 'landscape-primary') {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
     if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
@@ -1158,6 +1163,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
+      this.isPlayerPlaying = true;
     }
   }
 
@@ -1220,9 +1226,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (event.edata['type'] === 'END') {
         const saveState: string = JSON.stringify(event.metaData);
         this.playerService.savePlayerState(userId, parentId, contentId, saveState);
+        this.isPlayerPlaying = false;
       }
       if (event.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
            this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
@@ -1247,6 +1255,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
     } else if (event.type === 'ended') {
       this.rateContent('manual');
+    } else if (event.type === 'REPLAY') {
+      this.isPlayerPlaying = true;
     }
   }
 
