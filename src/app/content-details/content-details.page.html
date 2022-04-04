@@ -1,6 +1,7 @@
 <!-- New content details -->
 <ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
-  <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'">
+  <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'"
+    [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier], '': !contentDownloadable[content?.identifier]}">
     <div *ngIf="contentDownloadable[content?.identifier]">
       <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
@@ -77,7 +78,7 @@
     </div>
   </div>
   <div *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType === 'sunbird-video-player'" 
-  class="sb-play-container sb-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
+  class="sb-play-container sb-player-container standalone-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
     <div class="sb-overlay-container">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
