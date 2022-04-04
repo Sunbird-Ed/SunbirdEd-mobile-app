@@ -130,7 +130,7 @@ export class ContentPlayerHandler {
                                 corRelation: contentInfo.correlationList, isCourse } });
                 }
             } else {
-                if (callback && data.metadata.mimeType === 'video/mp4') {
+                if (callback && (data.metadata.mimeType === 'video/mp4' || data.metadata.mimeType === 'video/webm')) {
                     callback({ state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
                 } else {
                     this.router.navigate([RouterLinks.PLAYER],
