@@ -260,7 +260,7 @@ private getProfileSettingConfig() {
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
-            } else if(scannedData.includes('data=')) {
+            } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
               this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);

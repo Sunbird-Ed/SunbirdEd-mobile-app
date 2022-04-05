@@ -223,9 +223,15 @@ export class QRScannerResultHandler {
   }
 
   async handleRcCertsQR(scannedData){
-    
-    const encodedData = await this.certificateService.getEncodedData(scannedData.split('data=')[1])
-    const verifyCertReq = {
+    let encodedData, verifyCertReq;
+    if(scannedData.includes('data=')){
+      try {
+        encodedData = await this.certificateService.getEncodedData(scannedData.split('data=')[1])
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    verifyCertReq = {
       certificateId: scannedData.split('certs/')[1].split('?')[0],
       certificateData: encodedData,
       schemaName: 'certificate',
