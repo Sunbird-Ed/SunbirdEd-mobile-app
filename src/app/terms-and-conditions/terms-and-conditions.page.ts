@@ -181,9 +181,10 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
+                this.appGlobalService.closeSigninOnboardingLoader();
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   categoriesProfileData['status'] = value['status']
-                    categoriesProfileData['isUserLocationAvalable'] = false;
+                  categoriesProfileData['isUserLocationAvalable'] = false;
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }
                 });
@@ -196,6 +197,7 @@ export class TermsAndConditionsPage implements OnInit {
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
+              this.appGlobalService.closeSigninOnboardingLoader();
               if (await tncUpdateHandlerService.isSSOUser(profile)) {
                 await this.consentService.getConsent(profile, true);
               }

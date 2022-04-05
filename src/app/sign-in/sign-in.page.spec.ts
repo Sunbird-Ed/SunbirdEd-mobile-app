@@ -17,6 +17,7 @@ import {of} from 'rxjs';
 import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
 import {AppleSignInResponse, SignInWithApple} from '@ionic-native/sign-in-with-apple/ngx';
 import {Platform} from '@ionic/angular';
+import {UtilityService} from '@app/services'
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
     const actual = require.requireActual('@project-sunbird/sunbird-sdk');
@@ -58,7 +59,8 @@ describe('SignInPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockSignInWithApple: Partial<SignInWithApple> = {};
     const mockPlatform: Partial<Platform> = {};
-
+    const mockUtilityService: Partial<UtilityService> = {};
+ 
     beforeAll(() => {
         signInPage = new SignInPage(
             mockAuthService as AuthService,
@@ -74,7 +76,8 @@ describe('SignInPage', () => {
             mockGooglePlusLogin as GooglePlus,
             mockLocation as Location,
             mockSignInWithApple as SignInWithApple,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockUtilityService as UtilityService
         );
     });
 
@@ -169,8 +172,25 @@ describe('SignInPage', () => {
     });
 
     describe('signIn with Google', () => {
+        it('should invoked keycloak login if google service is not available', (done) => {
+            // arrange
+            mockUtilityService.isGoogleServiceAvailable = jest.fn(() => Promise.resolve('false'));
+            mockPlatform.is = jest.fn(() => false);
+            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
+            // act
+            signInPage.signInWithGoogle();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilityService.isGoogleServiceAvailable).toHaveBeenCalled();
+                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
         it('should generate telemetry and fetchClientId, googleLogin initiated, show progressLoader and put preference boolean', (done) => {
             // arrange
+            mockUtilityService.isGoogleServiceAvailable = jest.fn(() => Promise.resolve('true'));
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of({
                 value: 'sample_client_id'
