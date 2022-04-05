@@ -31,6 +31,7 @@ import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterL
 import { FormConstants } from '../form.constants';
 import {ProfileType} from '@project-sunbird/sunbird-sdk';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'app-district-mapping',
@@ -51,6 +52,7 @@ export class DistrictMappingPage implements OnDestroy {
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
   profile?: Profile;
+  navigateToCourse = 0;
   private name: string;
   private backButtonFunc: Subscription;
   private presetLocation: { [locationType: string]: LocationSearchResult } = {};
@@ -77,9 +79,12 @@ export class DistrictMappingPage implements OnDestroy {
     private formLocationFactory: FormLocationFactory,
     private locationHandler: LocationHandler,
     private profileHandler: ProfileHandler,
-    private tncUpdateHandlerService: TncUpdateHandlerService
+    private tncUpdateHandlerService: TncUpdateHandlerService,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    this.navigateToCourse = extrasState.noOfStepsToCourseToc;
   }
   goBack(isNavClicked: boolean) {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -244,7 +249,8 @@ export class DistrictMappingPage implements OnDestroy {
               this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
-              window.history.go(-2);
+              window.history.go(-this.navigateToCourse);
+              this.externalIdVerificationService.showExternalIdVerificationPopup();
             } else {
               this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
               this.events.publish('update_header');
