@@ -197,9 +197,6 @@ export class SyncPage implements  OnDestroy {
       this.allProjects[this.syncIndex] = this.syncServ.removeKeys(this.allProjects[this.syncIndex], ['isNew', 'isEdit']);
       (success.result && success.result.programId) ? this.allProjects[this.syncIndex]['programId'] = success.result.programId : null;
       this.updateSyncedDataToDb();
-      if (this.isShare) {
-        this.getPdfUrl(this.fileName, this.taskId);
-      }
     }).catch(error => {
       this.location.back();
     })
