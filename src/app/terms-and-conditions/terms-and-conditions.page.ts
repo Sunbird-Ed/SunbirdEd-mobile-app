@@ -158,7 +158,8 @@ export class TermsAndConditionsPage implements OnInit {
               hasFilledLocation: this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig),
               showOnlyMandatoryFields: true,
               profile: value['profile'],
-              isRootPage: true
+              isRootPage: true,
+              noOfStepsToCourseToc: 1
             };
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
@@ -175,7 +176,9 @@ export class TermsAndConditionsPage implements OnInit {
                     state: {categoriesProfileData}
                   });
                 } else {
-                  this.router.navigate(['/', RouterLinks.TABS]);
+                  if (!this.appGlobalService.isJoinTraningOnboardingFlow) {
+                    this.router.navigate(['/', RouterLinks.TABS]);
+                  }
               }
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();

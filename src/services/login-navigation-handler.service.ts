@@ -110,6 +110,7 @@ export class LoginNavigationHandlerService {
                         userId: session.userToken,
                         requiredFields: ProfileConstants.REQUIRED_FIELDS
                     };
+                    this.appGlobalService.isGuestUser = false;
                     const success: any = await that.profileService.getServerProfilesDetails(req).toPromise();
 
                     const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
