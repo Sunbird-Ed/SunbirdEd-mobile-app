@@ -250,7 +250,6 @@ export class QRScannerResultHandler {
                       btnClass: 'sb-btn sb-btn-sm  sb-btn-tertiary'
                   }
               ],
-              icon: null
           },
           cssClass: 'sb-popover',
         });
