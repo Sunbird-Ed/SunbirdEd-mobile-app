@@ -240,4 +240,8 @@ sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
   .player-endpage,.video-js,.player-for-back-ward-controls {
     height: 100vh !important;
   }
- }
+}
+
+.standalone-player-container {
+  height: auto !important;
+}
