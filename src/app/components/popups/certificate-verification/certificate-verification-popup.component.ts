@@ -11,6 +11,7 @@ import { CommonUtilService } from '@app/services';
 })
 export class CertificateVerificationPopoverComponent implements OnInit, OnDestroy {
 
+  @Input() actionsButtons: any;
   @Input() certificateData: any;
   @Input() showHeader = true;
   backButtonFunc: Subscription;
