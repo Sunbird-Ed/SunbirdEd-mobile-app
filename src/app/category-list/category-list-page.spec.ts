@@ -53,7 +53,8 @@ describe('CategoryListPage', () => {
                 },
                 fromLibrary: true,
                 description: '{"en":"Explore a wide variety of %category on %appName across different boards and subject"}',
-                title: 'A title'
+                title: 'A title',
+                code: 'popular_categories'
             }
         }
     };
@@ -243,14 +244,6 @@ describe('CategoryListPage', () => {
             //assert
             setTimeout(() => {
                 expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.PAGE_LOADED,
-                    '',
-                    PageId.CATEGORY_RESULTS,
-                    Environment.HOME,
-                    undefined, undefined, undefined, undefined,
-                    corRelationList
-                )
                 done();
             }, 0);
         });
@@ -258,7 +251,6 @@ describe('CategoryListPage', () => {
     describe('ngOnInit', () => {
         it('should get Appname and supportedFacets should not be defined', (done) => {
             //arrange
-            const acc = [];
             const facet = [{ code: 'code1' }, { code: 'code2' }]
             mockSearchFilterService.fetchFacetFilterFormConfig = jest.fn(() => {
                 return Promise.resolve(facet);
@@ -292,6 +284,62 @@ describe('CategoryListPage', () => {
                 expect(categoryListPage['supportedFacets']).toBeTruthy();
                 done();
                 //expect(acc).toEqual('se_mediums');
+            }, 0);
+        });
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be other_boards', (done) => {
+            //arrange
+            mockCommonUtilService.getAppName = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            categoryListPage['shouldGenerateImpressionTelemetry'] = true;
+            categoryListPage['sectionCode'] = 'other_boards';
+            //act
+            categoryListPage.ngOnInit();
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_subject', (done) => {
+            //arrange
+            mockCommonUtilService.getAppName = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            categoryListPage['shouldGenerateImpressionTelemetry'] = true;
+            categoryListPage['sectionCode'] =  'browse_by_subject';
+            //act
+            categoryListPage.ngOnInit();
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_category', (done) => {
+            //arrange
+            mockCommonUtilService.getAppName = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            categoryListPage['shouldGenerateImpressionTelemetry'] = true;
+            categoryListPage['sectionCode'] =  'browse_by_category';
+            //act
+            categoryListPage.ngOnInit();
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_audience', (done) => {
+            //arrange
+            mockCommonUtilService.getAppName = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            categoryListPage['shouldGenerateImpressionTelemetry'] = true;
+            categoryListPage['sectionCode'] =  'browse_by_audience';
+            //act
+            categoryListPage.ngOnInit();
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+                done();
             }, 0);
         });
         it('should get Appname and supportedFacets should be defined', (done) => {
@@ -435,7 +483,7 @@ describe('CategoryListPage', () => {
                     subjectName: 'Mathematics',
                     corRelation: [
                         { id: 'Mathematics', type: 'Section' },
-                        { id: '', type: 'RootSection' }]
+                        { id: 'browse_by_audience', type: 'RootSection' }]
                 }
             });
         });
@@ -482,16 +530,6 @@ describe('CategoryListPage', () => {
                 }, index: 1,
             }, 'Mathematics');
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractSubtype.SELECT_CONTENT,
-                '',
-                Environment.SEARCH,
-                PageId.CATEGORY_RESULTS,
-                telemetryObject,
-                { positionClicked: 1, sectionName: 'Mathematics' },
-                rollUp,
-                [{ id: 'search', type: 'FromPage' }]
-            );
             expect(mockNavService.navigateToDetailPage).toHaveBeenCalled();
         });
         it('should go else to else part toast if network is not available', () => {
@@ -516,16 +554,6 @@ describe('CategoryListPage', () => {
                 index: 1,
             }, 'Mathematics');
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractSubtype.SELECT_CONTENT,
-                '',
-                Environment.SEARCH,
-                PageId.CATEGORY_RESULTS,
-                telemetryObject,
-                { positionClicked: 1, sectionName: 'Mathematics' },
-                rollUp,
-                [{ id: 'search', type: 'FromPage' }]
-            );
             expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalled();
         });
     });
