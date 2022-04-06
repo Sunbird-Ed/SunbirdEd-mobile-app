@@ -113,7 +113,8 @@ export class TncUpdateHandlerService {
           hasFilledLocation: this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig),
           showOnlyMandatoryFields: true,
           profile: value['profile'],
-          isRootPage: true
+          isRootPage: true,
+          noOfStepsToCourseToc: 1
         };
         if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
@@ -171,7 +172,8 @@ export class TncUpdateHandlerService {
   private navigateToDistrictMapping() {
     const navigationExtras: NavigationExtras = {
       state: {
-        isShowBackButton: false
+        isShowBackButton: false,
+        noOfStepsToCourseToc: 1
       }
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
