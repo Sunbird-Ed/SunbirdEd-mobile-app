@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { FormAndFrameworkUtilService, SearchFilterService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
 import { ContentSearchCriteria, SearchType } from '@project-sunbird/sunbird-sdk';
+import { doesNotReject } from 'assert';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -138,22 +139,6 @@ describe('SearchFilterPage', () => {
         });
     });
 
-    describe('when form is cancelled', () => {
-        it('should dismiss current modal', () => {
-            // arrange
-            mockModalController.dismiss = jest.fn(() => { }) as any;
-            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            // act
-            searchFilterPage.cancel();
-            // assert
-            setTimeout(() => {
-                return Promise.resolve(
-                    expect(mockModalController.dismiss).toHaveBeenCalled()
-                )
-            });
-        });
-    });
-
     describe('resetFilter', () => {
         it('should delegate form reset to SbSearchFacetFilterComponent', () => {
             // arrange
@@ -164,22 +149,6 @@ describe('SearchFilterPage', () => {
             searchFilterPage.resetFilter();
             // assert
             expect(searchFilterPage.searchFilterComponent.resetFilter).toHaveBeenCalled();
-        });
-    });
-
-    describe('when form is applied', () => {
-        it('should dismiss current modal return selections', () => {
-            // arrange
-            mockModalController.dismiss = jest.fn(() => { }) as any;
-            searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
-            // act
-            searchFilterPage.applyFilter();
-            // assert
-            setTimeout(() => {
-                expect(mockModalController.dismiss).toHaveBeenCalledWith(expect.objectContaining({
-                    appliedFilterCriteria: FilterCriteriaData
-                }));
-            }, 0);
         });
     });
 
@@ -201,7 +170,6 @@ describe('SearchFilterPage', () => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             });
         });
-
         it('should not do anything if the event return false', () => {
             //arrange
             const event = false;
@@ -210,11 +178,10 @@ describe('SearchFilterPage', () => {
             //assert
             expect(!event).toBe(true);
         });
-
-        it('should call refresh form', () => {
+        it('should call refresh form and selection might be of type string', (done) => {
             //arrange
             const event = {
-                se_mediums: 'se_mediums',
+                se_mediums: [{ name: 'na1' }],
                 se_gradeLevels: 'se_gradeLevels'
             };
             JSON.parse = jest.fn().mockImplementationOnce(() => {
@@ -248,7 +215,106 @@ describe('SearchFilterPage', () => {
                 expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
                 expect(mockContentService.searchContent).toHaveBeenCalled();
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should call refresh form and selection might not be of type string', (done) => {
+            //arrange
+            const event = {
+                name: 'se_mediums',
+                values: 'se_gradeLevels'
+            };
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['initialFilterCriteria'] = {
+                    facetFilters: [
+                        {
+                            name: 'se_mediums', values: [
+                                {
+                                    name: 'english', count: 30408, apply: false, values: [{
+                                        name: 'english'
+                                    }]
+                                },
+                                {
+                                    name: 'hindi', count: 2107, apply: false, values: [{
+                                        name: 'hindi'
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            name: 'se_gradeLevels', values: [
+                                {
+                                    name: 'class 10', count: 6446, apply: false, values: [{
+                                        name: 'class 10'
+                                    }]
+                                },
+                                {
+                                    name: 'class 1', count: 23017, apply: false, values: [{
+                                        name: 'class 1'
+                                    }]
+                                }
+                            ]
+                        }
+                    ],
+                    facets: ['se_mediums', 'se_gradeLevels']
+                };
             });
-        })
+            const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            searchFilterPage['isPageLoadedFirstTime'] = false;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.reject('error message'));
+            mockSearchFilterService.reformFilterValues = jest.fn(() => Promise.resolve([
+                { name: 'board', values: [Array] },
+                { name: 'medium', values: [Array] }
+            ]))
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
+                expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done()
+            }, 0);
+        });
+    });
+
+    describe('when form is applied', () => {
+        it('should dismiss current modal return selections', () => {
+            // arrange
+            mockModalController.dismiss = jest.fn(() => { }) as any;
+            searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
+            // act
+            searchFilterPage.applyFilter();
+            // assert
+            setTimeout(() => {
+                expect(mockModalController.dismiss).toHaveBeenCalledWith(expect.objectContaining({
+                    appliedFilterCriteria: FilterCriteriaData
+                }));
+            }, 0);
+        });
+    });
+
+
+    describe('when form is cancelled', () => {
+        it('should dismiss current modal', () => {
+            // arrange
+            mockModalController.dismiss = jest.fn(() => { }) as any;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            searchFilterPage.cancel();
+            // assert
+            setTimeout(() => {
+                return Promise.resolve(
+                    expect(mockModalController.dismiss).toHaveBeenCalled()
+                )
+            });
+        });
     });
 });
