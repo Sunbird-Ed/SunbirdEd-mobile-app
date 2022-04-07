@@ -8,8 +8,9 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
       {{categories}}
     </div>
-    <div class="custom-filed" *ngIf="data?.duration">
+    <div class="custom-filed" *ngIf="data?.recommendedFor && data?.recommendedFor?.length">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_RECOMMENDED_FOR' | translate}} : </ion-label>
+      <span *ngFor="let recommend of data?.recommendedFor; let last = last"> {{recommend.code}}<span *ngIf="!last">,</span> </span>
     </div>
     <div class="custom-filed" *ngIf="data?.startDate">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
@@ -23,6 +24,6 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
       {{data?.duration?.label || data?.duration }}
     </div>
-  
+    
   </ion-card-content>
 </ion-card>
