@@ -127,11 +127,11 @@ export class SharingFeatureService {
    
   }
   directoryPath(): string {
-    let dir_name = 'Download/';
+    // let dir_name = 'Download/';
     if (this.platform.is('ios')) {
-      return this.file.documentsDirectory + dir_name;
+      return this.file.documentsDirectory;
     } else {
-      return this.file.externalRootDirectory + dir_name;
+      return this.file.externalDataDirectory;
     }
   }
 
