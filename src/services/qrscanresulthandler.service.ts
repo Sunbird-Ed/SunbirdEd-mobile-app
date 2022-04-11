@@ -224,6 +224,9 @@ export class QRScannerResultHandler {
 
   async handleRcCertsQR(scannedData){
     let encodedData, verifyCertReq;
+    this.generateQRScanSuccessInteractEvent(scannedData, 'OpenBrowser', undefined, {
+      certificateId: scannedData.split('/certs/')[1], scannedFrom: 'mobileApp'
+    });
     if(scannedData.includes('data=')){
       try {
         encodedData = await this.certificateService.getEncodedData(scannedData.split('data=')[1])
