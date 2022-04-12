@@ -820,7 +820,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile?.board?.length  ?  this.profile?.board[0]: null;
+      let board = [];
+      board.push(this.profile?.syllabus?.length  ?  this.profile?.syllabus[0]: null)
+      board.push(this.profile?.board?.length  ?  this.profile?.board[0]: null)
       let role = this.profile.profileType.toLowerCase();
       if (this.profile.serverProfile) {
         role = this.profile.serverProfile.profileUserType.type.toLowerCase();
@@ -828,7 +830,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       const otherCategories = await this.formAndFrameworkUtilService.getFormFields(
         FormConstants.ML_HOME_CATEGORIES
       );
-      this.otherCategories = otherCategories[board][role];
+      board.forEach(element => {
+        if(otherCategories[element] && otherCategories[element][role]){
+         this.otherCategories = otherCategories[element][role]; 
+         return;
+         }
+      });
       if (this.otherCategories.length) {
         this.homeDataAvailable = true;
         this.events.publish('onPreferenceChange:showReport', true);
