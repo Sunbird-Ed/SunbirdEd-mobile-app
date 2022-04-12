@@ -1,7 +1,7 @@
 <!-- New content details -->
 <ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'"
-    [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier], '': !contentDownloadable[content?.identifier]}">
+    [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier] && (content.mimeType === 'video/mp4' || content.mimeType === 'video/webm'), '': !contentDownloadable[content?.identifier]}">
     <div *ngIf="contentDownloadable[content?.identifier]">
       <img class="sb-player-container" [src]="getImageContent()" alt="">
       <div class="sb-overlay-container">
