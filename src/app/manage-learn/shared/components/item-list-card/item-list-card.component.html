@@ -17,6 +17,10 @@
           <div *ngIf="!isNumber(subTitle)" class="d-flex flex-ai-center">
             <span>{{ case?.subTitle ? (subTitle | titlecase) : subTitle}}</span> <ng-content select="[info]" class="ml-5"></ng-content>
           </div>
+          <div class="d-flex flex-ai-center">
+            <span>{{ case?.description ? (description | titlecase) : description }}</span>
+            <ng-content select="[info]" class="ml-5"></ng-content>
+          </div>
         </div>
       </div>
     </div>

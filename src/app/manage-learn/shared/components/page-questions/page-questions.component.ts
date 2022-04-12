@@ -82,6 +82,7 @@ export class PageQuestionsComponent implements OnInit,OnDestroy {
             return false
           } else {
             this.data.pageQuestions[currentQuestionIndex].isCompleted = this.utils.isQuestionComplete(currentQuestion);
+            this.data.pageQuestions[currentQuestionIndex].value = "";
           }
         }
       }

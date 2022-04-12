@@ -13,7 +13,8 @@
   </ion-list>
 
   <app-item-list-card [title]="data?.name"
-    [subTitle]="data?.description"
+  [subTitle]="data?.type == 'improvementProject'? 'Improvement project' : data?.type"
+  [description]="data?.description"
     [id]="data?.id"
     (click)="selectedSolution(data)"
     *ngFor="let data of solutions">
