@@ -519,4 +519,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.orientationToSwitch = AppOrientation.LANDSCAPE;
     }
   }
+  
+
+  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 }
