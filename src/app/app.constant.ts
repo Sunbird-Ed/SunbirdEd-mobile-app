@@ -795,7 +795,7 @@ export class OTPTemplates {
 
 export enum AppOrientation {
     LANDSCAPE = 'Landscape',
-    POTRAIT = 'Potrait'
+    PORTRAIT = 'Portrait'
 }
 
 export class OnboardingScreenType {
