@@ -62,12 +62,14 @@ describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
 
     const mockProfileService: Partial<ProfileService> = {};
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }))
+    };
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockStorageService: Partial<StorageService> = {};
     const mockDownloadService: Partial<DownloadService> = {
-        getActiveDownloadRequests: jest.fn(() => EMPTY)
+        getActiveDownloadRequests: jest.fn(() => of([{identifier: 'sample-id'}]))
     };
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockNgZone: Partial<NgZone> = {
@@ -87,7 +89,13 @@ describe('ContentDetailsPage', () => {
         generateInteractTelemetry: jest.fn(),
         generateEndTelemetry: jest.fn()
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getLoader: jest.fn(() => ({
+            present: jest.fn(() => Promise.resolve()),
+            dismiss: jest.fn(() => Promise.resolve()),
+        })),
+        showToast: jest.fn()
+    };
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
         getDeviceAPILevel: jest.fn(() => Promise.resolve('sample')),
@@ -99,7 +107,9 @@ describe('ContentDetailsPage', () => {
         hideHeader: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {};
-    const mockLocation: Partial<Location> = {};
+    const mockLocation: Partial<Location> = {
+        back: jest.fn(() => true)
+    };
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockContentData)
     };
@@ -189,44 +199,12 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage).toBeTruthy();
     });
 
-    it('should get extras from content || navigation when getExtras() called', () => {
-        // arrange
-        const extras = mockContentData.extras.state;
-        spyOn(contentDetailsPage, 'getNavParams');
-        // act
-        contentDetailsPage.getNavParams();
-        // assert
-        expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
-    });
-
-    it('should call subscribeEvents when ngOnInit() invoked', (done) => {
-        // arrange
-        spyOn(contentDetailsPage, 'subscribeEvents').and.stub();
-        mockFormFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
-            target: {
-                mimeType: [
-                    'application/pdf'
-                ],
-                primaryCategory: [
-                    'LearningResource'
-                ]
-            }
-        }]));
-        // act
-        contentDetailsPage.ngOnInit();
-        // assert
-        setTimeout(() => {
-            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
-            expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
-            done();
-        }, 0);
-    });
-
     describe('showSwitchUserAlert', () => {
         it('should return tost for offline', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             mockCommonUtilService.showToast = jest.fn();
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation();
             // act
             contentDetailsPage.showSwitchUserAlert(true);
             // assert
@@ -835,6 +813,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
                 return Promise.resolve();
             });
+            jest.spyOn(contentDetailsPage, 'getNextContent').mockImplementation();
             mockContentPlayerHandler.setContentPlayerLaunchStatus = jest.fn();
             mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -2454,110 +2433,6 @@ describe('ContentDetailsPage', () => {
         });
     });
 
-    describe('subscribeEvents', () => {
-        it('should invoke appVersion() and other subscription() when invoked', (done) => {
-            // arrange
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
-            const called: { [topic: EventTopics]: boolean } = {};
-            mockEvents.subscribe = jest.fn((topic, fn) => {
-                if (called[topic]) {
-                    return;
-                }
-                called[topic] = true;
-                if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
-                    fn({ content: {} });
-                }
-                if (topic === EventTopics.PLAYER_CLOSED) {
-                    fn({ selectedUser: 'sampleUser' });
-                }
-                if (topic === EventTopics.NEXT_CONTENT) {
-                    fn({ data: 'sample_data' });
-                }
-            });
-            mockRatingHandler.resetRating = jest.fn();
-            jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation();
-            mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
-            mockProfileService.getActiveProfileSession = jest.fn(() =>
-                of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
-            mockProfileSwitchHandler.switchUser = jest.fn();
-            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
-            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockImplementation();
-            mockEvents.unsubscribe = jest.fn((topic) => {
-                console.log(topic);
-                called[topic] = false;
-            });
-            jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
-            mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
-            contentDetailsPage['course'] = {
-                contentId: 'content_id'
-            };
-            mockEventBusService.events = jest.fn(() => of({
-                payload: {
-                    contentId: 'content_id'
-                },
-                type: ContentEventType.COURSE_STATE_UPDATED
-            }));
-            contentDetailsPage.shouldOpenPlayAsPopup = true;
-            // act
-            contentDetailsPage.subscribeEvents();
-            // assert
-            setTimeout(() => {
-                expect(mockAppVersion.getAppName).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(1, EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, expect.anything());
-                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(2, EventTopics.PLAYER_CLOSED, expect.anything());
-                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(3, EventTopics.NEXT_CONTENT, expect.anything());
-                expect(mockRatingHandler.resetRating).toHaveBeenCalled();
-                expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
-                expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
-                done();
-            }, 1000);
-        });
-
-        it('should invoke appVersion() and other subscription() if data is false when invoked', (done) => {
-            // arrange
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
-            const called: { [topic: EventTopics]: boolean } = {};
-            mockEvents.subscribe = jest.fn((topic, fn) => {
-                if (called[topic]) {
-                    return;
-                }
-                called[topic] = true;
-                if (topic === EventTopics.PLAYER_CLOSED) {
-                    fn({ selectedUser: { profileType: 'Teacher' } });
-                }
-                // if (topic === EventTopics.NEXT_CONTENT) {
-                //     fn({data: 'sample_data'});
-                // }
-            });
-            mockProfileSwitchHandler.switchUser = jest.fn();
-            spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
-            mockEvents.unsubscribe = jest.fn((topic) => {
-                console.log(topic);
-                called[topic] = false;
-            });
-            contentDetailsPage.course = {
-                contentId: 'content_id'
-            };
-            mockEventBusService.events = jest.fn(() => of({
-                payload: {
-                    contentId: 'content_id'
-                },
-                type: ContentEventType.COURSE_STATE_UPDATED
-            }));
-            // act
-            contentDetailsPage.subscribeEvents();
-            // assert
-            setTimeout(() => {
-                expect(mockAppVersion.getAppName).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({ profileType: 'Teacher' });
-                done();
-            }, 0);
-        });
-    });
-
     describe('getImportContentRequestBody', () => {
         it('should return requestParams', () => {
             // arrange
@@ -2755,5 +2630,174 @@ describe('ContentDetailsPage', () => {
                 done();
             });
         });
+    });
+
+    it('should get extras from content || navigation when getExtras() called', (done) => {
+        // arrange
+        // contentDetailsPage.content = mockContentData.extras.state;
+        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
+      //  spyOn(contentDetailsPage, 'getNavParams');
+        jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
+            return {};
+        });
+        jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation(() => {
+            return Promise.resolve({id: 'sample-id'});
+        });
+        jest.spyOn(contentDetailsPage, 'setContentDetails').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        mockDownloadService.getActiveDownloadRequests = jest.fn(() => of([{identifier: 'sample-id'}]));
+        // act
+        contentDetailsPage.getNavParams();
+        // assert
+        setTimeout(() => {
+           // expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    describe('subscribeEvents', () => {
+        it('should invoke appVersion() and other subscription() when invoked', (done) => {
+            // arrange
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+            mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
+            const called: { [topic: EventTopics]: boolean } = {};
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                if (called[topic]) {
+                    return;
+                }
+                called[topic] = true;
+                if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
+                    fn({ content: {} });
+                }
+                if (topic === EventTopics.PLAYER_CLOSED) {
+                    fn({ selectedUser: 'sampleUser' });
+                }
+                if (topic === EventTopics.NEXT_CONTENT) {
+                    fn({ data: 'sample_data' });
+                }
+            });
+            mockRatingHandler.resetRating = jest.fn();
+            jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation();
+            mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
+            mockProfileService.getActiveProfileSession = jest.fn(() =>
+                of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
+            mockProfileSwitchHandler.switchUser = jest.fn();
+            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
+            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockImplementation();
+            jest.spyOn(contentDetailsPage, 'getNavParams').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockEvents.unsubscribe = jest.fn((topic) => {
+                console.log(topic);
+                called[topic] = false;
+            });
+            jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
+            mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
+            contentDetailsPage['course'] = {
+                contentId: 'content_id'
+            };
+            mockEventBusService.events = jest.fn(() => of({
+                payload: {
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
+            }));
+            contentDetailsPage.shouldOpenPlayAsPopup = true;
+            // act
+            contentDetailsPage.subscribeEvents();
+            // assert
+            setTimeout(() => {
+                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(1, EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, expect.anything());
+                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(2, EventTopics.PLAYER_CLOSED, expect.anything());
+                expect(mockEvents.subscribe).toHaveBeenNthCalledWith(3, EventTopics.NEXT_CONTENT, expect.anything());
+                expect(mockRatingHandler.resetRating).toHaveBeenCalled();
+                expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
+                expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
+                done();
+            }, 1000);
+        });
+
+        it('should invoke appVersion() and other subscription() if data is false when invoked', (done) => {
+            // arrange
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+            mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
+            const called: { [topic: EventTopics]: boolean } = {};
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                if (called[topic]) {
+                    return;
+                }
+                called[topic] = true;
+                if (topic === EventTopics.PLAYER_CLOSED) {
+                    fn({ selectedUser: { profileType: 'Teacher' } });
+                }
+                // if (topic === EventTopics.NEXT_CONTENT) {
+                //     fn({data: 'sample_data'});
+                // }
+            });
+            mockProfileSwitchHandler.switchUser = jest.fn();
+            spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
+            mockEvents.unsubscribe = jest.fn((topic) => {
+                console.log(topic);
+                called[topic] = false;
+            });
+            contentDetailsPage.course = {
+                contentId: 'content_id'
+            };
+            mockEventBusService.events = jest.fn(() => of({
+                payload: {
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
+            }));
+            jest.spyOn(contentDetailsPage, 'getNavParams').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.subscribeEvents();
+            // assert
+            setTimeout(() => {
+                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({ profileType: 'Teacher' });
+                done();
+            }, 0);
+        });
+    });
+
+    it('should call subscribeEvents when ngOnInit() invoked', (done) => {
+        // arrange
+        jest.spyOn(contentDetailsPage, 'subscribeEvents').mockImplementation(() => {
+            return;
+        });
+        jest.spyOn(contentDetailsPage, 'getNextContent').mockImplementation();
+        jest.spyOn(mockContentService, 'getContentDetails').mockResolvedValue(of({ contentData: { size: '12KB', status: 'Retired' } }));
+
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
+        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample-app'));
+        mockFormFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+            target: {
+                mimeType: [
+                    'application/pdf'
+                ],
+                primaryCategory: [
+                    'LearningResource'
+                ]
+            }
+        }]));
+        // act
+        contentDetailsPage.ngOnInit();
+        // assert
+        setTimeout(() => {
+            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+            expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 });
