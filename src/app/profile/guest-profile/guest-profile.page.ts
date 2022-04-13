@@ -147,7 +147,7 @@ export class GuestProfilePage implements OnInit {
         this.refreshSignInCard();
         this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType);
         const supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
-        this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code ===  this.profile.profileType);
+        this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
         }, 500);
@@ -255,7 +255,7 @@ export class GuestProfilePage implements OnInit {
   }
 
   handleHeaderEvents($event) {
-    if($event.name === 'download'){
+    if ($event.name === 'download') {
       this.redirectToActiveDownloads();
     }
   }
@@ -286,4 +286,5 @@ export class GuestProfilePage implements OnInit {
     this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 
+  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 }

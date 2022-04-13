@@ -1,4 +1,5 @@
-<ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space" [ngClass]="{'ui-container': !platform.is('ios')}">
+<ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space"
+  [ngClass]="{'ui-container': !platform.is('ios')}">
   <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
     <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
@@ -9,7 +10,8 @@
       <p class="profile-name">
         <span class="user">{{profile?.handle | titlecase}}</span>
         <span role="button" aria-label="edit profile">
-          <ion-icon class="editIcon" role="button" aria-label="edit profile" name="create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
+          <ion-icon class="editIcon" role="button" aria-label="edit profile" name="create" color="primary"
+            (click)="editGuestProfile(false,'edit-profile')">
           </ion-icon>
         </span>
       </p>
@@ -21,14 +23,17 @@
       <div class="grid-container">
         <!-- Name -->
         <!-- Role -->
-        <div *ngIf="profile?.profileType" class="grid-item info-title text-align-start ion-text-uppercase">{{'FRMELEMNTS_LBL_PERSONA' | translate}}</div>
-        <div *ngIf="profile?.profileType" class="grid-item text-align-end" (click)="editGuestProfile(true,'change-role')">
+        <div *ngIf="profile?.profileType" class="grid-item info-title text-align-start ion-text-uppercase">
+          {{'FRMELEMNTS_LBL_PERSONA' | translate}}</div>
+        <div *ngIf="profile?.profileType" class="grid-item text-align-end"
+          (click)="editGuestProfile(true,'change-role')">
           <div *ngIf="profile?.profileType" class="align-content">
             <div class="ellipsis text-align width-100">{{currentUserTypeConfig?.name}}&lrm;</div>
             <span role="button" attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}">
-            <ion-icon role="button" class="icon-align" float="end" attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}" name="create" color="primary">
-            </ion-icon>
-          </span>
+              <ion-icon role="button" class="icon-align" float="end"
+                attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}" name="create" color="primary">
+              </ion-icon>
+            </span>
           </div>
         </div>
         <!-- Syllabus -->
@@ -39,53 +44,70 @@
           <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
             <div class="ellipsis text-align width-100">{{syllabus}}</div>
             <span role="button" attr.aria-label="edit {{'SYLLABUS' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SYLLABUS' | translate}}" name="create" color="primary" role="button">
-            </ion-icon></span>
+              <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SYLLABUS' | translate}}" name="create"
+                color="primary" role="button">
+              </ion-icon>
+            </span>
           </div>
-          <div *ngIf="!profile?.syllabus?.length" attr.aria-label="add {{'SYLLABUS' | translate}}" role="button" class="vertical-align">
+          <div *ngIf="!profile?.syllabus?.length" attr.aria-label="add {{'SYLLABUS' | translate}}" role="button"
+            class="vertical-align">
             {{'ADD' | translate}}
           </div>
         </div>
 
         <!-- Board -->
-        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
-        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
+        <div *ngIf="!!supportedProfileAttributes['board']"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end"
+          (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
             <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
             <span role="button" attr.aria-label="edit {{'BOARD' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'BOARD' | translate}}" name="create" color="primary" role="button">
-            </ion-icon></span>
+              <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'BOARD' | translate}}" name="create"
+                color="primary" role="button">
+              </ion-icon>
+            </span>
           </div>
-          <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" role="button" attr.aria-label="add {{'BOARD' | translate}}" class="vertical-align">{{'ADD' | translate}}
+          <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" role="button"
+            attr.aria-label="add {{'BOARD' | translate}}" class="vertical-align">{{'ADD' | translate}}
           </div>
 
         </div>
         <!-- Medium -->
 
-        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
-        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item text-align-end" (click)="editGuestProfile(false,'medium')">
+        <div *ngIf="!!supportedProfileAttributes['medium']"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item text-align-end"
+          (click)="editGuestProfile(false,'medium')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{medium}}</div>
             <span role="button" attr.aria-label="edit {{'MEDIUM' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-lable="edit {{'MEDIUM' | translate}}" name="create" color="primary" role="button">
-            </ion-icon></span>
+              <ion-icon class="icon-align" float="end" attr.aria-lable="edit {{'MEDIUM' | translate}}" name="create"
+                color="primary" role="button">
+              </ion-icon>
+            </span>
           </div>
-          <div role="button" attr.aria-label="add {{'MEDIUM' | translate}}" *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
+          <div role="button" attr.aria-label="add {{'MEDIUM' | translate}}"
+            *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
 
         <!-- Class -->
-        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
-        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item text-align-end" (click)="editGuestProfile(false,'class')">
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel']"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item text-align-end"
+          (click)="editGuestProfile(false,'class')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{grade}}</div>
             <span role="button" attr.aria-label="edit {{'CLASS' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'CLASS' | translate}}" name="create" color="primary" role="button">
-            </ion-icon></span>
+              <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'CLASS' | translate}}" name="create"
+                color="primary" role="button">
+              </ion-icon>
+            </span>
           </div>
           <div role="button" attr.aria-label="add {{'CLASS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length"
@@ -94,15 +116,19 @@
 
 
         <!-- Subject -->
-        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
-        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item text-align-end" (click)="editGuestProfile(false,'subjects')">
+        <div *ngIf="!!supportedProfileAttributes['subject']"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item text-align-end"
+          (click)="editGuestProfile(false,'subjects')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{subjects}}</div>
             <span role="button" attr.aria-label="edit {{'SUBJECTS' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SUBJECTS' | translate}}" name="create" color="primary" role="button">
-            </ion-icon></span>
+              <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SUBJECTS' | translate}}" name="create"
+                color="primary" role="button">
+              </ion-icon>
+            </span>
           </div>
           <div role="button" attr.aria-label="add {{'SUBJECTS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length || !profile?.subject?.length"
@@ -118,10 +144,12 @@
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
             <span role="button" attr.aria-label="edit {{'DISTRICT' | translate}}">
-            <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'DISTRICT' | translate}}" name="create" color="primary" role="button"></ion-icon>
+              <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'DISTRICT' | translate}}" name="create"
+                color="primary" role="button"></ion-icon>
             </span>
           </div>
-          <div *ngIf="!deviceLocation?.district" role="button" attr.aria-label="add {{'DISTRICT' | translate}}" class="vertical-align">{{'ADD' | translate}}</div>
+          <div *ngIf="!deviceLocation?.district" role="button" attr.aria-label="add {{'DISTRICT' | translate}}"
+            class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
         <div class="grid-item info-title text-align-start ion-text-uppercase">{{'STATE' | translate}}</div>
@@ -129,12 +157,17 @@
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
             <span role="button" attr.aria-label="edit {{'STATE' | translate}}">
-            <ion-icon class="icon-align" attr.aria-label="edit {{'STATE' | translate}}" float="end" name="create" color="primary" role="button"></ion-icon></span>
+              <ion-icon class="icon-align" attr.aria-label="edit {{'STATE' | translate}}" float="end" name="create"
+                color="primary" role="button"></ion-icon>
+            </span>
           </div>
-          <div *ngIf="!deviceLocation?.state" role="button" attr.aria-label="add {{'STATE' | translate}}" class="vertical-align">{{'ADD' | translate}}</div>
+          <div *ngIf="!deviceLocation?.state" role="button" attr.aria-label="add {{'STATE' | translate}}"
+            class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
-
+        <div style="margin-top: 10px;">
+          <ion-button fill="clear" (click)="signin()">Login Here</ion-button>
+        </div>
       </div>
 
     </div>
