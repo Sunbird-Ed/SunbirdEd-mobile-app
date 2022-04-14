@@ -122,6 +122,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
+      this.config['config'].showDeviceOrientation = true
       this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
@@ -235,6 +236,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
 
+  toggleDeviceOrientation() {
+    if (this.screenOrientation.type.includes(AppOrientation.LANDSCAPE.toLocaleLowerCase())) {
+      this.screenOrientation.unlock();
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      } else {
+        this.screenOrientation.unlock();
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+    }
+  }
+
   async ionViewWillLeave() {
     this.statusBar.show();
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
@@ -328,6 +339,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           };
           this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
+      } else if (event.edata.type === 'DEVICE_ROTATION_CLICKED') {
+        this.toggleDeviceOrientation();
       }
     }
   }

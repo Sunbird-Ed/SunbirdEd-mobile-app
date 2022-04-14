@@ -926,7 +926,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
         if (currentOrientation === AppOrientation.LANDSCAPE) {
           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
+          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         } else {
           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
@@ -1068,7 +1068,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
     } else {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.POTRAIT).toPromise();
+      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
     }
   }
 }
