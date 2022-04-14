@@ -2,6 +2,9 @@
   <div   id="stop">
   <div class="_container"  *ngIf="submissionId || extrasState">
     <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
+      <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+        <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+      </ion-item-divider>
       <ng-container [ngSwitch]="question.responseType.toLowerCase()">
         <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
           [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
