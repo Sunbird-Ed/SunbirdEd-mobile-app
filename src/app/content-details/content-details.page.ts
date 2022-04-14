@@ -263,11 +263,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.nextContentToBePlayed = extras.content;
+      this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
       }
       this.onboarding = extras.onboarding || this.onboarding;
+      this.setContentDetails(this.identifier, false, false);
     }
     this.isIOS = (this.platform.is('ios'))
       this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
@@ -290,6 +292,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.appLists.length) {
       this.isCompatibleWithVendorApps = true;
     }
+  }
+
+  getNextContent(hierarchyInfo, identifier) {
+    return new Promise((resolve) => {
+      this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
+        this.nextContentToBePlayed = res;
+        resolve(res);
+      })
+    })
   }
 
   subscribeEvents() {
@@ -468,6 +479,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           if (data.contentData.size) {
             this.contentSize = data.contentData.size;
           }
+          await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
           this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
@@ -1230,9 +1242,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
       if (event.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
-           this.playNextContent();
+        if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
+        this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
         cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
           () => {},
@@ -1266,7 +1283,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       content,
       course: this.course
     });
-    this.location.back();
   }
 
   checkappAvailability() {
