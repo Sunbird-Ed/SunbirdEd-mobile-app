@@ -27,8 +27,8 @@ describe('LogoutHandlerService', () => {
         })))
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {
-        getString: jest.fn(),
-        getBoolean: jest.fn(),
+        getString: jest.fn(() => of('123244')),
+        getBoolean: jest.fn(() => of(true)),
         putString: jest.fn(() => of(undefined)),
         putBoolean: jest.fn(() => of(undefined))
     };
@@ -62,11 +62,12 @@ describe('LogoutHandlerService', () => {
     };
 
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
-        getSystemSettings: jest.fn(() => of({}))
+        getSystemSettings: jest.fn(() => of({id: 'googleClientId'}))
     };
 
     const mockGooglePlus: Partial<GooglePlus> = {
-
+        trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
+        disconnect: jest.fn()
     };
 
     beforeAll(() => {
@@ -149,8 +150,6 @@ describe('LogoutHandlerService', () => {
              mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            jest.spyOn(mockSharedPreferences, 'getBoolean').mockImplementation(() => {return of(true)})
-            // mockSharedPreferences.getBoolean = jest.fn(() => Promise.resolve((true)));
             mockSharedPreferences.putBoolean = jest.fn(() => of(undefined));
             // act
             logoutHandlerService.onLogout();
@@ -179,7 +178,7 @@ describe('LogoutHandlerService', () => {
             })
         });
         
-        it ('should try silent login catch error while disconnecting google plus', (done) => {
+        it ('should try silent login catch error while disconnecting google plus', async(done) => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
@@ -190,6 +189,7 @@ describe('LogoutHandlerService', () => {
             mockGooglePlus.disconnect = jest.fn();
             // act
             logoutHandlerService.onLogout();
+            // assert
             setTimeout(() => {
                 expect(mockGooglePlus.disconnect).toHaveBeenCalled();
                 done();
@@ -216,7 +216,7 @@ describe('LogoutHandlerService', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'))
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             // act
             logoutHandlerService.onLogout();
