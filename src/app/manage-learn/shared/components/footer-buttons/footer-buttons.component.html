@@ -10,13 +10,18 @@
       <ion-col style=" margin: auto;">
         <!-- {{completedQuestionCount}} {{questionCount}} -->
         <progress-bar [progress]="percentage" [total]="questionCount" [showTracker]="true"
-          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount && !showStartButton">
+          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount && !showStartButton && !viewOnly">
         </progress-bar>
         <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_BTN_SUBMIT'| translate}}
           <ion-icon name="chevron-up-circle" style="padding: 0 9px;" color="primary"></ion-icon></ion-button>
         <div class="_flex-box _justify-content-center">
           <ion-button round small *ngIf="showStartButton" (click)="startBtnAction()"
             [ngClass]="{'btn-disabled': !isStartBTNEnabled}">{{'FRMELEMNTS_BTN_START'| translate}}
+          </ion-button>
+        </div>
+        <div *ngIf="viewOnly && showStartButton === undefined" class="_flex-box _justify-content-center">
+          <ion-button round small (click)="allowStartingObservation()"
+            >{{'FRMELEMNTS_BTN_START'| translate}}
           </ion-button>
         </div>
 

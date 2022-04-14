@@ -338,11 +338,6 @@ export class ObservationSubmissionComponent implements OnInit {
       selectedEvidence: evidenceIndex,
       entityDetails: aseessmemtData
     };
-    let action = await this.evdnsServ.openActionSheet(
-      options,
-      "FRMELEMNTS_LBL_OBSERVATION"
-    );
-    if (action) {
       this.router.navigate([RouterLinks.QUESTIONNAIRE], {
         queryParams: {
           submisssionId: assessment._id,
@@ -351,7 +346,6 @@ export class ObservationSubmissionComponent implements OnInit {
           schoolName: this.entityName
         }
       });
-    }
   }
   async openMenu(event, submission, index) {
       if (!this.networkFlag) {

@@ -1,18 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { RemarksModalComponent } from '../../questionnaire/remarks-modal/remarks-modal.component';
-import { urlConstants } from '../constants/urlConstants';
-import { AssessmentApiService } from './assessment-api.service';
-import { LoaderService } from './loader/loader.service';
-import { LocalStorageService } from './local-storage/local-storage.service';
-import { ToastService } from './toast/toast.service';
-import { UtilsService } from './utils.service';
-import cloneDeep from 'lodash/cloneDeep';
+import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import {
+  ActionSheetController,
+  AlertController,
+  ModalController,
+} from "@ionic/angular";
+import { TranslateService } from "@ngx-translate/core";
+import { RemarksModalComponent } from "../../questionnaire/remarks-modal/remarks-modal.component";
+import { urlConstants } from "../constants/urlConstants";
+import { AssessmentApiService } from "./assessment-api.service";
+import { LoaderService } from "./loader/loader.service";
+import { LocalStorageService } from "./local-storage/local-storage.service";
+import { ToastService } from "./toast/toast.service";
+import { UtilsService } from "./utils.service";
+import cloneDeep from "lodash/cloneDeep";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class EvidenceService {
   entityDetails: any;
@@ -33,35 +37,41 @@ export class EvidenceService {
   ) {}
 
   openActionSheet(params, type?) {
-    type = type ? type : '';
-    console.log(JSON.stringify(params) + ' test');
+    type = type ? type : "";
+    console.log(JSON.stringify(params) + " test");
     this.entityDetails = params.entityDetails;
     this.schoolId = params._id;
     this.evidenceIndex = params.selectedEvidence;
-    const selectedECM = this.entityDetails['assessment']['evidences'][this.evidenceIndex];
+    const selectedECM =
+      this.entityDetails["assessment"]["evidences"][this.evidenceIndex];
     let translateObject;
     return new Promise((resolve, reject) => {
       this.translate
         .get([
-          'FRMELEMNTS_LBL_SURVEY_ACTION',
-          'VIEW',
-          'START',
-          'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
-          'CANCEL',
-          'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
-          'FRMELEMNTS_LBL_OBSERVATION',
+          "FRMELEMNTS_LBL_SURVEY_ACTION",
+          "VIEW",
+          "START",
+          "FRMELEMNTS_LBL_ECM_NOT_APPLICABLE",
+          "CANCEL",
+          "FRMELEMNTS_LBL_ECM_NOT_ALLOWED",
+          "FRMELEMNTS_LBL_OBSERVATION",
         ])
         .subscribe(async (translations) => {
           translateObject = translations;
           let action = await this.actionSheet.create({
-            header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
-            cssClass: 'actionSheet-custom-class',
+            header: translateObject["FRMELEMNTS_LBL_SURVEY_ACTION"],
+            cssClass: "actionSheet-custom-class",
             buttons: [
               {
-                text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),
-                icon: 'arrow-forward',
+                text:
+                  translateObject["START"] +
+                  " " +
+                  (type ? translateObject[type] : ""),
+                icon: "arrow-forward",
                 handler: () => {
-                  params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
+                  params.entityDetails["assessment"]["evidences"][
+                    params.selectedEvidence
+                  ].startTime = Date.now();
 
                   this.localStorage.setLocalStorage(
                     this.utils.getAssessmentLocalStorageKey(this.schoolId),
@@ -69,24 +79,27 @@ export class EvidenceService {
                   );
                   delete params.entityDetails;
 
-                  resolve('start');
+                  resolve("start");
                 },
               },
               {
-                text: translateObject['VIEW'] + ' ' + (type ? translateObject[type] : ''),
-                icon: 'eye',
+                text:
+                  translateObject["VIEW"] +
+                  " " +
+                  (type ? translateObject[type] : ""),
+                icon: "eye",
                 handler: () => {
                   delete params.entityDetails;
 
-                  resolve('view');
+                  resolve("view");
                 },
               },
               {
                 text: selectedECM.canBeNotAllowed
-                  ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
-                  : translateObject['CANCEL'],
-                role: !selectedECM.canBeNotAllowed ? 'destructive' : '',
-                icon: selectedECM.canBeNotAllowed ? 'alert' : '',
+                  ? translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"]
+                  : translateObject["CANCEL"],
+                role: !selectedECM.canBeNotAllowed ? "destructive" : "",
+                icon: selectedECM.canBeNotAllowed ? "alert" : "",
                 handler: () => {
                   if (selectedECM.canBeNotAllowed) {
                     this.openAlert(selectedECM);
@@ -96,8 +109,8 @@ export class EvidenceService {
             ],
           });
           const notAvailable = {
-            text: translateObject['FRMELEMNTS_LBL_ECM_NOT_ALLOWED'],
-            icon: 'alert',
+            text: translateObject["FRMELEMNTS_LBL_ECM_NOT_ALLOWED"],
+            icon: "alert",
             handler: () => {
               delete params.entityDetails;
               this.openAlert(selectedECM);
@@ -114,24 +127,27 @@ export class EvidenceService {
   async openAlert(selectedECM) {
     let translateObject;
     this.translate
-      .get(['CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
+      .get([
+        "CANCEL",
+        "FRMELEMNTS_LBL_CONFIRM",
+        "FRMELEMNTS_LBL_ECM_NOT_APPLICABLE",
+      ])
       .subscribe((translations) => {
         translateObject = translations;
-        console.log(JSON.stringify(translations));
       });
     let alert = await this.alertCtrl.create({
-      header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
-      message: translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'],
+      header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+      message: translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"],
       buttons: [
         {
-          text: translateObject['CANCEL'],
-          role: 'cancel',
+          text: translateObject["CANCEL"],
+          role: "cancel",
           handler: () => {
-            console.log('Cancel clicked');
+            console.log("Cancel clicked");
           },
         },
         {
-          text: translateObject['FRMELEMNTS_LBL_CONFIRM'],
+          text: translateObject["FRMELEMNTS_LBL_CONFIRM"],
           handler: () => {
             this.openRemarksModal(selectedECM);
           },
@@ -142,9 +158,11 @@ export class EvidenceService {
   }
 
   async openRemarksModal(selectedECM) {
+    console.log(selectedECM, "Selected ECM");
+    console.log(this.entityDetails, "entity details");
     const modal = await this.modalCtrl.create({
       component: RemarksModalComponent,
-      componentProps: { data: selectedECM, button: 'submit', required: true },
+      componentProps: { data: selectedECM, button: "submit", required: true },
     });
     await modal.present();
 
@@ -159,22 +177,28 @@ export class EvidenceService {
   async notApplicable(selectedECM) {
     this.loader.startLoader();
     const constructPayload = this.constructPayload(selectedECM);
-    const submissionId = this.entityDetails['assessment'].submissionId;
-    const url = urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + submissionId;
+    const submissionId = this.entityDetails["assessment"].submissionId;
+    const url =
+      urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + submissionId;
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...constructPayload };
     const config = {
       url: url,
       payload: payload,
     };
-
     this.assessmentService.post(config).subscribe(
       (response) => {
-        console.log(JSON.stringify(response));
         this.toast.openToast(response.message);
-        this.entityDetails['assessment']['evidences'][this.evidenceIndex].isSubmitted = true;
-        this.entityDetails['assessment']['evidences'][this.evidenceIndex].notApplicable = true;
-        this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.schoolId), this.entityDetails);
+        this.entityDetails["assessment"]["evidences"][
+          this.evidenceIndex
+        ].isSubmitted = true;
+        this.entityDetails["assessment"]["evidences"][
+          this.evidenceIndex
+        ].notApplicable = true;
+        this.localStorage.setLocalStorage(
+          this.utils.getAssessmentLocalStorageKey(this.schoolId),
+          this.entityDetails
+        );
         this.loader.stopLoader();
       },
       (error) => {
@@ -184,20 +208,19 @@ export class EvidenceService {
   }
 
   constructPayload(selectedECM): any {
-    console.log('in construct');
+    console.log("in construct");
     const payload = {
       evidence: {},
     };
     const evidence = {
-      id: '',
-      externalId: '',
+      id: "",
+      externalId: "",
       answers: {},
       startTime: 0,
       endTime: 0,
       notApplicable: true,
-      remarks:''
+      remarks: "",
     };
-
 
     const currentEvidence = cloneDeep(selectedECM);
     evidence.id = currentEvidence._id;
@@ -210,7 +233,7 @@ export class EvidenceService {
         let obj = {
           qid: question._id,
           value:
-            question.responseType === 'matrix'
+            question.responseType === "matrix"
               ? this.constructMatrixObject(question, evidence.endTime)
               : question.value,
           remarks: question.remarks,
@@ -269,7 +292,7 @@ export class EvidenceService {
     sections.forEach((section, sectionIndex) => {
       let questionsArray = [];
       section.questions.forEach((question) => {
-        if (question.responseType === 'pageQuestions') {
+        if (question.responseType === "pageQuestions") {
           const parentquestionGpsLocation = question.gpsLocation;
           question.pageQuestions.forEach((pageQuestion) => {
             pageQuestion.gpsLocation = parentquestionGpsLocation;
@@ -282,5 +305,43 @@ export class EvidenceService {
       this.tempevidenceSections[sectionIndex].questions = questionsArray;
     });
     return this.tempevidenceSections;
+  }
+
+  async openConfirmation(entityData, selectedSection, submissionId) {
+    this.entityDetails = entityData;
+    this.evidenceIndex = selectedSection;
+    this.schoolId = submissionId;
+    const selectedECM =
+      this.entityDetails["assessment"]["evidences"][selectedSection];
+    let translateObject;
+    this.translate
+      .get([
+        "CANCEL",
+        "FRMELEMNTS_LBL_CONFIRM",
+        "FRMELEMNTS_LBL_ECM_NOT_APPLICABLE",
+      ])
+      .subscribe((translations) => {
+        translateObject = translations;
+      });
+    let alert = await this.alertCtrl.create({
+      header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+      message: translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"],
+      buttons: [
+        {
+          text: translateObject["CANCEL"],
+          role: "cancel",
+          handler: () => {
+            console.log("Cancel clicked");
+          },
+        },
+        {
+          text: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+          handler: () => {
+            this.openRemarksModal(selectedECM);
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }
