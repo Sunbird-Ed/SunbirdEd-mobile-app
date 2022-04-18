@@ -20,6 +20,7 @@ import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.se
 import {of, throwError} from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { profile } from 'console';
 
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
@@ -46,7 +47,10 @@ jest.mock('@app/app/module.service', () => {
 
 describe('LoginNavigationHandlerService', () => {
     let loginNavigationHandlerService: LoginNavigationHandlerService;
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        getActiveProfileSession: jest.fn(() => of({})),
+        deleteProfile: jest.fn((id) => of({}))
+    };
     const mockAuthService: Partial<AuthService> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -174,6 +178,38 @@ describe('LoginNavigationHandlerService', () => {
                 syllabus: [''],
                 source: ProfileSource.SERVER
             };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
+            mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfile));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
+            // act
+            loginNavigationHandlerService.setDefaultProfileDetails().then(() => {
+                // assert
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalled();
+                expect(mockProfileService.updateProfile).toHaveBeenCalled();
+            });
+        });
+    });
+    describe('logoutOnImpropperLoginProcess', () => {
+        it('should fetch Current user details and update the profile and set current profile as active and publish the events', () => {
+            // arrange
+            const mockProfile = {
+                uid: 'sample_uid',
+                handle: '',
+                medium: [''],
+                board: [''],
+                subject: [''],
+                profileType: ProfileType.TEACHER,
+                grade: [''],
+                syllabus: [''],
+                source: ProfileSource.SERVER
+            };
+            jest.spyOn(loginNavigationHandlerService, 'logoutGoogle').mockImplementation(() => {
+                Promise.resolve();
+            });
             mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
             mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
