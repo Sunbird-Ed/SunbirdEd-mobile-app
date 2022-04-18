@@ -149,20 +149,42 @@ describe('LoginNavigationHandlerService', () => {
             }, 0);
         });
 
-        it('should go to error part if setSession throws error', () => {
+        it('should go to error part if setSession throws error', (done) => {
             // arrange
+            jest.spyOn(loginNavigationHandlerService, 'logoutOnImpropperLoginProcess').mockImplementation(() => {
+                Promise.resolve();
+            });
             const signInError = new SignInError('error');
             mockAuthService.setSession = jest.fn(() => throwError(signInError));
-            mockSbProgressLoader.hide = jest.fn();
+            mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
             mockCommonUtilService.showToast = jest.fn();
             // act
-            loginNavigationHandlerService.setSession({}, {}).catch(() => {
-                expect(mockSbProgressLoader.hide).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(signInError.message);
-            });
+            loginNavigationHandlerService.setSession({},{}, 'sub');
             // assert
-        });
+            setTimeout(() => {
+            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(signInError.message);
+            done();
+        }, 0);
     });
+
+    it('should go to error part if setSession throws error', (done) => {
+        // arrange
+        jest.spyOn(loginNavigationHandlerService, 'logoutOnImpropperLoginProcess').mockImplementation(() => {
+            Promise.resolve();
+        });
+        const signInError = new SignInError('error');
+        mockAuthService.setSession = jest.fn(() => throwError('ERROR_WHILE_LOGIN'));
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        loginNavigationHandlerService.setSession({},{}, 'sub');
+        // assert
+        setTimeout(() => {
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+        done();
+    }, 0);
+});
+});
 
     describe('setProfileDetails', () => {
         it('should fetch Current user details and update the profile and set current profile as active and publish the events', () => {
