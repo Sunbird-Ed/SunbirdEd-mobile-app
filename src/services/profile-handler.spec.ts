@@ -1,9 +1,9 @@
 import { ProfileHandler } from './profile-handler';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { of } from 'rxjs';
-import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { ContentDisposition, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
-import { mockSupportedUserTypeConfig } from './profile-handler.spec.data';
+import { mockSupportedUserTypeConfig, mockFormFielddata, profile, userLocation, subPersonaConfig} from './profile-handler.spec.data';
 import { CommonUtilService } from './common-util.service';
 
 describe('ProfileHandler', () => {
@@ -33,9 +33,6 @@ describe('ProfileHandler', () => {
     });
 
     it('should create instance of ProfileHandler', () => {
-        // arrange
-        // act
-        // assert
         expect(profileHandler).toBeTruthy();
     });
 
@@ -121,9 +118,26 @@ describe('ProfileHandler', () => {
                 expect.arrayContaining([
                 expect.objectContaining({label: 'SAMPLE'})
                 ])
-            );
-            
+            ); 
         })
-    })
 
-});
+        it('should call getProfileFormConfig', async () => {
+            //arrange
+                const persona = 'parent';
+            const subPersonaCodes = [];
+            subPersonaCodes.push(profile.profileUserType);
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                mockFormFielddata
+            ));
+            //act
+            profileHandler.getSubPersona(profile, persona, userLocation);
+            //assert
+            expect(subPersonaCodes).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({type: 'parent'})
+                ])
+            );
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+              });   
+        })
+    });
