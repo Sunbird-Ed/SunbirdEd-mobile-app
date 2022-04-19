@@ -241,7 +241,6 @@ export class AddFilePage implements OnInit {
         }
       })
   }
-
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.project.isNew

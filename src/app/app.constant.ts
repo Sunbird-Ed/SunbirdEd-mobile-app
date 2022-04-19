@@ -584,7 +584,6 @@ export class RouterLinks {
     public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
     public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
     public static readonly PROJECT_REPORT = "project-report";
-    public static readonly PROJECT_FULL_REPORT = "project-full-report";
     public static readonly DEEPLINK_REDIRECT = "deeplink-redirect";
     public static readonly DETAILS = 'details';
     public static readonly TASK_VIEW = 'task-view';
@@ -795,7 +794,7 @@ export class OTPTemplates {
 
 export enum AppOrientation {
     LANDSCAPE = 'Landscape',
-    POTRAIT = 'Potrait'
+    PORTRAIT = 'Portrait'
 }
 
 export class OnboardingScreenType {

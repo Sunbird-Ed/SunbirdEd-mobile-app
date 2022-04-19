@@ -249,6 +249,41 @@ describe('UserTypeSelectionPage', () => {
             true);
     });
 
+    describe('setUserTypeForNewUser', () => {
+        it('should update userType for new user', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = 'none';
+            mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({
+                profileType: 'sample-profile'
+            }));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
+            // act
+            userTypeSelectionPage.setUserTypeForNewUser();
+            // assert
+            setTimeout(() => {
+                expect(userTypeSelectionPage.selectedUserType).toBe('sample-profile');
+                expect(mockSharedPreferences.putString).toHaveBeenCalledWith(
+                    PreferenceKey.SELECTED_USER_TYPE,
+                    'sample-profile'
+                );
+                expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should not update userType if already exists', (done) => {
+            // arrange
+            userTypeSelectionPage.selectedUserType = 'sample-user-type';
+            // act
+            userTypeSelectionPage.setUserTypeForNewUser();
+            // assert
+            setTimeout(() => {
+                expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
     describe('ionViewWillEnter', () => {
         it('should initialized all user-type', (done) => {
             // arrange
@@ -258,6 +293,9 @@ describe('UserTypeSelectionPage', () => {
             jest.useFakeTimers();
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            jest.spyOn(userTypeSelectionPage, 'setUserTypeForNewUser').mockImplementation(() => {
+                return Promise.resolve();
+            });
             jest.spyOn(userTypeSelectionPage, 'getNavParams').mockImplementation(() => {
                 return;
             });
