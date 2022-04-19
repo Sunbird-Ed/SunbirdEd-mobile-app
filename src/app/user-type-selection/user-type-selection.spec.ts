@@ -28,6 +28,7 @@ import { AuditState, CorrelationData, ProfileType } from '@project-sunbird/sunbi
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { ProfileHandler } from '../../services/profile-handler';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
 describe('UserTypeSelectionPage', () => {
     let userTypeSelectionPage: UserTypeSelectionPage;
@@ -94,6 +95,7 @@ describe('UserTypeSelectionPage', () => {
     const mockProfileHandler: Partial<ProfileHandler> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {};
+    const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {};
 
     beforeAll(() => {
         userTypeSelectionPage = new UserTypeSelectionPage(
@@ -114,7 +116,8 @@ describe('UserTypeSelectionPage', () => {
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockProfileHandler as ProfileHandler,
             mockLoginHandlerService as LoginHandlerService,
-            mockOnboardingConfigurationService as OnboardingConfigurationService
+            mockOnboardingConfigurationService as OnboardingConfigurationService,
+            mockExternalIdVerificationService as ExternalIdVerificationService
         );
     });
 
@@ -463,6 +466,7 @@ describe('UserTypeSelectionPage', () => {
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
             mockAppGlobalService.showYearOfBirthPopup = jest.fn(() => Promise.resolve());
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());
             // act
             userTypeSelectionPage.navigateToTabsAsLogInUser();
             // assert
@@ -472,6 +476,7 @@ describe('UserTypeSelectionPage', () => {
                 expect(mockTncUpdateHandlerService.isSSOUser).toHaveBeenCalled();
                 expect(mockAppGlobalService.showYearOfBirthPopup).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.TABS]);
+                expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -489,7 +494,8 @@ describe('UserTypeSelectionPage', () => {
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             const navigationExtras: NavigationExtras = {
                 state: {
-                  isShowBackButton: false
+                  isShowBackButton: false,
+                  noOfStepsToCourseToc: NaN
                 }
               };
             // act

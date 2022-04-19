@@ -75,6 +75,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   public supportedProfileAttributes: { [key: string]: string } = {};
   userType: string;
   shouldUpdatePreference: boolean;
+  noOfStepsToCourseToc = 0;
   guestUserProfile: any;
 
   /* Custom styles for the select box popup */
@@ -144,6 +145,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       this.hasFilledLocation = extrasState.hasFilledLocation;
       this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
       this.isRootPage = Boolean(extrasState.isRootPage);
+      this.noOfStepsToCourseToc = extrasState.noOfStepsToCourseToc;
       if (extrasState.profile) {
         this.profile = extrasState.profile;
       }
@@ -459,7 +461,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       .then(async () => {
         await this.loader.dismiss();
         this.disableSubmitButton = true;
-        await this.categoriesEditService.updateServerProfile(req, this.profile, this.showOnlyMandatoryFields, this.shouldUpdatePreference, this.hasFilledLocation);
+        await this.categoriesEditService.updateServerProfile(req, this.profile, this.showOnlyMandatoryFields,
+          this.shouldUpdatePreference, this.hasFilledLocation, this.noOfStepsToCourseToc);
       }).catch(async (error) => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
