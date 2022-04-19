@@ -390,12 +390,6 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
-        <ion-item (click)="signin()" *ngIf="!isLoggedIn">
-          <span class="sb-menu-icon">
-            <img src="./assets/imgs/login.png" aria-hidden="true" class="tool-icon" alt="my group">
-          </span>
-          <span class="sb-menu-item" role="button" menuClose>Login</span>
-        </ion-item>
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
