@@ -506,9 +506,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   private refreshLoginInButton() {
     const profileType = this.appGlobalService.getGuestUserType();
-    this.showLoginButton = (this.commonUtilService.isAccessibleForNonStudentRole(profileType)
-            && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
-        (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
+    this.showLoginButton = (this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
+        this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
   }
 
   private async checkCurrentOrientation() {
@@ -519,7 +518,4 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.orientationToSwitch = AppOrientation.LANDSCAPE;
     }
   }
-  
-
-  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 }
