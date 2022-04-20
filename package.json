@@ -352,7 +352,8 @@
     "transformIgnorePatterns": [],
     "coveragePathIgnorePatterns": [
       "<rootDir>/src/app/*/*.module.ts",
-      "<rootDir>/src/app/animations/*.ts"
+      "<rootDir>/src/app/animations/*.ts",
+      "<rootDir>/src/app/manage-learn/"
     ]
   }
 }
