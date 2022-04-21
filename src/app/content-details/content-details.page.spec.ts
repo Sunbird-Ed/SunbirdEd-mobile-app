@@ -35,7 +35,7 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { of, throwError, EMPTY, Subscription } from 'rxjs';
+import { of, throwError, EMPTY, Subscription, Observable } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import {
     Environment,
@@ -52,7 +52,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
-import { ContentEventType, PlayerService } from '@project-sunbird/sunbird-sdk';
+import { ContentEventType, PlayerService, SunbirdSdk, TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -88,7 +88,9 @@ describe('ContentDetailsPage', () => {
         generateEndTelemetry: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockCourseUtilService: Partial<CourseUtilService> = {};
+    const mockCourseUtilService: Partial<CourseUtilService> = {
+        showCredits: jest.fn()
+    };
     const mockUtilityService: Partial<UtilityService> = {
         getDeviceAPILevel: jest.fn(() => Promise.resolve('sample')),
         checkAppAvailability: jest.fn(() => Promise.resolve('sample_check'))
@@ -138,7 +140,13 @@ describe('ContentDetailsPage', () => {
     };
     const mockPlayerService: Partial<PlayerService> = {};
     const mockSantizer: Partial<DomSanitizer> = {};
-    const mockScreenOrientation: Partial<ScreenOrientation> = {};
+    const mockScreenOrientation: Partial<ScreenOrientation> = {
+        ORIENTATIONS: {
+            LANDSCAPE: 'LANDSCAPE',
+            PORTRAIT: 'PORTRAIT'
+        } as any,
+        lock: jest.fn()
+    };
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -332,7 +340,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
@@ -380,7 +388,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -425,7 +433,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: false }}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -1348,7 +1356,7 @@ describe('ContentDetailsPage', () => {
                     {
                         contentId: 'do_id',
                         bestScore: {},
-                        score:[{}]
+                        score: [{}]
                     }
                 ]
             }
@@ -1382,12 +1390,12 @@ describe('ContentDetailsPage', () => {
                     {
                         contentId: 'do_id',
                         bestScore: {},
-                        score:[{}, {}]
+                        score: [{}, {}]
                     }
                 ]
             }
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
-            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({ progress: 100, contentStatusData: contentStatusData }));
             // act
             contentDetailsPage.getContentState();
             // assert
@@ -1416,12 +1424,12 @@ describe('ContentDetailsPage', () => {
                     {
                         contentId: 'do_id',
                         bestScore: {},
-                        score:[{}, {}, {}]
+                        score: [{}, {}, {}]
                     }
                 ]
             }
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
-            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({ progress: 100, contentStatusData: contentStatusData }));
             // act
             contentDetailsPage.getContentState();
             // assert
@@ -1769,6 +1777,120 @@ describe('ContentDetailsPage', () => {
         });
     });
 
+    describe('ionViewWillLeave()', () => {
+        it('should unsubscribe', () => {
+            // arrange
+            const unsubscribe = jest.fn();
+            contentDetailsPage.eventSubscription = {
+                unsubscribe
+            };
+            contentDetailsPage.contentDeleteObservable = {
+                unsubscribe
+            };
+            contentDetailsPage.backButtonFunc = {
+                unsubscribe
+            };
+            // act
+            contentDetailsPage.ionViewWillLeave();
+            // assert
+            expect(unsubscribe).toBeCalledTimes(3);
+        });
+
+        it('should unsubscribe for else part', () => {
+            // arrange
+            contentDetailsPage.eventSubscription = undefined;
+            contentDetailsPage.contentDeleteObservable = undefined;
+            contentDetailsPage.backButtonFunc = undefined;
+            // act
+            contentDetailsPage.ionViewWillLeave();
+            // assert
+        });
+    });
+
+    describe('handleNavBackButton', () => {
+        it('should handle nav backbutton by invoked handleNavBackButton', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            contentDetailsPage.shouldGenerateEndTelemetry = true;
+            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'generateQRSessionEndEvent').mockImplementation();
+            // act
+            contentDetailsPage.handleNavBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                true,
+                undefined,
+                [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' },
+                { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }],
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+
+        it('should generate shouldGenerateEndTelemetry by invoked handleNavBackButton', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
+            contentDetailsPage.shouldGenerateEndTelemetry = false;
+            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
+            // act
+            contentDetailsPage.handleNavBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                true,
+                undefined,
+                [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' },
+                { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }],
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+    });
+
+    it('findHierarchyOfContent', () => {
+        //arrange
+        contentDetailsPage.cardData = {
+            hierarchyInfo: [{ id: 'sample-id' }],
+            identifier: 'do-123',
+            pkgVersion: 'v-3'
+        };
+        const data = [{
+            identifier: 'do-123',
+            contentData: {
+                name: 'test',
+                size: 32,
+                identifier: 'do-234'
+            },
+            isAvailableLocally: true,
+            hierarchyInfo: [{ identifier: 'do-234' }]
+        }];
+        contentDetailsPage.breadCrumbData = new Map();
+        contentDetailsPage.breadCrumbData.set(data[0].identifier, data[0].contentData.name);
+        contentDetailsPage.breadCrumbData = contentDetailsPage.breadCrumbData;
+        //act
+        contentDetailsPage.findHierarchyOfContent();
+        //assert
+        expect(contentDetailsPage.findHierarchyOfContent).toBeTruthy();
+    });
+
+    it('isPlayedFromCourse', () => {
+        //arrange
+        contentDetailsPage.cardData = {
+            hierarchyInfo: [{ id: 'sample-id', contentType: 'course' }],
+            identifier: 'do-123',
+            pkgVersion: 'v-3'
+        };
+        //act
+        contentDetailsPage.isPlayedFromCourse();
+        //assert
+        expect(contentDetailsPage.shouldOpenPlayAsPopup).toBeTruthy();
+    });
+
     describe('ionViewWillEnter()', () => {
         it('should unsubscribe events', (done) => {
             // arrange
@@ -1855,81 +1977,6 @@ describe('ContentDetailsPage', () => {
         });
     });
 
-    describe('ionViewWillLeave()', () => {
-        it('should unsubscribe', () => {
-            // arrange
-            const unsubscribe = jest.fn();
-            contentDetailsPage.eventSubscription = {
-                unsubscribe
-            };
-            contentDetailsPage.contentDeleteObservable = {
-                unsubscribe
-            };
-            contentDetailsPage.backButtonFunc = {
-                unsubscribe
-            };
-            // act
-            contentDetailsPage.ionViewWillLeave();
-            // assert
-            expect(unsubscribe).toBeCalledTimes(3);
-        });
-
-        it('should unsubscribe for else part', () => {
-            // arrange
-            contentDetailsPage.eventSubscription = undefined;
-            contentDetailsPage.contentDeleteObservable = undefined;
-            contentDetailsPage.backButtonFunc = undefined;
-            // act
-            contentDetailsPage.ionViewWillLeave();
-            // assert
-        });
-    });
-
-    describe('handleNavBackButton', () => {
-        it('should handle nav backbutton by invoked handleNavBackButton', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-            contentDetailsPage.shouldGenerateEndTelemetry = true;
-            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
-            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
-            jest.spyOn(contentDetailsPage, 'generateQRSessionEndEvent').mockImplementation();
-            // act
-            contentDetailsPage.handleNavBackButton();
-            // assert
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.CONTENT_DETAIL,
-                Environment.HOME,
-                true,
-                undefined,
-                [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' },
-                { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }],
-                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
-                { id: 'do_12345', type: '', version: '1' }
-            );
-        });
-
-        it('should generate shouldGenerateEndTelemetry by invoked handleNavBackButton', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
-            contentDetailsPage.shouldGenerateEndTelemetry = false;
-            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
-            // act
-            contentDetailsPage.handleNavBackButton();
-            // assert
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.CONTENT_DETAIL,
-                Environment.HOME,
-                true,
-                undefined,
-                [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' },
-                { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }],
-                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
-                { id: 'do_12345', type: '', version: '1' }
-            );
-        });
-    });
-
     it('should subscribe play content', () => {
         mockEvents.subscribe = jest.fn((_, fn) => {
             fn({ selectedUser: 'user-1', streaming: true });
@@ -1976,8 +2023,8 @@ describe('ContentDetailsPage', () => {
 
     describe('openConfirmPopUp', () => {
         it('should return content not downloaded for undefined downloadUrl with no internet message', (done) => {
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false }
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: '' } };
             mockCommonUtilService.showToast = jest.fn();
             mockFileSizePipe.transform = jest.fn(() => '');
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
@@ -1998,7 +2045,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: 'sample-url'} };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: 'sample-url' } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
@@ -2375,6 +2422,20 @@ describe('ContentDetailsPage', () => {
                 done();
             }, 1000);
         });
+        it('should be logged in after play the content by invoked promptToLogin() if user loggedin', async (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation(() => {
+                return 0;
+            });
+            // act
+            await contentDetailsPage.promptToLogin();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                done();
+            }, 1000);
+        });
 
         it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin', (done) => {
             // arrange
@@ -2412,7 +2473,7 @@ describe('ContentDetailsPage', () => {
                     { id: 'sample-id' }, undefined,
                     { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
                 );
-                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], { state: { navigateToCourse: true } });
                 done();
             }, 0);
         });
@@ -2425,7 +2486,7 @@ describe('ContentDetailsPage', () => {
                 contentData: {
                     status: ContentFilterConfig.CONTENT_STATUS_UNLISTED
                 },
-                contentId: 'sample-content-id'
+                contentId: 'sample_doId'
             };
             // contentDetailsPage.limitedShareContentFlag = true;
             jest.spyOn(contentDetailsPage, 'promptToLogin').mockImplementation(() => {
@@ -2434,7 +2495,6 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.checkLimitedContentSharingFlag(request);
             // assert
-            expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
             expect(contentDetailsPage.content).not.toBeUndefined();
             expect(contentDetailsPage.playingContent).not.toBeUndefined();
             expect(contentDetailsPage.identifier).toBe('sample_doId');
@@ -2696,7 +2756,7 @@ describe('ContentDetailsPage', () => {
         });
 
         it('should return empty string if there is an error', (done) => {
-            mockCourseService.getBatchDetails = jest.fn(() => throwError({error: 'some_error'})) as any;
+            mockCourseService.getBatchDetails = jest.fn(() => throwError({ error: 'some_error' })) as any;
             // act
             contentDetailsPage.fetchCertificateDescription('batch_id').then(res => {
                 // assert
@@ -2755,5 +2815,334 @@ describe('ContentDetailsPage', () => {
                 done();
             });
         });
+    });
+
+    describe('openWithVendorApps', () => {
+        it('openWithVendorApps', () => {
+            //arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockPopoverController.create = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+
+            }) as any);
+            //act
+            contentDetailsPage.openWithVendorApps();
+            //assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.OPEN_WITH_PLAYER_CLICKED,
+                Environment.HOME,
+                PageId.CONTENT_DETAIL
+            )
+        });
+    });
+
+    describe('handlePlayer', () => {
+        it('handlePlayer', (done) => {
+            //arrange
+            const playerData = {
+                state: {
+                    config: {
+                        metadata: {
+                            mimeType: ["video/mp4", "video/webm"]
+                        }
+                    }
+                }
+            }
+            mockFormFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({
+                fields: [{
+                    name: "videoPlayer",
+                    values: [
+                        { isEnabled: true }
+                    ]
+                }]
+            }));
+            let playerConfig = true;
+            // jest.spyOn(contentDetailsPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+            //     return {
+            //         name: 'videoPlayer'
+            //     }
+            // });
+            //act
+            // contentDetailsPage.checkIsPlayerEnabled({fields: [{
+            //     name: "videoPlayer",
+            //     values: [
+            //         {isEnabled: true}
+            //     ]
+            // }]}, 'videoPlayer')
+            contentDetailsPage.handlePlayer(playerData);
+            //assert
+            setTimeout(() => {
+                expect(contentDetailsPage.handlePlayer).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('playerEvents', () => {
+        it('Should execute if event.edata.type = END', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'END'
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            mockPlayerService.savePlayerState = jest.fn();
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = EXIT', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            mockPlayerService.deletePlayerSaveState = jest.fn();
+            mockScreenOrientation.type = 'portrait-primary';
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = NEXT_CONTENT_PLAY', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'NEXT_CONTENT_PLAY'
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = compatibility-error', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'compatibility-error'
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => { });
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = exdata', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'exdata',
+                    currentattempt: 1,
+                    maxLimitExceeded: true,
+                    isLastAttempt: true
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({
+                    isContentDisabled: event.edata.maxLimitExceeded,
+                    isLastAttempt: event.edata.isLastAttempt
+                }));
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = FULLSCREEN and screenOrientation.type === portrait-primary', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'FULLSCREEN'
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            mockScreenOrientation.type = 'portrait-primary';
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.edata.type = FULLSCREEN and screenOrientation.type === landscape-primary', (done) => {
+            //arrange
+            const event = {
+                edata: {
+                    type: 'FULLSCREEN',
+                },
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'id');
+            mockScreenOrientation.type = 'landscape-primary';
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.edata.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.type = ended', (done) => {
+            //arrange
+            const event = {
+                type: 'ended'
+            };
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(event.type).toBeTruthy();
+                done();
+            }, 0);
+        });
+        it('Should execute if event.type = REPLAY', (done) => {
+            //arrange
+            const event = {
+                type: 'REPLAY'
+            };
+            //act
+            contentDetailsPage.playerEvents(event);
+            //assert
+            setTimeout(() => {
+                expect(contentDetailsPage.playerEvents).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
+    it('playerTelemetryEvents', () => {
+        //arrange
+        const event = {
+            data: {
+                type: 'type'
+            },
+        };
+        jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+            telemetryService: {
+                saveTelemetry(request: string): Observable<boolean> {
+                    // for success
+                    return of(true);
+                    // for error
+                    return throwError(new Error('sample_error'));
+                }
+            } as Partial<TelemetryService> as TelemetryService
+        } as Partial<SunbirdSdk> as SunbirdSdk);
+        //act
+        contentDetailsPage.playerTelemetryEvents(event);
+        //assert
+    });
+    describe('viewCredits', () => {
+        it('should  check creator and creators are return true', () => {
+            //arrange
+            contentDetailsPage.content = {
+                identifier: 'id',
+                contentData: {
+                    creator: undefined,
+                    creators: undefined
+                }
+            };
+            //act
+            contentDetailsPage.viewCredits();
+            //assert
+        });
+        it('should  check creator and creators are return true', () => {
+            //arrange
+            contentDetailsPage.content = {
+                identifier: 'id',
+                contentData: {
+                    creator: 'creator',
+                    creators: 'creators'
+                }
+            };
+            jest.spyOn(mockCourseUtilService, 'showCredits');
+            //act
+            contentDetailsPage.viewCredits();
+            //assert
+            expect(mockCourseUtilService.showCredits).toBeCalled();
+        });
+    });
+    describe('readLessorReadMore', () => {
+        it('should check param is read-more-clicked', () => {
+            //arrange
+            const param = 'read-more-clicked';
+            const objRollup = { id: 'id' };
+            const corRelationList = [{ id: 'do_id', type: 's-type' }];
+            mockAppGlobalService.setAccessibilityFocus = jest.fn(() => 'read-more-content');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            //act
+            contentDetailsPage.readLessorReadMore(param, objRollup, corRelationList);
+            //assert
+            expect(contentDetailsPage.readLessorReadMore).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                param,
+                Environment.HOME,
+                PageId.CONTENT_DETAIL,
+                contentDetailsPage.telemetryObject,
+                undefined,
+                objRollup,
+                corRelationList
+            );
+        });
+        it('should check param is not read-more-clicked', () => {
+            //arrange
+            const param = 'read-less-clicked';
+            const objRollup = { id: 'id' };
+            const corRelationList = [{ id: 'do_id', type: 's-type' }];
+            mockAppGlobalService.setAccessibilityFocus = jest.fn(() => 'read-more-less-btn');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            //act
+            contentDetailsPage.readLessorReadMore(param, objRollup, corRelationList);
+            //assert
+            expect(contentDetailsPage.readLessorReadMore).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                param,
+                Environment.HOME,
+                PageId.CONTENT_DETAIL,
+                contentDetailsPage.telemetryObject,
+                undefined,
+                objRollup,
+                corRelationList
+            );
+        });
+    });
+    it('mergeProperties', () => {
+        //arrange 
+        const mergeProp = 'props';
+        jest.spyOn(ContentUtil, 'mergeProperties').mockImplementation();
+        //act
+        contentDetailsPage.mergeProperties(mergeProp);
+        //assert
+        expect(ContentUtil.mergeProperties).toHaveBeenCalled();
     });
 });
