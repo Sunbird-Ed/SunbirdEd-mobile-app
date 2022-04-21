@@ -1,6 +1,6 @@
 <ion-card class="attachments-card" *ngIf="attachments?.length">
   <ion-card-header class="project-card _capitalize">
-    {{title}}
+    {{title | titlecase}}
   </ion-card-header>
   <ion-card-content>
     <ion-list *ngFor="let attachment of attachments; let i = index" (click)="viewDocument(attachment)"

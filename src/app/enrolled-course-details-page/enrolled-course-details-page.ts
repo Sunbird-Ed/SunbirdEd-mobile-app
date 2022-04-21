@@ -927,6 +927,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       })
       .catch((error: any) => {
         if (this.courseCardData.batch) {
+          this.batchDetails = this.courseCardData.batch;
           if (this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate) {
             this.batchEndDateStatus(this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate);
           }

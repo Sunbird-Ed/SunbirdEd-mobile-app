@@ -65,7 +65,7 @@ export class SyncPage implements  OnDestroy {
           //Sync only single project
           this.projectId = params.projectId;
           this.taskId = params.taskId ? params.taskId : '';
-          this.isShare = params.share;
+          this.isShare = params.share == 'true';
           this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
         } else {
