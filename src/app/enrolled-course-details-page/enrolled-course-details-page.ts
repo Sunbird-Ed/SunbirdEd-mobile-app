@@ -1248,7 +1248,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         }
       })
       .catch(async (error: any) => {
-        if (NetworkError.isInstance(error)) {
+        if (NetworkError.isInstance(error) && !this.courseCardData) {
           this.showOfflineSection = true;
         } else {
           this.showOfflineSection = false;
