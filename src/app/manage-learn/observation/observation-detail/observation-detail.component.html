@@ -3,9 +3,9 @@
   <div class="d-flex flex-jc-flex-end grade_ellipsis info">
     <ion-button
       size="small"
-      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr"
+      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr ion-text-capitalize"
       (click)="addEntity()"
-      >{{ 'FRMELEMNTS_LBL_ADD_ENTITY' | translate }}</ion-button
+      >{{ 'ADD' | translate }} {{entityType}}</ion-button
     >
   </div>
   <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">

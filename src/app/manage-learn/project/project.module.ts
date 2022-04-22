@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
-import { ProjectDetailPage } from './project-detail/project-detail.page';
 import { ProjectListingComponent } from '../project/project-listing/project-listing.component';
 import { LearningResourcesPage } from './learning-resources/learning-resources.page';
 import { ProjectEditPage } from './project-edit/project-edit.page';
@@ -81,7 +80,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
+  declarations: [ProjectListingComponent, ProjectEditPage, 
     ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, 
     LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
     CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],

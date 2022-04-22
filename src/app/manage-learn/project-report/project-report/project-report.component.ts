@@ -222,11 +222,6 @@ export class ProjectReportComponent {
     await alert.present();
   }
 
-  viewFullReport() {
-    this.router.navigate([RouterLinks.PROJECT_FULL_REPORT], {
-      state: this.filter,
-    });
-  }
 
   fileName() {
     let arr = ['report'];

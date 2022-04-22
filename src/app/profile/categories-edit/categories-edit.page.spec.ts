@@ -325,6 +325,25 @@ describe('CategoryEditPage', () => {
         });
     });
 
+    describe('setDefaultBMG', () => {
+        it('should return guest profile details', (done) => {
+            // arrange
+            mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({
+                board: ['sample-board'],
+                medium: ['sample-medium'],
+                grade: ['sample-grade'],
+                syllabus: ['sample-board']
+            }));
+            // act
+            categoryEditPage.setDefaultBMG();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getGuestUserConfig).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
     describe('ionViewWillEnter', () => {
         it('should subscribe back button for loggedIn User', () => {
             // arrange
@@ -336,6 +355,9 @@ describe('CategoryEditPage', () => {
                 showHeader: true,
                 showBurgerMenu: true
             })) as any;
+            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
+                return Promise.resolve();
+            });
             mockHeaderService.updatePageConfig = jest.fn();
             categoryEditPage.isRootPage = true;
             const subscribeWithPriorityData = jest.fn((_, fn) => fn());

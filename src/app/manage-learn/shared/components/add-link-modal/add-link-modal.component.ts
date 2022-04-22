@@ -7,6 +7,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class AddLinkModalComponent implements OnInit {
   links:string;
+  isSubmit : boolean = false;
   @Output() eventEmit = new EventEmitter();
   constructor() { }
 
@@ -15,7 +16,8 @@ export class AddLinkModalComponent implements OnInit {
     this.eventEmit.emit();
   }
   submit() {
-    if(this.links){
+    if(this.links && !this.isSubmit){
+      this.isSubmit = true;
       this.eventEmit.emit(this.links);
     }
   }

@@ -31,7 +31,7 @@ export class CategoriesEditService {
 
   }
 
-  async updateServerProfile(profile, req, showOnlyMandatoryFields, shouldUpdatePreference, hasFilledLocation) {
+  async updateServerProfile(profile, req, showOnlyMandatoryFields, shouldUpdatePreference, hasFilledLocation, noOfStepsToCourseToc) {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
     this.events.publish('loggedInProfile:update', req.framework);
     const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(profile);
@@ -44,13 +44,13 @@ export class CategoriesEditService {
       };
       let updatedProfile;
       try {
-        updatedProfile = await this.profileService.getServerProfilesDetails(reqObj).toPromise()
+        updatedProfile = await this.profileService.getServerProfilesDetails(reqObj).toPromise();
       } catch {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         if (hasFilledLocation) {
-          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile)
+          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile, noOfStepsToCourseToc);
         } else {
-          this.navigateToDistrictMapping();
+          this.navigateToDistrictMapping(noOfStepsToCourseToc);
         }
       }
 
@@ -97,19 +97,24 @@ export class CategoriesEditService {
     }
   }
 
-  private executeUserPostOnboardingSteps(isSSOUser, updatedProfile) {
+  private executeUserPostOnboardingSteps(isSSOUser, updatedProfile, navigateToCourse?) {
     if (!isSSOUser) {
       this.appGlobalService.showYearOfBirthPopup(updatedProfile);
     }
-    this.router.navigate([RouterLinks.TABS]);
+    if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+      window.history.go(-navigateToCourse);
+    } else {
+      this.router.navigate([RouterLinks.TABS]);
+    }
     this.events.publish('update_header');
     this.externalIdVerificationService.showExternalIdVerificationPopup();
   }
 
-  private navigateToDistrictMapping() {
+  private navigateToDistrictMapping(navigateToCourse?) {
     const navigationExtras: NavigationExtras = {
       state: {
-        isShowBackButton: false
+        isShowBackButton: false,
+        noOfStepsToCourseToc: navigateToCourse + 1
       }
     };
     this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);

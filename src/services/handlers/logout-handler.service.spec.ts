@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../services';
 import { of, from } from 'rxjs';
 import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
-import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import { Platform } from '@ionic/angular';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
@@ -27,8 +27,10 @@ describe('LogoutHandlerService', () => {
         })))
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {
-        getString: jest.fn(),
-        putString: jest.fn(() => of(undefined))
+        getString: jest.fn(() => of('123244')),
+        getBoolean: jest.fn(() => of(true)),
+        putString: jest.fn(() => of(undefined)),
+        putBoolean: jest.fn(() => of(undefined))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
@@ -59,9 +61,14 @@ describe('LogoutHandlerService', () => {
         is: jest.fn(platform => platform === 'ios')
     };
 
-    const mockSystemSettingsService: Partial<SystemSettingsService> = {};
+    const mockSystemSettingsService: Partial<SystemSettingsService> = {
+        getSystemSettings: jest.fn(() => of({id: 'googleClientId'}))
+    };
 
-    const mockGooglePlus: Partial<GooglePlus> = {};
+    const mockGooglePlus: Partial<GooglePlus> = {
+        trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
+        disconnect: jest.fn()
+    };
 
     beforeAll(() => {
         logoutHandlerService = new LogoutHandlerService(
@@ -101,23 +108,94 @@ describe('LogoutHandlerService', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
 
-        xit('should generare LOGOUT_INITIATE telemetry', () => {
+        it('should persist segmentation', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockSegmentationTagService.persistSegmentation = jest.fn();
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockSegmentationTagService.persistSegmentation).toHaveBeenCalled();
+            })
+        });
+
+        it('should generare LOGOUT_INITIATE telemetry', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            const valuesMap = {};
+            valuesMap['UID'] = "";
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             logoutHandlerService.onLogout();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
-                InteractSubtype.LOGOUT_INITIATE,
-                Environment.HOME,
-                PageId.LOGOUT,
-                undefined,
-                { UID: '' });
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                    InteractSubtype.LOGOUT_INITIATE,
+                    Environment.HOME,
+                    PageId.LOGOUT,
+                    undefined,
+                    valuesMap);
+            })
         });
 
+
+        it('should logout_google', async(done) => {
+            // arrange
+             mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockSharedPreferences.putBoolean = jest.fn(() => of(undefined));
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockSharedPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN);
+                expect(mockSharedPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN, false);
+                done();
+            });
+        });
+
+        it ('should disconnect a googlePlus', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            const res = mockSharedPreferences.getBoolean = jest.fn(() => of(PreferenceKey.IS_GOOGLE_LOGIN));
+            mockGooglePlus.disconnect = jest.fn();
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            expect(res).toBeTruthy();
+            setTimeout(() => {
+                expect(mockGooglePlus.disconnect).toHaveBeenCalled();
+                done();
+            })
+        });
+        
+        it ('should try silent login catch error while disconnecting google plus', async(done) => {
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of());
+            mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
+                webClientId: clientId.value
+            }));
+            mockGooglePlus.disconnect = jest.fn();
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockGooglePlus.disconnect).toHaveBeenCalled();
+                done();
+            }, 0)
+        });
+        
         it('should clear the splashscreen preferences', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
@@ -128,23 +206,40 @@ describe('LogoutHandlerService', () => {
             // act
             logoutHandlerService.onLogout();
             // assert
-           // expect(splashscreen.clearPrefs).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(splashscreen.clearPrefs).toHaveBeenCalled();
+            })
         });
 
-        xit('should resign previuos session', () => {
+        it('should resign previuos session', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'))
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             // act
             logoutHandlerService.onLogout();
             // assert
-            expect(mockAuthService.resignSession).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAuthService.resignSession).toHaveBeenCalled();
+            })
         });
 
-        xit('should publish USER_INFO_UPDATED event', (done) => {
+        it('should not call preferences put boolean if return value is false ', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockSharedPreferences.getBoolean = jest.fn(() => of(false));
+            mockSharedPreferences.putBoolean = jest.fn(() => of());
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            expect(mockSharedPreferences.putBoolean).not.toHaveBeenCalled();
+        });
+
+        it('should publish USER_INFO_UPDATED event', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -161,11 +256,12 @@ describe('LogoutHandlerService', () => {
                 expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
                 expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalledWith([]);
                 expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+                expect(mockSegmentationTagService.getPersistedSegmentaion).toHaveBeenCalled();
                 done();
             }, 0);
         });
 
-        xit('should initialize the TABS if onboarding is completed ', (done) => {
+        it('should initialize the TABS if onboarding is completed ', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -190,11 +286,17 @@ describe('LogoutHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockRoute.navigate).toHaveBeenCalledWith([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+                    InteractSubtype.LOGOUT_SUCCESS,
+                    Environment.HOME,
+                    PageId.LOGOUT,
+                    undefined,
+                    { UID: '' });
                 done();
             }, 0);
         });
 
-        xit('should navigate to profile-settings page if onboarding is not completed ', (done) => {
+        it('should navigate to profile-settings page if onboarding is not completed ', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -229,7 +331,7 @@ describe('LogoutHandlerService', () => {
             }, 0);
         });
 
-        xit('should navigate to profile-settings page  for profile types other than student and teacher', (done) => {
+        it('should navigate to profile-settings page  for profile types other than student and teacher', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -261,6 +363,112 @@ describe('LogoutHandlerService', () => {
                     PageId.LOGOUT,
                     undefined,
                     { UID: '' });
+                done();
+            }, 0);
+        });
+
+        it('should get user info', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockAppGlobalService.getGuestUserInfo = jest.fn();
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getGuestUserInfo).toHaveBeenCalled();
+                done();
+            })
+        })
+
+        it('should navigate to user type selection route if onboarding id false and type is admin', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            jest.spyOn(mockSharedPreferences, 'getString').mockImplementation((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        value = 'administrator';
+                        break;
+                    case PreferenceKey.IS_ONBOARDING_COMPLETED:
+                        value = 'false';
+                        break;
+                    case PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockRoute.navigate).toHaveBeenCalledWith([`${RouterLinks.USER_TYPE_SELECTION}`]);
+                done();
+            }, 0);
+        });
+
+        it('should publish otehr tabs for other user type and not onboarded', (done) => {
+        // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            jest.spyOn(mockSharedPreferences, 'getString').mockImplementation((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        value = 'other';
+                        break;
+                    case PreferenceKey.IS_ONBOARDING_COMPLETED:
+                        value = 'false';
+                        break;
+                    case PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockEvents.publish).toHaveBeenCalledWith(`UPDATE_TABS`);
+                done();
+            }, 0);
+        });
+
+        it('should put string as user type teacher if userId is not present', (done) =>{
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockSharedPreferences.getString = jest.fn(() => of(undefined));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
+                done();
+            });
+        });
+
+        it('should put string as user type guest if userId is present', (done) =>{
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            mockSharedPreferences.putString = jest.fn(() => of(PreferenceKey.SELECTED_USER_TYPE, '1234567890'));
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 done();
             }, 0);
         });

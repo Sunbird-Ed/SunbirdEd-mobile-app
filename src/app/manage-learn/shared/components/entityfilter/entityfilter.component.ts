@@ -37,6 +37,7 @@ export class EntityfilterComponent implements OnInit {
   loading: boolean = false;
   payload;
   entityType;
+  selectedItems: any = [];
   constructor(
     private localStorage: LocalStorageService,
     private navParams: NavParams,
@@ -75,8 +76,8 @@ export class EntityfilterComponent implements OnInit {
     this.selectedState
       ? null
       : setTimeout(() => {
-          this.selectStateRef.open();
-        }, 100);
+        this.selectStateRef.open();
+      }, 100);
   }
 
   onStateChange(event) {
@@ -86,15 +87,8 @@ export class EntityfilterComponent implements OnInit {
     this.searchQuery = '';
   }
   addSchools() {
-    let selectedSchools = [];
-    this.selectableList.forEach((element) => {
-      if (element.selected && !element.preSelected) {
-        selectedSchools.push(element);
-      }
-    });
-
-    console.log(selectedSchools.length);
-    this.modalCtrl.dismiss(selectedSchools);
+    this.modalCtrl.dismiss(this.selectedItems);
+    this.selectedItems = [];
   }
   clearEntity() {
     this.selectableList = [];
@@ -103,6 +97,12 @@ export class EntityfilterComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
   checkItem(listItem) {
+    if (!listItem.selected) {
+      this.selectedItems.push(listItem)
+    } else {
+      let indexToRemove = this.selectedItems.indexOf(listItem)
+      this.selectedItems.splice(indexToRemove, 1)
+    }
     listItem.selected = !listItem.selected;
     listItem.selected ? this.selectedListCount.count++ : this.selectedListCount.count--;
   }
@@ -144,7 +144,27 @@ export class EntityfilterComponent implements OnInit {
           success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
         }
         this.totalCount = success.result[0].count;
-        this.selectableList = [...this.selectableList, ...success.result[0].data];
+        if (this.selectedItems.length) {
+          if (!event) {
+            if (this.searchQuery === "") {
+              this.selectableList = [...this.selectedItems, ...success.result[0].data];
+            } else {
+              this.selectableList = [...this.selectableList, ...success.result[0].data];
+            }
+          } else {
+            this.selectableList.forEach((element) => {
+              this.selectedItems.forEach((item) => {
+                if (element._id === item._id) {
+                  let indexToReplace = this.selectableList.indexOf(element);
+                  this.selectableList.splice(indexToReplace, 1, item)
+                }
+              })
+            })
+            this.selectableList = [...this.selectableList, ...success.result[0].data];
+          }
+        } else {
+          this.selectableList = [...this.selectableList, ...success.result[0].data];
+        }
         !event ? this.loader.stopLoader() : this.toggleInfiniteScroll(event);
       },
       (error) => {

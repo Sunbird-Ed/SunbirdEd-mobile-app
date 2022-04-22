@@ -41,7 +41,7 @@ export const FILE_EXTENSION_HEADERS = {
     ogv: "video/ogg",
     ogx: "application/ogg",
     otf: "font/otf",
-    png: "image/png",
+    png: "image/jpeg",
     pdf: "application/pdf",
     ppt: "application/vnd.ms-powerpoint",
     pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
