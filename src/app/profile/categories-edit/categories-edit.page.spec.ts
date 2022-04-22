@@ -23,7 +23,7 @@ import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, throwError } from 'rxjs';
-import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app.constant';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
@@ -141,7 +141,7 @@ describe('CategoryEditPage', () => {
     it('should be create a instance of CategoryEditPage', () => {
         expect(categoryEditPage).toBeTruthy();
     });
-
+    
     describe('get', () => {
         it('should be initialized syllabus', () => {
             // arrange
@@ -320,6 +320,36 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+    describe('getSyllabusDetails', () => {
+        it('should show data not found toast message if syllabus list is empty.', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            categoryEditPage.loader = mockCommonUtilService.getLoader;
+            const frameworkRes: Framework[] = [];
+            const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+                from: 'server',
+                language: undefined,
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            // act
+            categoryEditPage.getSyllabusDetails();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(getSuggestedFrameworksRequest);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_DATA_FOUND');
+                expect(categoryEditPage.loader.dismiss).toHaveBeenCalled();
                 done();
             }, 0);
         });
