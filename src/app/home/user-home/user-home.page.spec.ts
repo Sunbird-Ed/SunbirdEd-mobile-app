@@ -13,7 +13,7 @@ import {
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ContentAggregatorHandler} from '../../services/content/content-aggregator-handler.service';
-import {ContentService, FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
+import {ContentService, FrameworkUtilService, Profile, ProfileService, ProfileSource, ProfileType, ServerProfile} from '@project-sunbird/sunbird-sdk';
 import {SunbirdQRScanner} from '@app/services';
 import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
@@ -493,7 +493,108 @@ describe('UserHomePage', () => {
                 // assert
                 expect(userHomePage.otherCategories).toHaveLength(1);
             })
-        })
+        });
+        it('should get other categories', () => {
+            // arrange
+            let board = [];
+            board.push(userHomePage.profile?.syllabus?.length  ?  userHomePage.profile?.syllabus[0]: null)
+            board.push(userHomePage.profile?.board?.length  ?  userHomePage.profile?.board[0]: null);
+            let role = userHomePage.profile.profileType.toLowerCase();
+            const otherCategories = {
+                'CBSE': {
+                    teacher: [
+                        {
+                            name: 'observation',
+                            icon: {
+                                web: 'assets/images/mask-image/observation_category.png',
+                                app: 'assets/imgs/observation_category.png',
+                            },
+                        },
+                    ],
+                },
+            };
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(otherCategories));
+            board.forEach(element => {
+                if(otherCategories[element] && otherCategories[element][role]){
+                    userHomePage.otherCategories = otherCategories[element][role]; 
+                    return;
+                }
+            });
+            // act
+            userHomePage.getOtherMLCategories().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith({
+                    type: 'category',
+                    subType: 'targetedCategory',
+                    action: 'homeListing'
+                });
+            })
+        });
+        it('should get other categories', () => {
+            // arrange
+            let board = [];
+            const serverProfileData: ServerProfile = {
+                userId: 'sample_userId',
+                firstName: 'sample_firstName',
+                lastName: 'sample_lastName',
+                tncAcceptedVersion: 'sample_tncAcceptedVersion',
+                tncAcceptedOn: 'sample_tncAcceptedOn',
+                tncLatestVersion: 'sample_tncLatestVersion',
+                promptTnC: false,
+                tncLatestVersionUrl: 'sample_tncLatestVersionUrl',
+                id: 'sample_id',
+                avatar: 'sample_avatar',
+                profileUserType: {
+                    type: ProfileType.TEACHER
+                }
+            };
+            const profile: Profile = {
+                uid: 'sample_uid',
+                handle: 'sample_handle',
+                createdAt: 0,
+                medium: ['sample_medium1', 'sample_medium2'],
+                board: ['sample_board'],
+                subject: ['sample_subject1', 'sample_subject2'],
+                profileType: ProfileType.STUDENT,
+                grade: ['sample_grade1', 'sample_grade2'],
+                syllabus: ['sample_syllabus'],
+                source: ProfileSource.LOCAL,
+                serverProfile: serverProfileData
+            }
+            board.push(profile?.syllabus?.length  ?  profile?.syllabus[0]: null)
+            board.push(profile?.board?.length  ?  profile?.board[0]: null);
+            let role = profile.profileType.toLowerCase();
+            const otherCategories = {
+                'CBSE': {
+                    teacher: [
+                        {
+                            name: 'observation',
+                            icon: {
+                                web: 'assets/images/mask-image/observation_category.png',
+                                app: 'assets/imgs/observation_category.png',
+                            },
+                        },
+                    ],
+                },
+            };
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile))
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(otherCategories));
+            board.forEach(element => {
+                if(otherCategories[element] && otherCategories[element][role]){
+                    userHomePage.otherCategories = otherCategories[element][role]; 
+                    return;
+                }
+            });
+            // act
+            userHomePage.getOtherMLCategories().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith({
+                    type: 'category',
+                    subType: 'targetedCategory',
+                    action: 'homeListing'
+                });
+            })
+        });
     });
 
       describe('should handle click action of otherCategories', () => {
