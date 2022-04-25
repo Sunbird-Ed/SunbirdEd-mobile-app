@@ -521,6 +521,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should display offline mode', (done) => {
             // arrange
             jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(Promise.reject(new NetworkError())));
+            enrolledCourseDetailsPage.courseCardData = undefined;
             // act
             enrolledCourseDetailsPage.getAllBatches();
             // assert
