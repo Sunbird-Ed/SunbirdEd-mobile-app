@@ -1,17 +1,5 @@
 <ion-content class="ion-padding">
   <app-metadata-details translucent="true" [data]="metaData">
-    <!-- <div class="sb-dt-card-actions">
-    <div class="wrapper"> 
-      <app-metadata-actions (actionEvent)="action($event)" [actionItems]="actionItems"></app-metadata-actions>
-    </div>
-    <div class="sb-course-progress-container" *ngIf="taskCount">
-      <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
-      </p>
-      <p>{{projectProgress?.completedTasks}} / {{taskCount}} {{'COMPLETED' | translate}}
-      </p>
-        <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
-    </div>
-  </div> -->
     <ion-button (click)="doAction()" expand="block" class="ion-text-none ion-margin-top">{{buttonLabel |
       translate}}</ion-button>
   </app-metadata-details>

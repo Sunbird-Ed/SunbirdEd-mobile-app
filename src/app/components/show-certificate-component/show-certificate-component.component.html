@@ -19,11 +19,8 @@
                     <div class="ion-padding">
                         <div>
                             <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                                <!-- <div *ngFor="let cert of certificateInfo"> -->
                                     <p *ngIf="showCompletionCertificate"><span style="font-size: 150%" style="color:gray"> > </span>  {{'FRMELEMNTS_LBL_EARNYOURCERT' | translate}}</p>
                                     <p *ngIf="showMeritCertificate"><span style="font-size: 150%" style="color:gray"> > </span>  {{'FRMELEMNTS_LBL_EARNMCERT' | translate: {'percent': meritCertPercent} }}</p>
-
-                                <!-- </div> -->
                             </ion-card-title>
                         </div>
                     </div>

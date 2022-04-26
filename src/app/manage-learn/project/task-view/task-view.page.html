@@ -7,7 +7,7 @@
 
     <ion-row>
       <ion-col size="3">
-        <img src="assets/imgs/timetable.png" class="filter-icon" (click)="setTaskEndDate()" />
+        <img src="assets/imgs/timetable.png" class="filter-icon" (click)="setTaskEndDate()"  alt=""/>
       </ion-col>
       <ion-col size="9">
         <ion-datetime (ionChange)="setDate()" #dateTime value="{{task?.endDate}}" display-timezone="utc"
@@ -35,7 +35,7 @@
     <div class="subtask-form" *ngIf="task?.type !='observation' && task?.type != 'assessment'">
       <h4>{{'FRMELEMNTS_LBL_SUBTASKS' | translate}}</h4>
       <ion-row>
-        <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="filter-icon arrow-image" /> </ion-col>
+        <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="filter-icon arrow-image"  alt=""/> </ion-col>
         <ion-col size="9">
           <ion-item>
             <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_SUBTASK_PALCEHOLDER' | translate}}"
@@ -61,13 +61,13 @@
           </ion-col>
           <ion-col size="1" style="margin: auto; text-align: center" *ngIf="subtask.isDeletable">
             <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px"
-              (click)="askPermissionToDelete(subtask,'subtask')" />
+              (click)="askPermissionToDelete(subtask,'subtask')" alt=""/>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col size="6">
             <ion-item class="ion-date-time" lines="none">
-              <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" />
+              <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" alt=""/>
               <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate"
                 displayFormat="DD/MM/YYYY" min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc">
               </ion-datetime>
