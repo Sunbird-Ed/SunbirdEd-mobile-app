@@ -26,7 +26,7 @@ import {
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY, Observable } from 'rxjs';
-import {PreferenceKey, EventTopics, RouterLinks, SystemSettingsIds} from './app.constant';
+import {PreferenceKey, EventTopics, RouterLinks, SystemSettingsIds, AppOrientation} from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
@@ -877,6 +877,22 @@ describe('AppComponent', () => {
                 expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
                 expect(mockPreferences.putString).toHaveBeenCalledWith(
                     PreferenceKey.DEPLOYMENT_KEY, 'some_key');
+                done();
+            }, 0);
+        });
+        it('should check current orientation and handle for landscape', (done) => {
+            // arrange
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
+            mockPreferences.getString = jest.fn(() => of(AppOrientation.LANDSCAPE));
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockPreferences.putString = jest.fn(() => of());
+            // act
+            appComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
+                expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE)
+                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.ORIENTATION);
                 done();
             }, 0);
         });
@@ -1984,6 +2000,34 @@ describe('AppComponent', () => {
             appComponent.menuItemAction(menuName);
             // assert
             expect(cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+        });
+        it('should handle orientation for landscape', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'ORIENTATION'
+            };
+            mockPreferences.getString = jest.fn(() => of(AppOrientation.LANDSCAPE));
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockPreferences.putString = jest.fn(() => of());
+            mockEvents.publish = jest.fn(() => of())
+            // act
+            appComponent.menuItemAction(menuName);
+            // assert
+            expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.ORIENTATION);
+        });
+        it('should handle orientation for portrait', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'ORIENTATION'
+            };
+            mockPreferences.getString = jest.fn(() => of(AppOrientation.PORTRAIT));
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockPreferences.putString = jest.fn(() => of());
+            mockEvents.publish = jest.fn(() => of())
+            // act
+            appComponent.menuItemAction(menuName);
+            // assert
+            expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.ORIENTATION);
         });
     });
 

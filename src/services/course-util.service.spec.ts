@@ -39,46 +39,55 @@ describe('courseUtilService', () => {
 });
 describe('getCourseProgress', () => {
     it('should return course progress as 100', () => {
-        const leafNodeCount=  2,
-        progress=  50
-        courseUtilService.getCourseProgress(leafNodeCount, progress);
+      // arrange
+        const leafNodeCount=  0,
+        progress=  0
+        // act
+        const output = courseUtilService.getCourseProgress(leafNodeCount, progress);
+        // assert
+        expect(output).toEqual(0);
     });
     it('should return course progress as zero', () => {
-        const leafNodeCount=  0,
-        progress = 50
-        courseUtilService.getCourseProgress(leafNodeCount, progress);
+      // arrange
+        const leafNodeCount=  2,
+        progress = 10
+        // act
+        const output = courseUtilService.getCourseProgress(leafNodeCount, progress);
+        // assert
+        expect(output).toEqual(100);
     });
-});
+    it('should return course progress as zero if not a number', () => {
+      // arrange
+        const leafNodeCount=  'count',
+        progress = 10
+        // act
+        const output = courseUtilService.getCourseProgress(leafNodeCount, progress);
+        // assert
+        expect(output).toEqual(0);
+    });
+    it('should return course progress as zero', () => {
+      // arrange
+      const leafNodeCount=  2,
+      progress = 0.001
+      // act
+      const output = courseUtilService.getCourseProgress(leafNodeCount, progress);
+      // assert
+      expect(String(output)).toBeTruthy();
+  });
+  });
 
 describe('getImportContentRequestBody', () => {
-  it('should check array', (done) => {
+  it('should check array', () => {
       // arrange
       const identifiers = ['do-123', 'do-234'];
-      const requestParams = [];
       const isChild = true;
-      requestParams.push({isChildContent : isChild,destinationFolder: 'c://files',
-      contentId: '123',
-      correlationData: []});
-      // }); 
-      jest.spyOn(courseUtilService, 'getImportContentRequestBody').mockReturnValue([{
-        isChildContent: true,
-        destinationFolder: 'sample-dest-folder',
-        contentId: 'do-123'
-    }]);
+      mockPlatform.is = jest.fn(() => true);
       // act
       courseUtilService.getImportContentRequestBody(identifiers, isChild);
       // assert
-      setTimeout(() => {
-        expect(requestParams).toEqual(
-          expect.arrayContaining([
-            {isChildContent : isChild,destinationFolder: 'c://files',
-              contentId: '123',
-              correlationData: []}
-          ]))
-        });
-          done();
-      }, 0);
+      expect(mockPlatform.is).toHaveBeenCalled();
   });
+});
 
   describe('getImportContentRequestBody()', () => {
     it('should get import content body by invoked getImportContentRequestBody()', () => {
