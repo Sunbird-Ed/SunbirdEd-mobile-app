@@ -1,8 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { FileTransfer,FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { StreamingMedia, StreamingVideoOptions } from '@ionic-native/streaming-media/ngx';
 import { Platform } from '@ionic/angular';
 import { FileExtension } from '../../fileExtension';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { LoaderService, ToastService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'attachments',
@@ -12,6 +17,7 @@ import { FileExtension } from '../../fileExtension';
 export class AttachmentComponent {
   @Input() url: string;
   @Input() extension: string;
+  path;
   imageFormats: string[] = FileExtension.imageFormats;
   videoFormats: string[] = FileExtension.videoFormats;
   audioFormats: string[] = FileExtension.audioFormats;
@@ -19,8 +25,14 @@ export class AttachmentComponent {
   wordFormats: string[] = FileExtension.wordFormats;
   spreadSheetFormats: string[] = FileExtension.spreadSheetFormats;
 
-  constructor(private photoViewer: PhotoViewer, private streamingMedia: StreamingMedia, private platform: Platform) {
-    console.log('Hello AttachmentsComponent Component');
+  constructor(private photoViewer: PhotoViewer, private streamingMedia: StreamingMedia, private platform: Platform,
+    private fileTransfer: FileTransfer,
+    private file: File,
+    public toast: ToastService,
+    public loader: LoaderService,
+    public filePath: FilePath,
+    public fileOpener: FileOpener) {
+    this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
   }
 
   playVideo(link) {
@@ -83,5 +95,31 @@ export class AttachmentComponent {
     //   'location=no,toolbar=no,clearcache=yes'
     // );
     window.open(link, '_system', 'location=yes,enableViewportScale=yes,hidden=no');
+  }
+  downloadFile(link) {
+    this.loader.startLoader();
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+    let fileName = this.createFileName();
+    fileTransfer.download(link, this.path + '/' +fileName ).then(success => {
+      let attachment ={
+        name:fileName,
+        type:'application/pdf'
+      }
+      this.loader.stopLoader();
+      this.openFile(attachment);
+    },error =>{
+    this.loader.stopLoader();
+    })
+  }
+  openFile(attachment) {
+    this.fileOpener.open(this.path + '/' + attachment.name, attachment.type)
+      .then(() => { console.log('File is opened'); })
+      .catch(e => console.log('Error opening file', e));
+  }
+  createFileName() {
+    let d = new Date(),
+      n = d.getTime(),
+      newFileName = n + "." + this.extension;
+    return newFileName;
   }
 }
