@@ -17,9 +17,13 @@ import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
 import {TncUpdateHandlerService} from '@app/services/handlers/tnc-update-handler.service';
 import {of} from 'rxjs';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement} from '@angular/core';
 
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
+    let fixture: ComponentFixture<ApplicationHeaderComponent>;
+    let debugEl:DebugElement;
 
     window.cordova.plugins = {
         InAppUpdateManager: {
@@ -134,6 +138,26 @@ describe('ApplicationHeaderComponent', () => {
                 done();
             }, 0);
         });
+
+        it('Should check if login button showing when user not login', () => {
+            let fixture =  TestBed.createComponent(ApplicationHeaderComponent);
+            debugEl = fixture.debugElement;
+            fixture.detectChanges();
+            for(var i=0;i<=1;i++){
+                for(var j=0;j<=1;j++){
+                 applicationHeaderComponent.isLoggedIn = i;
+                 applicationHeaderComponent.showLoginButton = j;
+                 if(!applicationHeaderComponent.isLoggedIn && applicationHeaderComponent.showLoginButton){
+                    expect(debugEl.query(By.css('.sign_in_btn .sb-menu-item'))).toContain('sign'); 
+                } 
+                 else {
+                     expect(debugEl.query(By.css('.sign_in_btn'))).toBeNull();
+                     }
+                }
+             }
+
+           
+        });
     });
 
     describe('ngOnDestroy()', () => {
@@ -160,5 +184,6 @@ describe('ApplicationHeaderComponent', () => {
             expect(applicationHeaderComponent['networkSubscription'].unsubscribe).toHaveBeenCalled();
         });
 
+ 
     });
     });
