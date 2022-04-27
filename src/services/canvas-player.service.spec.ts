@@ -1,8 +1,13 @@
-import {CanvasPlayerService} from '@app/services/canvas-player.service';
-import {HttpClient} from '@angular/common/http';
-import {Events} from '@app/util/events';
-import {of} from 'rxjs';
-import {ContentFeedbackService, ContentService, ProfileService, SunbirdSdk, TelemetryService} from 'sunbird-sdk';
+import { CanvasPlayerService } from '@app/services/canvas-player.service';
+import { HttpClient } from '@angular/common/http';
+import { Events } from '@app/util/events';
+import { of } from 'rxjs';
+import * as X2JS from 'x2js';
+import { ContentFeedbackService, ContentService, ProfileService, SunbirdSdk, TelemetryService } from 'sunbird-sdk';
+import { CourseService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { PreferenceKey } from '../app/app.constant';
+import { LocalCourseService } from './local-course.service';
+import { CommonUtilService } from './common-util.service';
 
 
 describe('CanvasPlayerService', () => {
@@ -10,13 +15,21 @@ describe('CanvasPlayerService', () => {
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockContentFeedbackService: Partial<ContentFeedbackService> = {};
+    const mockCourseService: Partial<CourseService> = {};
     const mockTelemetryService: Partial<TelemetryService> = {};
+    const mockX2Js: Partial<X2JS> = {};
     const mockSunbirdSdk: Partial<SunbirdSdk> = {
         profileService: mockProfileService,
         contentService: mockContentService,
         contentFeedbackService: mockContentFeedbackService,
-        telemetryService: mockTelemetryService
+        telemetryService: mockTelemetryService,
+        courseService: mockCourseService
     };
+    const mockPreferences: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of('en' as any))
+    };
+    const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {};
     SunbirdSdk['_instance'] = mockSunbirdSdk as SunbirdSdk;
 
     const mockHttp: Partial<HttpClient> = {};
@@ -24,7 +37,10 @@ describe('CanvasPlayerService', () => {
     beforeAll(() => {
         canvasPlayerService = new CanvasPlayerService(
             mockHttp as HttpClient,
-            mockEvents as Events
+            mockEvents as Events,
+            mockPreferences as SharedPreferences,
+            mockLocalCourseService as LocalCourseService,
+            mockCommonUtilService as CommonUtilService
         );
     });
 
@@ -40,7 +56,7 @@ describe('CanvasPlayerService', () => {
     describe('it should handle readJSON test suites', () => {
         it('should readJSON if path is available', () => {
             // arrange
-            mockHttp.get = jest.fn(() => of({sampleObject: 'sampleObject'}));
+            mockHttp.get = jest.fn(() => of({ sampleObject: 'sampleObject' }));
             // act
             canvasPlayerService.readJSON('sampleRandomPath');
             // assert
@@ -58,7 +74,7 @@ describe('CanvasPlayerService', () => {
 
         it('should not get inside if call, if path is undefined', () => {
             // arrange
-            mockHttp.get = jest.fn(() => of({sampleObject: 'sample'}));
+            mockHttp.get = jest.fn(() => of({ sampleObject: 'sample' }));
             // act
             canvasPlayerService.readJSON('');
             // arrange
@@ -104,7 +120,7 @@ describe('CanvasPlayerService', () => {
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('getCurrentUser');
+            window.handleAction('getCurrentUser', []);
             // assert
             expect(SunbirdSdk.instance.profileService.getActiveSessionProfile).toHaveBeenCalled();
         });
@@ -114,7 +130,7 @@ describe('CanvasPlayerService', () => {
             mockProfileService.getAllProfiles = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('getAllUserProfile');
+            window.handleAction('getAllUserProfile', []);
             // assert
             expect(SunbirdSdk.instance.profileService.getAllProfiles).toHaveBeenCalled();
         });
@@ -124,7 +140,7 @@ describe('CanvasPlayerService', () => {
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('setUser');
+            window.handleAction('setUser', []);
             // assert
             expect(SunbirdSdk.instance.profileService.setActiveSessionForProfile).toHaveBeenCalled();
         });
@@ -134,19 +150,9 @@ describe('CanvasPlayerService', () => {
             mockContentService.getContents = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('getContent');
+            window.handleAction('getContent', []);
             // assert
             expect(SunbirdSdk.instance.contentService.getContents).toHaveBeenCalled();
-        });
-
-        it('should handle action if method name equals getRelatedContent', () => {
-            // arrange
-            jest.spyOn(console, 'log').mockImplementation();
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('getRelatedContent');
-            // assert
-            expect(console.log).toHaveBeenCalledWith('getRelatedContent to be defined');
         });
 
         it('should handle action if method name equals getContentList', () => {
@@ -154,7 +160,7 @@ describe('CanvasPlayerService', () => {
             mockContentService.getContents = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('getContentList');
+            window.handleAction('getContentList', []);
             // assert
             expect(SunbirdSdk.instance.contentService.getContents).toHaveBeenCalled();
         });
@@ -164,19 +170,9 @@ describe('CanvasPlayerService', () => {
             mockContentFeedbackService.sendFeedback = jest.fn(() => of({}));
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('sendFeedback');
+            window.handleAction('sendFeedback', []);
             // assert
             expect(SunbirdSdk.instance.contentFeedbackService.sendFeedback).toHaveBeenCalled();
-        });
-
-        it('should handle action if method name equals languageSearch', () => {
-            // arrange
-            jest.spyOn(console, 'log').mockImplementation();
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('languageSearch');
-            // assert
-            expect(console.log).toHaveBeenCalledWith('languageSearch to be defined');
         });
 
         it('should handle action if method name equals to endGenieCanvas', () => {
@@ -184,9 +180,9 @@ describe('CanvasPlayerService', () => {
             mockEvents.publish = jest.fn();
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('endGenieCanvas');
+            window.handleAction('endGenieCanvas', []);
             // assert
-            expect(mockEvents.publish).toHaveBeenCalledWith('endGenieCanvas', {showConfirmBox: false});
+            expect(mockEvents.publish).toHaveBeenCalledWith('endGenieCanvas', { showConfirmBox: false });
         });
 
         it('should handle action if method name equals to showExitConfirmPopup', () => {
@@ -194,9 +190,95 @@ describe('CanvasPlayerService', () => {
             mockEvents.publish = jest.fn();
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('showExitConfirmPopup');
+            window.handleAction('showExitConfirmPopup', []);
             // assert
-            expect(mockEvents.publish).toHaveBeenCalledWith('endGenieCanvas', {showConfirmBox: true});
+            expect(mockEvents.publish).toHaveBeenCalledWith('endGenieCanvas', { showConfirmBox: true });
+        });
+
+        it('should handle action if method name equals send', () => {
+            // arrange
+            mockTelemetryService.saveTelemetry = jest.fn(() => of());
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('send', []);
+            // assert
+            expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalled();
+        });
+
+        it('should handle action if method name equals getRelevantContent', () => {
+            // arrange
+            mockContentService.getRelevantContent = jest.fn(() => of({}));
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('getRelevantContent', ['{"sampleKey": "sampleValue"}']);
+            // assert
+            expect(SunbirdSdk.instance.contentService.getRelevantContent).toHaveBeenCalled();
+        });
+
+        it('should handle action if method name equals checkMaxLimit and context is not defined', () => {
+            // arrange
+            let context;
+            //const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
+
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('checkMaxLimit', []);
+            // assert
+        });
+
+        it('should handle action if method name equals checkMaxLimit and context is defined', () => {
+            // arrange
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}';
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockCourseService.getContentState = jest.fn(() => of({
+                "userId": "userid", "courseId": "courseid", "batchId": "batchid", "isCertified": false, "leafNodeIds": ["id1"], "batchStatus": 2
+            }));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({
+                isLastAttempt: true,
+                isContentDisabled: true,
+                currentAttempt: 0,
+                maxAttempts: 5
+            }));
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
+
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('checkMaxLimit', []);
+            // assert
+        });
+
+        it('should handle action if method name equals getRelatedContent', () => {
+            // arrange
+            jest.spyOn(console, 'log').mockImplementation();
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('getRelatedContent', []);
+            // assert
+            expect(console.log).toHaveBeenCalledWith('getRelatedContent to be defined');
+        });
+
+        it('should handle action if method name equals languageSearch', () => {
+            // arrange
+            jest.spyOn(console, 'log').mockImplementation();
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('languageSearch', []);
+            // assert
+            expect(console.log).toHaveBeenCalledWith('languageSearch to be defined');
         });
 
         it('should handle action if method name equals endContent', () => {
@@ -204,7 +286,7 @@ describe('CanvasPlayerService', () => {
             jest.spyOn(console, 'log').mockImplementation();
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('endContent');
+            window.handleAction('endContent', []);
             // assert
             expect(console.log).toHaveBeenCalledWith('endContent to be defined');
         });
@@ -213,19 +295,9 @@ describe('CanvasPlayerService', () => {
             jest.spyOn(console, 'log').mockImplementation();
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('launchContent');
+            window.handleAction('launchContent', []);
             // assert
             expect(console.log).toHaveBeenCalledWith('launchContent to be defined');
-        });
-
-        it('should handle action if method name equals send', () => {
-            // arrange
-            mockTelemetryService.saveTelemetry = jest.fn(() => of());
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('send');
-            // assert
-            expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalled();
         });
 
         it('should handle action if method name equals default', () => {
@@ -236,16 +308,6 @@ describe('CanvasPlayerService', () => {
             window.handleAction('anything');
             // assert
             expect(console.log).toHaveBeenCalledWith('Please use valid method');
-        });
-
-        it('should handle action if method name equals getRelevantContent', () => {
-            // arrange
-            mockContentService.getRelevantContent = jest.fn(() => of());
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('getRelevantContent', ['{"sampleKey": "sampleValue"}']);
-            // assert
-            expect(SunbirdSdk.instance.contentService.getRelevantContent).toHaveBeenCalled();
         });
     });
 });

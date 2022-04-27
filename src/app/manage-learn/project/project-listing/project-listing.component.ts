@@ -206,7 +206,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex !== 0 ? this.getProjectList() : this.getCreatedProjects()
+            this.selectedFilterIndex !== 2 ? this.getProjectList() : this.getCreatedProjects()
         } else {
             this.getDownloadedProjectsList();
         }
@@ -344,8 +344,25 @@ export class ProjectListingComponent {
                     }
                 ],
             },
-            fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'],
         };
+       let  fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'];
+       let prepareQuery:any={};
+        switch (this.selectedFilterIndex) {
+            case 0:
+                prepareQuery['isAPrivateProgram'] = false
+                break;
+            case 1:
+                prepareQuery['referenceFrom'] = 'link'
+                break;
+            case 2:
+                prepareQuery['isAPrivateProgram'] = { $ne: false }
+                prepareQuery['referenceFrom'] = { $ne: 'link' }
+                break;
+            default:
+                break;
+        }
+        query.selector.$and.push(prepareQuery);
+        fields ? (query['fields'] = fields) : null;
         return query
     }
     searchCreatedProjects() {

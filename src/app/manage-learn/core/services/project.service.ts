@@ -333,7 +333,7 @@ export class ProjectService {
               if (project.isEdit || project.isNew) {
                 project.isNew
                   ? this.createNewProject(project, true)
-                  : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+                  : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: project._id, taskId: taskId, share: true, fileName: name } });
               } else {
                 type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
               }

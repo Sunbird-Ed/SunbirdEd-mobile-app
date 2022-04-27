@@ -53,7 +53,7 @@
     </ion-segment>
   </div>
   <div *ngIf="segmentType == 'details'">
-    <app-project-details-card [data]="projectDetails">
+    <app-project-details-card [data]="projectDetails" [categories]="categories">
     </app-project-details-card>
     <app-accordion-list [data]="projectDetails?.learningResources" (actionEvent)="openResource($event)"
       [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" *ngIf="projectDetails?.learningResources?.length">

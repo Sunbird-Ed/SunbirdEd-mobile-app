@@ -22,8 +22,8 @@
       <div class="custom-filed _capitalize">
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
         <!-- {{categories}} -->
-        <span *ngFor="let category of project?.categories">
-          {{category?.label || category?.name}} ,
+        <span *ngFor="let category of project?.categories;let last=last">
+          {{category?.label || category?.name}} {{!last ?', ':"" }} 
         </span>
       </div>
     </ion-card-content>

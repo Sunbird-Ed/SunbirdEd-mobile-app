@@ -25,13 +25,141 @@ Node JS Version - above 8
     - Go to project folder and run npm i    
     - Run `./build.sh`    
 
-**3. How to build apk**    
+**3. Onboarding/Tabs Configuration**
+    Onboarding steps and Tabs can be configured via this configuration settings.
+
+**Onboarding Configurations**
+|Name|Description|Options|
+|----|-----|-----|
+|Language Selection|User should select their prefered language|To skip language selection, set skip as false and provide default values|
+|User Role Selection|User should select their role|If want to skip User Type selection, set skip as false and provide default user type|
+|Profile Settings|User should set their profile by choosing their framework fields|Provide deafult profile values to skip profile settings page|
+|District Maping|Here user need to provide details related to their location|To skip this page deafult location values are required|
+
+#### Language Selection
+```
+{
+  "onboarding": [
+    {
+      "name": "language-setting",
+      "skip": false,
+      "default": {
+        "code": "en",
+        "label": "English"
+      }
+    }
+  ]
+}
+```
+
+#### User Role Selection
+```
+{
+  "onboarding": [
+    {
+      "name": "user-type-selection",
+      "skip": false,
+      "default": "teacher"
+    }
+  ]
+}
+```
+
+#### Profile Settings
+```
+{
+  "onboarding": [
+    {
+      "name": "profile-settings",
+      "skip": false,
+      "default": {
+        "syllabus": [
+          "CBSE"
+        ],
+        "board": [
+          "cbse"
+        ],
+        "medium": [
+          "english"
+        ],
+        "grade": [
+          "class5",
+          "class6"
+        ]
+      }
+    }
+  ]
+}
+```
+#### District Maping
+```
+{
+  "onboarding": [
+    {
+      "name": "district-mapping",
+      "skip": false,
+      "default": {
+        "state": "Andaman & Nicobar Islands",
+        "stateId": "83h3u832ui4",
+        "district": "Nicobars",
+        "districtId": "aef899d41"
+      }
+    }
+  ]
+}
+```
+
+**Tabs Page COnfigurations**
+
+Configure the tabs page according to the requirement. Fllowing are the configurable settings for tabs.
+
+```
+{
+  "tabs": [
+    {
+      "root": "home",
+      "name": "home",
+      "icon": {
+        "active": "assets/imgs/tab_home_selected.svg",
+        "inactive": "assets/imgs/tab_home.svg",
+        "disabled": "assets/imgs/ic_home.png"
+      },
+      "label": "TAB_HOME",
+      "index": 2,
+      "isSelected": true,
+      "is_visable": true,
+      "disabled": false,
+      "theme": "NEW",
+      "status": "ALL",
+      "userTypeAdmin": true
+    }
+  ]
+}
+```
+
+|Property|Description|Value|
+|----|----|----|
+|`root`|On which page the tab should be shown.|`home`|
+|`name`|Name given to the tab|`home`|
+|`icon`|Different icons for respective events. i.e when the tab is selected, not seleted and disabled.|Object with path to the respectivr icons|
+|`label`|Label name to displayed for the tab|'TAB_NAME'|
+|`index`|At which position the tab should be displayed|numeric value ex: `2` shows at 2 position in order|
+|`isSelected`|Wheather the tab should be selected by deafult|Boolean value ex: `true` default selected|
+|`is_visable`|To display the tab or not|Boolean value|
+|`disabled`|If `true`, tab is displayed, but can't select|Boolean. |
+|`is_visable`|To display the tab or not|Boolean value|
+|`theme`|Theme on which the tab should be displayed(If there are multiple theme for the app available)|name of theme for which tab has to be displayed|
+|`status`|To display to a spefic user criteria|ex: 'logIn' will show to logged in users only|
+|`userTypeAdmin`|Wheather to show for only Admin users|Boolean value|
+  
+
+**4. How to build apk**    
     - To check attached devices do `adb devices`    
     - `npm run ionic-build` (Make sure you have attached device)    
     - `ionic cordova run android --prod`    
     - Apk location `project_folder/platforms/android/app/build/outputs/apk/staging/debug/apk_name.apk`    
 
-**4. How to debug apk**    
+**5. How to debug apk**    
     - Open chrome and enter `chrome://inspect`    
     - Select app    
 

@@ -12,17 +12,15 @@
   </div>
 
   <div *ngIf="type == 'image/jpeg'">
-    <app-item-list-header *ngIf="attachments?.project?.attachments?.length || attachments?.project?.remarks"
-      headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
-      class="header">
-    </app-item-list-header>
+    <div class="header" *ngIf="attachments?.project?.attachments?.length || attachments?.project?.remarks">
+      <h5 class="sb--card__title projects-labels"><span>{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}</span></h5>
+    </div>
     <app-attachment-card *ngIf="attachments?.project"  [data]="attachments?.project" [viewOnly]="viewOnly"
       (deleteAttachment)="deleteImage($event)">
     </app-attachment-card>
-    <app-item-list-header *ngIf="attachments?.tasks?.length"
-      headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
-      class="header">
-    </app-item-list-header>
+    <div class="header" *ngIf="attachments?.tasks?.length">
+      <h5 class="sb--card__title projects-labels"><span>{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}</span></h5>
+    </div>
     <div *ngIf="attachments?.tasks?.length">
       <app-attachment-card *ngFor="let task of attachments?.tasks" [data]="task" [viewOnly]="viewOnly"
         (deleteAttachment)="deleteImage($event)">
@@ -32,16 +30,14 @@
 
   <div *ngIf="type != 'image/jpeg'">
     <div *ngIf="attachments?.project?.attachments?.length">
-      <app-item-list-header
-        headerLabel="{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
-        class="header">
-      </app-item-list-header>
+      <div   class="header">
+        <h5 class="sb--card__title projects-labels"><span>{{'FRMELEMNTS_LBL_PROJECT_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}</span></h5>
+      </div>
        <app-attachment-lists  *ngIf="project?.attachments?.length" [type]="type" [title]="attachments?.project?.title" [attachments]="attachments?.project?.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
     </div>
-    <app-item-list-header *ngIf="attachments?.tasks?.length"
-      headerLabel="{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}"
-      class="header">
-    </app-item-list-header>
+    <div class="header" *ngIf="attachments?.tasks?.length">
+      <h5 class="sb--card__title projects-labels"><span>{{'FRMELEMNTS_LBL_TASK_LEVEL' | translate}} {{'FRMELEMNTS_LBL_EVIDENCE' | translate | lowercase}}</span></h5>
+    </div>
     <div *ngFor="let task of attachments?.tasks">
       <app-attachment-lists  *ngIf="task?.attachments?.length" [type]="type" [title]="task.title" [attachments]="task.attachments" [viewOnly]="viewOnly" (eventAction)="attachmentAction($event)"> </app-attachment-lists>
     </div>

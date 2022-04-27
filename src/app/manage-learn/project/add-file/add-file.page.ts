@@ -121,8 +121,10 @@ export class AddFilePage implements OnInit {
     this.headerConfig.pageTitle = this.taskId ? this.task.name : this.project.title;
     this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_PROJECT";
     if (this.taskId) {
+      this.task.attachments = this.task?.attachments ? this.task.attachments : [];
       this.attachments = this.task?.attachments ? this.task.attachments : [];
     } else {
+      this.project.attachments = this.project?.attachments ? this.project.attachments : [];
       this.attachments = this.project?.attachments ? this.project?.attachments : [];
     }
     this.remarks = this.taskId ? this.task.remarks : this.project?.remarks;
@@ -215,7 +217,13 @@ export class AddFilePage implements OnInit {
   linkEvent(event) {
     if (event) {
       this.attachments = this.attachments.concat(this.projectService.getLinks(event));
-    }
+      if (this.taskId) {
+        this.task.attachments =  this.task?.attachments.concat(this.projectService.getLinks(event));
+      } else {
+        this.project.attachments =  this.project?.attachments.concat(this.projectService.getLinks(event));
+      }
+      this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED', 'success');
+     }
     this.toggleLinkModal();
   }
 
