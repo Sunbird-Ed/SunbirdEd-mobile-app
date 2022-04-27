@@ -2,6 +2,7 @@ import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { HttpClient } from '@angular/common/http';
 import { Events } from '@app/util/events';
 import { of } from 'rxjs';
+import * as X2JS from 'x2js';
 import { ContentFeedbackService, ContentService, ProfileService, SunbirdSdk, TelemetryService } from 'sunbird-sdk';
 import { CourseService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '../app/app.constant';
@@ -16,6 +17,7 @@ describe('CanvasPlayerService', () => {
     const mockContentFeedbackService: Partial<ContentFeedbackService> = {};
     const mockCourseService: Partial<CourseService> = {};
     const mockTelemetryService: Partial<TelemetryService> = {};
+    const mockX2Js: Partial<X2JS> = {};
     const mockSunbirdSdk: Partial<SunbirdSdk> = {
         profileService: mockProfileService,
         contentService: mockContentService,
@@ -153,16 +155,6 @@ describe('CanvasPlayerService', () => {
             expect(SunbirdSdk.instance.contentService.getContents).toHaveBeenCalled();
         });
 
-        it('should handle action if method name equals getRelatedContent', () => {
-            // arrange
-            jest.spyOn(console, 'log').mockImplementation();
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('getRelatedContent', []);
-            // assert
-            expect(console.log).toHaveBeenCalledWith('getRelatedContent to be defined');
-        });
-
         it('should handle action if method name equals getContentList', () => {
             // arrange
             mockContentService.getContents = jest.fn(() => of({}));
@@ -181,16 +173,6 @@ describe('CanvasPlayerService', () => {
             window.handleAction('sendFeedback', []);
             // assert
             expect(SunbirdSdk.instance.contentFeedbackService.sendFeedback).toHaveBeenCalled();
-        });
-
-        it('should handle action if method name equals languageSearch', () => {
-            // arrange
-            jest.spyOn(console, 'log').mockImplementation();
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('languageSearch', []);
-            // assert
-            expect(console.log).toHaveBeenCalledWith('languageSearch to be defined');
         });
 
         it('should handle action if method name equals to endGenieCanvas', () => {
@@ -213,6 +195,92 @@ describe('CanvasPlayerService', () => {
             expect(mockEvents.publish).toHaveBeenCalledWith('endGenieCanvas', { showConfirmBox: true });
         });
 
+        it('should handle action if method name equals send', () => {
+            // arrange
+            mockTelemetryService.saveTelemetry = jest.fn(() => of());
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('send', []);
+            // assert
+            expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalled();
+        });
+
+        it('should handle action if method name equals getRelevantContent', () => {
+            // arrange
+            mockContentService.getRelevantContent = jest.fn(() => of({}));
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('getRelevantContent', ['{"sampleKey": "sampleValue"}']);
+            // assert
+            expect(SunbirdSdk.instance.contentService.getRelevantContent).toHaveBeenCalled();
+        });
+
+        it('should handle action if method name equals checkMaxLimit and context is not defined', () => {
+            // arrange
+            let context;
+            //const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
+
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('checkMaxLimit', []);
+            // assert
+        });
+
+        it('should handle action if method name equals checkMaxLimit and context is defined', () => {
+            // arrange
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}';
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockCourseService.getContentState = jest.fn(() => of({
+                "userId": "userid", "courseId": "courseid", "batchId": "batchid", "isCertified": false, "leafNodeIds": ["id1"], "batchStatus": 2
+            }));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({
+                isLastAttempt: true,
+                isContentDisabled: true,
+                currentAttempt: 0,
+                maxAttempts: 5
+            }));
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
+
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('checkMaxLimit', []);
+            // assert
+        });
+
+        it('should handle action if method name equals getRelatedContent', () => {
+            // arrange
+            jest.spyOn(console, 'log').mockImplementation();
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('getRelatedContent', []);
+            // assert
+            expect(console.log).toHaveBeenCalledWith('getRelatedContent to be defined');
+        });
+
+        it('should handle action if method name equals languageSearch', () => {
+            // arrange
+            jest.spyOn(console, 'log').mockImplementation();
+            // act
+            canvasPlayerService.handleAction();
+            window.handleAction('languageSearch', []);
+            // assert
+            expect(console.log).toHaveBeenCalledWith('languageSearch to be defined');
+        });
+
         it('should handle action if method name equals endContent', () => {
             // arrange
             jest.spyOn(console, 'log').mockImplementation();
@@ -232,34 +300,6 @@ describe('CanvasPlayerService', () => {
             expect(console.log).toHaveBeenCalledWith('launchContent to be defined');
         });
 
-        it('should handle action if method name equals send', () => {
-            // arrange
-            mockTelemetryService.saveTelemetry = jest.fn(() => of());
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('send', []);
-            // assert
-            expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalled();
-        });
-
-        it('should handle action if method name equals checkMaxLimit', () => {
-            // arrange
-            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
-            mockPreferences.getString = jest.fn((key) => {
-                switch (key) {
-                    case PreferenceKey.CONTENT_CONTEXT:
-                        return of(context);
-                }
-            });
-            mockCommonUtilService.handleAssessmentStatus =
-                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
-
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('checkMaxLimit', []);
-            // assert
-        });
-
         it('should handle action if method name equals default', () => {
             // arrange
             jest.spyOn(console, 'log').mockImplementation();
@@ -268,16 +308,6 @@ describe('CanvasPlayerService', () => {
             window.handleAction('anything');
             // assert
             expect(console.log).toHaveBeenCalledWith('Please use valid method');
-        });
-
-        it('should handle action if method name equals getRelevantContent', () => {
-            // arrange
-            mockContentService.getRelevantContent = jest.fn(() => of());
-            // act
-            canvasPlayerService.handleAction();
-            window.handleAction('getRelevantContent', ['{"sampleKey": "sampleValue"}']);
-            // assert
-            expect(SunbirdSdk.instance.contentService.getRelevantContent).toHaveBeenCalled();
         });
     });
 });

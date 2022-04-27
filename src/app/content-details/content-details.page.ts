@@ -479,7 +479,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           if (data.contentData.size) {
             this.contentSize = data.contentData.size;
           }
-          await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
+          if(this.cardData && this.cardData.hierachyInfo) {
+            await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
+          }
           this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
