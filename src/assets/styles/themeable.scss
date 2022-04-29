@@ -190,6 +190,22 @@ html[data-theme="JOYFUL"]{
     color: var(--app-primary) !important;
     background-color: var(--app-white) !important;
   }
+  app-user-home, app-discover {
+    sb-library-cards-hlist {
+      .sb-btn-outline-secondary{
+        // margin-right: 1rem !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+    }
+    
+    sb-course-cards-hlist {
+      .sb-btn-outline-secondary{
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+    }
+  }
 
   .sb-btn-outline-primary {
     color: var(--app-primary) !important;
