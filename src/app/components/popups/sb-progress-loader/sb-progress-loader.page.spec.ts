@@ -1,5 +1,5 @@
-import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
-import {Platform} from '@ionic/angular';
+import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import { Platform } from '@ionic/angular';
 
 describe('SbProgressLoaderPage', () => {
     let sbProgressLoaderPage: SbProgressLoaderPage;
@@ -32,13 +32,8 @@ describe('SbProgressLoaderPage', () => {
     });
 
     it('should unsubscibe the backButton once subscribed', () => {
-        mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => {
-                fn();
-                return {
-                    unsubscribe: jest.fn()
-                };
-            })
+        sbProgressLoaderPage['backButtonSubscription'] = {
+            unsubscribe: jest.fn(),
         } as any;
 
         sbProgressLoaderPage.ngOnDestroy();
