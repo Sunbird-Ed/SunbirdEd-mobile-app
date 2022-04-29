@@ -55,6 +55,13 @@ describe('CopyTraceIdPopoverComponent', () => {
         expect(mockPopOverController.dismiss).toBeCalled();
         expect(mockSocialSharing.share).toHaveBeenCalledWith('some_trace_id');
     });
-    
 
+    it('ionViewWillEnter', () => {
+        //arrange
+        mockNavParams.get = jest.fn(() => 'traceId') as any;
+        //act
+        copyTraceIdPopoverComponent.ionViewWillEnter();
+        //assert
+        expect(mockNavParams.get).toHaveBeenCalledWith('traceId');
+    });
 });
