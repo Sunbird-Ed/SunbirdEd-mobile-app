@@ -49,9 +49,9 @@ import { ApiUtilsService, DbService, LoaderService, LocalStorageService, Network
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 
 declare const cordova;
+declare const window;
 
 @Component({
   selector: 'app-root',
@@ -127,28 +127,28 @@ export class AppComponent implements OnInit, AfterViewInit {
     private segmentationTagService: SegmentationTagService,
     private mlloader: LoaderService,
     private screenOrientation: ScreenOrientation,
-    private onboardingConfigurationService: OnboardingConfigurationService,
-    private deeplinks: Deeplinks
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
-    if (this.platform.is('iphone')) {
+    if (this.platform.is('iphone') || this.platform.is('ipad')) {
       this.iosDeeplink();
     }
   }
 
   iosDeeplink() {
-    console.log('Established Deeplink Observer');
-    this.deeplinks.route({
-      '/sample': '' 
-      // This is not required untill NavigationController implementation
-      // for all deeplinked pages
-    }).subscribe(match => {
-      // TODO handle matching URLs
-    }, nomatch => {
-      // nomatch.$link - the full link data
-      // Only URL has to sent to the deeplink service
-      this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
-    });
+    window.addEventListener('deviceready', function() {
+      window.IonicDeeplink.route({
+        '/sample': ''
+        // This is not required untill NavigationController implementation
+        // for all deeplinked pages
+      }, function(match) {
+        // TODO handle matching URLs
+      }, function(nomatch) {
+        // nomatch.$link - the full link data
+        // Only URL has to sent to the deeplink service
+        this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
+      });
+    })
   }
 
   ngOnInit() {

@@ -31,8 +31,6 @@
     "@angular/platform-browser": "^9.1.13",
     "@angular/platform-browser-dynamic": "^9.1.13",
     "@angular/router": "^9.1.13",
-    "@awesome-cordova-plugins/core": "^5.41.0",
-    "@awesome-cordova-plugins/deeplinks": "^5.41.0",
     "@ionic-native/android-permissions": "^5.30.0",
     "@ionic-native/app-version": "^5.15.1",
     "@ionic-native/camera": "^5.30.0",
