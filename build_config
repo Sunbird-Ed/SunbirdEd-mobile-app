@@ -45,3 +45,4 @@ sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbird
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0
 cordova-plugin=uk.co.workingedge.phonegap.plugin.istablet
+cordova-plugin=cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=preprod.diksha.app --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=preprod.ntp.net.in
