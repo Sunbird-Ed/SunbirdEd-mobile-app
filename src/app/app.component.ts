@@ -136,7 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   iosDeeplink() {
-    window.addEventListener('deviceready', function() {
+    window.addEventListener('deviceready', () => {
       window.IonicDeeplink.route({
         '/sample': ''
         // This is not required untill NavigationController implementation
