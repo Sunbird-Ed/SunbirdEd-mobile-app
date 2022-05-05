@@ -6,7 +6,7 @@
 					 (click)="handleBackButton(true)"
 					 class="top-back-button" alt="back">
 			</div>
-			<div class="qr-container ui-container" *ngIf="showQRScanner">
+			<div class="qr-container ui-container" *ngIf="showQRScanner && !isJioBook">
 				<div class="qr-content">
 					<img #animatedQRImage class="qr-img" src="assets/imgs/qr_with_book.svg" alt="qr book scanner">
 					<div class="qr-instruction-container text-center">
@@ -53,7 +53,7 @@
 					</div>
 				</div>
 			</div>
-			<div novalidate class="form-position" *ngIf="!showQRScanner">
+			<div novalidate class="form-position" *ngIf="!showQRScanner || isJioBook">
 				<ion-item *ngIf="!!supportedProfileAttributes['board']" appCustomIonSelect (click)="onCategoryCliked('board')">
 					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}
 					</ion-label>
@@ -97,7 +97,7 @@
 	</div>
 </ion-content>
 
-<div class="ion-padding ion-no-border" style="background: white;" *ngIf="!showQRScanner">
+<div class="ion-padding ion-no-border" style="background: white;" *ngIf="!showQRScanner || isJioBook">
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
 		[style.background-color]="btnColor" (click)="onSubmitAttempt()">
 		{{ 'CONTINUE' | translate }}

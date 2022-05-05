@@ -217,11 +217,12 @@ export class TabsPage implements OnInit, AfterViewInit {
     }
   }
 
- async findDisableTab() {
-  const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
-  if ((deviceName.toLowerCase() === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
-      this.disableTab = 'qrscanner';
+  async findDisableTab() {
+    await this.commonUtilService.isScannerAvailable().then((val) => {
+      if (val) {
+        this.disableTab = 'qrscanner';
+      }
+    });
   }
- }
 
 }

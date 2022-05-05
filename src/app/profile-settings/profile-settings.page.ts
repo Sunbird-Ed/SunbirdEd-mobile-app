@@ -68,6 +68,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   btnColor = '#8FC4FF';
   appName: string;
   showQRScanner = true;
+  isJioBook = false;
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -139,6 +140,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.commonUtilService.isScannerAvailable().then((val) => {
+      this.isJioBook = val;
+    });
     this.handleActiveScanner();
 
     this.appVersion.getAppName().then((appName) => {
