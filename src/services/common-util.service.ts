@@ -33,6 +33,7 @@ import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
+import { UtilityService } from './utility-service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -69,7 +70,8 @@ export class CommonUtilService {
         private router: Router,
         private toastController: ToastController,
         private permissionService: AndroidPermissionsService,
-        private comingSoonMessageService: ComingSoonMessageService
+        private comingSoonMessageService: ComingSoonMessageService,
+        private utilityService: UtilityService,
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
@@ -795,6 +797,14 @@ export class CommonUtilService {
                 }
             }
         }
+    }
+
+    public async isScannerAvailable() {
+        const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
+        if ((deviceName.toLowerCase() === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+            return true;
+        }
+        return false;
     }
 
 }
