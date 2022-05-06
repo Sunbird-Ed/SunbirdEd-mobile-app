@@ -61,7 +61,7 @@ export class ProjectService {
   }
   async getTemplateByExternalId(id, extraParams?) {
     const config = {
-      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id + (extraParams ? extraParams : ''),
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + encodeURIComponent(id) + (extraParams ? extraParams : ''),
     }
     return this.unnatiService.post(config).toPromise();
   }
