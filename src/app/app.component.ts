@@ -51,6 +51,7 @@ import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmen
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const cordova;
+declare const window;
 
 @Component({
   selector: 'app-root',
@@ -129,6 +130,25 @@ export class AppComponent implements OnInit, AfterViewInit {
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
+    if (this.platform.is('iphone') || this.platform.is('ipad')) {
+      this.iosDeeplink();
+    }
+  }
+
+  iosDeeplink() {
+    window.addEventListener('deviceready', () => {
+      window.IonicDeeplink.route({
+        '/sample': ''
+        // This is not required untill NavigationController implementation
+        // for all deeplinked pages
+      }, function(match) {
+        // TODO handle matching URLs
+      }, function(nomatch) {
+        // nomatch.$link - the full link data
+        // Only URL has to sent to the deeplink service
+        this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
+      });
+    })
   }
 
   ngOnInit() {
