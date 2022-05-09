@@ -2029,6 +2029,49 @@ describe('AppComponent', () => {
             // assert
             expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.ORIENTATION);
         });
+
+        it('should handle login when network is not available', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'LOGIN'
+            };
+            const routeUrl = [`${RouterLinks.SIGN_IN}`];
+            mockCommonUtilService.networkInfo= { isNetworkAvailable: false };
+            mockCommonUtilService.showToast = jest.fn(); 
+            // act
+            appComponent.menuItemAction(menuName); 
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+        });
+
+        it('should handle login and router value is not matched', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'LOGIN'
+            };
+            mockCommonUtilService.networkInfo= { isNetworkAvailable: true };
+            const routeUrl = [`${RouterLinks.SIGN_IN}`];
+            // act
+            appComponent.menuItemAction(menuName);
+
+            // assert 
+            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl);
+                 
+        });
+
+        it('should handle login and router value is not matched', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'LOGIN'
+            }; 
+            const obj = {state: [{source: 'user'},{source: 'resources'}]};
+            const routeUrl = [`${RouterLinks.SIGN_IN}`, obj];
+            mockCommonUtilService.networkInfo= { isNetworkAvailable: true };
+
+            appComponent.menuItemAction(menuName); 
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl);
+        });
     });
 
     describe('checkAndroidWebViewVersion', () => {
