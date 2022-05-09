@@ -2059,7 +2059,7 @@ describe('AppComponent', () => {
                  
         });
 
-        it('should handle login and router value is not matched', () => {
+        it('should handle login and router value is matched', () => {
             // arrange
             const menuName = {
                 menuItem: 'LOGIN'
