@@ -2035,42 +2035,48 @@ describe('AppComponent', () => {
             const menuName = {
                 menuItem: 'LOGIN'
             };
-            const routeUrl = [`${RouterLinks.SIGN_IN}`];
-            mockCommonUtilService.networkInfo= { isNetworkAvailable: false };
-            mockCommonUtilService.showToast = jest.fn(); 
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            mockCommonUtilService.showToast = jest.fn();
             // act
-            appComponent.menuItemAction(menuName); 
+            appComponent.menuItemAction(menuName);
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
-
         it('should handle login and router value is not matched', () => {
             // arrange
             const menuName = {
                 menuItem: 'LOGIN'
             };
-            mockCommonUtilService.networkInfo= { isNetworkAvailable: true };
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const routeUrl = [`${RouterLinks.SIGN_IN}`];
             // act
             appComponent.menuItemAction(menuName);
-
-            // assert 
-            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl);
-                 
+            // assert
+             expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl);
         });
-
-        it('should handle login and router value is matched', () => {
+        it('should handle login and router value is user', () => {
             // arrange
             const menuName = {
                 menuItem: 'LOGIN'
-            }; 
-            const obj = {state: [{source: 'user'},{source: 'resources'}]};
-            const routeUrl = [`${RouterLinks.SIGN_IN}`, obj];
-            mockCommonUtilService.networkInfo= { isNetworkAvailable: true };
-
-            appComponent.menuItemAction(menuName); 
+            };
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockRouter.url = 'user';
+            // act
+            appComponent.menuItemAction(menuName);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl);
+            expect(mockRouter.url.split('/').pop()).toBe(PageId.USER);
+        });
+        it('should handle login and router value is resources', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'LOGIN'
+            };
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockRouter.url = 'resources';      
+            // act
+            appComponent.menuItemAction(menuName);
+            // assert
+            expect(mockRouter.url.split('/').pop()).toBe(PageId.RESOURCES); 
         });
     });
 
