@@ -10,6 +10,7 @@ import {
   TelemetryObject,
   TelemetryService,
   SharedPreferences,
+  CertificateService
 } from 'sunbird-sdk';
 import { EventTopics, RouterLinks, PreferenceKey } from '../app/app.constant';
 
@@ -26,7 +27,7 @@ import {
   CorReleationDataType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
@@ -34,6 +35,7 @@ import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
 import { FormConstants } from '@app/app/form.constants';
+import { CertificateVerificationPopoverComponent } from '@app/app/components/popups/certificate-verification/certificate-verification-popup.component';
 
 declare var cordova;
 
@@ -56,6 +58,7 @@ export class QRScannerResultHandler {
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageAssembleService: PageAssembleService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
@@ -63,7 +66,8 @@ export class QRScannerResultHandler {
     private events: Events,
     private appGlobalService: AppGlobalService,
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
-    private navService: NavigationService
+    private navService: NavigationService,
+    private popoverCtrl: PopoverController
   ) {
   }
 
@@ -218,6 +222,49 @@ export class QRScannerResultHandler {
     });
   }
 
+  async handleRcCertsQR(scannedData){
+    let encodedData, verifyCertReq;
+    this.generateQRScanSuccessInteractEvent(scannedData, 'OpenBrowser', undefined, {
+      certificateId: scannedData.split('/certs/')[1], scannedFrom: 'mobileApp'
+    });
+    if(scannedData.includes('data=')){
+      try {
+        encodedData = await this.certificateService.getEncodedData(scannedData.split('data=')[1])
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    verifyCertReq = {
+      certificateId: scannedData.split('certs/')[1].split('?')[0],
+      certificateData: encodedData,
+      schemaName: 'certificate',
+    }
+    this.certificateService.verifyCertificate(verifyCertReq).toPromise()
+    .then(async (res) => {
+      if(res.verified) {
+        const qrAlert = await this.popoverCtrl.create({
+          component: CertificateVerificationPopoverComponent,
+          componentProps: {
+              certificateData: res.certificateData,
+              actionsButtons: [
+                  {
+                      // btntext: this.translateMessage('OKAY'),
+                      btntext: 'OKAY',
+                      btnClass: 'sb-btn sb-btn-sm  sb-btn-tertiary'
+                  }
+              ],
+          },
+          cssClass: 'sb-popover',
+        });
+        await qrAlert.present();
+      } else {
+        this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'CERTIFICATE_VERIFICATION_FAIL', this.source, scannedData);
+      }
+    }).catch((err) => {
+      console.log('handleCertsQR mobile err', err)
+    })
+  }
+
   handleInvalidQRCode(source: string, scannedData: string) {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'UNKNOWN');
@@ -359,4 +406,6 @@ export class QRScannerResultHandler {
     };
     this.navCtrl.navigateForward([route], extras);
   }
+
+  
 }

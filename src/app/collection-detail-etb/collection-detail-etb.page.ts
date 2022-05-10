@@ -392,6 +392,14 @@ export class CollectionDetailEtbPage implements OnInit {
         this.refreshContentDetails(data);
       }
     });
+    this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
+      console.log('Next Content', data);
+      this.content = data.content;
+      this.playContent(data);
+      setTimeout(() => {
+        this.contentPlayerHandler.setLastPlayedContentId('');
+      }, 1000);
+    });
   }
 
   ionViewDidEnter() {

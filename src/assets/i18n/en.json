@@ -1537,5 +1537,10 @@
   "FRMELEMNTS_BTN_LOAD_MORE_IMAGES":"Load more images",
   "FRMELEMNTS_LBL_GALLERY":"Gallery",
   "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT":"You have attached a file that exceeds the limit",
-  "FRMELEMENTS_NO_EVIDENCES_FOR_FILE":"No files found for this project"
+  "FRMELEMENTS_NO_EVIDENCES_FOR_FILE":"No files found for this project",
+  "CERTIFICATE_VERIFIED": "Certificate verified",
+  "CERTIFICATE_ISSUED_TO": "Certificate issued to",
+  "SUCCESSFULLY_COMPLETING_COURSE": "For successfully completing the course",
+  "ON_APPNAME_ON": "On {{appName}} on",
+  "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed"
 }
