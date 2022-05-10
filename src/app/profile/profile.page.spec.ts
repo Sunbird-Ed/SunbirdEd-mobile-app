@@ -153,6 +153,7 @@ describe('Profile.page', () => {
             mockCourseService as CourseService,
             mockFormService as FormService,
             mockFrameworkService as FrameworkService,
+            mockCertificateService as CertificateService,
             mockNgZone as NgZone,
             mockRouter as Router,
             mockPopoverController as PopoverController,

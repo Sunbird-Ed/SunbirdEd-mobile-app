@@ -3,6 +3,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    h4{
+        word-break: break-all;
+        max-width: 92%;
+    }
 }
 .status-label {
     margin: auto;

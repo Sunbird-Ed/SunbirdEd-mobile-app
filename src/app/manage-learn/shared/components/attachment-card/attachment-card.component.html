@@ -14,8 +14,8 @@
               <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(attachment,i)"></ion-icon>
             </div>
             <img [src]="getImgContent(attachment?.localUrl)"
-              *ngIf="attachment.type.includes('image') && !attachment.url" />
-            <img [src]="attachment?.url" *ngIf="attachment.type.includes('image') && attachment.url" />
+              *ngIf="attachment.type.includes('image') && !attachment.url"  alt=""/>
+            <img [src]="attachment?.url" *ngIf="attachment.type.includes('image') && attachment.url"  alt=""/>
           </ion-card-content>
         </ion-card>
       </ion-col>

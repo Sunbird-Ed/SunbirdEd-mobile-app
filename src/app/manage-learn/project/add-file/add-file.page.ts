@@ -121,8 +121,10 @@ export class AddFilePage implements OnInit {
     this.headerConfig.pageTitle = this.taskId ? this.task.name : this.project.title;
     this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_PROJECT";
     if (this.taskId) {
+      this.task.attachments = this.task?.attachments ? this.task.attachments : [];
       this.attachments = this.task?.attachments ? this.task.attachments : [];
     } else {
+      this.project.attachments = this.project?.attachments ? this.project.attachments : [];
       this.attachments = this.project?.attachments ? this.project?.attachments : [];
     }
     this.remarks = this.taskId ? this.task.remarks : this.project?.remarks;

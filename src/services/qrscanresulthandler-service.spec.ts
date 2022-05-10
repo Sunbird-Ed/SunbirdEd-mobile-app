@@ -1,6 +1,6 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryService, Mode, ContentService,
-   FrameworkService, PageAssembleService, SharedPreferences } from 'sunbird-sdk';
+   FrameworkService, PageAssembleService, SharedPreferences, CertificateService } from 'sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
   CorReleationDataType, CorrelationData
@@ -9,7 +9,7 @@ import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
@@ -61,7 +61,9 @@ describe('QRScannerResultHandler', () => {
   };
   const mockPreferences: Partial<SharedPreferences> = {
     getString: jest.fn(() => { })
-};
+  };
+  const mockCertificateService: Partial<CertificateService> = {}
+  const mockPopoverController: Partial<PopoverController> = {};
 
   beforeAll(() => {
     qRScannerResultHandler = new QRScannerResultHandler(
@@ -70,6 +72,7 @@ describe('QRScannerResultHandler', () => {
       mockPageAssembleService as PageAssembleService,
       mockFrameworkService as FrameworkService,
       mockPreferences as SharedPreferences,
+      mockCertificateService as CertificateService,
       mockCommonUtilService as CommonUtilService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
@@ -78,6 +81,8 @@ describe('QRScannerResultHandler', () => {
       mockAppglobalService as AppGlobalService,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
       mockNavigationService as NavigationService,
+      mockPopoverController as PopoverController,
+
     );
   });
 
@@ -389,18 +394,20 @@ describe('QRScannerResultHandler', () => {
     beforeAll(() => {
       qRScannerResultHandler = new QRScannerResultHandler(
         mockContentService as ContentService,
-        mockTelemetryService as TelemetryService,
-        mockPageAssembleService as PageAssembleService,
-        mockFrameworkService as FrameworkService,
-        mockPreferences as SharedPreferences,
-        mockCommonUtilService as CommonUtilService,
-        mockTelemetryGeneratorService as TelemetryGeneratorService,
-        mockRouter as Router,
-        mockNavController as NavController,
-        mockEvents as Events,
-        mockAppglobalService as AppGlobalService,
-        mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-        mockNavigationService as NavigationService
+      mockTelemetryService as TelemetryService,
+      mockPageAssembleService as PageAssembleService,
+      mockFrameworkService as FrameworkService,
+      mockPreferences as SharedPreferences,
+      mockCertificateService as CertificateService,
+      mockCommonUtilService as CommonUtilService,
+      mockTelemetryGeneratorService as TelemetryGeneratorService,
+      mockRouter as Router,
+      mockNavController as NavController,
+      mockEvents as Events,
+      mockAppglobalService as AppGlobalService,
+      mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+      mockNavigationService as NavigationService,
+      mockPopoverController as PopoverController,
       );
     });
     it('should generate INTERACT and END event in case of invalid dialcode', () => {
