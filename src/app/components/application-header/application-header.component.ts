@@ -1,3 +1,4 @@
+import { AppOrientation } from './../../app.constant';
 import {
   ChangeDetectorRef, Component, EventEmitter,
   Inject, Input, NgZone, OnDestroy, OnInit, Output
@@ -16,7 +17,7 @@ import {
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
   EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
   Profile, ProfileService, ProfileType,
-  ServerProfile, SharedPreferences
+  ServerProfile, SharedPreferences, UserFeedStatus
 } from 'sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
@@ -66,6 +67,11 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isDarkMode:boolean;
   showReports: any;
   showLoginButton = false;
+  notificationCount = {
+    unreadCount : 0
+  };
+  isTablet = false;
+  orientationToSwitch = AppOrientation.LANDSCAPE;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -98,9 +104,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
     });
     this.events.subscribe('onPreferenceChange:showReport', res => {
-      this.showReports= res
-    })
+      this.showReports = res;
+    });
     this.getUnreadNotifications();
+    this.isTablet = window['isTablet'];
+    this.events.subscribe(EventTopics.ORIENTATION, () => {
+      this.checkCurrentOrientation();
+    });
   }
 
   ngOnInit() {
@@ -111,6 +121,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.events.subscribe('app-global:profile-obj-changed', () => {
       this.setAppLogo();
+    });
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
+      this.getUnreadNotifications();
     });
 
     this.events.subscribe('notification-status:update', (eventData) => {
@@ -271,17 +284,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed');
   }
 
-  getUnreadNotifications() {
-    let newNotificationCount = 0;
-    this.pushNotificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
-      notificationList.forEach((item) => {
-        if (!item.isRead) {
-          newNotificationCount++;
-        }
-      });
-
-      this.isUnreadNotification = Boolean(newNotificationCount);
-    });
+  async getUnreadNotifications() {
+    await this.notification.fetchNotificationList().then((data) => {
+      const notificationList = data.feeds;
+      const unreadNotificationList = notificationList.filter((n: any) => n.status === UserFeedStatus.UNREAD);
+      this.notificationCount.unreadCount = unreadNotificationList.length;
+    })
   }
 
   async fetchManagedProfileDetails() {
@@ -363,9 +371,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cData,
       ID.BTN_SWITCH
     );
-    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(res => {
+    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(async res => {
       this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       this.events.publish('loggedInProfile:update');
+      if(user.profileUserType && user.profileUserType.type){
+        await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, user.profileUserType.type).toPromise();
+        this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      }
       this.menuCtrl.close();
       this.showSwitchSuccessPopup(user.firstName);
       this.tncUpdateHandlerService.checkForTncUpdate();
@@ -498,4 +510,16 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
             && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
         (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT);
   }
+
+  private async checkCurrentOrientation() {
+    const currentOritentation = await this.preference.getString(PreferenceKey.ORIENTATION).toPromise();
+    if ( currentOritentation === AppOrientation.LANDSCAPE) {
+      this.orientationToSwitch = AppOrientation.POTRAIT;
+    } else {
+      this.orientationToSwitch = AppOrientation.LANDSCAPE;
+    }
+  }
+  
+
+  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 }

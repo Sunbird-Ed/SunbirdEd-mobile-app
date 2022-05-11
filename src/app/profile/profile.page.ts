@@ -43,7 +43,10 @@ import {
   ProfileType,
   Batch,
   GetLearnerCerificateRequest,
-  GenerateOtpRequest
+  GenerateOtpRequest,
+  CertificateService,
+  CSGetLearnerCerificateRequest,
+  CsLearnerCertificate
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -146,6 +149,7 @@ export class ProfilePage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private zone: NgZone,
     private router: Router,
     private popoverCtrl: PopoverController,
@@ -318,7 +322,8 @@ export class ProfilePage implements OnInit {
                     && that.profile.profileUserType.type === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.profileUserType.type;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.profileUserType.subType,
+                
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(this.profile,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
@@ -455,7 +460,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (res: Course[]) => {
         if (res.length) {
-          this.enrolledCourseList = res;
+          this.enrolledCourseList = res.sort((a, b) => (a.enrolledDate > b.enrolledDate ? -1 : 1));
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
         refreshCourseList ? await loader.dismiss() : false;
@@ -506,30 +511,40 @@ export class ProfilePage implements OnInit {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
       this.learnerPassbookCount ? request.size = this.learnerPassbookCount : null;
-      await this.courseService.getLearnerCertificates(request).toPromise().then(response => {
-        this.learnerPassbookCount = response.count;
+      const getCertsReq: CSGetLearnerCerificateRequest = {
+        userId: this.profile.userId || this.profile.id,
+        schemaName: 'certificate',
+        size: this.learnerPassbookCount? this.learnerPassbookCount : null
+      };
 
-        this.learnerPassbook = response.content.filter((learnerCertificate: any) => (learnerCertificate &&
-          learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
-          .map((learnerCertificate: any) => {
+      await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
+        this.learnerPassbookCount = response.certRegCount + response.rcCount || null;
+
+        this.learnerPassbook = response.certificates
+          .map((learnerCertificate: CsLearnerCertificate) => {
             const oneCert: any = {
-              issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
-              issuedOn: learnerCertificate._source.data.issuedOn,
-              courseName: learnerCertificate._source.data.badge.name,
-              courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
+              issuingAuthority: learnerCertificate.issuerName,
+              issuedOn: learnerCertificate.issuedOn,
+              courseName: learnerCertificate.trainingName,
+              courseId: learnerCertificate.courseId,
             };
-            if (learnerCertificate._source.pdfUrl) {
+            if (learnerCertificate.pdfUrl) {
               oneCert.certificate = {
-                url: learnerCertificate._source.pdfUrl || undefined,
-                id: learnerCertificate._id || undefined,
-                issuedOn: learnerCertificate._source.data.issuedOn,
-                name: learnerCertificate._source.data.badge.issuer.name
+                url: learnerCertificate.pdfUrl || undefined,
+                id: learnerCertificate.id || undefined,
+                identifier: learnerCertificate.id,
+                issuedOn: learnerCertificate.issuedOn,
+                name: learnerCertificate.issuerName,
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             } else {
               oneCert.issuedCertificate = {
-                identifier: learnerCertificate._id,
-                name: learnerCertificate._source.data.badge.issuer.name,
-                issuedOn: learnerCertificate._source.data.issuedOn
+                identifier: learnerCertificate.id,
+                name: learnerCertificate.issuerName,
+                issuedOn: learnerCertificate.issuedOn,
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             }
             return oneCert;

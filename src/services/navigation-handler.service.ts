@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { RouterLinks, MimeType } from '@app/app/app.constant';
+import { RouterLinks, MimeType, EventTopics } from '@app/app/app.constant';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { CommonUtilService } from './common-util.service';
 import { Environment, InteractSubtype, InteractType } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { Events } from '@app/util/events';
 @Injectable()
 export class NavigationService {
 
@@ -14,7 +15,8 @@ export class NavigationService {
     constructor(
         private router: Router,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private commonUtilService: CommonUtilService
+        private commonUtilService: CommonUtilService,
+        private events: Events
     ) { }
 
     navigateToDetailPage(content, navExtras) {
@@ -47,15 +49,23 @@ export class NavigationService {
     }
 
     navigateToTrackableCollection(navExtras) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-            state: navExtras
-        });
+        if (this.router.url && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+            this.events.publish(EventTopics.DEEPLINK_COURSE_PAGE_OPEN, navExtras);
+        } else {
+            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+                state: navExtras
+            });
+        }
     }
 
     navigateToCollection(navExtras) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-            state: navExtras
-        });
+        if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+            this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, navExtras);
+        } else {
+            this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+                state: navExtras
+            });
+        }
     }
 
     navigateToContent(navExtras) {

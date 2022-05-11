@@ -34,16 +34,14 @@ import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '../../services/consent-service';
 import {
     TncUpdateHandlerService,
 } from '../../services/handlers/tnc-update-handler.service';
-import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { mockProfileData } from '../profile/profile.page.spec.data';
-import { CourseBatchStatus, CourseEnrollmentType, DiscussionService, SortOrder } from '@project-sunbird/sunbird-sdk';
+import { DiscussionService } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -69,7 +67,10 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
     };
-    const mockEvents: Partial<Events> = {};
+    const mockEvents: Partial<Events> = {
+        publish: jest.fn(),
+        subscribe: jest.fn()
+    };
     const mockFileSizePipe: Partial<FileSizePipe> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {
     };
@@ -102,7 +103,8 @@ describe('EnrolledCourseDetailsPage', () => {
         translateMessage: jest.fn(),
         networkInfo: {
             isNetworkAvailable: true
-        }
+        },
+        appendTypeToPrimaryCategory: jest.fn(() => 'sample-details')
     };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -123,7 +125,6 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockConsentService: Partial<ConsentService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
-    const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
     const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
         transform: jest.fn(() => 'sample-message')
     };
@@ -133,8 +134,6 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockDiscussionService: Partial<DiscussionService> = {
         getForumIds: jest.fn()
-    };
-    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
     };
 
     global.window.segmentation = {
@@ -175,11 +174,9 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentDeleteHandler as ContentDeleteHandler,
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
-            mockContentPlayerHandler as ContentPlayerHandler,
             mockCategoryKeyTranslator as CategoryKeyTranslator,
             mockConsentService as ConsentService,
-            mockTncUpdateHandlerService as TncUpdateHandlerService,
-            mockDiscussionTelemetryService as DiscussionTelemetryService
+            mockTncUpdateHandlerService as TncUpdateHandlerService
         );
     });
 
@@ -299,7 +296,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.handleUnenrollButton();
             // assert
-            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
         });
 
         it('should be set updatedCourseCardData and set showUnenrollButton to true', () => {
@@ -317,7 +314,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.handleUnenrollButton();
             // assert
-            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
         });
 
         it('should set showUnenrollButton to false', () => {
@@ -667,6 +664,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
             mockLocation.back = jest.fn();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.appendTypeToPrimaryCategory = jest.fn(() => 'course-detail');
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
@@ -690,6 +688,7 @@ describe('EnrolledCourseDetailsPage', () => {
             spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            mockCommonUtilService.appendTypeToPrimaryCategory = jest.fn(() => 'course-detail');
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
@@ -1693,7 +1692,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1712,7 +1711,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 PageId.COURSE_DETAIL,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1735,7 +1734,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 objectType,
                 objectVersion,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
     });
@@ -1756,7 +1755,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch' }]
+                undefined
             );
         });
 
@@ -2007,7 +2006,6 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             enrolledCourseDetailsPage.isBatchNotStarted = false;
             enrolledCourseDetailsPage.nextContent = false;
-            mockContentPlayerHandler.playContent = jest.fn();
             mockPreferences.getBoolean = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }));
@@ -2022,9 +2020,9 @@ describe('EnrolledCourseDetailsPage', () => {
                     Environment.HOME,
                     PageId.COURSE_DETAIL,
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                    undefined,
+                   undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
@@ -2061,7 +2059,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                     undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
@@ -2105,7 +2103,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                     undefined,
                     {},
-                    [{ id: '', type: 'CourseBatch' }],
+                    undefined,
                 );
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
@@ -2387,6 +2385,7 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
                 return Promise.resolve();
             });
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             // assert
             enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
@@ -2431,6 +2430,7 @@ describe('EnrolledCourseDetailsPage', () => {
             });
             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             // act
             enrolledCourseDetailsPage.ionViewWillEnter();
             // assert
@@ -2666,7 +2666,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
@@ -2708,7 +2707,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');

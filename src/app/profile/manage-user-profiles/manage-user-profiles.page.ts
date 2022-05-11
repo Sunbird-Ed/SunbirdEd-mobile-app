@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
+import { RouterLinks, ProfileConstants, PreferenceKey } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -136,11 +136,14 @@ export class ManageUserProfilesPage implements OnInit {
       cData,
       ID.BTN_SWITCH
     );
-    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: this.selectedUser.id }).toPromise().then(res => {
+    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: this.selectedUser.id }).toPromise().then(async res => {
       this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       this.events.publish('loggedInProfile:update');
+      if(this.selectedUser.profileUserType && this.selectedUser.profileUserType.type){
+        await this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUser.profileUserType.type).toPromise();
+        this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      }
       this.showSwitchSuccessPopup(this.selectedUser.firstName);
-      this.router.navigate([RouterLinks.TABS]);
       this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');

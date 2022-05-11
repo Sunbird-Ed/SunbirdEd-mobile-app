@@ -5,17 +5,13 @@ import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
 import * as moment from 'moment';
-import { HttpClient } from '@angular/common/http';
-import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
-import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, NetworkService, statusType, ToastService } from '../../core';
+import { NetworkService, ProjectService, statusType, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
-import { SyncService } from '../../core/services/sync.service';
 import cloneDeep from 'lodash/cloneDeep';
 
 @Component({
@@ -51,19 +47,15 @@ export class ProjectOperationPage  {
     private routerparam: ActivatedRoute,
     private router: Router,
     private modalController: ModalController,
-    private http: HttpClient,
-    private utils: UtilsService,
     private location: Location,
     private headerService: AppHeaderService,
     public platform: Platform,
     private db: DbService,
     private translate: TranslateService,
     private alertController: AlertController,
-    private unnatiDataService: UnnatiDataService,
-    private loaderService: LoaderService,
-    private syncServ: SyncService,
     private networkService: NetworkService,
     private toast: ToastService,
+    private projectServ: ProjectService,
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -284,8 +276,8 @@ export class ProjectOperationPage  {
     }
     if(!newProject &&  JSON.stringify(this.template) !== JSON.stringify(this.templateCopy)){
       this.template.isEdit = true;
-      this.template.status =  this.template.status ? this.template.status : statusType.notStarted;
-      this.template.status =  this.template.status == statusType.notStarted ? statusType.inProgress:this.template.status;
+      this.template.status =  this.template.status ? this.template.status : statusType.started;
+      // this.template.status =  this.template.status == statusType.notStarted ? statusType.inProgress:this.template.status;
     }
     this.template.isDeleted = false;
     this.db.update(this.template).then(success => {
@@ -309,6 +301,10 @@ export class ProjectOperationPage  {
           text: texts[button],
           cssClass: 'secondary',
           handler: (blah) => {
+            if(isNew){
+              this.networkService.isNetworkAvailable ? this.projectServ.createNewProject(this.template, false) : this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
+              return;
+            }
             this.showSkip ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
               queryParams: {
                 projectId: project._id,
@@ -341,11 +337,10 @@ export class ProjectOperationPage  {
   }
 
   newProjectCreate() {
-    this.template.isNew = true;
-    this.template.downloaded = true;
-
-    this.update(true);
+    this.template.isDeleted = false;
+    this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) 
   }
+
   ionViewWillLeave() {
     if(this.viewProjectAlert ){
      this.viewProjectAlert.dismiss();

@@ -89,7 +89,7 @@ export class TextbookViewMorePage {
         corRelation: this.corRelationList
       });
     } else {
-      this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI_1', false, 'toastHeader', 3000, 'top');
+      this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI', false, 'toastHeader', 3000, 'top');
     }
   }
 

@@ -411,3 +411,9 @@
   z-index: 9;
   top: 0px;
 }
+
+::ng-deep {
+  .sb--card__img.sb--card__image-pos {
+    z-index: 8 !important;
+  }
+}

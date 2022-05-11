@@ -15,6 +15,7 @@ import {
   InteractType
 } from '@app/services/telemetry-constants';
 import { map } from 'rxjs/operators';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 enum ViewType {
   APP_RATE = 'appRate',
@@ -63,6 +64,7 @@ export class AppRatingAlertComponent implements OnInit {
     private platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navParams: NavParams,
+    private commonUtilService: CommonUtilService,
   ) {
     this.getAppName();
     this.appLogo$ = this.preference.getString('app_logo').pipe(
@@ -164,6 +166,7 @@ export class AppRatingAlertComponent implements OnInit {
       undefined,
       { appRatingPopAppearedCount: this.appRatingPopCount }
     );
+    this.rateContent(0);
   }
 
   async calculateAppRatingCountAppeared(value) {
@@ -180,6 +183,11 @@ export class AppRatingAlertComponent implements OnInit {
         return this.calculateAppRatingCountAppeared(1);
       }
     });
+  }
+
+  rateContent(ratingCount){
+    const ratingDomTag = document.getElementsByTagName('rating');
+    this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, ratingCount);
   }
 
 }

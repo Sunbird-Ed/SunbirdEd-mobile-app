@@ -60,11 +60,16 @@ export class SignInPage implements OnInit {
         private signInWithApple: SignInWithApple,
         public platform: Platform
     ) {
-        this.skipNavigation = this.router.getCurrentNavigation().extras.state;
+        const extrasData = this.router.getCurrentNavigation().extras.state;
+        this.skipNavigation = extrasData;
+        if(extrasData && extrasData.hideBackBtn) {
+            this.appHeaderService.hideHeader();
+        } else {
+            this.appHeaderService.showHeaderWithBackButton();
+        }
     }
 
     async ngOnInit() {
-        this.appHeaderService.showHeaderWithBackButton();
         this.appName = await this.commonUtilService.getAppName();
     }
 

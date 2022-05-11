@@ -1,0 +1,69 @@
+.task-card{
+    padding: 10px;
+    margin: 15px 0px !important;
+    .last-row {
+        display: flex;
+        margin: 5px 0px;
+        justify-content: space-between;
+    }
+    .display-flex-space-btn{
+        display: flex;
+         margin: 5px 0px;
+         .action-icon{
+            font-size: 20px;
+         }
+         .link-label{
+            color: var(--app-primary);
+             font-size: 16px;
+             ion-icon{
+                color: var(--app-primary);
+                display: inline-block;
+                font-size: 16px;
+                vertical-align: middle;
+             }
+         }
+         ion-button {
+            font-size: 14px;
+            text-transform: capitalize;
+          }
+    }
+    .check-icon{
+        font-size: 24px;
+        margin-top: 3px;
+        padding-left: 0px;
+    }
+    .mandatory-ribben-label{
+        background-color: var(--app-primary-header) !important;
+        padding: 2px 15px;
+        color: #000;
+        text-transform: uppercase;
+        font-size: 13px !important;
+        border-radius: 4px;
+        font-weight: 500;
+        align-self: flex-start;
+    }
+
+    .action-btn{
+        --background: var(--app-primary-header) !important;
+        color: var(--app-primary) !important;
+        text-transform: none;
+    }
+
+    .options {
+        align-self: flex-start;
+    }
+
+    .viewBtn {
+        justify-content: flex-end;
+    }
+}
+.view-more {
+    --background: transparent !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    width: 100%;
+    text-transform: none;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 10px 0;
+ }

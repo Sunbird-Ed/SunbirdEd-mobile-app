@@ -2,10 +2,8 @@ import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { IonSelect, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import {
   FrameworkService,
   FrameworkUtilService,
@@ -25,17 +23,14 @@ import {
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { ContainerService } from '@app/services/container.services';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { Router, NavigationExtras } from '@angular/router';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { CategoriesEditService } from './categories-edit.service';
 
 
 @Component({
@@ -80,6 +75,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   public supportedProfileAttributes: { [key: string]: string } = {};
   userType: string;
   shouldUpdatePreference: boolean;
+  noOfStepsToCourseToc = 0;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -130,19 +126,15 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private translate: TranslateService,
     private appGlobalService: AppGlobalService,
-    private events: Events,
-    private container: ContainerService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private platform: Platform,
     private activePageService: ActivePageService,
-    private externalIdVerificationService: ExternalIdVerificationService,
-    private tncUpdateHandlerService: TncUpdateHandlerService,
     private sbProgressLoader: SbProgressLoader,
     private profileHandler: ProfileHandler,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private categoriesEditService: CategoriesEditService
 
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -152,6 +144,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       this.hasFilledLocation = extrasState.hasFilledLocation;
       this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
       this.isRootPage = Boolean(extrasState.isRootPage);
+      this.noOfStepsToCourseToc = extrasState.noOfStepsToCourseToc;
       if (extrasState.profile) {
         this.profile = extrasState.profile;
       }
@@ -463,63 +456,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.profileService.updateServerProfile(req).toPromise()
       .then(async () => {
         await this.loader.dismiss();
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.disableSubmitButton = true;
-        this.events.publish('loggedInProfile:update', req.framework);
-        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
-        await this.refreshSegmentTags();
-        if (this.showOnlyMandatoryFields || this.shouldUpdatePreference) {
-          const reqObj: ServerProfileDetailsRequest = {
-            userId: this.profile.uid,
-            requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER
-          };
-          this.profileService.getServerProfilesDetails(reqObj).toPromise()
-            .then(updatedProfile => {
-               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
-                .then(async () => {
-                  if (this.shouldUpdatePreference) {
-                    this.location.back();
-                  } else {
-                    initTabs(this.container, LOGIN_TEACHER_TABS);
-                    if (this.hasFilledLocation || isSSOUser) {
-                      if (!isSSOUser) {
-                        this.appGlobalService.showYearOfBirthPopup(updatedProfile);
-                      }
-                      this.router.navigate([RouterLinks.TABS]);
-                      this.events.publish('update_header');
-                      this.externalIdVerificationService.showExternalIdVerificationPopup();
-                    } else {
-                      const navigationExtras: NavigationExtras = {
-                        state: {
-                          isShowBackButton: false
-                        }
-                      };
-                      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-                    }
-                  }
-                });
-            }).catch(() => {
-              initTabs(this.container, LOGIN_TEACHER_TABS);
-              if (this.hasFilledLocation) {
-                if (!isSSOUser) {
-                  this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
-                }
-                this.router.navigate([RouterLinks.TABS]);
-                this.events.publish('update_header');
-                this.externalIdVerificationService.showExternalIdVerificationPopup();
-              } else {
-                const navigationExtras: NavigationExtras = {
-                  state: {
-                    isShowBackButton: false
-                  }
-                };
-                this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-              }
-            });
-        } else {
-          this.location.back();
-        }
+        await this.categoriesEditService.updateServerProfile(req, this.profile, this.showOnlyMandatoryFields,
+          this.shouldUpdatePreference, this.hasFilledLocation, this.noOfStepsToCourseToc);
       }).catch(async (error) => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));

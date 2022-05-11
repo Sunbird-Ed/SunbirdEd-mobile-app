@@ -27,7 +27,6 @@ const routes: Routes = [
     IonicModule,
     IonicRatingModule,
     RouterModule.forChild(routes),
-    RouterModule.forChild(routes),
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,

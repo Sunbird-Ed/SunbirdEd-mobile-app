@@ -10,18 +10,32 @@
     </sb-library-filters>
   </div>
 
-  <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
+  <app-item-list-card *ngIf="selectedFilterIndex==2" title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
     subTitle="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING' | translate}}" class="create_header"
     (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon clr-primary" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
-  <div>
-    <h5 *ngIf="selectedFilter" class="sb--card__title projects-labels">{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter}} </h5>
+  <div class="header">
+  <app-item-list-header *ngIf="selectedFilter" headerLabel="{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter | lowercase}}"></app-item-list-header>
   </div>
+  <!-- <div *ngIf="selectedFilterIndex==0">
+    <app-item-list-card *ngFor="let project of projects"
+      [title]="project?.name||project?.title" [subTitle]="project?.programName" [id]="project?._id"
+      (cardSelect)="doAction($event, project)">
+    </app-item-list-card>
+  </div>
+  <div *ngIf="!selectedFilterIndex==0">
+    <app-item-list-card *ngFor="let project of projects"
+      [title]="project?.name||project?.title" [subTitle]="" [id]="project?._id"
+      (cardSelect)="doAction($event, project)">
+    </app-item-list-card>
+  </div> -->
+  <!-- <ion-button routerLink="/project/project-templateview"> Go to Template page
+    </ion-button> -->
   <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title"
     [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">
 
-    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc"
+    <!-- <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc"
       (click)="$event.stopPropagation(); downloaded(project)">
       <ion-icon class="mg-popup-btn-icon clr-primary"  name="arrow-down" color="primary"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
@@ -29,11 +43,11 @@
     <div arrow *ngIf="project?.downloaded" class="d-flex flex-dc">
       <ion-icon class="mg-popup-btn-icon clr-downloaded-btn" style="color:green" name="checkmark"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
-    </div>
+    </div> -->
   </app-item-list-card>
-  <app-no-data *ngIf="!projects?.length"></app-no-data>
+  <app-no-data *ngIf="!projects?.length" [message]="noDataFound" [color]="'text-primary'"></app-no-data>
 </ion-content>
-<ion-button class="view-more" expand="block" (click)="loadMore()"
+<ion-button class="view-more" fill="outline" (click)="loadMore()"
   *ngIf="projects?.length && count > currentOnlineProjectLength">
-  {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
+  {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate | uppercase }}
 </ion-button>

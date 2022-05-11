@@ -20,7 +20,7 @@ export class ConsentService {
                 isSSOUser: isOrgConsent,
                 course
             },
-            cssClass: 'sb-popover',
+            cssClass: 'sb-popover back-drop-hard',
             backdropDismiss: false
         });
         await popover.present();

@@ -60,8 +60,9 @@ export class ProfileHandler {
         return userTypeConfig ? userTypeConfig['searchFilter'] : [];
     }
 
-    public async getSubPersona(subPersonaCode: string, persona: string, userLocation: any): Promise<string> {
-        if (!subPersonaCode || !persona) {
+    public async getSubPersona(profile, persona: string, userLocation: any): Promise<string> {
+
+        if((!profile.profileUserTypes || !profile.profileUserTypes.length) && (!profile.profileUserType || !profile.profileUserType.subType)){
             return undefined;
         }
         let formFields;
@@ -79,10 +80,36 @@ export class ProfileHandler {
         const subPersonaConfig = personaChildrenConfig.find(formField => formField.code === 'subPersona');
         if (!subPersonaConfig) {
             return undefined;
-         }
-        const subPersonaFieldConfigOption = (subPersonaConfig.templateOptions.options as FieldConfigOption<any>[]).
-                    find(option => option.value === subPersonaCode);
-        return subPersonaFieldConfigOption ? subPersonaFieldConfigOption.label : undefined;
+        }
+        const subPersonaCodes = [];
+
+        if (subPersonaConfig.templateOptions.multiple) {
+            if (!profile.profileUserTypes && !profile.profileUserTypes.length && profile.profileUserType && profile.profileUserType.subType) {
+                subPersonaCodes.push(profile.profileUserType.subType);
+            }
+            else if (profile.profileUserTypes && profile.profileUserTypes.length) {
+                for (let i = 0; i < profile.profileUserTypes.length; i++) {
+                    subPersonaCodes.push(profile.profileUserTypes[i].subType);
+                }
+            }            
+        } else{
+            if (profile.profileUserType) {
+                subPersonaCodes.push(profile.profileUserType.subType);
+            }
+        }
+
+         const subPersonaLabelArray : any = []
+         if (subPersonaConfig.templateOptions.options && subPersonaConfig.templateOptions.options.length) {
+            subPersonaCodes.forEach(code => {
+              for (let i = 0; i<subPersonaConfig.templateOptions.options.length; i++ ){
+                if(subPersonaConfig.templateOptions.options[i].value === code){
+                  subPersonaLabelArray.push(subPersonaConfig.templateOptions.options[i].label);
+                  break;
+                }
+              }
+            });
+          }
+         return subPersonaLabelArray;
     }
 
     private async getProfileFormConfig(subType: string): Promise<FieldConfig<any>[]> {

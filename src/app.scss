@@ -1167,6 +1167,7 @@ sb-library-cards-hlist {
   }
   .title {
     font-size: 18px !important;
+    text-transform: none !important;
   }
 }
 
@@ -1394,6 +1395,10 @@ app-manage-user-profiles{
 }
 ion-modal.sb-progress-loader {
   z-index: 50000 !important;
+  .modal-wrapper {
+    width: 100vw;
+    height: 100vh;
+  }
 }
 .tutorial-popover {
   .popover-wrapper {
@@ -1851,6 +1856,7 @@ app-user-home, app-sb-preferences-popup {
 sb-form{
   .multi-select-container{
     .list-border{
+      background-color: transparent !important;
       ul{
         width: 90%;
         text-overflow: ellipsis;
@@ -2124,6 +2130,7 @@ app-user-home{
       box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
     } 
     .sb--card__main-area{
+      height: 7rem !important;
       flex-direction: row-reverse !important;
       .sb--card__img{
         float: right;
@@ -2154,4 +2161,169 @@ app-user-home{
       }
     }
   }
+}
+
+app-add-file {
+  .icon-style{
+    border-radius: 50%;
+    padding: 10px;
+    background-image: linear-gradient( #dce7f3 50%, #adc3dd 100% );
+    box-shadow: 1px 3px 4px #666666;
+  }
+  .btn-space-btwn{
+    display: flex;
+    justify-content: space-between;
+  }
+}
+app-metadata-details,app-add-file {
+  .progress-bar-style{
+    height: 10px;
+    border-radius: 16px;
+    // --progress-background: green !important;
+  }
+  ion-card{
+    margin: 0 0 10px 0 !important;
+    --ion-item-background: white;
+  }
+  ion-content{
+    --ion-background-color: white;
+  }
+.hr-border-bottom {
+    box-sizing: border-box;
+    height: 1px;
+    width: 100%;
+    border: 0.5px solid map-get($colors, medium_gray);
+    margin-top: 9px;
+}
+.hr-border-bottom-share {
+  box-sizing: border-box;
+  height: 1px;
+  border: 1px solid #E9DED3;
+  margin-top: 8px;
+}
+.wrapper {
+  grid-template-columns: 100px 100px 100px auto;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  & > div {
+    border-radius: 5px;
+    padding: 1em 0;
+  }
+}
+
+.pull-right{
+    float: right;
+}
+.menu-icon{
+  display: block;
+  width: 100%;
+  height: 16px;
+  margin-top: 18px;
+  float: right;
+}
+.card-icons {
+  font-size: 30px;
+  color: $blue;
+}
+.card-icons-downloadStarted {
+  font-size: 30px;
+  color: map-get($colors, text_gray);
+}
+.card-icons-red{
+  font-size: 30px;
+  color:map-get($colors , danger);
+}
+
+.card-text{
+  height: 18px;
+  width: auto;
+  color: map-get($colors, granite_gray);
+  font-family: "Noto Sans", sans-serif;
+  font-size: 13px !important;
+  line-height: 20px;
+  text-align: center;
+}
+.card-button{
+    background-color: transparent !important;
+    outline: none;
+    padding: 0px 10px;
+}
+
+.enrolled-course-card-button{
+  background-color: var(--app-primary) !important;
+  border-radius: 50px !important;
+  margin: 1rem 0 1rem !important;
+}
+.view-credits{
+  strong{
+    color: var(--app-dark-gray) !important;
+  }
+}
+.sb-dt-card{
+  margin: 15px 0 !important;
+  border-radius: 12px !important;
+}
+.sb-dt-card-actions{
+    padding-left: 0px !important; 
+    padding-right: 0px !important;
+  .card-button{
+    box-shadow: none !important;
+  }
+  .sb-course-progress-container{
+    background-color: var(--joyful-light-yellow) !important;
+    border-radius: 8px;;
+    padding: 10px 15px;
+  }
+  .progress-label {
+    font-size: 10px !important;
+    color: map-get($colors, primary_black);
+  }
+}
+.enrolled-course-container{
+  ion-card{
+    background-color: var(--joyful-light-blue) !important;
+  }
+}
+.certificate-container{
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+.sb-course-complete-container, .sb-batch-end-container{
+  border-radius: 1rem;
+}
+
+.card-content-bottom-0 {
+  .segment-button-has-label-only {
+    color: var(--app-primary) !important;
+  }
+}
+}
+
+.project-segments{
+  margin: 0px 0px 16px;
+  display: flex;
+  .hr-div {
+    padding: 0px 10px 0px 10px;
+  }
+  hr.hr-height {
+    height: 40px;
+    width: 2px;
+    background: black;
+  }
+.segment-card{
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--button-style-shadow) !important;
+    ion-segment-button{
+        margin: 0px 10px;
+        text-transform: none;
+    }
+}
+.attachment-delete-alert{
+  background-color: red;
+  ion-button{
+    color:#adc3dd;
+    --color:green;
+  }
+}
 }

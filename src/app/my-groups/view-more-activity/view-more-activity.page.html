@@ -10,7 +10,7 @@
           </span>
         </div>
         <div class="sb-card-container sb-card-textbook-container">
-          <div *ngIf="activityGroup.title === 'ACTIVITY_COURSE_TITLE'">
+          <div *ngIf="activityGroup.title === 'COURSES'">
             <div class="sc-content" *ngFor="let activity of activityGroup.items; let i = index;">
               <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
                 [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo"
@@ -19,7 +19,7 @@
               </sb-course-card>
             </div>
           </div>
-          <div *ngIf="activityGroup.title !== 'ACTIVITY_COURSE_TITLE'">
+          <div *ngIf="activityGroup.title !== 'COURSES'">
             <div class="sc-content" *ngFor="let activity of activityGroup.items; let i = index;">
               <sb-library-card [content]="activity.activityInfo" [type]="'mobile_textbook'" (click)="onActivityCardClick($event, activity)"
               [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [isMenu]="isMenu"

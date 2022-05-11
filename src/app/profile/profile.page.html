@@ -22,15 +22,10 @@
             <span class="app-name"> {{appName}} </span>
             <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
-            <span class="profile-share-icon" (click)="shareUsername()">
-                <ion-icon role="button" aria-label="Share profile" name="share-social" class="share-icon"></ion-icon>
+            <span role="button" aria-label="Share profile" class="profile-share-icon" (click)="shareUsername()" tabindex="0">
+                <ion-icon name="share-social" aria-hidden="true" class="share-icon"></ion-icon>
             </span>
         </p>
-        <div class="school-recent" *ngIf="organisationName">
-            <h6 class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-
-            </h6>
-        </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
@@ -60,10 +55,10 @@
             <span>{{profile?.persona?.name}}</span>
         </div>
     </div>
-    <div *ngIf="profile?.subPersona" class="text-center">
+    <div *ngIf="profile?.subPersona && profile?.subPersona.length" class="text-center">
         <div>
             <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
-            <span>{{profile?.subPersona}}</span>
+            <span>{{profile?.subPersona.join(', ')}}</span>
         </div>
     </div>
     <div *ngIf="userLocation" class="location text-center">
@@ -137,39 +132,39 @@
     </div>
     <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
         <div *ngIf="profile?.phone">
-            <div class="phone" (click)="editMobileNumber();">
+            <div class="phone" role="button" (click)="editMobileNumber();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="call"></ion-icon>
+                    <ion-icon aria-hidden="true" name="call"></ion-icon>
                 </span>
                 <span class="value align-middle">+91 {{ profile?.phone }}</span>
             </div>
         </div>
         <div *ngIf="!profile?.phone">
-            <div class="phone light" (click)="editMobileNumber();" tabindex="0">
+            <div class="phone light" role="button"  (click)="editMobileNumber();" tabindex="0">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="call"></ion-icon>
+                    <ion-icon aria-hidden="true" name="call"></ion-icon>
                 </span>
                 <span class="value align-middle">{{'ADD_PHONE' | translate}}</span>
             </div>
         </div>
         <div *ngIf="profile?.email">
-            <div class="email " (click)="editEmail();" tabindex="0">
+            <div class="email " role="button" (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="mail"></ion-icon>
+                    <ion-icon aria-hidden="true" name="mail"></ion-icon>
                 </span>
                 <span class="value align-middle">{{ profile?.email }}</span>
             </div>
         </div>
         <div *ngIf="!profile?.email">
-            <div class="email light" (click)="editEmail();" tabindex="0">
+            <div class="email light" role="button" (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="mail"></ion-icon>
+                    <ion-icon aria-hidden="true" name="mail"></ion-icon>
                 </span>
                 <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
             </div>
         </div>
         <div class="MT10" *ngIf=" ( profile?.recoveryEmail?.length > 0 ) || ( profile?.recoveryPhone?.length > 0 )">
-            <div class="email" (click)="editRecoveryId();">
+            <div class="email" role="button" (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
@@ -182,7 +177,7 @@
         </div>
         <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
         ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
-            <div class="email light" (click)="editRecoveryId();" tabindex="0">
+            <div class="email light" role="button" (click)="editRecoveryId();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
@@ -226,7 +221,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="bottom-block">
+    <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>

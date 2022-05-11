@@ -950,7 +950,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

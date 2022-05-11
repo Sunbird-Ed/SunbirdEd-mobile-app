@@ -1,3 +1,4 @@
+import { OnInit } from '@angular/core';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -14,13 +15,14 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
 import { ContentUtil } from '@app/util/content-util';
+import { FormAndFrameworkUtilService } from '@app/services';
 
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
   styleUrls: ['./filters.page.scss']
 })
-export class FiltersPage implements OnDestroy {
+export class FiltersPage implements OnInit, OnDestroy {
 
   filterCriteria: any;
   initialFilterCriteria: any;
@@ -41,14 +43,24 @@ export class FiltersPage implements OnDestroy {
     private location: Location,
     private router: Router,
     private headerService: AppHeaderService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
     this.initialFilterCriteria = this.router.getCurrentNavigation().extras.state.initialfilterCriteria;
     this.source = this.router.getCurrentNavigation().extras.state.source;
     this.supportedUserTypesConfig = this.router.getCurrentNavigation().extras.state.supportedUserTypesConfig;
-    this.init();
     this.handleBackButton();
+  }
+
+    ngOnInit(): void {
+    this.fetchChannelIdName();
+    this.init();
+  }
+
+  private async fetchChannelIdName() {
+    this.filterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(this.filterCriteria);
+    this.initialFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(this.initialFilterCriteria);
   }
 
   async ionViewWillEnter() {
@@ -92,7 +104,7 @@ export class FiltersPage implements OnDestroy {
     this.init();
   }
 
-  applyFilter() {
+  async applyFilter() {
     const values = {
       appliedFilter: {}
     };
@@ -104,6 +116,7 @@ export class FiltersPage implements OnDestroy {
       (this.source && this.source.match('courses')) ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
+    this.filterCriteria = await this.formAndFrameworkUtilService.changeChannelNameToId(this.filterCriteria);
     this.events.publish('search.applyFilter', this.filterCriteria);
     this.location.back();
   }
@@ -198,6 +211,7 @@ export class FiltersPage implements OnDestroy {
     this.shouldEnableFilter = false;
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    this.filterCriteria = await this.formAndFrameworkUtilService.changeChannelNameToId(this.filterCriteria);
     const modifiedCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
     modifiedCriteria.facetFilters.forEach(facet => {
       if (facet.values && facet.values.length > 0) {
@@ -208,12 +222,11 @@ export class FiltersPage implements OnDestroy {
     });
     this.contentService.searchContent(modifiedCriteria).toPromise()
       .then(async (responseData: ContentSearchResult) => {
-        await loader.dismiss();
         this.shouldEnableFilter = true;
         if (responseData) {
           this.facetsFilter = [];
           this.filterCriteria = undefined;
-          this.filterCriteria = responseData.filterCriteria;
+          this.filterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(responseData.filterCriteria);
           responseData.filterCriteria.facetFilters.forEach(element => {
             this.initialFilterCriteria.facetFilters.forEach(item => {
               if (element.name === item.name) {
@@ -222,6 +235,7 @@ export class FiltersPage implements OnDestroy {
               }
             });
           });
+          await loader.dismiss();
           this.init();
         }
       }).catch(async () => {

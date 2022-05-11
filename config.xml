@@ -16,15 +16,15 @@
     <preference name="AndroidLaunchMode" value="singleInstance" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-    <hook src="scripts/copyGradleFiles.js" type="before_build" />
-    <hook src="scripts/copyBundledData.js" type="before_build" />
-    <hook src="scripts/application/add_application.js" type="before_run" />
-    <hook src="scripts/copyGradleFiles.js" type="before_run" />
-    <hook src="scripts/copyBundledData.js" type="before_run" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
-    <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
     <platform name="android">
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
+        <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_build" />
+        <hook src="scripts/copyBundledData.js" type="before_build" />
+        <hook src="scripts/copyGradleFiles.js" type="before_run" />
+        <hook src="scripts/copyBundledData.js" type="before_run" />
+        <hook src="scripts/application/add_application.js" type="before_run" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
@@ -42,8 +42,7 @@
             </queries>
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:allowBackup="false" android:networkSecurityConfig="@xml/network_security_config" android:usesCleartextTraffic="true" />
-        </edit-config>
+            <application android:allowBackup="false" android:largeHeap="true" android:networkSecurityConfig="@xml/network_security_config" android:usesCleartextTraffic="true" />        </edit-config>
         <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
         <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
         <preference name="android-manifest/application/@android:allowBackup" value="false" />
@@ -73,8 +72,23 @@
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
     </platform>
     <platform name="ios">
+       <allow-navigation href="*" />
+       <hook src="scripts/ios/ios.js" type="after_prepare" />
+        <preference name="WKWebViewOnly" value="true" />
+        <edit-config file="*-Info.plist" mode="overwrite" target="UIBackgroundModes">
+            <array />
+        </edit-config>
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <preference name="AllowInlineMediaPlayback" value="true" />
+        <preference name="MediaPlaybackRequiresUserAction" value="false" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+            <string>App uses camera permissions to scan QR codes and upload evidences</string>
+        </edit-config>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
@@ -119,12 +133,12 @@
     <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
     <plugin name="cordova-plugin-ionic-webview" spec="^4.2.1" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.2" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.3" />
     <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.3" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
-    <plugin name="cordova-plugin-inappbrowser" spec="^3.2.0" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^5.0.0" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
     <plugin name="cordova-plugin-webview-checker" spec="^1.0.1" />
@@ -163,4 +177,5 @@
     <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
     </plugin>
+    <plugin name="uk.co.workingedge.phonegap.plugin.istablet" spec="^1.2.0" />
 </widget>

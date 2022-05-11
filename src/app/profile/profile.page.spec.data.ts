@@ -43,6 +43,7 @@ export const mockProfileData = {
     profileUserType: {
         type: 'teacher'
     },
+    profileUserTypes: [{type: 'teacher'}, {type: 'student'}],
     declarations: [{
         orgId: 'sample_org_id',
         persona: 'sample_persona',
@@ -58,6 +59,12 @@ export const mockProfileData = {
     framework: {
         medium: ['English', 'Bengali'],
         board: ['CBSE'],
+    },
+    serverProfile: {
+        roles: [
+            'teacher',
+        'headmaster'
+        ]
     }
 };
 

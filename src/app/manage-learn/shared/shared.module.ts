@@ -27,7 +27,15 @@ import {
   CreateTaskFormComponent,
   PrivacyPolicyAndTCComponent,
   ProjectMetadataCardComponent,
-  ProjectTaskListComponent
+  ProjectTaskListComponent,
+  MetadataDetailsComponent,
+  MetadataActionsComponent,
+  ProjectDetailsCardComponent,
+  AccordionListComponent,
+  TaskCardComponent,
+  AddLinkModalComponent,
+  AttachmentCardComponent,
+  AttachmentListsComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -67,7 +75,6 @@ import { ExpansionPanelComponent } from './components/expansion-panel/expansion-
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
 import { HTTP } from '@ionic-native/http/ngx';
-
 
 @NgModule({
   declarations: [
@@ -117,7 +124,15 @@ import { HTTP } from '@ionic-native/http/ngx';
     ExpansionTableComponent,
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
-    ProjectTaskListComponent
+    ProjectTaskListComponent,
+    MetadataDetailsComponent,
+    MetadataActionsComponent,
+    ProjectDetailsCardComponent,
+    AccordionListComponent,
+    TaskCardComponent,
+    AddLinkModalComponent,
+    AttachmentCardComponent,
+    AttachmentListsComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -168,7 +183,15 @@ import { HTTP } from '@ionic-native/http/ngx';
     ExpansionTableComponent,
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
-    ProjectTaskListComponent
+    ProjectTaskListComponent,
+    MetadataDetailsComponent,
+    MetadataActionsComponent,
+    ProjectDetailsCardComponent,
+    AccordionListComponent,
+    TaskCardComponent,
+    AddLinkModalComponent,
+    AttachmentCardComponent,
+    AttachmentListsComponent
   ],
   providers: [
     Camera,
@@ -205,7 +228,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     RemarksModalComponent,
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
-    ProjectTaskListComponent
+    ProjectTaskListComponent,
+    AddLinkModalComponent
   ],
   
 })

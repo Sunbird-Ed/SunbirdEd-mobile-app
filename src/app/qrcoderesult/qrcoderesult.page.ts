@@ -456,6 +456,10 @@ export class QrcoderesultPage implements OnDestroy {
    * Play content
    */
   playContent(content: Content, isStreaming: boolean, contentInfo?: ContentInfo) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+      return;
+    }
     const extraInfoMap = { hierarchyInfo: [] };
     if (this.cardData && this.cardData.hierarchyInfo) {
       extraInfoMap.hierarchyInfo = this.cardData.hierarchyInfo;
@@ -508,6 +512,10 @@ export class QrcoderesultPage implements OnDestroy {
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
     if (content.contentData.streamingUrl && !content.isAvailableLocally) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+        return;
+      }
       const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_CARD, '',
@@ -532,6 +540,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+      return;
+    }
     this.interactEventForPlayAndDownload(content, false);
     if (!(content.contentData.downloadUrl) && !paths && ContentUtil.isTrackable(content.contentData) === -1) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');

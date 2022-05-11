@@ -20,6 +20,7 @@ import {
     ContainerService,
     AppHeaderService,
     FormAndFrameworkUtilService,
+    OnboardingConfigurationService,
 } from '../../services';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SplashScreenService } from '../../services/splash-screen.service';
@@ -77,6 +78,9 @@ describe('ProfileSettingsPage', () => {
         getSupportedProfileAttributes: jest.fn
     };
     const mockSegmentationTagService: Partial<SegmentationTagService> = {}
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        initialOnboardingScreenName: ''
+    }
 
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
@@ -100,7 +104,8 @@ describe('ProfileSettingsPage', () => {
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute,
             mockProfileHandler as ProfileHandler,
-            mockSegmentationTagService as SegmentationTagService
+            mockSegmentationTagService as SegmentationTagService,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 

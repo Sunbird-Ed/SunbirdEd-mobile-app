@@ -4,7 +4,7 @@ import { TabOptions } from '../services/container.services';
 const LIBRARY_TAB = {
     root: 'resources',
     icon: 'resources',
-    label: 'LIBRARY_BNAV',
+    label: 'TAB_1',
     index: 1,
     isSelected: true
 };
@@ -12,7 +12,7 @@ const LIBRARY_TAB = {
 const HOME_TAB = {
     root: 'home',
     icon: 'home',
-    label: 'FRMELEMNTS_LBL_TAB_HOME',
+    label: 'TAB_2',
     index: 1,
     isSelected: true
 };
@@ -20,14 +20,14 @@ const HOME_TAB = {
 const COURSE_TAB = {
     root: 'courses',
     icon: 'courses',
-    label: 'COURSES_BNAV',
+    label: 'TAB_3',
     index: 2
 };
 
 const COURSE_TAB_DISABLED = {
     root: '',
     icon: 'courses',
-    label: 'COURSES_BNAV',
+    label: 'TAB_3',
     index: 2,
     disabled: true
 };
@@ -35,7 +35,7 @@ const COURSE_TAB_DISABLED = {
 const SEARCH_TAB = {
     root: 'search',
     icon: 'discover',
-    label: 'DISCOVER_BNAV',
+    label: 'TAB_4',
     index: 2
 };
 
@@ -49,21 +49,21 @@ const SCANNER_TAB = {
 const DOWNLOADS_TAB = {
     root: 'download-manager',
     icon: 'downloads',
-    label: 'DOWNLOAD_BNAV',
+    label: 'TAB_5',
     index: 4
 };
 
 const GUEST_PROFILE_TAB = {
     root: 'guest-profile',
     icon: 'profile',
-    label: 'PROFILE_BNAV',
+    label: 'TAB_6',
     index: 5
 };
 
 const GUEST_PROFILE_SWITCH_TAB = {
     root: 'guest-profile',
     icon: 'profile',
-    label: 'PROFILE_BNAV',
+    label: 'TAB_6',
     index: 5,
     isSelected: true
 };
@@ -71,7 +71,7 @@ const GUEST_PROFILE_SWITCH_TAB = {
 const PROFILE_TAB = {
     root: 'profile',
     icon: 'profile',
-    label: 'PROFILE_BNAV',
+    label: 'TAB_6',
     index: 5
 };
 

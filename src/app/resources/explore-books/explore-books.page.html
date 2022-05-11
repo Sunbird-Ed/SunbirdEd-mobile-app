@@ -4,6 +4,8 @@
       <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
         <div class="pill" *ngFor="let grade of categoryGradeLevels; let i = index; let first = first"
           [class.active]="searchForm.get('grade').value[0] === grade.name" attr.id="gradeLevel{{i}}"
+          [attr.aria-label]="(searchForm.get('grade').value[0] === grade.name) ? grade?.name + ', selected' : grade?.name"
+          role="button"
           (click)="searchForm.get('grade').patchValue([grade.name]); classClick(i); classClickedForTelemetry(grade.name)">
           {{grade?.name}}</div>
       </div>
@@ -12,6 +14,8 @@
       <div class="sb-pills-container sb-medium-pills-container">
         <div class="pill" *ngFor="let subject of subjects; let i = index;"
           [class.active]="searchForm.get('subject').value[0] ? searchForm.get('subject').value[0] === subject.name : subject.name === 'All'"
+          [attr.aria-label]="(searchForm.get('subject').value[0] ? searchForm.get('subject').value[0] === subject.name : subject.name === 'All') ? subject?.name + ', selected' : subject?.name "
+          role="button"
           [@appear] (click)="searchForm.get('subject').patchValue([subject.name]); subjectClicked(i, subject.name)">
           {{subject?.name}}
         </div>
@@ -21,6 +25,8 @@
       <div class="sb-pills-container sb-grade-pills-container">
         <div class="pill" *ngFor="let mimeType of mimeTypes; let i = index; let first = first"
           [class.active]="mimeType?.selected"
+          [attr.aria-label]="mimeType?.selected ? mimeType?.name + ', selected' : mimeType?.name"
+          role="button"
           (click)="searchForm.get('mimeType').patchValue(mimeType.value); onMimeTypeClicked(mimeType, i)">
           <span class="img-align" *ngIf="mimeType?.iconNormal && mimeType?.selected">
             <img class="filter-icon" src="{{mimeType?.iconActive}}" alt="filter">
