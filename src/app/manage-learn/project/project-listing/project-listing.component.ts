@@ -29,7 +29,7 @@ export class ProjectListingComponent {
     limit = 10;
     offset = 0;
     currentOnlineProjectLength = 0;
-
+    noDataFound='';
     searchText: string = '';
     headerConfig = {
         showHeader: true,
@@ -48,7 +48,7 @@ export class ProjectListingComponent {
 
     constructor(
         private router: Router,
-        private routerParams : ActivatedRoute,
+        private routerParams: ActivatedRoute,
         private location: Location,
         private headerService: AppHeaderService,
         private platform: Platform,
@@ -65,18 +65,18 @@ export class ProjectListingComponent {
         private popupService: GenericPopUpService,
         private toastService: ToastService
     ) {
-        routerParams.queryParams.subscribe(params =>{
-            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME','FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
-            this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME']];
+        routerParams.queryParams.subscribe(params => {
+            this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME', 'FRMELEMNTS_LBL_DISCOVERED_BY_ME']).subscribe(translations => {
+                this.filters = [translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME'], translations['FRMELEMNTS_LBL_DISCOVERED_BY_ME'], translations['FRMELEMNTS_LBL_CREATED_BY_ME']];
             });
-            if( params.selectedFilter ){
-                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[1] : this.filters[2];
-                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 1 : 2;
-            }else{
-                this.selectedFilter = this.filters[0];
+            if (params.selectedFilter) {
+                this.selectedFilter = params.selectedFilter == 'assignedToMe' ? this.filters[0] : this.filters[1];
+                this.selectedFilterIndex = params.selectedFilter == 'assignedToMe' ? 0 : 1;
+            } else {
+                this.selectedFilter = this.filters[this.selectedFilterIndex]
             }
         })
-       
+
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
             this.networkFlag = available;
@@ -90,21 +90,18 @@ export class ProjectListingComponent {
             selector: {
                 downloaded: true,
             }
-          
-          
         };
         switch (this.selectedFilterIndex) {
             case 0:
+                query.selector['isAPrivateProgram'] = false
+                break;
+            case 1:
+                query.selector['referenceFrom'] = 'link'
+                break;
+            case 2:
                 query.selector['isAPrivateProgram'] = { $ne: false }
-                query.selector['referenceFrom']={ $ne: 'link' }
+                query.selector['referenceFrom'] = { $ne: 'link' }
                 break;
-             case 1:
-                query.selector['isAPrivateProgram']=false
-                break;
-             case 2:
-                query.selector['referenceFrom']='link'
-                break;
-        
             default:
                 break;
         }
@@ -125,7 +122,7 @@ export class ProjectListingComponent {
                 isAPrivateProgram: isAprivateProgramQuery,
                 isNew: true,
             },
-            limit: 10 * this.offlineProjectPage,
+            // limit: 10 * this.offlineProjectPage,
         };
         if (fields) {
             query['fields'] = fields
@@ -184,6 +181,7 @@ export class ProjectListingComponent {
         this.clearFields();
         this.projects = [];
         this.page = 1;
+        this.currentOnlineProjectLength = 0;
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -208,7 +206,7 @@ export class ProjectListingComponent {
     fetchProjectList() {
         this.projects = [];
         if (this.networkFlag) {
-            this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
+            this.selectedFilterIndex !== 2 ? this.getProjectList() : this.getCreatedProjects()
         } else {
             this.getDownloadedProjectsList();
         }
@@ -221,16 +219,20 @@ export class ProjectListingComponent {
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
 
-        let selectedFilter 
+        let selectedFilter;
         switch (this.selectedFilterIndex) {
             case 0:
-                selectedFilter = 'createdByMe'
+                selectedFilter = 'assignedToMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND';
                 break;
-             case 1:
-                selectedFilter = 'assignedToMe'
+            case 1:
+                selectedFilter = 'discoveredByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_DISCOVERED_PROJECT_NOT_FOUND';
                 break;
             case 2:
-                selectedFilter = 'discoveredByMe'
+                selectedFilter = 'createdByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND';
+                break;
             default:
                 break;
         }
@@ -239,14 +241,16 @@ export class ProjectListingComponent {
         }
         const config = {
             url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
-            payload: selectedFilter == 'assignedToMe' ? this.payload : ''
+            payload: selectedFilter !== 'createdByMe' ? this.payload : ''
         }
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
             this.projects = this.projects.concat(success.result.data);
-            this.projects.map((p) => {
-                if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
-            });
+            // if (offilineIdsArr){
+            //     this.projects.map((p) => {
+            //         if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+            //     });
+            // }
             this.count = success.result.count;
             this.currentOnlineProjectLength = this.currentOnlineProjectLength + success.result.data.length;
             this.description = success.result.description;
@@ -271,15 +275,27 @@ export class ProjectListingComponent {
     }
 
     selectedProgram(project) {
-        const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-            queryParams: {
-                projectId: project._id,
-                programId: project.programId,
-                solutionId: project.solutionId,
-                type: selectedFilter,
-            },
-        });
+        const selectedFilter = this.selectedFilterIndex !== 0 ? 'createdByMe' : 'assignedToMe';
+        if (!project?._id) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, project.solutionId], {
+                queryParams: {
+                    // data: project
+                    // projectId: project?._id && ,
+                    programId: project.programId,
+                    solutionId: project.solutionId,
+                    type: selectedFilter,
+                },
+            });
+        } else {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                queryParams: {
+                    projectId: project._id,
+                    programId: project.programId,
+                    solutionId: project.solutionId,
+                    type: selectedFilter,
+                },
+            });
+        }
     }
 
     loadMore() {
@@ -328,8 +344,25 @@ export class ProjectListingComponent {
                     }
                 ],
             },
-            fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'],
         };
+       let  fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'];
+       let prepareQuery:any={};
+        switch (this.selectedFilterIndex) {
+            case 0:
+                prepareQuery['isAPrivateProgram'] = false
+                break;
+            case 1:
+                prepareQuery['referenceFrom'] = 'link'
+                break;
+            case 2:
+                prepareQuery['isAPrivateProgram'] = { $ne: false }
+                prepareQuery['referenceFrom'] = { $ne: 'link' }
+                break;
+            default:
+                break;
+        }
+        query.selector.$and.push(prepareQuery);
+        fields ? (query['fields'] = fields) : null;
         return query
     }
     searchCreatedProjects() {
@@ -340,11 +373,11 @@ export class ProjectListingComponent {
                         isDeleted: {
                             $ne: true
                         },
-                        Downloaded: {
+                        downloaded: {
                             $ne: false
                         },
                         isNew: {
-                            $ne: false
+                            $eq: true
                         }
                     }
                 ],
@@ -430,8 +463,9 @@ export class ProjectListingComponent {
     }
 
     doAction(id?, project?) {
+        const selectedFilter = this.selectedFilterIndex === 0 ? 'assignedToMe' : 'createdByMe';
+
         if (project) {
-            const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
             if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
                 this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                     if (data && data.isClicked) {
@@ -440,7 +474,7 @@ export class ProjectListingComponent {
                                 project.hasAcceptedTAndC = data.isChecked;
                                 this.db.update(project)
                                     .then((success) => {
-                                       !this.networkFlag? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') :'';
+                                        !this.networkFlag ? this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger') : '';
                                         this.selectedProgram(project);
                                     })
                                 return;

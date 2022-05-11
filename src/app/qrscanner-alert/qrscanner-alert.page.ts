@@ -27,10 +27,8 @@ export class QRScannerAlert {
       this.cancelKey = undefined;
     }
 
-  }
+  }  
 
-  ionViewWillEnter() {
-  }
   tryAgain() {
     if (this.callback) {
       this.callback.tryAgain();

@@ -33,7 +33,9 @@ import {
   SharedPreferences,
   EventNamespace,
   ContentUpdate,
-  CourseService
+  CourseService,
+  SunbirdSdk,
+  PlayerService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -42,7 +44,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, PreferenceKey, MaxAttempt
+  ShareItemType, PreferenceKey, MaxAttempt, ProfileConstants
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
@@ -83,7 +85,10 @@ import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show
 import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
+
+declare const cordova;
 declare const window;
 @Component({
   selector: 'app-content-details',
@@ -181,6 +186,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isCompatibleWithVendorApps = false;
   appLists: any;
   isIOS = false;
+  playerType: any = null;
+  config: any;
+  nextContentToBePlayed: any;
+  isPlayerPlaying = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -189,6 +198,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -215,7 +225,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private screenOrientation: ScreenOrientation
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -251,11 +262,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
+      this.nextContentToBePlayed = extras.content;
+      this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
       }
       this.onboarding = extras.onboarding || this.onboarding;
+      this.setContentDetails(this.identifier, false, false);
     }
     this.isIOS = (this.platform.is('ios'))
       this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
@@ -278,6 +292,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.appLists.length) {
       this.isCompatibleWithVendorApps = true;
     }
+  }
+
+  getNextContent(hierarchyInfo, identifier) {
+    return new Promise((resolve) => {
+      this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
+        this.nextContentToBePlayed = res;
+        resolve(res);
+      })
+    })
   }
 
   subscribeEvents() {
@@ -456,6 +479,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           if (data.contentData.size) {
             this.contentSize = data.contentData.size;
           }
+          if(this.cardData && this.cardData.hierachyInfo) {
+            await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
+          }
           this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
@@ -586,6 +612,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
+    if (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') {
+      this.playContent(true, true);
+    }
   }
   getImageContent() {
     if(this.platform.is('ios')) {
@@ -702,10 +731,17 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   popToPreviousPage(isNavBack?) {
     this.appGlobalService.showCourseCompletePopup = false;
+    if (this.screenOrientation.type === 'landscape-primary') {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
     if (this.isSingleContent) {
       !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      if (this.appGlobalService.isOnBoardingCompleted) {
+        this.router.navigate([`/${RouterLinks.TABS}`]);
+      } else {
+        this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      }
     } else if (this.resultLength === 1) {
       window.history.go(-2);
     } else {
@@ -1112,7 +1148,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Play content
    */
-  private playContent(isStreaming: boolean) {
+  private playContent(isStreaming: boolean, loadPlayer: boolean = false) {
     if (this.apiLevel < 21 && this.appAvailability === 'false' && !this.isIOS) {
       this.showPopupDialog();
     } else {
@@ -1128,9 +1164,127 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming,
-        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent, this.maxAttemptAssessment);
+        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent, this.maxAttemptAssessment, 
+        loadPlayer ? (val) => this.handlePlayer(val) : undefined);
       this.downloadAndPlay = false;
     }
+  }
+
+  async handlePlayer(playerData) {
+    this.config = playerData.state.config;
+    let playerConfig = await this.formFrameworkUtilService.getPdfPlayerConfiguration();
+    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer") {
+      this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showPrint = false;
+      this.playerType = 'sunbird-video-player';
+      this.isPlayerPlaying = true;
+    }
+  }
+
+  async getNewPlayerConfiguration() {
+    const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
+    this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+    if (this.config['metadata'].isAvailableLocally) {
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+    }
+    this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+    this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
+    this.config['metadata'] = this.config['metadata'].contentData;
+    this.config['data'] = {};
+    this.config['config'] = {
+      ...this.config['config'],
+      nextContent,
+      sideMenu: {
+        showShare: true,
+        showDownload: true,
+        showReplay: false,
+        showExit: true,
+        showPrint: true
+      }
+    };
+
+    if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
+      let questionSet;
+      try{
+        questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+      } catch(e){
+        console.log(e);
+      }
+      this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+    }
+    const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.config['context'].userData = {
+      firstName:  profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
+      lastName: ''
+    };
+    return this.config;
+  }
+
+  checkIsPlayerEnabled(config , playerType) {
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled);
+  }
+
+  playerTelemetryEvents(event) {
+    if (event) {
+      SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+        (res) => console.log('response after telemetry', res),
+        );
+    }
+  }
+
+  async playerEvents(event) {
+    if (event.edata) {
+      const userId: string = this.appGlobalService.getCurrentUser().uid;
+      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const contentId: string = this.content.identifier;
+      if (event.edata['type'] === 'END') {
+        const saveState: string = JSON.stringify(event.metaData);
+        this.playerService.savePlayerState(userId, parentId, contentId, saveState);
+        this.isPlayerPlaying = false;
+      }
+      if (event.edata['type'] === 'EXIT') {
+        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
+        if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
+      } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
+        if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
+        this.playNextContent();
+      } else if (event.edata.type === 'compatibility-error') {
+        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+          () => {},
+          () => {}
+        );
+      } else if (event.edata.type === 'exdata') {
+        if (event.edata.currentattempt) {
+          const attemptInfo = {
+            isContentDisabled: event.edata.maxLimitExceeded,
+            isLastAttempt: event.edata.isLastAttempt
+          };
+          this.commonUtilService.handleAssessmentStatus(attemptInfo);
+        }
+      } else if (event.edata['type'] === 'FULLSCREEN') {
+        if (this.screenOrientation.type === 'portrait-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        } else if (this.screenOrientation.type === 'landscape-primary') {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
+      }
+    } else if (event.type === 'ended') {
+      this.rateContent('manual');
+    } else if (event.type === 'REPLAY') {
+      this.isPlayerPlaying = true;
+    }
+  }
+
+  playNextContent(){
+    const content = this.nextContentToBePlayed;
+    this.events.publish(EventTopics.NEXT_CONTENT, {
+      content,
+      course: this.course
+    });
   }
 
   checkappAvailability() {
@@ -1219,6 +1373,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * @param corRelationList correlation List
    */
   readLessorReadMore(param, objRollup, corRelationList) {
+    if(param === 'read-more-clicked'){
+      this.appGlobalService.setAccessibilityFocus('read-more-content')
+    } else {
+      this.appGlobalService.setAccessibilityFocus('read-more-less-btn');
+    }
     param = 'read-more-clicked' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       param,
@@ -1459,8 +1618,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
     try {
       const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
-      return (batchDetails && batchDetails.cert_templates && Object.keys(batchDetails.cert_templates).length &&
-        batchDetails.cert_templates[Object.keys(batchDetails.cert_templates)[0]].description) || '';
+      for (var key in batchDetails.cert_templates) {
+        return (batchDetails && batchDetails.cert_templates[key] &&
+        batchDetails.cert_templates[key].description) || '';
+      }
     } catch (e) {
       console.log(e);
       return '';

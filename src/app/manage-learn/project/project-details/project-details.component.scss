@@ -1,0 +1,56 @@
+@import 'src/assets/styles/_custom-mixins';
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
+
+.button-disabled {
+    --background: #707070 !important;
+}
+.completed {
+    --progress-background: var(--app-green) !important;
+}
+.zeroTask{
+  --progress-background: var(--app-lighter-gray) !important;
+}
+.in-progress {
+    --progress-background: var(--app-quaternary-medium) !important;
+}
+.sb-course-complete-container {
+    white-space: nowrap;
+    width: 100%;
+    background-color: map-get($colors, light_grayish_green);
+    @include padding(8px);
+    .img-container{
+      width: 20%;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .text-container{
+      color: map-get($colors, office_green);
+      font-family: "Noto Sans", sans-serif;
+      font-size: 14px !important;
+      font-weight: bold;
+      width: 80%;
+      vertical-align: middle;
+      display: inline-block;
+      padding-left: 10px;
+      @include padding(0px 0px 0px 11px);
+      white-space: normal;
+    }
+  }
+
+  .add-task {
+    --background: var(--app-primary-light) !important;
+    background-color: var(--app-primary-light);
+    .flex-box {
+      display: flex;
+      align-items: center;
+      .icon {
+        color: var(--app-primary) !important;
+        font-size: 30px;
+      }
+      .label {
+        flex: 1;;
+      }
+    }
+
+  }

@@ -778,4 +778,27 @@ export class CommonUtilService {
         return toast;
     }
 
+    public setRatingStarAriaLabel(ratingDomTag, slectedStar = 0) {
+        if (ratingDomTag && ratingDomTag.length && ratingDomTag[0].children && ratingDomTag[0].children.length) {
+            const ratingStarContainer = ratingDomTag[0].children[0];
+            ratingStarContainer.setAttribute('aria-label', (slectedStar > 0) ? `Rated ${slectedStar} star out of 5 stars` : 'Rate stars out of 5 stars');
+            ratingStarContainer.setAttribute('tabindex', '0');
+            if (ratingDomTag[0].children[0].children && ratingDomTag[0].children[0].children.length) {
+                const ratingStars = ratingDomTag[0].children[0].children;
+                for (let index = 0; index < ratingStars.length; index++) {
+                    const element = ratingStars[index];
+                    if (element && element.shadowRoot && element.shadowRoot.querySelector('button')) {
+                        const starButton = element.shadowRoot.querySelector('button');
+                        starButton.setAttribute('aria-label', (slectedStar >= index + 1 ? 'selected ' : '') + (index + 1) + ' star');
+                        starButton.setAttribute('tabindex', '0');
+                    }
+                }
+            }
+        }
+    }
+
+    public appendTypeToPrimaryCategory(content, type = "detail"): string {
+        const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType ? content.contentType : '';
+        return primaryCategory ? (primaryCategory.replace(/\s/g, '')+'-'+type).toLowerCase() : '';
+      }
 }

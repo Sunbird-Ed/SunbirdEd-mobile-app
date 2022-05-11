@@ -434,7 +434,8 @@ export const mockDiscoverPageData = [
                 pillShape: 'circle',
                 pillsViewType: 'scroll'
             }
-        }
+        },
+        code: 'popular_categories'
     },
     {
         index: 2,

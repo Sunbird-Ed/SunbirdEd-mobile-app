@@ -62,10 +62,16 @@
 }
 
 // Discussion Forum
-.discussion-forum{
+.discussion-forum-content{
   background-color: map-get($colors, light_gray_8c);
-  min-height: 90vh !important;
-  height: 90vh !important;
+  // min-height: 90vh !important;
+  // height: 90vh !important;
+  .df-cancel-btn{
+    color: $primary-color !important;
+  }
+  .open-btn{
+    color: $gray-800 !important;
+  }
   .topic-list-container{
     height: calc(100vh - 175px) !important;
   }
@@ -109,7 +115,7 @@
 .dataTables_wrapper {
   white-space: nowrap;
   height: calc(100vh - 100px);
-  // overflow: auto;
+  overflow: auto;
 }
 
 table.dataTable.no-footer {
@@ -179,4 +185,28 @@ table.dataTable.display tbody td {
 
 table.dataTable tbody tr:nth-child(odd) {
   background-color: #f6f6f6 !important;
+}
+
+.sb-popover.ios {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popover-alert.ios {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+ion-button.ios {
+  -webkit-appearance: borderless-attachment;
+}
+sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
+  padding-top: 3rem;
+}
+.segment-button-checked{
+  border-bottom: 4px solid;
+  ion-label{
+    color: #000;
+  }
+}
+.ion-text-none{
+  text-transform: none;
 }

@@ -1,0 +1,23 @@
+h5 {
+    position: relative;
+  }
+  
+  h5 span {
+    background-color: var(--app-primary-background);
+    padding-right: 10px;
+  }
+  
+  h5:after {
+    content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0.76em;
+      border-top: 3px solid yellow;
+      z-index: -1;
+  }
+  .projects-labels{
+    font-weight: 600;
+    margin: 20px 0px;
+    }

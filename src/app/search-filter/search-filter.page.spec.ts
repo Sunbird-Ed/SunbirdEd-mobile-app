@@ -5,9 +5,11 @@ import { ContentService } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
-import {of} from 'rxjs';
-import { FormAndFrameworkUtilService } from '../../services';
+import { of } from 'rxjs';
+import { FormAndFrameworkUtilService, SearchFilterService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
+import { ContentSearchCriteria, SearchType } from '@project-sunbird/sunbird-sdk';
+import { doesNotReject } from 'assert';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -17,8 +19,8 @@ describe('SearchFilterPage', () => {
         }
     };
     const mockRouter: Partial<Router> = {
-        navigate: () => Promise.resolve(),
-        getCurrentNavigation: jest.fn(() => mockRouterExtras),
+        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
+        navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
@@ -32,9 +34,13 @@ describe('SearchFilterPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockModalController: Partial<ModalController> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-        changeChannelIdToName: jest.fn(()=>Promise.resolve(FilterCriteriaData)),
-        changeChannelNameToId: jest.fn(()=>Promise.resolve(FilterCriteriaData))
+        changeChannelIdToName: jest.fn(() => Promise.resolve(FilterCriteriaData)),
+        changeChannelNameToId: jest.fn(() => Promise.resolve(FilterCriteriaData))
     };
+    const mockSearchFilterService: Partial<SearchFilterService> = {
+        getFacetFormAPIConfig: jest.fn(() => Promise.resolve('string' as any))
+    };
+    const mockFilterFormConfigMapper: Partial<FilterFormConfigMapper> = {};
 
     JSON.parse = jest.fn().mockImplementationOnce(() => {
         return FilterCriteriaData;
@@ -48,8 +54,9 @@ describe('SearchFilterPage', () => {
             mockLocation as Location,
             mockModalController as ModalController,
             mockCommonUtilService as CommonUtilService,
-            new FilterFormConfigMapper(mockCommonUtilService),
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFilterFormConfigMapper as FilterFormConfigMapper,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockSearchFilterService as SearchFilterService
         );
     });
 
@@ -63,60 +70,227 @@ describe('SearchFilterPage', () => {
     });
 
     describe('when loaded', () => {
-        it('should initialise page with appropriate configurations', () => {
+        it('should initialise page with appropriate configurations', (done) => {
             // arrange
-            searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
-            
+            searchFilterPage['isPageLoadedFirstTime'] = true;
+            searchFilterPage['initialFilterCriteria'] = {
+                facetFilters: [
+                    {
+                        name: 'se_mediums', values: [
+                            {
+                                name: 'english', count: 30408, apply: false, values: [{
+                                    name: 'english'
+                                }]
+                            },
+                            {
+                                name: 'hindi', count: 2107, apply: false, values: [{
+                                    name: 'hindi'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        name: 'se_gradeLevels', values: [
+                            {
+                                name: 'class 10', count: 6446, apply: false, values: [{
+                                    name: 'class 10'
+                                }]
+                            },
+                            {
+                                name: 'class 1', count: 23017, apply: false, values: [{
+                                    name: 'class 1'
+                                }]
+                            }
+                        ]
+                    }
+                ],
+                facets: ['se_mediums', 'se_gradeLevels']
+            };
+            mockFilterFormConfigMapper.map = jest.fn(() => Promise.resolve({
+                config: [{
+                    facet: 'board',
+                    type: 'dropdown',
+                }],
+                defaults: {
+                    values: ['english', 'hindi']
+                }
+            }))
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(searchFilterPage['initialFilterCriteria']));
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['initialFilterCriteria'];
+            });
+            mockSearchFilterService.getFacetFormAPIConfig = jest.fn(() => Promise.resolve('string' as any));
             // act
             searchFilterPage.ngOnInit();
-            
             // assert
             setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
                 expect(searchFilterPage.baseSearchFilter).toEqual({
-                    board: 'sample_board_1',
-                    medium: ['sample_medium_1'],
-                    gradeLevel: ['sample_gradeLevel_1'],
-                    subject: ['sample_subject_1'],
-                    mimeType: ['sample_mimeType_1'],
-                    primaryCategory: ['sample_primaryCategory_1'],
-                    audience: ['sample_audience_1'],
+                    values: ['english', 'hindi']
                 });
                 expect(searchFilterPage.filterFormTemplateConfig).toEqual([
-                    expect.objectContaining({ facet: 'board' }),
-                    expect.objectContaining({ facet: 'medium' }),
-                    expect.objectContaining({ facet: 'gradeLevel' }),
-                    expect.objectContaining({ facet: 'subject' }),
-                    expect.objectContaining({ facet: 'mimeType' }),
-                    expect.objectContaining({ facet: 'primaryCategory' }),
-                    expect.objectContaining({ facet: 'audience' }),
+                    {
+                        facet: 'board',
+                        type: 'dropdown',
+                    }
                 ]);
+                done();
             }, 0);
         });
     });
 
-    describe('when form is reset', () => {
+    describe('resetFilter', () => {
         it('should delegate form reset to SbSearchFacetFilterComponent', () => {
             // arrange
             searchFilterPage.searchFilterComponent = {
                 resetFilter: jest.fn()
             };
-
             // act
             searchFilterPage.resetFilter();
-
             // assert
             expect(searchFilterPage.searchFilterComponent.resetFilter).toHaveBeenCalled();
+        });
+    });
+
+    describe('when a selection is made', () => {
+        it('should change isPageLoadedFirstTime to false if it is true', () => {
+            // arrange
+            const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            // act
+            searchFilterPage.valueChanged({ board: 'sample_board_2', medium: ['sample_medium_2'] });
+            //assert
+            setTimeout(() => {
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+            });
+        });
+        it('should not do anything if the event return false', () => {
+            //arrange
+            const event = false;
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            expect(!event).toBe(true);
+        });
+        it('should call refresh form and selection might be of type string', (done) => {
+            //arrange
+            const event = {
+                se_mediums: [{ name: 'na1' }],
+                se_gradeLevels: 'se_gradeLevels'
+            };
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['appliedFilterCriteria'];
+            });
+            const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            searchFilterPage['isPageLoadedFirstTime'] = false;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve({
+                filterCriteria: {
+                    facetFilters: [
+                        { name: 'board', values: [Array] },
+                        { name: 'medium', values: [Array] }
+                    ]
+                }
+            }));
+            mockSearchFilterService.reformFilterValues = jest.fn(() => Promise.resolve([
+                { name: 'board', values: [Array] },
+                { name: 'medium', values: [Array] }
+            ]))
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
+                expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should call refresh form and selection might not be of type string', (done) => {
+            //arrange
+            const event = {
+                name: 'se_mediums',
+                values: 'se_gradeLevels'
+            };
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['initialFilterCriteria'] = {
+                    facetFilters: [
+                        {
+                            name: 'se_mediums', values: [
+                                {
+                                    name: 'english', count: 30408, apply: false, values: [{
+                                        name: 'english'
+                                    }]
+                                },
+                                {
+                                    name: 'hindi', count: 2107, apply: false, values: [{
+                                        name: 'hindi'
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            name: 'se_gradeLevels', values: [
+                                {
+                                    name: 'class 10', count: 6446, apply: false, values: [{
+                                        name: 'class 10'
+                                    }]
+                                },
+                                {
+                                    name: 'class 1', count: 23017, apply: false, values: [{
+                                        name: 'class 1'
+                                    }]
+                                }
+                            ]
+                        }
+                    ],
+                    facets: ['se_mediums', 'se_gradeLevels']
+                };
+            });
+            const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            searchFilterPage['isPageLoadedFirstTime'] = false;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.reject('error message'));
+            mockSearchFilterService.reformFilterValues = jest.fn(() => Promise.resolve([
+                { name: 'board', values: [Array] },
+                { name: 'medium', values: [Array] }
+            ]))
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
+                expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 
     describe('when form is applied', () => {
         it('should dismiss current modal return selections', () => {
             // arrange
-            mockModalController.dismiss = jest.fn(() => {}) as any;
+            mockModalController.dismiss = jest.fn(() => { }) as any;
             searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
-
             // act
-            searchFilterPage.ngOnInit();
             searchFilterPage.applyFilter();
             // assert
             setTimeout(() => {
@@ -127,37 +301,19 @@ describe('SearchFilterPage', () => {
         });
     });
 
+
     describe('when form is cancelled', () => {
         it('should dismiss current modal', () => {
             // arrange
-            mockModalController.dismiss = jest.fn(() => {}) as any;
+            mockModalController.dismiss = jest.fn(() => { }) as any;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             // act
             searchFilterPage.cancel();
             // assert
             setTimeout(() => {
-                expect(mockModalController.dismiss).toHaveBeenCalled();
-            });
-        });
-    });
-
-    describe('when a selection is made', () => {
-        it('should refresh form with new facets from search results', () => {
-            // arrange
-            const sampleFilterCriteria = FilterCriteriaData;
-            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
-            mockContentService.searchContent = jest.fn(() => of({filterCriteria: sampleFilterCriteria}));
-
-            // act
-            searchFilterPage.ngOnInit();
-            searchFilterPage.valueChanged({
-                board: 'sample_board_2',
-                medium: [
-                    'sample_medium_2'
-                ]
-            });
-
-            setTimeout(() => {
-                expect(mockContentService.searchContent).toHaveBeenCalled();
+                return Promise.resolve(
+                    expect(mockModalController.dismiss).toHaveBeenCalled()
+                )
             });
         });
     });

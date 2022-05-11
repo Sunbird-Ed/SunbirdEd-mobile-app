@@ -164,11 +164,13 @@ export class EventTopics {
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
     public static readonly DEEPLINK_COLLECTION_PAGE_OPEN = 'DEEPLINK_COLLECTION_PAGE_OPEN';
+    public static readonly DEEPLINK_COURSE_PAGE_OPEN = 'DEEPLINK_COURSE_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
     public static readonly BANNER = 'banner';
     public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
+    public static readonly ORIENTATION = 'orientation';
 }
 
 export class ShareUrl {
@@ -240,6 +242,7 @@ export class PreferenceKey {
     public static readonly NAVIGATION_SOURCE = 'navigation_source';
     public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
     public static readonly IS_APPLE_LOGIN = 'is_apple_login';
+    public static readonly ORIENTATION = 'orientation';
 }
 
 export enum SwitchableTabsConfig {
@@ -444,6 +447,7 @@ export class ActionType {
     public static readonly EXT_URL = 'extURL';
     public static readonly CONTENT_URL = 'contentURL';
     public static readonly CERTIFICATE = 'certificateUpdate';
+    public static readonly SEARCH = 'search';
 }
 
 export class RouterLinks {
@@ -575,6 +579,7 @@ export class RouterLinks {
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
     public static readonly TEMPLATE = 'template';
+    public static readonly PROJECT_TEMPLATE = 'project-templateview';
     public static readonly REPORTS = "reports";
     public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
     public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
@@ -592,6 +597,8 @@ export class RouterLinks {
     public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
     public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
     public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+    public static readonly ADD_FILE='add-file';
+    public static readonly ATTACHMENTS_LISTING = 'attachment-listing';
 
 
     public static readonly SOLUTIONS = 'solutions';
@@ -784,4 +791,16 @@ export interface MaxAttempt {
 
 export class OTPTemplates {
     public static readonly EDIT_CONTACT_OTP_TEMPLATE = 'otpContactUpdateTemplate';
+}
+
+export enum AppOrientation {
+    LANDSCAPE = 'Landscape',
+    POTRAIT = 'Potrait'
+}
+
+export class OnboardingScreenType {
+    public static readonly LANGUAGE_SETTINGS = 'language-setting';
+    public static readonly USER_TYPE_SELECTION = 'user-type-selection';
+    public static readonly PROFILE_SETTINGS = 'profile-settings';
+    public static readonly DISTRICT_MAPPING = 'district-mapping';
 }

@@ -37,8 +37,8 @@ export class ContentPlayerHandler {
      * Launches Content-Player with given configuration
      */
     public async launchContentPlayer(
-        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
-        navigateBackToContentDetails?: boolean , isChildContent?: boolean, maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }) {
+        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean, navigateBackToContentDetails?: boolean , isChildContent?: boolean,
+        maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }, callback?) {
         const maxCompatibilityLevel = await this.utilityService.getBuildConfigValue(GenericAppConfig.MAX_COMPATIBILITY_LEVEL);
         if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
             cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
@@ -129,11 +129,14 @@ export class ContentPlayerHandler {
                         { state: { config: data, course : contentInfo.course, navigateBackToContentDetails,
                                 corRelation: contentInfo.correlationList, isCourse } });
                 }
-
             } else {
-                this.router.navigate([RouterLinks.PLAYER],
-                    { state: { contentToPlay : content , config: data,  course : contentInfo.course, navigateBackToContentDetails,
-                            corRelation: contentInfo.correlationList, isCourse , childContent: isChildContent } });
+                if (callback && (data.metadata.mimeType === 'video/mp4' || data.metadata.mimeType === 'video/webm')) {
+                    callback({ state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
+                } else {
+                    this.router.navigate([RouterLinks.PLAYER],
+                        { state: { contentToPlay : content , config: data,  course : contentInfo.course, navigateBackToContentDetails,
+                                corRelation: contentInfo.correlationList, isCourse , childContent: isChildContent } });
+                }
             }
         });
     }

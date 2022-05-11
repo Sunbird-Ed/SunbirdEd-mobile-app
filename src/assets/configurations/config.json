@@ -1,0 +1,175 @@
+{
+    "onboarding": [
+        {
+            "name": "language-setting",
+            "skip": false,
+            "default": {
+                "code": "en",
+                "label": "English"
+            }
+        },
+        {
+            "name": "user-type-selection",
+            "skip": false,
+            "default": "teacher"
+        },
+        {
+            "name": "profile-settings",
+            "skip": false,
+            "default": {
+                "syllabus": [
+                    "ekstep_ncert_k-12"
+                ],
+                "board": [
+                    "cbse"
+                ],
+                "medium": [
+                    "english"
+                ],
+                "grade": [
+                    "class5",
+                    "class6"
+                ]
+            }
+        },
+        {
+            "name": "district-mapping",
+            "skip": false,
+            "default": {
+                "state": "Andaman & Nicobar Islands",
+                "stateId": "1e01c46f-6b5a-4aa4-8cce-aae729c7670c",
+                "district": "Nicobars",
+                "districtId": "6daef899-1e83-4b87-9c67-779985c3fd41"
+            }
+        }
+    ],
+    "tabs": [
+        {
+            "root": "home",
+            "name": "home",
+            "icon": {
+                "active": "assets/imgs/tab_home_selected.svg",
+                "inactive": "assets/imgs/tab_home.svg",
+                "disabled": "assets/imgs/ic_home.png"
+            },
+            "label": "FRMELEMNTS_LBL_TAB_HOME",
+            "index": 2,
+            "isSelected": true,
+            "is_visable": true,
+            "disabled": false,
+            "theme": "NEW",
+            "status": "ALL",
+            "userTypeAdmin": true
+        },
+        {
+            "root": "search",
+            "name": "discover",
+            "icon": {
+                "active": "assets/imgs/tab_search_selected.svg",
+                "inactive": "assets/imgs/tab_search.svg",
+                "disabled": ""
+            },
+            "label": "DISCOVER_BNAV",
+            "index": 2,
+            "is_visable": true,
+            "disabled": false,
+            "theme": "NEW",
+            "status": "ALL"
+        },
+        {
+            "root": "",
+            "name": "qrscanner",
+            "icon": {
+                "active": "assets/imgs/ic_qr_scanner.svg",
+                "inactive": "assets/imgs/ic_qr_scanner.svg",
+                "disabled": ""
+            },
+            "label": "",
+            "index": 3,
+            "is_visable": true,
+            "disabled": false,
+            "theme": "ALL",
+            "status": "ALL",
+            "userTypeAdmin": true
+        },
+        {
+            "root": "download-manager",
+            "name": "download",
+            "icon": {
+                "active": "assets/imgs/tab_download_selected.svg",
+                "inactive": "assets/imgs/tab_download.svg",
+                "disabled": "assets/imgs/ic_download_disabled.png"
+            },
+            "label": "DOWNLOAD_BNAV",
+            "index": 4,
+            "is_visable": true,
+            "disabled": false,
+            "theme": "ALL",
+            "status": "ALL",
+            "userTypeAdmin": true
+        },
+        {
+            "root": "guest-profile",
+            "name": "profile",
+            "label": "PROFILE_BNAV",
+            "disabled": false,
+            "icon": {
+                "active": "assets/imgs/tab_profile_selected.svg",
+                "inactive": "assets/imgs/tab_profile.svg",
+                "disabled": ""
+            },
+            "index": 5,
+            "is_visable": true,
+            "theme": "ALL",
+            "status": "guest"
+        },
+        {
+            "root": "profile",
+            "name": "profile",
+            "label": "TAB_6",
+            "disabled": false,
+            "icon": {
+                "active": "assets/imgs/tab_profile_selected.svg",
+                "inactive": "assets/imgs/tab_profile.svg",
+                "disabled": ""
+            },
+            "index": 5,
+            "is_visable": true,
+            "theme": "ALL",
+            "status": "logIn",
+            "userTypeAdmin": true
+        },
+        {
+            "root": "resources",
+            "name": "resources",
+            "label": "TAB_1",
+            "isSelected": true,
+            "disabled": false,
+            "icon": {
+                "active": "assets/imgs/tab_library_selected.svg",
+                "inactive": "assets/imgs/tab_library.svg",
+                "disabled": "assets/imgs/ic_library_disabled.png"
+            },
+            "index": 1,
+            "is_visable": true,
+            "theme": "OLD",
+            "status": "ALL"
+        },
+        {
+            "root": "courses",
+            "name": "courses",
+            "label": "TAB_2",
+            "disabled": false,
+            "icon": {
+                "active": "assets/imgs/tab_course_selected.svg",
+                "inactive": "assets/imgs/tab_course.svg",
+                "disabled": "assets/imgs/ic_courses_disabled.png"
+            },
+            "index": 2,
+            "is_visable": true,
+            "theme": "OLD",
+            "status": "ALL",
+            "userTypeAdmin": true
+        }
+    ]
+}

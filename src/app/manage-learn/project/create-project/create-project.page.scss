@@ -1,3 +1,4 @@
+@import "../../../../assets/styles/base/variables";
 .create_header ::ng-deep .title.w-90 {
     color:black;
   }
@@ -12,3 +13,22 @@
     margin-left: 10px;
    } 
   }
+
+.text-feilds{
+  margin:15px 10px;
+}  
+
+.label-text{
+  font-weight: bold;
+  font-size: 17px;
+  color:$primary-color;
+} 
+
+p .label-hint{
+  font-weight: 17px;
+  font-weight: bold;
+}
+
+  
+
+ 

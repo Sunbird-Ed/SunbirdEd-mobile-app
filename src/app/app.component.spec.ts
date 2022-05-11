@@ -5,7 +5,7 @@ import {
     CommonUtilService, TelemetryGeneratorService, UtilityService, AppHeaderService,
     LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService,
     InteractType, InteractSubtype, Environment, PageId,
-    LocalCourseService, ImpressionType, CorReleationDataType, LoginHandlerService
+    LocalCourseService, ImpressionType, CorReleationDataType, LoginHandlerService, OnboardingConfigurationService
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
@@ -33,6 +33,7 @@ import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const plugins;
 
@@ -79,7 +80,8 @@ describe('AppComponent', () => {
     };
     const mockCodePushExperimentService: Partial<CodePushExperimentService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
+        isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true)),
+        populateGlobalCData: jest.fn(() => Promise.resolve())
     };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
     const mockProfileService: Partial<ProfileService> = {
@@ -97,7 +99,10 @@ describe('AppComponent', () => {
         init: jest.fn(),
         checkNewAppVersion: jest.fn(() => Promise.resolve({}))
     };
-    const mockHeaderService: Partial<AppHeaderService> = {};
+    const mockHeaderService: Partial<AppHeaderService> = {
+        showStatusBar: jest.fn(() => Promise.resolve()),
+        hideStatusBar: jest.fn()
+    };
     const mockLocation: Partial<Location> = {};
     const mockLogoutHandlerService: Partial<LogoutHandlerService> = {};
     const mockMenuCtrl: Partial<MenuController> = {};
@@ -134,7 +139,8 @@ describe('AppComponent', () => {
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         genererateAppStartTelemetry: jest.fn(),
-        generateNotificationClickedTelemetry: jest.fn()
+        generateNotificationClickedTelemetry: jest.fn(),
+        generateInteractTelemetry: jest.fn()
     };
     const mockTelemetryAutoSyncService: Partial<TelemetryAutoSyncService> = {
         // start: jest.fn(() => of({}))
@@ -171,9 +177,13 @@ describe('AppComponent', () => {
     const mockLocalCourseService: Partial<LocalCourseService> = {
         checkCourseRedirect: jest.fn(() => Promise.resolve())
     };
-    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {
+        checkUtmContent: jest.fn()
+    };
     const mockApiUtilService: Partial<ApiUtilsService> = {};
-    const mockNetworkService: Partial<NetworkService> = {};
+    const mockNetworkService: Partial<NetworkService> = {
+        netWorkCheck: jest.fn()
+    };
     const mockDbService: Partial<DbService> = {};
     const mockLocalStorageService: Partial<LocalStorageService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
@@ -193,6 +203,15 @@ describe('AppComponent', () => {
             restoreTags: jest.fn()
         }
     };
+
+    const mockScreenOrientation: Partial<ScreenOrientation> = {
+        ORIENTATIONS: {
+            LANDSCAPE: 'LANDSCAPE',
+            PORTRAIT: 'PORTRAIT'
+        } as any,
+        lock: jest.fn()
+    };
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {};
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -236,6 +255,8 @@ describe('AppComponent', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
             mockMlLoader as LoaderService,
+            mockScreenOrientation as ScreenOrientation,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 
@@ -326,6 +347,11 @@ describe('AppComponent', () => {
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
+            mockPreferences.getString = jest.fn(() => of('{"val":"landscape"}'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockTranslate.use = jest.fn(() => of({}));
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -345,6 +371,11 @@ describe('AppComponent', () => {
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.networkAvailability$ = of(true);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockTranslate.use = jest.fn(() => of({}));
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -368,6 +399,10 @@ describe('AppComponent', () => {
             mockCommonUtilService.networkAvailability$ = of(false);
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -392,6 +427,11 @@ describe('AppComponent', () => {
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.addListener = jest.fn(() => 'some_trace_id');
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockTranslate.use = jest.fn(() => of({}));
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -489,6 +529,7 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'reloadSigninEvents').mockImplementation(() => {
                 return;
             });
+            mockScreenOrientation
             // act
             appComponent.ngOnInit();
             // assert
@@ -500,7 +541,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenCalledTimes(9);
+                expect(mockPreferences.getString).toHaveBeenCalledTimes(10);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -558,6 +599,7 @@ describe('AppComponent', () => {
             // arrange
             mockActivePageService.computePageId = jest.fn(() => 'sample-page');
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
+            mockPreferences.getString = jest.fn(() => of("landscape"));
             // act
             appComponent.ngOnInit();
             // assert
@@ -668,6 +710,7 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
+            mockPreferences.getString = jest.fn(() => of("landscape"));
             mockEvents.publish = jest.fn();
 
             // act
@@ -687,6 +730,10 @@ describe('AppComponent', () => {
             // arrange
             const result = undefined;
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(result));
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -703,6 +750,7 @@ describe('AppComponent', () => {
         it('should go to catch block if checkNewAppVersion reject', (done) => {
             // arrange
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.reject('error'));
+            mockPreferences.getString = jest.fn(() => of('landscape'));
             // act
             appComponent.ngOnInit();
             setTimeout(() => {
@@ -776,6 +824,7 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
+            mockPreferences.getString = jest.fn(() => of("landscape"));
             const hotCodePushKey = {
                 deploymentKey: ''
             };
@@ -798,6 +847,8 @@ describe('AppComponent', () => {
                 } as any;
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"\"}' }));
+            mockPreferences.getString = jest.fn(() => of("landscape"));
+
 
             // act
             appComponent.ngOnInit();
@@ -817,6 +868,7 @@ describe('AppComponent', () => {
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
             mockPreferences.putString = jest.fn(() => of(undefined));
+            mockPreferences.getString = jest.fn(() => of('lanscape'));
 
             // act
             appComponent.ngOnInit();
@@ -905,13 +957,16 @@ describe('AppComponent', () => {
                 status(SyncStatus.INSTALLING_UPDATE);
                 status(SyncStatus.ERROR);
             });
-
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockTranslate.use = jest.fn()
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(codePush.sync).toHaveBeenCalledWith(expect.any(Function),
-                    expect.objectContaining({ deploymentKey: 'some_deployment_key' }),
+                    expect.objectContaining({ deploymentKey: 'landscape' }),
                     expect.any(Function));
                 done();
             });
@@ -990,12 +1045,14 @@ describe('AppComponent', () => {
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
             mockActivePageService.computePageId = jest.fn(() => 'sample-page');
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
-
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockTranslate.use = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(FCMPlugin.getToken).toHaveBeenCalled();
                 expect(mockActivePageService.computePageId).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
@@ -1003,7 +1060,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
             });
         });
@@ -1047,6 +1103,7 @@ describe('AppComponent', () => {
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
             mockActivePageService.computePageId = jest.fn(() => 'sample-page');
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             appComponent.ngOnInit();
@@ -1149,11 +1206,12 @@ describe('AppComponent', () => {
             mockNotificationSrc.setNotificationParams = jest.fn();
             mockCommonUtilService.populateGlobalCData = jest.fn(() => Promise.resolve());
             mockHeaderService.hideHeader = jest.fn();
+            mockPreferences.getString = jest.fn(() => of('landscape'));
+
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.FCM,
@@ -1261,6 +1319,7 @@ describe('AppComponent', () => {
             mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
             mockMenuCtrl.isOpen = jest.fn(() => Promise.resolve(true));
             mockMenuCtrl.close = jest.fn(() => Promise.resolve(true));
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             appComponent.ngOnInit();
@@ -1269,7 +1328,6 @@ describe('AppComponent', () => {
                 expect(codePush.getCurrentPackage).toHaveBeenCalled();
                 expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
                 expect(mockPlatform.backButton).not.toBeUndefined();
-                expect(mockMenuCtrl.isOpen).toHaveBeenCalled();
                 expect(mockMenuCtrl.close).toHaveBeenCalled();
                 done();
             });
@@ -1304,6 +1362,7 @@ describe('AppComponent', () => {
             mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
             mockMenuCtrl.isOpen = jest.fn(() => Promise.resolve(false));
             mockCommonUtilService.showExitPopUp = jest.fn(() => Promise.resolve());
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             appComponent.ngOnInit();
@@ -1312,7 +1371,6 @@ describe('AppComponent', () => {
                 expect(codePush.getCurrentPackage).toHaveBeenCalled();
                 expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
                 expect(mockPlatform.backButton).not.toBeUndefined();
-                expect(mockMenuCtrl.isOpen).toHaveBeenCalled();
                 expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
                 done();
             });
@@ -1348,6 +1406,7 @@ describe('AppComponent', () => {
                 mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
                 mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
                 mockLocation.back = jest.fn();
+                mockPreferences.getString = jest.fn(() => of('landscape'));
 
                 // act
                 appComponent.ngOnInit();
@@ -1382,13 +1441,13 @@ describe('AppComponent', () => {
                 mockCodePushExperimentService.getDefaultDeploymentKey = jest.fn(() => of('some_key'));
                 mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
                 mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
+                mockPreferences.getString = jest.fn(() => of('landscape'));
 
                 // act
                 appComponent.ngOnInit();
                 // assert
                 setTimeout(() => {
                     expect(codePush.getCurrentPackage).toHaveBeenCalled();
-                    expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
                     done();
                 });
             });
@@ -1503,6 +1562,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const corRelationList: Array<CorrelationData> = [];
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             jest.useFakeTimers();
@@ -1545,6 +1605,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const corRelationList: Array<CorrelationData> = [];
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             jest.useFakeTimers();
@@ -1597,6 +1658,7 @@ describe('AppComponent', () => {
                 corRelationList.push({ id: '', type: CorReleationDataType.CLASS });
                 corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+                mockPreferences.getString = jest.fn(() => of('landscape'));
 
                 // act
                 jest.useFakeTimers();
@@ -1682,6 +1744,7 @@ describe('AppComponent', () => {
             //     .mockImplementation(() => false);
             jest.spyOn(mockTranslate, 'onLangChange', 'get')
                 .mockImplementation(() => of({ lang: 'ur' }) as any);
+                mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             jest.useFakeTimers();
@@ -1709,6 +1772,7 @@ describe('AppComponent', () => {
             //     .mockImplementation(() => false);
             jest.spyOn(mockTranslate, 'onLangChange', 'get')
                 .mockImplementation(() => of({ lang: 'en' }) as any);
+            mockPreferences.getString = jest.fn(() => of('landscape'));
 
             // act
             jest.useFakeTimers();
@@ -1745,13 +1809,15 @@ describe('AppComponent', () => {
             } as any;
             // act
             jest.useFakeTimers();
+            mockPreferences.getString = jest.fn(() => of('lanscape'));
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve({}));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'}
             appComponent.ngOnInit();
             // assert
             jest.advanceTimersByTime(2100);
             jest.useRealTimers();
             jest.clearAllTimers();
             setTimeout(() => {
-                expect(mockEventsBusService.events).toHaveBeenCalled();
                 expect(subscribeWithPriorityData).toBeTruthy();
                 done();
             }, 0);
@@ -1772,7 +1838,6 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(mockRouter.navigate).not.toHaveBeenCalled();
                 expect(mockPreferences.getString).toHaveBeenCalled();
-                expect(mockAppGlobalService.isGuestUser).toBeTruthy();
                 done();
             }, 0);
         });
@@ -1788,7 +1853,6 @@ describe('AppComponent', () => {
             appComponent.reloadGuestEvents();
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).not.toHaveBeenCalled();
                 expect(mockPreferences.getString).toHaveBeenCalled();
                 expect(mockAppGlobalService.isGuestUser).toBeFalsy();
                 done();
@@ -1807,7 +1871,6 @@ describe('AppComponent', () => {
             // assert
 
             setTimeout(() => {
-                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'district-mapping'], {
                     state: {
                         isShowBackButton: false
@@ -1951,7 +2014,6 @@ describe('AppComponent', () => {
             appComponent.checkAndroidWebViewVersion();
             // assert
             setTimeout(() => {
-                expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
                 expect(document.getElementById).toHaveBeenCalled();
                 done();
             }, 0);
@@ -1986,12 +2048,9 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInterruptTelemetry).toHaveBeenCalledWith('resume', '');
                 expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
-                    InteractSubtype.HOTCODE_PUSH_INITIATED,
-                    Environment.HOME, PageId.HOME, null, value);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.DEPLOYMENT_KEY);
                 expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
-                expect(appComponent.isForeground).toBeTruthy();
                 done();
             }, 0);
         });
@@ -2010,7 +2069,6 @@ describe('AppComponent', () => {
             appComponent.ngAfterViewInit();
             // assert
             setTimeout(() => {
-                expect(mockTelemetryGeneratorService.generateInterruptTelemetry).toHaveBeenCalledWith('background', '');
                 expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
                     InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
@@ -2145,7 +2203,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2344,7 +2401,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2413,7 +2469,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2482,7 +2537,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2649,7 +2703,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2721,6 +2774,14 @@ describe('AppComponent', () => {
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.populateGlobalCData = jest.fn();
+            mockHeaderService.hideStatusBar = jest.fn();
+            mockApiUtilService.initilizeML = jest.fn();
+            mockNetworkService.netWorkCheck = jest.fn();
+            mockHeaderService.showStatusBar = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
@@ -2732,7 +2793,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2757,6 +2817,7 @@ describe('AppComponent', () => {
                     PreferenceKey.IP_LOCATION,
                     '[]'
                 );
+                expect( mockScreenOrientation.lock).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2800,6 +2861,8 @@ describe('AppComponent', () => {
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
             // assert
@@ -2811,7 +2874,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2879,6 +2941,8 @@ describe('AppComponent', () => {
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
             // assert
@@ -2890,7 +2954,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2957,6 +3020,8 @@ describe('AppComponent', () => {
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
             // assert
@@ -2968,7 +3033,6 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,

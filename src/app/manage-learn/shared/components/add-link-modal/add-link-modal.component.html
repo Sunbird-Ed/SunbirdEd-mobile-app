@@ -1,0 +1,22 @@
+<div class="custom-popup">
+  <div class="pop-container">
+    <ion-icon name="close" (click)="cancel()" class="close-attach-popup"></ion-icon>
+    <div class="pop-msg">
+      <h5>
+        {{'FRMELEMNTS_MSG_COPY_PASTE_LINKS_BELOW' | translate}}
+      </h5>
+      <div class="text-area-container">
+        <ion-textarea rows="5" placeholder="{{'FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER' | translate}}" [(ngModel)]="links">
+        </ion-textarea>
+      </div>
+    </div>
+      <div class="action-btns">
+        <ion-button class="custom-btn-txt-transform-none"  color="light" (click)="cancel()">
+          {{'CANCEL' | translate}}
+        </ion-button>
+        <ion-button class="custom-btn-txt-transform-none" color="primary" (click)="submit()">
+          {{'FRMELEMNTS_BTN_ADD_LINK' | translate}}
+        </ion-button>
+      </div>
+  </div>
+</div>

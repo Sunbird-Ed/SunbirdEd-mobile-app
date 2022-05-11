@@ -13,6 +13,8 @@ import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { RouterLinks } from "@app/app/app.constant";
+
 
 var environment = {
   db: {
@@ -47,6 +49,8 @@ export class TaskViewPage {
     showBurgerMenu: false,
     actionButtons: []
   };
+  viewOnlyMode: boolean = false;
+  stateData;
 
   constructor(
     private router: Router,
@@ -64,16 +68,22 @@ export class TaskViewPage {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private navigateService: NavigationService,
     private commonUtilService: CommonUtilService,
-
+    private routereParams: ActivatedRoute
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
     this.saveSubTaskChanges = _.debounce(this.saveSubTaskChanges, 800);
+    routereParams.queryParams.subscribe(params => {
+      this.viewOnlyMode = (params.viewOnlyMode === 'true');
+    })
     params.params.subscribe((parameters) => {
       this.parameters = parameters;
       this.getTask();
       this.prepareSubTaskMeta();
     });
+    this.stateData = this.router.getCurrentNavigation().extras.state;
+
+
   }
 
   
@@ -94,7 +104,13 @@ export class TaskViewPage {
   getTask() {
     this.db.query({ _id: this.parameters.id }).then(
       (success) => {
-        this.project = success.docs.length ? success.docs[0] : success.docs;
+        if(success?.docs.length){
+          this.project = success.docs[0]
+        } else {
+          this.viewOnlyMode = true;
+          this.project = this.stateData.projectDetails;
+        }
+        // this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
           return item._id == this.parameters.taskId;
@@ -131,6 +147,7 @@ export class TaskViewPage {
   }
   public addSubtask() {
     if (this.newSubtask.name) {
+      this.newSubtask.isDeletable = true;
       !this.task.children ? (this.task.children = []) : "";
       this.task.children.push(this.newSubtask);
       this.enableTaskMarkButton();
@@ -302,9 +319,6 @@ export class TaskViewPage {
     });
   }
 
-  markTaskAsCompleted() {
-    this.showAttachments = true;
-  }
   closemarkTaskAsCompleted(){
     this.showAttachments = false;
   }
@@ -327,7 +341,7 @@ export class TaskViewPage {
   doAction() {
     this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
       if (data.isClicked) {
-        data.isChecked ? this.markTaskAsCompleted() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+        data.isChecked ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`,this.parameters.id],{queryParams:{taskId:this.task._id}}) : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
       }
     })
   }
@@ -336,14 +350,21 @@ export class TaskViewPage {
     let name;
     switch (what) {
       case 'task':
-        name = "Edit Task"
+        if(this.task.isDeletable){
+          name = "Edit Task";
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
         break
-      case 'assignName':
-        name = " Edit Assignee’s Name"
-        break
-      default:
-        name = "Edit Subtask"
+      case 'subtask':
+        if(subtask.isDeletable){
+          name = "Edit Subtask"
+          this.openEditModal(what,name,placeholder,subtask,subTaskIndex);
+         }
+      break
     }
+  }
+
+ async openEditModal(what,name,placeholder,subtask,subTaskIndex){
     const alert = await this.alert.create({
       cssClass: "central-alert",
       header: name,

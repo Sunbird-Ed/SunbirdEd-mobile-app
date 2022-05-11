@@ -12,6 +12,7 @@ import { ToastService } from './toast/toast.service';
 import { UnnatiDataService } from './unnati-data.service';
 import { LoaderService } from './loader/loader.service';
 import { DbService } from './db.service';
+import { statusType } from '../constants';
 var environment = {
   db: {
     projects: "project.db",
@@ -99,16 +100,20 @@ export class SyncService {
   }
 
 
-  createNewProject(showLoader: boolean = false, project?): Promise<any> {
+  createNewProject(showLoader: boolean = false, projectDetails = {}): Promise<any> {
     if(showLoader){
       this.loader.startLoader()
     }
-    const payload = this.removeKeys(project, ['isNew', 'isEdit']);
-    delete payload._rev;
+    const project = { ...projectDetails };
+    const payload = this.removeKeys(project, ['isNew', 'isEdit', 'submissionDetails']);
     delete payload._id;
+    delete payload.tasks;
+    const actualPayload = this.processPayload(payload);
+    //Else in submitted status projects, the sync API will Fail while redirecting to sync page
+    actualPayload.status = statusType.started;
     const config = {
       url: urlConstants.API_URLS.CREATE_PROJECT,
-      payload: payload
+      payload: actualPayload
     }
     return new Promise((resolve, reject) => {
       this.unnatiServ.post(config).subscribe(success => {
@@ -133,11 +138,11 @@ export class SyncService {
     return doc
   }
 
-  deleteSpecificKey(tasks, key) {
+  deleteSpecificKey(tasks = [], key) {
     for (const task of tasks) {
       delete task[key];
-      if (task.children && task.children.length) {
-        for (const subTask of task.children) {
+      if (task?.children && task?.children?.length) {
+        for (const subTask of task?.children) {
           delete subTask[key]
         }
       }
@@ -178,10 +183,22 @@ export class SyncService {
 
   getAllAttachmentOfProject(project) {
     let attachments = [];
+    // project leve attachments
+    if (project.attachments && project.attachments.length) {
+      for (const attachment of project.attachments) {
+        if (attachment.type != 'link') {
+          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+        }
+      }
+    }
+
+    // Task leve attachments
     for (const task of project.tasks) {
       if (task.attachments && task.attachments.length) {
         for (const attachment of task.attachments) {
-          !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          if (attachment.type != 'link') {
+            !attachment['sourcePath'] ? attachments.push(attachment) : null;
+          }
         }
       }
     }
@@ -193,6 +210,9 @@ export class SyncService {
     delete payload.solutionInformation;
     delete payload.programInformation;
     delete payload.userId;
+    delete payload.downloaded;
+    payload.status = (payload.status === statusType.notStarted) ? statusType.started : payload.status;
+    payload.status = (payload.status === statusType.completed) ? statusType.inProgress : payload.status;
     return payload
   }
 

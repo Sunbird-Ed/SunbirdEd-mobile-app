@@ -33,7 +33,7 @@
                   animated: false
                 }"
               >
-                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate}}</ion-select-option>
               </ion-select>
             </div>
             <download-share
@@ -51,7 +51,7 @@
               <img src="{{ p?.img }}" alt="" />
             </div>
             <div class="card-content sb--card__title">
-              <div class="content-heading">{{ p?.name }}</div>
+              <div class="content-heading">{{ p?.name | translate}}</div>
               <div class="count">{{ reportData?.projects[p?.key] }}</div>
             </div>
           </div>
@@ -78,7 +78,7 @@
                   animated: false
                 }"
               >
-                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate}}</ion-select-option>
               </ion-select>
             </div>
             <download-share
@@ -117,7 +117,7 @@
                   animated: false
                 }"
               >
-                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate }}</ion-select-option>
               </ion-select>
             </div>
             <download-share

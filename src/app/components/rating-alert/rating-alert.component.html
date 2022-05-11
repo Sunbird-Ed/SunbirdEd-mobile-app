@@ -9,7 +9,7 @@
       {{currentViewText.message | translate}}</div>
 
     <div class="popover-ratings" *ngIf="currentViewText.type === 'appRate'">
-      <rating [(ngModel)]="appRate"></rating>
+      <rating [(ngModel)]="appRate" (ngModelChange)="rateContent($event)"></rating>
       <ion-row class="ion-padding-top ion-padding-bottom">
         <ion-col size="6" class="btn-pr-8">
           <ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">

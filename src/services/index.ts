@@ -26,3 +26,5 @@ export { CollectionService } from './collection.service';
 export {ContentAggregatorHandler} from './content/content-aggregator-handler.service';
 export {LoginNavigationHandlerService} from './login-navigation-handler.service';
 export {SbProgressLoader} from './sb-progress-loader.service';
+export {SearchFilterService} from './search-filter/search-filter.service';
+export {OnboardingConfigurationService} from './onboarding-configuration.service';

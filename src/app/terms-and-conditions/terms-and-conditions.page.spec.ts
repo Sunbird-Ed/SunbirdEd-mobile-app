@@ -32,8 +32,12 @@ describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
 
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({profileType: 'none', serverProfile: { tncLatestVersionUrl: 'sample_tnc_url' ,
-        declarations: [{name: 'sample-name'}]} })),
+        getActiveSessionProfile: jest.fn(() => of({
+            profileType: 'none', serverProfile: {
+                tncLatestVersionUrl: 'sample_tnc_url',
+                declarations: [{ name: 'sample-name' }],
+            }
+        })),
         getServerProfilesDetails: jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url' })),
     };
 
@@ -281,7 +285,7 @@ describe('TermsAndConditionsPage', () => {
             // arrange
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
-            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
+            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
             mockConsentService.getConsent = jest.fn(() => Promise.resolve());
             const categoriesProfileData = {
                 hasFilledLocation: true,
@@ -290,7 +294,7 @@ describe('TermsAndConditionsPage', () => {
                 isRootPage: true,
                 isUserLocationAvalable: true,
                 status: true
-              };
+            };
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
@@ -298,17 +302,84 @@ describe('TermsAndConditionsPage', () => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
                 setTimeout(() => {
-                   // expect(mockConsentService.getConsent).toHaveBeenCalled();
-                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
-                    //     {state: {categoriesProfileData}});
-                   // expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                     done();
                 }, 0);
             });
         });
-
         it('should navigate to district mapping  page if Tnc is accepted and user location is not available', (done) => {
             // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'none'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve())
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
+            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
+            const categoriesProfileData = {
+                hasFilledLocation: false,
+                showOnlyMandatoryFields: true,
+                profile: undefined,
+                isRootPage: true,
+                isUserLocationAvalable: false,
+                status: true
+            };
+            // act
+            termsAndConditionsPage.ngOnInit();
+            // assert
+            termsAndConditionsPage.onAcceptanceClick().then(() => {
+                setTimeout(() => {
+                    done();
+                }, 0);
+            });
+        });
+        it('should navigate to category edit  page if Tnc is accepted but  BMG value is not filled', (done) => {
+            // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'other'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve())
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
+            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+
+
+            const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+                profile: undefined,
+                isRootPage: true
+            };
+            // act
+            // assert
+            termsAndConditionsPage.ngOnInit();
+            termsAndConditionsPage.onAcceptanceClick().then(() => {
+                expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
+                setTimeout(() => {
+                    done();
+                }, 0);
+            });
+        });
+        it('should navigate to district mapping  page if Tnc is not accepted and user location is not available and profileType is none', (done) => {
+            // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'none'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve())
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
@@ -319,40 +390,104 @@ describe('TermsAndConditionsPage', () => {
                 isRootPage: true,
                 isUserLocationAvalable: false,
                 status: true
-              };
+            };
             // act
             termsAndConditionsPage.ngOnInit();
             // assert
             termsAndConditionsPage.onAcceptanceClick().then(() => {
                 setTimeout(() => {
-                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
-                    //     {state: {categoriesProfileData}});
                     done();
                 }, 0);
             });
         });
-
-        it('should navigate to category edit  page if Tnc is accepted but  BMG value is not filled', (done) => {
+        it('should navigate to district mapping  page if Tnc is not accepted and user location is not available and profileType is other', (done) => {
             // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'other'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve())
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
-            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ status: false }));
-            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
-            mockConsentService.getConsent = jest.fn(() => Promise.resolve());
-            const categoriesProfileData = {
-                hasFilledLocation: true,
-                showOnlyMandatoryFields: true,
-                profile: undefined,
-                isRootPage: true
-              };
+            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
             // act
-            // assert
             termsAndConditionsPage.ngOnInit();
+            // assert
             termsAndConditionsPage.onAcceptanceClick().then(() => {
-                expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 setTimeout(() => {
-                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
-                    //     {state: {categoriesProfileData}});
+                    done();
+                }, 0);
+            });
+        });
+        it('should navigate to district mapping  page if Tnc is not accepted and user location is not available and profileType is undefined', (done) => {
+            // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: undefined
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve())
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
+            mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
+            // act
+            termsAndConditionsPage.ngOnInit();
+            // assert
+            termsAndConditionsPage.onAcceptanceClick().then(() => {
+                setTimeout(() => {
+                    done();
+                }, 0);
+            });
+        });
+        it('should return false by updateLoggedInUser and profileType is none', (done) => {
+            // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'none'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false}))
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+            // act
+            termsAndConditionsPage.ngOnInit();
+            // assert
+            termsAndConditionsPage.onAcceptanceClick().then(() => {
+                setTimeout(() => {
+                    done();
+                }, 0);
+            });
+        });
+        it('should return false by updateLoggedInUser and profileType is other', (done) => {
+            // arrange
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    tncLatestVersionUrl: 'sample_tnc_url',
+                    declarations: [{ name: 'sample-name' }],
+                    managedBy: 'manager'
+                },
+                profileType: 'other'
+            }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false}))
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+            // act
+            termsAndConditionsPage.ngOnInit();
+            // assert
+            termsAndConditionsPage.onAcceptanceClick().then(() => {
+                setTimeout(() => {
                     done();
                 }, 0);
             });

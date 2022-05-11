@@ -23,7 +23,7 @@ import {
   SelectMode,
   ShowMoreViewType
 } from '@project-sunbird/common-consumption';
-import {NavigationExtras, Router} from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
@@ -54,15 +54,15 @@ import {
   SubjectMapping,
   ViewMore
 } from '../../app.constant';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
-import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
-import {NavigationService} from '@app/services/navigation-handler.service';
-import {IonContent as ContentView, IonRefresher, ModalController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {Subscription} from 'rxjs';
-import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
-import {CategoryTerm, FrameworkCategory} from '@project-sunbird/client-services/models/channel';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { IonContent as ContentView, IonRefresher, ModalController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Subscription } from 'rxjs';
+import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { CategoryTerm, FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { FrameworkSelectionDelegateService } from './../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -78,7 +78,7 @@ import { SbPreferencePopupComponent } from './../../components/popups/sb-prefere
   styleUrls: ['./user-home.page.scss'],
 })
 export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
-  private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
+  private frameworkCategoriesMap: { [code: string]: FrameworkCategory | undefined } = {};
 
   @ViewChild('refresher', { static: false }) refresher: IonRefresher;
 
@@ -112,13 +112,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   boardList = [];
   mediumList = [];
   gradeLevelList = [];
-  otherCategories=[];
+  otherCategories = [];
   subjectList = [];
   primaryBanner = [];
   secondaryBanner = [];
   layoutConfiguration = {
     layout: 'v3'
-};
+  };
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -176,6 +176,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   doRefresh(refresher?) {
     this.refresh = true;
     this.fetchDisplayElements(refresher);
+    this.events.publish(EventTopics.NOTIFICATION_REFRESH);
   }
 
   private async getUserProfileDetails() {
@@ -208,7 +209,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   editProfileDetails() {
     if (!this.guestUser) {
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {state: {shouldUpdatePreference: true}});
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], { state: { shouldUpdatePreference: true } });
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -282,7 +283,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
-    this.getOtherMLCategories()
+    this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
@@ -298,7 +299,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const corRelationList: Array<CorrelationData> = [];
     corRelationList.push({
       id: event.data[0].name || '',
-      type: isFromPopover ? CorReleationDataType.SUBJECT : CorReleationDataType.CATEGORY});
+      type: isFromPopover ? CorReleationDataType.SUBJECT : CorReleationDataType.CATEGORY
+    });
     this.telemetryGeneratorService.generateInteractTelemetry(
       isFromPopover ? InteractType.SELECT_ATTRIBUTE : InteractType.SELECT_CATEGORY,
       isFromPopover ? '' : event.data[0].name,
@@ -307,9 +309,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       undefined, undefined, undefined,
       isFromPopover ? corRelationList : undefined
     );
-    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+    if (section.dataSrc && section.dataSrc.params && section.dataSrc.params.config) {
       const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
       event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
+
+      if(!event.data[0].value['filterIdentifier']){
+        const filterIdentifierList = section.dataSrc.params.config.find(((facet) => (facet.type === 'filterConfigIdentifier' && facet.code === section.code)));
+        const filterVal = filterIdentifierList && filterIdentifierList.values && filterIdentifierList.values.find(v=>{
+          if(v.code && event.data[0].name) {
+            return v.code.toLowerCase().replace(/ /g, '') === event.data[0].name.toLowerCase().replace(/ /g, '')
+          }
+          return false;
+        });
+        event.data[0].value['filterIdentifier'] = filterVal ? filterVal.filterIdentifier : undefined;
+      }
     }
     const params = {
       code: section.code,
@@ -344,13 +357,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         };
         break;
-        case 'CONTENTS':
-          state = {
-            contentList: subsection[0].contents,
-            pageName: ViewMore.PAGE_TV_PROGRAMS,
-            subjectName: this.commonUtilService.getTranslatedValue(section.title, ''),
-          };
-          break;
+      case 'CONTENTS':
+        state = {
+          contentList: subsection[0].contents,
+          pageName: ViewMore.PAGE_TV_PROGRAMS,
+          subjectName: this.commonUtilService.getTranslatedValue(section.title, ''),
+        };
+        break;
     }
 
     const values = new Map();
@@ -363,7 +376,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const params: NavigationExtras = {
       state
     };
-    this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] : 
+    this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] :
       [RouterLinks.TEXTBOOK_VIEW_MORE], params);
   }
 
@@ -374,9 +387,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); 
+      this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -446,16 +459,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         list: this.boardList && this.boardList.length ? [this.boardList] : []
       },
       {
-          name: this.commonUtilService.translateMessage('MEDIUM'),
-          list: this.mediumList && this.mediumList.length ? [this.mediumList] : []
+        name: this.commonUtilService.translateMessage('MEDIUM'),
+        list: this.mediumList && this.mediumList.length ? [this.mediumList] : []
       },
       {
-          name: this.commonUtilService.translateMessage('CLASS'),
-          list: this.gradeLevelList && this.gradeLevelList.length ? [this.gradeLevelList] : []
+        name: this.commonUtilService.translateMessage('CLASS'),
+        list: this.gradeLevelList && this.gradeLevelList.length ? [this.gradeLevelList] : []
       },
       {
-          name: this.commonUtilService.translateMessage('SUBJECT'),
-          list: this.subjectList && this.subjectList.length ? [this.subjectList] : []
+        name: this.commonUtilService.translateMessage('SUBJECT'),
+        list: this.subjectList && this.subjectList.length ? [this.subjectList] : []
       }
     ]
     const subjectListPopover = await this.modalCtrl.create({
@@ -508,11 +521,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           continue;
         }
         if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type
-           === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
+          === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
           displayItems[count] = this.mapSubjectTheme(displayItems[count]);
         }
         if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type
-           === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
+          === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
           displayItems[count] = this.mapPrimaryCategoryTheme(displayItems[count]);
         }
         if (displayItems[count].dataSrc && displayItems[count].dataSrc.type === 'RECENTLY_VIEWED_CONTENTS') {
@@ -529,7 +542,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   mapSubjectTheme(displayItems) {
     displayItems.data.forEach(item => {
       const subjectMap = item.facet && SubjectMapping[item.facet.toLowerCase()]
-       ? SubjectMapping[item.facet.toLowerCase()] : SubjectMapping['default'];
+        ? SubjectMapping[item.facet.toLowerCase()] : SubjectMapping['default'];
       item.icon = item.icon ? item.icon : subjectMap.icon;
       item.theme = item.theme ? item.theme : subjectMap.theme;
       if (!item.theme) {
@@ -583,7 +596,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.homeDataAvailable = false;
     for (let index = 0; index < displayItems.length; index++) {
       if (displayItems[index] && displayItems[index].data && ((displayItems[index].data.length) ||
-        (displayItems[index].data.sections && displayItems[index].data.sections.length && displayItems[index].data.sections[0].contents && displayItems[index].data.sections[0].contents.length)
+        (displayItems[index].data.sections && displayItems[index].data.sections.length && 
+          displayItems[index].data.sections[0].contents && displayItems[index].data.sections[0].contents.length)
       )) {
         this.homeDataAvailable = true;
         break;
@@ -667,7 +681,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const navigationExtras = {
       state: {
         subjects: await this.getFrameworkData(frameworkId, categories, FrameworkCategoryCode.SUBJECT),
-        categoryGradeLevels:  await this.getFrameworkData(frameworkId, categories, FrameworkCategoryCode.GRADE_LEVEL),
+        categoryGradeLevels: await this.getFrameworkData(frameworkId, categories, FrameworkCategoryCode.GRADE_LEVEL),
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.profile.grade,
         selectedMedium: this.profile.medium
@@ -706,43 +720,43 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME, undefined, undefined, undefined,
       corRelationList
-     );
+    );
     switch (banner.code) {
       case 'banner_external_url':
-           this.commonUtilService.openLink(banner.action.params.route);
-           break;
+        this.commonUtilService.openLink(banner.action.params.route);
+        break;
       case 'banner_internal_url':
-            if (this.guestUser && banner.action.params.route === RouterLinks.PROFILE) {
-              this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
-            } else {
-              this.router.navigate([banner.action.params.route]);
-            }
-            break;
+        if (this.guestUser && banner.action.params.route === RouterLinks.PROFILE) {
+          this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
+        } else {
+          this.router.navigate([banner.action.params.route]);
+        }
+        break;
       case 'banner_search':
-          // const extras = {
-          //   state: {
-          //     source: PageId.HOME,
-          //     corRelation: corRelationList,
-          //     preAppliedFilter: event.data.action.params.filter,
-          //     hideSearchOption: true,
-          //     searchWithBackButton: true
-          //   }
-          // };
-          // this.router.navigate(['search'], extras);
+        // const extras = {
+        //   state: {
+        //     source: PageId.HOME,
+        //     corRelation: corRelationList,
+        //     preAppliedFilter: event.data.action.params.filter,
+        //     hideSearchOption: true,
+        //     searchWithBackButton: true
+        //   }
+        // };
+        // this.router.navigate(['search'], extras);
         if (banner.action && banner.action.params && banner.action.params.filter) {
           (banner['searchCriteria'] as ContentSearchCriteria) =
             this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
           if (section.dataSrc && section.dataSrc.mapping) {
             const bannerMap = section.dataSrc.mapping.find(m => m.code === banner.code);
-            if(bannerMap){
-              banner = {...banner, ...bannerMap};
+            if (bannerMap) {
+              banner = { ...banner, ...bannerMap };
             }
             banner['facet'] = (banner.ui && banner.ui.landing && banner.ui.landing.title) || '';
             banner['description'] = (banner.ui && banner.ui.description) || '';
           }
         }
         section['description'] = (banner.ui && banner.ui.landing && banner.ui.landing.description) || '';
-        this.handlePillSelect({data: [{value: banner}]}, section);
+        this.handlePillSelect({ data: [{ value: banner }] }, section);
         break;
       case 'banner_content':
         this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
@@ -764,7 +778,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       accumulator = accumulator.concat(bannerConfig);
       return accumulator;
     }, []);
-    if (this.bannerSegment ) {
+    if (this.bannerSegment) {
       this.setBannerConfig();
     }
   }
@@ -776,8 +790,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         corRelationList.push({ id: this.boardList.join(',') || '', type: CorReleationDataType.BOARD });
         corRelationList.push({ id: this.gradeLevelList.join(',') || '', type: CorReleationDataType.CLASS });
         corRelationList.push({ id: this.mediumList.join(',') || '', type: CorReleationDataType.MEDIUM });
-        corRelationList.push({ id: (this.profile && this.profile.profileType)
-          ? this.profile.profileType : '', type: CorReleationDataType.USERTYPE });
+        corRelationList.push({
+          id: (this.profile && this.profile.profileType)
+            ? this.profile.profileType : '', type: CorReleationDataType.USERTYPE
+        });
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.BANNER,
           PageId.HOME,
@@ -787,41 +803,48 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           undefined,
           undefined,
           corRelationList
-         );
-         this.displaySections[index]['data'] = this.bannerSegment;
-         this.primaryBanner = [];
-         this.secondaryBanner = [];
-         this.bannerSegment.forEach((banner) => {
-           if (banner.type === 'secondary') {
-             this.secondaryBanner.push(banner);
-           } else {
-             this.primaryBanner.push(banner)
-           }
-         });
+        );
+        this.displaySections[index]['data'] = this.bannerSegment;
+        this.primaryBanner = [];
+        this.secondaryBanner = [];
+        this.bannerSegment.forEach((banner) => {
+          if (banner.type === 'secondary') {
+            this.secondaryBanner.push(banner);
+          } else {
+            this.primaryBanner.push(banner);
+          }
+        });
       }
     });
   }
 
   async getOtherMLCategories() {
     try {
-      const board = this.profile.syllabus[0]
-      let role = this.profile.profileType.toLowerCase()
+      let board = [];
+      board.push(this.profile?.syllabus?.length  ?  this.profile?.syllabus[0]: null)
+      board.push(this.profile?.board?.length  ?  this.profile?.board[0]: null)
+      let role = this.profile.profileType.toLowerCase();
       if (this.profile.serverProfile) {
-        role = this.profile.serverProfile.profileUserType.type.toLowerCase()
+        role = this.profile.serverProfile.profileUserType.type.toLowerCase();
       }
       const otherCategories = await this.formAndFrameworkUtilService.getFormFields(
         FormConstants.ML_HOME_CATEGORIES
       );
-      this.otherCategories = otherCategories[board][role]
+      board.forEach(element => {
+        if(otherCategories[element] && otherCategories[element][role]){
+         this.otherCategories = otherCategories[element][role]; 
+         return;
+         }
+      });
       if (this.otherCategories.length) {
-        this.homeDataAvailable=true
-        this.events.publish('onPreferenceChange:showReport',true)
+        this.homeDataAvailable = true;
+        this.events.publish('onPreferenceChange:showReport', true);
       } else {
-        this.events.publish('onPreferenceChange:showReport',false)
+        this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
       this.otherCategories = [],
-      this.events.publish('onPreferenceChange:showReport',false)
+        this.events.publish('onPreferenceChange:showReport', false);
 
     }
   }
@@ -830,12 +853,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    let selectedPill = event.data[0].value.name
+    const title = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_PROJECT' :'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS';
+    const meta = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT': 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION';
+    const selectedPill = event.data[0].value.name;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS'),
-        metaInfo: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage(title),
+        metaInfo: this.commonUtilService.translateMessage(meta),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -851,20 +876,21 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       await confirm.present();
       const { data } = await confirm.onDidDismiss();
       if (data && data.canDelete) {
-        this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+        this.router.navigate([RouterLinks.SIGN_IN], { state: { navigateToCourse: true } });
       }
-      return
+      return;
     }
     switch (selectedPill) {
       case 'observation':
-      this.router.navigate([RouterLinks.OBSERVATION], {})
+        this.router.navigate([RouterLinks.OBSERVATION], {});
         break;
+      case 'project':
+        this.router.navigate([RouterLinks.PROJECT], {});
+        break;  
       default:
         break;
     }
   }
-
-
 }
 
 

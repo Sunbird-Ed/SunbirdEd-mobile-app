@@ -3,12 +3,14 @@ import { SplashScreenService } from '@app/services';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+
 
 describe('HasNotSelectedLanguageGuard', () => {
     let hasNotSelectedLanguageGuard: HasNotSelectedLanguageGuard;
 
     const mockSharedPreference: Partial<SharedPreferences> = {
-        getString: jest.fn(() => of('teacher'))
+        getString: jest.fn(() => of('en'))
     };
 
     const mockRouter: Partial<Router> = {
@@ -19,13 +21,17 @@ describe('HasNotSelectedLanguageGuard', () => {
         handleSunbirdSplashScreenActions: jest.fn()
     };
 
+    const mockOnBoardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        skipOnboardingStep: jest.fn(()=> Promise.resolve(false))
+    };
 
 
     beforeAll(() => {
         hasNotSelectedLanguageGuard = new HasNotSelectedLanguageGuard(
             mockSharedPreference as SharedPreferences,
             mockRouter as Router,
-            mockSplashScreenService as SplashScreenService
+            mockSplashScreenService as SplashScreenService,
+            mockOnBoardingConfigurationService as OnboardingConfigurationService
         );
     });
 
@@ -41,24 +47,29 @@ describe('HasNotSelectedLanguageGuard', () => {
 
     describe('resolve', () => {
 
-        it('should return true if route has onReload property true', () => {
+        it('should return true if route has onReload property true and skipOnboarding as false', (done) => {
             // arrange
             // act
             const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);
             // assert
-            expect(response).toBeTruthy();
-            expect(hasNotSelectedLanguageGuard['guardActivated']).toBeTruthy();
-
+            expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(hasNotSelectedLanguageGuard['guardActivated']).toBeTruthy();
+                expect(response).toBeTruthy();
+                done();
+            }, 0);
         });
 
 
-        it('should  navigate to user type selection page if selected user type is available', (done) => {
+        it('should  navigate to user type selection page if selected language is available', (done) => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
+
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
             // assert
             setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'user-type-selection'], {
                     state: {
                         forwardMigration: true
@@ -72,11 +83,13 @@ describe('HasNotSelectedLanguageGuard', () => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
             mockSharedPreference.getString = jest.fn(() => of(undefined));
+
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
 
             setTimeout(() => {
                 // assert
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
                 expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 done();
             }, 0);

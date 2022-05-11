@@ -1596,10 +1596,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   private generateImpressionEvent(dialCodeResult?) {
-    if (dialCodeResult && dialCodeResult.length) {
+    if (this.dialCode) {
       const corRelationList: Array<CorrelationData> = [];
       corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
-      corRelationList.push({ id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK });
+      corRelationList.push({ id: dialCodeResult  ? dialCodeResult.length.toString() : '1', type: CorReleationDataType.COUNT_BOOK });
       this.telemetryGeneratorService.generatePageLoadedTelemetry(
         PageId.QR_BOOK_RESULT,
         this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,

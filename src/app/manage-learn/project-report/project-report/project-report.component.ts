@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AlertController, IonSelect, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../core';
+import { statusType, UtilsService } from '../../core';
 import { ProjectReportService } from '../../core/services/project-report.service';
 import { FilterModalComponent } from '../../shared/components/filter-modal/filter-modal.component';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -49,24 +49,24 @@ export class ProjectReportComponent {
 
   projectsArr = [
     {
-      name: 'Total Projects',
+      name: 'FRMELEMNTS_LBL_TOTAL_PROJECTS',
       img: '../../assets/imgs/reports-page/Note 1.svg',
       key: 'total',
     },
     {
-      name: 'Projects Completed',
+      name: 'FRMELEMNTS_LBL_PROJECTS_SUBMITTED',
       img: '../../assets/imgs/reports-page/note.svg',
-      key: 'completed',
+      key: 'submitted',
     },
     {
-      name: 'Projects In Progress',
+      name: 'FRMELEMNTS_LBL_PROJECTS_IN_PROGRESS',
       img: '../../assets/imgs/reports-page/Note 4.svg',
       key: 'inProgress',
     },
     {
-      name: 'Projects Overdue',
+      name: 'FRMELEMNTS_LBL_PROJECTS_STARTED',
       img: '../../assets/imgs/reports-page/Note 3.svg',
-      key: 'overdue',
+      key: 'started',
     },
   ];
   ionViewWillEnter() {
@@ -79,15 +79,15 @@ export class ProjectReportComponent {
   loadFilterType() {
     this.filterType = [
       {
-        label: 'Weekly',
+        label: 'FRMELEMNTS_LBL_WEEKLY',
         value: 0,
       },
       {
-        label: 'Monthly',
+        label: 'FRMELEMNTS_LBL_MONTHLY',
         value: 1,
       },
       {
-        label: 'Quarterly',
+        label: 'FRMELEMNTS_LBL_QUARTERLY',
         value: 2,
       },
     ];
@@ -149,12 +149,15 @@ export class ProjectReportComponent {
 
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
-      if (key == 'completed') {
-        color.push({ color: '#b4e3aa', pos: count });
+      if (key == statusType.completed ) {
+        color.push({ color: '#29621B', pos: count });
       }
 
-      if (key == 'notStarted') {
-        color.push({ color: '#e86d6d', pos: count });
+      if (key == statusType.notStarted) {
+        color.push({ color: '#DA090D', pos: count });
+      }
+      if (key == statusType.started) {
+        color.push({ color: '#ffd31a', pos: count });
       }
       count++;
     }
@@ -181,11 +184,11 @@ export class ProjectReportComponent {
       x['value'] = ((obj[key] / obj.total) * 100).toFixed(1) + '%';
       x['y'] = obj[key];
       x['z'] = 0;
-      if (key == 'completed') {
+      if (key == 'submitted') {
         x['color'] = '#b4e3aa';
       }
 
-      if (key == 'notStarted') {
+      if (key == 'started') {
         x['color'] = '#e86d6d  ';
       }
 

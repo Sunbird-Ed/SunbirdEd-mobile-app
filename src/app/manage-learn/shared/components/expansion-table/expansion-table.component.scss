@@ -27,3 +27,27 @@ tr:nth-child(even) {
   //   padding: 2px 2.2px;
   text-align: -webkit-center;
 }
+
+.level-name{
+  text-align: left;
+}
+
+.level-score{
+  text-align: center;
+}
+
+.table-view{
+  width:100%
+}
+
+.table-view td {
+  border-bottom: 1px solid #ddd;
+}
+
+.table-view th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  text-align:center;
+  border-bottom: 1px solid #ddd;
+}

@@ -104,7 +104,7 @@ export class SharingFeatureService {
         this.loader.stopLoader();
         return;
       }
-      let fileName = name + '.pdf';
+      let fileName = name.replace(/[^A-Z0-9]/ig, "_") + '.pdf';
       const ft = this.fileTransfer.create();
       ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
       .then(
@@ -127,11 +127,11 @@ export class SharingFeatureService {
    
   }
   directoryPath(): string {
-    let dir_name = 'Download/';
+    // let dir_name = 'Download/';
     if (this.platform.is('ios')) {
-      return this.file.documentsDirectory + dir_name;
+      return this.file.documentsDirectory;
     } else {
-      return this.file.externalRootDirectory + dir_name;
+      return this.file.externalDataDirectory;
     }
   }
 

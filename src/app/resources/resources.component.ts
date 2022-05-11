@@ -723,7 +723,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-      if (this.searchGroupingContents.combination.medium) {
+      if (this.searchGroupingContents && this.searchGroupingContents.combination.medium) {
         const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
         this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
@@ -747,7 +747,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        if (this.searchGroupingContents.combination.gradeLevel) {
+        if (this.searchGroupingContents && this.searchGroupingContents.combination.gradeLevel) {
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
           this.classClickHandler(indexOfselectedClass);
@@ -870,7 +870,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -889,7 +889,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

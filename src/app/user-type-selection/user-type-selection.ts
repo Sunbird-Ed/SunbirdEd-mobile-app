@@ -1,9 +1,9 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { LoginHandlerService } from '@app/services';
+import { LoginHandlerService, OnboardingConfigurationService } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -32,6 +32,7 @@ import {
   SharedPreferences,
   UpdateServerProfileInfoRequest
 } from 'sunbird-sdk';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -75,7 +76,9 @@ export class UserTypeSelectionPage implements OnDestroy {
     private nativePageTransitions: NativePageTransitions,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private profileHandler: ProfileHandler,
-    private loginHandlerService: LoginHandlerService
+    private loginHandlerService: LoginHandlerService,
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private externalIdVerificationService: ExternalIdVerificationService,
   ) {
   }
 
@@ -129,6 +132,9 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         PageId.USER_TYPE
       );
+      if(this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.USER_TYPE_SELECTION) {
+        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.ONBOARDING, false);
+      }
       if (this.categoriesProfileData) {
         if (this.platform.is('ios')) {
           this.headerService.showHeaderWithHomeButton();
@@ -139,7 +145,9 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.backButtonFunc.unsubscribe();
       }
     });
-    this.hideBackButton = false;
+    if(this.onboardingConfigurationService.initialOnboardingScreenName !== OnboardingScreenType.USER_TYPE_SELECTION){
+      this.hideBackButton = false;
+    }
   }
 
   ionViewWillLeave() {
@@ -382,17 +390,24 @@ export class UserTypeSelectionPage implements OnDestroy {
           if (!isSSOUser) {
             this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
           }
-          this.router.navigate([RouterLinks.TABS]);
+          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+            window.history.go(-this.categoriesProfileData.noOfStepsToCourseToc);
+          } else {
+            this.router.navigate([RouterLinks.TABS]);
+          }
+          this.externalIdVerificationService.showExternalIdVerificationPopup();
         } else {
           const navigationExtras: NavigationExtras = {
             state: {
-              isShowBackButton: false
+              isShowBackButton: false,
+              noOfStepsToCourseToc: this.categoriesProfileData.noOfStepsToCourseToc + 1
             }
           };
           this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
       }
     } else {
+      this.categoriesProfileData['noOfStepsToCourseToc'] = this.categoriesProfileData.noOfStepsToCourseToc + 1;
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
         state: this.categoriesProfileData
       });
