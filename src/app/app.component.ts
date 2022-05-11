@@ -130,29 +130,27 @@ export class AppComponent implements OnInit, AfterViewInit {
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
-    if (this.platform.is('iphone') || this.platform.is('ipad')) {
-      this.iosDeeplink();
-    }
   }
 
   iosDeeplink() {
-    window.addEventListener('deviceready', () => {
       window.IonicDeeplink.route({
         '/sample': ''
         // This is not required untill NavigationController implementation
         // for all deeplinked pages
-      }, function(match) {
+      }, (match) => {
         // TODO handle matching URLs
-      }, function(nomatch) {
+      }, (nomatch) => {
         // nomatch.$link - the full link data
         // Only URL has to sent to the deeplink service
         this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
       });
-    })
   }
 
   ngOnInit() {
     this.platform.ready().then(async () => {
+      if (this.platform.is('iphone') || this.platform.is('ipad')) {
+        this.iosDeeplink();
+      }
       this.isForeground = true;
       window['segmentation'] = SBTagModule.instance;
       if (!window['segmentation'].isInitialised) {
