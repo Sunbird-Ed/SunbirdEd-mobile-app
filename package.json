@@ -167,7 +167,7 @@
     "tslib": "^1.10.0",
     "uk.co.workingedge.phonegap.plugin.istablet": "^1.2.0",
     "uuid": "^3.4.0",
-    "video.js": "7.4.1",
+    "video.js": "7.14.3",
     "videojs-contrib-quality-levels": "2.1.0",
     "videojs-http-source-selector": "1.1.6",
     "x2js": "^3.3.0",
