@@ -299,7 +299,7 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSignInWithApple.signin = jest.fn(() => Promise.resolve(mockAppleResponse));
             mockSbProgressLoaderService.show = jest.fn();
-            mockSharedPreferences.putBoolean = jest.fn(() => of({true}));
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
 
             // act
@@ -323,7 +323,7 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSignInWithApple.signin = jest.fn(() => Promise.resolve(mockAppleResponse));
             mockSbProgressLoaderService.show = jest.fn();
-            mockSharedPreferences.putBoolean = jest.fn(() => of({true}));
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.reject());
             mockCommonUtilService.showToast = jest.fn();
             // act
