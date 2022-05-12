@@ -175,9 +175,9 @@ Configure the tabs page according to the requirement. Fllowing are the configura
     Xcode 12.4 Build version 12D4e or above
     
 ## Steps
-    1. Checkout sunbird-sdk repo from https://github.com/shikshalokam/sunbird-mobile-sdk with branch release-3.9.0-ios
+    1. Checkout sunbird-sdk repo from https://github.com/Sunbird-Ed/sunbird-mobile-sdk with branch release-3.9.0-ios
     2. cd to <sunbird-mobile-sdk> && npm i && npm run build:prod
-    3. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
+    3. Checkout sunbird-mobile-app repo from https://github.com/Sunbird-Ed/SunbirdEd-mobile-app with branch release-3.9.0-ios
     4. Add `GoogleService-Info.plist` file
     5. cd to <sunbird-mobile-app> local path
     6. RUN npm i <sunbird-sdk repo local path>/dist
