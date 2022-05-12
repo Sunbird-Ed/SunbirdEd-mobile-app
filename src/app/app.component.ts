@@ -51,6 +51,7 @@ import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmen
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const cordova;
+declare const window;
 
 @Component({
   selector: 'app-root',
@@ -131,8 +132,25 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
 
+  iosDeeplink() {
+      window.IonicDeeplink.route({
+        '/sample': ''
+        // This is not required untill NavigationController implementation
+        // for all deeplinked pages
+      }, (match) => {
+        // TODO handle matching URLs
+      }, (nomatch) => {
+        // nomatch.$link - the full link data
+        // Only URL has to sent to the deeplink service
+        this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
+      });
+  }
+
   ngOnInit() {
     this.platform.ready().then(async () => {
+      if (this.platform.is('iphone') || this.platform.is('ipad')) {
+        this.iosDeeplink();
+      }
       this.isForeground = true;
       window['segmentation'] = SBTagModule.instance;
       if (!window['segmentation'].isInitialised) {

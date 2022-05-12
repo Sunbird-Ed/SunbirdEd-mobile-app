@@ -1,5 +1,5 @@
-import {ShowCertificateComponent} from './show-certificate-component.component';
-import {CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService} from '@app/services';
+import { ShowCertificateComponent } from './show-certificate-component.component';
+import { CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService } from '@app/services';
 
 describe('ShowCertificateComponent', () => {
     let showCertificateComponent: ShowCertificateComponent;
@@ -8,10 +8,10 @@ describe('ShowCertificateComponent', () => {
 
     beforeAll(() => {
         showCertificateComponent = new ShowCertificateComponent(
-                mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockCommonUtilService as CommonUtilService
-            );
-        }
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockCommonUtilService as CommonUtilService
+        );
+    }
     );
     beforeEach(() => {
         jest.clearAllMocks();
@@ -26,6 +26,9 @@ describe('ShowCertificateComponent', () => {
             contentType: 'course',
             pkgVersion: 1
         };
+        let scoreKey = '>=';
+        showCertificateComponent.certificateDetails = { key1: { criteria: { enrollment: { status: 1 }} }, 
+        key2: { criteria: { enrollment: { status: 2 }, assessment: {score: {[scoreKey]: 20}} } } }
         showCertificateComponent.ngOnInit();
     });
 
@@ -42,7 +45,7 @@ describe('ShowCertificateComponent', () => {
                 '',
                 undefined,
                 showCertificateComponent.pageId,
-                {id: 'do_123', type: 'course', version: 1},
+                { id: 'do_123', type: 'course', version: 1 },
                 undefined,
                 showCertificateComponent.objRollup,
                 showCertificateComponent.corRelationList,
@@ -62,7 +65,7 @@ describe('ShowCertificateComponent', () => {
                 '',
                 undefined,
                 showCertificateComponent.pageId,
-                {id: 'do_123', type: 'course', version: 1},
+                { id: 'do_123', type: 'course', version: 1 },
                 undefined,
                 showCertificateComponent.objRollup,
                 showCertificateComponent.corRelationList,

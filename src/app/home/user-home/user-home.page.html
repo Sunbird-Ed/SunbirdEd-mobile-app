@@ -59,7 +59,7 @@
               [hideProgress]="section?.theme?.inputs?.hideProgress || true"
               [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
               [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
-              [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+              [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.TOP"
               [publishedByText]="'CONTENT_CREATED_BY' | translate"
               (viewMoreClick)="navigateToViewMoreContentsPage(section, subSection)"
               (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
@@ -117,7 +117,7 @@
           [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
           [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
           [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
-          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.TOP"
           (viewMoreClick)="navigateToViewMoreContentsPage(section, section?.data?.sections)"
           (cardClick)="navigateToDetailPage($event, section?.title);">
         </sb-library-cards-hlist>
@@ -133,7 +133,7 @@
           [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
           [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
           [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
-          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+          [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.TOP"
           (viewMoreClick)="navigateToViewMoreContentsPage(section, section?.data?.sections)"
           (cardClick)="navigateToDetailPage($event, section?.title);">
         </sb-library-cards-hlist>

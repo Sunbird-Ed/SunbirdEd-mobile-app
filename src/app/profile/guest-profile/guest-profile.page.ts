@@ -160,8 +160,9 @@ export class GuestProfilePage implements OnInit {
   refreshSignInCard() {
     const profileType = this.appGlobalService.getGuestUserType();
 
-    if (this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
-      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT) {
+    if ((this.commonUtilService.isAccessibleForNonStudentRole(profileType)
+      && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
+      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) { 
       this.showSignInCard = true;
     } else {
       this.showSignInCard = false;
