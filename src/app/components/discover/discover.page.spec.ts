@@ -9,8 +9,9 @@ import { AppGlobalService, CommonUtilService, FormAndFrameworkUtilService, Telem
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
 import { ContentFilterConfig } from '@app/app/app.constant';
-import {ProfileType, SharedPreferences} from '@project-sunbird/sunbird-sdk';
+import { ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
+import { PrimaryCaregoryMapping } from '../../app.constant';
 
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
@@ -42,7 +43,7 @@ describe('DiscoverComponent', () => {
         generateInteractTelemetry: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-       getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
+        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
     };
     const mockSharedPrefernces: Partial<SharedPreferences> = {
         getString: jest.fn(() => of(ProfileType.TEACHER))
@@ -69,11 +70,9 @@ describe('DiscoverComponent', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
-
     it('should be create an instance of DiscoverComponent', () => {
         expect(discoverComponent).toBeTruthy();
     });
-
     describe('ngOnInit', () => {
         it('should fetch appName, displayElements, and showHeaderWithHomeButton', (done) => {
             // arrange
@@ -96,9 +95,12 @@ describe('DiscoverComponent', () => {
         });
 
         it('should fetch appName, displayElements and headerEvents should redirect to notification', (done) => {
-
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+            PrimaryCaregoryMapping['primarycategory'] = { icon: 'icon path' }
+            mockPlatform.is = jest.fn(platform => platform === 'android');
+            mockDiscoverPageData[1].code = 'other_boards';
+            mockDiscoverPageData[3].data[0].icon = undefined;
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
             const data = jest.fn((fn => fn({ name: 'notification' })));
             mockHeaderService.headerEventEmitted$ = {
@@ -106,7 +108,7 @@ describe('DiscoverComponent', () => {
             } as any;
             mockRouter.navigate = jest.fn();
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
-            mockSharedPrefernces.getString =jest.fn(() => of(ProfileType.TEACHER));
+            mockSharedPrefernces.getString = jest.fn(() => of(ProfileType.TEACHER));
             // act
             discoverComponent.ngOnInit();
             // assert
@@ -116,7 +118,6 @@ describe('DiscoverComponent', () => {
             }, 0);
         });
     });
-
     it('should open searchPage and getSupportedContentFilterConfig', (done) => {
         // arrange
         mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() => Promise.resolve([]));
@@ -130,7 +131,6 @@ describe('DiscoverComponent', () => {
             done();
         }, 0);
     });
-
     describe('navigateToDetailPage', () => {
         it('should navigate to detail page with data in item', () => {
             // arrange
@@ -146,7 +146,6 @@ describe('DiscoverComponent', () => {
             // assert
             expect(mockNavService.navigateToDetailPage).toHaveBeenCalled();
         });
-
         it('should show offlineToast if data is not available or internet not available', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
@@ -161,7 +160,6 @@ describe('DiscoverComponent', () => {
             expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI');
         });
     });
-
     it('should navigate to viewmore activity', () => {
         // arrange
         mockCommonUtilService.getTranslatedValue = jest.fn();
@@ -171,7 +169,6 @@ describe('DiscoverComponent', () => {
         // assert
         expect(mockRouter.navigate).toHaveBeenCalled();
     });
-
     describe('', () => {
         it('should get data and open popover', () => {
             // arrange
@@ -185,7 +182,6 @@ describe('DiscoverComponent', () => {
             // assert
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
-
         it('should return if event or data is not available', () => {
             // arrange
             mockRouter.navigate = jest.fn();
@@ -195,7 +191,6 @@ describe('DiscoverComponent', () => {
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
     });
-
     describe('handle pill select', () => {
         it('should return if event or event.data is not available', () => {
             // arrange
@@ -205,38 +200,95 @@ describe('DiscoverComponent', () => {
             // assert
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
-
-        it('should navigate to categoryList page', () => {
+        it('should navigate to categoryList page and section.code is popular_categories', () => {
             // arrange
             mockRouter.navigate = jest.fn();
             // act
             discoverComponent.handlePillSelect({
-                data: [
-                    {
-                        value: {}
-                    }
-                ]
+                data: [{
+                    value: {}, name: 'event1'
+                }]
             }, {
+                code: 'popular_categories',
                 dataSrc: {
                     params: {
-                        config: []
+                        config: [{
+                            type: 'filter', code: 'popular_categories', values: [{ name: 'na1' }]
+                        }, {
+                            type: 'filterConfigIdentifier', code: 'code', values: [{ name: 'na2', code: 'code1' }]
+                        }]
                     }
                 }
             });
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
+        it('should navigate to categoryList page and section.code is other_boards', () => {
+            // arrange
+            mockRouter.navigate = jest.fn();
+            // act
+            discoverComponent.handlePillSelect({
+                data: [{
+                    value: {}, name: 'event1'
+                }]
+            }, {
+                code: 'other_boards',
+                dataSrc: {
+                    params: {
+                        config: [{
+                            type: 'filter', code: 'code', values: [{ name: 'na1' }]
+                        }, {
+                            type: 'filterConfigIdentifier', code: 'other_boards', values: [{ name: 'na2', code: 'event1' }]
+                        }]
+                    }
+                }
+            });
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled();
+        });
+        it('should navigate to categoryList page and section.code is browse_by_audience', () => {
+            // arrange
+            mockRouter.navigate = jest.fn();
+            // act
+            discoverComponent.handlePillSelect({
+                data: [{
+                    value: {}
+                }]
+            }, {
+                code: 'browse_by_audience',
+                dataSrc: {
+                    params: {
+                        config: [{
+                            type: 'filter', code: 'code', values: [{ name: 'na1' }]
+                        }, {
+                            type: 'filterConfigIdentifier', code: 'browse_by_audience', values: [{ name: 'na2', code: 'code1' }]
+                        }]
+                    }
+                },
+                landingDetails: {
+                    title: 'title1',
+                    description: 'description'
+                }
+            });
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled();
+        });
     });
-
+    it('clearAllSubscriptions', () => {
+        //arrange
+        //act
+        discoverComponent.clearAllSubscriptions();
+        //assert
+    });
     it('should fetch displayElements', () => {
         // arrange
+        mockDiscoverPageData[1].code = 'browse_by_audience';
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
         // act
         discoverComponent.tabViewWillEnter();
         // assert
         expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
     });
-
     it('should call clearAllSubscription on ionViewWillLeave', () => {
         // arrange
         discoverComponent.clearAllSubscriptions = jest.fn();
@@ -245,7 +297,6 @@ describe('DiscoverComponent', () => {
         // assert
         expect(discoverComponent.clearAllSubscriptions).toHaveBeenCalled();
     });
-
     it('should call clearAllSubscription on ngOnDestroy', () => {
         // arrange
         discoverComponent.clearAllSubscriptions = jest.fn();
@@ -254,7 +305,6 @@ describe('DiscoverComponent', () => {
         // assert
         expect(discoverComponent.clearAllSubscriptions).toHaveBeenCalled();
     });
-
     it('should call doRefresh and call emit', () => {
         // arrange
         const hideRefresher = {
