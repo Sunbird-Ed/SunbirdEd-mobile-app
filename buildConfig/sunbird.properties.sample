@@ -1,45 +1,64 @@
 //App specific Properties
-dev_app_id = DEV_APP_ID
-staging_app_id = STAGING_APP_ID
-production_app_id = PRODUCTION_APP_ID
 app_name = APP_NAME
 app_version_code = APP_VERSION_CODE
+player_deeplink_scheme = PLAYER_DEEPLINK_SCHEME
+
 // Dev Enironment properties
-dev_base_url = DEV_BASE_URL
-dev_mobile_app_key = DEV_MOBILE_APP_KEY
-dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
-dev_channel_id = DEV_CHANNEL_ID
-dev_producer_id = DEV_PRODUCER_ID
+dev_app_id = DEV_APP_ID
 dev_deeplink_base_url = DEV_DEEPLINK_BASE_URL
 dev_deeplink_ncert_url = DEV_DEEPLINK_NCERT_URL
 dev_deeplink_igot_url = DEV_DEEPLINK_IGOT_URL
+dev_custom_scheme = org.sunbird.app.dev
+dev_base_url = DEV_BASE_URL
+dev_merge_account_base_url= DEV_MERGE_ACCOUNT_BASE_URL
+dev_producer_id = DEV_PRODUCER_ID
+dev_channel_id = DEV_CHANNEL_ID
+dev_mobile_app_key = DEV_MOBILE_APP_KEY
+dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
 dev_oauth_redirect_url = DEV_OATH_REDIRECT_URL
+dev_tou_base_url = DEV_TOU_BASE_URL
+dev_survey_base_url= DEV_SURVEY_BASE_URL
+dev_projects_base_url= DEV_PROJECTS_BASE_URL
+
 // Staging envornment properties.
-staging_base_url = STAGING_BASE_URL
-staging_mobile_app_key = STAGING_MOBILE_APP_KEY
-staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
-staging_channel_id = STAGING_CHANNEL_ID
-staging_producer_id = STAGING_PRODUCER_ID
+staging_app_id = STAGING_APP_ID
 staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
 staging_deeplink_ncert_url = STAGING_DEEPLINK_NCERT_URL
 staging_deeplink_igot_url = STAGING_DEEPLINK_IGOT_URL
+staging_custom_scheme = org.sunbird.staging.app
+staging_base_url = STAGING_BASE_URL
+staging_merge_account_base_url= STAGING_MERGE_ACCOUNT_BASE_URL
+staging_producer_id = STAGING_PRODUCER_ID
+staging_channel_id = STAGING_CHANNEL_ID
+staging_mobile_app_key = STAGING_MOBILE_APP_KEY
+staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
 staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
+staging_tou_base_url = STAGING_TOU_BASE_URL
+staging_survey_base_url= STAGING_SURVEY_BASE_URL
+staging_projects_base_url= STAGING_PROJECTS_BASE_URL
+
 // Production envornment properties.
+production_app_id = PRODUCTION_APP_ID
+production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
+production_deeplink_ncert_url = PRODUCTION_DEEPLINK_NCERT_URL
+production_deeplink_igot_url = PRODUCTION_DEEPLINK_IGOT_URL
+production_custom_scheme = org.sunbird.prod.app
 production_base_url = PRODUCTION_BASE_URL
+production_merge_account_base_url= PRODUCTION_MERGE_ACCOUNT_BASE_URL
+production_producer_id = PRODUCTION_PRODUCER_ID
+production_channel_id = PRODUCTION_CHANNEL_ID
 production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
 production_mobile_app_secret = PRODUCTION_MOBILE_APP_SECRET
-production_channel_id = PRODUCTION_CHANNEL_ID
-production_producer_id = PRODUCTION_PRODUCER_ID
-production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
-production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
-staging_deeplink_ncert_url = PRODUCTION_DEEPLINK_NCERT_URL
-staging_deeplink_igot_url = PRODUCTION_DEEPLINK_IGOT_URL
 production_oauth_redirect_url = PRODUCTION_OATH_REDIRECT_URL
+production_tou_base_url = PRODUCTION_TOU_BASE_URL
+production_survey_base_url= PRODUCTION_SURVEY_BASE_URL
+production_projects_base_url= PRODUCTION_PROJECTS_BASE_URL
+
 // Fabric Keys
 release_fabric_api_key = RELEASE_FABRIC_API_KEY
 release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
-player_deeplink_scheme = PLAYER_DEEPLINK_SCHEME
 
+// Configurable Properties
 display_framework_categories_in_profile = DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE
 display_signin_footer_card_in_course_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER
 display_signin_footer_card_in_library_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER
@@ -51,7 +70,3 @@ content_streaming_enabled = CONTENT_STREAMING_ENABLED
 open_rapdiscovery_enabled = OPEN_RAPDISCOVERY_ENABLED
 display_onboarding_category_page = DISPLAY_ONBOARDING_CATEGORY_PAGE
 support_email = SUPPORT_EMAIL
-
-dev_custom_scheme = org.sunbird.app.dev
-staging_custom_scheme = staging.diksha.app
-production_custom_scheme = in.gov.diksha.app
