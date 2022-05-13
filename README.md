@@ -1,6 +1,6 @@
 **Dependencies:**    
 NPM Version - above 6    
-Node JS Version - 14 (Recommended)
+Node Version - 14 (Recommended)
 Cordova Version - 9 (Recommended)
 
 **1. Ionic-Android build Setup**    
