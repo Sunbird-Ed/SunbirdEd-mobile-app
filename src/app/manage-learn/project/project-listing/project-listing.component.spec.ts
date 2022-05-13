@@ -1,6 +1,6 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService, CommonUtilService } from '@app/services';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService, UtilsService, ToastService } from "../../core";
@@ -107,7 +107,6 @@ describe('ProjectListingComponent', () => {
   });
   it('getCreatedProjects', () => {
     //arrange
-    jest.spyOn(projectListingComponent, 'getOfflineCreatedProjects').mockImplementation()
     //act
     projectListingComponent.getCreatedProjects();
     //assert
@@ -263,6 +262,48 @@ describe('ProjectListingComponent', () => {
       //assert
       expect(projectListingComponent.onSearch).toBeTruthy();
     });
+    it('should do when searchText is available, customQuery return success and selectedFilterIndex = 1', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        mockDB.customQuery = jest.fn(() => Promise.resolve({
+          docs: 'docs'
+        }));
+      projectListingComponent.selectedFilterIndex = 1;
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+    });
+    it('should do when searchText is available, customQuery return success and selectedFilterIndex = 2', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        mockDB.customQuery = jest.fn(() => Promise.resolve({
+          docs: 'docs'
+        }));
+      projectListingComponent.selectedFilterIndex = 2;
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+    });
+    it('should do when searchText is available, customQuery return success and selectedFilterIndex = 3', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        mockDB.customQuery = jest.fn(() => Promise.resolve({
+          docs: 'docs'
+        }));
+      projectListingComponent.selectedFilterIndex = 3;
+      mockKendra.post = jest.fn(() =>
+        throwError('error')
+      );
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+    });
     it('should do when searchText is available and customQuery return error', () => {
       //arrange
       const e = 'event';
@@ -301,6 +342,99 @@ describe('ProjectListingComponent', () => {
       projectListingComponent.onSearch(e);
       //assert
       expect(projectListingComponent.onSearch).toBeTruthy();
+    });
+    it('should do when searchText is available and networkFlag is false, selectedFilterIndex is 0', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        projectListingComponent.networkFlag = false;
+      projectListingComponent.selectedFilterIndex = 0;
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
+      mockDB.customQuery = jest.fn(() => Promise.resolve({
+        docs: 'docs'
+      }));
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+
+    });
+    it('should do when searchText is available and networkFlag is false, selectedFilterIndex is 1', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        projectListingComponent.networkFlag = false;
+      projectListingComponent.selectedFilterIndex = 1;
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
+      mockDB.customQuery = jest.fn(() => Promise.resolve({
+        docs: 'docs'
+      }));
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+
+    });
+    it('should do when searchText is available and networkFlag is false, selectedFilterIndex is 2', () => {
+      //arrange
+      const e = 'event';
+      projectListingComponent.searchText = 'text to search',
+        projectListingComponent.networkFlag = false;
+      projectListingComponent.selectedFilterIndex = 2;
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
+      mockDB.customQuery = jest.fn(() => Promise.resolve({
+        docs: 'docs'
+      }));
+      //act
+      projectListingComponent.onSearch(e);
+      //assert
+      expect(projectListingComponent.onSearch).toBeTruthy();
+
     });
   });
   it('ngOnDestroy', () => {
@@ -460,11 +594,10 @@ describe('ProjectListingComponent', () => {
       //arrange
       projectListingComponent.networkFlag = true;
       projectListingComponent.selectedFilterIndex = 2;
-      jest.spyOn(projectListingComponent, 'getCreatedProjects').mockImplementation();
       //act
       projectListingComponent.fetchProjectList();
       //assert
-      expect(projectListingComponent.getCreatedProjects).toHaveBeenCalled();
+      expect(projectListingComponent.fetchProjectList).toBeTruthy();
     })
     it('networkFlag should be false', () => {
       //arrange
@@ -526,11 +659,11 @@ describe('ProjectListingComponent', () => {
   });
   it('loadMore', () => {
     //arrange
-    jest.spyOn(projectListingComponent, 'getProjectList').mockImplementation();
+    projectListingComponent.networkFlag = false;
     //act
     projectListingComponent.loadMore();
     //assert
-    expect(projectListingComponent.getProjectList).toHaveBeenCalled();
+    expect(projectListingComponent.loadMore).toBeTruthy();
   });
   describe('checkProjectInLocal', () => {
     it('should check projectInLocal have data in success.docs', () => {

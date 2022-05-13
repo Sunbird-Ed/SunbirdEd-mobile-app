@@ -58,7 +58,7 @@ export class AddEntityComponent implements OnInit {
                "?type=" +
                entityType +
                "&search=" +
-               this.searchText +
+               encodeURIComponent(this.searchText) +
                "&page=" +
                this.page +
                "&limit=" +
