@@ -1,6 +1,7 @@
 **Dependencies:**    
 NPM Version - above 6    
-Node JS Version - above 8    
+Node JS Version - 14 (Recommended)
+Cordova Version - 9 (Recommended)
 
 **1. Ionic-Android build Setup**    
     - [Install java](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)    
