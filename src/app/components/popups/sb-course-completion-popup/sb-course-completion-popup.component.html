@@ -9,9 +9,9 @@
             </div>
             <div class="course-completion-title">{{'CONGRATULATIONS' | translate}}</div>
             <div class="course-completion-info">{{'FRMELEMNTS_MSG_TRAINING_COMPLETED_SUCCESSFULLY' | categoryKeyTranslate : course }}</div>
-            <div class="course-completion-cert" *ngIf="isCertified && certificateDescription">
-                <p>{{certificateDescription}}</p>
-                <p>{{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_DESC' | categoryKeyTranslate : course }}</p>
+            <div class="course-completion-cert" *ngIf="isCertified">
+                <p *ngIf="certificateDescription; else defaultDescription">{{certificateDescription}}</p>
+                <ng-template #defaultDescription>{{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_DESC' | categoryKeyTranslate : course }}</ng-template>
             </div>
             <div class="course-completion-cert" *ngIf="isOnline && !isCertified">
                 {{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | categoryKeyTranslate : course }}
