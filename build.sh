@@ -19,7 +19,7 @@ SUNBIRD_CORDOVA_COUNTER=0
 
 # Pass build branch as input
 buildBranch="$1"
-rm package-lock.json && npm install && npm install -g @angular/cli@11
+rm package-lock.json && npm install && npm install --save-dev @angular-devkit/build-angular
 export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-6.5.1-all.zip"
 
 file="./build_config"
