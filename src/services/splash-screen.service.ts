@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SplashscreenImportActionHandlerDelegate } from './sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from './sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class SplashScreenService {
@@ -10,13 +11,14 @@ export class SplashScreenService {
         private splashScreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
         private splashScreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
         private splashScreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+        private platform: Platform
     ) {
 
     }
 
     async handleSunbirdSplashScreenActions(): Promise<undefined> {
         const stringifiedActions = await new Promise<string>((resolve) => {
-            if(splashscreen){
+            if(this.platform.is('android') && splashscreen){
                 splashscreen.getActions((actionsTobeDone) => {
                     resolve(actionsTobeDone);
                 });
