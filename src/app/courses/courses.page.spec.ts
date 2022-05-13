@@ -34,7 +34,7 @@ import { CsNetworkError } from '@project-sunbird/client-services/core/http-servi
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
-import { FrameworkCategoryCodesGroup, FrameworkUtilService, GetFrameworkCategoryTermsRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ContentAggregatorRequest, ContentSearchCriteria, FrameworkCategoryCodesGroup, FrameworkUtilService, GetFrameworkCategoryTermsRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { mockCategoryTermsResponse } from '../../services/formandframeworkutil.service.spec.data';
 import { mockFrameworkList } from '../faq-report-issue/faq-report-issue.page.spec.data';
@@ -149,7 +149,10 @@ describe('CoursesPage', () => {
 
     describe('getAggregatorResult', () => {
         it('should return course for loggedIn user', (done) => {
-            jest.spyOn(coursesPage, 'spinner').mockImplementation();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(
+                { profileType: 'Student', grade: ['g1', 'g2'], medium: ['m1', 'm2'], subject: 'Sunbject' } as any
+            ));
+            mockProfileHandler.getAudience = jest.fn(() => Promise.resolve(['Student']));
             mockContentAggregatorHandler.newAggregate = jest.fn(() => {
                 Promise.resolve([{
                     orientation: 'horaizontal',
@@ -158,6 +161,7 @@ describe('CoursesPage', () => {
                     }
                 }]);
             }) as any;
+            
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
@@ -188,7 +192,7 @@ describe('CoursesPage', () => {
     describe('ngOnInit', () => {
         it('should return enrolledCourse data and course tab data by invoked ngOnIt', (done) => {
             // arrange
-            jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
+            const refresher = true;
             const param = { isOnBoardingCardCompleted: true, contentId: 'do_123' };
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
             jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
@@ -198,7 +202,6 @@ describe('CoursesPage', () => {
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);

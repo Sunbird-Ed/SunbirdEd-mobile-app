@@ -62,7 +62,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'User name', value: 'sample-User-name'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'User name', value: 'sample-User-name' }]);
             done();
         }, 0);
     });
@@ -96,7 +96,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'Mobile', value: '-'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'Mobile', value: '-' }]);
             done();
         }, 0);
     });
@@ -108,7 +108,7 @@ describe('ConsentPiiPopupComponent', () => {
             serverProfile: {
                 firstName: 'sample-User-name',
                 id: 'sample-user-id',
-                userLocations: [{type: 'state', name: 'sample-state'}]
+                userLocations: [{ type: 'state', name: 'sample-state' }]
             }
         };
         mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
@@ -132,7 +132,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'State', value: 'sample-state'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: 'sample-state' }]);
             done();
         }, 0);
     });
@@ -144,7 +144,7 @@ describe('ConsentPiiPopupComponent', () => {
             serverProfile: {
                 firstName: 'sample-User-name',
                 id: 'sample-user-id',
-                userLocations: [{type: 'state', name: 'sample-state'}]
+                userLocations: [{ type: 'state', name: 'sample-state' }]
             }
         };
         mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
@@ -168,7 +168,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'State', value: '-'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
             done();
         }, 0);
     });
@@ -204,7 +204,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'State', value: '-'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
             done();
         }, 0);
     });
@@ -240,7 +240,7 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{key: 'Class', value: '-'}]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'Class', value: '-' }]);
             done();
         }, 0);
     });
@@ -297,15 +297,12 @@ describe('ConsentPiiPopupComponent', () => {
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'declared-email'
-                        }
+                        params: { categoryCode: 'declared-email' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
                 serverProfile: {
-                    declarations: [],
                     maskedEmail: 'sample@sample.com'
                 }
             };
@@ -314,7 +311,42 @@ describe('ConsentPiiPopupComponent', () => {
             // assert
             expect(data).toBe('sample@sample.com');
         });
-
+        it('should return email', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE',
+                        params: { categoryCode: 'declared-email' }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { email: 'sample@sample.com' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample@sample.com');
+        });
+        it('should return - for empty email and maskedEmail', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE',
+                        params: { categoryCode: 'declared-email' }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {}
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
         it('should return maskedphone for empty phone', () => {
             const ele = {
                 code: 'phoneNumber',
@@ -337,6 +369,198 @@ describe('ConsentPiiPopupComponent', () => {
             const data = consentPiiPopupComponent.converDataSrcToObject(ele);
             // assert
             expect(data).toBe('9999999999');
+        });
+        it('should return phone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE',
+                        params: { categoryCode: 'declared-phone' }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { phone: '9999999999' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('9999999999');
+        });
+        it('should return - for empty phone and maskedphone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE',
+                        params: {
+                            categoryCode: 'declared-phone'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {}
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return external id', () => {
+            //arrange
+            const ele = {
+                code: 'externalIds',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE',
+                        params: { categoryCode: 'externaId' }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    channel: 'p1',
+                    externaId: [{ id: 'id1', provider: 'p1' }, { id: 'id2', provider: 'p2' }]
+                }
+            };
+            //act
+            consentPiiPopupComponent.converDataSrcToObject(ele);
+            //assert
+            expect(consentPiiPopupComponent.converDataSrcToObject).toBeTruthy();
+        });
+        it('should return location', () => {
+            //arrange
+            const ele = {
+                code: 'schoolId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_LOCATIONS' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    userLocations: [{ code: 'schoolId1', type: 'school', name: 'na1' }, { code: 'school', type: 'schoolId', name: 'na2' }]
+                }
+            };
+            //act
+            consentPiiPopupComponent.converDataSrcToObject(ele);
+            //assert
+            expect(consentPiiPopupComponent.converDataSrcToObject).toBeTruthy();
+        });
+        it('should return declaration info if the marker is SERVER_PROFILE_DECLARED', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [
+                        { info: { code1: 'cd1' } }
+                    ]
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('cd1');
+        });
+        it('should return - instead of declaration info if the marker is SERVER_PROFILE_DECLARED', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [
+                        { info: {} }
+                    ]
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return maskedEmail for code is emailId', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [], maskedEmail: 'sample@sample.com' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample@sample.com');
+        });
+        it('should return  - for code is maskedEmail', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [] }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return maskedphone for code phone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [], maskedPhone: '9999999999' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('9999999999');
+        });
+        it('should return  - for code is maskedPhone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [] }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return - when all conditions are false if the marker is SERVER_PROFILE_DECLARED', () => {
+            const ele = {
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: []
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
         });
     });
 });
