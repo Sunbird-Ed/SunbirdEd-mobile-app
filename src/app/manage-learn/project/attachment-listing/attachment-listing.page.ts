@@ -161,10 +161,10 @@ export class AttachmentListingPage implements OnInit {
 
   viewDocument(attachment) {
     if(attachment.type == 'link'){
-      window.open(attachment.name, '_blank');
-      return
-    }
-    if (attachment.url) {
+      const options
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+    (window as any).cordova.InAppBrowser.open(attachment.name, '_blank', options)
+    }else if (attachment.url) {
       this.downloadFile(attachment);
     } else {
       this.openFile(attachment);
