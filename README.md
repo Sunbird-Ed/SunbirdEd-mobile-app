@@ -1,3 +1,10 @@
+Recommended Branch - 4.9.0
+
+Kindly mail back to sunbird to get the starter kit Which consists of two files:
+a) google-services.json - To be Copied at the root of the project
+b) sunbird.properties.  - To be Copied into buildConfig/ folder
+
+
 **Dependencies:**    
 NPM Version - above 6    
 Node Version - 14 (Recommended)
