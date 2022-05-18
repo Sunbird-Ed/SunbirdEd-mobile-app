@@ -160,6 +160,10 @@ export class AttachmentListingPage implements OnInit {
   }
 
   viewDocument(attachment) {
+    if(attachment.type == 'link'){
+      window.open(attachment.name, '_blank');
+      return
+    }
     if (attachment.url) {
       this.downloadFile(attachment);
     } else {
@@ -230,6 +234,7 @@ export class AttachmentListingPage implements OnInit {
     this.getAttachments();
   }
   attachmentAction(event) {
+    console.log(event,"event");
     if (event.action == 'delete') {
       this.deleteConfirmation(event.attachment);
     } else if (event.action == 'view') {

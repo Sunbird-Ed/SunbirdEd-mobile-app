@@ -35,7 +35,7 @@
 
     <!-- for question and criteria filter modal/ only show when report is present -->
     <div *ngIf="filter.filter.type == 'modal' && !error" class="d-flex flex-jc-flex-end py-10">
-      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin>
+      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin class="custom-btn-txt-transform-none">
         <ion-icon name="options"></ion-icon>
         {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
       </ion-button>
@@ -108,7 +108,7 @@
     {{ error?.message }}
   </div>
   <div class="_flex-box _justify-content-center" *ngIf="data?.improvementProjectSuggestions && data?.improvementProjectSuggestions.length ">
-    <ion-button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
+    <ion-button ion-button round class="custom-btn-txt-transform-none viewReportBtn" (click)="goToImpSugg()">
       {{'FRMELEMNTS_CLICK_TO_IMPROVE' | translate}}
     </ion-button>
   </div>
