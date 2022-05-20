@@ -2354,54 +2354,6 @@ lib-discuss-card .discuss-card-subtitle {
   }
 }
 
-.fontResize-container {
-  .fontResizeBtn_A- {
-    font-size: 0.75rem;
-  }
-
-  .fontResizeBtn_A {
-    font-size: 0.85rem;
-  }
-
-  .fontResizeBtn_A+ {
-    font-size: 1rem;
-  }
-
-  .fontResizeBtn {
-    border: 0.15rem solid #484848;
-    background: none;
-    color: var(--black);
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0px 0.25rem;
-    padding: 0px 0.5rem;
-    transition: all .3s ease-in-out;
-    border-radius: 50%;
-
-    &:hover,
-    &:active {
-      background: #ff714a;
-      color: var(--white);
-      cursor: pointer;
-    }
-
-    &:disabled,
-    &[disabled] {
-      opacity: 0.5;
-      cursor: default;
-      border-radius: 50%;
-
-      &:hover {
-        background: none;
-      }
-    }
-  }
-}
-
-.fontResizeBtn:focus,
 .dark-mode-toggle:focus {
   outline: none;
 }
