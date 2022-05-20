@@ -925,7 +925,6 @@ ion-split-pane {
 .leave-training-popup {
   .popover-content {
     top: 168.273px !important;
-    left: 220px !important;
     --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
@@ -2020,7 +2019,20 @@ app-category-list-page{
     .header{
       padding: 0 1rem !important;
     }
+    .body {
+      sb-library-card sb-library-card-v4 >
+      .sb--card.sb--card--theme2 {
+        width: auto !important;
+        margin: 10px !important;
+      }
+    }
   }
+}
+
+sb-library-card sb-library-card-v4 >
+.sb--card.sb--card--theme2 {
+  width: auto !important;
+  margin: 10px !important;
 }
 
 app-courses, app-resources {
@@ -2035,9 +2047,12 @@ app-user-home, app-discover {
   }
 
   sb-banner-card-hlist {
+    .sb--scrolling-wrapper-flexbox {
+      justify-content: center;
+    }
     .sb--card.sb--card--theme2 {
-      width: 85vw !important;
-      height: 17vh !important;
+      width: 19.18rem !important;
+      height: 7.8125rem !important;
       background-repeat: no-repeat !important;
       background-size: 100% 100% !important;
     }
@@ -2326,4 +2341,67 @@ app-metadata-details,app-add-file {
     --color:green;
   }
 }
+}
+
+lib-discuss-card .discuss-card-subtitle {
+  .card-label-container, .discuss-card-content {
+    margin-right: auto;
+    flex-wrap: wrap;
+
+    .discuss-card-label {
+      flex-basis: 100%;
+    }
+  }
+}
+
+.fontResize-container {
+  .fontResizeBtn_A- {
+    font-size: 0.75rem;
+  }
+
+  .fontResizeBtn_A {
+    font-size: 0.85rem;
+  }
+
+  .fontResizeBtn_A+ {
+    font-size: 1rem;
+  }
+
+  .fontResizeBtn {
+    border: 0.15rem solid #484848;
+    background: none;
+    color: var(--black);
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 0.25rem;
+    padding: 0px 0.5rem;
+    transition: all .3s ease-in-out;
+    border-radius: 50%;
+
+    &:hover,
+    &:active {
+      background: #ff714a;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    &:disabled,
+    &[disabled] {
+      opacity: 0.5;
+      cursor: default;
+      border-radius: 50%;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+}
+
+.fontResizeBtn:focus,
+.dark-mode-toggle:focus {
+  outline: none;
 }

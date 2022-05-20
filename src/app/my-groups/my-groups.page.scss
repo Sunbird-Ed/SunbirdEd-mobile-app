@@ -7,6 +7,10 @@
 .my-gr-title{
   display: flex;
   justify-content: space-between;
+
+  img {
+    margin-right: 1rem;
+  }
 }
 .my-cr-title{
   color: $blue;
