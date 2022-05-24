@@ -412,7 +412,7 @@
   "ERROR_OTP": "Incorrect OTP. Number of attempts remaining : {{%s}}",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum OTP limit, try again later",
   "ERROR_PHONE_EXISTS": "This mobile number is already registered. Try with a different mobile number",
-  "ERROR_PHONE_INVALID": "Enter a valid mobile number",
+  "ERROR_PHONE_INVALID": "Enter a valid 10 digit mobile number",
   "ERROR_PHONE_REQUIRED": "Mobile number is required",
   "ERROR_SAME_EMAIL_UPDATED": "This email address is already linked to your profile. Enter another email address",
   "ERROR_SAME_PHONE_UPDATED": "This mobile number is already linked to your profile. Enter another mobile number",
@@ -842,7 +842,7 @@
   "RECOMMENDATION_BASED_ON_PROFILE": "Recommendations based on your profile details",
   "RECOMMENDED": "Recommended",
   "RECOVERY_ACCOUNT_UPDATE_SUCCESS": "Recovery account updated successfully",
-  "RECOVERY_ID_DESCRIPTION": "A recovery account helps you to regain access if you are locked out. Choose your recovery account type and enter details:",
+  "RECOVERY_ID_DESCRIPTION": "A recovery account helps you to regain access to your account if you are locked out or forget your password. Choose the recovery account type and enter details:",
   "REDO": "Redo",
   "REDO_ASSESSMENT": "Redo Assessment",
   "REGISTER_TO_COMPLETE_ACCESS": "Register to get complete access to the content",
@@ -1542,5 +1542,6 @@
   "CERTIFICATE_ISSUED_TO": "Certificate issued to",
   "SUCCESSFULLY_COMPLETING_COURSE": "For successfully completing the course",
   "ON_APPNAME_ON": "On {{appName}} on",
-  "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed"
+  "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed",
+  "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number"
 }

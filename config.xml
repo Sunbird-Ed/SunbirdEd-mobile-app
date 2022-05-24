@@ -86,6 +86,7 @@
         <preference name="MediaPlaybackRequiresUserAction" value="false" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <allow-intent href="https://*/*" />
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>App uses camera permissions to scan QR codes and upload evidences</string>
         </edit-config>

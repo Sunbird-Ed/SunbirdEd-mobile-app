@@ -66,6 +66,18 @@ export class ActivityDashboardPage {
 
     getDashletData() {
         this.groupService.activityService.getDataForDashlets(this.hierarchyData.children, this.aggData).subscribe((data) => {
+            data.rows.forEach(element => {
+				let columnNames = data.columns.map(function(item) {
+					return item['data'];
+				});
+				if(Object.keys(element).length !== columnNames.length && Object.keys(element).length < columnNames.length) {
+					columnNames.forEach(key => {
+						if(element[key] == undefined) {
+							element[key] = 'NA';
+						}
+					});
+				}
+            });
             this.dashletData = data;
             this.getActivityAggLastUpdatedOn()
         })
