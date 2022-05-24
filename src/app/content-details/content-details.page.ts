@@ -278,6 +278,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   }
 
+  iosCheck() {
+    if (this.platform.is('ios') && this.content.mimeType === 'application/vnd.sunbird.questionset') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async ngOnInit() {
     this.subscribeEvents();
     this.appLists = await this.formFrameworkUtilService.getFormFields(FormConstants.VENDOR_APPS_CONFIG);

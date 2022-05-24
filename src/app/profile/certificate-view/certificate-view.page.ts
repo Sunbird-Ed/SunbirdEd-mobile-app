@@ -9,6 +9,7 @@ import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
 import { CertificateService, InteractType } from 'sunbird-sdk';
+declare var cordova;
 
 @Component({
   selector: 'app-certificate-view',
@@ -160,7 +161,27 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     if (template.startsWith('data:image/svg+xml,')) {
       template = decodeURIComponent(template.replace(/data:image\/svg\+xml,/, '')).replace(/\<!--\s*[a-zA-Z0-9\-]*\s*--\>/g, '');
     }
-    this.certificateContainer.nativeElement.innerHTML = template;
+    
+    if (this.platform.is('ios')) {
+      template = template.replace(/`/gi, "\"");
+      var ref = cordova.InAppBrowser.open('', '_blank');
+      ref.executeScript( { code : `
+        var certs = document.createElement('div');
+        certs.setAttribute('id', 'certid');
+        document.body.appendChild(certs);`
+      } );
+  
+      let funcExecute = () => {
+        ref.executeScript({ code: `
+          var certs = document.getElementById('certid');
+          certs.innerHTML = \`${template}\`
+        ` });
+        ref.insertCSS({ code: "body{height: 100%;}" });
+      };
+      setTimeout(funcExecute, 1000);
+    } else {
+      this.certificateContainer.nativeElement.innerHTML = template;
+    }
   }
 
   private async listenActionEvents(option) {
