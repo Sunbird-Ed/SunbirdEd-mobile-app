@@ -50,7 +50,7 @@ describe('LocalCourseService', () => {
   const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
     transform: jest.fn(() => 'sample-message')
   };
-
+ 
   const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
   beforeAll(() => {
@@ -884,4 +884,34 @@ describe('LocalCourseService', () => {
     });
   });
 
+  describe('isConsentPopupVisible', ()=>{
+    it('should check consent is visible', ()=>{
+      jest.spyOn(localCourseService, 'isConsentPopupVisible').mockReturnValue(true);
+    })
+    it('should check consent is not visible', ()=>{
+      jest.spyOn(localCourseService, 'isConsentPopupVisible').mockReturnValue(false);
+    })
+  })
+  describe('setConsentPopupVisibility', ()=>{
+    it('should set consent popup as visible or not', ()=>{     
+      jest.spyOn(localCourseService, 'setConsentPopupVisibility').mockImplementation((status:boolean)=>{
+        return status; 
+      });
+    })
+  })
+  describe('getTimeRemaining', ()=>{
+    it('should check the time remaining', ()=>{   
+      const FormRequest = {
+        type: 'config',
+        subType: 'utility',
+        action: 'get',
+        component: 'app',
+    };
+    const utilityConfigFields:any = mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(FormRequest));
+    const batchEnrollmentEndDateDisplayThreshold= utilityConfigFields.find = jest.fn(()=>of((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
+    const today = '01/01/01';
+    const enrollmentEndDate = '02/01/01';
+    const countTimeOfEOD = '01/01/01';
+    })
+  })
 });
