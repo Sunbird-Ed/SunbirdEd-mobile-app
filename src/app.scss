@@ -925,7 +925,6 @@ ion-split-pane {
 .leave-training-popup {
   .popover-content {
     top: 168.273px !important;
-    left: 220px !important;
     --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
@@ -2029,7 +2028,20 @@ app-category-list-page{
     .header{
       padding: 0 1rem !important;
     }
+    .body {
+      sb-library-card sb-library-card-v4 >
+      .sb--card.sb--card--theme2 {
+        width: auto !important;
+        margin: 10px !important;
+      }
+    }
   }
+}
+
+sb-library-card sb-library-card-v4 >
+.sb--card.sb--card--theme2 {
+  width: auto !important;
+  margin: 10px !important;
 }
 
 app-courses, app-resources {
@@ -2044,9 +2056,12 @@ app-user-home, app-discover {
   }
 
   sb-banner-card-hlist {
+    .sb--scrolling-wrapper-flexbox {
+      justify-content: center;
+    }
     .sb--card.sb--card--theme2 {
-      width: 85vw !important;
-      height: 17vh !important;
+      width: 19.18rem !important;
+      height: 7.8125rem !important;
       background-repeat: no-repeat !important;
       background-size: 100% 100% !important;
     }
@@ -2476,4 +2491,6 @@ app-slider-type-input {
   ion-label {
     font-size: 0.875rem;
   }
+.dark-mode-toggle:focus {
+  outline: none;
 }

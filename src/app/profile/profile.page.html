@@ -229,8 +229,8 @@
                     (click)="getEnrolledCourses(true, true)"></ion-icon></span>
             </div>
             <div class="content">
-                <div class="flex-nowrap"
-                    *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
+                <div *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc'; let i = index;"
+                    [ngClass]="{'flex-nowrap': i !== mappedTrainingCertificates.length-1, 'flex-nowrap-last': i == mappedTrainingCertificates.length-1}">
                     <div class="training-1">
                         <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(training)">
                             {{training.courseName}}
@@ -274,8 +274,8 @@
                 <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>
             </div>
             <div class="content">
-                <div class="flex-nowrap"
-                    *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc';">
+                <div *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc'; let i = index;"
+                    [ngClass]="{'flex-nowrap': i !== learnerPassbook.length-1, 'flex-nowrap-last': i == learnerPassbook.length-1}">
                     <div class="training-1">
                         <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}

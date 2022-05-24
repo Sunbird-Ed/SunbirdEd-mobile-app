@@ -285,12 +285,11 @@
   .training-1 {
     width: 80%;
     float: left;
-    padding-left: 10%;
+    padding-left: 2rem;
     @include padding(16px, null, 8px, null);
   }
 
   .training-2 {
-    width: 20%;
     .sb-btn-tile {
       margin: 0.5rem 0 !important;
     }
@@ -305,6 +304,13 @@
     justify-content: space-between;
     flex-wrap: nowrap;
     border-bottom: 0.5px solid map-get($colors, dark_gray);
+    @include padding(null, 16px, null, 16px);
+  }
+
+  .flex-nowrap-last {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
     @include padding(null, 16px, null, 16px);
   }
 

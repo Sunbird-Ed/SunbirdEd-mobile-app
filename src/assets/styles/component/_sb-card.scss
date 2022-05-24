@@ -186,8 +186,6 @@
           flex-direction: row-reverse;
           align-items: flex-end;
           position: absolute;
-          bottom: 0;
-          left: 0;
           right: 0;
           .action-btn {
             outline: none;
@@ -233,10 +231,11 @@
 .sb-textbook-container {
   // margin-top: ($base-block-space * 3);
   @include padding(($base-block-space * 1));
-  width: 98.5%;
+  width: auto;
   &:last-child{
       margin-bottom: ($base-block-space * 2);
       margin-left: 3px;
+      margin-right: 3px;
   }
 
   .sb-textbook-items {
