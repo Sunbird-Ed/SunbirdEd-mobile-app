@@ -21,7 +21,7 @@
     background: $gray-0;
     @include padding(($base-block-space * 0.5), ($base-block-space),0,0);
     height: ($base-block-space * 3);
-    font-size: ($font-size-base - 2);
+    font-size: ($font-size-base - 0.125);
     line-height: 17px;
     @include margin(0, ($base-block-space * 4), 0, 0);
     position: relative;

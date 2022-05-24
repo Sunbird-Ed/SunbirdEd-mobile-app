@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
 
 .mu-title{
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: map-get($colors, granite_gray);
   margin: 16px;
@@ -42,7 +42,7 @@ ion-footer{
 }
 
 .add-size{
-  font-size: 24px;
+  font-size: 1.5rem;
   padding-right: 8px;
 }
 
@@ -58,7 +58,7 @@ ion-footer{
   height: 40px;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .sb-new-btn-success {
@@ -68,5 +68,5 @@ ion-footer{
   height: 40px;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }

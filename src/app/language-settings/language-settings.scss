@@ -59,7 +59,7 @@
   }
 
   .font-size-17 {
-    font-size: 17px !important;
+    font-size: 1.063rem !important;
   }
 }
 
@@ -102,7 +102,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 1.25rem;
   transform: translate(-50%, -50%);
 }
 
@@ -118,7 +118,7 @@
 }
 
 .app-title {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
   color: $blue;
   margin-top: 5vh;

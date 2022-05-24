@@ -7,7 +7,7 @@
 
     <ion-row>
       <ion-col size="3">
-        <img src="assets/imgs/timetable.png" class="filter-icon" (click)="setTaskEndDate()"  alt=""/>
+        <img src="assets/imgs/timetable.png" class="filter-icon-calendar" (click)="setTaskEndDate()"  alt=""/>
       </ion-col>
       <ion-col size="9">
         <ion-datetime (ionChange)="setDate()" #dateTime value="{{task?.endDate}}" display-timezone="utc"
@@ -60,7 +60,7 @@
             {{subtask.name}}
           </ion-col>
           <ion-col size="1" style="margin: auto; text-align: center" *ngIf="subtask.isDeletable">
-            <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 20px"
+            <img src="assets/imgs/Delete.png" class="filter-icon" style="width: 1.25rem"
               (click)="askPermissionToDelete(subtask,'subtask')" alt=""/>
           </ion-col>
         </ion-row>

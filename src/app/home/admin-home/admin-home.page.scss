@@ -1,6 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 .filter-style {
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: 500;
   color: $blue;
   white-space: nowrap;
@@ -12,11 +12,11 @@
 
 .user-profile {
   padding: 8px 8px 0;
-  font-size: 3.2vh;
+  font-size: 1.188rem;
 }
 
 .label {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
   padding-left: 8px;
 }

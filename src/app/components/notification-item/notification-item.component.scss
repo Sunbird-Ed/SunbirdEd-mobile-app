@@ -9,7 +9,7 @@
     .date-time {
       color: $gray-200;
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px;
+      font-size: 0.75rem;
       line-height: 20px;
       margin-bottom: 4px;
       padding: 2px;
@@ -19,7 +19,7 @@
       width: 100%;
       color: $blue;
       font-family: "Noto Sans", sans-serif;
-      font-size: 15px;
+      font-size: 0.938rem;
       font-weight: bold;
       letter-spacing: -0.4px;
       line-height: 20px;
@@ -29,12 +29,12 @@
       overflow: hidden;
       text-overflow: ellipsis; 
       margin: 0;
-      font-size: 16px;
+      font-size: 1rem;
     }
     .description {
       color: $gray-300;
       font-family: "Noto Sans", sans-serif;
-      font-size: 13px;
+      font-size: 0.813rem;
        letter-spacing: -0.1px;
       line-height: 20px;
       margin: 0;
@@ -45,7 +45,7 @@
     }
 
     .sb-accordian-arrow {
-      font-size: 24px;
+      font-size: 1.5rem;
       line-height: 20px;
     }
     .arrow-up {
@@ -56,7 +56,7 @@
       border-radius: 2px;
      // background-color: map-get($colors, white_f1);
       font-family: "Noto Sans", sans-serif;
-      font-size: 13px;
+      font-size: 0.813rem;
       line-height: 20px;
       margin-top: 2px;
       color: $gray-300;
@@ -90,7 +90,7 @@
       height: 20px;
       color: $blue;
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: bold;
       letter-spacing: -0.34px;
       line-height: 20px;

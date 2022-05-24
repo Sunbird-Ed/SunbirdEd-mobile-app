@@ -34,7 +34,7 @@
 
 .offline-header {
   color: $gray-300;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .offline-content {
@@ -82,7 +82,7 @@
 
 .sub-heading {
   padding: 1em 4em !important;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: $gray-300;
   margin: 0;
 }
@@ -96,7 +96,7 @@
 .sb-nodownloads-title {
   & {
     margin: 0;
-    font-size: 16px;
+    font-size: 1rem;
     padding-top: 4%;
     color: map-get($colors, granite_gray);
     font-weight: bold;
@@ -134,7 +134,7 @@
   .sb-course-heading {
     background: map-get($colors , pale_blue);
     padding: 16px;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
     line-height: 18px;
 

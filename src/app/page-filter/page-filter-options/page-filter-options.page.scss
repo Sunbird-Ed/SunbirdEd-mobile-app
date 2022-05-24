@@ -2,7 +2,7 @@
 @import "src/assets/styles/_variables.scss";
 .subtitle {
       text-transform: capitalize;
-      font-size: 1.3em;
+      font-size: 1.3rem;
       font-weight: 700 !important;
       color: #3b5998;
     }
@@ -12,7 +12,7 @@
         margin: 8px !important;
       }
       ion-label {
-        font-size: 14px !important;
+        font-size: 0.875rem !important;
         text-overflow: unset !important;
         white-space: unset !important;
       }
@@ -94,7 +94,7 @@
     margin: 16px !important;
     background-color: map-get($colors, white_f0);
     color: map-get($colors, dark_gray);
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 600 !important;
     height: 2em;
     ion-icon {

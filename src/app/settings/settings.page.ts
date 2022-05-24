@@ -35,6 +35,11 @@ export class SettingsPage implements OnInit {
   subjectDetails: string;
   shareAppLabel: string;
   appName: any;
+  headerConfig = {
+    showHeader: false,
+    showBurgerMenu: false,
+    actionButtons: []
+  };
 
   public isUserLoggedIn$: Observable<boolean>;
   public isNotDefaultChannelProfile$: Observable<boolean>;
@@ -73,6 +78,11 @@ export class SettingsPage implements OnInit {
 
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = ['font-accessibility'];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;

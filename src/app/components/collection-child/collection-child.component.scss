@@ -19,13 +19,13 @@
     .play-icon
     {
         color : map-get($colors, vivid_green);
-        font-size: 30px;
+        font-size: 1.875rem;
     }
 
     .checkmark-icon
     {
       color : map-get($colors, vivid_green);
-      font-size: 18px;
+      font-size: 1.125rem;
       margin-left: 5px;
     }
 
@@ -43,7 +43,7 @@
     .grey-icon
     {
         color : map-get($colors, dark_gray);
-        font-size: 18px;
+        font-size: 1.125rem;
     }
 
     .ml8{
@@ -79,7 +79,7 @@
     }
     .sb-checkmark-icon{
         color : $secondary-200;
-        font-size: ($font-size-base + 4);
+        font-size: ($font-size-base + 0.25);
         @include margin(null,null,null,($base-block-space * .5));
         vertical-align: middle;
     }

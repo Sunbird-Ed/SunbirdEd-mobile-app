@@ -73,7 +73,7 @@ div
       border-bottom: 0;
     }
     ion-icon {
-      font-size:(($font-size-base * 2) - 4);
+      font-size: ($font-size-base * 2) - 0.25;
     }
     .sb-menu-item{
         @include margin(0,0,0,$base-block-space); 
@@ -81,8 +81,8 @@ div
     .sb-menu-item-language{
       @include margin(0,0,0,$base-block-space); 
       color: $gray-100;
-      font-size: 12px;
-      line-height: 17px;
+      font-size: 0.75rem;
+      line-height: 1.063rem;
     }
   }
 }
@@ -90,7 +90,7 @@ div
   @include padding($base-block-space * 2);
   background-color: $gray-0;
   width: 100%;
-  font-size: ($font-size-base);
+  font-size: $font-size-base;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;

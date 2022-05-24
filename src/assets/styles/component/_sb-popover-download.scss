@@ -80,7 +80,7 @@
                .meta-info{
                     display: block;
                     color: map-get($colors, dark_gray);
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     font-weight:normal;
                }
 
@@ -90,7 +90,7 @@
                 font-weight: normal;
                 top: -24px;
               //  right: -16px;
-              font-size: 13px;
+              font-size: 0.813rem;
                 height: 68px;
                 width: auto;
             }

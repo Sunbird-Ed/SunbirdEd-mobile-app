@@ -4,12 +4,12 @@
 :host {
     .download-page-heading{
         color: white;
-        font-size: $font-size-base + 2;
+        font-size: $font-size-base + 0.125;
     }
 
     .download-page-info{
         color: white;
-        font-size: $font-size-base - 2;
+        font-size: $font-size-base - 0.125;
     }
 
     .download-cancel-icon{
@@ -21,7 +21,7 @@
         padding-top: $base-block-space * 0.5 !important;
     }
     .iconSize{
-        font-size: 24px;
+        font-size: 1.5rem;
     }
     .storage-info{
         @include padding(0,0,0,($base-block-space));

@@ -15,12 +15,12 @@
       border-color: $orange;
       color: $orange !important;
       padding: 8px 40px;
-      font-size: 14px;
+      font-size: $font-size-base;
       border-radius: 0 !important;
     }
     .sb-url {
       color: map-get($colors, bright_blue_a0);
-      font-size: 14px;
+      font-size: $font-size-base;
       text-decoration: underline;
     }
     .fontBold {
@@ -45,22 +45,22 @@
         padding: 8px;
     }
     .font-10{
-        font-size: 10px;
+        font-size: 0.625rem;
     }
     .font-12 {
-        font-size: 12px !important;
+        font-size: 0.75rem!important;
     }
     .font-13{
-      font-size: 13px !important;
+      font-size: 0.813rem !important;
     }
     .font-16{
-        font-size: 16px !important;
+        font-size: 1rem!important;
     }
     .font-14{
-        font-size: 14px !important;
+        font-size: $font-size-base !important;
     }
     .font-18{
-        font-size: 18px;
+        font-size: 1.125rem;
     }
     .padding-left-8{
         @include padding(0px 0px 0px 8px);
@@ -95,7 +95,7 @@
     }
 
     ion-card ion-card-content p {
-        font-size: 14px;
+        font-size: $font-size-base;
     }
     .enrolled-course-card{
         background-color: map-get($colors, pale_green);
@@ -165,7 +165,7 @@
     }
 
     .size_txt {
-        font-size: 12px;
+        font-size: 0.75rem;
     }
     .padding-right-3 {
         padding-right: 3px;
@@ -178,7 +178,7 @@
 
     .sc-ion-buttons-md-s ion-button {
         height: 20px;
-        font-size: 10px;
+        font-size: 0.625rem;
     }
     .label-margin-bottom{
       margin-bottom: 3px !important;
@@ -198,7 +198,7 @@
     }
     .sb-accordian-arrow{
         float: right;
-        font-size: 14px;
+        font-size: $font-size-base;
         padding-top: 10px;
     }
     .enrollment-info{
@@ -214,7 +214,7 @@
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 16px;
+        font-size: 1rem;
         cursor: pointer;
         outline: none;
         margin: 4px 0 8px;
@@ -274,7 +274,7 @@
     // height: 2.44%;
     // width: 80%;
     color: $blue;
-    font-size: 14px;
+    font-size: $font-size-base;
     // line-height: 20px;
   }
 
@@ -314,15 +314,15 @@
     float: right;
   }
   .card-icons {
-    font-size: 30px;
+    font-size: 1.875rem;
     color: $blue;
   }
   .card-icons-downloadStarted {
-    font-size: 30px;
+    font-size: 1.875rem;
     color: map-get($colors, text_gray);
   }
   .card-icons-red{
-    font-size: 30px;
+    font-size: 1.875rem !important;
     color:map-get($colors , danger);
   }
   .sb-course-complete-container {
@@ -338,7 +338,7 @@
     .text-container{
       color: map-get($colors, office_green);
       font-family: "Noto Sans", sans-serif;
-      font-size: 14px !important;
+      font-size: $font-size-base !important;
       font-weight: bold;
       width: 80%;
       vertical-align: middle;
@@ -353,7 +353,7 @@
     width: auto;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
-    font-size: 13px !important;
+    font-size: 0.813rem !important;
     line-height: 20px;
     text-align: center;
   }
@@ -383,7 +383,7 @@
   }
 
   .last-read-content{
-    font-size: 16px !important;
+    font-size: 1rem!important;
     font-weight:bold;
     @include rtl() {
       padding-bottom: 4px;
@@ -399,18 +399,18 @@
     height: auto;
     width: auto;
     .batch-end-main-heading{
-      font-size: 12px !important;
+      font-size: 0.75rem !important;
       color: $orange;
       font-weight: bold;
     }
     .batch-end-sub-heading{
       color: map-get($colors, primary_black);
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px !important;
+      font-size: 0.75rem !important;
     }
   }
   .enrollment-end-date{
-    font-size: 12px;
+    font-size: 0.75rem;
     color: map-get($colors, primary_black);
     font-family: "Noto Sans", sans-serif;
     ion-icon{
@@ -427,23 +427,23 @@
     height: 70px;
     width: auto;
     .main-heading{
-      font-size: 14px !important;
+      font-size: $font-size-base !important;
       color: $orange;
     }
     .sub-heading{
       color: map-get($colors, primary_black);
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px !important;
+      font-size: 0.75rem !important;
     }
 }
 
 .information-icon {
   color: map-get($colors, dark);
-  font-size: 14px;
+  font-size: $font-size-base;
 }
 
 .progress-label {
-  font-size: 10px !important;
+  font-size: 0.625rem!important;
   color: map-get($colors, primary_black);
 }
 
@@ -523,7 +523,7 @@ ion-segment-button{
   border-radius: 2px;
   background-color: map-get($colors, ligth_yellow);
   color: $gray-800;
-  font-size: 12px;
+  font-size: 0.75rem;
 
   .alert {
     width: 24px;
@@ -551,12 +551,12 @@ ion-segment-button{
   border: none;
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .ds-m0 {
   color: map-get($colors, primary_black);
   font-family: "Noto Sans", sans-serif;
-  font-size: 12px;
+  font-size: 0.75rem;
   letter-spacing: 0;
   line-height: 20px;
 }
@@ -568,13 +568,13 @@ ion-radio{
   margin-right: 10px !important;
 }
 .font-14-new{
-  font-size: 16px !important;
+  font-size: 1rem !important;
   margin-top: 8px;
 }
 .data-share-info{
   padding: 5px;
   margin-left: -6px;
-  font-size: 15px;
+  font-size: 0.938rem;
   text-transform: uppercase;
 }
 
@@ -604,8 +604,8 @@ margin-top: -13px; opacity: 1;
   width: 100%;
   .data_1, .data_2 {
     color: var(--cc-sbcard-data1-2-text);
-    border-radius: calculateRem(8px);
-    font-size: calculateRem(14px);
+    border-radius: 0.5rem;
+    font-size: $font-size-base;
     width:auto;flex: initial;
     white-space: nowrap;
   }

@@ -51,7 +51,7 @@ h6 {
 }
 
 .font-size-20 {
-  font-size: 20px !important;
+  font-size: 1.25rem !important;
 }
 
 .span-semibold {
@@ -59,7 +59,7 @@ h6 {
 }
 .sb-legal-url {
   color: map-get($colors, bright_blue_a0);
-  font-size: 14px;
+  font-size: $font-size-base;
   text-decoration: underline;
 }
 
@@ -77,7 +77,7 @@ h6 {
 }
 
 .header-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   height: 100%;
   vertical-align: middle;
 }
@@ -184,12 +184,12 @@ ul.rating .ion-md-star-outline:before {
 }
 .small-rating .sc-ion-buttons-md-s ion-button {
   height: 23px;
-  font-size: 11px;
+  font-size: 0.688rem;
 }
 .popover-ratings .sc-ion-buttons-md-s ion-button {
   height: 32px !important;
   width: auto !important;
-  font-size: 22px;
+  font-size: 1.375rem;
   padding-right: 10px;
 }
 .popover-ratings ion-icon.filled {
@@ -356,7 +356,7 @@ ul.rating .ion-md-star-outline:before {
   top: 3px;
   z-index: 1000;
   background-color: transparent !important;
-  font-size: 18px !important;
+  font-size: 1.125rem !important;
   font-weight: 600 !important;
   padding-top: 12px !important;
 }
@@ -439,7 +439,7 @@ ul.rating .ion-md-star-outline:before {
   display: inline-block;
   vertical-align: middle;
   margin: 0px 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .need-header-space {
@@ -613,11 +613,11 @@ ion-toolbar {
 }
 
 .f11 {
-  font-size: 11px;
+  font-size: 0.688rem;
 }
 
 .f16 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .PTB0 {
@@ -674,7 +674,7 @@ ion-toolbar {
 
 .asPerStateRecord {
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   white-space: pre;
   display: inline-block;
   font-weight: bold;
@@ -697,7 +697,7 @@ ion-toolbar {
   color:map-get($colors, gray_solid);
 }
 .info-icon-text {
-  font-size: 10px;
+  font-size: 0.625rem;
   text-align: center;
 }
 .qr-alert-invalid .popover-content {
@@ -793,7 +793,7 @@ ion-toast.sb-toast.available-later {
   --background: #{$warning-color};
   --color: #{$white-color};
   --border-radius: 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding: 0;
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
@@ -915,7 +915,7 @@ ion-toast.green-toast{
 }
 
 .no-net-close-btn {
-  font-size: 24px;
+  font-size: 1.5rem;
   float: right;
 }
 
@@ -962,7 +962,7 @@ ion-split-pane {
     height: 3.11%;
     width: 93.33%;
     color: $gray-300;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 18px;
     font-weight: bold;
     @include rtl() {
@@ -992,13 +992,13 @@ ion-split-pane {
     box-shadow: 0 3px 4px 0 rgba(2, 79, 157, 0.1);
     .sb-play-unselected {
       color: $blue;
-      font-size: 12px;
+      font-size: 0.75rem;
       line-height: 20px;
       @include margin(6px);
       @include clearfix;
     }
     .sb-play-selected {
-      font-size: 12px;
+      font-size: 0.75rem;
       line-height: 20px;
       @include margin(6px);
       @include clearfix;
@@ -1075,9 +1075,14 @@ ion-split-pane {
   --padding-bottom: 0px !important;
 }
 
+.searchbar-input {
+  font-size: 0.875rem !important;
+  line-height: 2rem !important;
+}
+
 [dir="rtl"] .search-input .native-input.sc-ion-input-md::placeholder {
-  font-size: 11px !important;
-  line-height: 32px !important;
+  font-size: 0.688rem !important;
+  line-height: 2rem !important;
 }
 
 .ftue-changes .alert-wrapper{
@@ -1166,7 +1171,8 @@ sb-library-cards-hlist {
     padding: 0 0.5rem;
   }
   .title {
-    font-size: 18px !important;
+    font-size: 1rem !important;
+    height: auto !important;
     text-transform: none !important;
   }
 }
@@ -1198,7 +1204,7 @@ sb-library-cards-stack{
   .header{
     padding: 0 !important;
     .title{
-      font-size: 14px !important;
+      font-size: $font-size-base !important;
     }
   }
 }
@@ -1207,7 +1213,7 @@ app-resources{
   .fixed-container{
     sb-library-filters{
       .pill{
-        font-size: 14px !important;
+        font-size: $font-size-base !important;
         padding-top: 8px !important;
         padding-bottom: 8px !important;
       }
@@ -1226,7 +1232,7 @@ app-resources{
     .header{
       padding: 0 !important;
       .title{
-        font-size: 14px !important;
+        font-size: $font-size-base !important;
         padding-left: 0.5rem;
       }
     }
@@ -1273,7 +1279,7 @@ app-resources{
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 1rem;
   margin: 4px 0px;
   cursor: pointer;
   outline: none;
@@ -1307,18 +1313,18 @@ app-resources{
     top: 0;
     right: 0;
     color: $blue;
-    font-size: 25px;
+    font-size: 1.563rem;
   }
   .mg-popup-title{
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
     text-align: center;
     padding-top: 16px;
     .am-title{
-      font-size: 18px;
+      font-size: 1.125rem;
     }
     .am-desc{
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: normal;
     }
   }
@@ -1336,7 +1342,7 @@ app-resources{
     .mg-popup-btn-icon{
       position: absolute;
       right: 16px;
-      font-size: 32px;
+      font-size: 2rem;
       top: 7px;
     }
   }
@@ -1421,7 +1427,7 @@ ion-modal.sb-progress-loader {
 .group-option-popover {
   padding: 16px;
   ion-item {
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: "Noto Sans";
   }
 
@@ -1470,16 +1476,16 @@ ion-modal.sb-progress-loader {
     padding: 16px;
   }
   .cc-popup-close{
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .course-completion-title{
     color: $green;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
   }
   .course-completion-info{
     color: $green;
-    font-size: 14px;
+    font-size: $font-size-base;
     padding-top: 8px;
   }
   .course-completion-cert{
@@ -1555,7 +1561,7 @@ body {
 }
 
 .consent-info {
-  font-size: 12px;
+  font-size: 0.75rem;
   padding-left: 4em;
 }
 
@@ -1643,11 +1649,11 @@ app-collection-detail-etb{
 }
 
 ._cards {
-  width: calc(25% - 8px) !important;
-  margin: 4px;
+  width: calc(25% - 0.5rem) !important;
+  margin: 0.25rem;
   background: $white-color;
   position: relative;
-  height: 75px;
+  height: 4.688rem;
   border: 1px solid #e8eaed;
   border-radius: 3px;
 
@@ -1679,7 +1685,7 @@ app-collection-detail-etb{
 
 ._tip {
   color: #777;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding-left: 10px;
 }
 .disabled-toc-card {
@@ -1731,7 +1737,7 @@ sb-pills-grid{
   .icon-header{
     .item{
       height: 5.875em !important;
-      width: 22% !important;
+      width: 5rem !important;
       .img{
         width: 70% !important;
       }
@@ -1751,6 +1757,9 @@ sb-pills-grid{
       top: -1.5em !important;
       margin-top: 0 !important;
       width: 60% !important;
+    }
+    label {
+      font-size: 0.75rem !important;
     }
   }
 }
@@ -1776,7 +1785,7 @@ app-user-home{
 
 app-user-home, app-sb-preferences-popup {
   app-truncated-ellipsis {
-    font-size: 14px;
+    font-size: $font-size-base;
     font-weight: bold;
     color: var(--app-gray);
     .dot-divider {
@@ -1819,7 +1828,7 @@ app-user-home, app-sb-preferences-popup {
   sb-course-cards-hlist, sb-library-cards-hlist {
     .title{
       color: var(--app-gray) !important;
-      font-size: 16px !important;
+      font-size: 1rem !important;
       font-weight: normal !important;
       padding-left: 1rem;
       hr{
@@ -1878,7 +1887,7 @@ sb-form{
 }
 
 .heading-label {
-  font-size: 16px;
+  font-size: 1rem;
   color: var(--app-gray);
   padding-left: 1rem;
   display: flex;
@@ -2124,6 +2133,23 @@ app-user-home{
   }
 }
 
+app-admin-home {
+  sb-pills-grid {
+    .sb-label-grid .item {
+      label {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+app-profile {
+  .trainings .refresh-icon { 
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+}
+
 app-user-home{
   sb-course-cards-hlist {
     .sb--card{
@@ -2175,9 +2201,28 @@ app-add-file {
     justify-content: space-between;
   }
 }
+app-metadata-details {
+  ion-card {
+    ion-card-header {
+      ion-card-title {
+        font-size: 1.25rem;
+      }
+      ion-card-subtitle {
+        font-size: 0.875rem;
+      }
+    }
+  }
+  ion-card-content {
+    ion-button {
+      font-size: 0.875rem;
+      height: 2.25rem;
+    }
+  }
+}
+
 app-metadata-details,app-add-file {
   .progress-bar-style{
-    height: 10px;
+    height: 0.625rem;
     border-radius: 16px;
     // --progress-background: green !important;
   }
@@ -2222,15 +2267,15 @@ app-metadata-details,app-add-file {
   float: right;
 }
 .card-icons {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: $blue;
 }
 .card-icons-downloadStarted {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: map-get($colors, text_gray);
 }
 .card-icons-red{
-  font-size: 30px;
+  font-size: 1.875rem !important;
   color:map-get($colors , danger);
 }
 
@@ -2239,7 +2284,7 @@ app-metadata-details,app-add-file {
   width: auto;
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans", sans-serif;
-  font-size: 13px !important;
+  font-size: 0.813rem !important;
   line-height: 20px;
   text-align: center;
 }
@@ -2273,10 +2318,10 @@ app-metadata-details,app-add-file {
     background-color: var(--joyful-light-yellow) !important;
     border-radius: 8px;;
     padding: 10px 15px;
-  }
-  .progress-label {
-    font-size: 10px !important;
-    color: map-get($colors, primary_black);
+    p {
+      font-size: 0.875rem !important;
+      color: map-get($colors, primary_black);
+    }
   }
 }
 .enrolled-course-container{
@@ -2317,8 +2362,12 @@ app-metadata-details,app-add-file {
     ion-segment-button{
         margin: 0px 10px;
         text-transform: none;
+      ion-label {
+        font-size: 0.875rem;
+      }
     }
 }
+
 .attachment-delete-alert{
   background-color: red;
   ion-button{
@@ -2326,4 +2375,105 @@ app-metadata-details,app-add-file {
     --color:green;
   }
 }
+}
+
+app-project-details app-project-details-card {
+  ion-card-content .custom-filed {
+    font-size: 0.875rem;
+  }
+}
+app-solution-listing, app-observation-home, 
+app-survey-home, app-reports-listing, 
+app-observation-solution-listing app-item-list-card {
+  ion-card-content ion-icon, .info {
+    font-size: 0.875rem;
+  }
+}
+
+download-share ion-fab-button {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+lib-discuss-card .discuss-card-subtitle {
+  .card-label-container, .discuss-card-content {
+    margin-right: auto;
+    flex-wrap: wrap;
+
+    .discuss-card-label {
+      flex-basis: 100%;
+    }
+  }
+}
+
+.fontResize-container {
+  .fontResizeBtn_A- {
+    font-size: 12px;
+  }
+
+  .fontResizeBtn_A {
+    font-size: 14px;
+  }
+
+  .fontResizeBtn_A+ {
+    font-size: 16px;
+  }
+
+  .fontResizeBtn {
+    border: 0.15rem solid #484848;
+    background: none;
+    color: var(--black);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 4px;
+    padding: 0px 8px;
+    transition: all .3s ease-in-out;
+    border-radius: 50%;
+
+    &:hover,
+    &:active {
+      background: #ff714a;
+      color: var(--white);
+      cursor: pointer;
+      // outline: 0px;
+    }
+
+    &:disabled,
+    &[disabled] {
+      opacity: 0.5;
+      cursor: default;
+      border-radius: 50%;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+}
+
+.fontResizeBtn:focus,
+.dark-mode-toggle:focus {
+  outline: none;
+}
+
+.df-sidebar-menu-list {
+  font-size: 0.875rem !important;
+}
+
+ion-button {
+  font-size: 0.875rem;
+  height: 2.25rem;
+}
+
+app-text-type-input .ion-margin-top {
+  font-size: 0.875rem;
+}
+
+app-slider-type-input {
+  ion-label {
+    font-size: 0.875rem;
+  }
 }

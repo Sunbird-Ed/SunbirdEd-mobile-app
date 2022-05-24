@@ -54,7 +54,7 @@
 
 .sb-course-container .header .title {
   color: #000000 !important;
-  font-size: 18px !important;
+  font-size: 1.125rem !important;
 }
 
 .text-transform-free{
@@ -209,4 +209,8 @@ sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
 }
 .ion-text-none{
   text-transform: none;
+}
+
+.sb-popover .sb-popover-footer .sb-popover-action-btn {
+  height: 3rem;
 }

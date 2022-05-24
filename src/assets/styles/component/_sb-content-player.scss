@@ -36,14 +36,14 @@
         background: transparent;
         outline: none;
         .sb-common-white-icon{
-          font-size: (($font-size-base * 3) - 2) ;
+          font-size: (($font-size-base * 3) - 0.125);
           color: $white;
         } 
       }
       .sb-offline-title {
-       @include padding ($base-block-space);
+      @include padding ($base-block-space);
         .sb-offline-white-icon{
-          font-size :  (($font-size-base * 2) - 4);
+          font-size : (($font-size-base * 2) - 0.25);
           color: $white;
         } 
       }  
@@ -55,7 +55,7 @@
         text-transform: initial;
       }  
       .sb-common-footer-text.sb-sub-footer{
-         font-size:($font-size-base  - 2);
+        font-size: ($font-size-base  - 0.125);
       }  
     }
     .sb-common-player-group.sb-common-title-group{
@@ -74,7 +74,7 @@
       height: ($base-block-space * 3);
       color: $white;
       text-align: center;
-      font-size: ($font-size-base  - 2); 
+      font-size: ($font-size-base  - 0.125);
       width: 100%;  
     }
     .sb-overlay-container{

@@ -2,7 +2,7 @@
 @import "src/assets/styles/_custom-mixins.scss";
 
 .font-16{
-    font-size: 16px;
+    font-size: 1rem;
 }
 .gd-page {
     padding: 8px;
@@ -26,7 +26,7 @@
     box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
 
     .gd-title {
-        font-size: 18px;
+        font-size: 1.125rem;
         font-weight: bold;
         padding: 8px 16px;
         position: relative;
@@ -35,7 +35,7 @@
             padding-right: 60px;
             color: $gray-800;
             font-family: "Noto Sans", sans-serif;
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: bold;
             letter-spacing: 0;
             line-height: 20px;
@@ -43,7 +43,7 @@
             .gd-created-by {
                 color: $gray-400;
                 font-family: "Noto Sans", sans-serif;
-                font-size: 11px;
+                font-size: 0.688rem;
                 letter-spacing: 0;
                 line-height: 20px;
                 font-weight: normal;
@@ -90,7 +90,7 @@
         margin-bottom: 5px;
         margin-top: 8px;
         color: $gray-400;
-        font-size: 16px;
+        font-size: 1rem;
 
         &.gd-tab-border {
             border-right: 1px solid $gray-300;
@@ -110,7 +110,7 @@
         position: absolute;
         top: 8px;
         left: 8px;
-        font-size: 20px;
+        font-size: 1.25rem;
         color: map-get($colors, gray_96);
         width: 18px;
     }
@@ -137,7 +137,7 @@
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 16px;
+        font-size: 1rem;
         cursor: pointer;
         outline: none;
         margin: 4px 0 8px;
@@ -182,7 +182,7 @@
 .gd-large-text {
     color: $gray-800;
     font-family: "Noto Sans", sans-serif;
-    font-size: 16px;
+    font-size: 1rem;
     letter-spacing: 0;
     line-height: 20px;
 }
@@ -196,7 +196,7 @@
         max-width: 65%;
         margin-top: 20%;
         margin-bottom: 16px;
-        font-size: 16px;
+        font-size: 1rem;
     }
 }
 
@@ -210,7 +210,7 @@
     }
     .gd-card-titile{
         color: $blue;
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: bold;
     }
 }

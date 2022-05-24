@@ -16,7 +16,7 @@ ion-tabs {
   }
 
   ion-tab-button.tab-layout-icon-top.tab-has-label.tab-has-icon ion-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     text-align: center;
     @include margin(0, null, null, null);
     font-weight: normal;
@@ -98,10 +98,10 @@ ion-tabs {
   ion-tab-button.tab-selected,
   ion-tab-button:not(.tab-selected) {
     ion-icon {
-      font-size: 20px;
+      font-size: 1.25rem;
     }
     ion-label {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   }
 }

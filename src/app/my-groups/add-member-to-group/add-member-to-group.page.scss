@@ -2,7 +2,7 @@
 .au-container{
     padding: 16px;
     .au-title{
-        font-size: 18px;
+        font-size: 1.125rem;
         font-weight: bold;
         margin-top: 8px;
     }
@@ -11,7 +11,7 @@
         position: relative;
         .au-ip-info{
             margin-bottom: 8px;
-            font-size: 16px;
+            font-size: 1rem;
             .pull-left{
                 sup{
                     color: $red;
@@ -19,11 +19,11 @@
             }
             .pull-right{
                 color: $gray-300;
-                font-size: 14px;
+                font-size: $font-size-base;
             }
             .au-info-icon{
                 color: $blue;
-                font-size: 20px;
+                font-size: 1.25rem;
                 vertical-align: bottom;
             }
         }
@@ -46,11 +46,11 @@
             position: absolute;
             bottom: 10px;
             right: 8px;
-            font-size: 20px;
+            font-size: 1.25rem;
         }
         .au-ip-error-msg{
             color: $red;
-            font-size: 14px;
+            font-size: $font-size-base;
             margin-top: 8px;
         }
     }
@@ -60,7 +60,7 @@
         text-align: center;
     }
     .au-desc{
-        font-size: 16px;
+        font-size: 1rem;
         padding: 16px 0;
         span{
             font-weight: bold;
@@ -123,6 +123,6 @@
 }
 
 .loader-text {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: $gray-300;
 }

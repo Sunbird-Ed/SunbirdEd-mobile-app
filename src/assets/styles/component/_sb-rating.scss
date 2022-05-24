@@ -6,7 +6,7 @@ ul {
         background: none;
         color: $info-color;
         ion-icon {
-          font-size: (($font-size-base * 3) - 2);
+          font-size: (($font-size-base * 3) - 0.125);
         }
       }
     }

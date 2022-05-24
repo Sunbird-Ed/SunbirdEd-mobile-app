@@ -9,12 +9,12 @@
     width: 63px;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
-    font-size: 13px !important;
+    font-size: 0.813rem !important;
     line-height: 20px;
     text-align: center;
 }
 .card-button{
     background-color: transparent !important;
     outline: none;
-    font-size: 30px;
+    font-size: 1.875rem;
 }

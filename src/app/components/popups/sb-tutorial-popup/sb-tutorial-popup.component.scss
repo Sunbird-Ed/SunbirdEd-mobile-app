@@ -32,7 +32,7 @@ img.arrow-icon{
 }
 
 #details-text {
-  font-size: 14px;
+  font-size: $font-size-base;
   line-height: 19px;
   text-align: center;
   color: map-get($colors, primary_black);

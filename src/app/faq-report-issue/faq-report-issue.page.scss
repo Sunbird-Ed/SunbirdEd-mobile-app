@@ -21,7 +21,7 @@
     margin-left: 5px;
 }
 P{
-    font-size: 13px;
+    font-size: 0.813rem;
 }
 .help-header, .help-header-send-email{
     background: $blue;
@@ -107,7 +107,7 @@ P{
     border-color: map-get($colors, white_fa);
     width: 80px;
     color: $blue;
-    font-size: 13px;
+    font-size: 0.813rem;
     font-weight: 700;
     outline: none;
     height: 20px;
@@ -181,7 +181,7 @@ P{
         bottom: -13px;
         right: 0px;
         font-weight: normal;
-        font-size: 12px;
+        font-size: 0.75rem;
         padding-right: 16px;
     }
     .initiate-email-info-button {
@@ -229,7 +229,7 @@ img>.report-button{
 .send-email-info{
     padding: 10px 0px;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: justify;
 
 }
@@ -284,7 +284,7 @@ img>.report-button{
 }
 ::placeholder {
   color: $gray-300;
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: normal;
 }
 .initiate-email-info{
@@ -310,7 +310,7 @@ img>.report-button{
     bottom: -24px;
     right: 0px;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 0.75rem;
     }
     
 }

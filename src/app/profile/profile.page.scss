@@ -82,7 +82,7 @@
 
     .badge {
       color: map-get($colors, primary);
-      font-size: 11px;
+      font-size: 0.688rem;
       height: 20px;
       box-shadow: none;
       --border-width: 0.5px;
@@ -116,7 +116,7 @@
       word-break: break-all;
       white-space: normal;
       min-height: 32px;
-      font-size: 14px !important;
+      font-size: 0.875rem !important;
       color: map-get($colors, primary_black);
       width: 100%;
     }
@@ -131,7 +131,7 @@
     }
 
     .author {
-      font-size: 13px;
+      font-size: 0.813rem;
       font-weight: normal;
       font-style: normal;
       font-stretch: normal;
@@ -161,7 +161,7 @@
   .sb-btn-footer-text {
     color : $gray;
     font-weight: 100;
-    font-size: ($font-size-base - 2);
+    font-size: ($font-size-base - 0.125);
     text-align: center;
     text-transform: initial;
   }
@@ -187,7 +187,7 @@
   }
 
   .sb-dt-card-blue-icon{
-    font-size : ($font-size-base * 2) + 2;
+    font-size : ($font-size-base * 2) + 0.125;
     color: $primary-color;
     @include margin(0, 0, ($base-block-space * .5), 0);
   }
@@ -323,13 +323,13 @@
   }
   
   .add-size{
-    font-size: 24px;
+    font-size: 1.5rem;
     padding-right: 8px;
   }
 
   .enrolled-status-text {
     font-family: "Noto Sans", sans-serif;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: bold;
   }
 
@@ -358,7 +358,7 @@
     background-color: map-get($colors, bright_blue_19);
     text-align: center;
     color: map-get($colors, white);
-    font-size: 14px;
+    font-size: $font-size-base;
     
     .container{
       @include margin(null, null, 8px, null);
@@ -372,7 +372,7 @@
 
     .declare-info{
       margin: 0;
-      font-size: 14px;
+      font-size: $font-size-base;
       font-weight: bold;
     }
   }
@@ -387,9 +387,9 @@
   .refresh-icon {
     color: map-get($colors, primary_blue);
     float: right;
-    height: 40px;
-    width: 40px;
-    margin-top: -8px;
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+    margin-top: -0.5rem;
   }
   ion-icon.refresh-icon.md.hydrated:active {
     background: map-get($colors, white_e8);

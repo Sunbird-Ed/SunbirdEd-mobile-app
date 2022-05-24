@@ -90,7 +90,7 @@
       padding: ($base-block-space * 2);
       .icon-container {
         ion-icon {
-          font-size: ($font-size-base * 2)+2;
+          font-size: ($font-size-base * 2)+0.125;
           color: $info-color;
         }
         @include margin(0, 0, ($base-block-space * 1), 0);
@@ -98,13 +98,13 @@
       .sb-popover-content-details {
         .main-title {
           color: $gray-800;
-          font-size: 14px;
+          font-size: $font-size-base;
           @include margin(0, 0, ($base-block-space * 1), 0);
           font-weight: 500;
 
           .meta-info {
             color: $gray-200;
-            font-size: ($font-size-base - 2);
+            font-size: ($font-size-base - 0.125);
             line-height: 20px;
             text-align: left;
             @include padding(($base-block-space * 2), 0, 0, 0);
@@ -113,7 +113,7 @@
 
         .sb-popover-content {
           color: $gray-200;
-          font-size: ($font-size-base - 2);
+          font-size: $font-size-base - 0.125;
           line-height: 20px;
           font-weight: bold;
           text-align: center;
@@ -128,7 +128,7 @@
           color: $gray-800;
           font-family: "Noto Sans";
           font-weight: normal;
-          font-size: ($font-size-base + 6);
+          font-size: ($font-size-base + 0.375);
           letter-spacing: 0;
           line-height: 24px;
           text-align: center;
@@ -154,7 +154,7 @@
       line-height: 17px;
       text-align: center;
       color: $white-color;
-      font-size: 14px;
+      font-size: $font-size-base;
       font-weight: normal;
       min-width: $base-block-space * 12;
       @include padding(($base-block-space * 0.5), ($base-block-space * 2));
@@ -244,7 +244,7 @@
       padding: 16px;
       .icon-container {
         ion-icon {
-          font-size: ($font-size-base * 2)+2;
+          font-size: ($font-size-base * 2)+0.125;
           color: $danger-color;
         }
       }
@@ -269,7 +269,7 @@
       padding: 16px;
       .icon-container {
         ion-icon {
-          font-size: ($font-size-base * 2)+2;
+          font-size: ($font-size-base * 2)+0.125;
           color: $tertiary-color;
         }
       }
@@ -292,7 +292,7 @@
       padding: 16px;
       .icon-container {
         ion-icon {
-          font-size: ($font-size-base * 2)+2;
+          font-size: ($font-size-base * 2)+0.125;
           color: #008840;
         }
       }
@@ -416,7 +416,7 @@
   text-align: center;
   ion-icon{
     float: right;
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
 

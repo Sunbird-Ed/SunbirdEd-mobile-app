@@ -13,13 +13,13 @@
 
         .input-icon {
             float: right;
-            font-size: 20px;
+            font-size: 1.25rem;
             color: map-get($colors, primary_black);
         }
     }
 
     .font-size-13{
-      font-size: 13px;
+      font-size: 0.813rem;
     }
     
     .error-input{
@@ -27,7 +27,7 @@
     }
 
     .label {
-        font-size: 13px;
+        font-size: 0.813rem;
         padding-left: 16px;
         color: map-get($colors, primary_black);
     }
@@ -53,7 +53,7 @@
         border-bottom: 0.5px solid map-get($colors, primary_black);
         padding-bottom: 6px;
         padding-left: 11px;
-        font-size: 13px;
+        font-size: 0.813rem;
         outline: none;
     }
 
@@ -83,7 +83,7 @@
 
     .input-label {
         font-weight: 200;
-        font-size: 14px;
+        font-size: $font-size-base;
         color: map-get($colors, gray_79);
     }
 
@@ -122,18 +122,18 @@
     .heading {
         color: $blue;
         text-align: center;
-        font-size: 14px;
+        font-size: $font-size-base;
         margin: 16px 0px 16px 0px;
     }
 
     .sub-heading {
         color: map-get($colors, primary_black);
-        font-size: 12px;
+        font-size: 0.75rem;
         margin: 16px 0px 25px 0px;
     }
 
     .top-back-button {
-        font-size: 20px;
+        font-size: 1.25rem;
         @include rtl() {
             float: right;
         }
@@ -160,7 +160,7 @@
     .block-button-save{
         color: white;
         background-color: $blue;
-        font-size: 16px;
+        font-size: 1rem;
         padding: 8px 0;
         margin-left: 18px;
         border: 2px solid $blue;
@@ -169,7 +169,7 @@
       .block-button-clear{
         color: $blue;
         background-color: white;
-        font-size: 16px;
+        font-size: 1rem;
         padding: 8px 0;
         border: 2px solid $blue;
         width: 45%;
@@ -194,7 +194,7 @@
         padding: 20px
     }
     .preference-info{
-        font-size: 18px;
+        font-size: 1.125rem;
         position: absolute;
         margin-left: 10px;
     }

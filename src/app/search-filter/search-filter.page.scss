@@ -237,7 +237,7 @@
         cursor: pointer;
         transition: .25s ease-in-out;
 
-        font-size: 12px;
+        font-size: 0.75rem;
         -webkit-appearance: none;
         text-overflow: ellipsis;
         text-transform: capitalize;
@@ -320,7 +320,7 @@
     z-index: 1;
 
     label {
-      font-size: 14px;
+      font-size: $font-size-base;
       font-weight: normal;
       margin: 0
     }
@@ -339,7 +339,7 @@
       list-style-type: none;
       position: absolute;
       margin: 0;
-      font-size: 14px;
+      font-size: $font-size-base;
       font-weight: bold;
     }
 
@@ -355,7 +355,7 @@
 
     .list-border li {
       float: left;
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: 700;
       margin-left: 4px;
     }
@@ -381,7 +381,7 @@
       grid-gap: 0rem;
 
       span {
-        font-size: inherit !important;
+        font-size: calculateRem(inherit !important);
         text-transform: capitalize;
       }
     }
@@ -463,7 +463,7 @@
       border: 0.5px solid var(--primary-color);
       border-radius: 4px;
       padding: 10px 40px;
-      font-size: 16px;
+      font-size: 1rem;
       text-transform: uppercase;
       width: 100%;
     }
@@ -474,7 +474,7 @@
       border: 0.5px solid var(--primary-color);
       border-radius: 4px;
       padding: 10px 40px;
-      font-size: 16px;
+      font-size: 1rem;
       text-transform: uppercase;
       width: 100%;
     }
@@ -495,7 +495,7 @@
 
     .list-with-ellipsis:nth-child(3) {
       float: left;
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: 700;
       margin-left: 4px;
       width: 50px;
@@ -592,7 +592,7 @@
       margin-top: 10px;
       margin-bottom: 8px;
       padding: 8px;
-      font-size: 13px;
+      font-size: 0.813rem;
     }
 
     .sb-modal-dropdown-web .selected-option {

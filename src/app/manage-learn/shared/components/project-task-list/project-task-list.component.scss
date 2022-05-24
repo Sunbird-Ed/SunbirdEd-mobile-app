@@ -25,12 +25,12 @@
 
   .task-endDate {
     color: var(--ion-primary);
-    font-size: 16px;
+    font-size: 1rem;
     margin-top: 5px;
   }
 
   ion-icon {
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-left: 20px;
   }
 
@@ -45,7 +45,7 @@
   .date-label {
     text-align: center;
     color: #5a5b5d;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
   }
 
@@ -63,7 +63,7 @@
   padding-right: 10px;
   margin-top: 10px;
   ion-button {
-    font-size: 14px;
+    font-size: $font-size-base;
     text-transform: capitalize;
   }
 }

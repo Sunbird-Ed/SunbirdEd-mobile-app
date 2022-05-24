@@ -46,7 +46,7 @@
             font-size: $font-size-base;
           }
           .info{
-            font-size: 12px;
+            font-size: 0.75rem;
             // font-weight: 500;
             font-style: normal;
             font-stretch: normal;
@@ -58,7 +58,7 @@
             display: block;
             ion-label{
               margin-bottom: 1px;
-              font-size: ($font-size-base - 2);
+              font-size: ($font-size-base - 0.125);
               color: $gray-200;
             }
             p{
@@ -108,7 +108,7 @@
 
               .offline-icon{
                 margin: auto;
-                font-size: ($font-size-base + 10);
+                font-size: ($font-size-base + 0.625);
                 color: $white-color;
               }
               .sb-card-details{
@@ -202,7 +202,7 @@
             @include padding(null, ($base-block-space * 1));
 
             .button-inner {
-              font-size: ($font-size-base - 2);
+              font-size: ($font-size-base - 0.125);
               line-height: 17px;
               font-weight: 100;
               font-style: normal;
@@ -250,14 +250,14 @@
               @include margin(0, ($base-block-space * 1), 0, 0);
               color: $tertiary-color;
               ion-icon{
-                  font-size: 19px;
+                  font-size: 1.188rem;
               }
               vertical-align: middle;
           }
           .textbook-title {
               height: ($base-block-space * 3);	
               color: $blue;	
-              font-size: 18px;	
+              font-size: 1.125rem;
               font-weight: bold;
               text-transform: capitalize;
               line-height: ($base-block-space * 3)
@@ -282,14 +282,14 @@
       .sb-view-all-title{
           color: $white-color;
           .page-heading{
-              font-size: $font-size-base + 2;
+              font-size: ($font-size-base + 0.125);
               font-weight: bold;
               line-height: 22px;
           }
       
           .page-info{
               display: block;
-              font-size: $font-size-base - 2;
+              font-size: ($font-size-base - 0.125);
               line-height: 15px;
           }
       }
@@ -339,7 +339,7 @@
     @include padding(($base-block-space * 1), 0);
     .sb-recenlty-viewed-title {
       font-weight: 700;
-      font-size: 18px;
+      font-size: 1.125rem;
       padding-top: 5px;
       font-family: "Noto Sans";	
       overflow: auto;

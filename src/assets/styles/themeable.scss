@@ -919,6 +919,7 @@ html[data-theme="JOYFUL"]{
     .sb-curiculum{
       border: none !important;
       border-radius: 12px !important;
+      min-height: 3rem !important;
       .title{
         color: var(--app-primary) !important;
         font-weight: bold;
@@ -968,7 +969,7 @@ html[data-theme="JOYFUL"]{
         .placeholder{
           color: var(--app-light-gray) !important;
           margin-left: 0 !important;
-          font-size: 16px !important;
+          font-size: 1rem !important;
         }
       }
       .multi-select-container{
@@ -979,7 +980,7 @@ html[data-theme="JOYFUL"]{
           padding-left: 0 !important;
           margin-left: 0 !important;
           span{
-            font-size: 16px !important;
+            font-size: 1rem !important;
           }
         }
         .list-border{
@@ -1037,11 +1038,11 @@ html[data-theme="JOYFUL"]{
         input::placeholder {
           color: var(--app-light-gray);
           margin-left: 0 !important;
-          font-size: 16px !important;
+          font-size: 1rem !important;
           font-weight: normal !important;
         }
         input{
-          font-size: 16px !important;
+          font-size: 1rem !important;
         }
         .async-text{
           border: none !important;
@@ -1060,7 +1061,7 @@ html[data-theme="JOYFUL"]{
       }
       textarea::placeholder {
         color: var(--app-light-gray);
-        font-size: 16px !important;
+        font-size: 1rem !important;
         font-weight: normal !important;
       }
     }
@@ -1254,12 +1255,13 @@ html[data-theme="JOYFUL"]{
 
     .sb-popover-title{
       color: var(--app-dark-gray) !important;
-      padding: 0 16px !important;
-      font-size: 20px !important;
+      padding: 1rem !important;
+      font-size: 1.25rem !important;
       text-align: unset !important;
       ion-icon{
-        height: 30px !important;
-        width: 60px !important;
+        height: 1.875rem;
+        width: 3.75rem !important;
+        padding: 1rem 0 1rem;
       }
     }
 
