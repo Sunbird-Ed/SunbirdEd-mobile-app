@@ -163,6 +163,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     }
     
     if (this.platform.is('ios')) {
+      template = template.replace("`${maxFontSize}px`", "'18px'");
+      template = template.replace("`${minFontSize}px`", "'13px'");
       template = template.replace(/`/gi, "\"");
       var ref = cordova.InAppBrowser.open('', '_blank');
       ref.executeScript( { code : `
