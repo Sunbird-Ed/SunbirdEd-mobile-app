@@ -27,7 +27,7 @@
       .sb-practice{
         .button-small-md,.button-small-ios
         {
-          height:16px;
+          height:1rem;
           font-size: ($font-size-base - 0.25);
           text-transform: initial;
           @include padding($base-block-space);
@@ -110,8 +110,8 @@
           @include margin(null, 0, null, null);
         }
         .button-md,.button-ios{
-          width:72px;
-          height:72px;
+          width:4.5rem;
+          height:4.5rem;
         }
         .sb-btn-tile {
           .button-inner {
@@ -135,7 +135,7 @@
             text-transform: initial;
           }
           ion-icon {
-            line-height: 30px;
+            line-height: 1.88rem;
           }
          
         }
@@ -159,8 +159,8 @@
       .sb-btn-tile {
         flex-direction: column;
         background-color: $white;
-        width:72px;
-        height:72px;
+        width:4.5rem;
+        height:4.5rem;
         display: flex;
         align-items: center;
         justify-content: center;

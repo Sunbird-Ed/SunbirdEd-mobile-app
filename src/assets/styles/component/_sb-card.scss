@@ -201,7 +201,7 @@
 
             .button-inner {
               font-size: ($font-size-base - 0.125);
-              line-height: 17px;
+              line-height: 1.063rem;
               font-weight: 100;
               font-style: normal;
               font-stretch: normal;
@@ -244,7 +244,7 @@
           @include margin(null, null, $base-block-space, null);
 
           .textbook-icon {
-              height: 17px;	
+              height: 1.063rem;	
               transform: scaleX(-1);
               @include margin(0, ($base-block-space * 1), 0, 0);
               color: $tertiary-color;
@@ -283,13 +283,13 @@
           .page-heading{
               font-size: ($font-size-base + 0.125);
               font-weight: bold;
-              line-height: 22px;
+              line-height: 1.375rem;
           }
       
           .page-info{
               display: block;
               font-size: ($font-size-base - 0.125);
-              line-height: 15px;
+              line-height: 0.938rem;
           }
       }
       .sb-card-scroll-container{
@@ -329,7 +329,7 @@
 }
 
 .sb-recently-viewed-container {
-  min-height: 135px;
+  min-height: 8.438rem;
   padding-top: 8px;
   .sb-recently-viewed-items{
     height: ($base-block-space * 11);

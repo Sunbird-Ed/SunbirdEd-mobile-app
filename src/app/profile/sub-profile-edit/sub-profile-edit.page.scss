@@ -106,7 +106,7 @@
     font-family: "Noto Sans", sans-serif;
     font-size: $font-size-base;
     letter-spacing: 0;
-    line-height: 19px;
+    line-height: 1.188rem;
   }
 
 }
@@ -123,7 +123,7 @@
   font-family: "Noto Sans", sans-serif;
   font-size: $font-size-base;
   letter-spacing: 0;
-  line-height: 19px;
+  line-height: 1.188rem;
   margin: 16px 0 8px;
 }
 
@@ -140,7 +140,7 @@
   display: block;
   font-size: 0.75rem;
   color: red;
-  line-height: 10px;
+  line-height: 0.625rem;
 }
 
 .input-item{
@@ -154,7 +154,7 @@
 ion-footer{
   ion-button{
     --background: #{$blue} !important;
-    height: 40px !important;
+    height: 2.5rem !important;
     font-family: "Noto Sans", sans-serif;
     font-size: 1rem;
   }

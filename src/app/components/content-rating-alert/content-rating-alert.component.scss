@@ -33,7 +33,7 @@
   }
   .rating-opts{
     .rating-item{
-      --min-height: 30px;
+      --min-height: 1.88rem;
       display: flex;
       padding: 8px 8px 8px 0;
       border-bottom: 1px solid map-get($colors, light_gray_8c);
@@ -71,7 +71,7 @@
 
   // ************** iOS start **************
   .footer-ios {
-      bottom: 60px;
+      bottom: 3.75rem;
   }
   // ************** iOS end ****************
 }

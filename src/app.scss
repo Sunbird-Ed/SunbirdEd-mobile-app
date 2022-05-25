@@ -70,7 +70,7 @@ h6 {
 }
 
 .tool-icon {
-  width: 27px;
+  width: 1.688rem;
   height: auto;
   // margin: 10px;
   float: right;
@@ -183,11 +183,11 @@ ul.rating .ion-md-star-outline:before {
   background: map-get($colors, white);
 }
 .small-rating .sc-ion-buttons-md-s ion-button {
-  height: 23px;
+  height: 1.438rem;
   font-size: 0.688rem;
 }
 .popover-ratings .sc-ion-buttons-md-s ion-button {
-  height: 32px !important;
+  height: 2rem !important;
   width: auto !important;
   font-size: 1.375rem;
   padding-right: 10px;
@@ -237,7 +237,7 @@ ul.rating .ion-md-star-outline:before {
     border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
-    border-width: 1px;
+    border-width: 0.063rem;
     border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
@@ -283,7 +283,7 @@ ul.rating .ion-md-star-outline:before {
 
 .user-popover {
   .popover-content {
-    min-width: 96px;
+    min-width: 6rem;
     width: auto;
     display: inline-block;
     height: auto !important;
@@ -352,8 +352,8 @@ ul.rating .ion-md-star-outline:before {
 .alert-wp.confirm-alert .closeButton {
   //@include text-align('end');
   position: absolute;
-  width: 5px !important;
-  top: 3px;
+  width: 0.313rem !important;
+  top: 0.188rem;
   z-index: 1000;
   background-color: transparent !important;
   font-size: 1.125rem !important;
@@ -367,7 +367,7 @@ ul.rating .ion-md-star-outline:before {
   border-color: map-get($colors, primary);
   text-transform: uppercase;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.063rem;
   border-radius: 4px !important;
   overflow: hidden;
   height: 4.3rem;
@@ -382,7 +382,7 @@ ul.rating .ion-md-star-outline:before {
   border-color: map-get($colors, primary);
   text-transform: uppercase;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.063rem;
   border-radius: 4px !important;
   overflow: hidden;
   height: 4.3rem;
@@ -432,8 +432,8 @@ ul.rating .ion-md-star-outline:before {
 }
 
 .separator-dot {
-  width: 4px;
-  height: 4px;
+  width: 0.25rem;
+  height: 0.25rem;
   background-color: map-get($colors, light_silver);
   border-radius: 50%;
   display: inline-block;
@@ -503,7 +503,7 @@ ion-toolbar {
 
 .box {
   .popover-content {
-    min-width: 96px;
+    min-width: 6rem;
     width: auto;
     display: inline-block;
     height: auto !important;
@@ -583,8 +583,8 @@ ion-toolbar {
 .loading-md .loading-wrapper {
   border-radius: 50% !important;
   @include padding(10px !important);
-  max-height: 48px !important;
-  max-width: 48px !important;
+  max-height: 3rem !important;
+  max-width: 3rem !important;
 }
 
 .ellipsis {
@@ -681,13 +681,13 @@ ion-toolbar {
   background-color: black;
   padding: 6px;
   position: absolute;
-  right: 13px;
-  top: 22px;
+  right: 0.813rem;
+  top: 1.375rem;
 }
 .isymbol {
   position: relative;
   top: 0;
-  line-height: 12px;
+  line-height: 0.75rem;
   margin-left: 5px;
 }
 .information-icon-style {
@@ -807,7 +807,7 @@ ion-toast.green-toast{
   margin: 0;
   border-style: none;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  height: 45px;
+  height: 2.813rem;
 }
 
 .hydrated,
@@ -834,7 +834,7 @@ ion-toast.green-toast{
 }
 
 .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
-  height: 32px !important;
+  height: 2rem !important;
   width: auto !important;
 }
 
@@ -895,7 +895,7 @@ ion-toast.green-toast{
 
 .no-network {
   .popover-content {
-    top: 57px !important;
+    top: 3.563rem !important;
   }
 }
 .no-net-heading {
@@ -924,7 +924,7 @@ ion-split-pane {
 }
 .leave-training-popup {
   .popover-content {
-    top: 168.273px !important;
+    top: 10.517rem !important;
     --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
@@ -940,7 +940,7 @@ ion-split-pane {
 }
 .cd-leave-training-popup {
   .popover-content {
-    top: 80px !important;
+    top: 5rem !important;
     // --box-shadow: 0px 3px 6px 5px #eee;
     transform-origin: right top;
     transform: scale(1);
@@ -962,7 +962,7 @@ ion-split-pane {
     width: 93.33%;
     color: $gray-300;
     font-size: 0.75rem;
-    line-height: 18px;
+    line-height: 1.125rem;
     font-weight: bold;
     @include rtl() {
       margin-left: 14px;
@@ -992,13 +992,13 @@ ion-split-pane {
     .sb-play-unselected {
       color: $blue;
       font-size: 0.75rem;
-      line-height: 20px;
+      line-height: 1.25rem;
       @include margin(6px);
       @include clearfix;
     }
     .sb-play-selected {
       font-size: 0.75rem;
-      line-height: 20px;
+      line-height: 1.25rem;
       @include margin(6px);
       @include clearfix;
     }
@@ -1062,7 +1062,7 @@ ion-split-pane {
     .content-type-container {
       img {
         display: inline-block !important;
-        height: 28px !important;
+        height: 1.75rem !important;
         width: auto !important;
         vertical-align: middle;
         @include margin(4px 8px 4px 0px);
@@ -1106,7 +1106,7 @@ ion-split-pane {
     border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
-    border-width: 1px;
+    border-width: 0.063rem;
     border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
@@ -1340,9 +1340,9 @@ app-resources{
     position: relative;
     .mg-popup-btn-icon{
       position: absolute;
-      right: 16px;
+      right: 1rem;
       font-size: 2rem;
-      top: 7px;
+      top: 0.438rem;
     }
   }
 }
@@ -1448,7 +1448,7 @@ ion-modal.sb-progress-loader {
   width: auto;
   margin-top: -30px;
   ion-item {
-    --min-height: 16px !important;
+    --min-height: 1rem !important;
     padding-top: 16px;
     &:first-child{
       padding-top: 0;
@@ -1471,7 +1471,7 @@ ion-modal.sb-progress-loader {
     left: 0 !important;
     right: 0 !important;
     margin: auto;
-    width: 250px !important;
+    width: 15.625rem !important;
     padding: 16px;
   }
   .cc-popup-close{
@@ -1534,7 +1534,7 @@ body {
 #timer {
   width: 100vw;
   text-align: center;
-  max-height: 48px;
+  max-height: 3rem;
   display: inline-block;
   list-style-type: none;
   text-transform: uppercase;
@@ -1912,7 +1912,7 @@ sb-library-card-v3 {
 .certificate-popup {
   .popover-content {
     left: auto !important;
-    top: 150px !important;
+    top: 9.375rem !important;
     right: 3rem;
     width: 30% !important;
   }
@@ -2158,13 +2158,6 @@ app-admin-home {
   }
 }
 
-app-profile {
-  .trainings .refresh-icon { 
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-  }
-}
-
 app-user-home{
   sb-course-cards-hlist {
     .sb--card{
@@ -2235,6 +2228,13 @@ app-metadata-details {
   }
 }
 
+.sb-dt-card-actions {
+  button img {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
 app-metadata-details,app-add-file {
   .progress-bar-style{
     height: 0.625rem;
@@ -2250,14 +2250,14 @@ app-metadata-details,app-add-file {
   }
 .hr-border-bottom {
     box-sizing: border-box;
-    height: 1px;
+    height: 0.063rem;
     width: 100%;
     border: 0.5px solid map-get($colors, medium_gray);
     margin-top: 9px;
 }
 .hr-border-bottom-share {
   box-sizing: border-box;
-  height: 1px;
+  height: 0.063rem;
   border: 1px solid #E9DED3;
   margin-top: 8px;
 }
@@ -2277,7 +2277,7 @@ app-metadata-details,app-add-file {
 .menu-icon{
   display: block;
   width: 100%;
-  height: 16px;
+  height: 1rem;
   margin-top: 18px;
   float: right;
 }
@@ -2295,12 +2295,12 @@ app-metadata-details,app-add-file {
 }
 
 .card-text{
-  height: 18px;
+  height: 1.125rem;
   width: auto;
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans", sans-serif;
   font-size: 0.813rem !important;
-  line-height: 20px;
+  line-height: 1.25rem;
   text-align: center;
 }
 .card-button{
@@ -2366,8 +2366,8 @@ app-metadata-details,app-add-file {
     padding: 0px 10px 0px 10px;
   }
   hr.hr-height {
-    height: 40px;
-    width: 2px;
+    height: 2.5rem;
+    width: 0.125rem;
     background: black;
   }
 .segment-card{
@@ -2493,4 +2493,5 @@ app-slider-type-input {
   }
 .dark-mode-toggle:focus {
   outline: none;
+}
 }

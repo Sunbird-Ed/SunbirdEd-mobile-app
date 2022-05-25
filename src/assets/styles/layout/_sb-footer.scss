@@ -234,8 +234,8 @@
 .tabs-md .tab-button:nth-child(3) .tab-button-icon,
 .tabs-ios .tab-button:nth-child(3) .tab-button-icon {
   background: $primary-color;
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,7 +250,7 @@
   @include margin(0, null, null, null);
   font-weight: normal;
   text-transform: capitalize;
-  line-height: 20px;
+  line-height: 1.25rem;
 }
 
 .tabs-md .tab-button[aria-selected="true"],

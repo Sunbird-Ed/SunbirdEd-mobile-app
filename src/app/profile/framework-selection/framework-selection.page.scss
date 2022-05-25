@@ -10,7 +10,7 @@
     h4 {
         padding:0;
         font-weight: 700;
-        max-width: 1024px;
+        max-width: 64rem;
         margin: 0 auto;
     }
 }
@@ -25,7 +25,7 @@ ion-footer{
 
 ion-button{
     --background: #{$blue} !important;
-    height: 40px !important;
+    height: 2.5rem !important;
     text-transform: capitalize !important;
 }
 

@@ -10,7 +10,7 @@
       color: $gray-200;
       font-family: "Noto Sans", sans-serif;
       font-size: 0.75rem;
-      line-height: 20px;
+      line-height: 1.25rem;
       margin-bottom: 4px;
       padding: 2px;
       margin-top: 10px;
@@ -22,7 +22,7 @@
       font-size: 0.938rem;
       font-weight: bold;
       letter-spacing: -0.4px;
-      line-height: 20px;
+      line-height: 1.25rem;
     }
     .title-info{
       white-space: nowrap; 
@@ -36,7 +36,7 @@
       font-family: "Noto Sans", sans-serif;
       font-size: 0.813rem;
        letter-spacing: -0.1px;
-      line-height: 20px;
+      line-height: 1.25rem;
       margin: 0;
       white-space: nowrap; 
       overflow: hidden;
@@ -46,7 +46,7 @@
 
     .sb-accordian-arrow {
       font-size: 1.5rem;
-      line-height: 20px;
+      line-height: 1.25rem;
     }
     .arrow-up {
       transform: rotate(180deg);
@@ -57,7 +57,7 @@
      // background-color: map-get($colors, white_f1);
       font-family: "Noto Sans", sans-serif;
       font-size: 0.813rem;
-      line-height: 20px;
+      line-height: 1.25rem;
       margin-top: 2px;
       color: $gray-300;
       white-space: nowrap; 
@@ -87,13 +87,13 @@
     }
 
     .update-now-btn {
-      height: 20px;
+      height: 1.25rem;
       color: $blue;
       font-family: "Noto Sans", sans-serif;
       font-size: 0.75rem;
       font-weight: bold;
       letter-spacing: -0.34px;
-      line-height: 20px;
+      line-height: 1.25rem;
     }
 
     .mr-6 {

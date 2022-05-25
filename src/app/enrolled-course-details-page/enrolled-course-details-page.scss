@@ -103,7 +103,7 @@
     }
     .play-icon{
        display: inline;
-       width: 21px;
+       width: 1.313rem;
        vertical-align: middle;
        margin-right: 6.43px;
     }
@@ -177,7 +177,7 @@
     }
 
     .sc-ion-buttons-md-s ion-button {
-        height: 20px;
+        height: 1.25rem;
         font-size: 0.625rem;
     }
     .label-margin-bottom{
@@ -187,7 +187,7 @@
       padding: 12px 14px;
       .dd-icon {
         position: relative;
-        bottom: 3px;
+        bottom: 0.188rem;
       }
       .sb-checkmark-icon{
         color: map-get($colors, office_green);
@@ -204,7 +204,7 @@
     .enrollment-info{
       ion-icon{
         position: relative;
-        top: 2px;
+        top: 0.125rem;
       }
     }
     .enrolled-course-card-button{
@@ -237,7 +237,7 @@
       padding: 0px 10px 0px 10px;
     }
     hr.hr-height {
-      height: 32px;
+      height: 2rem;
     }
     .segment-button-indicator{
       width: 84% !important;
@@ -309,7 +309,7 @@
   .menu-icon{
     display: block;
     width: 100%;
-    height: 16px;
+    height: 1rem;
     margin-top: 18px;
     float: right;
   }
@@ -349,12 +349,12 @@
     }
   }
   .card-text{
-    height: 18px;
+    height: 1.125rem;
     width: auto;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
     font-size: 0.813rem !important;
-    line-height: 20px;
+    line-height: 1.25rem;
     text-align: center;
   }
   .card-button{
@@ -378,7 +378,7 @@
   .sb-course-progress-container{
       background-color: map-get($colors, pale_blue);
       padding: 8px;
-      height: 70px;
+      height: 4.38rem;
       width: auto;
   }
 
@@ -415,7 +415,7 @@
     font-family: "Noto Sans", sans-serif;
     ion-icon{
       position: relative;
-      top: 2px;
+      top: 0.125rem;
     }
   }
   .padding-left-5em{
@@ -424,7 +424,7 @@
   .sb-course-end-container{
     background-color: map-get($colors, pale_red);
     padding: 10px;
-    height: 70px;
+    height: 4.38rem;
     width: auto;
     .main-heading{
       font-size: $font-size-base !important;
@@ -526,8 +526,8 @@ ion-segment-button{
   font-size: 0.75rem;
 
   .alert {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     display: inline-block;
     margin-right: 8px;
   }
@@ -558,7 +558,7 @@ ion-segment-button{
   font-family: "Noto Sans", sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0;
-  line-height: 20px;
+  line-height: 1.25rem;
 }
 
 .ds-item{

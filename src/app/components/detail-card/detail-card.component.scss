@@ -4,7 +4,7 @@
     .btn-progress-highlight{
         left: 0px;
         background: $primary-800;
-        height: 5px;
+        height: 0.313rem;
         position: absolute;
         border-radius: inherit;
         border: 0px;
@@ -15,8 +15,8 @@
         border-radius: 33px;
         display: inline-block;
         background: $primary-200;
-        height: 5px;
-        width: 56px;
+        height: 0.313rem;
+        width: 3.5rem;
     }
 
 }

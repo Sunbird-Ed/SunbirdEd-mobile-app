@@ -4,7 +4,7 @@
     color: map-get($colors, primary_black) !important;
     font-family: "Noto Sans", sans-serif !important;
     font-size: 1.25rem !important;
-    line-height: 22px !important;
+    line-height: 1.375rem !important;
     font-weight: normal;
   }
 
@@ -106,7 +106,7 @@
     font-family: "Noto Sans", sans-serif;
     font-size: $font-size-base;
     letter-spacing: 0;
-    line-height: 19px;
+    line-height: 1.188rem;
   }
 
 }
@@ -123,7 +123,7 @@
   font-family: "Noto Sans", sans-serif;
   font-size: $font-size-base;
   letter-spacing: 0;
-  line-height: 19px;
+  line-height: 1.188rem;
   margin: 16px 0 8px;
 }
 
@@ -140,7 +140,7 @@
   display: block;
   font-size: 0.75rem;
   color: red;
-  line-height: 10px;
+  line-height: 0.625rem;
 }
 
 .input-item{
@@ -155,7 +155,7 @@
   background-color: $blue;
   color: map-get($colors, white);
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
   font-size: 1rem;
@@ -165,7 +165,7 @@
   background-color: map-get($colors, white);
   color: $blue;
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   border: 1px solid $blue;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
@@ -194,7 +194,7 @@ ion-checkbox {
   border-radius: 6px;
   .decorator {
     display: inline-block;
-    max-width: 50px;
+    max-width: 3.125rem;
   }
   .custom {
     display: inline-block;

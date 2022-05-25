@@ -18,7 +18,7 @@
             color: $white;
             font-size: $font-size-base;
             font-weight: 500;
-            line-height: 19px;
+            line-height: 1.188rem;
             @include padding(($base-block-space * 2), 0, 0, 0);
     }
 }

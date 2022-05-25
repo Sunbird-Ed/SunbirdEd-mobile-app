@@ -649,6 +649,10 @@ html[data-theme="JOYFUL"]{
       .trainings{
         .heading{
           border-radius: 1rem;
+          .refresh-icon { 
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+          }
         }
         .content{
           border-radius: 1rem !important;
@@ -836,7 +840,7 @@ html[data-theme="JOYFUL"]{
     &::after {
       content: '';
       width: 100%;
-      height: 172px;
+      height: 10.75rem;
       display: block;
       position: absolute;
       z-index: 0;
@@ -850,7 +854,7 @@ html[data-theme="JOYFUL"]{
     }
   }
   .backgrond-div::after{
-    top: -56px;
+    top: -3.5rem;
   }
   .ui-content{
     z-index: 2;
@@ -864,7 +868,7 @@ html[data-theme="JOYFUL"]{
         content: '';
         background-color: var(--app-primary-header) !important;
         width: 100vw;
-        height: 50px;
+        height: 3.125rem;
         position: absolute;
         z-index: -1;
         border-bottom-left-radius: 20px;
@@ -1248,8 +1252,8 @@ html[data-theme="JOYFUL"]{
     ion-header{
       ion-toolbar{
         --background: var(--app-secondary-background) !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
+        min-height: 3.75rem !important;
+        max-height: 3.75rem !important;
       }
     }
 
@@ -1276,7 +1280,7 @@ html[data-theme="JOYFUL"]{
       }
 
       .sb-popover-action-btn{
-        height: 40px !important;
+        height: 2.5rem !important;
       }
     }
   }
@@ -1589,11 +1593,11 @@ html[data-theme="JOYFUL"]{
         background: var(--app-secondary-background) !important;
         border-radius: 20px !important;
         width: 94% !important;
-        height: 55px !important;
+        height: 3.438rem !important;
         left: 3% !important;
         padding: 10px !important;
         margin-bottom: 10px !important;
-        top: 8px !important;
+        top: 0.5rem !important;
         .sb-view-all-title{
           color: unset !important;
           margin-left: 8px !important;
@@ -1763,7 +1767,7 @@ html[data-theme="JOYFUL"]{
   .ui-content-ios{
     z-index: 2;
     position: relative;
-    top: 45px;
+    top: 2.813rem;
   }
   .ui-container-ios {
     &::part(scroll) {
@@ -1772,7 +1776,7 @@ html[data-theme="JOYFUL"]{
     &::after {
       content: '';
       width: 100%;
-      height: 50px;
+      height: 3.125rem;
       display: block;
       position: absolute;
       z-index: 0;

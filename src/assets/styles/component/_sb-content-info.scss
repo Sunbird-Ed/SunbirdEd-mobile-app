@@ -12,7 +12,7 @@
         font-size: ($font-size-base) + 0.125;
         color: $white;
         font-family: "Noto Sans";	
-        line-height: 22px;
+        line-height: 1.375rem;
         overflow: auto;
         font-weight: bold;
         @include margin(0, 0, ($base-block-space * 1), 0);
@@ -46,6 +46,6 @@
     .sb-content-title-data{
       color: var(--app-medium-gray);
       font-size: ($font-size-base);
-      line-height: 17px;
+      line-height: 1.063rem;
      }
   }
