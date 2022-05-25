@@ -18,10 +18,10 @@
         color: $white-color;
         font-weight: normal;
         text-transform: capitalize;
-        top: -10px;
+        top: -0.625rem;
         position: absolute;
-        right: -8px;
-        height: 40px;
+        right: -0.5rem;
+        height: 2.5rem;
         width: auto;
     }
     .popover-content{
@@ -33,9 +33,9 @@
             align-items: center;
             margin-top: ($base-block-space * 5);
             margin-bottom: ($base-block-space * 6);    
-            max-height: 116px;
+            max-height: 7.25rem;
             overflow-y: auto;
-            height: 116px;
+            height: 7.25rem;
         }
     }
 
@@ -62,13 +62,13 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 72px;
+        height: 4.5rem;
         background-color: map-get($colors, white);
         box-shadow: 0 -4px 4px 1px rgba(0,0,0,0.22);
 
         .sb-popover-toolbar {
-            max-height: 68px;
-            height: 68px;
+            max-height: 4.25rem;
+            height: 4.25rem;
             padding: 16px;
             
             .toolbar-background {
@@ -80,7 +80,7 @@
                .meta-info{
                     display: block;
                     color: map-get($colors, dark_gray);
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     font-weight:normal;
                }
 
@@ -88,10 +88,10 @@
             .sb-modal-close{
                 color: map-get($colors, empty_color);
                 font-weight: normal;
-                top: -24px;
+                top: -1.5rem;
               //  right: -16px;
-              font-size: 13px;
-                height: 68px;
+              font-size: 0.813rem;
+                height: 4.25rem;
                 width: auto;
             }
 

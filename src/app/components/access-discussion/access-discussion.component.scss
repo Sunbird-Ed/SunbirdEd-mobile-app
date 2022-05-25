@@ -2,19 +2,19 @@
 .card-icons{
     margin-right: 10px;
     position: relative;
-    top: 2px;
+    top: 0.125rem;
 }
 .card-text{
-    height: 18px;
-    width: 63px;
+    height: 1.125rem;
+    width: 3.938rem;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
-    font-size: 13px !important;
-    line-height: 20px;
+    font-size: 0.813rem !important;
+    line-height: 1.25rem;
     text-align: center;
 }
 .card-button{
     background-color: transparent !important;
     outline: none;
-    font-size: 30px;
+    font-size: 1.875rem;
 }

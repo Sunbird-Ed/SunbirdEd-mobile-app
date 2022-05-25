@@ -27,7 +27,7 @@
     .text-container{
       color: map-get($colors, office_green);
       font-family: "Noto Sans", sans-serif;
-      font-size: 14px !important;
+      font-size: 0.875rem !important;
       font-weight: bold;
       width: 80%;
       vertical-align: middle;
@@ -46,11 +46,11 @@
       align-items: center;
       .icon {
         color: var(--app-primary) !important;
-        font-size: 30px;
+        font-size: 1.875rem;
       }
       .label {
         flex: 1;;
+        font-size: 0.875rem;
       }
     }
-
   }

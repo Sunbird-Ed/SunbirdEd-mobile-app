@@ -1,6 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 .custom-label{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     margin-bottom: 15px;
 }
@@ -9,36 +9,38 @@
     display: flex;
     justify-content: space-between;
     margin: 20px 0px;
+    font-size: 1rem;
     ion-datetime{
     border-bottom: 1px solid #999999;
-    min-width: 185px;
-    font-size: 16px;
+    min-width: 11.563rem;
+    font-size: 1rem;
     }
     ion-icon{
-    font-size: 14px;
+    font-size: $font-size-base;
     color: #999999;
     padding: 0px;
     margin: 0px;
     }
 }
 .custom-datetime-label{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     margin-top: 15px;
 }
 .custom-label-float{
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 400;
     margin-bottom: 15px;
 }
 .file-list{
     margin: auto; 
-    font-size: 24px;
+    font-size: 1.5rem;
 }
 .custom-item{
     margin: 20px 0px;
+    font-size: 1rem;
     ion-select{
-        min-width: 200px;
+        min-width: 12.5rem;
     }
 }
 .btn-disabled{
@@ -53,7 +55,7 @@
     .file-box{
         img{
             margin: 5px 5px;
-            font-size: 23px;
+            font-size: 1.438rem;
         }
         .attach-label{
         color: #{$blue}; 
@@ -65,7 +67,7 @@
     .img{
         margin: 5px 5px;
         margin-bottom: -5px;
-        font-size: 23px;
+        font-size: 1.438rem;
         transform: rotate(45deg);
         -ms-transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
@@ -79,3 +81,8 @@
 .container {
     margin-top: env(safe-area-inset-top);
   }
+
+ion-content ion-button {
+    font-size: 0.875rem;
+    height: 2.25rem;
+}

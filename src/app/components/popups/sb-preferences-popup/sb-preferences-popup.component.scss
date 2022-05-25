@@ -1,10 +1,10 @@
 .preference-container {
   color: var(--app-gray);
   padding: 1rem;
-  font-size: 12px;
+  font-size: 0.75rem;
 
   .preference-username {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
     margin: 0.75rem 0;
   }
@@ -28,7 +28,7 @@
   .change-preference{
     text-align: center;
     button{
-      font-size: 12px !important;
+      font-size: 0.75rem !important;
     }
   }
 }

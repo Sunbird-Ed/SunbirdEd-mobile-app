@@ -1,11 +1,11 @@
 // typography styles
 h1 {
-    font-size: $h1-font-size;
-    line-height: ($h1-font-size + 8);
+    font-size: $h1-font-size - 0.75;
+    line-height: ($h1-font-size - 0.5);
  }
  h2 {
-    font-size: $h2-font-size;
-    line-height: ($h2-font-size + 8);
+    font-size: $h2-font-size - 0.75;
+    line-height: ($h2-font-size - 0.5);
  }
  h3 {
     font-size: $h3-font-size;

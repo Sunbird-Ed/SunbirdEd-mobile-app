@@ -8,9 +8,13 @@
         max-width: 92%;
     }
 }
+.filter-icon-calendar {
+    width: 3rem;
+    height: 3rem;
+}
 .status-label {
     margin: auto;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 500;
 }
 .btn-disabled{
@@ -22,13 +26,20 @@
     padding: 5px;
 
     .arrow-image {
-        width: 35%;
+        width: 2.438rem;
         margin-top: 5px;
     }
-
+    ion-item {
+        font-size: 0.813rem;
+    }
     ion-button {
         text-transform: none;
     }
+}
+
+ion-button {
+    font-size: 0.875rem;
+    height: 1.813rem;
 }
 
 .subtask-box {
@@ -71,7 +82,7 @@
             .close-attach-popup{
                 float: right;
                 text-align: right;
-                font-size: 24px;
+                font-size: 1.5rem;
                 margin-top: -15px;
             }
         ion-textarea {
@@ -83,21 +94,21 @@
 }
 
 .roundedButton {
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 .subtask-date-picker{
-    max-width: 25px;  
+    max-width: 1.563rem;  
     margin-right: 5px;
 }
 
 .assignee {
     font-weight: normal;
     margin-left: 20px;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .iconAdj {
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 .disablePage {

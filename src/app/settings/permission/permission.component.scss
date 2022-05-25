@@ -3,8 +3,8 @@
 :host {
   .permission-title {
     color: map-get($colors, primary_black);
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 1rem;
+    line-height: 1.375rem;
   }
   .permission-container {
     .item-row {
@@ -16,7 +16,7 @@
         @include rtl() {
           border-left: 1px solid $gray-100;
         }
-        min-width: 45px;
+        min-width: 2.813rem;
         text-align: end;
 
         ion-icon {
@@ -25,14 +25,14 @@
       }
 
       .title {
-        font-size: 14px;
+        font-size: $font-size-base;
         color: map-get($colors, primary_black);
         font-weight: bold;
-        line-height: 19px;
+        line-height: 1.188rem;
       }
       .description {
-        line-height: 19px;
-        font-size: 14px;
+        line-height: 1.188rem;
+        font-size: $font-size-base;
         color: $gray-400;
         margin: 0px !important;
       }
@@ -51,8 +51,8 @@
 
   .btn-outline {
     letter-spacing: normal;
-    border-width: 1px;
-    --border-width: 1px;
+    border-width: 0.063rem;
+    --border-width: 0.063rem;
   }
 }
 

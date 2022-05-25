@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
     .subtitle {
       text-transform: capitalize;
-      font-size: 1.3em;
+      font-size: 1.3rem;
       font-weight: 700 !important;
       color: map-get($colors, facebook);
       margin-left: 1.3rem;
@@ -10,12 +10,12 @@
       margin: 8px !important;
     }
     .filter-option-text {
-          font-size: 14px !important;
+          font-size: $font-size-base !important;
           text-overflow: unset !important;
           white-space: unset !important;
     }
     .col {
-      min-height: 3.3em !important;
+      min-height: 3.3rem !important;
     }
     .scroll-list {
       overflow-y: scroll;
