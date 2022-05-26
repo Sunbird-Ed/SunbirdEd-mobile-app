@@ -31,6 +31,7 @@
           .title-break{
             flex:1;
             word-break: break-all;
+            color: #000;
           }
     }
     .check-icon{
@@ -61,6 +62,9 @@
 
     .viewBtn {
         justify-content: flex-end;
+        ion-icon{
+            vertical-align: middle;
+        }
     }
 }
 .view-more {

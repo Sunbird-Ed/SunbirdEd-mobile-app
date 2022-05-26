@@ -7,7 +7,7 @@
   </ion-buttons>
 </ion-toolbar>
 <ion-content class="ion-padding">
-  <ion-button color="primary" expand="block" (click)="createProgram()" *ngIf="type== 'programs'">
+  <ion-button color="primary" expand="block" (click)="createProgram()" *ngIf="type== 'programs'" class="custom-btn-txt-transform-none">
     {{'FRMELEMNTS_LBL_CREATE_NEW_PROGRAM' | translate}}
   </ion-button>
   <ion-list>
@@ -20,7 +20,7 @@
   </ion-list>
 </ion-content>
 <ion-footer *ngIf="dataList">
-  <ion-button expand="block" (click)="addProgram()">
+  <ion-button expand="block" (click)="addProgram()" class="custom-btn-txt-transform-none">
     {{button | translate}}
   </ion-button>
 </ion-footer>

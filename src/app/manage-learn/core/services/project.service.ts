@@ -314,6 +314,7 @@ export class ProjectService {
       this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
         data = text;
       });
+      if(project.status != statusType['submitted']){
       this.shareTaskId = taskId ? taskId : null;
       const alert = await this.alert.create({
         cssClass: 'central-alert',
@@ -342,6 +343,15 @@ export class ProjectService {
         ],
       });
       await alert.present();
+    }else{
+      if (project.isEdit || project.isNew) {
+        project.isNew
+          ? this.createNewProject(project, true)
+          : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: project._id, taskId: taskId, share: true, fileName: name } });
+      } else {
+        type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
+      }
+    }
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
     }

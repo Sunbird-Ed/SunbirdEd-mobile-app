@@ -46,13 +46,13 @@
   <ion-toolbar class="_toolbar-background-md" position="bottom">
     <ion-row>
       <ion-col>
-        <ion-button ion-button full (click)="cancel()" class="w-100">
+        <ion-button ion-button full (click)="cancel()" class="w-100 custom-btn-txt-transform-none">
           <ion-icon role="button" name="close" attr.aria-label="{{ 'CANCEL' | translate }}" margin-right></ion-icon>
           {{ 'CANCEL' | translate }}
         </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button ion-button full (click)="addSchools()" class="w-100" [disabled]="selectedListCount.count === 0">
+        <ion-button ion-button full (click)="addSchools()" class="w-100 custom-btn-txt-transform-none" [disabled]="selectedListCount.count === 0">
           <ion-icon role="button" name="add" attr.aria-label="{{ 'FRMELEMENTS_BTN_ADD' | translate }}" margin-right></ion-icon>
           {{ 'FRMELEMENTS_BTN_ADD' | translate }}
         </ion-button>

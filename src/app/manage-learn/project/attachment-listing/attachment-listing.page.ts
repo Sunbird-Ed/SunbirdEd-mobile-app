@@ -160,7 +160,11 @@ export class AttachmentListingPage implements OnInit {
   }
 
   viewDocument(attachment) {
-    if (attachment.url) {
+    if(attachment.type == 'link'){
+      const options
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+    (window as any).cordova.InAppBrowser.open(attachment.name, '_blank', options)
+    }else if (attachment.url) {
       this.downloadFile(attachment);
     } else {
       this.openFile(attachment);
@@ -230,6 +234,7 @@ export class AttachmentListingPage implements OnInit {
     this.getAttachments();
   }
   attachmentAction(event) {
+    console.log(event,"event");
     if (event.action == 'delete') {
       this.deleteConfirmation(event.attachment);
     } else if (event.action == 'view') {

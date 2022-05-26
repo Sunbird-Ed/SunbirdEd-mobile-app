@@ -46,7 +46,7 @@
   *ngIf="((allAnsweredForEvidence && !currentEvidence?.isSubmitted) || currentEvidence?.enableSubmit) && !sectionData?.observation">
   <ion-toolbar position="bottom">
     <ion-row>
-      <ion-button class="w-100" ion-button full (click)="checkForNetworkTypeAlert()">{{'FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT'|translate}}
+      <ion-button class="w-100 custom-btn-txt-transform-none" ion-button full (click)="checkForNetworkTypeAlert()">{{'FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT'|translate}}
        
        </ion-button>
 
@@ -57,7 +57,7 @@
 <ion-footer no-shadow *ngIf="((allAnsweredForEvidence && !currentEvidence.isSubmitted && sectionData?.observation) || currentEvidence?.enableSubmit)">
   <ion-toolbar position="bottom">
     <ion-row>
-      <ion-button class="w-100" ion-button full (click)="previewSubmission()">
+      <ion-button class="w-100 custom-btn-txt-transform-none" ion-button full (click)="previewSubmission()">
         {{'FRMELEMNTS_BTN_PREVIEW'|translate}}</ion-button>
     </ion-row>
   </ion-toolbar>
@@ -66,7 +66,7 @@
 <ion-footer no-shadow *ngIf="sectionData?.observation && currentEvidence?.isSubmitted">
   <ion-toolbar position="bottom">
     <ion-row>
-      <ion-button class="w-100" ion-button full (click)="viewReport()">
+      <ion-button class="w-100 custom-btn-txt-transform-none" ion-button full (click)="viewReport()">
         {{'FRMELEMNTS_LBL_VIEW_REPORT'|translate}} </ion-button>
       
     </ion-row>
