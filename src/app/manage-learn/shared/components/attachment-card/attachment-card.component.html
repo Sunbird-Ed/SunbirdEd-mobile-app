@@ -22,9 +22,9 @@
     </ion-row>
   </ion-card-content>
   <div class="button-flex-div">
-    <ion-button class="view-more" expand="block" fill="outline" (click)="loadMore()"
+    <ion-button class="view-more custom-btn-txt-transform-none" expand="block" fill="outline" (click)="loadMore()"
       *ngIf="data?.attachments?.length>2 && limit <=2 ">
-      {{ 'FRMELEMNTS_BTN_LOAD_MORE_IMAGES' | translate | uppercase }}
+      {{ 'FRMELEMNTS_BTN_LOAD_MORE_IMAGES' | translate }}
     </ion-button>
   </div>
 </ion-card>

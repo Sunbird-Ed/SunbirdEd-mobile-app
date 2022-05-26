@@ -23,7 +23,7 @@
   </app-item-list-card>
   <app-no-data *ngIf="!projects?.length" [message]="noDataFound" [color]="'text-primary'"></app-no-data>
 </ion-content>
-<ion-button class="view-more" fill="outline" (click)="loadMore()"
+<ion-button class="view-more custom-btn-txt-transform-none" fill="outline" (click)="loadMore()"
   *ngIf="projects?.length && count > currentOnlineProjectLength">
-  {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate | uppercase }}
+  {{ 'FRMELEMNTS_BTN_LOAD_MORE_PROJECTS' | translate }}
 </ion-button>

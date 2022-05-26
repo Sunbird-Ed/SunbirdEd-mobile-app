@@ -18,7 +18,7 @@
     <app-no-data *ngIf="!solutionList?.length"></app-no-data>
   </ion-content>
   <ion-button
-    class="view-more"
+    class="view-more custom-btn-txt-transform-none"
     expand="block"
     (click)="loadMore()"
     *ngIf="solutionList?.length && count > solutionList?.length"
