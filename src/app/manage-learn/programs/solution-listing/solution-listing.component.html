@@ -23,7 +23,7 @@
   <app-no-data *ngIf="!solutions?.length"></app-no-data>
 </ion-content>
 <div class="px-5">
-  <ion-button expand="block" 
+  <ion-button expand="block"  class="custom-btn-txt-transform-none"
   (click)="loadMore()" *ngIf="solutions?.length && count > solutions?.length">{{ "FRMELEMNTS_BTN_VIEW_MORE" | translate }}
   </ion-button>
 </div>

@@ -61,7 +61,7 @@ export class ProjectService {
   }
   async getTemplateByExternalId(id, extraParams?) {
     const config = {
-      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id + (extraParams ? extraParams : ''),
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + encodeURIComponent(id) + (extraParams ? extraParams : ''),
     }
     return this.unnatiService.post(config).toPromise();
   }
@@ -78,7 +78,7 @@ export class ProjectService {
     programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true }) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
-    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
+    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: detailsPayload ? detailsPayload : payload
@@ -314,6 +314,7 @@ export class ProjectService {
       this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
         data = text;
       });
+      if(project.status != statusType['submitted']){
       this.shareTaskId = taskId ? taskId : null;
       const alert = await this.alert.create({
         cssClass: 'central-alert',
@@ -333,7 +334,7 @@ export class ProjectService {
               if (project.isEdit || project.isNew) {
                 project.isNew
                   ? this.createNewProject(project, true)
-                  : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+                  : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: project._id, taskId: taskId, share: true, fileName: name } });
               } else {
                 type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
               }
@@ -342,6 +343,15 @@ export class ProjectService {
         ],
       });
       await alert.present();
+    }else{
+      if (project.isEdit || project.isNew) {
+        project.isNew
+          ? this.createNewProject(project, true)
+          : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: project._id, taskId: taskId, share: true, fileName: name } });
+      } else {
+        type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
+      }
+    }
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
     }

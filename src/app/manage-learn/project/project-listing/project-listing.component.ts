@@ -5,7 +5,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, UtilsService, ToastService } from "../../core";
+import { LoaderService, UtilsService, ToastService, statusType } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
@@ -240,7 +240,7 @@ export class ProjectListingComponent {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
-            url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
+            url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + encodeURIComponent(this.searchText) + '&filter=' + selectedFilter,
             payload: selectedFilter !== 'createdByMe' ? this.payload : ''
         }
         this.kendra.post(config).subscribe(success => {
@@ -344,8 +344,25 @@ export class ProjectListingComponent {
                     }
                 ],
             },
-            fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'],
         };
+       let  fields: ['title', '_id', 'downloaded', 'hasAcceptedTAndC'];
+       let prepareQuery:any={};
+        switch (this.selectedFilterIndex) {
+            case 0:
+                prepareQuery['isAPrivateProgram'] = false
+                break;
+            case 1:
+                prepareQuery['referenceFrom'] = 'link'
+                break;
+            case 2:
+                prepareQuery['isAPrivateProgram'] = { $ne: false }
+                prepareQuery['referenceFrom'] = { $ne: 'link' }
+                break;
+            default:
+                break;
+        }
+        query.selector.$and.push(prepareQuery);
+        fields ? (query['fields'] = fields) : null;
         return query
     }
     searchCreatedProjects() {
@@ -447,8 +464,11 @@ export class ProjectListingComponent {
 
     doAction(id?, project?) {
         const selectedFilter = this.selectedFilterIndex === 0 ? 'assignedToMe' : 'createdByMe';
-
         if (project) {
+            if(project.status == statusType['submitted']){
+                this.selectedProgram(project);
+                return;
+            }
             if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
                 this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                     if (data && data.isClicked) {

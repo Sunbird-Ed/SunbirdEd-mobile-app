@@ -11,16 +11,16 @@
         }
         &.mytitle{
             color: map-get($colors, primary_black);
-            font-size: 1.2em;
+            font-size: 1.2rem;
         }
         &.head{
-            font-size: 1.2em;
+            font-size: 1.2rem;
             color: map-get($colors, primary_black);
             background-color:map-get($colors, light_gray) !important;
         }
         &.title{
             color: map-get($colors, primary_black);
-            font-size: 1em;
+            font-size: 1rem;
         }
 
         
@@ -28,7 +28,7 @@
 
     .sb-btn-outline-info {
         font-weight: bold;
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 
     .background-gray{
@@ -40,7 +40,7 @@
     .batch-font{
         @extend .NotoSans-bold;
         padding: 15px 0 12px 7px;
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .batch-list {
@@ -74,7 +74,7 @@
 
     .batch-name {
         margin-top: 0px; 
-        font-size: 12px;
+        font-size: 0.75rem;
         @extend .NotoSans-semi-bold;
     }
 
@@ -86,11 +86,11 @@
 
     .enroll-msg-ended {
         color: $orange;
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
 
     .enroll-msg-style {
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
 
     .card-icon{
@@ -105,7 +105,7 @@
         background-color: rgb(165, 165, 165) !important;
         border-radius: 5px !important;
         font-weight: bold;
-        font-size: 12px;
+        font-size: 0.75rem;
         color: map-get($colors, white) !important;
         border-color: map-get($colors, white) !important;
     }

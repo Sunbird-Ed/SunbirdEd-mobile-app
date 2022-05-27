@@ -51,7 +51,7 @@ h6 {
 }
 
 .font-size-20 {
-  font-size: 20px !important;
+  font-size: 1.25rem !important;
 }
 
 .span-semibold {
@@ -59,7 +59,7 @@ h6 {
 }
 .sb-legal-url {
   color: map-get($colors, bright_blue_a0);
-  font-size: 14px;
+  font-size: $font-size-base;
   text-decoration: underline;
 }
 
@@ -70,14 +70,14 @@ h6 {
 }
 
 .tool-icon {
-  width: 27px;
+  width: 1.688rem;
   height: auto;
   // margin: 10px;
   float: right;
 }
 
 .header-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   height: 100%;
   vertical-align: middle;
 }
@@ -183,13 +183,13 @@ ul.rating .ion-md-star-outline:before {
   background: map-get($colors, white);
 }
 .small-rating .sc-ion-buttons-md-s ion-button {
-  height: 23px;
-  font-size: 11px;
+  height: 1.438rem;
+  font-size: 0.688rem;
 }
 .popover-ratings .sc-ion-buttons-md-s ion-button {
-  height: 32px !important;
+  height: 2rem !important;
   width: auto !important;
-  font-size: 22px;
+  font-size: 1.375rem;
   padding-right: 10px;
 }
 .popover-ratings ion-icon.filled {
@@ -237,7 +237,7 @@ ul.rating .ion-md-star-outline:before {
     border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
-    border-width: 1px;
+    border-width: 0.063rem;
     border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
@@ -283,7 +283,7 @@ ul.rating .ion-md-star-outline:before {
 
 .user-popover {
   .popover-content {
-    min-width: 96px;
+    min-width: 6rem;
     width: auto;
     display: inline-block;
     height: auto !important;
@@ -352,11 +352,11 @@ ul.rating .ion-md-star-outline:before {
 .alert-wp.confirm-alert .closeButton {
   //@include text-align('end');
   position: absolute;
-  width: 5px !important;
-  top: 3px;
+  width: 0.313rem !important;
+  top: 0.188rem;
   z-index: 1000;
   background-color: transparent !important;
-  font-size: 18px !important;
+  font-size: 1.125rem !important;
   font-weight: 600 !important;
   padding-top: 12px !important;
 }
@@ -367,7 +367,7 @@ ul.rating .ion-md-star-outline:before {
   border-color: map-get($colors, primary);
   text-transform: uppercase;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.063rem;
   border-radius: 4px !important;
   overflow: hidden;
   height: 4.3rem;
@@ -382,7 +382,7 @@ ul.rating .ion-md-star-outline:before {
   border-color: map-get($colors, primary);
   text-transform: uppercase;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.063rem;
   border-radius: 4px !important;
   overflow: hidden;
   height: 4.3rem;
@@ -432,14 +432,14 @@ ul.rating .ion-md-star-outline:before {
 }
 
 .separator-dot {
-  width: 4px;
-  height: 4px;
+  width: 0.25rem;
+  height: 0.25rem;
   background-color: map-get($colors, light_silver);
   border-radius: 50%;
   display: inline-block;
   vertical-align: middle;
   margin: 0px 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .need-header-space {
@@ -503,7 +503,7 @@ ion-toolbar {
 
 .box {
   .popover-content {
-    min-width: 96px;
+    min-width: 6rem;
     width: auto;
     display: inline-block;
     height: auto !important;
@@ -583,8 +583,8 @@ ion-toolbar {
 .loading-md .loading-wrapper {
   border-radius: 50% !important;
   @include padding(10px !important);
-  max-height: 48px !important;
-  max-width: 48px !important;
+  max-height: 3rem !important;
+  max-width: 3rem !important;
 }
 
 .ellipsis {
@@ -613,11 +613,11 @@ ion-toolbar {
 }
 
 .f11 {
-  font-size: 11px;
+  font-size: 0.688rem;
 }
 
 .f16 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .PTB0 {
@@ -674,20 +674,20 @@ ion-toolbar {
 
 .asPerStateRecord {
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   white-space: pre;
   display: inline-block;
   font-weight: bold;
   background-color: black;
   padding: 6px;
   position: absolute;
-  right: 13px;
-  top: 22px;
+  right: 0.813rem;
+  top: 1.375rem;
 }
 .isymbol {
   position: relative;
   top: 0;
-  line-height: 12px;
+  line-height: 0.75rem;
   margin-left: 5px;
 }
 .information-icon-style {
@@ -697,7 +697,7 @@ ion-toolbar {
   color:map-get($colors, gray_solid);
 }
 .info-icon-text {
-  font-size: 10px;
+  font-size: 0.625rem;
   text-align: center;
 }
 .qr-alert-invalid .popover-content {
@@ -793,7 +793,7 @@ ion-toast.sb-toast.available-later {
   --background: #{$warning-color};
   --color: #{$white-color};
   --border-radius: 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding: 0;
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
@@ -807,7 +807,7 @@ ion-toast.green-toast{
   margin: 0;
   border-style: none;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  height: 45px;
+  height: 2.813rem;
 }
 
 .hydrated,
@@ -834,7 +834,7 @@ ion-toast.green-toast{
 }
 
 .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
-  height: 32px !important;
+  height: 2rem !important;
   width: auto !important;
 }
 
@@ -895,7 +895,7 @@ ion-toast.green-toast{
 
 .no-network {
   .popover-content {
-    top: 57px !important;
+    top: 3.563rem !important;
   }
 }
 .no-net-heading {
@@ -915,7 +915,7 @@ ion-toast.green-toast{
 }
 
 .no-net-close-btn {
-  font-size: 24px;
+  font-size: 1.5rem;
   float: right;
 }
 
@@ -924,8 +924,7 @@ ion-split-pane {
 }
 .leave-training-popup {
   .popover-content {
-    top: 168.273px !important;
-    left: 220px !important;
+    top: 10.517rem !important;
     --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
@@ -941,7 +940,7 @@ ion-split-pane {
 }
 .cd-leave-training-popup {
   .popover-content {
-    top: 80px !important;
+    top: 5rem !important;
     // --box-shadow: 0px 3px 6px 5px #eee;
     transform-origin: right top;
     transform: scale(1);
@@ -962,8 +961,8 @@ ion-split-pane {
     height: 3.11%;
     width: 93.33%;
     color: $gray-300;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 0.75rem;
+    line-height: 1.125rem;
     font-weight: bold;
     @include rtl() {
       margin-left: 14px;
@@ -992,14 +991,14 @@ ion-split-pane {
     box-shadow: 0 3px 4px 0 rgba(2, 79, 157, 0.1);
     .sb-play-unselected {
       color: $blue;
-      font-size: 12px;
-      line-height: 20px;
+      font-size: 0.75rem;
+      line-height: 1.25rem;
       @include margin(6px);
       @include clearfix;
     }
     .sb-play-selected {
-      font-size: 12px;
-      line-height: 20px;
+      font-size: 0.75rem;
+      line-height: 1.25rem;
       @include margin(6px);
       @include clearfix;
     }
@@ -1063,7 +1062,7 @@ ion-split-pane {
     .content-type-container {
       img {
         display: inline-block !important;
-        height: 28px !important;
+        height: 1.75rem !important;
         width: auto !important;
         vertical-align: middle;
         @include margin(4px 8px 4px 0px);
@@ -1075,9 +1074,14 @@ ion-split-pane {
   --padding-bottom: 0px !important;
 }
 
+.searchbar-input {
+  font-size: 0.875rem !important;
+  line-height: 2rem !important;
+}
+
 [dir="rtl"] .search-input .native-input.sc-ion-input-md::placeholder {
-  font-size: 11px !important;
-  line-height: 32px !important;
+  font-size: 0.688rem !important;
+  line-height: 2rem !important;
 }
 
 .ftue-changes .alert-wrapper{
@@ -1102,7 +1106,7 @@ ion-split-pane {
     border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
-    border-width: 1px;
+    border-width: 0.063rem;
     border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
@@ -1166,7 +1170,8 @@ sb-library-cards-hlist {
     padding: 0 0.5rem;
   }
   .title {
-    font-size: 18px !important;
+    font-size: 1rem !important;
+    height: auto !important;
     text-transform: none !important;
   }
 }
@@ -1198,7 +1203,7 @@ sb-library-cards-stack{
   .header{
     padding: 0 !important;
     .title{
-      font-size: 14px !important;
+      font-size: $font-size-base !important;
     }
   }
 }
@@ -1207,7 +1212,7 @@ app-resources{
   .fixed-container{
     sb-library-filters{
       .pill{
-        font-size: 14px !important;
+        font-size: $font-size-base !important;
         padding-top: 8px !important;
         padding-bottom: 8px !important;
       }
@@ -1226,7 +1231,7 @@ app-resources{
     .header{
       padding: 0 !important;
       .title{
-        font-size: 14px !important;
+        font-size: $font-size-base !important;
         padding-left: 0.5rem;
       }
     }
@@ -1273,7 +1278,7 @@ app-resources{
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 1rem;
   margin: 4px 0px;
   cursor: pointer;
   outline: none;
@@ -1307,18 +1312,18 @@ app-resources{
     top: 0;
     right: 0;
     color: $blue;
-    font-size: 25px;
+    font-size: 1.563rem;
   }
   .mg-popup-title{
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
     text-align: center;
     padding-top: 16px;
     .am-title{
-      font-size: 18px;
+      font-size: 1.125rem;
     }
     .am-desc{
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: normal;
     }
   }
@@ -1335,9 +1340,9 @@ app-resources{
     position: relative;
     .mg-popup-btn-icon{
       position: absolute;
-      right: 16px;
-      font-size: 32px;
-      top: 7px;
+      right: 1rem;
+      font-size: 2rem;
+      top: 0.438rem;
     }
   }
 }
@@ -1421,7 +1426,7 @@ ion-modal.sb-progress-loader {
 .group-option-popover {
   padding: 16px;
   ion-item {
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: "Noto Sans";
   }
 
@@ -1443,7 +1448,7 @@ ion-modal.sb-progress-loader {
   width: auto;
   margin-top: -30px;
   ion-item {
-    --min-height: 16px !important;
+    --min-height: 1rem !important;
     padding-top: 16px;
     &:first-child{
       padding-top: 0;
@@ -1466,20 +1471,20 @@ ion-modal.sb-progress-loader {
     left: 0 !important;
     right: 0 !important;
     margin: auto;
-    width: 250px !important;
+    width: 15.625rem !important;
     padding: 16px;
   }
   .cc-popup-close{
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .course-completion-title{
     color: $green;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
   }
   .course-completion-info{
     color: $green;
-    font-size: 14px;
+    font-size: $font-size-base;
     padding-top: 8px;
   }
   .course-completion-cert{
@@ -1529,7 +1534,7 @@ body {
 #timer {
   width: 100vw;
   text-align: center;
-  max-height: 48px;
+  max-height: 3rem;
   display: inline-block;
   list-style-type: none;
   text-transform: uppercase;
@@ -1555,7 +1560,7 @@ body {
 }
 
 .consent-info {
-  font-size: 12px;
+  font-size: 0.75rem;
   padding-left: 4em;
 }
 
@@ -1643,11 +1648,11 @@ app-collection-detail-etb{
 }
 
 ._cards {
-  width: calc(25% - 8px) !important;
-  margin: 4px;
+  width: calc(25% - 0.5rem) !important;
+  margin: 0.25rem;
   background: $white-color;
   position: relative;
-  height: 75px;
+  height: 4.688rem;
   border: 1px solid #e8eaed;
   border-radius: 3px;
 
@@ -1679,7 +1684,7 @@ app-collection-detail-etb{
 
 ._tip {
   color: #777;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding-left: 10px;
 }
 .disabled-toc-card {
@@ -1731,7 +1736,7 @@ sb-pills-grid{
   .icon-header{
     .item{
       height: 5.875em !important;
-      width: 22% !important;
+      width: 5rem !important;
       .img{
         width: 70% !important;
       }
@@ -1751,6 +1756,9 @@ sb-pills-grid{
       top: -1.5em !important;
       margin-top: 0 !important;
       width: 60% !important;
+    }
+    label {
+      font-size: 0.75rem !important;
     }
   }
 }
@@ -1776,7 +1784,7 @@ app-user-home{
 
 app-user-home, app-sb-preferences-popup {
   app-truncated-ellipsis {
-    font-size: 14px;
+    font-size: $font-size-base;
     font-weight: bold;
     color: var(--app-gray);
     .dot-divider {
@@ -1819,7 +1827,7 @@ app-user-home, app-sb-preferences-popup {
   sb-course-cards-hlist, sb-library-cards-hlist {
     .title{
       color: var(--app-gray) !important;
-      font-size: 16px !important;
+      font-size: 1rem !important;
       font-weight: normal !important;
       padding-left: 1rem;
       hr{
@@ -1878,7 +1886,7 @@ sb-form{
 }
 
 .heading-label {
-  font-size: 16px;
+  font-size: 1rem;
   color: var(--app-gray);
   padding-left: 1rem;
   display: flex;
@@ -1904,7 +1912,7 @@ sb-library-card-v3 {
 .certificate-popup {
   .popover-content {
     left: auto !important;
-    top: 150px !important;
+    top: 9.375rem !important;
     right: 3rem;
     width: 30% !important;
   }
@@ -2020,7 +2028,20 @@ app-category-list-page{
     .header{
       padding: 0 1rem !important;
     }
+    .body {
+      sb-library-card sb-library-card-v4 >
+      .sb--card.sb--card--theme2 {
+        width: auto !important;
+        margin: 10px !important;
+      }
+    }
   }
+}
+
+sb-library-card sb-library-card-v4 >
+.sb--card.sb--card--theme2 {
+  width: auto !important;
+  margin: 10px !important;
 }
 
 app-courses, app-resources {
@@ -2035,9 +2056,12 @@ app-user-home, app-discover {
   }
 
   sb-banner-card-hlist {
+    .sb--scrolling-wrapper-flexbox {
+      justify-content: center;
+    }
     .sb--card.sb--card--theme2 {
-      width: 85vw !important;
-      height: 17vh !important;
+      width: 19.18rem !important;
+      height: 7.8125rem !important;
       background-repeat: no-repeat !important;
       background-size: 100% 100% !important;
     }
@@ -2124,6 +2148,16 @@ app-user-home{
   }
 }
 
+app-admin-home {
+  sb-pills-grid {
+    .sb-label-grid .item {
+      label {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
 app-user-home{
   sb-course-cards-hlist {
     .sb--card{
@@ -2175,9 +2209,35 @@ app-add-file {
     justify-content: space-between;
   }
 }
+app-metadata-details {
+  ion-card {
+    ion-card-header {
+      ion-card-title {
+        font-size: 1.25rem;
+      }
+      ion-card-subtitle {
+        font-size: 0.875rem;
+      }
+    }
+  }
+  ion-card-content {
+    ion-button {
+      font-size: 0.875rem;
+      height: 2.25rem;
+    }
+  }
+}
+
+.sb-dt-card-actions {
+  button img {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
 app-metadata-details,app-add-file {
   .progress-bar-style{
-    height: 10px;
+    height: 0.625rem;
     border-radius: 16px;
     // --progress-background: green !important;
   }
@@ -2190,14 +2250,14 @@ app-metadata-details,app-add-file {
   }
 .hr-border-bottom {
     box-sizing: border-box;
-    height: 1px;
+    height: 0.063rem;
     width: 100%;
     border: 0.5px solid map-get($colors, medium_gray);
     margin-top: 9px;
 }
 .hr-border-bottom-share {
   box-sizing: border-box;
-  height: 1px;
+  height: 0.063rem;
   border: 1px solid #E9DED3;
   margin-top: 8px;
 }
@@ -2217,30 +2277,30 @@ app-metadata-details,app-add-file {
 .menu-icon{
   display: block;
   width: 100%;
-  height: 16px;
+  height: 1rem;
   margin-top: 18px;
   float: right;
 }
 .card-icons {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: $blue;
 }
 .card-icons-downloadStarted {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: map-get($colors, text_gray);
 }
 .card-icons-red{
-  font-size: 30px;
+  font-size: 1.875rem !important;
   color:map-get($colors , danger);
 }
 
 .card-text{
-  height: 18px;
+  height: 1.125rem;
   width: auto;
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans", sans-serif;
-  font-size: 13px !important;
-  line-height: 20px;
+  font-size: 0.813rem !important;
+  line-height: 1.25rem;
   text-align: center;
 }
 .card-button{
@@ -2273,10 +2333,10 @@ app-metadata-details,app-add-file {
     background-color: var(--joyful-light-yellow) !important;
     border-radius: 8px;;
     padding: 10px 15px;
-  }
-  .progress-label {
-    font-size: 10px !important;
-    color: map-get($colors, primary_black);
+    p {
+      font-size: 0.875rem !important;
+      color: map-get($colors, primary_black);
+    }
   }
 }
 .enrolled-course-container{
@@ -2306,8 +2366,8 @@ app-metadata-details,app-add-file {
     padding: 0px 10px 0px 10px;
   }
   hr.hr-height {
-    height: 40px;
-    width: 2px;
+    height: 2.5rem;
+    width: 0.125rem;
     background: black;
   }
 .segment-card{
@@ -2317,8 +2377,12 @@ app-metadata-details,app-add-file {
     ion-segment-button{
         margin: 0px 10px;
         text-transform: none;
+      ion-label {
+        font-size: 0.875rem;
+      }
     }
 }
+
 .attachment-delete-alert{
   background-color: red;
   ion-button{
@@ -2328,6 +2392,106 @@ app-metadata-details,app-add-file {
 }
 }
 
-.sb-play-container {
-  height: auto !important;
+app-project-details app-project-details-card {
+  ion-card-content .custom-filed {
+    font-size: 0.875rem;
+  }
+}
+app-solution-listing, app-observation-home, 
+app-survey-home, app-reports-listing, 
+app-observation-solution-listing app-item-list-card {
+  ion-card-content ion-icon, .info {
+    font-size: 0.875rem;
+  }
+}
+
+download-share ion-fab-button {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+lib-discuss-card .discuss-card-subtitle {
+  .card-label-container, .discuss-card-content {
+    margin-right: auto;
+    flex-wrap: wrap;
+
+    .discuss-card-label {
+      flex-basis: 100%;
+    }
+  }
+}
+
+.fontResize-container {
+  .fontResizeBtn_A- {
+    font-size: 12px;
+  }
+
+  .fontResizeBtn_A {
+    font-size: 14px;
+  }
+
+  .fontResizeBtn_A+ {
+    font-size: 16px;
+  }
+
+  .fontResizeBtn {
+    border: 0.15rem solid #484848;
+    background: none;
+    color: var(--black);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 4px;
+    padding: 0px 8px;
+    transition: all .3s ease-in-out;
+    border-radius: 50%;
+
+    &:hover,
+    &:active {
+      background: #ff714a;
+      color: var(--white);
+      cursor: pointer;
+      // outline: 0px;
+    }
+
+    &:disabled,
+    &[disabled] {
+      opacity: 0.5;
+      cursor: default;
+      border-radius: 50%;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+}
+
+.fontResizeBtn:focus,
+.dark-mode-toggle:focus {
+  outline: none;
+}
+
+.df-sidebar-menu-list {
+  font-size: 0.875rem !important;
+}
+
+ion-button {
+  font-size: 0.875rem;
+  height: 2.25rem;
+}
+
+app-text-type-input .ion-margin-top {
+  font-size: 0.875rem;
+}
+
+app-slider-type-input {
+  ion-label {
+    font-size: 0.875rem;
+  }
+.dark-mode-toggle:focus {
+  outline: none;
+}
 }

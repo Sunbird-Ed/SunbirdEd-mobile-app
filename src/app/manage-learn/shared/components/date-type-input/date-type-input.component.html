@@ -31,7 +31,7 @@
         (ionCancel)="canceled()" [(ngModel)]="data.value" [max]="futureDate" (ngModelChange)="checkForValidation()">
       </ion-datetime>
     </ion-item>
-    <ion-button icon-start clear class="capture ion-float-right" (click)="captureTime()"
+    <ion-button icon-start clear class="capture ion-float-right custom-btn-txt-transform-none" (click)="captureTime()"
       *ngIf="!data?.value && data?.autoCapture">
       {{'FRMELEMENTS_LBL_CAPTURE'| translate}}
     </ion-button>

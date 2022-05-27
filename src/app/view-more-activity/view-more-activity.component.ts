@@ -292,7 +292,6 @@ export class ViewMoreActivityComponent implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((data: Course[]) => {
         if (data) {
-          data.sort((a, b) => (a.enrolledDate! > b.enrolledDate! ? -1 : 1));
           this.searchList = data;
           this.loadMoreBtn = false;
           for (const course of data) {

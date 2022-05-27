@@ -43,7 +43,10 @@ import {
   ProfileType,
   Batch,
   GetLearnerCerificateRequest,
-  GenerateOtpRequest
+  GenerateOtpRequest,
+  CertificateService,
+  CSGetLearnerCerificateRequest,
+  CsLearnerCertificate
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -146,6 +149,7 @@ export class ProfilePage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private zone: NgZone,
     private router: Router,
     private popoverCtrl: PopoverController,
@@ -507,30 +511,40 @@ export class ProfilePage implements OnInit {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
       this.learnerPassbookCount ? request.size = this.learnerPassbookCount : null;
-      await this.courseService.getLearnerCertificates(request).toPromise().then(response => {
-        this.learnerPassbookCount = response.count;
+      const getCertsReq: CSGetLearnerCerificateRequest = {
+        userId: this.profile.userId || this.profile.id,
+        schemaName: 'certificate',
+        size: this.learnerPassbookCount? this.learnerPassbookCount : null
+      };
 
-        this.learnerPassbook = response.content.filter((learnerCertificate: any) => (learnerCertificate &&
-          learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
-          .map((learnerCertificate: any) => {
+      await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
+        this.learnerPassbookCount = response.certRegCount + response.rcCount || null;
+
+        this.learnerPassbook = response.certificates
+          .map((learnerCertificate: CsLearnerCertificate) => {
             const oneCert: any = {
-              issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
-              issuedOn: learnerCertificate._source.data.issuedOn,
-              courseName: learnerCertificate._source.data.badge.name,
-              courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
+              issuingAuthority: learnerCertificate.issuerName,
+              issuedOn: learnerCertificate.issuedOn,
+              courseName: learnerCertificate.trainingName,
+              courseId: learnerCertificate.courseId,
             };
-            if (learnerCertificate._source.pdfUrl) {
+            if (learnerCertificate.pdfUrl) {
               oneCert.certificate = {
-                url: learnerCertificate._source.pdfUrl || undefined,
-                id: learnerCertificate._id || undefined,
-                issuedOn: learnerCertificate._source.data.issuedOn,
-                name: learnerCertificate._source.data.badge.issuer.name
+                url: learnerCertificate.pdfUrl || undefined,
+                id: learnerCertificate.id || undefined,
+                identifier: learnerCertificate.id,
+                issuedOn: learnerCertificate.issuedOn,
+                name: learnerCertificate.issuerName,
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             } else {
               oneCert.issuedCertificate = {
-                identifier: learnerCertificate._id,
-                name: learnerCertificate._source.data.badge.issuer.name,
-                issuedOn: learnerCertificate._source.data.issuedOn
+                identifier: learnerCertificate.id,
+                name: learnerCertificate.issuerName,
+                issuedOn: learnerCertificate.issuedOn,
+                type: learnerCertificate.type,
+                templateUrl: learnerCertificate.templateUrl
               };
             }
             return oneCert;
@@ -570,10 +584,13 @@ export class ProfilePage implements OnInit {
               return;
             }
           }
-
-          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: { request }
-          });
+          if (this.platform.is('ios')) {
+            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank');
+          } else {
+            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+              state: { request }
+            });
+          }
         } else {
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');

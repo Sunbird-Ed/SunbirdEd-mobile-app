@@ -1,7 +1,7 @@
 <ion-content *ngIf="project">
   <ion-card class="project-box">
     <ion-card-header class="custom-filed" (click)="edit('metaData')">
-      <div style="height: 20px;">
+      <div style="height: 1.25rem;">
         <ion-icon name="create" color="primary"></ion-icon>
       </div>
     </ion-card-header>
@@ -22,15 +22,15 @@
       <div class="custom-filed _capitalize">
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
         <!-- {{categories}} -->
-        <span *ngFor="let category of project?.categories">
-          {{category?.label || category?.name}} ,
+        <span *ngFor="let category of project?.categories;let last=last">
+          {{category?.label || category?.name}} {{!last ?', ':"" }} 
         </span>
       </div>
     </ion-card-content>
   </ion-card>
   <ion-card class="project-box">
     <ion-card-header class="custom-filed _capitalize" (click)="edit('others')">
-      <div style="height: 20px;">
+      <div style="height: 1.25rem;">
         <ion-icon name="create" color="primary"></ion-icon>
       </div>
     </ion-card-header>

@@ -7,9 +7,9 @@
   .sb-topic-text{
     width: 90.28%;
     color: $blue;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-weight: bold;
-    line-height: 20px;
+    line-height: 1.25rem;
   }
   .sb-topic-item {
     color: $primary-color;

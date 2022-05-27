@@ -782,5 +782,28 @@ describe('CommonUtilService', () => {
       // assert
       expect(commonUtilService.appendTypeToPrimaryCategory).toHaveReturnedWith('digitaltextbook-detail');
     });
-})
+  });
+
+  describe('getGuestUserConfig', () => {
+    it('should return guest profile', (done) => {
+      // arrange
+      mockSharedPreferences.getString = jest.fn(() => of('sample-uid'));
+      mockProfileService.getAllProfiles = jest.fn(() => of([
+        {
+          uid: 'sample-uid',
+          name: 'sample-name'
+        }, {
+          uid: 'login-user-uid'
+        }
+      ]));
+      // act
+      commonUtilService.getGuestUserConfig();
+      // assert
+      setTimeout(() => {
+        expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN);
+        expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+  });
 });

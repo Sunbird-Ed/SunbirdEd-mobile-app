@@ -1,5 +1,5 @@
 <ion-card class="thumbnail-card">
-  <img [src]="url" *ngIf="imageFormats.includes(extension)" (click)="openImage(url)" />
+  <img [src]="url" *ngIf="imageFormats.includes(extension)" (click)="openImage(url)" alt=""/>
   <ion-icon
     name="videocam"
     class="attachmentIcon"
@@ -19,7 +19,7 @@
     name="document"
     class="attachmentIcon"
     *ngIf="pdfFormats.includes(extension)"
-    (click)="openDocument(url)"
+    (click)="downloadFile(url)"
   ></ion-icon>
 
   <ion-icon

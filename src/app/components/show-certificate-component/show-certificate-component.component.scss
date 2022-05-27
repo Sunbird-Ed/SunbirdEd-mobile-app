@@ -8,8 +8,7 @@
     ion-icon{
       padding: 0 0 4px 8px;
       vertical-align: middle;
-      font-size: 18px;
-      margin-right: 2%;
+      font-size: 1.5rem;
       float: right;
     }
   }
@@ -34,5 +33,5 @@
   color: map-get($colors, granite_gray);
 }
 .font-12 {
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
 }

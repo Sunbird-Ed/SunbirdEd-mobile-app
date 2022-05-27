@@ -1,0 +1,37 @@
+
+  <ion-header class="sb-popover-header" *ngIf="showHeader">
+    <ion-toolbar class="sb-popover-toolbar">
+        
+        <ion-title role="heading" class="sb-popover-title">{{"CERTIFICATE_VERIFIED" | translate}}
+            <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="sb-popover-container ion-no-padding">
+    <div class="sb-popover-items">
+        <div class="sb-popover-content-details">
+            <div class="sb-popover-content certificate-contentent">
+                <div class="icon-container">
+                    <img src="../../../../assets/imgs/badge.svg" alt="">
+                </div>
+                <div class="certificate-head">{{'CERTIFICATE_ISSUED_TO' | translate}}</div>
+                <div class="certificate-to">{{certificateData.issuedTo}}</div>
+                <div class="certificate-course">{{'SUCCESSFULLY_COMPLETING_COURSE' | translate}}</div>
+                <div class="certificate-course-name">{{certificateData.trainingName}}</div>
+                <div class="certificate-data">
+                    <span>{{'ON_APPNAME_ON' | translate: {'appName': appName} }}</span>
+                    <span> {{certificateData.issuanceDate | date: 'dd/MM/yyyy' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer>
+    <div class="sb-popover-footer">
+        <button class="sb-popover-action-btn " [ngClass]="btn.btnClass"
+            *ngFor="let btn of actionsButtons,let btn_index=index" (click)="deleteContent(btn_index)">
+            {{btn.btntext }}</button>
+    </div>
+</ion-footer>

@@ -10,7 +10,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { statusType, UtilsService } from '../../core';
+import { statusType, taskStatus, UtilsService } from '../../core';
 import * as _ from "underscore";
 
 @Component({
@@ -115,16 +115,18 @@ export class AttachmentListingPage implements OnInit {
     }
     if (this.project.tasks && this.project.tasks.length) {
       this.project.tasks.forEach(task => {
-        let evidence = {
-          title: task.name,
-          remarks: task.remarks ? task.remarks : '',
-          attachments: []
-        }
-        if (task.attachments && task.attachments.length) {
-          this.getEvidences(task.attachments, evidence);
-        }
-        if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
-          this.attachments.tasks.push(evidence);
+        if(!task.isDeleted){
+          let evidence = {
+            title: task.name,
+            remarks: task.remarks ? task.remarks : '',
+            attachments: []
+          }
+          if (task.attachments && task.attachments.length) {
+            this.getEvidences(task.attachments, evidence);
+          }
+          if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+            this.attachments.tasks.push(evidence);
+          }
         }
       });
     }
@@ -158,7 +160,11 @@ export class AttachmentListingPage implements OnInit {
   }
 
   viewDocument(attachment) {
-    if (attachment.url) {
+    if(attachment.type == 'link'){
+      const options
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+    (window as any).cordova.InAppBrowser.open(attachment.name, '_blank', options)
+    }else if (attachment.url) {
       this.downloadFile(attachment);
     } else {
       this.openFile(attachment);
@@ -228,6 +234,7 @@ export class AttachmentListingPage implements OnInit {
     this.getAttachments();
   }
   attachmentAction(event) {
+    console.log(event,"event");
     if (event.action == 'delete') {
       this.deleteConfirmation(event.attachment);
     } else if (event.action == 'view') {

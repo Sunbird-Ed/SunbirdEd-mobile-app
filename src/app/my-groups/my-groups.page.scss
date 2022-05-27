@@ -7,21 +7,24 @@
 .my-gr-title{
   display: flex;
   justify-content: space-between;
+  img {
+    width: 1.5rem;
+  }
 }
 .my-cr-title{
   color: $blue;
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   letter-spacing: 0;
-  line-height: 16px;
+  line-height: 1rem;
   padding: 24px 16px 16px;
   margin: 0;
   position: relative;
   img{
     position: absolute;
-    right: 16px;
-    top: 20px;
+    right: 1rem;
+    top: 1.25rem;
   }
 }
 
@@ -45,9 +48,9 @@
 .my-cr-subtitle{
   color: $gray-800;
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: 0;
-  line-height: 22px;
+  line-height: 1.375rem;
   text-align: center;
   padding: 20px 10%;
 }
@@ -67,7 +70,7 @@
       img{
         margin-right: 8px;
         position: relative;
-        bottom: 2px;
+        bottom: 0.125rem;
       }
     }
 }

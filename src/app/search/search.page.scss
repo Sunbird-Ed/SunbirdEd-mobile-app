@@ -27,7 +27,7 @@
     }
 
     > div {
-      font-size: 12px;
+      font-size: 0.75rem;
       @include padding(8px, 16px);
       // padding: 8px 16px;
 
@@ -39,7 +39,7 @@
 
   .sb-search-header-meta {
     color: $blue;
-    font-size: 12px;
+    font-size: 0.75rem;
     padding-top: 0.5rem;
   }
 
@@ -73,14 +73,14 @@
   
     .divider {
       width: 100%;
-      height: 6px;
+      height: 0.375rem;
       background-color: map-get($colors, $gray-0);
       margin: 20px 0 0 0;
     }
   
     .inner-divider{
       width: 90%;
-      height: 3px;
+      height: 0.188rem;
       background-color: map-get($colors, $gray-0);
       margin:  0 5%;
     }
@@ -90,7 +90,7 @@
     @include margin(null, null, $base-block-space, null);
     margin-top: 16px;
     .textbook-icon {
-        height: 17px;	
+        height: 1.063rem;	
         transform: scaleX(-1);
           @include margin(0, ($base-block-space * 1), 0, 0);
         color: $tertiary-color;
@@ -98,7 +98,7 @@
     .textbook-title {
         height: ($base-block-space * 3);	
         color: $blue;	
-        font-size: 18px;	
+        font-size: 1.125rem;
         font-weight: bold;
         text-transform: capitalize;
         line-height: ($base-block-space * 3);
@@ -129,7 +129,7 @@
     }
     .dial-section-header{
       @extend .NotoSans-bold;
-      font-size: 1.350em;
+      font-size: 1.350rem;
       padding: 11px;
       margin: 0;
       background-color: map-get($colors, $gray-0);
@@ -141,8 +141,8 @@
       right: 0 !important;
       text-transform: none;
       font-weight: 600;
-      font-size: 14px;
-      line-height: 14px;
+      font-size: $font-size-base;
+      line-height: 0.875rem;
       span.button-inner{
         color: map-get($colors, vivid_blue);
       }
@@ -150,20 +150,20 @@
     }
   
     .collection-name {
-      font-size: 14px;
+      font-size: $font-size-base;
       color: black;
     }
   
     span {
       color: grey;
       @extend .font-weight-600;
-      font-size: 14px;
+      font-size: $font-size-base;
     }
     .cancel-btn span {
       color: map-get($colors, white) !important;
     }
     .empty-search-result {
-      font-size: 1.2em;
+      font-size: 1.2rem;
     }
 
   .ellipsis{
@@ -241,14 +241,14 @@
       @include padding($base-block-space * 2);
         .sb-card-res-count{
               color: map-get($colors, dark_gray);
-              font-size: ($font-size-base  - 2);
-              line-height: 15px;
+              font-size: ($font-size-base  - 0.125);
+              line-height: 0.938rem;
         }
       .sb-card-result-content{
               color: map-get($colors, dark_gray);
-              font-size: ($font-size-base  + 2);
+              font-size: ($font-size-base  + 0.125);
               font-weight: 500;
-              line-height: 22px;
+              line-height: 1.375rem;
         }
       }
     }
@@ -323,7 +323,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     outline: none;
     margin: 4px 0 8px;
@@ -351,11 +351,11 @@
 .search-info {
   display: flex;
   .title {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .description {
     color: #333333;
-    font-size: 12px;
+    font-size: 0.75rem;
     margin-bottom: 0;
   }
 }
@@ -372,7 +372,7 @@
       width: 90%;
       display: inline-block;
       padding: 0.25rem;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
     button{
       background-color: transparent;

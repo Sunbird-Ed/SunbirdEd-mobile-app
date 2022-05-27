@@ -1,0 +1,52 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
+
+.certificate-contentent{
+    .certificate-head {
+        color: map-get($colors, primary);
+    }
+    .certificate-to{
+        font-size: 1.25rem;
+        padding: 5px;
+    }
+    .certificate-course-name{
+        font-size: 1.125rem;
+        padding: 5px;
+    }
+}
+.flex-grow-1{
+    flex-grow: 1;
+}
+
+.sb-popover .sb-popover-footer .sb-popover-action-btn.sb-btn-outline-info {
+    color: $primary-color;
+    margin: 0 10px;
+}
+
+.sb-dw-delete-popover{
+    top: auto;
+    .popover-content{
+        box-shadow: 0 0 4px 2px map-get($colors, medium_gray);
+        .sb-popover-items{
+            padding-bottom: 0 !important;
+        }
+        .sb-popover-footer {
+            .sb-popover-action-btn{
+                box-shadow: none;
+                width: 30%;
+                border-radius: 3px;
+                @extend .flex-grow-1;
+            }
+        } 
+    }
+}
+
+.dw-active-downloads-popover{
+    .popover-content{
+        .sb-popover-footer {
+            .sb-popover-action-btn{
+                box-shadow: none;
+            }
+        }
+    }
+}

@@ -12,7 +12,22 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="color f16" role="heading" aria-level="1" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
-    <ion-buttons class="sb-header-btn-group pr-12" slot="end">
+    <ion-buttons class="sb-header-btn-group pr-12 fontResize-container" slot="end">
+      <button type="button" [attr.aria-pressed]="false" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
+        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilityfont}}"
+        class="fontResizeBtn fontResizeBtn_A-"
+        title="{{resourceService?.frmelmnts?.lbl?.accessibilityfont}}"
+        (click)="changeFontSize('decrease');" #decreaseFontSize>A-</button>
+      <button [attr.aria-pressed]="false" type="button" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
+        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilityfntdflt}}"
+        class="fontResizeBtn fontResizeBtn_A"
+        title="{{resourceService?.frmelmnts?.lbl?.accessibilityfntdflt}}"
+        (click)="changeFontSize('reset');" #resetFontSize>A</button>
+      <button [attr.aria-pressed]="false" type="button" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
+        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilitytextsize}}"
+        class="fontResizeBtn fontResizeBtn_A+"
+        title="{{resourceService?.frmelmnts?.lbl?.accessibilitytextsize}}"
+        (click)="changeFontSize('increase');" #increaseFontSize>A+</button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
         <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" role="button" height="25"
@@ -113,8 +128,9 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <div class="menu-section">
+    <div class="menu-section"> 
       <section *ngIf="isLoggedIn" class="menu-container">
+        
         <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
           <section class="user-container">
 
@@ -247,8 +263,7 @@
   <ion-footer class="side-menu-footer">
     {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
   </ion-footer>
-</ion-menu>
-
+</ion-menu> 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true"
   [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header *ngIf="!isLoggedIn">
@@ -259,8 +274,7 @@
       </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content>
-
+  <ion-content> 
     <div class="menu-section">
       <section *ngIf="isLoggedIn" class="menu-container">
         <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
@@ -305,6 +319,7 @@
       </section>
 
       <ion-list class="sb-menu-list" lines="none">
+       
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
@@ -390,7 +405,6 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
-
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
@@ -404,7 +418,7 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
-
+      
         <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
@@ -415,7 +429,7 @@
       </ion-list>
     </div>
   </ion-content>
-  <ion-footer class="side-menu-footer" style="height: 97px; padding: 26px">
+  <ion-footer class="side-menu-footer" style="height: 6.063rem; padding: 26px">
     <div *ngIf="!isUpdateAvailable">
       {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
     </div>

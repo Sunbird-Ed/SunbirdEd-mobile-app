@@ -157,12 +157,12 @@ $link-decoration: none;
 $link-hover-decoration: underline;
 // Fonts
 // $font-default-size: 14px;
-$font-size-base: 14px; // Assumes the browser default, typically `16px`
+$font-size-base: 0.875rem; // Assumes the browser default, typically `16px`
 $font-weight-light: 300;
 $font-weight-normal: 400;
 $font-weight-bold: 700;
 $font-weight-base: $font-weight-normal;
-$line-height-base: ($font-size-base + 8);
+$line-height-base: ($font-size-base + 0.5);
 $h1-font-size: $font-size-base * 2.286; // 32px
 $h2-font-size: $font-size-base * 2; // 28px
 $h3-font-size: $font-size-base * 1.714; // 24px
@@ -176,7 +176,7 @@ $font-size-sm: ($font-size-base * 0.8571); // 12px
 $font-size-xs: ($font-size-base * 0.7143); // 10px
 $p-font-size: $font-size-normal;
 // spaces
-$base-block-space: 8px;
+$base-block-space: 0.5rem;
 $block-padding-y-x: ($base-block-space * 1) ($base-block-space * 2); // any block default spacing 16px
 $block-padding-xy: ($base-block-space * 2); // top right bottom left spacing
 $block-padding-x: ($base-block-space * 2) ($base-block-space * 2); // left right spacing
@@ -206,9 +206,9 @@ $sb-modal-header-bg-success: $secondary-200;
 $sb-modal-header-bg-warning: $tertiary-400;
 $sb-modal-header-bg-error: $red-400;
 $sb-modal-header-fsize: $h5-font-size;
-$sb-modal-small-width:480px;
-$sb-modal-normal-width:720px;
-$sb-modal-large-width:900px;
+$sb-modal-small-width:30rem;
+$sb-modal-normal-width:45rem;
+$sb-modal-large-width:56.25rem;
 //button component
 
 // To clean
