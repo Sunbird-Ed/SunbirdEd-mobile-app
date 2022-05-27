@@ -1,4 +1,4 @@
-<ion-card (click)="programDetails(id)" class="sb--card card-container">
+<ion-card (click)="programDetails(id)" class="sb--card card-container" [ngClass]="{alterCard: selectedEvidenceIndex !== undefined && arrIndex !== undefined && arrIndex === selectedEvidenceIndex}">
   <ion-card-content>
     <div class="d-flex flex-jc-ai-center">
       <div>
