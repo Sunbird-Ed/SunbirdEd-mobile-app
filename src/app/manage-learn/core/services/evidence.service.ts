@@ -30,7 +30,7 @@ export class EvidenceService {
     private loader: LoaderService,
     private toast: ToastService,
     private assessmentService: AssessmentApiService
-  ) {}
+  ) { }
 
   openActionSheet(params, type?) {
     type = type ? type : '';
@@ -195,7 +195,7 @@ export class EvidenceService {
       startTime: 0,
       endTime: 0,
       notApplicable: true,
-      remarks:''
+      remarks: ''
     };
 
 
@@ -224,7 +224,6 @@ export class EvidenceService {
             responseType: question.responseType,
           },
         };
-
         for (const key of Object.keys(question.payload)) {
           obj[key] = question.payload[key];
         }
@@ -234,7 +233,6 @@ export class EvidenceService {
     payload.evidence = evidence;
     return payload;
   }
-
   constructMatrixObject(question, evidenceEndTime) {
     const value = [];
     for (const instance of question.value) {
@@ -263,7 +261,6 @@ export class EvidenceService {
     }
     return value;
   }
-
   pullOutPageQuestion() {
     let sections = this.tempevidenceSections;
     sections.forEach((section, sectionIndex) => {
@@ -282,5 +279,43 @@ export class EvidenceService {
       this.tempevidenceSections[sectionIndex].questions = questionsArray;
     });
     return this.tempevidenceSections;
+  }
+
+  async openConfirmation(entityData, selectedSection, submissionId) {
+    this.entityDetails = entityData;
+    this.evidenceIndex = selectedSection;
+    this.schoolId = submissionId;
+    const selectedECM =
+      this.entityDetails["assessment"]["evidences"][selectedSection];
+    let translateObject;
+    this.translate
+      .get([
+        "CANCEL",
+        "FRMELEMNTS_LBL_CONFIRM",
+        "FRMELEMNTS_LBL_ECM_NOT_APPLICABLE",
+      ])
+      .subscribe((translations) => {
+        translateObject = translations;
+      });
+    let alert = await this.alertCtrl.create({
+      header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+      message: translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"],
+      buttons: [
+        {
+          text: translateObject["CANCEL"],
+          role: "cancel",
+          handler: () => {
+            console.log("Cancel clicked");
+          },
+        },
+        {
+          text: translateObject["FRMELEMNTS_LBL_CONFIRM"],
+          handler: () => {
+            this.openRemarksModal(selectedECM);
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

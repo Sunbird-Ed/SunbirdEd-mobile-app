@@ -151,6 +151,11 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
+  allowStart(){
+    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
+    this.isViewOnly = false;
+    document.getElementById('stop').style.pointerEvents = 'auto';
+  }
  async startAction(){
     await this.router.navigate([`/${RouterLinks.HOME}`]);
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
