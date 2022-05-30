@@ -1,0 +1,21 @@
+<ion-content>
+  <div class="header-info">
+    <div class="close-icon-info">
+        <img src="assets/imgs/close.png" alt="close-icon" (click)="closePopover()">
+    </div>
+    <h4 class="theme-header-info sb-btn-footer-text">{{'DOWNLOAD_TRANSCRIPT' | translate}}</h4>
+</div>
+  <div>
+    <div class="input-text">
+            <ion-select placeholder="Select language" interface="popover" class="select-language"
+                        [(ngModel)]="transcriptLanguage" mode="ios">
+                <ion-select-option *ngFor="let transcript of contentData.transcripts"
+                                   value="{{transcript.language}}">
+                    {{transcript.language}}</ion-select-option>
+            </ion-select>
+    </div>
+    <div class="download-icon">
+        <button type="submit" class="download-btn"(click)="download()" [disabled]="!transcriptLanguage" [ngClass]="!transcriptLanguage ?  'download-disibled' : null">{{'DOWNLOAD' | translate}}</button>
+    </div>
+  </div>
+</ion-content>

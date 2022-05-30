@@ -245,3 +245,11 @@ sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
 .standalone-player-container {
   height: auto !important;
 }
+
+.transcript-download{
+  color: $blue;
+  font-family: "Noto Sans";
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.125rem;
+}
