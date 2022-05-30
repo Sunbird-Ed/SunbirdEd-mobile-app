@@ -1,24 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
-
+import { PopoverController } from '@ionic/angular';
 import { DownloadTranscriptPopupComponent } from './download-transcript-popup.component';
+import { ContentService, StorageService } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 describe('DownloadTranscriptPopupComponent', () => {
-  let component: DownloadTranscriptPopupComponent;
-  let fixture: ComponentFixture<DownloadTranscriptPopupComponent>;
+  let downloadTranscriptPopupComponent: DownloadTranscriptPopupComponent;
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockContentService: Partial<ContentService> = {};
+  const mockPopOverCtrl: Partial<PopoverController> = {};
+  const mockStorageService: Partial<StorageService> = {};
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DownloadTranscriptPopupComponent ],
-      imports: [IonicModule.forRoot()]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(DownloadTranscriptPopupComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  }));
+  beforeAll(() => {
+    downloadTranscriptPopupComponent = new DownloadTranscriptPopupComponent(
+      mockContentService as ContentService,
+      mockStorageService as StorageService,
+      mockPopOverCtrl as PopoverController,
+      mockCommonUtilService as CommonUtilService,
+    );
+  });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(downloadTranscriptPopupComponent).toBeTruthy();
   });
 });
