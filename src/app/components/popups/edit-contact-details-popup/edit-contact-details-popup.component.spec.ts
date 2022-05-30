@@ -267,7 +267,7 @@ describe('EditContactDetailsPopupComponent', () => {
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
             { response: { body: { params: { err: 'USER_NOT_FOUND' } } } }));
         mockProfileService.generateOTP = jest.fn(() => throwError(
-            { err: 'ERROR_RATE_LIMIT_EXCEEDED' }));
+            { err: '0060' }));
         // act
 
         editContactDetailsPopupComponent.validate();

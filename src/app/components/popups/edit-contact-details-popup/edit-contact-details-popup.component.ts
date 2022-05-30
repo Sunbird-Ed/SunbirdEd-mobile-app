@@ -98,7 +98,7 @@ export class EditContactDetailsPopupComponent {
       }, async (error) => {
         if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
           this.generateOTP();
-        } else if (error.response && error.response.body.params.err === 'USER_ACCOUNT_BLOCKED') {
+        } else if (error.response && error.response.body.params.err === '0006') {
           this.blockedAccount = true;
           if (this.loader) {
             await this.loader.dismiss();
@@ -156,7 +156,7 @@ export class EditContactDetailsPopupComponent {
           this.loader = undefined;
         }
         this.popOverCtrl.dismiss({ isEdited: false });
-        if (err.hasOwnProperty(err) === 'ERROR_RATE_LIMIT_EXCEEDED') {
+        if (err.hasOwnProperty(err) === '0060') {
           this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');
         }
       });
