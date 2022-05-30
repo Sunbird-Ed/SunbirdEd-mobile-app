@@ -245,51 +245,11 @@ sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
 .standalone-player-container {
   height: auto !important;
 }
-.transcript-info{
-  background: var(--app-white);
-  height: 100%;
-  margin-top: 6px;
-  border-radius: 14px;
-}
-.transcript-title{
-  color: var(--app-medium-gray);
-  font-family: "Noto Sans";
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 0;
-  line-height: 24px;
-}
-.transcript-header {
-    padding: 1rem .5rem 0.5rem 1.2rem;
-    background-color: var(--sbt-compt-bg);
-    color: var(--sb-modal-header-text);
-    border-radius: var(--sbt-bradius-24) var(--sbt-bradius-24) 0 0;
-}
-.close-transcript{
-  float: right;
-  margin-right: 1rem;
-}
-.message-info{
-  color: var(--app-medium-gray);
-  font-family: "Noto Sans";
-  font-size: 18px;
-  letter-spacing: 0;
-  line-height: 22px;
-  padding: 1rem;
-}
+
 .transcript-download{
   color: $blue;
   font-family: "Noto Sans";
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: 0;
-  line-height: 18px;
-}
-.selected-transcript{
-  background: linear-gradient(to right,  $blue 1.5%,map-get($colors, gray_light) 0%)
-}
-.header-line{
-  box-sizing: border-box;
- height: 1px;
- width: 361px;
- border: 1px solid #BCBCBC;
+  line-height: 1.125rem;
 }
