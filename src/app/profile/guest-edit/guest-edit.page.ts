@@ -558,9 +558,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
           }
         }
     }
-    if (formVal.profileType !== ProfileType.ADMIN) {
-      this.location.back();
-    }
   }
 
 
