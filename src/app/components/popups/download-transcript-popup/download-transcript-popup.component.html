@@ -7,7 +7,7 @@
 </div>
   <div>
     <div class="input-text">
-            <ion-select placeholder="Select language" interface="popover" style="padding: 6px 20px; color: var(--app-medium-gray)"
+            <ion-select placeholder="Select language" interface="popover" class="select-language"
                         [(ngModel)]="transcriptLanguage" mode="ios">
                 <ion-select-option *ngFor="let transcript of contentData.transcripts"
                                    value="{{transcript.language}}">
