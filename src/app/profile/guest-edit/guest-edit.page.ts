@@ -558,6 +558,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
           }
         }
     }
+    this.location.back();
   }
 
 
