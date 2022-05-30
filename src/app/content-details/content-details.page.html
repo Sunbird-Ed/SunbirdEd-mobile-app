@@ -221,6 +221,13 @@
         </ion-card-title>
       </div>
 
+      <div *ngIf="content?.contentData?.transcripts" (click)="showDownloadTranscript()" class="transcript-download audience-info">
+        <strong>{{ 'DOWNLOAD_TRANSCRIPT' | translate}}</strong>
+        <span>
+          <img src="./assets/imgs/download-icon.svg" alt="download">
+        </span>
+      </div>
+
       <ion-card class="sb-content-info-card"
         *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
         <div class="sb-content-info-heading"

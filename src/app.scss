@@ -1961,6 +1961,15 @@ sb-library-card-v3 {
   }
 }
 
+.download-transcript-popup{
+  .popover-content {
+    width: 80vw !important;
+    left: 5% !important;
+    border-radius: 16px;
+    position: initial
+  }
+}
+
 app-search {
   .pills-filter{
     sb-pills-grid{
