@@ -1,5 +1,5 @@
 <ion-content>
-  <div class="dm-header ion-padding">
+  <div class="dm-header ion-padding" [ngClass]="{'dm-header-new': !isShowBackButton}">
     <span role="button" aria-label="back"><ion-icon *ngIf="isShowBackButton" name="arrow-back" role="button" aria-label="back" (click)="goBack(true)"
       class="top-back-button"></ion-icon></span>
       <span class="preference-info" role="heading" aria-level="1">{{ 'SET_PREFERENCE' | translate }}</span>
