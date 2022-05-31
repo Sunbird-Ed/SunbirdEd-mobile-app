@@ -202,7 +202,7 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.personEditForm = { value: '1234567890' } as any;
         jest.spyOn(editContactDetailsPopupComponent, 'generateOTP');
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
-            { response: { body: { params: { err: 'USER_ACCOUNT_BLOCKED' } } } }));
+            { response: { body: { params: { err: '0006' } } } }));
         // act
         editContactDetailsPopupComponent.validate();
         // assert
