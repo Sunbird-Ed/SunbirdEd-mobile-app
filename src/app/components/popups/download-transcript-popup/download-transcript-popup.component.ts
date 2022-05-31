@@ -1,8 +1,7 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PopoverController } from '@ionic/angular';
-import { ContentService, StorageService } from 'sunbird-sdk';
+import { ContentService } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-download-transcript-popup',
@@ -15,7 +14,6 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   @Input() contentData;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private popOverCtrl: PopoverController,
     private commonUtilService: CommonUtilService,
   ) { }
@@ -29,6 +27,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     if (transcriptsObj) {
       let transcripts = [];
       if (typeof transcriptsObj === 'string') {
+        console.log('....................')
         transcripts = JSON.parse(transcriptsObj);
       } else {
         transcripts = transcriptsObj;
@@ -37,9 +36,6 @@ export class DownloadTranscriptPopupComponent implements OnInit {
         transcripts.forEach(item => {
             if (item.language === this.transcriptLanguage) {
               const url = item.artifactUrl;
-              // window.open(url);
-              // this.fileOpener.open(url, item.identifier);
-              const destinationFolder = this.storageService.getStorageDestinationDirectoryPath();
               const request = {
                 identifier: item.identifier,
                 downloadUrl: url,
@@ -48,13 +44,14 @@ export class DownloadTranscriptPopupComponent implements OnInit {
               };
               this.contentService.downloadTranscriptFile(request).then((data) => {
                 loader.dismiss();
-                console.log('data..............', data);
               }).catch((err) => {
                 console.log('err........', err);
                 loader.dismiss();
               });
             }
         });
+      } else {
+        loader.dismiss();
       }
     }
   }
