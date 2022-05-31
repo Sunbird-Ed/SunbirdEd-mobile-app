@@ -14,7 +14,7 @@
   .thumbnail {
     width: 100%;
     height: auto;
-    max-width: 150px;
+    max-width: 9.375rem;
   }
 
   .icon-check {
@@ -36,13 +36,13 @@
     padding: 0;
     margin-top: 4px;
     margin-bottom: 0;
-    line-height: 30px;
+    line-height: 1.88rem;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 
   .title-class {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
     color: $blue;
     margin-top: 4vh;
@@ -62,13 +62,13 @@
     position: absolute;
     .top-back-button{
       position: relative;
-      width: 22px;
+      width: 1.375rem;
       @include ltr() {
-        left: 16px;
+        left: 1rem;
         transform: rotate(180deg);
       }
       @include rtl() {
-        right: 16px;
+        right: 1rem;
         transform: rotate(0deg);
       }
     }
@@ -106,13 +106,13 @@
   .continue {
     position: fixed;
     z-index: 2;
-    bottom: 32px;
+    bottom: 2rem;
     width: 90vw;
     left: 5vw;
   }
   img.arrow-icon {
     display: inline-block;
-    width: 22px;
+    width: 1.375rem;
     margin-top: -3px;
     float: right;
 
@@ -139,4 +139,9 @@
     color: map-get($colors, danger);
   }
 
+  .check-icon {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 }

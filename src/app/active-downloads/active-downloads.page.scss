@@ -5,12 +5,12 @@
 // :host {
     .download-page-heading{
         color: map-get($colors, white);
-        font-size: $font-size-base + 2;
+        font-size: $font-size-base + 0.125;
     }
 
     .download-page-info{
         color: map-get($colors, white);
-        font-size: $font-size-base - 2;
+        font-size: $font-size-base - 0.125;
     }
 
     .download-cancel-icon{
@@ -57,8 +57,8 @@
         color: $white-color;
 
         .button-inner {
-            font-size: ($font-size-base - 2);
-            line-height: 17px;
+            font-size: ($font-size-base - 0.125);
+            line-height: 1.063rem;
             font-weight: 100;
             font-style: normal;
             font-stretch: normal;

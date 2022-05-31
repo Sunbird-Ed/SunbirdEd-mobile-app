@@ -262,7 +262,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
-      this.nextContentToBePlayed = extras.content;
+      this.nextContentToBePlayed = extras.content ? extras.content : (this.content ? this.content : undefined);
       this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
@@ -1620,7 +1620,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
       for (var key in batchDetails.cert_templates) {
         return (batchDetails && batchDetails.cert_templates[key] &&
-        batchDetails.cert_templates[key].description) || '';
+          batchDetails.cert_templates[key].description) || '';
       }
     } catch (e) {
       console.log(e);

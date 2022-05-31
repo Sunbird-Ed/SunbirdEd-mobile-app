@@ -3,10 +3,11 @@
     white-space: normal;
     padding: 5px 0px 30px 0px;
     margin-bottom: 10px;
+    font-size: 1rem;
 }
 
 .title{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     // color: $black;
     color: black;
@@ -19,4 +20,9 @@
 
 .button-native {
     background: #DFE7F1 !important;
+}
+
+ion-button {
+    font-size: 0.875rem;
+    height: 2.25rem;
 }

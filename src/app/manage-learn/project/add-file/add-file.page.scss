@@ -21,7 +21,7 @@
     font-weight: 600;
     .attachment-label{
         ion-icon{
-            font-size: 20px;
+            font-size: 1.25rem;
             position: absolute;
         }
        span{
@@ -37,14 +37,14 @@
         margin-top: -7px;
     p{
         margin-bottom: 0px;
-        font-size: 12px !important;
+        font-size: 0.75rem !important;
         margin-top: -5px;
         text-align: center;
         font-weight: 600;
     }
     }
     ion-icon{
-        font-size: 20px;
+        font-size: 1.25rem;
         color: $black-color;
     }
 }

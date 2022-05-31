@@ -1,13 +1,28 @@
 ._completed,
 ._inProgress,
-._submitted,._na {
-  font-size: 11px !important;
+._submitted,
+._na {
+  font-size: 0.688rem !important;
 }
 ._progressIcon {
-  font-size: 11px !important;
+  font-size: 0.688rem !important;
   padding-left: 3px;
 }
 
-.restrict{
-  pointer-events:none;
+.restrict {
+  pointer-events: none;
+}
+
+.naBtnDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15px;
+}
+.naBtn {
+  --background: var(--app-white) !important;
+  --color: var(--app-primary) !important;
+  --border-color: var(--app-white) !important;
+  --box-shadow: var(--button-style-shadow) !important;
+  margin-top: 10px;
+  text-transform: none;
 }

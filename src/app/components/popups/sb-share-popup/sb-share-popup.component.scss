@@ -27,7 +27,7 @@
         padding: 5px;
         color: map-get($colors, gray_solid);
         position: relative;
-        top: -10px;
+        top: -0.625rem;
     }
     .share-desc{
         text-align: left;
@@ -46,7 +46,7 @@
         ion-icon{
             color: map-get($colors, gray_solid);
             position: relative;
-            top: 3px;
+            top: 0.188rem;
         }
     }
 }

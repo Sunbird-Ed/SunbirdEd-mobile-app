@@ -13,7 +13,7 @@ ion-title.color {
   color: $blue;
   font-weight: bold;
   margin-left: 25px;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .close-icon {
@@ -28,7 +28,7 @@ ion-title.color {
 }
 
 ion-footer {
-  height: 80px;
+  height: 5rem;
 }
 
 .start-btn {
@@ -38,10 +38,10 @@ ion-footer {
   padding-right: 10px;
   margin-top: 10px;
   ion-button.btn {
-    width: 120px;
-    height:40px;
+    width: 7.5rem;
+    height:2.5rem;
     margin: 7px auto;
-    font-size: 14px;
+    font-size: $font-size-base;
     display: block;
     border-radius: 50%;
   }

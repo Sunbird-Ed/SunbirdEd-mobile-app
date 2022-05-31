@@ -73,7 +73,7 @@ export class ObservationHomeComponent implements OnInit {
       const config = {
         url:
           urlConstants.API_URLS.GET_TARGETED_SOLUTIONS +
-          `?type=observation&page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
+          `?type=observation&page=${this.page}&limit=${this.limit}&search=${encodeURIComponent(this.searchText)}`,
         payload: payload
       };
       this.kendra.post(config).subscribe(

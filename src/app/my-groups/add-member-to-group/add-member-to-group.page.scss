@@ -2,7 +2,7 @@
 .au-container{
     padding: 16px;
     .au-title{
-        font-size: 18px;
+        font-size: 1.125rem;
         font-weight: bold;
         margin-top: 8px;
     }
@@ -11,7 +11,7 @@
         position: relative;
         .au-ip-info{
             margin-bottom: 8px;
-            font-size: 16px;
+            font-size: 1rem;
             .pull-left{
                 sup{
                     color: $red;
@@ -19,11 +19,11 @@
             }
             .pull-right{
                 color: $gray-300;
-                font-size: 14px;
+                font-size: $font-size-base;
             }
             .au-info-icon{
                 color: $blue;
-                font-size: 20px;
+                font-size: 1.25rem;
                 vertical-align: bottom;
             }
         }
@@ -35,7 +35,7 @@
                 background-color: #fff;
             }
             width: 100%;
-            height: 40px;
+            height: 2.5rem;
             border: 1px solid $gray-800;
             padding: 0 16px;
             color: $gray-800;
@@ -44,13 +44,13 @@
         }
         .au-clear-icon{
             position: absolute;
-            bottom: 10px;
-            right: 8px;
-            font-size: 20px;
+            bottom: 0.625rem;
+            right: 0.5rem;
+            font-size: 1.25rem;
         }
         .au-ip-error-msg{
             color: $red;
-            font-size: 14px;
+            font-size: $font-size-base;
             margin-top: 8px;
         }
     }
@@ -60,7 +60,7 @@
         text-align: center;
     }
     .au-desc{
-        font-size: 16px;
+        font-size: 1rem;
         padding: 16px 0;
         span{
             font-weight: bold;
@@ -76,7 +76,7 @@
         img{
             margin-right: 8px;
             position: relative;
-            bottom: 2px;
+            bottom: 0.125rem;
         }
     }
 }
@@ -86,9 +86,9 @@
     box-sizing: border-box;
     border-radius: 50%;
     border-top: 4px solid transparent;
-    width: 48px;
+    width: 3rem;
     float: center;
-    height: 48px;
+    height: 3rem;
     margin-left: 45%;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
@@ -123,6 +123,6 @@
 }
 
 .loader-text {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: $gray-300;
 }

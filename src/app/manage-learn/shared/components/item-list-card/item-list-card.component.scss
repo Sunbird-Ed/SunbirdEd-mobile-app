@@ -3,7 +3,7 @@
 @import "src/assets/styles/_variables.scss";
 
 .title{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     color: #{$blue};
     word-break: break-all;
@@ -13,8 +13,8 @@
 .ellipsis{
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 1em;
-    height: 1.4em;
+    width: 1rem;
+    height: 1.4rem;
     white-space: nowrap;
     flex-grow: 1;
 }
@@ -28,3 +28,10 @@ ion-card-header {
     padding-bottom: 8px;
     background: #ffffff;
 }
+
+.alterCard{
+    border-bottom-left-radius: initial !important;
+    border-bottom-right-radius: initial !important;
+    margin-bottom: 2px;
+  }
+  

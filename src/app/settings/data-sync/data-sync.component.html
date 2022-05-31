@@ -26,11 +26,11 @@
   <ion-label *ngIf="(lastSyncDateTime | async) as lastSyncDateTime">
     {{ 'LAST_SYNC' | translate }} {{lastSyncDateTime}}
   </ion-label>
-  <ion-button expand="block" class="MT16" (click)="onSyncClick()">
+  <ion-button expand="block" class="MT16 btn" (click)="onSyncClick()">
     {{ 'SYNC_NOW' | translate }}
   </ion-button>
   <hr>
-  <ion-button (click)="shareTelemetry()" class="ion-no-padding" fill="clear">
+  <ion-button (click)="shareTelemetry()" class="ion-no-padding btn" fill="clear">
     {{ 'SHARE_TELEMETRY' | translate }}
   </ion-button>
 

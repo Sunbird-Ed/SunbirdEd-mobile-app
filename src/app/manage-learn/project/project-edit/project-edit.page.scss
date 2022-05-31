@@ -9,6 +9,7 @@
 
     .custom-filed {
         margin: 10px 0px;
+        font-size: 0.875rem;
         ion-label {
             font-weight: 600;
             // color: $black-color;
@@ -16,11 +17,15 @@
 
         ion-icon {
             float: right;
-            font-size: 24px;
+            font-size: 1.5rem;
         }
 
         ion-col {
             padding: 0px;
+        }
+
+        ion-card ion-card-content {
+            font-size: 0.875rem;
         }
     }
 }

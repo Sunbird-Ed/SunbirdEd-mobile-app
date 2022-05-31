@@ -61,7 +61,7 @@ export class ProjectService {
   }
   async getTemplateByExternalId(id, extraParams?) {
     const config = {
-      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + id + (extraParams ? extraParams : ''),
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + encodeURIComponent(id) + (extraParams ? extraParams : ''),
     }
     return this.unnatiService.post(config).toPromise();
   }
@@ -78,7 +78,7 @@ export class ProjectService {
     programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true }) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
-    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + templateId : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
+    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: detailsPayload ? detailsPayload : payload

@@ -142,31 +142,9 @@ describe('ActivityTocPage', () => {
                     }
                 })) as any,
                 getDataForDashlets: jest.fn(() => of({
-                    members: [{
-                        role: GroupMemberRole.MEMBER,
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id-2',
-                        agg: [{
-                            metric: 'completedCount',
-                            value: 2
-                        }]
-                    }, {
-                        role: GroupMemberRole.ADMIN,
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id-1',
-                        agg: [{
-                            metric: 'completedCount',
-                            value: 1
-                        }]
-                    }],
-                    activity: {
-                        id: 'activity-id',
-                        type: 'activity-type',
-                        agg: {}
-                    }
-                })) as any
+                    rows: [{sample_title: 'New_User'}, {sample_title2: 'user1'}], 
+                    columns: [{title:'sample_title', data:'sample_title'}, {title:'sample_title2', data:'sample_title2'}]}
+                    )) as any
             } as any
             // activityDetailsPage.activity = {
             //     type: 'Course'
@@ -177,8 +155,8 @@ describe('ActivityTocPage', () => {
                 done()
             });
             
-        })
-    })
+        });
+    });
 
     describe('ionViewWillEnter', () => {
         beforeEach(() => {

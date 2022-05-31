@@ -5,18 +5,18 @@
 :host {
   .profile-info{
     background-color: transparent;
-    border-radius: 0 0 0 16px;
+    border-radius: 0 0 0 1rem;
     .profile-icon{
-      width: 90px;
-      height: 90px;
-      border-radius: 60px;
+      width: 5.625rem;
+      height: 5.625rem;
+      border-radius: 3.75rem;
       background-color: map-get($colors, white);
       box-shadow: 0 5px 2px 0 rgba(0,0,0,0.1);
       margin: auto;
       img{
         position: relative;
-        top: 5px;
-        width: 75px;
+        top: 0.313rem;
+        width: 4.688rem;
       }
     }
   }
@@ -38,8 +38,8 @@
 
   .editIcon {
     @include margin(null, null, null, 5px);
-    height: 15px;
-    width: 15px;
+    height: 0.938rem;
+    width: 0.938rem;
   }
 
   .change-role {
@@ -64,7 +64,7 @@
 
   .info-title {
     color: map-get($colors, dark_gray);
-    font-size: 1 rem;
+    font-size: 1rem;
     @extend .font-weight-700;
   }
 
@@ -115,7 +115,7 @@
   }
   .grid-item {
     padding: 0 10px 14px;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 700;
 
     .align-content {
@@ -129,8 +129,8 @@
       }
 
       ion-icon {
-        width: 14px;
-        height: 14px;
+        width: 0.875rem;
+        height: 0.875rem;
         padding-left: 4px;
       }
     }

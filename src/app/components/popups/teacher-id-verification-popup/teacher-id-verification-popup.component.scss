@@ -8,7 +8,7 @@
     border-radius: 4px;
     .decorator {
         display: inline-block;
-        max-width: 50px;
+        max-width: 3.125rem;
     }
     .custom {
         display: inline-block;
@@ -51,13 +51,13 @@ input:focus {
 
     .input-icon {
         float: right;
-        font-size: 20px;
+        font-size: 1.25rem;
         color: map-get($colors, primary_black);
     }
 }
 .showList {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-height: 200px;
+    max-height: 12.5rem;
     overflow-y: scroll;
 
     ul {

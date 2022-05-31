@@ -6,12 +6,7 @@
       </h4>
       <h4 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h4>
     </ion-text>
-    <div
-      arrow
-      *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts && submissionId"
-      class="d-flex flex-ai-center flex-dc mr-15  clr-primary"
-      (click)="$event.stopPropagation(); pushToLocal(submission)"
-    >
+    <div arrow *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts && submissionId" class="d-flex flex-ai-center flex-dc mr-15  clr-primary" click)="$event.stopPropagation(); pushToLocal(submission)">
       <ion-icon class="clr-primary" name="arrow-down"></ion-icon>
       <span>{{ 'FRMELEMNTS_LBL_DOWNLOAD' | translate }}</span>
     </div>
@@ -22,33 +17,20 @@
   </div>
 
   <!-- for Domain/ecm -->
-  <div
-    *ngFor="let evidence of entityEvidences; let arrIndex = index"
-    [ngClass]="{ 'restrict': evidence?.notApplicable === true }"
-  >
-    <app-item-list-card [title]="evidence?.name" (click)="openEvidence(arrIndex)">
-      <div
-        arrow
-        *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable"
-        class="_completed _flex-box progressWidth ion-float-right"
-      >
+  <div *ngFor="let evidence of entityEvidences; let arrIndex = index"
+    [ngClass]="{ 'restrict': evidence?.notApplicable === true }">
+    <app-item-list-card [title]="evidence?.name" (click)="openEvidence(arrIndex)"  [selectedEvidenceIndex]="selectedEvidenceIndex" [arrIndex]="arrIndex">
+      <div arrow *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable" class="_completed _flex-box progressWidth ion-float-right">
         <progress-bar [progress]="100" class="_full-width"></progress-bar>
       </div>
       <div arrow *ngIf="!evidence.progressStatus && !evidence?.notApplicable && !isIos" class="_flex-box">
-        <ion-icon name="caret-down-circle" class="_progressIcon ion-float-right ion-margin-right"></ion-icon>
+        <ion-icon size="small" name="caret-down-circle" class="_progressIcon ion-float-right ion-margin-right">
+        </ion-icon>
       </div>
-      <div
-        arrow
-        *ngIf="evidence.progressStatus === 'inProgress' && !evidence?.notApplicable"
-        class="_inProgress _flex-box progressWidth ion-float-right"
-      >
+      <div arrow *ngIf="evidence.progressStatus === 'inProgress' && !evidence?.notApplicable" class="_inProgress _flex-box progressWidth ion-float-right">
         <progress-bar [progress]="evidence?.completePercentage" class="_full-width"></progress-bar>
       </div>
-      <div
-        arrow
-        *ngIf="evidence.progressStatus === 'submitted' && !evidence?.notApplicable"
-        class="_submitted _flex-box flex-dc"
-      >
+      <div arrow *ngIf="evidence.progressStatus === 'submitted' && !evidence?.notApplicable" class="_submitted _flex-box flex-dc">
         <div>
           <progress-bar [progress]="100" class="_full-width"></progress-bar>
         </div>
@@ -59,41 +41,43 @@
         <ion-icon name="alert" class="_progressIcon ion-margin-left"></ion-icon>
       </div>
     </app-item-list-card>
-
     <!--  for section/critera -->
-    <div *ngIf="selectedEvidenceIndex == arrIndex">
-      <div *ngFor="let section of evidence.sections; let selectedSection = index">
-        <ion-item
-          lines="none"
-          class="p-12"
-          (click)="goToQuestioner(selectedSection)"
-          *ngIf="section?.questions?.length"
-        >
-          <div class="d-flex flex-ai-center flex-jc-space-between w-100">
-            <div class="d-flex flex-ai-center">
-              <ion-icon name="document-text" class="margin-right mr-5"></ion-icon>
-              <span>
-                {{ section?.name }}
+    <ion-card *ngIf="!evidence?.notApplicable" style="border-radius: initial !important; margin-top: 0px;">
+      <div *ngIf="selectedEvidenceIndex == arrIndex">
+        <div *ngIf="!evidence.progressStatus && !evidence?.notApplicable" class="naBtnDiv">
+          <ion-button class="naBtn" (click)="notApplicableClick(arrIndex)" fill="outline" size="small" shape="round">
+            <span>{{ 'FRMELEMNTS_LBL_NOT_APPLICABLE' | translate | titlecase }}</span>
+          </ion-button>
+        </div>
+        <div *ngFor="let section of evidence.sections; let selectedSection = index">
+          <ion-item lines="none" class="p-12" style="--background: var(--app-white-background);" (click)="goToQuestioner(selectedSection)" *ngIf="section?.questions?.length">
+
+            <div class="d-flex flex-ai-center flex-jc-space-between w-100">
+              <div class="d-flex flex-ai-center">
+                <ion-icon name="document-text" class="margin-right mr-5"></ion-icon>
+                <span>
+                  {{ section?.name }}
+                </span>
+              </div>
+              <span *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
+                {{ 'COMPLETED' | translate }}
+                <ion-icon name="checkmark-circle" class="_progressIcon" margin-left> </ion-icon>
+              </span>
+              <span *ngIf="!section.progressStatus && !isIos" class="_flex-box">
+                <ion-icon name="arrow-forward" class="_progressIcon" margin-left></ion-icon>
+              </span>
+              <span *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box" style="font-size: 11">
+                {{ 'FRMELEMNTS_LBL_IN_PROGRESS' | translate }}
+                <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon>
+              </span>
+              <span *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
+                {{ 'FRMELEMNTS_LBL_SUBMITTTED' | translate }}
+                <ion-icon name="cloud-done" class="_progressIcon" margin-left></ion-icon>
               </span>
             </div>
-            <span *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
-              {{ 'COMPLETED' | translate }}
-              <ion-icon name="checkmark-circle" class="_progressIcon" margin-left> </ion-icon>
-            </span>
-            <span *ngIf="!section.progressStatus && !isIos" class="_flex-box">
-              <ion-icon name="arrow-forward" class="_progressIcon" margin-left></ion-icon>
-            </span>
-            <span *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box" style="font-size: 11">
-              {{ 'FRMELEMNTS_LBL_IN_PROGRESS' | translate }}
-              <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon>
-            </span>
-            <span *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
-              {{ 'FRMELEMNTS_LBL_SUBMITTTED' | translate }}
-              <ion-icon name="cloud-done" class="_progressIcon" margin-left></ion-icon>
-            </span>
-          </div>
-        </ion-item>
+          </ion-item>
+        </div>
       </div>
-    </div>
+    </ion-card>
   </div>
 </ion-content>

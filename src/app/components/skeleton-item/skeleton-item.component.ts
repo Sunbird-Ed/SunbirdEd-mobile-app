@@ -14,7 +14,7 @@ export class SkeletonItemComponent implements OnInit {
   ngOnInit() {
     this.styles = {
       width: this.width ? this.width : '100%',
-      height: this.height ? this.height : '16px'
+      height: this.height ? this.height : '1rem'
     };
 
     if (typeof this.radius !== 'undefined' && this.radius !== '') {

@@ -18,12 +18,12 @@
   .text-gray-color {
     color: gray;
     margin-top: 6px;
-    font-size: 1.3em;
+    font-size: 1.3rem;
     margin-bottom: 5px;
   }
   .subtitle {
     text-transform: capitalize;
-    font-size: 1.3em;
+    font-size: 1.3rem;
     font-weight: 700 !important;
     margin-bottom: 10px;
     color: map-get($colors, primary_black);

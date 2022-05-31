@@ -3,7 +3,7 @@
   .label-font {
     color: map-get($colors, primary_black) !important;
     font-family: "Noto Sans", sans-serif !important;
-    font-size: 22px !important;
+    font-size: 1.375rem !important;
     font-weight: normal;
   }
 
@@ -34,7 +34,7 @@
     margin-top: 16px;
     padding-left: 8px;
     padding-right: 16px !important;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: "Noto Sans Bold", sans-serif;
     .select-icon {
       .select-icon-inner {
@@ -80,7 +80,7 @@
     margin-top: 16px;
     padding-left: 16px !important;
     padding-right: 16px !important;
-    font-size: 14px;
+    font-size: $font-size-base;
   }
 
   .sp-input-primary ion-input{
@@ -104,15 +104,15 @@
   ion-label {
     color: map-get($colors, primary_black);
     font-family: "Noto Sans", sans-serif;
-    font-size: 14px;
+    font-size: $font-size-base;
     letter-spacing: 0;
-    line-height: 19px;
+    line-height: 1.188rem;
   }
 
 }
 
 .sp-title{
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: $blue;
   margin: 16px 16px 0;
@@ -121,9 +121,9 @@
 .sp-input-title{
   color: map-get($colors, primary_black);
   font-family: "Noto Sans", sans-serif;
-  font-size: 14px;
+  font-size: $font-size-base;
   letter-spacing: 0;
-  line-height: 19px;
+  line-height: 1.188rem;
   margin: 16px 0 8px;
 }
 
@@ -138,9 +138,9 @@
 .sp-error{
   margin-top: 8px;
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: red;
-  line-height: 10px;
+  line-height: 0.625rem;
 }
 
 .input-item{
@@ -154,9 +154,9 @@
 ion-footer{
   ion-button{
     --background: #{$blue} !important;
-    height: 40px !important;
+    height: 2.5rem !important;
     font-family: "Noto Sans", sans-serif;
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 
@@ -167,4 +167,8 @@ ion-footer{
 .tnc-link {
   color: $blue;
   text-decoration: underline;
+}
+
+.sub-profile-img {
+  width: 4.875rem;
 }

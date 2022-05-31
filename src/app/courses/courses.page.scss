@@ -33,7 +33,7 @@
     }
   }
   .sc-ion-buttons-md-s ion-button {
-    height: 13px !important;
+    height: 0.813rem !important;
     margin-bottom: 12px;
   }
   .inprogress-courses {
@@ -45,12 +45,12 @@
     @include padding(10px, null, null, null);
     @extend .NotoSans-bold;
     @extend .font-weight-700;
-    font-size: 18px;
+    font-size: 1.125rem;
     padding-left:7px;
     font-weight: 600 !important;
   }
   .view-all-link {
-    font-size: 12px;
+    font-size: 0.75rem;
     padding-top: 11px;
     @extend .NotoSans-bold;
     @extend .font-weight-700;
@@ -73,11 +73,11 @@
     overflow: hidden;
   }
   .height-130 {
-    height: 134px;
+    height: 8.375rem;
   }
   .devider-line {
     background: map-get($colors, gray_white);
-    height: 7px;
+    height: 0.438rem;
   }
 
   ion-spinner {
@@ -86,7 +86,7 @@
   }
   ion-select {
     max-width: 75%;
-    font-size: 14px;
+    font-size: $font-size-base;
     color: map-get($colors, vived_blue_ff);
     @extend .font-weight-bold;
   }
@@ -96,7 +96,7 @@
   }
   .offline-message {
     background-color: red !important;
-    line-height: 2.5em !important;
+    line-height: 2.5rem !important;
     text-align: center !important;
     color: white;
     top: 0px;
@@ -126,7 +126,7 @@
   .section-header-style{
     margin-left: 10px;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 1rem;
     padding-top: 14px;
     padding-bottom: 4px;
   }

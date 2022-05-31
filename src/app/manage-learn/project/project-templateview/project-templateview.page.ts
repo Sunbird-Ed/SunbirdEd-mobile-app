@@ -117,7 +117,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
         this.metaData = {
-          title: this.project.title,
+          title: this.project?.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
         }
       }).catch(error => {
@@ -143,7 +143,7 @@ export class ProjectTemplateviewPage implements OnInit {
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
     this.metaData = {
-      title: this.project.title,
+      title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
     if (this.project.tasks && this.project.tasks.length)
@@ -158,7 +158,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
     }
     this.metaData = {
-      title: this.project.title,
+      title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
   }

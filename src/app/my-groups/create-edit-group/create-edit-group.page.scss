@@ -3,7 +3,7 @@
   .label-font {
     color: $gray-800 !important;
     font-family: "Noto Sans", sans-serif !important;
-    font-size: 22px !important;
+    font-size: 1.375rem !important;
     font-weight: normal;
   }
 
@@ -19,7 +19,7 @@
     display: block;
     text-align: right;
     width: 100%;
-    font-size: 12px;
+    font-size: 0.75rem;
     padding-top: 4px;
     color: $gray-300;
   }
@@ -36,7 +36,7 @@
     img{
       margin-right: 8px;
       position: relative;
-      bottom: 2px;
+      bottom: 0.125rem;
     }
   }
 
@@ -44,7 +44,7 @@
     margin-top: 16px;
     padding-left: 16px !important;
     padding-right: 16px !important;
-    font-size: 14px;
+    font-size: $font-size-base;
   }
 
   .item-label-stacked .cr-desc {
@@ -79,7 +79,7 @@
   }
   .cr-terms-container{
     padding: 0 16px;
-    font-size: 14px;
+    font-size: $font-size-base;
     .cr-terms-checkbox-label{
       margin-left: 16px;
       display: inline-block;
@@ -93,10 +93,10 @@
   ion-label {
     color: $gray-800;
     font-family: "Noto Sans", sans-serif;
-    font-size: 14px;
+    font-size: $font-size-base;
     letter-spacing: 0;
     sup{
-      font-size: 22px;
+      font-size: 1.375rem;
       top: 0;
       margin-left: 4px;
       color: $red;
@@ -106,7 +106,7 @@
 }
 
 .cr-title{
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: $blue;
   margin: 16px 16px 0;
@@ -115,9 +115,9 @@
 .cr-input-title{
   color: $gray-800;
   font-family: "Noto Sans", sans-serif;
-  font-size: 14px;
+  font-size: $font-size-base;
   letter-spacing: 0;
-  line-height: 19px;
+  line-height: 1.188rem;
   margin: 16px 0 8px;
 }
 
@@ -132,7 +132,7 @@
 .cr-error{
   margin-top: 8px;
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: $red;
 }
 
