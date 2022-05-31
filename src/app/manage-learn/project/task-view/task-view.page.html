@@ -2,7 +2,7 @@
   <div [ngClass]="{'disablePage' : viewOnlyMode}">
     <div class="heading-name" (click)="edit('task',task?.name)">
       <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
-      <ion-icon name="create" color="primary" class="iconAdj"> </ion-icon>
+      <ion-icon name="create" color="primary" class="iconAdj" *ngIf="task.isDeletable"> </ion-icon>
     </div>
 
     <ion-row>
