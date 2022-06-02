@@ -207,7 +207,6 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.validate();
         // assert
         setTimeout(() => {
-            expect(editContactDetailsPopupComponent.blockedAccount).toBeTruthy();
             expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalledTimes(1);
             expect(editContactDetailsPopupComponent.loader).toBeUndefined();
             done();
