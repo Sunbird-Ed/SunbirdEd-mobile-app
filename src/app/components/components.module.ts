@@ -79,6 +79,7 @@ import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component
 import { ContentShareHandlerService } from '@app/services';
 import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
 import { CertificateVerificationPopoverComponent } from './popups/certificate-verification/certificate-verification-popup.component';
+import { DownloadTranscriptPopupComponent } from './popups/download-transcript-popup/download-transcript-popup.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -144,7 +145,8 @@ import { CertificateVerificationPopoverComponent } from './popups/certificate-ve
     SbPreferencePopupComponent,
     QrScannerIOSComponent,
     ShowCertificateComponent,
-    CertificateVerificationPopoverComponent
+    CertificateVerificationPopoverComponent,
+    DownloadTranscriptPopupComponent
   ],
   imports: [
     CommonModule,
@@ -207,7 +209,8 @@ import { CertificateVerificationPopoverComponent } from './popups/certificate-ve
     ContentViewerComponent,
     SbPreferencePopupComponent,
     QrScannerIOSComponent,
-    CertificateVerificationPopoverComponent
+    CertificateVerificationPopoverComponent,
+    DownloadTranscriptPopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -271,7 +274,8 @@ import { CertificateVerificationPopoverComponent } from './popups/certificate-ve
     SbPreferencePopupComponent,
     QrScannerIOSComponent,
     ShowCertificateComponent,
-    CertificateVerificationPopoverComponent
+    CertificateVerificationPopoverComponent,
+    DownloadTranscriptPopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService]
 })
