@@ -202,7 +202,7 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.personEditForm = { value: '1234567890' } as any;
         jest.spyOn(editContactDetailsPopupComponent, 'generateOTP');
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
-            { response: { body: { params: { err: '0006' } } } }));
+            { response: { body: { params: { err: 'UOS_USRRED0013' } } } }));
         // act
         editContactDetailsPopupComponent.validate();
         // assert
@@ -267,7 +267,7 @@ describe('EditContactDetailsPopupComponent', () => {
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
             { response: { body: { params: { err: 'USER_NOT_FOUND' } } } }));
         mockProfileService.generateOTP = jest.fn(() => throwError(
-            { err: '0060' }));
+            { err: 'UOS_OTPCRT0059' }));
         // act
 
         editContactDetailsPopupComponent.validate();

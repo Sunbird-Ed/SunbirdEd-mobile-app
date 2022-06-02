@@ -149,7 +149,7 @@ describe('EditContactVerifyPopupComponent', () => {
         response.errorMesg = "RASD";
         response.body = {
             params: {
-                err: '0064'
+                err: 'UOS_OTPVERFY0063'
             },
             result: {
                 remainingAttempt: 1
