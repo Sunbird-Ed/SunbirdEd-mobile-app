@@ -109,7 +109,7 @@ export class FormValidationAsyncFactory {
       }
     } catch (e) {
       if (e && e.response && e.response.body && e.response.body.params && e.response.body.params.err &&
-        e.response.body.params.err === 'ERROR_RATE_LIMIT_EXCEEDED') {
+        e.response.body.params.err === 'UOS_OTPCRT0059') {
         this.commonUtilService.showToast('ERROR_OTP_LIMIT_EXCEEDED');
       } else if (e.message !== 'CANCEL') {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');

@@ -202,12 +202,11 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.personEditForm = { value: '1234567890' } as any;
         jest.spyOn(editContactDetailsPopupComponent, 'generateOTP');
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
-            { response: { body: { params: { err: 'USER_ACCOUNT_BLOCKED' } } } }));
+            { response: { body: { params: { err: 'UOS_USRRED0013' } } } }));
         // act
         editContactDetailsPopupComponent.validate();
         // assert
         setTimeout(() => {
-            expect(editContactDetailsPopupComponent.blockedAccount).toBeTruthy();
             expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalledTimes(1);
             expect(editContactDetailsPopupComponent.loader).toBeUndefined();
             done();
@@ -267,7 +266,7 @@ describe('EditContactDetailsPopupComponent', () => {
         mockProfileService.isProfileAlreadyInUse = jest.fn(() => throwError(
             { response: { body: { params: { err: 'USER_NOT_FOUND' } } } }));
         mockProfileService.generateOTP = jest.fn(() => throwError(
-            { err: 'ERROR_RATE_LIMIT_EXCEEDED' }));
+            { err: 'UOS_OTPCRT0059' }));
         // act
 
         editContactDetailsPopupComponent.validate();

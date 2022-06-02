@@ -93,7 +93,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
           }
         }, (error) => {
           if (error && error.response && error.response.body && error.response.body.params &&
-            error.response.body.params.err === 'RECOVERY_PARAM_MATCH_EXCEPTION') {
+            error.response.body.params.err === 'UOS_USRUPD0062') {
             if (type === RecoveryType.EMAIL) { this.sameEmailErr = true; }
             if (type === RecoveryType.PHONE) { this.samePhoneErr = true; }
           } else {
