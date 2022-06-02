@@ -20,17 +20,14 @@ describe('CertificateVerificationPopoverComponent', () => {
             mockEvents as Events
         );
     }); 
-
     beforeEach(() => {
         jest.clearAllMocks();
         jest.resetAllMocks();
     });
-
     it('should create a instance of certificateVerificationPopoverComponent', () => {
         expect(certificateVerificationPopoverComponent).toBeTruthy();
-    }); 
-    
-    it('should subscribe to back button and events subscription', () => {
+    });     
+    it('should subscribe to back button subscription and get the App Name', () => {
         // arrange
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPopOverCtrl.dismiss = jest.fn();
@@ -49,9 +46,7 @@ describe('CertificateVerificationPopoverComponent', () => {
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         expect(mockPopOverCtrl.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
         expect(unsubscribeFn).toHaveBeenCalled();
-        
     });
- 
     it('should unsubscribe to back button ngOnDestroy', () => {
         // arrange
         certificateVerificationPopoverComponent.backButtonFunc = {
@@ -63,14 +58,13 @@ describe('CertificateVerificationPopoverComponent', () => {
         expect(certificateVerificationPopoverComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
     });
     it('should close the popover on click', () => {
-    //arrange  
-     mockPopOverCtrl.dismiss = jest.fn();     
-    //act
-    certificateVerificationPopoverComponent.closePopover();
-    // assert 
-    expect(mockPopOverCtrl.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
+        //arrange  
+        mockPopOverCtrl.dismiss = jest.fn();     
+        //act
+        certificateVerificationPopoverComponent.closePopover();
+        // assert 
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
     });
-
     it('should close the popover on deleteContent', () => {
         //arrange  
          mockPopOverCtrl.dismiss = jest.fn();         
