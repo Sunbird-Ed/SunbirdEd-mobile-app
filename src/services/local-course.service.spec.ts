@@ -23,6 +23,7 @@ import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/catego
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import moment from 'moment';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
@@ -900,18 +901,56 @@ describe('LocalCourseService', () => {
     })
   })
   describe('getTimeRemaining', ()=>{
-    it('should check the time remaining', ()=>{   
-      const FormRequest = {
-        type: 'config',
-        subType: 'utility',
-        action: 'get',
-        component: 'app',
-    };
-    const utilityConfigFields:any = mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(FormRequest));
-    const batchEnrollmentEndDateDisplayThreshold= utilityConfigFields.find = jest.fn(()=>of((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
-    const today = '01/01/01';
-    const enrollmentEndDate = '02/01/01';
-    const countTimeOfEOD = '01/01/01';
+    it('should check the time remaining', ()=>{  
+     //arrange 
+        
+    const endDate = '01/01/01';
+    // const data = localCourseService.getTimeRemaining(endDate);
+    mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
+      
+    //act
+    localCourseService.getTimeRemaining(endDate);
+
+    // assert
+    expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+    
     })
+    it('should return undefined when enrollment date is greater then batch enrollment date', ()=>{  
+     //arrange 
+        
+    const endDate = '01/01/01';
+    mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
+    const today = '01/01/01'    
+    const batchEnrollmentEndDateDisplayThreshold: number = 10;
+    const enrollmentEndDate = '01/01/01'  
+    localCourseService.getTimeRemaining = jest.fn();
+    
+    //act
+    localCourseService.getTimeRemaining(endDate);
+
+    // assert
+    // expect(data).isEqualto(); 
+    jest.spyOn(localCourseService, 'getTimeRemaining').mockImplementation((value)=>{
+      return undefined; 
+    });
+    })
+    it('should return undefined when the difference between today and count time of EOD is greater then 0', ()=>{  
+      
+    //arrange 
+        
+     const endDate = '01/01/01';
+     mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
+     const today = '01/01/01' 
+     const countTimeOfEOD = '02/01/01'
+     localCourseService.getTimeRemaining = jest.fn();    
+    
+    //act
+     localCourseService.getTimeRemaining(endDate);
+ 
+     // assert
+     jest.spyOn(localCourseService, 'getTimeRemaining').mockImplementation((value)=>{
+      return undefined; 
+    });
+     })
   })
 });
