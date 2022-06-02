@@ -263,7 +263,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
-      this.nextContentToBePlayed = extras.content ? extras.content : (this.content ? this.content : undefined);
+      this.nextContentToBePlayed = extras.content;
       this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
@@ -614,6 +614,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
     }
     if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') && !this.content.contentData["interceptionPoints"] ) {
+      this.getNextContent(data.hierarchyInfo, data.identifier);
       this.playContent(true, true);
     }
   }
