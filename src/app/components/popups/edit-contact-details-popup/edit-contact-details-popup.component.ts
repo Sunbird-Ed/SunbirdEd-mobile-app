@@ -93,12 +93,12 @@ export class EditContactDetailsPopupComponent {
             this.updateErr = true;
           } else {
             this.err = true;
-          }
+          }   
         }
       }, async (error) => {
-        if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
+        if (error.response && error.response.body.params.err === 'UOS_USRRED0013') {
           this.generateOTP();
-        } else if (error.response && error.response.body.params.err === 'UOS_USRRED0013') {
+        } else if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
           this.blockedAccount = true;
           if (this.loader) {
             await this.loader.dismiss();
