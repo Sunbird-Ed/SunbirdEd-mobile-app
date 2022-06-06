@@ -6,7 +6,7 @@
       </h4>
       <h4 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h4>
     </ion-text>
-    <div arrow *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts && submissionId" class="d-flex flex-ai-center flex-dc mr-15  clr-primary" click)="$event.stopPropagation(); pushToLocal(submission)">
+    <div arrow *ngIf="!downloadedSubmissionList?.includes(submissionId) && !allowMultipleAssessemts && submissionId" class="d-flex flex-ai-center flex-dc mr-15  clr-primary" (click)="$event.stopPropagation(); pushToLocal(submission)">
       <ion-icon class="clr-primary" name="arrow-down"></ion-icon>
       <span>{{ 'FRMELEMNTS_LBL_DOWNLOAD' | translate }}</span>
     </div>
