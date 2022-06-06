@@ -381,7 +381,7 @@
       grid-gap: 0rem;
 
       span {
-        font-size: calculateRem(inherit !important);
+        font-size: 1rem !important;
         text-transform: capitalize;
       }
     }

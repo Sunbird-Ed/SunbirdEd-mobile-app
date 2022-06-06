@@ -83,7 +83,7 @@ describe('ContentDetailsPage', () => {
         is: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getCurrentUser: jest.fn()
+        getCurrentUser: jest.fn(() => ({uid: 'user_id'}))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
@@ -2821,6 +2821,35 @@ describe('ContentDetailsPage', () => {
         }, 0);
     });
 
+    it('should return a transcript download popup', (done) => {
+        // arrange
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+        } as any)));
+        contentDetailsPage.content = {
+            contentData: {
+                transcripts: [{
+                    identifier: 'sample-do_id',
+                    artifactUrl: 'http//:sample-url/do_id',
+                    language: 'english'
+                  }, {
+                    identifier: 'sample-do_id',
+                    artifactUrl: 'http//:sample-url/do_id',
+                    language: 'hindi'
+                  }],
+                  name: 'transcript-content'
+            }
+        };
+        // act
+        contentDetailsPage.showDownloadTranscript();
+        // assert
+        setTimeout(() => {
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(contentDetailsPage.content.contentData.transcripts).not.toBeUndefined();
+            done();
+        }, 0);
+    });
+
     describe('playerEvents', () => {
         it('should check on edata type END', () => {
             // arrange
@@ -2833,7 +2862,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id')
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
             if(event.edata['type'] === 'END') {
                 mockPlayerService.savePlayerState = jest.fn(() => of());
                 contentDetailsPage.isPlayerPlaying = false;
@@ -2856,7 +2885,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id');
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
             if(event.edata['type'] === 'EXIT') {
                 mockPlayerService.deletePlayerSaveState = jest.fn(() => of());
                 mockScreenOrientation.type = 'landscape-primary';
@@ -2880,7 +2909,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id')
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
             mockScreenOrientation.type = 'landscape-primary';
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockEvents.publish = jest.fn(() => Promise.resolve());
@@ -2981,5 +3010,5 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.playerEvents(event);
             // assert
         });
-    })
+    });
 });

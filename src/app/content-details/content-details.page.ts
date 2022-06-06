@@ -86,6 +86,7 @@ import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 
 
 declare const cordova;
@@ -190,6 +191,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   config: any;
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
+  // displayTranscripts = false;
+  // transcriptList = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -1648,4 +1651,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     await popoverElement.present();
   }
 
+  async showDownloadTranscript() {
+      const newThemePopover = await this.popoverCtrl.create({
+          component: DownloadTranscriptPopupComponent,
+          componentProps: {
+            contentData: this.content.contentData
+          },
+          backdropDismiss: false,
+          showBackdrop: true,
+          cssClass: 'download-transcript-popup'
+      });
+      newThemePopover.present();
+  }
 }

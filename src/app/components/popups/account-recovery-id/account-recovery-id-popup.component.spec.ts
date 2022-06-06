@@ -155,7 +155,7 @@ describe('AccountRecoveryInfoComponent', () => {
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         accountRecoveryInfoComponent.recoveryEmailForm = { value: { email: 'abc@email.com' } } as any;
         mockProfileService.updateServerProfile = jest.fn(() => throwError(
-            { response: { body: { params: { err: 'RECOVERY_PARAM_MATCH_EXCEPTION' } } } }));
+            { response: { body: { params: { err: 'UOS_USRUPD0062' } } } }));
         // act
         accountRecoveryInfoComponent.submitRecoveryId(accountRecoveryInfoComponent.RecoveryType.EMAIL);
         // assert
@@ -172,7 +172,7 @@ describe('AccountRecoveryInfoComponent', () => {
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         accountRecoveryInfoComponent.recoveryEmailForm = { value: { phone: '0123456789' } } as any;
         mockProfileService.updateServerProfile = jest.fn(() => throwError(
-            { response: { body: { params: { err: 'RECOVERY_PARAM_MATCH_EXCEPTION' } } } }));
+            { response: { body: { params: { err: 'UOS_USRUPD0062' } } } }));
         // act
         accountRecoveryInfoComponent.submitRecoveryId(accountRecoveryInfoComponent.RecoveryType.PHONE);
         // assert
