@@ -19,8 +19,8 @@
             [ngClass]="{'btn-disabled': !isStartBTNEnabled}">{{'FRMELEMNTS_BTN_START'| translate}}
           </ion-button>
         </div>
-        <div *ngIf="viewOnly && showStartButton === undefined" class="_flex-box _justify-content-center custom-btn-txt-transform-none">
-          <ion-button round small (click)="allowStartingObservation()"
+        <div *ngIf="viewOnly && showStartButton === undefined" class="_flex-box _justify-content-center">
+          <ion-button round small (click)="allowStartingObservation()" class=" custom-btn-txt-transform-none"
             >{{'FRMELEMNTS_BTN_START'| translate}}
           </ion-button>
         </div>

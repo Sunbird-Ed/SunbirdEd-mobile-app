@@ -1862,17 +1862,7 @@ html[data-theme="JOYFUL"]{
   // ************ iOS end ***************
 }
 
-.central-alert{
-  button{
-    text-transform: none !important;
-  }
-}
-.background-theme-color {
-  button{
-    text-transform: none !important;
-  }
-}
-.select-box{
+.central-alert, .attachment-delete-alert,.background-theme-color, .select-box {
   button{
     text-transform: none !important;
   }
