@@ -36,7 +36,7 @@
             <ion-button size="small" class="action-btn custom-btn-txt-transform-none"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
               (click)="$event.stopPropagation();onObservatonActionButtonClick(task, i)">
-              {{'START' | translate}} {{task?.type | titlecase}}
+              {{'START' | translate}} {{task?.type | lowercase }}
             </ion-button>
             <ion-button size="small" class="action-btn custom-btn-txt-transform-none"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
