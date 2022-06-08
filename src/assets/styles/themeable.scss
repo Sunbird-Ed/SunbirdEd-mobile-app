@@ -152,6 +152,7 @@ html[data-theme="JOYFUL"]{
     .alert-button {
       border-color: var(--app-primary) !important;
       border-radius: 20px !important;
+      text-transform: none;
     }
     .alert-button:first-child:not(:only-child) {
       background: transparent !important;
@@ -164,6 +165,9 @@ html[data-theme="JOYFUL"]{
     .alert-wrapper{
       background-color: var(--app-secondary-background);
       border-radius: 1rem 1rem 0 0;
+      button{
+        text-transform: none;
+      }
     }
     .alert-tappable {
       box-shadow: none !important;
@@ -1856,4 +1860,17 @@ html[data-theme="JOYFUL"]{
   }
 
   // ************ iOS end ***************
+}
+
+.central-alert, .attachment-delete-alert,.background-theme-color, .select-box {
+  button{
+    text-transform: none !important;
+  }
+}
+ion-picker{
+  .picker-toolbar{
+    .picker-button{
+      text-transform: none !important;
+    }
+  }
 }
