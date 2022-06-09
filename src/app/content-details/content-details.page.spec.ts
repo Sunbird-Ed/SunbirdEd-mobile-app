@@ -645,6 +645,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
             mockCommonUtilService.convertFileSrc = jest.fn();
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'markContent').mockImplementation();
             mockUtilityService.getDeviceAPILevel = jest.fn(() => Promise.resolve('sample'));
             mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
             contentDetailsPage.cardData = {
@@ -698,6 +699,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
             mockCommonUtilService.convertFileSrc = jest.fn();
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'markContent').mockImplementation();
             mockUtilityService.getDeviceAPILevel = jest.fn(() => Promise.resolve('sample'));
             mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
             contentDetailsPage.cardData = {

@@ -606,6 +606,56 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('joinTraining()', () => {
+        it('should show error toast if no batches available', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+            done();
+        });
+
+        it('should show error toast if single enrolment expired batch', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [{
+                enrollmentEndDate: '2020-04-23'
+            }];
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn((v) => v);
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ENROLLMENT_ENDED_ON', null, null, null, null, '2020-04-23');
+            done();
+        });
+
+        it('should be joined training for logged in user', async (done) => {
+            // arrange
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
+            } as any)));
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
+            enrolledCourseDetailsPage.batches = [{}, {}];
+            // act
+            enrolledCourseDetailsPage.joinTraining();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
     describe('subscribeUtilityEvents()', () => {
 
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
@@ -707,55 +757,6 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.checkCurrentUserType();
             // assert
             expect(mockAppGlobalService.getGuestUserInfo).toHaveBeenCalled();
-        });
-    });
-
-    describe('joinTraining()', () => {
-        it('should show error toast if no batches available', async (done) => {
-            // arrange
-            enrolledCourseDetailsPage.batches = [];
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            await enrolledCourseDetailsPage.joinTraining();
-            // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
-            done();
-        });
-
-        it('should show error toast if single enrolment expired batch', async (done) => {
-            // arrange
-            enrolledCourseDetailsPage.batches = [{
-                enrollmentEndDate: '2020-04-23'
-            }];
-            mockCommonUtilService.showToast = jest.fn();
-            mockDatePipe.transform = jest.fn((v) => v);
-            // act
-            await enrolledCourseDetailsPage.joinTraining();
-            // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ENROLLMENT_ENDED_ON', null, null, null, null, '2020-04-23');
-            done();
-        });
-
-        it('should be joined training for logged in user', async (done) => {
-            // arrange
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
-            } as any)));
-            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
-            mockCommonUtilService.translateMessage = jest.fn(() => '');
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
-            spyOn(mockCourseService, 'getBatchDetails').and.stub();
-            enrolledCourseDetailsPage.batches = [{}, {}];
-            // act
-            enrolledCourseDetailsPage.joinTraining();
-            // assert
-            setTimeout(() => {
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-                done();
-            }, 0);
         });
     });
 
@@ -980,6 +981,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockZone.run = jest.fn((fn) => fn());
             spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getContentState').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
             // act
             enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
             // assert
