@@ -74,7 +74,13 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private db: DbService,
     private storage: LocalStorageService,
     private utils: UtilsService
-  ) {}
+  ) {
+    this.events.subscribe(EventTopics.LAST_ACCESS_ON, (data) => {
+      if (data) {
+        this.getDownloadedContents();
+      }
+    });
+  }
 
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
@@ -330,6 +336,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     this.events.unsubscribe('update_header');
     this.headerObservable.unsubscribe();
     this.events.unsubscribe(EventTopics.HAMBURGER_MENU_CLICKED);
+    this.events.unsubscribe(EventTopics.LAST_ACCESS_ON);
   }
 
   private subscribeContentUpdateEvents() {
