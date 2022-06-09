@@ -171,6 +171,7 @@ export class EventTopics {
     public static readonly BANNER = 'banner';
     public static readonly NOTIFICATION_REFRESH = 'notification:refresh';
     public static readonly ORIENTATION = 'orientation';
+    public static readonly LAST_ACCESS_ON = 'last_access_on';
 }
 
 export class ShareUrl {

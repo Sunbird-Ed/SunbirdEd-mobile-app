@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="playerType === 'sunbird-video-player'"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
+    <div *ngIf="playerType === 'sunbird-video-player' && config"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
       <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
         (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
     </div>

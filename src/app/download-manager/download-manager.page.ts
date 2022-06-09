@@ -74,7 +74,13 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private db: DbService,
     private storage: LocalStorageService,
     private utils: UtilsService
-  ) {}
+  ) {
+    this.events.subscribe(EventTopics.LAST_ACCESS_ON, (data) => {
+      if (data) {
+        this.getDownloadedContents();
+      }
+    });
+  }
 
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
