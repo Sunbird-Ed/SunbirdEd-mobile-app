@@ -19,7 +19,7 @@
               }"
               [disabled]="field.disabled || (field.context && formGroup.get(field.context).invalid)"
               [compareWith]="ValueComparator.valueComparator"
-              placeholder="{{ field.templateOptions?.placeHolder | translate }}"
+              placeholder="{{ field.templateOptions?.placeholder | translate }}"
               okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
 
               <ng-container *ngIf="isOptionsArray(field.templateOptions?.options)">
@@ -56,7 +56,7 @@
             <span class="prefix" *ngIf="field.templateOptions?.prefix">{{field.templateOptions?.prefix}}</span>
 
             <ion-input formControlName="{{field.code}}"
-              placeholder="{{ field.templateOptions?.placeHolder | translate}}" class="form-control custom">
+              placeholder="{{ field.templateOptions?.placeholder | translate}}" class="form-control custom">
             </ion-input>
             
             <span class="otp-validator" *ngIf="field.asyncValidation"> 
