@@ -336,6 +336,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     this.events.unsubscribe('update_header');
     this.headerObservable.unsubscribe();
     this.events.unsubscribe(EventTopics.HAMBURGER_MENU_CLICKED);
+    this.events.unsubscribe(EventTopics.LAST_ACCESS_ON);
   }
 
   private subscribeContentUpdateEvents() {
