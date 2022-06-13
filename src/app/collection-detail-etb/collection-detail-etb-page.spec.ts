@@ -266,6 +266,72 @@ describe('collectionDetailEtbPage', () => {
         }, 0);
     });
 
+    describe('markContent', () => {
+        it('should update content last access time', (done) => {
+            // arrange
+            mockappGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(true));
+            mockevents.publish = jest.fn();
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            collectionDetailEtbPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: 'Course',
+                    status: 1
+                });
+                expect(mockevents.publish).toHaveBeenCalledWith(EventTopics.LAST_ACCESS_ON, true);
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: undefined,
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+
+        it('should not update content last access time for else part', (done) => {
+            // arrange
+            mockappGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(false));
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            collectionDetailEtbPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: 'Course',
+                    status: 1
+                });
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: undefined,
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+    });
+
     describe('IonViewWillEnter', () => {
 
         it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
