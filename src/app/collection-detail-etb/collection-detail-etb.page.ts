@@ -440,7 +440,11 @@ export class CollectionDetailEtbPage implements OnInit {
       contentType: this.content.contentType
     };
     const profile: Profile = this.appGlobalService.getCurrentUser();
-    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then();
+    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
+      if (data) {
+        this.events.publish(EventTopics.LAST_ACCESS_ON, true);
+      }
+    });
     const contentMarkerRequest: ContentMarkerRequest = {
       uid: profile.uid,
       contentId: this.identifier,

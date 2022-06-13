@@ -78,6 +78,7 @@ describe('DownloadManagerPage', () => {
     };
 
     const mockEvents: Partial<Events> = {
+        subscribe: jest.fn(),
         publish: jest.fn(),
         unsubscribe: jest.fn()
     };

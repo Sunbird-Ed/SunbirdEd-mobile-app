@@ -612,6 +612,72 @@ describe('ContentDetailsPage', () => {
         });
     });
 
+    describe('markContent', () => {
+        it('should update content last access time', (done) => {
+            // arrange
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(true));
+            mockEvents.publish = jest.fn();
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            contentDetailsPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: undefined,
+                    status: 1
+                });
+                expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.LAST_ACCESS_ON, true);
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: JSON.stringify({ size: '64kb' }),
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+
+        it('should not update content last access time for else part', (done) => {
+            // arrange
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(false));
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            contentDetailsPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: undefined,
+                    status: 1
+                });
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: JSON.stringify({ size: '64kb' }),
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+    });
+
     describe('extractApiResponse', () => {
         it('should be return player response', () => {
             // arrange
@@ -645,6 +711,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
             mockCommonUtilService.convertFileSrc = jest.fn();
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'markContent').mockImplementation();
             mockUtilityService.getDeviceAPILevel = jest.fn(() => Promise.resolve('sample'));
             mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
             contentDetailsPage.cardData = {
@@ -698,6 +765,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
             mockCommonUtilService.convertFileSrc = jest.fn();
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'markContent').mockImplementation();
             mockUtilityService.getDeviceAPILevel = jest.fn(() => Promise.resolve('sample'));
             mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
             contentDetailsPage.cardData = {
