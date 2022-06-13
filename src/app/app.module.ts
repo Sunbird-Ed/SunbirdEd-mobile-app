@@ -358,7 +358,7 @@ export const sunbirdSdkFactory =
         contentServiceConfig: {
           apiPath: '/api/content/v2',
           searchApiPath: '/api/content/v1',
-          contentHeirarchyAPIPath: '/api/collection/v1/hierarchy',
+          contentHeirarchyAPIPath: '/api/collection/v1',
           questionSetReadApiPath: '/api/questionset/v1',
           questionReadApiPath: '/api/question/v1/'
         },
