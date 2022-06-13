@@ -25,6 +25,12 @@
     </ion-radio-group>
   </ion-list>
   <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
-  <app-image-upload [data]="data" [generalQuestion]="generalQuestion" [imageLocalCopyId]="imageLocalCopyId"
-  [evidenceId]="evidenceId" [submissionId]="submissionId"></app-image-upload>
+  <app-image-upload
+    [submissionId]="submissionId"
+    [data]="data"
+    [generalQuestion]="generalQuestion"
+    [imageLocalCopyId]="imageLocalCopyId"
+    [evidenceId]="evidenceId"
+    [schoolId]="schoolId"
+  ></app-image-upload>
 </ion-card>
