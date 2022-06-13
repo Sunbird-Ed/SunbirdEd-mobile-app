@@ -24,6 +24,11 @@
     }
 }
 
+._inline_flex-box{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+}
 .color-green {
     color: white !important;
     background: green !important;

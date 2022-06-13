@@ -23,7 +23,7 @@
           <div> {{statuses[task?.status]?.label}}</div>
         </div>
         <div class="last-row">
-          <div> {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : ""}}</div>
+          <div> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}</div>
           <div class="viewBtn">
             <ion-label class="link-label" *ngIf="task?.type =='simple'"
               (click)="$event.stopPropagation();onCardClick(task)">
