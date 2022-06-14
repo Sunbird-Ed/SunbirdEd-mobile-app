@@ -378,7 +378,8 @@ export const sunbirdSdkFactory =
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
-          profileApiPath:'/api/user/v2',
+          profileApiPath: '/api/user/v1',
+          profileApiPath_V2: '/api/user/v2',
           profileApiPath_V5: '/api/user/v5',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v2',
