@@ -104,14 +104,14 @@ export class SelfDeclaredTeacherEditPage {
       },
       fields: ['orgName', 'rootOrgId']
   };
-  const organisations = (await this.frameworkService.searchOrganization(searchOrganizationReq).toPromise()).content;
-  let index = 0;
-  this.organisationList = organisations.map((org) => ({
-  value :  org.rootOrgId,
-  label : org.orgName,
-  index : index++
-  }));
-  index = 0;
+    const organisations = (await this.frameworkService.searchOrganization(searchOrganizationReq).toPromise()).content;
+    let index = 0;
+    this.organisationList = organisations.map((org) => ({
+      value: org.rootOrgId,
+      label: org.orgName,
+      index: index++
+    }));
+    index = 0;
     const personaTenantFormData: FieldConfig<any>[] = await this.formnFrameworkService.getFormFields(FormConstants.TENANT_PERSONAINFO,
       this.profile.rootOrg.rootOrgId);
 
