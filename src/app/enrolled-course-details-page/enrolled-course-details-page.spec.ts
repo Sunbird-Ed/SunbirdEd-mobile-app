@@ -606,6 +606,80 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('markContent', () => {
+        it('should update content last access time', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.content = {
+                contentType: 'sample-type'
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(true));
+            mockEvents.publish = jest.fn();
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            enrolledCourseDetailsPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: 'sample-type',
+                    status: 1
+                });
+                expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.LAST_ACCESS_ON, true);
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: undefined,
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+
+        it('should not update content last access time for else part', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                content: {
+                    contentType: 'sample-type'
+                }
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                uid: 'sample-uid'
+            }));
+            mockProfileService.addContentAccess = jest.fn(() => of(false));
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            // act
+            enrolledCourseDetailsPage.markContent();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
+                    contentId: 'do_212911645382959104165',
+                    contentType: 'sample-type',
+                    status: 1
+                });
+                expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
+                    {
+                        contentId: 'do_212911645382959104165',
+                        data: JSON.stringify({contentType: 'sample-type'}),
+                        extraInfo: {},
+                        isMarked: true,
+                        marker: 1,
+                        uid: 'sample-uid'
+                    }
+                );
+                done();
+            }, 0);
+        });
+    });
+
     describe('joinTraining()', () => {
         it('should show error toast if no batches available', async (done) => {
             // arrange
