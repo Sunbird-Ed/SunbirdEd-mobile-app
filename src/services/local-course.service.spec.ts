@@ -53,6 +53,7 @@ describe('LocalCourseService', () => {
   };
  
   const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+  
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
@@ -887,25 +888,38 @@ describe('LocalCourseService', () => {
 
   describe('isConsentPopupVisible', ()=>{
     it('should check consent is visible', ()=>{
-      jest.spyOn(localCourseService, 'isConsentPopupVisible').mockReturnValue(true);
-    })
-    it('should check consent is not visible', ()=>{
-      jest.spyOn(localCourseService, 'isConsentPopupVisible').mockReturnValue(false);
-    })
+      //arrage
+      localCourseService['isConsentPopupDisplayed'] = true;
+      localCourseService.isConsentPopupVisible  = jest.fn();
+  
+      //act
+      const data = localCourseService.isConsentPopupVisible();
+
+      //assert
+      expect(localCourseService.isConsentPopupVisible).toHaveBeenCalled();
+      expect(localCourseService['isConsentPopupDisplayed']).toEqual(true);
+    }) 
   })
   describe('setConsentPopupVisibility', ()=>{
-    it('should set consent popup as visible or not', ()=>{     
-      jest.spyOn(localCourseService, 'setConsentPopupVisibility').mockImplementation((status:boolean)=>{
-        return status; 
-      });
+    it('should set consent popup as visible or not', ()=>{  
+      //arrage
+      const status = true;
+      localCourseService.setConsentPopupVisibility  = jest.fn();
+
+      //act
+      const data = localCourseService.setConsentPopupVisibility(status);
+
+      //assert
+      expect(localCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(status);
+      expect(localCourseService['isConsentPopupDisplayed']).toEqual(true);    
+    
     })
   })
   describe('getTimeRemaining', ()=>{
     it('should check the time remaining', ()=>{  
-     //arrange 
+    //arrange 
         
     const endDate = '01/01/01';
-    // const data = localCourseService.getTimeRemaining(endDate);
     mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
       
     //act
@@ -916,8 +930,7 @@ describe('LocalCourseService', () => {
     
     })
     it('should return undefined when enrollment date is greater then batch enrollment date', ()=>{  
-     //arrange 
-        
+    //arrange  
     const endDate = '01/01/01';
     mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
     const today = '01/01/01'    
@@ -928,16 +941,12 @@ describe('LocalCourseService', () => {
     //act
     localCourseService.getTimeRemaining(endDate);
 
-    // assert
-    // expect(data).isEqualto(); 
-    jest.spyOn(localCourseService, 'getTimeRemaining').mockImplementation((value)=>{
-      return undefined; 
-    });
+    //assert 
+    expect(localCourseService.getTimeRemaining).toReturnWith(undefined); 
     })
     it('should return undefined when the difference between today and count time of EOD is greater then 0', ()=>{  
       
-    //arrange 
-        
+    //arrange         
      const endDate = '01/01/01';
      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve('utility'));
      const today = '01/01/01' 
@@ -947,10 +956,8 @@ describe('LocalCourseService', () => {
     //act
      localCourseService.getTimeRemaining(endDate);
  
-     // assert
-     jest.spyOn(localCourseService, 'getTimeRemaining').mockImplementation((value)=>{
-      return undefined; 
-    });
+    //assert
+     expect(localCourseService.getTimeRemaining).toReturnWith(undefined); 
      })
   })
 });
