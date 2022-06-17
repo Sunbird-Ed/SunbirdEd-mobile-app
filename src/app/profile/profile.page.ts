@@ -1163,7 +1163,7 @@ export class ProfilePage implements OnInit {
     const translatedMsg = this.commonUtilService.translateMessage('SHARE_USERNAME', {
       app_name: this.appName,
       user_name: fullName,
-      diksha_id: this.profile.userName
+      sunbird_id: this.profile.userName
     });
     this.socialSharing.share(translatedMsg);
   }

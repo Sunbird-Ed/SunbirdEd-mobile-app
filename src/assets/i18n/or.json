@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "ଟେଲିମେଟ୍ରି ସେୟାର କରନ୍ତୁ",
   "SHARE_TELEMETRY_FAILED": "ଟେଲିମେଟ୍ରି ସେୟାର କରିବାରେ ବିଫଳ",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "କୌଣସି ଟେଲିମେଟ୍ରି ଡାଟା ମିଳିଲା ନାହିଁ",
-  "SHARE_USERNAME": "ହାଏ ! {{app_name}} ର {{user_name}} ଙ୍କ ପାଇଁ ଗ୍ରହଣ କରିଥିବା ID ହେଉଛି : {{diksha_id}}",
+  "SHARE_USERNAME": "ହାଏ ! {{app_name}} ର {{user_name}} ଙ୍କ ପାଇଁ ଗ୍ରହଣ କରିଥିବା ID ହେଉଛି : {{sunbird_id}}",
   "SHOW": "ପ୍ରଦର୍ଶନ କରନ୍ତୁ ",
   "SHOWING_ITEMS": "{{%s}} ଆଇଟମ୍ ଦେଖାଉଛି",
   "SHOWING_RESULTS_FOR": "'{{%query}}' ପାଇଁ {{%count}} ଫଳାଫଳ ଦେଖାଉଛି ",

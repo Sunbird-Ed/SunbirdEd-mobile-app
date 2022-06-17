@@ -176,7 +176,7 @@ describe('collectionDetailEtbPage', () => {
 
     it('should get the appName', () => {
         // arrange
-        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
+        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockDownloadService.trackDownloads = jest.fn(() => of());
         mockCommonUtilService.translateMessage = jest.fn(() => 'play');
         // act

@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "டெலிமெட்ரியைப் பகிர",
   "SHARE_TELEMETRY_FAILED": "டெலிமெட்ரியைப் பகிர முடியவில்லை",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "டெலிமெட்ரி தரவு எதுவும் கிடைக்கவில்லை",
-  "SHARE_USERNAME": "வணக்கம்! நீங்கள் ‪{{user_name}}‬ அவர்களின் ‪{{app_name}}‬ ஐடி: ‪{{diksha_id}}‬ பெற்றுள்ளீர்கள்",
+  "SHARE_USERNAME": "வணக்கம்! நீங்கள் ‪{{user_name}}‬ அவர்களின் ‪{{app_name}}‬ ஐடி: ‪{{sunbird_id}}‬ பெற்றுள்ளீர்கள்",
   "SHOW": "காட்டு",
   "SHOWING_ITEMS": "{{%s}} உருப்படிகளைக் காட்டுகிறது",
   "SHOWING_RESULTS_FOR": "'{{%query}}' க்கு {{%count}} முடிவுகளை காட்டுகிறது ",

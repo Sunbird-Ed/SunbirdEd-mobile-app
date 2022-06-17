@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "टेलिमेट्री शेअर करा",
   "SHARE_TELEMETRY_FAILED": "टेलीमेट्री शेअर करण्यास अक्षम ",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "टेलीमेट्री डेटा सापडला नाही ",
-  "SHARE_USERNAME": "नमस्कार! तुम्हाला ‪{{user_name}}‬चा ‪{{app_name}}‬ ID मिळालेला आहे: ‪{{diksha_id}}‬",
+  "SHARE_USERNAME": "नमस्कार! तुम्हाला ‪{{user_name}}‬चा ‪{{app_name}}‬ ID मिळालेला आहे: ‪{{sunbird_id}}‬",
   "SHOW": "दाखवा",
   "SHOWING_ITEMS": "{{%s}} कलम दाखवत आहोत ",
   "SHOWING_RESULTS_FOR": "'{{%query}}' साठी {{%count}} निकाल दाखवत आहोत ",

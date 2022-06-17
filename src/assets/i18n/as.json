@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "টেলিমেট্ৰী শ্ৱেয়াৰ কৰক",
   "SHARE_TELEMETRY_FAILED": "Telemetry শ্ৱেয়াৰ কৰিব পৰা নাই",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "কোনো টেলিমেট্ৰী ডাটা পোৱা নগ’ল",
-  "SHARE_USERNAME": "নমস্কাৰ! আপুনি ‪{{user_name}}ৰ ‪{{app_name}}‬ ‬ID: ‪{{diksha_id}}‬ লাভ কৰিছে",
+  "SHARE_USERNAME": "নমস্কাৰ! আপুনি ‪{{user_name}}ৰ ‪{{app_name}}‬ ‬ID: ‪{{sunbird_id}}‬ লাভ কৰিছে",
   "SHOW": "দেখুৱাওক",
   "SHOWING_ITEMS": "{{%s}} বয়-বস্তু দেখুওৱা হৈছে",
   "SHOWING_RESULTS_FOR": "'{{%query}}' ৰ ফলাফল {{%count}} দেখুওৱা হৈছে",

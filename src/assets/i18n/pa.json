@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "ਸ਼ੇਅਰ ਟੈਲੀਮੈਟਰੀ",
   "SHARE_TELEMETRY_FAILED": "ਟੈਲੀਮੈਟਰੀ ਸਾਂਝੀ ਕਰਨ ਲਈ ਅਸਮਰੱਥ ਹੈ",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "ਕੋਈ ਟੈਲੀਮੈਟਰੀ ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ",
-  "SHARE_USERNAME": "ਹਾਇ! ਤੁਸੀਂ ‪{{user_name}}‬'s ਦੀ ‪{{app_name}}‬ ID: ‪{{diksha_id}}‬ ਪ੍ਰਾਪਤ ਕੀਤਾ ਹੈ",
+  "SHARE_USERNAME": "ਹਾਇ! ਤੁਸੀਂ ‪{{user_name}}‬'s ਦੀ ‪{{app_name}}‬ ID: ‪{{sunbird_id}}‬ ਪ੍ਰਾਪਤ ਕੀਤਾ ਹੈ",
   "SHOW": "ਦਿਖਾਉ",
   "SHOWING_ITEMS": "{{%s}} ਇਕਾਈਆਂ ਦਿਖਾ ਰਿਹਾ ਹੈ",
   "SHOWING_RESULTS_FOR": "{{%count}} ਲਈ '{{%query}}' ਨਤੀਜੇ ਦਿਖਾ ਰਿਹਾ ਹੈ",

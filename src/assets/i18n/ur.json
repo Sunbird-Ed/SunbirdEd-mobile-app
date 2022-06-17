@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "ٹیلیمیٹری کا اشتراک کریں",
   "SHARE_TELEMETRY_FAILED": "ٹیلیمیٹری کا اشتراک کرنے میں ناکام",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "ٹیلی میٹری کا کوئی ڈیٹا نہیں ملا",
-  "SHARE_USERNAME": "ہائے! آپ ‪{{user_name}}'s‬‪{{app_name}}‬ID:‪{{diksha_id}}‬ وصول کر چکے ہیں",
+  "SHARE_USERNAME": "ہائے! آپ ‪{{user_name}}'s‬‪{{app_name}}‬ID:‪{{sunbird_id}}‬ وصول کر چکے ہیں",
   "SHOW": "دکھائیں",
   "SHOWING_ITEMS": "{{%s}} آئٹمز دکھا رہا ہے",
   "SHOWING_RESULTS_FOR": "'{{%query}}' کیلئے {{%count}} نتائج دکھا ے جا رہے ہیں",

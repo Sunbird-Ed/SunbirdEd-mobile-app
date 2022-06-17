@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "టెలిమెట్రీని షేర్ చేయండి",
   "SHARE_TELEMETRY_FAILED": "టెలీమెట్రీని షేర్ చేయడం కుదరలేదు",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "టెలిమెట్రీ డేటా కనుగొనబడలేదు",
-  "SHARE_USERNAME": "{{user_name}}  యొక్క {{app_name}} ID \"{{diksha_id}}\"",
+  "SHARE_USERNAME": "{{user_name}}  యొక్క {{app_name}} ID \"{{sunbird_id}}\"",
   "SHOW": "ప్రదర్శించు",
   "SHOWING_ITEMS": "{{%s}} అంశాలను చూపుతోంది",
   "SHOWING_RESULTS_FOR": "'{{%query}}' కోసం {{%count}} ఫలితాలను  చూపుతోంది",

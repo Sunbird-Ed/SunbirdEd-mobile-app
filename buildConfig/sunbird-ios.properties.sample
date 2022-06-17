@@ -33,7 +33,7 @@ deeplink_base_url = DEEPLINK_BASE_URL
 deeplink_ncert_url = DEEPLINK_NCERT_URL
 deeplink_igot_url = DEEPLINK_IGOT_URL
 
-custom_scheme = staging.diksha.app
+custom_scheme = staging.sunbird.app
 
 base_url = BASE_URL
 merge_account_base_url= MERGE_ACCOUT_BASE_URL

@@ -632,7 +632,7 @@
   "SHARE_TELEMETRY": "ટેલીમેટ્રી શેર કરો",
   "SHARE_TELEMETRY_FAILED": "ટેલિમેટ્રી શેર કરવામાં અસમર્થ",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "કોઈ ટેલિમેટ્રી ડેટા મળ્યો નથી",
-  "SHARE_USERNAME": "હાય! તમે ‪{{user_name}}નું ‬ ‪{{app_name}}‬ ID મેળવ્યું છે:‪{{diksha_id}}‬",
+  "SHARE_USERNAME": "હાય! તમે ‪{{user_name}}નું ‬ ‪{{app_name}}‬ ID મેળવ્યું છે:‪{{sunbird_id}}‬",
   "SHOW": "બતાવો",
   "SHOWING_ITEMS": "{{%s}} વસ્તુઓને બતાવી રહ્યું છે.",
   "SHOWING_RESULTS_FOR": "'{{%query}}' માટે {{%count}} પરિણામો બતાવી રહ્યું છે",
