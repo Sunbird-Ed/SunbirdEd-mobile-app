@@ -572,8 +572,5 @@ describe('DownloadManagerPage', () => {
             expect(mockEvents.unsubscribe).toHaveBeenNthCalledWith(2, EventTopics.HAMBURGER_MENU_CLICKED);
             expect(mockEvents.unsubscribe).toHaveBeenNthCalledWith(3, EventTopics.LAST_ACCESS_ON);
         });
-
     });
-
-
 });
