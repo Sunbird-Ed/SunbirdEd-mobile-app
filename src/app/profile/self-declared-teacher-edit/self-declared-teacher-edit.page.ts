@@ -24,7 +24,6 @@ import {
   TelemetryObject, FrameworkService, OrganizationSearchCriteria
 } from 'sunbird-sdk';
 import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
-import { request } from 'http';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
