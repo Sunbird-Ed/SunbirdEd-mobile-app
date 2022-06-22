@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { FormConstants } from '@app/app/form.constants';
 import {
     ContentAggregatorResponse, ContentService, CourseService, FormRequest,
     FormService, ProfileService
@@ -35,14 +36,9 @@ export class ContentAggregatorHandler {
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
         }
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: pageName,
-            action: 'get',
-            component: 'app',
-        };
         try {
-            this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
+            this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
+                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName});
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
                     val['name'] = this.commonUtilService.getTranslatedValue(val.title, JSON.parse(val.title)['en']);
@@ -79,14 +75,9 @@ export class ContentAggregatorHandler {
             dataSrc = [];
         }
 
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: pageName,
-            action: 'get',
-            component: 'app',
-        };
         try {
-            this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
+            this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
+                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName});
             return this.aggregatorResponse.result;
         } catch (e) {
             console.error(e);
