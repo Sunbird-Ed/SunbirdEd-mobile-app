@@ -654,7 +654,7 @@ export const mockFormFielddata = [
 export const profile = {
     "maskedPhone": null,
     "tcStatus": null,
-    "channel": "dikshapreprodcustodian",
+    "channel": "sunbirdpreprodcustodian",
     "profileUserTypes": [
         {
             "type": "parent"
@@ -748,7 +748,7 @@ export const profile = {
     ],
     "rootOrgId": "0126796199493140480",
     "prevUsedEmail": "",
-    "firstName": "Sdiksha",
+    "firstName": "Ssunbird",
     "isMinor": false,
     "tncAcceptedOn": 1644811598091,
     "allTncAccepted": {
@@ -770,7 +770,7 @@ export const profile = {
         {
             "organisationId": "0126796199493140480",
             "approvedBy": null,
-            "channel": "dikshapreprodcustodian",
+            "channel": "sunbirdpreprodcustodian",
             "updatedDate": null,
             "approvaldate": null,
             "isSystemUpload": false,
@@ -831,7 +831,7 @@ export const profile = {
     "email": "sd*****@yopmail.com",
     "rootOrg": {
         "keys": {},
-        "channel": "dikshapreprodcustodian",
+        "channel": "sunbirdpreprodcustodian",
         "description": "Pre-prod Custodian Organization",
         "updatedDate": "2022-02-18 09:50:42:752+0000",
         "organisationType": 5,
@@ -839,7 +839,7 @@ export const profile = {
         "provider": null,
         "id": "0126796199493140480",
         "email": null,
-        "slug": "dikshapreprodcustodian",
+        "slug": "sunbirdpreprodcustodian",
         "isSSOEnabled": null,
         "orgName": "Staging Custodian Organization",
         "updatedBy": null,
@@ -884,7 +884,7 @@ export const profile = {
         }
     ],
     "recoveryPhone": "",
-    "userName": "sdiksha_meeg",
+    "userName": "ssunbird_meeg",
     "userId": "9d17a8b4-925b-41ac-a9f6-2d536ebeb34c",
     "declarations": [
         {
@@ -893,7 +893,7 @@ export const profile = {
             "orgId": "0127236218321879040",
             "status": "SUBMITTED",
             "info": {
-                "declared-email": "sdiksha@yopmail.com"
+                "declared-email": "ssunbird@yopmail.com"
             }
         }
     ],
