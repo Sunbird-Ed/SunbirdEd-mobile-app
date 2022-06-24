@@ -75,12 +75,10 @@ ionic cordova plugin rm sb-cordova-plugin-db
 ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 ionic cordova plugin rm cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
-ionic cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
 ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
 ionic cordova plugin add https://github.com/apache/cordova-plugin-file-transfer.git
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 ionic cordova plugin add cordova-plugin-sign-in-with-apple
-ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=$URL_SCHEME --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=$DEEPLINK_HOST
 ionic cordova plugin rm cordova-plugin-inappupdatemanager   
 ionic cordova plugin add https://github.com/subranil/cordova-plugin-inappupdatemanager.git
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
