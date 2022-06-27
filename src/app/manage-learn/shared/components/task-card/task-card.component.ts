@@ -131,6 +131,12 @@ export class TaskCardComponent implements OnInit {
       cssClass: 'central-alert',
       buttons: [
         {
+          text: data["NO"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => { },
+        },
+        {
           text: data["YES"],
           handler: () => {
             const obj = {
@@ -139,12 +145,6 @@ export class TaskCardComponent implements OnInit {
             }
             this.actionEvent.emit(obj);
           },
-        },
-        {
-          text: data["NO"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => { },
         }
       ],
     });
