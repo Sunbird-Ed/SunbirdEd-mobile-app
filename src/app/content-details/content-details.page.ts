@@ -412,7 +412,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleNavBackButton() {
-    if (this.screenOrientation.type === 'landscape-secondary') {
+    if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       return false;
     }
@@ -428,7 +428,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      if (this.screenOrientation.type === 'landscape-secondary') {
+      if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
         return false;
       }
