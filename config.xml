@@ -75,6 +75,7 @@
        <allow-navigation href="*" />
        <hook src="scripts/ios/ios.js" type="after_prepare" />
         <preference name="WKWebViewOnly" value="true" />
+        <preference name="UseSwiftLanguageVersion" value="4" />
         <edit-config file="*-Info.plist" mode="overwrite" target="UIBackgroundModes">
             <array />
         </edit-config>
