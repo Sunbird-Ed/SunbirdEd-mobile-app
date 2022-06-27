@@ -12,9 +12,9 @@ PROPERTIES_PATH=buildConfig/sunbird-ios.properties
 function prop {
     grep "^${1}"  $PROPERTIES_PATH|cut -d'=' -f2
 }
-DEEPLINK_HOST="$(prop 'deeplink_base_url')"
-URL_SCHEME="$(prop 'app_id')"
-REVERSED_CLIENT_ID="$(prop 'reverse_client_id')"
+DEEPLINK_HOST="$(prop 'deeplink_base_url'| xargs)"
+URL_SCHEME="$(prop 'app_id'| xargs)"
+REVERSED_CLIENT_ID="$(prop 'reverse_client_id'| xargs)"
 
 if [ "$1" != "skip-install" ]; then
 # Simple script to clean install
@@ -69,18 +69,18 @@ npm install com.telerik.plugins.nativepagetransitions@0.7.0
 ionic cordova plugin rm cordova-plugin-sunbirdsplash
 ionic cordova plugin add cordova-plugin-splashscreen
 ionic cordova plugin rm cordova-plugin-fcm-with-dependecy-updated
-ionic cordova plugin rm cordova-plugin-file-support
 ionic cordova plugin rm cordova-plugin-file-transfer
 ionic cordova plugin rm sb-cordova-plugin-db
 ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
-ionic cordova plugin rm cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=$REVERSED_CLIENT_ID
+ionic cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID="${REVERSED_CLIENT_ID}"
 ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
 ionic cordova plugin add https://github.com/apache/cordova-plugin-file-transfer.git
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 ionic cordova plugin add cordova-plugin-sign-in-with-apple
 ionic cordova plugin rm cordova-plugin-inappupdatemanager   
 ionic cordova plugin add https://github.com/subranil/cordova-plugin-inappupdatemanager.git
+ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME="${URL_SCHEME}" --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST="${DEEPLINK_HOST}"
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add ios
