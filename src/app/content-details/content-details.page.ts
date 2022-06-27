@@ -412,6 +412,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleNavBackButton() {
+    if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      return false;
+    }
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
       true, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
     this.didViewLoad = false;
@@ -424,6 +428,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        return false;
+      }
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
         false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
       this.didViewLoad = false;
