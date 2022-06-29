@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks, SwitchableTabsConfig } from '@app/app/app.constant';
 import { initTabs } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
-import { PageId } from '@app/services';
+import { PageId, UtilityService } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ContainerService } from '@app/services/container.services';
-import { IonTabs, ToastController } from '@ionic/angular';
+import { IonTabs, Platform, ToastController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
@@ -34,6 +34,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   olderWebView = false;
   tabList: any;
   selectedTab: string;
+  disableTab = '';
 
   constructor(
     private container: ContainerService,
@@ -44,7 +45,9 @@ export class TabsPage implements OnInit, AfterViewInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
     private router: Router,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private utilityService: UtilityService,
+    private platform: Platform
   ) {
 
   }
@@ -74,7 +77,9 @@ export class TabsPage implements OnInit, AfterViewInit {
   private async refreshTabs(data?) {
     this.selectedTab = '';
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
-    this.tabs = this.container.getAllTabs();
+    this.disableTab = '';
+    await this.findDisableTab();
+    this.tabs = this.container.getAllTabs().filter((tab) => tab.icon !== this.disableTab);
     if (!data || (data && !data.navigateToCourse)) {
     this.router.navigate(['/tabs/' + this.tabs[0].root]);
     }
@@ -113,11 +118,12 @@ export class TabsPage implements OnInit, AfterViewInit {
       .catch(function (error) { });
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (this.tabRef.outlet.component['tabViewWillEnter']) {
       (this.tabRef.outlet.component as OnTabViewWillEnter).tabViewWillEnter();
     }
-    this.tabs = this.container.getAllTabs();
+    await this.findDisableTab();
+    this.tabs = this.container.getAllTabs().filter((tab) => tab.icon !== this.disableTab);
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
       setTimeout(() => {
@@ -216,4 +222,12 @@ export class TabsPage implements OnInit, AfterViewInit {
         config['LOGIN_USER'][selectedSwitchableTabsConfig];
     }
   }
+
+ async findDisableTab() {
+  const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
+  if ((deviceName.toLowerCase() === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+      this.disableTab = 'qrscanner';
+  }
+ }
+
 }
