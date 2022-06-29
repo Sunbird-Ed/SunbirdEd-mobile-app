@@ -5,7 +5,8 @@ import {
     FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-    LoginHandlerService
+    LoginHandlerService,
+    UtilityService
 } from '@app/services';
 import {
     WebviewStateSessionProviderConfig,
@@ -43,6 +44,7 @@ import { Platform } from '@ionic/angular';
 export class SignInPage implements OnInit {
     appName = '';
     skipNavigation: any;
+    isGoogleServiceAvailable = false;
 
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -58,7 +60,8 @@ export class SignInPage implements OnInit {
         private googlePlusLogin: GooglePlus,
         private location: Location,
         private signInWithApple: SignInWithApple,
-        public platform: Platform
+        public platform: Platform,
+        private utilityService: UtilityService
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
@@ -106,27 +109,34 @@ export class SignInPage implements OnInit {
     }
 
     async signInWithGoogle() {
-        this.loginNavigationHandlerService.generateLoginInteractTelemetry
-        (InteractType.LOGIN_INITIATE, InteractSubtype.GOOGLE, '');
-        const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
-        this.googlePlusLogin.login({
-            webClientId: clientId.value
-        }).then(async (result) => {
-            await this.sbProgressLoader.show({id: 'login'});
-            const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
-            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true).toPromise();
-            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation, InteractSubtype.GOOGLE)
-            .then(() => {
+        this.isGoogleServiceAvailable = (await this.utilityService.isGoogleServiceAvailable() === 'true') && !this.platform.is('ios');
+        if (!this.isGoogleServiceAvailable) {
+            this.loginHandlerService.signIn(this.skipNavigation).then(() => {
                 this.navigateBack(this.skipNavigation);
             });
-        }).catch(async (err) => {
-            await this.sbProgressLoader.hide({id: 'login'});
-            if (err instanceof SignInError) {
-                this.commonUtilService.showToast(err.message);
-            } else {
-                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
-            }
-        });
+        } else {
+            this.loginNavigationHandlerService.generateLoginInteractTelemetry
+            (InteractType.LOGIN_INITIATE, InteractSubtype.GOOGLE, '');
+            const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
+            this.googlePlusLogin.login({
+                webClientId: clientId.value
+            }).then(async (result) => {
+                await this.sbProgressLoader.show({id: 'login'});
+                const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
+                await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, true).toPromise();
+                await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation, InteractSubtype.GOOGLE)
+                .then(() => {
+                    this.navigateBack(this.skipNavigation);
+                });
+            }).catch(async (err) => {
+                await this.sbProgressLoader.hide({id: 'login'});
+                if (err instanceof SignInError) {
+                    this.commonUtilService.showToast(err.message);
+                } else {
+                    this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+                }
+            });
+        }
     }
 
     async register() {
