@@ -7,7 +7,7 @@
 
 <ion-content class="ion-padding">
   <div *ngIf="projectForm" class="project-form">
-    <form [formGroup]="projectForm">
+    <form [formGroup]="projectForm" id="createProjectForm">
       <div *ngFor="let data of projectFormData">
         <div *ngIf="!data.taskData">
           <div *ngIf="data.input != 'select'" class="text-feilds">
@@ -55,7 +55,7 @@
             </ion-icon>
           </ion-item>
         </ion-card>
-        <ion-card (click)="openCreateTaskAction()" class="sb--card card-container create_header">
+        <ion-card (click)="openCreateTaskAction()" class="sb--card card-container create_header" id="tasksCardInCP">
           <ion-card-content>
             <div class="d-flex flex-jc-ai-center">
               <div class="flex-dc d-flex flex-basis-1">
@@ -73,7 +73,7 @@
   </div>
 </ion-content>
 <ion-footer>
-  <ion-button (click)="next()" expand="block" class="custom-btn-txt-transform-none"
+  <ion-button (click)="next()" expand="block" class="custom-btn-txt-transform-none" id="createProjectSubmitBTN"
     [disabled]="!this.projectForm?.value?.description || !this.projectForm?.value?.title || !this.selectedCategories?.length">
     {{button | translate}}
   </ion-button>
