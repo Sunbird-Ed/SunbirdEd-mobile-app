@@ -1200,7 +1200,7 @@
   "FRMELEMNTS_LBL_TCANDCP": "Terms of Use and Content Policy.",
   "FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC": "I have not shared any personal or sensitive information and have made sure that I do not violate others’ privacy rights and third party rights including intellectual property rights ",
   "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT": "I have made sure that I do not violate others’ copyright, privacy or third party rights.",
-  "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY": "I confirm that the Content submitted by me comply with the terms and policies of SUNBIRD, including SUNBIRD's",
+  "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY": "I confirm that the Content submitted by me comply with the terms and policies of {{app_name}}, including {{app_name}}'s",
   "FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL": "Content Policy.",
   "FRMELEMNTS_LBL_UPLOAD_EVIDENCES": "Upload Evidences",
   "FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT": "Evidence not uploaded please click on attach and accept the content policy terms",
@@ -1315,5 +1315,8 @@
   "SUCCESSFULLY_COMPLETING_COURSE": "For successfully completing the course",
   "ON_APPNAME_ON": "On {{appName}} on",
   "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed",
-  "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number"
+  "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number",
+  "FRMELEMNTS_LBL_DISCARD_EDIT_PROJECT": "Save changes",
+  "FRMELEMNTS_MSG_DISCARD_EDIT_PROJECT": "Would you like to save the changes you have made before you exit the page?",
+  "FRMELEMNTS_MSG_CERTIFICATE_CRITERIA_BFR_SUBMITTING":"Please ensure you have met the certificate criteria for this improvement project before submitting."
 }
