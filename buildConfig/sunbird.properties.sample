@@ -36,7 +36,6 @@ staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
 staging_tou_base_url = STAGING_TOU_BASE_URL
 staging_survey_base_url= STAGING_SURVEY_BASE_URL
 staging_projects_base_url= STAGING_PROJECTS_BASE_URL
-supporting_device = ANY_DEVICES
 
 // Production envornment properties.
 production_app_id = PRODUCTION_APP_ID

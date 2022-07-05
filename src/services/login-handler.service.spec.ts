@@ -11,6 +11,8 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LoginNavigationHandlerService } from '@app/services/login-navigation-handler.service';
 import { of } from 'rxjs';
+import { UtilityService } from '@app/services/utility-service';
+import { Platform } from '@ionic/angular';
 
 jest.mock('sunbird-sdk', () => {
     const actual = require.requireActual('sunbird-sdk');
@@ -41,6 +43,13 @@ describe('LoginHandlerService', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockLoginNavigationHandlerService: Partial<LoginNavigationHandlerService> = {};
+    const mockutilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn()
+    }
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform !== 'ios')
+    };
+
 
     beforeAll(() => {
         loginHandlerService = new LoginHandlerService(
@@ -50,7 +59,9 @@ describe('LoginHandlerService', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockSbProgressLoader as SbProgressLoader,
             mockAppGlobalService as AppGlobalService,
-            mockLoginNavigationHandlerService as LoginNavigationHandlerService
+            mockLoginNavigationHandlerService as LoginNavigationHandlerService,
+            mockutilityService as UtilityService,
+            mockPlatform as Platform
         );
     });
 
@@ -89,6 +100,48 @@ describe('LoginHandlerService', () => {
                     present: presentFn,
                     dismiss: dismissFn,
                 }));
+                const customWebViewConfig = new Map();
+                (window['device'] = {
+                    manufacturer: "Jio".toLowerCase()
+                })
+                mockutilityService.getBuildConfigValue = jest.fn(() => "jio")
+                customWebViewConfig.set('extraParams', 'com.jio.web.stbpc')
+                mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }));
+                mockLoginNavigationHandlerService.setSession = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
+                // act
+                loginHandlerService.signIn({ fromEnrol: false });
+                // assert
+                setTimeout(() => {
+                    expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                    expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                    expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
+                    done();
+                }, 0);
+            });
+            it('should fetch from form configuration for login session for different devices ', (done) => {
+                // arrange
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockSharedPreferences.putString = jest.fn(() => of(undefined));
+                mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                const dismissFn = jest.fn(() => Promise.resolve());
+                const presentFn = jest.fn(() => Promise.resolve());
+                mockCommonUtilService.getLoader = jest.fn(() => ({
+                    present: presentFn,
+                    dismiss: dismissFn,
+                }));
+                const customWebViewConfig = new Map();
+                (window['device'] = {
+                    manufacturer: "OTHER".toLowerCase()
+                })
+                mockutilityService.getBuildConfigValue = jest.fn(() => "OTHER")
+                customWebViewConfig.set('extraParams', 'com.android.chrome')
                 mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
                     access_token: 'SOME_ACCESS_TOKEN',
                     refresh_token: 'SOME_REFRESH_TOKEN',

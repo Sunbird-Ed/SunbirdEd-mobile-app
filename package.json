@@ -65,15 +65,15 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "4.9.1",
     "@project-sunbird/common-consumption-v9": "4.9.0",
+    "@project-sunbird/content-player": "4.4.0",
     "@project-sunbird/discussions-ui-v8": "2.6.0-beta.2",
     "@project-sunbird/sb-dashlet": "1.0.4",
     "@project-sunbird/sb-styles": "0.0.9",
     "@project-sunbird/sunbird-epub-player-v9": "4.8.1",
     "@project-sunbird/sunbird-pdf-player-v9": "4.8.1",
     "@project-sunbird/sunbird-quml-player-v9": "4.9.8",
-    "@project-sunbird/sunbird-sdk": "4.10.2",
+    "@project-sunbird/sunbird-sdk": "4.10.3",
     "@project-sunbird/sunbird-video-player-v9": "4.7.1",
-    "@project-sunbird/content-player": "4.4.0",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "chartjs-plugin-stacked100": "^0.7.1",
@@ -157,10 +157,8 @@
     "pouchdb-adapter-cordova-sqlite": "^2.0.7",
     "pouchdb-find": "^7.2.2",
     "rxjs": "^6.6.3",
-    "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-4.6.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
-    "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.9.0",
     "sb-notification": "0.0.2",
     "sb-svg2pdf": "0.0.10",
     "sb-tag-manager": "^3.9.19",
@@ -209,6 +207,8 @@
     "jest": "^25.4.0",
     "plist": "^3.0.2",
     "properties-reader": "^2.2.0",
+    "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git#release-4.10.1",
+    "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-4.7.0",
     "sonarqube-scanner": "^2.5.0",
     "tiny-glob": "^0.2.9",
     "ts-node": "^8.4.1",
@@ -237,10 +237,6 @@
       "cordova-plugin-media": {},
       "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-db": {},
-      "sb-cordova-plugin-customtabs": {
-        "URL_SCHEME": "@string/custom_scheme_url",
-        "URL_HOST": "mobile"
-      },
       "cordova-plugin-qr-scanner": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-file-opener2": {
@@ -257,7 +253,6 @@
       },
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
-      "sb-cordova-plugin-utility": {},
       "cordova-plugin-printer": {},
       "cordova-plugin-fcm-with-dependecy-updated": {
         "FCM_CORE_VERSION": "16.0.9",
@@ -286,7 +281,12 @@
       "cordova-plugin-googleplus": {
         "PLAY_SERVICES_VERSION": "15.0.1"
       },
-      "uk.co.workingedge.phonegap.plugin.istablet": {}
+      "uk.co.workingedge.phonegap.plugin.istablet": {},
+      "sb-cordova-plugin-utility": {},
+      "sb-cordova-plugin-customtabs": {
+        "URL_SCHEME": "@string/custom_scheme_url",
+        "URL_HOST": "mobile"
+      }
     },
     "platforms": [
       "android"
