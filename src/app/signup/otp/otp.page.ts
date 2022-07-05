@@ -83,7 +83,7 @@ export class OtpPage implements OnInit {
             firstName: this.userData.name,
             lastName: '',
             dob: this.userData.dob,
-            profileUserTypes: this.userData.profileUserTypes
+            profileUserTypes: this.userData.profileUserTypes[0]
           };
           this.profileService.updateServerProfile(profileReq).toPromise()
             .then(async (data) => {
