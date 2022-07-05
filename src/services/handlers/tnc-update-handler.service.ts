@@ -51,6 +51,9 @@ export class TncUpdateHandlerService {
         if (this.hasProfileTncUpdated(profile)) {
           this.presentTncPage({ profile });
         } else {
+          if (!profile.dob) {
+            this.router.navigate(['signup-basic-info']);
+          }
           this.checkBmc(profile);
         }
       }).catch(e => {

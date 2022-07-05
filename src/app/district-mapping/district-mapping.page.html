@@ -11,6 +11,10 @@
     <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
   </div>
 
+  <div class="login-header" *ngIf="isGoogleSignIn">
+    To discover relevant content update the following details:
+</div>
+
   <div class="px-16">
     <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
              [platform]="'mobile'"
@@ -19,6 +23,12 @@
              (valueChanges)="onFormValueChange($event)"
              (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
+  </div>
+  <div class="login-content" *ngIf="isGoogleSignIn">
+    <label>Already have an account?</label>
+    <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
+      aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()"
+      type="submit">Login</button>
   </div>
   <div class="bottom-section"></div>
   <div class="ios-footer" *ngIf="platform.is('ios')">

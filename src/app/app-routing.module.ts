@@ -126,6 +126,18 @@ const routes: Routes = [
     loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
   },
   { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
+  {
+    path: 'signup-basic-info',
+    loadChildren: './signup/signup-basic-info/signup-basic-info.module#SignupBasicInfoPageModule'
+  },
+  {
+    path: 'signup-email',
+    loadChildren: './signup/signup-email-password/signup-email-password.module#SignupEmailPasswordPageModule'
+  },
+  {
+    path: 'otp',
+    loadChildren: './signup/otp/otp.module#OtpPageModule'
+  }
 
 ];
 

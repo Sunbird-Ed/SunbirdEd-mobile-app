@@ -1874,3 +1874,21 @@ ion-picker{
     }
   }
 }
+
+app-signup-email-password {
+  .emailPasswordForm {
+    sb-form {
+      sb-textbox {
+        .sb-input {
+          margin: 1rem !important;
+          input {
+            border-radius: 1rem !important;
+            border: 1px solid #8080805c !important;
+            padding: 0.5rem 0.5rem !important;
+            // width: 90%;
+          }
+        }
+      }
+    }
+  }
+}
