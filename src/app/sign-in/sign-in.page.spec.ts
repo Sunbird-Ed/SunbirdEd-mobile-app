@@ -30,6 +30,8 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
         WebviewLoginSessionProvider() {
         },
         NativeAppleSessionProvider() {
+        },
+        NativeCustomBrowserSessionProvider() {
         }
     };
 });
@@ -63,7 +65,9 @@ describe('SignInPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockSignInWithApple: Partial<SignInWithApple> = {};
     const mockPlatform: Partial<Platform> = {};
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn()
+    };
  
     beforeAll(() => {
         signInPage = new SignInPage(
@@ -90,12 +94,31 @@ describe('SignInPage', () => {
     });
 
     it('should create instance of signInPage ', () => {
+        mockRouter.getCurrentNavigation = jest.fn(() => ({
+            extras: {
+                state: {
+                    navigateToCourse: true,
+                    source: 'user',
+                    hideBackBtn: false
+                }
+            }
+        }));
+        mockAppHeaderService.showHeaderWithBackButton = jest.fn();
         // assert
         expect(signInPage).toBeTruthy();
     });
 
     it('should call appHeaderServiceWithBackButton and fetchAppName', (done) => {
         // arrange
+        mockRouter.getCurrentNavigation = jest.fn(() => ({
+            extras: {
+                state: {
+                    navigateToCourse: true,
+                    source: 'user',
+                    hideBackBtn: false
+                }
+            }
+        }));
         mockAppHeaderService.showHeaderWithBackButton = jest.fn();
         mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('SUNBIRD'));
         // act
@@ -175,19 +198,92 @@ describe('SignInPage', () => {
     });
 
     describe('signIn with Google', () => {
-        it('should invoked keycloak login if google service is not available', (done) => {
+        it('should invoked custom browser tab login if google service is not available', (done) => {
             // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
             mockUtilityService.isGoogleServiceAvailable = jest.fn(() => Promise.resolve('false'));
             mockPlatform.is = jest.fn(() => false);
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
-            mockLocation.back = jest.fn();
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            const customWebViewConfig = new Map();
+                (window['device'] = {
+                    manufacturer: "Jio".toLowerCase()
+                })
+            mockUtilityService.getBuildConfigValue = jest.fn(() => "jio")
+            customWebViewConfig.set('extraParams', 'com.jio.web.stbpc')
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve(
+                {
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }
+            ));
+            mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
             signInPage.signInWithGoogle();
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.isGoogleServiceAvailable).toHaveBeenCalled();
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
-                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith("login");
+                done();
+            }, 0);
+        });
+        it('should invoked custom browser tab or other devices and if google service is not available', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
+            mockUtilityService.isGoogleServiceAvailable = jest.fn(() => Promise.resolve('false'));
+            mockPlatform.is = jest.fn(() => false);
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            const customWebViewConfig = new Map();
+                (window['device'] = {
+                    manufacturer: "devices".toLowerCase()
+                })
+            mockUtilityService.getBuildConfigValue = jest.fn(() => "jio")
+            customWebViewConfig.set('extraParams', 'com.android.chrome')
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve(
+                {
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }
+            ));
+            mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
+            // act
+            signInPage.signInWithGoogle();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilityService.isGoogleServiceAvailable).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith("login");
+                done();
+            }, 0);
+        });
+        it('should  catch error while invoked to custom browser tab login if google service is not available', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
+            mockUtilityService.isGoogleServiceAvailable = jest.fn(() => Promise.resolve('false'));
+            mockPlatform.is = jest.fn(() => false);
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject());
+            mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
+            // act
+            signInPage.signInWithGoogle();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilityService.isGoogleServiceAvailable).toHaveBeenCalled();
                 done();
             }, 0);
         });

@@ -19,7 +19,8 @@ import {
     SystemSettingsService,
     SignInError,
     SharedPreferences,
-    NativeAppleSessionProvider
+    NativeAppleSessionProvider,
+    NativeCustomBrowserSessionProvider
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
@@ -111,8 +112,34 @@ export class SignInPage implements OnInit {
     async signInWithGoogle() {
         this.isGoogleServiceAvailable = (await this.utilityService.isGoogleServiceAvailable() === 'true') && !this.platform.is('ios');
         if (!this.isGoogleServiceAvailable) {
-            this.loginHandlerService.signIn(this.skipNavigation).then(() => {
-                this.navigateBack(this.skipNavigation);
+            const that = this;
+            const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
+
+            let webviewLoginSessionProviderConfig: WebviewSessionProviderConfig;
+            await webviewSessionProviderConfigloader.present();
+            let customWebViewConfig = new Map()
+            const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
+            if ((deviceName === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+                customWebViewConfig.set('extraParam', 'com.jio.web.stbpc');
+            } else {
+                customWebViewConfig.set('extraParam', 'com.android.chrome');
+            }
+            try {
+                webviewLoginSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('login');
+                await webviewSessionProviderConfigloader.dismiss();
+            } catch (e) {
+                this.sbProgressLoader.hide({id: 'login'});
+                await webviewSessionProviderConfigloader.dismiss();
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+                return;
+            }
+            const customBrowserLoginSession = new NativeCustomBrowserSessionProvider(
+                webviewLoginSessionProviderConfig,
+                customWebViewConfig
+            );
+            await this.loginNavigationHandlerService.setSession(customBrowserLoginSession, this.skipNavigation, InteractSubtype.GOOGLE)
+            .then(() => {
+                that.navigateBack(this.skipNavigation);
             });
         } else {
             this.loginNavigationHandlerService.generateLoginInteractTelemetry

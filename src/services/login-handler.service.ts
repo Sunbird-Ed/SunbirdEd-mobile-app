@@ -11,7 +11,8 @@ import {
     TelemetryGeneratorService,
     AppGlobalService,
     SbProgressLoader,
-    LoginNavigationHandlerService
+    LoginNavigationHandlerService,
+    UtilityService
 } from '@app/services';
 import {
     Environment,
@@ -19,6 +20,7 @@ import {
     InteractType,
     PageId
 } from '@app/services/telemetry-constants';
+import { Platform } from '@ionic/angular';
 
 @Injectable()
 export class LoginHandlerService {
@@ -30,7 +32,9 @@ export class LoginHandlerService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private sbProgressLoader: SbProgressLoader,
         private appGlobalService: AppGlobalService,
-        private loginNavigationHandlerService: LoginNavigationHandlerService
+        private loginNavigationHandlerService: LoginNavigationHandlerService,
+        private utilityService: UtilityService,
+        private platform: Platform
     ) {
     }
 
@@ -58,9 +62,17 @@ export class LoginHandlerService {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;
             }
+            let customWebViewConfig = new Map()
+            const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
+            if ((deviceName === window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+                customWebViewConfig.set('extraParam', 'com.jio.web.stbpc');
+            } else {
+                customWebViewConfig.set('extraParam', 'com.android.chrome');
+            }
             const webViewLoginSession = new WebviewLoginSessionProvider(
                 webviewLoginSessionProviderConfig,
-                webviewMigrateSessionProviderConfig
+                webviewMigrateSessionProviderConfig,
+                customWebViewConfig
             );
 
             await this.loginNavigationHandlerService.setSession(webViewLoginSession, skipNavigation, InteractSubtype.KEYCLOAK);
