@@ -52,9 +52,10 @@ export class TncUpdateHandlerService {
           this.presentTncPage({ profile });
         } else {
           if (!profile.dob) {
-            this.router.navigate(['signup-basic-info']);
+            this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+          } else {
+            this.checkBmc(profile);
           }
-          this.checkBmc(profile);
         }
       }).catch(e => {
         this.appGlobalService.closeSigninOnboardingLoader();

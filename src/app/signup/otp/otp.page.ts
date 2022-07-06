@@ -6,6 +6,7 @@ import { CommonUtilService } from '@app/services';
 import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService } from 'sunbird-sdk';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-otp',
@@ -13,23 +14,28 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
   styleUrls: ['./otp.page.scss'],
 })
 export class OtpPage implements OnInit {
-
+  btnColor = '#8FC4FF';
   public otpInfoForm: FormGroup;
   userData: any;
   appName = "";
   enableResend = true;
+  contactNumber = "";
+  acceptAgreement = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private _fb: FormBuilder,
     private commonUtilService: CommonUtilService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private location: Location,
     public router: Router) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
+    this.contactNumber = (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, "*");
+    console.log('userData ', this.userData, this.contactNumber);
   }
 
   back() {
-    // this.triggerPrev.emit();
+    this.location.back();
   }
 
   async ngOnInit() {
@@ -155,4 +161,11 @@ export class OtpPage implements OnInit {
     }
   }
 
+  redirectToLogin() {
+    this.router.navigate([RouterLinks.SIGN_IN]);
+  }
+
+  changeEvent(event) {
+    this.acceptAgreement = event.target.checked;
+  }
 }

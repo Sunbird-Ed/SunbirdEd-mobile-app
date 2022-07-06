@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, NgZone, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { AppGlobalService, CommonUtilService } from '@app/services';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
 import { IsProfileAlreadyInUseRequest, GenerateOtpRequest, ProfileService } from 'sunbird-sdk';
-import { FieldConfig, FieldConfigValidationType } from 'common-form-elements-v9';
+import { FieldConfig, FieldConfigValidationType } from 'common-form-elements';
+import { Location } from '@angular/common';
 import { async } from 'rxjs';
 
 @Component({
@@ -23,11 +24,15 @@ export class SignupEmailPasswordPage implements OnInit {
   loader: any;
   userId: string;
   userData: any;
+  btnColor = '#8FC4FF';
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public platform: Platform,
     private commonUtilService: CommonUtilService,
-    private router: Router
+    private router: Router,
+    private location: Location,
+    private ngZone: NgZone
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
@@ -62,7 +67,15 @@ export class SignupEmailPasswordPage implements OnInit {
         templateOptions: {
           type: 'password',
           label: 'Password',
-          placeHolder: 'Enter Password'
+          placeHolder: 'Enter Password',
+          showIcon: {
+            show: true,
+            image: {
+                active: 'assets/imgs/eye.svg',
+                inactive: 'assets/imgs/eye-off.svg'
+            },
+            direction: 'right'
+          },
         },
         validations: [{
           type: FieldConfigValidationType.REQUIRED,
@@ -77,6 +90,14 @@ export class SignupEmailPasswordPage implements OnInit {
           type: 'password',
           label: 'Confirm Password',
           placeHolder: 'Re-enter the password',
+          showIcon: {
+            show: true,
+            image: {
+                active: 'assets/imgs/eye.svg',
+                inactive: 'assets/imgs/eye-off.svg'
+            },
+            direction: 'right'
+          },
         },
         validations: [{
           type: FieldConfigValidationType.REQUIRED,
@@ -93,22 +114,23 @@ export class SignupEmailPasswordPage implements OnInit {
 
   contactTypeChange() {
     if (this.contactType === 'email') {
-      this.emailPasswordConfig[0] = {
-        code: 'email',
-        type: 'input',
-        templateOptions: {
-          type: 'email',
-          label: '',
-          placeHolder: 'Enter Email Address',
-        },
-        validations: [{
-          type: FieldConfigValidationType.REQUIRED,
-          value: null,
-          message: 'Please enter email address'
-        }]
-      }
+      this.ngZone.run(() => {
+        this.emailPasswordConfig[0] = {
+          code: 'email',
+          type: 'input',
+          templateOptions: {
+            type: 'email',
+            label: '',
+            placeHolder: 'Enter Email Address',
+          },
+          validations: [{
+            type: FieldConfigValidationType.REQUIRED,
+            value: null,
+            message: 'Please enter email address'
+          }]
+        }
+      })
     } else if (this.contactType === 'phone') {
-
       this.emailPasswordConfig[0] = {
         code: 'phone',
         type: 'input',
@@ -132,9 +154,11 @@ export class SignupEmailPasswordPage implements OnInit {
     console.log(this.emailPasswordConfig);
 
   }
+
   back() {
-   // this.triggerPrev.emit();
+   this.location.back()
   }
+  
   async continue() {
       if (this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.loader = await this.commonUtilService.getLoader();
@@ -207,7 +231,7 @@ export class SignupEmailPasswordPage implements OnInit {
               userData: this.userData
             }
           };
-          this.router.navigate(['otp'], navigationExtras);
+          this.router.navigate([RouterLinks.OTP], navigationExtras);
           // if (this.contactType === ProfileConstants.CONTACT_TYPE_PHONE) {
           //   this.popOverCtrl.dismiss({ isEdited: true, value: this.userData.phone });
           // } else {
@@ -228,16 +252,17 @@ export class SignupEmailPasswordPage implements OnInit {
 
   onFormEmailPasswordChange(value: any) {
     console.log('onFormEmailPasswordChange')
-    this.errorConfirmPassword = false;
     this.userData['contactInfo'] = value;
     this.userData['contactInfo']['type'] = this.contactType;
-    if (value.confirmPassword && value.confirmPassword !== value.password) {this.errorConfirmPassword = true;}
+    this.errorConfirmPassword = value.confirmPassword !== value.password
     console.log(value)
   }
   statusChanges(event) {
     this.isFormValid = event.isValid;
   }
 
-  redirectToLogin() {}
+  redirectToLogin() {
+    this.router.navigate([RouterLinks.SIGN_IN]);
+  }
 
 }

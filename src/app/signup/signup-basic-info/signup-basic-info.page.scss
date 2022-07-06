@@ -89,6 +89,9 @@ ion-datetime {
   a {
     color: #005A9E;
   }
+  label {
+    margin-bottom: 0!important;
+  }
 }
 
 ion-slides {
@@ -101,6 +104,7 @@ ion-slides {
 .yob-info {
   border: 1px solid #999999 !important;
   border-radius: 22px;
+  padding-left: 0.75rem !important;
 }
 
 .btn-info{

@@ -127,15 +127,15 @@ const routes: Routes = [
   },
   { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
   {
-    path: 'signup-basic-info',
+    path: RouterLinks.SIGNUP_BASIC,
     loadChildren: './signup/signup-basic-info/signup-basic-info.module#SignupBasicInfoPageModule'
   },
   {
-    path: 'signup-email',
+    path: RouterLinks.SIGNUP_EMAIL,
     loadChildren: './signup/signup-email-password/signup-email-password.module#SignupEmailPasswordPageModule'
   },
   {
-    path: 'otp',
+    path: RouterLinks.OTP,
     loadChildren: './signup/otp/otp.module#OtpPageModule'
   }
 

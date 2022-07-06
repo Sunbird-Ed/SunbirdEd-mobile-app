@@ -43,7 +43,7 @@
     </table>
   </div>
   <div class="center">
-    <h5>OTP is sent to ******8902</h5>
+    <h5>OTP is sent to {{contactNumber}}</h5>
     <span>it is valid for 30 minutes</span>
     <p>Parent/Guardian should enter the OTP</p>
   </div>
@@ -58,25 +58,25 @@
       Please enter OTP
     </div>
     <ion-item lines="none">
-      <ion-checkbox slot="start" name="agreement"></ion-checkbox>
+      <ion-checkbox slot="start" name="agreement" (ionChange)="changeEvent($event)"></ion-checkbox>
       <ion-text class="accepttext">As a parent/guardian I understand & <a href="#">Accept the DIKSHA Terms of Use</a>
         and
         agree my child to register on DIKSHA with the given information.
       </ion-text>
     </ion-item>
-    <ion-row class="ion-justify-content-end prb-3">
+    <ion-row class="ion-justify-content-end prb-3 pb-30">
       <ion-col size="6" class="flex">
         <ion-button (click)="back()" color="light" shape="round">
           <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
         </ion-button>
-        <ion-button expand="block" [ngStyle]="{'background-color':btnColor}" (click)="continue()">
+        <ion-button expand="block" [ngStyle]="{'background-color':btnColor}" [disabled]="otpInfoForm.value.otp && !acceptAgreement" (click)="continue()">
           {{'FRMELEMNTS_LBL_CONTINUE' | translate}} <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end">
           </ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>
   </form>
-  <div class="center pb-40">
+  <div class="center pb-60">
     <ion-button fill="clear" (click)="resendOTP();" [disabled]="!enableResend">{{'RESEND_OTP' | translate}}
     </ion-button>
   </div>

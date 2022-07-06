@@ -4,7 +4,7 @@
       <div class="logos">
         <img src="assets/imgs/ic_launcher.png" alt="app">
       </div>
-      <h1 class="title">Welcome to Sunbird</h1>
+      <h1 class="title">{{'APP_TITLE' | translate:{'%s': appName} }}</h1>
       <h5 class="subtitle">Register on Sunbird</h5>
     </div>
 
@@ -28,7 +28,7 @@
     <div style="padding: 1rem;">
       <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" (click)="continue()"
         [disabled]="!personalInfoForm.valid">
-        <span style="col">Continue</span>
+        <span>{{'CONTINUE' | translate}}</span>
          <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end"></ion-icon>
       </ion-button>
     </div>
@@ -38,6 +38,6 @@
 <div class="footer">
   <label>Already have an account?</label>
   <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
-    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()"
+    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()" 
     type="submit">Login</button>
 </div>

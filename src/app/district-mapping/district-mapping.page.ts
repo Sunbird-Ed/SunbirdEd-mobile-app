@@ -237,8 +237,7 @@ export class DistrictMappingPage implements OnDestroy {
                 userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid}
             }
           };
-          console.log('...............', navigationExtras);
-          this.router.navigate(['signup-email'], navigationExtras);
+          this.router.navigate([RouterLinks.SIGNUP_EMAIL], navigationExtras);
       } else {
         if (this.isGoogleSignIn) {
           req['name'] = this.userData.name;
@@ -668,6 +667,6 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   redirectToLogin() {
-    console.log('.............................')
+    this.router.navigate([RouterLinks.SIGN_IN]);
   }
 }

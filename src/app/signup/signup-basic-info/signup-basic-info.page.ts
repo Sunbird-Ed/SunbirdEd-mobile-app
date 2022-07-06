@@ -15,6 +15,8 @@ export class SignupBasicInfoPage implements OnInit {
   date: any = new Date().toISOString();
   currentYear: any = (new Date()).getFullYear();
   personalInfoForm: FormGroup;
+  btnColor = '#8FC4FF';
+  appName = "";
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -26,7 +28,8 @@ export class SignupBasicInfoPage implements OnInit {
     this.initializeForm();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.appName = await this.commonUtilService.getAppName();
     this.initiateYearSelecter();
   }
 
@@ -66,4 +69,7 @@ export class SignupBasicInfoPage implements OnInit {
     });
   }
 
+  redirectToLogin() {
+    this.router.navigate([RouterLinks.SIGN_IN]);
+  }
 }
