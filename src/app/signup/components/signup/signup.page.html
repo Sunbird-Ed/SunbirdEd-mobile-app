@@ -1,0 +1,22 @@
+<ion-content fullscreen scroll-y="true">
+  <ng-container [ngSwitch]="Stage">
+    <app-signup-basic-info *ngSwitchCase="signUpStage.BASIC_INFO" (subformInitialized)="submitForm('basicInfo', $event)"
+      (triggerNext)="nextStage()">
+    </app-signup-basic-info>
+    <app-signup-onboarding-info *ngSwitchCase="signUpStage.ONBOARDING_INFO"
+      (subformInitialized)="submitForm('onboardInfo', $event)" (triggerNext)="nextStage()" (triggerPrev)="prevStage()">
+    </app-signup-onboarding-info>
+    <!-- <app-district-mapping *ngSwitchCase="signUpStage.ONBOARDING_INFO" [signintype]="datapass"></app-district-mapping> -->
+    <app-signup-email-password *ngSwitchCase="signUpStage.EMAIL_PASSWORD"
+      (subformInitialized)="submitForm('emailPassInfo', $event)" (triggerNext)="nextStage()"
+      (triggerPrev)="prevStage()">
+    </app-signup-email-password>
+    <app-otp *ngSwitchCase="signUpStage.OTP" (subformInitialized)="submitForm('otp', $event)"
+      (triggerNext)="nextStage()" (triggerPrev)="prevStage()"></app-otp>
+  </ng-container>
+  <div class="footer">
+    <ion-text class="ion-text-center">
+      Aleardy have an account? <a (click)="gotoLogin()" class="bold">LOGIN</a>
+    </ion-text>
+  </div>
+</ion-content>

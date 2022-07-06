@@ -1,38 +1,38 @@
 @import "src/assets/styles/_variables.scss";
 @import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile.scss';
 
-html[data-theme="JOYFUL"]{
+html[data-theme="JOYFUL"] {
 
-  --app-primary:#00458F;
-  --app-primary-medium:#007AFF;
-  --app-primary-light-2:#94CCF5;
-  --app-primary-light:#C6E7FF;
-  --app-primary-background:#E9E8D9;
-  --app-primary-header:#FFD954;
-  --app-primary-header-light:#FFE487;
-  --app-secondary-background:#F2F2EA;
-  --app-tertiary:#6236FF;
-  --app-tertiary-light:#E0E1FD;
-  --app-tertiary-background:#F3F7FB;
+  --app-primary: #00458F;
+  --app-primary-medium: #007AFF;
+  --app-primary-light-2: #94CCF5;
+  --app-primary-light: #C6E7FF;
+  --app-primary-background: #E9E8D9;
+  --app-primary-header: #FFD954;
+  --app-primary-header-light: #FFE487;
+  --app-secondary-background: #F2F2EA;
+  --app-tertiary: #6236FF;
+  --app-tertiary-light: #E0E1FD;
+  --app-tertiary-background: #F3F7FB;
   --app-quaternary-medium: #FF794A;
   --app-quaternary-light: #FDF0E4;
 
-  --joyful-light-yellow:#F9FFBE; // take it out
-  --joyful-light-blue:#DAECFF; // take it out
+  --joyful-light-yellow: #F9FFBE; // take it out
+  --joyful-light-blue: #DAECFF; // take it out
 
-  --app-white:#FFFFFF;
-  --app-black:#000000; // remove
-  --app-dark-gray:#222222;
-  --app-gray:#333333;
-  --app-medium-gray:#4A4A4A;
-  --app-light-gray:#555;
-  --app-lighter-gray:#cccccc;
+  --app-white: #FFFFFF;
+  --app-black: #000000; // remove
+  --app-dark-gray: #222222;
+  --app-gray: #333333;
+  --app-medium-gray: #4A4A4A;
+  --app-light-gray: #555;
+  --app-lighter-gray: #cccccc;
 
-  --app-brown:#4F2C0D;
-  --app-green:#008840;
-  --app-light-green:#BFE1CF; // take it out
+  --app-brown: #4F2C0D;
+  --app-green: #008840;
+  --app-light-green: #BFE1CF; // take it out
 
-  --app-shadow:rgba(0,0,0,0.1);
+  --app-shadow: rgba(0, 0, 0, 0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
   --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
@@ -40,8 +40,9 @@ html[data-theme="JOYFUL"]{
   ion-toolbar {
     --background: var(--app-primary-header);
     border-bottom-left-radius: 20px;
-    ion-buttons{
-      ion-button{
+
+    ion-buttons {
+      ion-button {
         --background: var(--app-primary-header) !important;
         --color: var(--app-primary) !important;
         box-shadow: none !important;
@@ -53,47 +54,54 @@ html[data-theme="JOYFUL"]{
     background: var(--app-primary-background) !important;
   }
 
-  ion-button{
+  ion-button {
     --background: var(--app-primary) !important;
     --color: var(--app-white) !important;
     --border-radius: 20px !important;
     --border-color: var(--app-primary) !important;
-    button{
+
+    button {
       box-shadow: var(--button-style-shadow) !important;
     }
   }
 
-  ion-button.button-clear{
+  ion-button.button-clear {
     --background: transparent !important;
     --color: var(--app-primary) !important;
   }
 
-  button{
+  button {
     border-radius: 20px !important;
     color: var(--app-white);
     // background-color: var(--app-primary) !important;
   }
 
-  input, textarea, ion-input, ion-textarea {
+  input,
+  textarea,
+  ion-input,
+  ion-textarea {
     border-radius: 16px !important;
   }
 
-  ion-list{
+  ion-list {
     background: var(--app-primary-background) !important;
   }
 
   ion-item {
     --background: var(--app-primary-background);
-    ion-label{
+
+    ion-label {
       color: var(--app-light-gray) !important;
       font-weight: bold !important;
     }
-    ion-select{
+
+    ion-select {
       border: none !important;
       border-bottom: 1px solid var(--app-light-gray) !important;
       color: var(--app-gray) !important;
       padding-left: 0 !important;
-      .select-text{
+
+      .select-text {
         color: var(--app-white) !important;
         --color: var(--app-white) !important;
       }
@@ -105,70 +113,83 @@ html[data-theme="JOYFUL"]{
     --color: var(--app-gray) !important;
   }
 
-  ion-card, button{
+  ion-card,
+  button {
     box-shadow: var(--button-style-shadow) !important;
   }
 
-  ion-back-button{
+  ion-back-button {
     box-shadow: none !important;
-    button{
+
+    button {
       box-shadow: none !important;
     }
   }
 
-  ion-alert{ // EXCEPTION
-    [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md{
+  ion-alert {
+
+    // EXCEPTION
+    [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md {
       border-color: var(--app-primary) !important;
       background-color: var(--app-primary) !important;
     }
 
-    [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md{
+    [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
       border-color: var(--app-primary) !important;
-      .alert-radio-inner.sc-ion-alert-md{
+
+      .alert-radio-inner.sc-ion-alert-md {
         background-color: var(--app-primary) !important;
       }
     }
+
     button {
       background-color: var(--app-primary) !important;
       color: var(--app-white) !important;
     }
   }
 
-  ion-card{
+  ion-card {
     border-radius: 16px !important;
     box-shadow: var(--button-style-shadow) !important;
     background-color: var(--app-white);
+
     &.selected {
-      border:3px solid var(--app-primary) !important;
+      border: 3px solid var(--app-primary) !important;
     }
   }
 
-  ion-title{
+  ion-title {
     color: var(--app-primary) !important;
   }
 
   // SelectBox popup multi select styles
-  .select-box.select-alert, .ftue-changes.select-alert {
+  .select-box.select-alert,
+  .ftue-changes.select-alert {
     .alert-button {
       border-color: var(--app-primary) !important;
       border-radius: 20px !important;
       text-transform: none;
     }
+
     .alert-button:first-child:not(:only-child) {
       background: transparent !important;
       color: var(--app-primary) !important;
     }
+
     .alert-button:last-child:not(:only-child) {
       background: var(--app-primary) !important;
       color: var(--app-white) !important;
     }
-    .alert-wrapper{
+
+    .alert-wrapper {
       background-color: var(--app-secondary-background);
       border-radius: 1rem 1rem 0 0;
-      button{
+
+      button {
         text-transform: none;
       }
     }
+
     .alert-tappable {
       box-shadow: none !important;
       background-color: transparent !important;
@@ -176,8 +197,8 @@ html[data-theme="JOYFUL"]{
   }
 
   // Courses Filter
-  .resource-filter{
-    .popover-content{
+  .resource-filter {
+    .popover-content {
       border-radius: 16px 16px 0 0;
       background-color: var(--app-secondary-background) !important;
     }
@@ -190,20 +211,22 @@ html[data-theme="JOYFUL"]{
     color: var(--app-white) !important;
   }
 
-  .sb-btn-primary-outline{
+  .sb-btn-primary-outline {
     color: var(--app-primary) !important;
     background-color: var(--app-white) !important;
   }
-  app-user-home, app-discover {
+
+  app-user-home,
+  app-discover {
     sb-library-cards-hlist {
-      .sb-btn-outline-secondary{
+      .sb-btn-outline-secondary {
         background-color: transparent !important;
         box-shadow: none !important;
       }
     }
-    
+
     sb-course-cards-hlist {
-      .sb-btn-outline-secondary{
+      .sb-btn-outline-secondary {
         background-color: transparent !important;
         box-shadow: none !important;
       }
@@ -215,52 +238,56 @@ html[data-theme="JOYFUL"]{
     background-color: var(--app-white) !important;
   }
 
-  .sb-btn-outline-secondary{
+  .sb-btn-outline-secondary {
     background-color: var(--app-white) !important;
     color: var(--app-primary) !important;
   }
 
-  .sb--card{
+  .sb--card {
     box-shadow: var(--block-style-shadow);
   }
 
-  .sb--card__title{
+  .sb--card__title {
     color: var(--app-gray) !important;
   }
 
-  .sb--card__img{
+  .sb--card__img {
     border-radius: 0.5rem;
   }
 
-  .sb--card--course{
+  .sb--card--course {
     border-radius: 1rem !important;
   }
 
-  sb-course-cards-hlist, sb-library-cards-stack{
-    .title{
+  sb-course-cards-hlist,
+  sb-library-cards-stack {
+    .title {
       color: var(--app-gray) !important;
     }
   }
 
-  sb-course-cards-hlist{
-    .sb-btn-outline-secondary{
+  sb-course-cards-hlist {
+    .sb-btn-outline-secondary {
       border: none !important;
     }
-    .sb--card--container{
+
+    .sb--card--container {
       margin: 2px 1rem 10px 10px !important;
     }
   }
 
-  sb-library-cards-stack{
-    .header{
-      i{
+  sb-library-cards-stack {
+    .header {
+      i {
         display: none;
       }
     }
-    .body{
+
+    .body {
       box-shadow: none !important;
     }
-    .sbbtn{
+
+    .sbbtn {
       border-radius: 3rem !important;
       background-color: transparent !important;
       color: var(--app-primary) !important;
@@ -274,90 +301,101 @@ html[data-theme="JOYFUL"]{
   }
 
   // sb-group-card
-  sb-group-card{
-    .sb-label-badge{
+  sb-group-card {
+    .sb-label-badge {
       border-radius: 16px !important;
       box-shadow: var(--button-style-shadow) !important;
     }
   }
 
-  sb-member-card{
-    .sb-members-list-item{
-      .status{
+  sb-member-card {
+    .sb-members-list-item {
+      .status {
         border-radius: 16px !important;
         box-shadow: var(--button-style-shadow);
       }
     }
-    .sb-member__img{
+
+    .sb-member__img {
       box-shadow: var(--button-style-shadow) !important;
     }
   }
 
   // application-header Component
-  app-application-header{
-    .sb-menu-list{
+  app-application-header {
+    .sb-menu-list {
       background-color: var(--app-white) !important;
       border-radius: 16px 16px 0 0;
     }
-    .sb-menu-item{
+
+    .sb-menu-item {
       color: var(--app-primary);
     }
-    .sb-menu-item-language{
+
+    .sb-menu-item-language {
       color: var(--app-gray) !important;
     }
-    ion-content{
+
+    ion-content {
       --background: var(--app-white) !important;
     }
-    ion-item{
+
+    ion-item {
       --background: var(--app-white) !important;
     }
-    .menu-section{
+
+    .menu-section {
       background-color: var(--app-primary-background) !important;
-      .menu-container{
+
+      .menu-container {
         --background: var(--app-primary-background) !important;
         background-color: var(--app-primary-background) !important;
         padding-bottom: 8px;
-        .user-container{
+
+        .user-container {
           background-color: var(--app-primary-background) !important;
         }
-        .another-user-title{
+
+        .another-user-title {
           border-radius: 20px;
           margin: 0 8px;
           box-shadow: var(--button-style-shadow) !important;
         }
       }
     }
-    .side-menu-footer{
+
+    .side-menu-footer {
       border-radius: 16px 16px 0 0;
     }
 
   }
 
   // language-settings page
-  page-language-settings{
-      .language-card {
-        &.selected {
-          .language-selection {
-            background-color: var(--app-primary) !important;
-          }
-          .label-text {
-            color: var(--app-white) !important;
-          }
+  page-language-settings {
+    .language-card {
+      &.selected {
+        .language-selection {
+          background-color: var(--app-primary) !important;
+        }
+
+        .label-text {
+          color: var(--app-white) !important;
         }
       }
+    }
   }
 
   // user-type-selection page
-  app-profile-settings{
-    .title{
+  app-profile-settings {
+    .title {
       color: var(--app-primary) !important;
     }
 
-    .qr-btn{
+    .qr-btn {
       background-color: var(--app-white) !important;
     }
 
-    .board-btn-text{
+    .board-btn-text {
       color: var(--app-primary) !important;
     }
 
@@ -367,7 +405,7 @@ html[data-theme="JOYFUL"]{
       }
     }
 
-    .board-select-dummy{
+    .board-select-dummy {
       padding: 16px;
       // ion-item{
       //   --background: var(--app-white) !important;
@@ -387,12 +425,14 @@ html[data-theme="JOYFUL"]{
       //   color: red !important;
       //   opacity: 1;
       // }
-      ion-item{
+      ion-item {
         display: none !important;
       }
-      .ps-board{
+
+      .ps-board {
         display: block !important;
-        .ps-board-label{
+
+        .ps-board-label {
           color: var(--app-primary);
           padding: 0.5rem;
         }
@@ -401,32 +441,33 @@ html[data-theme="JOYFUL"]{
   }
 
   // District mapping
-  app-district-mapping{
-    .heading{
+  app-district-mapping {
+    .heading {
       color: var(--app-primary) !important;
     }
 
-    .block-button{
+    .block-button {
       background-color: var(--app-primary) !important;
       border-radius: 20px !important;
     }
 
-    ion-item{
+    ion-item {
       --border-width: 0 !important;
     }
 
-    form{
+    form {
       padding-inline-start: 0 !important;
       padding-inline-end: 0 !important;
     }
 
-    .name{
-      .name-feild{
+    .name {
+      .name-feild {
         background-color: transparent;
         border-radius: 0 !important;
         padding-left: 0 !important;
       }
-      .label{
+
+      .label {
         padding-left: 0 !important;
         color: var(--app-light-gray);
         font-weight: bold;
@@ -435,20 +476,22 @@ html[data-theme="JOYFUL"]{
   }
 
   // Resourses page
-  app-resources{
-    sb-library-filters{
-      .sb-pills-container{
+  app-resources {
+    sb-library-filters {
+      .sb-pills-container {
         background: transparent !important;
       }
 
-      .sb-medium-pills-container, .sb-grade-pills-container {
-        .pill{
+      .sb-medium-pills-container,
+      .sb-grade-pills-container {
+        .pill {
           border-color: var(--app-white) !important;
           color: var(--app-gray) !important;
           box-shadow: var(--button-style-shadow) !important;
           margin-right: 1rem !important;
         }
-        .pill.active{
+
+        .pill.active {
           color: var(--app-white) !important;
           background-color: var(--app-primary) !important;
           border-color: var(--app-primary) !important;
@@ -456,18 +499,18 @@ html[data-theme="JOYFUL"]{
       }
 
       .sb-medium-pills-container {
-        .pill{
+        .pill {
           border-radius: 4px !important;
         }
       }
     }
 
-    .sb-textbook-container{
+    .sb-textbook-container {
       margin-bottom: 20px !important;
     }
 
-    .sb-recenlty-viewed-title{
-      .sb-btn{
+    .sb-recenlty-viewed-title {
+      .sb-btn {
         background-color: var(--app-white) !important;
         color: var(--app-primary) !important;
         border-color: var(--app-white) !important;
@@ -476,13 +519,15 @@ html[data-theme="JOYFUL"]{
   }
 
   // Courses page
-  app-courses{
-    .course-grid-bg{
+  app-courses {
+    .course-grid-bg {
       background-color: var(--app-secondary-background) !important;
     }
-    .enrolled-course-bg{
+
+    .enrolled-course-bg {
       background: transparent !important;
-      sb-course-cards-hlist > .layout-course > .header > .title{
+
+      sb-course-cards-hlist>.layout-course>.header>.title {
         color: var(--app-gray) !important;
         padding-left: 1rem !important;
       }
@@ -490,68 +535,79 @@ html[data-theme="JOYFUL"]{
   }
 
   // View-more-activity page
-  app-view-more-activity{
-    .view-more-course-bg{
+  app-view-more-activity {
+    .view-more-course-bg {
       // background: var(--app-primary-background) !important;
       background: transparent !important;
     }
 
-    .title, .count-text{
+    .title,
+    .count-text {
       color: var(--app-gray) !important;
     }
   }
 
   // Sign-in-card page
-  app-sign-in-card{
-    .sign-in-card-title{
+  app-sign-in-card {
+    .sign-in-card-title {
       color: var(--app-gray) !important;
     }
-    .sign-in-block{
+
+    .sign-in-block {
       box-shadow: 0 20px 40px -10px #D8D8D8 !important;
-      ion-button{
+
+      ion-button {
         --border-radius: 100px !important;
       }
     }
 
-    ion-card{
+    ion-card {
       text-align: center;
     }
-    .sign-in-card-text{
+
+    .sign-in-card-text {
       font-weight: normal !important;
     }
   }
 
   // enrolled-course-details page
-  app-enrolled-course-details-page{
-    .enrolled-course-card-button{
+  app-enrolled-course-details-page {
+    .enrolled-course-card-button {
       background-color: var(--app-primary) !important;
       border-radius: 50px !important;
       margin: 1rem 0 1rem !important;
     }
-    .view-credits{
-      strong{
+
+    .view-credits {
+      strong {
         color: var(--app-dark-gray) !important;
       }
     }
-    .sb-dt-card-actions{
-      .card-button{
+
+    .sb-dt-card-actions {
+      .card-button {
         box-shadow: none !important;
       }
-      .sb-course-progress-container{
+
+      .sb-course-progress-container {
         background-color: var(--joyful-light-yellow) !important;
         border-radius: 1rem;
       }
     }
-    .enrolled-course-container{
-      ion-card{
+
+    .enrolled-course-container {
+      ion-card {
         background-color: var(--joyful-light-blue) !important;
       }
     }
-    .certificate-container{
+
+    .certificate-container {
       border-radius: 0.5rem;
       padding: 0.5rem;
     }
-    .sb-course-complete-container, .sb-batch-end-container{
+
+    .sb-course-complete-container,
+    .sb-batch-end-container {
       border-radius: 1rem;
     }
 
@@ -563,82 +619,99 @@ html[data-theme="JOYFUL"]{
   }
 
   // guest-profile page
-  app-guest-profile{
-    .profile-info{
+  app-guest-profile {
+    .profile-info {
       background-color: transparent;
       border-radius: 0 0 0 16px;
       margin-top: 55px !important;
     }
-    .details-container{
+
+    .details-container {
       margin: 8px;
       background-color: var(--app-white);
       border-radius: 16px;
     }
-    .signin-card-bg{
+
+    .signin-card-bg {
       background-color: transparent !important;
     }
   }
 
   // profile-page
-  app-profile{
-    .basic-profile-details{
+  app-profile {
+    .basic-profile-details {
       background-color: transparent;
       margin-top: 55px;
-      .profile-avatar{
+
+      .profile-avatar {
         background-color: var(--app-white);
-      }  
+      }
     }
-    .roles-container{
-      .roles{
+
+    .roles-container {
+      .roles {
         margin-bottom: 4px !important;
         color: var(--app-primary) !important;
         border: 1px solid var(--app-primary) !important;
         box-shadow: var(--button-style-shadow) !important;
       }
     }
-    .self-declare-btn{
+
+    .self-declare-btn {
       margin: 8px !important;
       padding: 8px;
       background-color: var(--app-light-green);
       border-radius: 16px;
-      ion-button{
+
+      ion-button {
         --background: var(--app-green) !important;
       }
     }
-    .contacts{
+
+    .contacts {
       margin: 8px;
       background-color: var(--app-white) !important;
       border-radius: 16px;
-      .email ,.phone{
+
+      .email,
+      .phone {
         border: 1px solid var(--app-primary) !important;
         box-shadow: var(--button-style-shadow) !important;
-        .icon{
+
+        .icon {
           color: var(--app-primary);
         }
-        .value{
+
+        .value {
           color: var(--app-gray);
         }
       }
-      .email.light ,.phone.light{
-        .icon{
+
+      .email.light,
+      .phone.light {
+        .icon {
           color: var(--app-light-gray);
         }
-        .value{
+
+        .value {
           color: var(--app-light-gray);
         }
       }
     }
-    .school-details{
+
+    .school-details {
       margin: 8px;
       border-radius: 16px;
       background-color: var(--app-white) !important;
     }
-    .self-declare-teacher-details{
+
+    .self-declare-teacher-details {
       margin: 8px;
       border-radius: 16px;
       background-color: var(--app-white) !important;
       color: var(--app-gray) !important;
-      ion-button{
+
+      ion-button {
         --color: var(--app-white) !important;
         --background: var(--app-primary) !important;
         border-radius: 1rem;
@@ -646,21 +719,25 @@ html[data-theme="JOYFUL"]{
       }
     }
 
-    .bottom-block{
+    .bottom-block {
       margin: 0.5rem;
       border-radius: 1rem;
       padding-bottom: 0.5rem;
-      .trainings{
-        .heading{
+
+      .trainings {
+        .heading {
           border-radius: 1rem;
-          .refresh-icon { 
+
+          .refresh-icon {
             width: 2.5rem !important;
             height: 2.5rem !important;
           }
         }
-        .content{
+
+        .content {
           border-radius: 1rem !important;
-          .heading{
+
+          .heading {
             border-radius: 1rem 1rem 0 0 !important;
           }
         }
@@ -669,62 +746,72 @@ html[data-theme="JOYFUL"]{
   }
 
   // collection-details-etb page
-  app-collection-detail-etb{
-    .sb-dt-card{
+  app-collection-detail-etb {
+    .sb-dt-card {
       margin: 0 0 8px;
       background-color: var(--app-white);
       border-radius: 16px;
       box-shadow: var(--button-style-shadow) !important;
-      .sb-btn-tile{
+
+      .sb-btn-tile {
         box-shadow: none !important;
       }
-      .img-container{
+
+      .img-container {
         border-radius: 8px !important;
       }
     }
 
-    .collection-etb-filter{
+    .collection-etb-filter {
       .sb-chapter-dd {
         border-radius: 16px;
         margin-bottom: 8px;
         box-shadow: var(--button-style-shadow) !important;
       }
+
       .sb-slider-pills-container {
         border-radius: 1.5rem;
         // overflow: hidden !important;
         margin-bottom: 8px;
         background: var(--app-secondary-background) !important;
-        .sb-pills-container{
-          .pill{
+
+        .sb-pills-container {
+          .pill {
             min-width: 5rem;
             box-shadow: var(--button-style-shadow) !important;
             color: var(--app-dark-gray) !important;
-            .img-align{
+
+            .img-align {
               margin-top: 0 !important;
             }
-            .allign-middle{
+
+            .allign-middle {
               width: 100%;
             }
           }
-          .pill.active{
+
+          .pill.active {
             color: var(--app-white) !important;
           }
         }
       }
+
       .sticky-header-title-box {
         --background: var(--app-secondary-background) !important;
       }
     }
 
-    .textbook-accordian{
+    .textbook-accordian {
       background-color: transparent;
       padding: 0 0.5rem;
-      sb-accordion-header{
-        .sbaccordion__panel-header{
+
+      sb-accordion-header {
+        .sbaccordion__panel-header {
           border: none !important;
           background-color: var(--app-secondary-background) !important;
           box-shadow: var(--block-style-shadow) !important;
         }
+
         .expansion-indicator {
           width: 1.5rem;
           height: 1.5rem;
@@ -732,101 +819,119 @@ html[data-theme="JOYFUL"]{
           border-radius: 5rem;
           text-align: center;
           box-shadow: var(--button-sm-style-shadow);
+
           svg {
             width: 80%;
             fill: var(--app-gray);
           }
         }
       }
-      .accordion-item-header-expanded{
-        .sbaccordion__panel-header{
+
+      .accordion-item-header-expanded {
+        .sbaccordion__panel-header {
           border-radius: 1.5rem 1.5rem 0 0 !important;
         }
       }
-      .accordion-item-header-collapsed{
-        .sbaccordion__panel-header{
+
+      .accordion-item-header-collapsed {
+        .sbaccordion__panel-header {
           border-radius: 1.5rem !important;
         }
       }
-      sb-accordion-body{
-        .sbaccordion__panel-content{
+
+      sb-accordion-body {
+        .sbaccordion__panel-content {
           border: none !important;
           background-color: var(--app-secondary-background) !important;
           border-radius: 0 0 1rem 1rem;
           padding: 0.5rem !important;
         }
-        .sbaccordion__panel-content > div{
+
+        .sbaccordion__panel-content>div {
           background-color: var(--app-white);
           padding: 0.5rem;
           border-radius: 1rem;
           box-shadow: var(--button-style-shadow);
         }
       }
-      sb-toc-card{
-        .sbchapter__item{
+
+      sb-toc-card {
+        .sbchapter__item {
           border-radius: 5rem;
           box-shadow: none;
           border: 1px solid var(--app-primary-background);
-          .d-inline-flex{
+
+          .d-inline-flex {
             align-items: center;
           }
         }
-        .sbchapter__item.sbchapter__item--active{
+
+        .sbchapter__item.sbchapter__item--active {
           background-color: var(--app-quaternary-light);
           border-color: var(--app-quaternary-medium);
         }
-        .sbchapter__img{
+
+        .sbchapter__img {
           border-radius: 0.5rem;
           overflow: auto;
         }
       }
-      sb-accordion-item{
-        .sbaccordion{
+
+      sb-accordion-item {
+        .sbaccordion {
           box-shadow: none !important;
-          .sbaccordion__panel{
+
+          .sbaccordion__panel {
             margin-bottom: 1rem !important;
           }
         }
       }
-      .sbchapter__play__btn{
+
+      .sbchapter__play__btn {
         color: var(--app-primary) !important;
         margin-left: auto;
       }
     }
 
-    .credit-label-padding{
+    .credit-label-padding {
       background-color: var(--app-secondary-background) !important;
     }
 
-    .drop-arrow{
+    .drop-arrow {
       box-shadow: var(--button-style-shadow);
     }
-    .sb-topic-text{
+
+    .sb-topic-text {
       color: var(--app-brown) !important;
     }
-    .sb-chapter-dd{
+
+    .sb-chapter-dd {
       margin-top: 0.5rem;
     }
   }
+
   // app-collection-child component
-  app-collection-child{
-    .etb-card-item-play-container{
-      ion-button{
+  app-collection-child {
+    .etb-card-item-play-container {
+      ion-button {
         --background: var(--app-white) !important;
         height: 2.5rem;
       }
     }
-    .sticky-header-title-box{
-      .sb-ftue-design{
+
+    .sticky-header-title-box {
+      .sb-ftue-design {
         margin-bottom: 0.5rem !important;
       }
     }
-    .etb-card-item{
+
+    .etb-card-item {
       padding: 0 0 0 0.5rem !important;
       border-radius: 2rem;
       border-color: var(--app-secondary-background);
-      .image-position{
-        .content-icon{
+
+      .image-position {
+        .content-icon {
           border-radius: 0.5rem;
         }
       }
@@ -834,13 +939,15 @@ html[data-theme="JOYFUL"]{
   }
 
   // header
-  ion-header::after{
+  ion-header::after {
     background-image: none;
   }
+
   .ui-container {
     &::part(scroll) {
       z-index: auto;
     }
+
     &::after {
       content: '';
       width: 100%;
@@ -857,18 +964,21 @@ html[data-theme="JOYFUL"]{
       background-position: bottom center;
     }
   }
-  .backgrond-div::after{
+
+  .backgrond-div::after {
     top: -3.5rem;
   }
-  .ui-content{
+
+  .ui-content {
     z-index: 2;
     position: relative;
   }
 
-  .ps-container{
+  .ps-container {
     .back-btn-container {
       z-index: 2;
-      &::after{
+
+      &::after {
         content: '';
         background-color: var(--app-primary-header) !important;
         width: 100vw;
@@ -879,26 +989,29 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-  .dm-header{
+
+  .dm-header {
     background-color: var(--app-primary-header);
     border-bottom-left-radius: 20px;
   }
+
   .qr-content {
     z-index: 2;
   }
 
-  .sb-slider-pills-container{
+  .sb-slider-pills-container {
     .sb-grade-pills-container {
       background: transparent !important;
     }
-    .sb-medium-pills-container{
+
+    .sb-medium-pills-container {
       background: transparent !important;
     }
   }
 
   // textbook-view-more component
-  app-textbook-view-more{
-    .sb-card-container{
+  app-textbook-view-more {
+    .sb-card-container {
       box-shadow: none !important;
     }
   }
@@ -913,51 +1026,59 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  sb-toc-curriculum{
+  sb-toc-curriculum {
 
-    .sb-curiculum-responsive-grid{
+    .sb-curiculum-responsive-grid {
       padding: 0.5rem 0 1rem !important;
     }
 
-    .sb-curiculum__border{
+    .sb-curiculum__border {
       border-radius: 12px;
       box-shadow: var(--button-style-shadow);
       margin: 0 0 1rem !important;
     }
-    .sb-curiculum{
+
+    .sb-curiculum {
       border: none !important;
       border-radius: 12px !important;
       min-height: 3rem !important;
-      .title{
+
+      .title {
         color: var(--app-primary) !important;
         font-weight: bold;
       }
-      .sb-curiculum__chapter{
+
+      .sb-curiculum__chapter {
         padding-top: 0.5rem !important;
       }
     }
 
-    sb-accordion-item{
-      .sbaccordion{
+    sb-accordion-item {
+      .sbaccordion {
         border-radius: 1rem !important;
         overflow: hidden;
         box-shadow: var(--block-style-shadow) !important;
-        .sbaccordion__panel{
+
+        .sbaccordion__panel {
           margin-bottom: 0 !important;
         }
       }
-      .sbaccordion__panel-content{
+
+      .sbaccordion__panel-content {
         background-color: var(--app-secondary-background) !important;
         border-color: transparent !important;
       }
-      .sbaccordion__panel-header{
+
+      .sbaccordion__panel-header {
         border-color: transparent !important;
       }
     }
-    .sb-content__bar{
+
+    .sb-content__bar {
       border-radius: 1rem;
     }
-    .sbchapter__item{
+
+    .sbchapter__item {
       border-radius: 1rem;
       border-color: transparent !important;
       background: var(--app-white) !important;
@@ -971,27 +1092,33 @@ html[data-theme="JOYFUL"]{
   }
 
   // common-forms component
-  sb-form{
-    sb-multiple-dropdown{
-      .multi-select-section{
-        .placeholder{
+  sb-form {
+    sb-multiple-dropdown {
+      .multi-select-section {
+        .placeholder {
           color: var(--app-light-gray) !important;
           margin-left: 0 !important;
           font-size: 1rem !important;
         }
       }
-      .multi-select-container{
-        sb-caret-down, sb-caret-up{
+
+      .multi-select-container {
+
+        sb-caret-down,
+        sb-caret-up {
           right: 0 !important;
         }
-        ul{
+
+        ul {
           padding-left: 0 !important;
           margin-left: 0 !important;
-          span{
+
+          span {
             font-size: 1rem !important;
           }
         }
-        .list-border{
+
+        .list-border {
           position: relative;
           padding: 0 !important;
           border: none !important;
@@ -999,25 +1126,29 @@ html[data-theme="JOYFUL"]{
         }
       }
 
-      .sb-modal{
+      .sb-modal {
         background-color: var(--app-secondary-background) !important;
         border-radius: 16px 16px 0 0;
-        .sb-form-button{
-          button{
+
+        .sb-form-button {
+          button {
             border: 1px solid var(--app-primary) !important;
             border-radius: 20px !important;
           }
-          .sb-btn-primary-outline{
+
+          .sb-btn-primary-outline {
             color: var(--app-primary) !important;
             background-color: var(--app-white) !important;
           }
-          .sb-btn-primary{
+
+          .sb-btn-primary {
             color: var(--app-white) !important;
             background-color: var(--app-primary) !important;
           }
         }
 
       }
+
       .cfe-multiselect-modal-item {
         .container input:checked~.checkmark {
           background-color: var(--app-primary) !important;
@@ -1035,26 +1166,32 @@ html[data-theme="JOYFUL"]{
           padding: 8px 16px 4px 0 !important;
           border-radius: 0 !important;
         }
-        input:focus{
+
+        input:focus {
           outline: none !important;
           border-bottom: 0.5px solid var(--app-green) !important;
         }
-        input:blur{
+
+        input:blur {
           outline: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
         }
+
         input::placeholder {
           color: var(--app-light-gray);
           margin-left: 0 !important;
           font-size: 1rem !important;
           font-weight: normal !important;
         }
-        input{
+
+        input {
           font-size: 1rem !important;
         }
-        .async-text{
+
+        .async-text {
           border: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
+
           input {
             border: none !important;
             padding-left: 0 !important;
@@ -1063,10 +1200,11 @@ html[data-theme="JOYFUL"]{
       }
     }
 
-    sb-textarea{
-      textarea{
+    sb-textarea {
+      textarea {
         border-radius: 16px !important;
       }
+
       textarea::placeholder {
         color: var(--app-light-gray);
         font-size: 1rem !important;
@@ -1076,38 +1214,45 @@ html[data-theme="JOYFUL"]{
   }
 
   // permission page
-  app-permission{
-    .permission-container{
+  app-permission {
+    .permission-container {
       margin-right: 16px;
     }
   }
 
   // faq-help page
-  app-faq-help{
-    .info-msg{
+  app-faq-help {
+    .info-msg {
       background-color: transparent !important;
     }
-    .panel{
-      .btn, .yesBtn{
+
+    .panel {
+
+      .btn,
+      .yesBtn {
         border-radius: 16px !important;
       }
-      .btn{
+
+      .btn {
         color: var(--app-primary) !important;
       }
-      .yesBtn{
+
+      .yesBtn {
         color: var(--app-green) !important;
       }
-      
-      .panel-collapse{
+
+      .panel-collapse {
         background-color: var(--app-secondary-background) !important;
         border-radius: 0 0 16px 16px;
         margin: 0 8px 8px;
         box-shadow: var(--button-style-shadow);
       }
     }
-    .send-email{
+
+    .send-email {
       background-color: transparent !important;
-      .report-button{
+
+      .report-button {
         border-radius: 20px !important;
         box-shadow: var(--button-style-shadow) !important;
         background-color: var(--app-white) !important;
@@ -1118,7 +1263,11 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-user-home, app-search, app-category-list-page, app-faq-help, app-faq-report-issue {
+  app-user-home,
+  app-search,
+  app-category-list-page,
+  app-faq-help,
+  app-faq-report-issue {
     ion-content:first-child {
       --offset-top: calc(-36px) !important;
 
@@ -1129,112 +1278,125 @@ html[data-theme="JOYFUL"]{
   }
 
   // faq-report-issue page
-  app-faq-report-issue{
-    .initiate-email-info-button{
+  app-faq-report-issue {
+    .initiate-email-info-button {
       background-color: var(--app-white) !important;
-      .submit-button{
+
+      .submit-button {
         border-radius: 20px !important;
         background-color: var(--app-primary) !important;
         box-shadow: var(--button-style-shadow) !important;
       }
-      .invalid-btn{
+
+      .invalid-btn {
         opacity: 0.7;
       }
     }
   }
 
   // my-groups page
-  app-my-groups{
+  app-my-groups {
     .my-cr-bg {
       background: transparent !important;
     }
+
     .my-cr-title {
       color: var(--app-primary) !important;
     }
-    .my-cr-card{
+
+    .my-cr-card {
       border-radius: 16px;
       background-color: var(--app-secondary-background);
       box-shadow: var(--block-style-shadow) !important;
     }
   }
+
   app-create-edit-group .cr-terms-container .cr-terms {
     padding: 14px 0 !important;
   }
-  app-group-details .gd-opts ion-icon{
+
+  app-group-details .gd-opts ion-icon {
     padding: 0 !important;
   }
 
   // my-groups-popover component
-  app-my-groups-popover{
-    .mg-popup-btn{
+  app-my-groups-popover {
+    .mg-popup-btn {
       border-radius: 30px !important;
     }
   }
 
-  .tutorial-popover, .download-popover, .leave-training-popup, .cd-leave-training-popup {
-    .popover-content{
+  .tutorial-popover,
+  .download-popover,
+  .leave-training-popup,
+  .cd-leave-training-popup {
+    .popover-content {
       border-radius: 1rem !important;
     }
   }
 
-  .add-to-group-btn-container{
+  .add-to-group-btn-container {
     .open-btn {
       color: var(--app-primary) !important;
     }
   }
 
   // Group edit delete popup
-  .group-option-popover .popover-content{
+  .group-option-popover .popover-content {
     border-radius: 1rem !important;
     background-color: var(--app-primary-background) !important;
   }
 
-  .enrollement-popover.popover-content{
+  .enrollement-popover.popover-content {
     border-radius: 1rem 1rem 0 0 !important;
   }
 
-  app-group-details{
-    .gd-header{
+  app-group-details {
+    .gd-header {
       padding: 0 8px 8px;
       border-radius: 16px;
       background-color: var(--app-secondary-background) !important;
-      .gd-tab-header{
+
+      .gd-tab-header {
         background-color: var(--app-white) !important;
         border-radius: 24px;
-        .gd-tab:first-child{
+
+        .gd-tab:first-child {
           border-radius: 24px 0 0 24px;
         }
-        .gd-tab:last-child{
+
+        .gd-tab:last-child {
           border-radius: 0 24px 24px 0;
         }
       }
     }
 
-    .gd-tab-member-container{
+    .gd-tab-member-container {
       border-radius: 16px;
       background-color: var(--app-secondary-background) !important;
     }
   }
 
-  app-add-member-to-group{
-    .sb-btn-large.inactive{
+  app-add-member-to-group {
+    .sb-btn-large.inactive {
       background-color: var(--app-light-gray) !important;
     }
   }
 
-  app-activity-details{
-    .ad-member-container{
+  app-activity-details {
+    .ad-member-container {
       border-radius: 16px;
       background-color: var(--app-secondary-background);
-      .activity-toc{
+
+      .activity-toc {
         border-radius: 16px 16px 0 0;
         background-color: var(--app-primary) !important;
       }
     }
   }
 
-  add-activity-to-group{
-    .add-activity-container{
+  add-activity-to-group {
+    .add-activity-container {
       margin: 0 8px;
       padding: 16px 0 8px;
       border-radius: 16px;
@@ -1243,127 +1405,138 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  .sb-popover{
-    .popover-content{
+  .sb-popover {
+    .popover-content {
       border-radius: 16px 16px 0 0;
       box-shadow: var(--button-style-shadow);
     }
 
-    ion-content{
+    ion-content {
       --background: var(--app-secondary-background) !important;
     }
 
-    ion-header{
-      ion-toolbar{
+    ion-header {
+      ion-toolbar {
         --background: var(--app-secondary-background) !important;
         min-height: 3.75rem !important;
         max-height: 3.75rem !important;
       }
     }
 
-    .sb-popover-title{
+    .sb-popover-title {
       color: var(--app-dark-gray) !important;
       padding: 1rem !important;
       font-size: 1.25rem !important;
       text-align: unset !important;
-      ion-icon{
+
+      ion-icon {
         height: 1.875rem;
         width: 3.75rem !important;
         padding: 1rem 0 1rem;
       }
     }
 
-    .sb-popover-footer{
+    .sb-popover-footer {
       background: var(--app-secondary-background) !important;
       align-items: normal !important;
       justify-content: flex-end !important;
 
-      .sb-btn-outline-info{
+      .sb-btn-outline-info {
         background-color: var(--app-white) !important;
         color: var(--app-primary) !important;
       }
 
-      .sb-popover-action-btn{
+      .sb-popover-action-btn {
         height: 2.5rem !important;
       }
     }
   }
 
-  app-manage-user-profiles{
-    .manage-user-section{
+  app-manage-user-profiles {
+    .manage-user-section {
       background-color: var(--app-secondary-background);
       border-radius: 16px;
       padding: 16px 8px;
       box-shadow: var(--block-style-shadow);
     }
-    .manage-user-item{
+
+    .manage-user-item {
       margin-bottom: 8px;
     }
-    .mu-selected-user{
+
+    .mu-selected-user {
       border-radius: 16px;
     }
-    
-    sb-member-card{
-      .sb-members-list-item{
+
+    sb-member-card {
+      .sb-members-list-item {
         border-radius: 16px;
         background-color: var(--app-primary-background);
         box-shadow: var(--button-style-shadow);
       }
     }
 
-    .add-user{
-      .button-outline{
+    .add-user {
+      .button-outline {
         --border-color: transparent !important;
       }
     }
   }
 
-  app-explore-books{
-    form{
-      .search-bar{
+  app-explore-books {
+    form {
+      .search-bar {
         border-radius: 1rem !important;
-        button{
+
+        button {
           box-shadow: none !important;
         }
       }
     }
-    .sb-slider-pills-container{
-      .pill{
+
+    .sb-slider-pills-container {
+      .pill {
         box-shadow: var(--button-style-shadow);
       }
     }
-    .sb-medium-pills-container{
-      .pill{
+
+    .sb-medium-pills-container {
+      .pill {
         border: none !important;
         color: var(--app-primary) !important;
       }
-      .pill.active{
+
+      .pill.active {
         background-color: var(--app-primary) !important;
         color: var(--app-white) !important;
       }
     }
-    .explore-results-section{
+
+    .explore-results-section {
       margin: 1rem;
       border-radius: 1rem;
     }
 
-    ion-button{
+    ion-button {
       border-radius: 1rem 1rem 0 0 !important;
     }
   }
 
-  app-create-edit-group{
-    ion-input, ion-textarea{
+  app-create-edit-group {
+
+    ion-input,
+    ion-textarea {
       background-color: var(--app-white);
     }
   }
 
-  app-enrollment-details{
-    ion-item-group{
-      .subtitle{
+  app-enrollment-details {
+    ion-item-group {
+      .subtitle {
         background-color: var(--app-primary-background) !important;
       }
-      .subtitle.buttontext{
+
+      .subtitle.buttontext {
         --background: var(--app-white) !important;
         color: var(--app-primary) !important;
         box-shadow: var(--button-style-shadow);
@@ -1372,27 +1545,28 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-content-details{
-    .sb-detail-card-info{
-      button{
+  app-content-details {
+    .sb-detail-card-info {
+      button {
         box-shadow: none !important;
       }
     }
   }
 
-  app-course-batches{
-    ion-content{
+  app-course-batches {
+    ion-content {
       --padding-start: 0 !important;
       --padding-end: 0 !important;
     }
 
-    .background-gray{
+    .background-gray {
       background: var(--app-primary-background) !important;
     }
 
-    .batch-list{
+    .batch-list {
       margin: 0.5rem !important;
-      .flex-card-container{
+
+      .flex-card-container {
         background-color: var(--app-white);
         border-radius: 1rem;
         box-shadow: var(--block-style-shadow);
@@ -1400,47 +1574,51 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-content-details{
-    .sb-dt-card{
+  app-content-details {
+    .sb-dt-card {
       border-radius: 0 0 1rem 1rem;
       background-color: var(--app-white);
       box-shadow: var(--button-style-shadow);
     }
-    ion-card{
+
+    ion-card {
       border-radius: 0 !important;
       box-shadow: none !important;
       background-color: transparent;
     }
   }
 
-  app-download-manager{
-    .sb-view-all-items{
+  app-download-manager {
+    .sb-view-all-items {
       border-radius: 0 0 1rem 1rem;
     }
 
-    .sb-card-download-container{
+    .sb-card-download-container {
       border-radius: 1rem;
       overflow: hidden;
-      .img-container{
+
+      .img-container {
         border-radius: 0.5rem;
       }
-      .check-container{
+
+      .check-container {
         background-color: var(--app-secondary-background);
       }
     }
   }
 
-  app-sb-share-popup{
-    ion-list{
+  app-sb-share-popup {
+    ion-list {
       background: var(--app-secondary-background) !important;
     }
-    ion-item{
+
+    ion-item {
       --background: var(--app-secondary-background) !important;
     }
   }
 
-  textbook-toc{
-    ion-card{
+  textbook-toc {
+    ion-card {
       background-color: var(--app-secondary-background) !important;
       margin: 8px !important;
       width: auto !important;
@@ -1448,57 +1626,67 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-rating-alert{
-    .sb-popover-items{
+  app-rating-alert {
+    .sb-popover-items {
       background-color: var(--app-secondary-background) !important;
     }
-    .app-rate-btn{
+
+    .app-rate-btn {
       background-color: transparent !important;
       --box-shadow: var(--button-style-shadow) !important;
     }
-    .app-rate-btn-outline{
+
+    .app-rate-btn-outline {
       --background: var(--app-white) !important;
       --box-shadow: var(--button-style-shadow) !important;
     }
   }
 
-  app-content-rating-alert{
-    .popover-ratings{
+  app-content-rating-alert {
+    .popover-ratings {
       padding: 0 1rem !important;
     }
   }
 
-  app-chapter-details{
-    .cd-header-container{
+  app-chapter-details {
+    .cd-header-container {
       border-radius: 1rem;
       background-color: var(--app-white);
       padding: 0 !important;
-      .cd-title-container{
+
+      .cd-title-container {
         padding: 16px 16px 0 !important;
       }
-      .new-div{
+
+      .new-div {
         padding-left: 16px;
         padding-right: 16px;
-        .enrolled-course-card-button{
+
+        .enrolled-course-card-button {
           border-radius: 2rem !important;
           background-color: var(--app-primary) !important;
         }
       }
-      ion-card-content{
+
+      ion-card-content {
         margin: 0 16px;
-        .sb-course-complete-container{
+
+        .sb-course-complete-container {
           border-radius: 16px;
         }
-        .sb-course-progress-container{
+
+        .sb-course-progress-container {
           background-color: var(--joyful-light-yellow) !important;
           border-radius: 1rem;
         }
       }
-      .cd-flex-container{
+
+      .cd-flex-container {
         padding: 16px;
         background-color: var(--joyful-light-blue);
         border-radius: 1rem;
-        .cd-chapter-card-button{
+
+        .cd-chapter-card-button {
           border-radius: 2rem !important;
           background-color: var(--app-primary) !important;
         }
@@ -1506,94 +1694,108 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-consent-pii-popup{
-    .consent-popover-info{
+  app-consent-pii-popup {
+    .consent-popover-info {
       background: var(--app-secondary-background) !important;
     }
-    .sb-popover-toolbar{
+
+    .sb-popover-toolbar {
       margin-left: -3px !important;
     }
-    .save-changes-not-agree{
+
+    .save-changes-not-agree {
       color: var(--app-primary) !important;
     }
-    .btn-info{
+
+    .btn-info {
       text-align: right !important;
-      button{
+
+      button {
         padding: 11px 16px;
         border: none !important;
       }
     }
   }
-  
-  app-toast-navigation{
-    div{
+
+  app-toast-navigation {
+    div {
       color: var(--app-gray);
     }
   }
 
-  app-sb-progress-loader{
-    ion-content{
+  app-sb-progress-loader {
+    ion-content {
       --background: var(--app-primary-header) !important;
     }
-    ion-progress-bar{
+
+    ion-progress-bar {
       --ion-color-base: var(--app-primary) !important;
     }
   }
 
-  .player-exit-popup{
-    .alert-wrapper{
+  .player-exit-popup {
+    .alert-wrapper {
       background-color: var(--app-secondary-background);
       border-radius: 1rem;
     }
+
     .alert-button {
       border: 1px solid var(--app-primary) !important;
       border-radius: 2rem !important;
     }
+
     .alert-button:first-child:not(:only-child) {
       background: var(--app-primary) !important;
       color: var(--app-white) !important;
     }
+
     .alert-button:last-child:not(:only-child) {
       background: var(--app-white) !important;
       color: var(--app-primary) !important;
     }
   }
 
-  app-qrcoderesult{
-    .download-info{
-      color:map-get($colors, dark_blue) !important;
+  app-qrcoderesult {
+    .download-info {
+      color: map-get($colors, dark_blue) !important;
     }
-    .btn-space{
+
+    .btn-space {
       padding-right: 5px !important;
     }
-    button{
+
+    button {
       box-shadow: none !important;
     }
-    ion-card{
+
+    ion-card {
       padding: 7px !important;
     }
   }
 
-  app-sb-download-popup{
-    .sb-modal-close{
+  app-sb-download-popup {
+    .sb-modal-close {
       color: var(--app-primary) !important;
     }
-    .progress-highlight{
+
+    .progress-highlight {
       background: var(--app-white) !important;
     }
-    .popover-progress-container{
+
+    .popover-progress-container {
       background-color: var(--app-primary) !important;
     }
+
     .collapsed {
-      .sb-popover-title{
+      .sb-popover-title {
         margin-top: 0 !important;
       }
     }
   }
 
-  app-notification{
-    .sb-view-all-container{
-      .sb-view-all-items{
+  app-notification {
+    .sb-view-all-container {
+      .sb-view-all-items {
         background: var(--app-secondary-background) !important;
         border-radius: 20px !important;
         width: 94% !important;
@@ -1602,57 +1804,63 @@ html[data-theme="JOYFUL"]{
         padding: 10px !important;
         margin-bottom: 10px !important;
         top: 0.5rem !important;
-        .sb-view-all-title{
+
+        .sb-view-all-title {
           color: unset !important;
           margin-left: 8px !important;
         }
       }
     }
-    ion-item{
+
+    ion-item {
       --background: var(--app-white) !important;
       margin-left: 0.5rem;
       margin-right: 0.5rem;
       border-radius: 0.5rem !important;
     }
-    ion-item-sliding{
+
+    ion-item-sliding {
       box-shadow: var(--block-style-shadow) !important;
-      sb-notification-card{
-        .sb-notification-list{
+
+      sb-notification-card {
+        .sb-notification-list {
           box-shadow: none !important;
           margin-bottom: 0 !important;
           border: none !important;
         }
       }
     }
-    .oval-wrapper{
-      h4{
+
+    .oval-wrapper {
+      h4 {
         color: unset !important;
       }
     }
   }
 
-  .file-download__action-btns .cancel-btn{
-   padding: 0.73em 2.5em !important;
+  .file-download__action-btns .cancel-btn {
+    padding: 0.73em 2.5em !important;
   }
 
   ion-picker {
-      button{
-        color: var(--app-primary) !important;
-        background-color:transparent !important;
-        box-shadow: none !important;
-      }
-  }
-  .action-sheet-container{
-    button{
+    button {
       color: var(--app-primary) !important;
-      background-color:transparent !important;
+      background-color: transparent !important;
       box-shadow: none !important;
     }
   }
 
-  app-district-mapping{
+  .action-sheet-container {
+    button {
+      color: var(--app-primary) !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  app-district-mapping {
     .block-button-clear {
-      color: $blue !important;
+      color: $blue  !important;
     }
   }
 
@@ -1662,60 +1870,73 @@ html[data-theme="JOYFUL"]{
     .reply-btn {
       background-color: var(--app-lighter-gray);
     }
-    .df-reply-btn, .df-cancel-btn{
-      color:  map-get($colors, primary) !important;
+
+    .df-reply-btn,
+    .df-cancel-btn {
+      color: map-get($colors, primary) !important;
     }
-    .discussion-start-modal{
-      .discard-btn{
+
+    .discussion-start-modal {
+      .discard-btn {
         color: map-get($colors, primary) !important;
       }
     }
-    .openbtn{
+
+    .openbtn {
       color: map-get($colors, primary) !important;
     }
-    .sb-btn-disabled{
+
+    .sb-btn-disabled {
       background-color: map-get($colors, gray_ba) !important;
     }
-    .sb-btn-outline-primary{
+
+    .sb-btn-outline-primary {
       background: none !important;
       border: 1px solid map-get($colors, gray_ba) !important;
       color: map-get($colors, black) !important;
     }
   }
-  .df-btn-container{
-    .sb-left-icon{
+
+  .df-btn-container {
+    .sb-left-icon {
       color: map-get($colors, primary) !important;
       background-color: map-get($colors, light_gray) !important;
     }
-    .df-back-btn{
+
+    .df-back-btn {
       color: map-get($colors, primary) !important;
       background-color: map-get($colors, light_gray) !important;
     }
-    .df-close-btn{
+
+    .df-close-btn {
       color: map-get($colors, black) !important;
       background: var(--app-pink) !important;
       padding: 0.5rem 1rem !important;
     }
   }
-  
 
-  app-search-filter{
-    sb-form{
-      sb-multiple-dropdown{
-        .input-label{
+
+  app-search-filter {
+    sb-form {
+      sb-multiple-dropdown {
+        .input-label {
           margin-bottom: 0.5rem;
           font-weight: bold;
         }
-        .multi-select-container{
+
+        .multi-select-container {
           border: 1px solid var(--app-primary-light-2);
           border-radius: 3rem;
-          sb-caret-down{
+
+          sb-caret-down {
             right: 1rem !important;
           }
-          ul{
+
+          ul {
             padding-left: 1rem !important;
           }
-          .list-border{
+
+          .list-border {
             border: none !important;
           }
         }
@@ -1723,16 +1944,16 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  app-category-list-page{
-    .filter-items{
+  app-category-list-page {
+    .filter-items {
       --background: var(--app-white) !important;
     }
   }
 
   sunbird-pdf-player .sunbird-pdf-palyer-container {
-    .sb-pdf-main-header{
+    .sb-pdf-main-header {
       .player-zoom-btns {
-        button{
+        button {
           border-radius: 0 !important;
           box-shadow: none !important;
           color: var(--sbt-language-dropdown-bg) !important;
@@ -1752,31 +1973,36 @@ html[data-theme="JOYFUL"]{
       position: relative;
     }
   }
+
   ion-toolbar {
-    border-bottom-left-radius: 20px; 
+    border-bottom-left-radius: 20px;
   }
 
-  app-user-home, app-search, app-admin-home{
-    ion-content{
+  app-user-home,
+  app-search,
+  app-admin-home {
+    ion-content {
       background-color: var(--app-tertiary-background);
       --background: var(--app-tertiary-background);
     }
   }
-  
+
   .header-ios ion-toolbar:last-of-type {
     --border-width: 0px !important;
   }
 
   // ************ iOS start *************
-  .ui-content-ios{
+  .ui-content-ios {
     z-index: 2;
     position: relative;
     top: 2.813rem;
   }
+
   .ui-container-ios {
     &::part(scroll) {
       z-index: auto;
     }
+
     &::after {
       content: '';
       width: 100%;
@@ -1813,7 +2039,9 @@ html[data-theme="JOYFUL"]{
     top: calc(constant(safe-area-inset-top)); //ios 11.2
     top: calc(env(safe-area-inset-top)); //ios 11.1  
 
-    ion-content, ion-footer, ion-header {
+    ion-content,
+    ion-footer,
+    ion-header {
       width: calc(100% + 10%);
     }
 
@@ -1842,7 +2070,7 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  .ios .central-alert{
+  .ios .central-alert {
     .alert-wrapper {
       margin-top: calc(env(safe-area-inset-top) + 20px);
     }
@@ -1852,6 +2080,7 @@ html[data-theme="JOYFUL"]{
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .alert-button.sc-ion-alert-ios {
         margin: 3px;
         min-width: 45%;
@@ -1862,15 +2091,37 @@ html[data-theme="JOYFUL"]{
   // ************ iOS end ***************
 }
 
-.central-alert, .attachment-delete-alert,.background-theme-color, .select-box {
-  button{
+.central-alert,
+.attachment-delete-alert,
+.background-theme-color,
+.select-box {
+  button {
     text-transform: none !important;
   }
 }
-ion-picker{
-  .picker-toolbar{
-    .picker-button{
+
+ion-picker {
+  .picker-toolbar {
+    .picker-button {
       text-transform: none !important;
+    }
+  }
+}
+
+app-signup-email-password {
+  .emailPasswordForm {
+    sb-form {
+      sb-textbox {
+        .sb-input {
+          margin: 1rem !important;
+          input {
+            border-radius: 1rem !important;
+            border: 1px solid #8080805c !important;
+            padding: 0.5rem 0.5rem !important;
+            // width: 90%;
+          }
+        }
+      }
     }
   }
 }

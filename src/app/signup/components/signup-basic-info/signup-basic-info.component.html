@@ -1,0 +1,45 @@
+<div class="sign-up-div">
+  <div class="header">
+    <div class="logos">
+      <img src="../../assets/imgs/Emblem_of_India.png" alt="app-logo">
+      <img src="../../assets/imgs/ic_launcher.png" alt="app-logo">
+    </div>
+    <h1 class="title">{{'APP_TITLE' | translate:{'%s': appName} }}</h1>
+    <h5 class="subtitle">{{'REGISTER_TO' | translate:{'appName': appName} }}</h5>
+  </div>
+
+  <form [formGroup]="basicInfoForm" (ngSubmit)="continue()" novalidate>
+    <ion-item lines="none">
+      <ion-label position="stacked" class="important">Name</ion-label>
+      <ion-input type="text" placeholder="Enter Your Name" formControlName="name"></ion-input>
+    </ion-item>
+    <div class="ion-padding-start danger"
+      *ngIf="basicInfoForm.controls.name.touched && basicInfoForm.controls['name'].errors && basicInfoForm.controls['name'].errors.required">
+      Please enter name
+    </div>
+    <div class="ion-padding-start danger"
+      *ngIf="basicInfoForm.controls.name.touched && basicInfoForm.controls['name'].errors && basicInfoForm.controls['name'].errors.pattern">
+      Please enter a valid name
+    </div>
+    <ion-item lines="none">
+      <ion-label position="stacked" class="important">Year of Birth </ion-label>
+      <section>
+        <ion-datetime display-timezone="utc" placeholder="DD/MM/YYYY" formControlName="yearofbirth">
+        </ion-datetime>
+        <ion-icon name="calendar" slot="end"></ion-icon>
+      </section>
+    </ion-item>
+    <div class="ion-padding-start danger"
+      *ngIf="basicInfoForm.controls.yearofbirth.touched && basicInfoForm.controls['yearofbirth'].errors && basicInfoForm.controls['yearofbirth'].errors.required">
+      Please enter year of birth
+    </div>
+    <ion-row>
+      <ion-col size-md="10">
+        <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" (click)="continue()"
+          [disabled]="!basicInfoForm.valid">
+          Continue <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</div>

@@ -1,0 +1,63 @@
+<!-- <div class="sign-up-div">
+  <div class="header">
+    <h5 class="subtitle">To discover relevant content update the following details:</h5>
+  </div>
+  <form id="signup2" [formGroup]="onboardInfoForm">
+    <ion-item lines="none">
+      <ion-label position="stacked" class="important">State</ion-label>
+      <ion-select placeholder="Select One" formControlName="state">
+        <ion-select-option value="Asam">Asam</ion-select-option>
+        <ion-select-option value="Bombay">Bombay</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div class="ion-padding-start danger"
+      *ngIf="onboardInfoForm.controls.state.touched && onboardInfoForm.controls['state'].errors && onboardInfoForm.controls['state'].errors.required">
+      Please enter year of birth
+    </div>
+    <ion-item lines="none">
+      <ion-label position="stacked" class="important">District</ion-label>
+      <ion-select placeholder="Select" formControlName="district">
+        <ion-select-option value="district_1">District 1</ion-select-option>
+        <ion-select-option value="district_2">District 2</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div class="ion-padding-start danger"
+      *ngIf="onboardInfoForm.controls.district.touched && onboardInfoForm.controls['district'].errors && onboardInfoForm.controls['district'].errors.required">
+      Please enter year of birth
+    </div>
+    <ion-item lines="none">
+      <ion-label position="stacked" class="important">Block</ion-label>
+      <ion-select placeholder="Select" formControlName="block">
+        <ion-select-option value="block_1">Block 1</ion-select-option>
+        <ion-select-option value="block_2">BWlock 2</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div class="ion-padding-start danger"
+      *ngIf="onboardInfoForm.controls.block.touched && onboardInfoForm.controls['block'].errors && onboardInfoForm.controls['block'].errors.required">
+      Please enter year of birth
+    </div>
+    <ion-item lines="none">
+      <ion-label position="stacked">Cluster (Optional)</ion-label>
+      <ion-select placeholder="Select" formControlName="cluster">
+      </ion-select>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label position="stacked">School (Optional)</ion-label>
+      <ion-select placeholder="Select" formControlName="school">
+      </ion-select>
+    </ion-item>
+    <ion-row class="ion-justify-content-end prb-3">
+      <ion-col size="6" class="flex">
+        <ion-button (click)="back()" color="light" shape="round">
+          <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" (click)="continue()"
+          [disabled]="!onboardInfoForm.valid">
+          Continue <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</div> -->
+
+<app-district-mapping [signintype]="datapass"></app-district-mapping>

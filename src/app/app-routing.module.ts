@@ -96,16 +96,16 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
-  { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule', canActivate:[MlGuard] },
-  { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule', canActivate:[MlGuard] },
-  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule'},
-  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule',canActivate:[MlGuard] },
+  { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule', canActivate: [MlGuard] },
+  { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule', canActivate: [MlGuard] },
+  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule' },
+  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule', canActivate: [MlGuard] },
   {
     path: RouterLinks.QUESTIONNAIRE,
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
   },
 
-  { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' , canActivate:[MlGuard]},
+  { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule', canActivate: [MlGuard] },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule' },
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.ECM_LISTING, loadChildren: './manage-learn/ecm-listing/ecm-listing.module#EcmListingPageModule' },
@@ -115,17 +115,19 @@ const routes: Routes = [
   { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' },
   { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
   { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule' },
-  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
+  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule' },
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.DISCUSSION, loadChildren: './discussion-forum/discussion-forum.module#DiscussionForumModule' },
   { path: RouterLinks.SEARCH_FILTER, loadChildren: './search-filter/search-filter.module#SearchFilterPageModule' },
-  { path: RouterLinks.GENERIC_REPORT, loadChildren: './manage-learn/generic-reports/generic-reports.module#GenericReportsModule' , canActivate:[MlGuard]},
+  { path: RouterLinks.GENERIC_REPORT, loadChildren: './manage-learn/generic-reports/generic-reports.module#GenericReportsModule', canActivate: [MlGuard] },
   { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: './manage-learn/domain-ecm-listing/domain-ecm-listing.module#DomainEcmListingModule' },
   {
     path: RouterLinks.IMP_SUGGESTIONS,
-    loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
+    loadChildren: './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
   },
-  { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
+  { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule' },
+  { path: RouterLinks.SIGNUP, loadChildren: './signup/signup.module#SignUpModule' },
+  { path: RouterLinks.LOGIN, loadChildren: './login/login.module#LoginPageModule' }
 
 ];
 

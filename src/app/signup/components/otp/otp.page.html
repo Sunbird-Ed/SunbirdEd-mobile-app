@@ -1,0 +1,68 @@
+<div class="tablebox">
+  <table>
+    <tr>
+      <td>{{'NAME' | translate }}</td>
+      <td>Hrishikesh S Bothe</td>
+    </tr>
+    <tr>
+      <td>{{'YOB_TITLE' | translate}}</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <td>{{'STATE' | translate}}</td>
+      <td>Karnataka</td>
+    </tr>
+    <tr>
+      <td>{{'DISTRICT' | translate}}</td>
+      <td>Belagavi</td>
+    </tr>
+    <tr>
+      <td>{{'FRMELEMNTS_LBL_SCHOOL' | translate}}</td>
+      <td>Balmohan Vidya Mandir</td>
+    </tr>
+    <tr>
+      <td>{{'FRMELEMNTS_LBL_BLOCK' | translate}}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{'FRMELEMNTS_LBL_CLUSTER' | translate}}</td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+<div class="center">
+  <h5>OTP is sent to ******8902</h5>
+  <span>it is valid for 30 minutes</span>
+  <p>Parent/Guardian should enter the OTP</p>
+</div>
+
+<form [formGroup]="otpInfoForm" (ngSubmit)="continue()">
+  <ion-item lines="none">
+    <ion-label position="stacked">{{'OTP' | translate}}</ion-label>
+    <ion-input type="text" placeholder="{{'ENTER_OTP' | translate}}" formControlName="otp"></ion-input>
+  </ion-item>
+  <div class="ion-padding-start danger"
+    *ngIf="otpInfoForm.controls.otp.touched && otpInfoForm.controls['otp'].errors && otpInfoForm.controls['otp'].errors.required">
+    Please enter OTP
+  </div>
+  <ion-item lines="none">
+    <ion-checkbox slot="start" name="agreement"></ion-checkbox>
+    <ion-text class="accepttext">As a parent/guardian I understand & <a href="#">Accept the DIKSHA Terms of Use</a> and
+      agree my child to register on DIKSHA with the given information.
+    </ion-text>
+  </ion-item>
+  <ion-row class="ion-justify-content-end prb-3">
+    <ion-col size="6" class="flex">
+      <ion-button (click)="back()" color="light" shape="round">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+      <ion-button expand="block" [ngStyle]="{'background-color':btnColor}" (click)="continue()">
+        {{'FRMELEMNTS_LBL_CONTINUE' | translate}} <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end">
+        </ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</form>
+<div class="center pb-40">
+  Didn’t Receive an OTP?<b color="primary">{{'RESEND_OTP' | translate}}</b>
+</div>

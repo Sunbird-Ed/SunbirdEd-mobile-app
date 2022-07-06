@@ -1,0 +1,43 @@
+.sign-up-div {
+    .header {
+        text-align: center;
+        margin: auto;
+
+        .subtitle {
+            font-weight: bold;
+            color: #333333;
+        }
+    }
+}
+
+
+#signup2 ion-select {
+    border: 1px solid gray !important;
+    border-radius: 16px;
+    margin: 10px auto;
+    padding: 0.5rem 1rem !important;
+
+}
+
+.important::after {
+    content: '*';
+    color: red;
+    margin-left: 5px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.prb-3 {
+    padding-right: 7rem;
+    padding-bottom: 3rem;
+} 
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.danger{
+    color: red;
+}

@@ -1,0 +1,74 @@
+.sign-up-div {
+    margin-top: 10vh;
+
+    .header {
+        text-align: center;
+        margin: auto;
+
+        .logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                width: 4rem;
+                padding: 10px;
+            }
+
+            img:last-child {
+                border-left: 0.5px solid #80808085;
+            }
+        }
+
+        .title {
+            color: #005A9E;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .subtitle {
+            font-weight: bold;
+            color: #333333;
+        }
+    }
+}
+
+
+ion-input,
+section {
+    border: 1px solid gray;
+    border-radius: 16px;
+    margin: 10px auto;
+    padding-left: 1rem !important;
+}
+
+section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 1rem;
+
+    ion-icon {
+        font-size: 23px;
+        color: gray;
+    }
+}
+
+ion-datetime {
+    width: 100%;
+    padding: 7px 0;
+}
+
+.important::after {
+    content: '*';
+    color: red;
+    margin-left: 5px;
+}
+
+.bold {
+    font-weight: bold;
+}
+.danger{
+    color: red;
+}
