@@ -1,0 +1,43 @@
+<ion-content>
+  <div class="sign-up-div">
+    <div class="header">
+      <div class="logos">
+        <img src="assets/imgs/ic_launcher.png" alt="app">
+      </div>
+      <h1 class="title">{{'APP_TITLE' | translate:{'%s': appName} }}</h1>
+      <h5 class="subtitle">Register on Sunbird</h5>
+    </div>
+
+    <form [formGroup]="personalInfoForm">
+      <ion-item lines="none">
+        <ion-label position="stacked" class="important">Name</ion-label>
+        <ion-input formControlName="name" type="text" placeholder="Enter Your Name" required></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked" class="important" style="margin-bottom: .7rem;">Year of Birth </ion-label>
+        <ion-select formControlName="dob" placeholder="Select year" interface="popover" mode="ios"
+          class="yob-info ion-text-capitalize">
+          <ion-select-option *ngFor="let year of birthYearOptions" value="{{year}}">
+            {{year}}</ion-select-option>
+        </ion-select>
+
+      </ion-item>
+    </form>
+
+    <div style="padding: 1rem;">
+      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" (click)="continue()"
+        [disabled]="!personalInfoForm.valid">
+        <span>{{'CONTINUE' | translate}}</span>
+         <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>
+<div class="footer">
+  <label>Already have an account?</label>
+  <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
+    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()" 
+    type="submit">Login</button>
+</div>
