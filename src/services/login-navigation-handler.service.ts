@@ -24,6 +24,7 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { mergeMap, tap } from 'rxjs/operators';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { Platform } from '@ionic/angular';
+import { AppHeaderService } from './app-header.service';
 
 @Injectable()
 export class LoginNavigationHandlerService {
@@ -44,13 +45,14 @@ export class LoginNavigationHandlerService {
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private platform: Platform,
         private googlePlusLogin: GooglePlus,
+        private appheader: AppHeaderService
     ) {
     }
 
     async setSession(webViewSession, skipNavigation, subType: string) {
         try {
             await this.authService.setSession(webViewSession).toPromise();
-
+            this.appheader.showStatusBar();
             await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
             const value = await this.setProfileDetailsAndRefresh(skipNavigation, subType);
 
@@ -67,7 +69,10 @@ export class LoginNavigationHandlerService {
             await this.logoutOnImpropperLoginProcess();
 
             this.sbProgressLoader.hide({ id: 'login' });
-            if (err instanceof SignInError) {
+            if (err && err.error_msg) {
+                this.commonUtilService.showToast(err.error_msg, false, 'red-toast');
+                throw err;
+            } else if (err instanceof SignInError) {
                 this.commonUtilService.showToast(err.message);
             } else {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
