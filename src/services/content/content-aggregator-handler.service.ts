@@ -68,7 +68,7 @@ export class ContentAggregatorHandler {
     }
 
 
-    async newAggregate(request, pageName: AggregatorPageType): Promise<any> {
+    async newAggregate(request, pageName: AggregatorPageType, rootOrgId?: string): Promise<any> {
         let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
@@ -77,7 +77,7 @@ export class ContentAggregatorHandler {
 
         try {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
-                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName});
+                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, rootOrgId: rootOrgId || '*'});
             return this.aggregatorResponse.result;
         } catch (e) {
             console.error(e);
