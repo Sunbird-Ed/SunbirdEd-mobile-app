@@ -21,6 +21,8 @@ export class OtpPage implements OnInit {
   enableResend = true;
   contactNumber = "";
   acceptAgreement = false;
+  invalidOtp = false;
+  remainingAttempts: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private _fb: FormBuilder,
@@ -30,8 +32,7 @@ export class OtpPage implements OnInit {
     public router: Router) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
-    this.contactNumber = (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, "*");
-    console.log('userData ', this.userData, this.contactNumber);
+    this.contactNumber = this.userData?.contactInfo?.phone ? (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, "*") : this.userData?.contactInfo?.email;
   }
 
   back() {
@@ -98,6 +99,9 @@ export class OtpPage implements OnInit {
               await this.tncUpdateHandlerService.checkForTncUpdate();
             }).catch((error) => {
               console.error(error);
+              if (error.response.body.params.err == "UOS_USRUPD0003") {
+                this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
+              }
             })
         })
         .catch(error => {
@@ -106,17 +110,17 @@ export class OtpPage implements OnInit {
             if (typeof error.response.body === 'object') {
               if (error.response.body.params.err === 'UOS_OTPVERFY0063' &&
                 error.response.body.result.remainingAttempt > 0) {
-                // this.remainingAttempts = error.response.body.result.remainingAttempt;
-                // this.otp = '';
-                // this.invalidOtp = true;
+                this.remainingAttempts = error.response.body.result.remainingAttempt;
+                this.otpInfoForm.value.otp = "";
+                this.invalidOtp = true;
               } else {
-                this.commonUtilService.showToast('OTP_FAILED');
+                this.commonUtilService.showToast(this.commonUtilService.translateMessage('OTP_FAILED'));
               }
             }
           }
         });
     } else {
-      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED'));
     }
   }
 
@@ -145,19 +149,19 @@ export class OtpPage implements OnInit {
       await loader.present();
       this.profileService.generateOTP(req).toPromise()
         .then(async () => {
-          this.commonUtilService.showToast('OTP_RESENT');
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('OTP_RESENT'));
           await loader.dismiss();
           loader = undefined;
         })
         .catch(async (e) => {
           if (loader) {
-            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+            this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
             await loader.dismiss();
             loader = undefined;
           }
         });
     } else {
-      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED'));
     }
   }
 

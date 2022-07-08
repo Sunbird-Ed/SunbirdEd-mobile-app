@@ -34,9 +34,6 @@ export class SignupBasicInfoPage implements OnInit {
   }
 
   async continue() {
-    console.log('....................', this.personalInfoForm);
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
     const req = {
       userId: this.appGlobalService.getCurrentUser().uid,
       name: this.personalInfoForm.value.name,

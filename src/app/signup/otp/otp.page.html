@@ -43,27 +43,28 @@
     </table>
   </div>
   <div class="center">
-    <h5>OTP is sent to {{contactNumber}}</h5>
-    <span>it is valid for 30 minutes</span>
-    <p>Parent/Guardian should enter the OTP</p>
+    <h5>{{'OTP_SENT_TO' | translate:{'contactNumber': contactNumber} }}</h5>
+    <span>{{'OTP_VALID_FOR' | translate}}</span>
+    <p>{{'OTP_PARENT_GUARDIAN' | translate}}</p>
   </div>
 
   <form [formGroup]="otpInfoForm" (ngSubmit)="continue()">
     <ion-item lines="none">
+      <div size="12" class="text-center ion-no-padding" *ngIf="invalidOtp">
+        <p class="error">{{'ERROR_OTP' | translate:{'%s': remainingAttempts} }}</p>
+      </div>
       <ion-label position="stacked">{{'OTP' | translate}}</ion-label>
-      <ion-input type="text" placeholder="{{'ENTER_OTP' | translate}}" formControlName="otp"></ion-input>
+      <ion-input type="tel" placeholder="{{'ENTER_OTP' | translate}}" formControlName="otp"></ion-input>
     </ion-item>
     <div class="ion-padding-start danger"
-      *ngIf="otpInfoForm.controls.otp.touched && otpInfoForm.controls['otp'].errors && otpInfoForm.controls['otp'].errors.required">
-      Please enter OTP
-    </div>
-    <ion-item lines="none">
-      <ion-checkbox slot="start" name="agreement" (ionChange)="changeEvent($event)"></ion-checkbox>
-      <ion-text class="accepttext">As a parent/guardian I understand & <a href="#">Accept the DIKSHA Terms of Use</a>
-        and
-        agree my child to register on DIKSHA with the given information.
-      </ion-text>
-    </ion-item>
+    *ngIf="otpInfoForm.controls.otp.touched && otpInfoForm.controls['otp'].errors && otpInfoForm.controls['otp'].errors.required">
+    {{'OTP_VALIDATION' | translate}}
+  </div>
+  <ion-item lines="none">
+    <ion-checkbox slot="start" name="agreement" (ionChange)="changeEvent($event)"></ion-checkbox>
+    <ion-text class="accepttext">{{'OTP_TERMS' | translate}}
+    </ion-text>
+  </ion-item>
     <ion-row class="ion-justify-content-end prb-3 pb-30">
       <ion-col size="6" class="flex">
         <ion-button (click)="back()" color="light" shape="round">
@@ -84,8 +85,8 @@
 </ion-content>
 
 <div class="footer">
-  <label>Already have an account?</label>
+  <label>{{'HAVE_ACCOUNT' | translate }}</label>
   <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
-    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()"
-    type="submit">Login</button>
+    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()" type="submit">{{'SIGN_IN'
+    | translate}}</button>
 </div>
