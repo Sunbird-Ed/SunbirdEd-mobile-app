@@ -191,7 +191,9 @@
         }
     }
     .btn-info{
-        padding: 20px
+        padding: 20px;
+        display: flex;
+        justify-content: center;
     }
     .login-info{
         border: none !important;

@@ -20,8 +20,22 @@ import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.se
 import {of, throwError} from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
-import { profile } from 'console';
+import { AppHeaderService } from './app-header.service';
+import { PreferenceKey, SystemSettingsIds } from '../app/app.constant';
 
+const mockUserProfile = {
+    board: ['statekarnataka'],
+    createdAt: 1594741466334,
+    grade: ['class10'],
+    gradeValue: '',
+    handle: 'Guest1',
+    medium: ['english'],
+    profileType: 'TEACHER',
+    source: 'local',
+    subject: [],
+    syllabus: ['ka_k-12_1'],
+    uid: 'ca20b97e-9c88-456c-ad1e-4418c65f6dee'
+}
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
     const actual = require.requireActual('@project-sunbird/sunbird-sdk');
@@ -48,24 +62,64 @@ jest.mock('@app/app/module.service', () => {
 describe('LoginNavigationHandlerService', () => {
     let loginNavigationHandlerService: LoginNavigationHandlerService;
     const mockProfileService: Partial<ProfileService> = {
+        createProfile: jest.fn(),
+        getTenantInfo: jest.fn(),
+        isDefaultChannelProfile: jest.fn(() => of()),
+        updateProfile: jest.fn(),
+        setActiveSessionForProfile: jest.fn(),
+        getActiveSessionProfile: jest.fn(),
         getActiveProfileSession: jest.fn(() => of({})),
-        deleteProfile: jest.fn((id) => of({}))
+        deleteProfile: jest.fn((id) => of({})),
+        getAllProfiles: jest.fn(() => of([mockUserProfile]))
     };
-    const mockAuthService: Partial<AuthService> = {};
-    const mockSharedPreferences: Partial<SharedPreferences> = {};
-    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
-    const mockEvents: Partial<Events> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockAuthService: Partial<AuthService> = {
+        setSession: jest.fn(() => of(undefined)),
+        getSession: jest.fn(() => of(undefined)),
+        resignSession: jest.fn()
+    };
+    const mockSharedPreferences: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of('123244')),
+        getBoolean: jest.fn(() => of(true)),
+        putString: jest.fn(() => of()),
+        putBoolean: jest.fn(() => of(undefined))
+    };
+    const mockSystemSettingsService: Partial<SystemSettingsService> = {
+        getSystemSettings: jest.fn(() => of())
+    };
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {
+        hide: jest.fn()
+    };
+    const mockEvents: Partial<Events> = {
+        publish: jest.fn()
+    };
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        limitedShareQuizContent: true,
+        getCurrentUser: jest.fn(() => mockUserProfile),
+        setEnrolledCourseList: jest.fn()
+    };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockContainerService: Partial<ContainerService> = {};
     const mockNgZone: Partial<NgZone> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-    const mockSystemSettingsService: Partial<SystemSettingsService> = {};
-    const mockGooglePlus: Partial<GooglePlus> = {};
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn()
+    };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        updateLoggedInUser: jest.fn()
+    };
     const mockPlatform: Partial<Platform> = {
         is: jest.fn(platform => platform === 'ios')
+    };
+    const mockGooglePlus: Partial<GooglePlus> = {
+        trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
+        disconnect: jest.fn()
+    };
+    const mockAppHeader: Partial<AppHeaderService> = {
+        showStatusBar: jest.fn()
     };
 
     beforeAll(() => {
@@ -84,7 +138,8 @@ describe('LoginNavigationHandlerService', () => {
             mockCommonUtilService as CommonUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockPlatform as Platform,
-            mockGooglePlus as GooglePlus
+            mockGooglePlus as GooglePlus,
+            mockAppHeader as AppHeaderService
         );
     });
 
@@ -118,7 +173,7 @@ describe('LoginNavigationHandlerService', () => {
                     orgName: ''
                 }
             }));
-            jest.spyOn(loginNavigationHandlerService, 'generateLoginInteractTelemetry').getMockImplementation();
+            // jest.spyOn(loginNavigationHandlerService, 'generateLoginInteractTelemetry').getMockImplementation();
             mockProfileService.createProfile = jest.fn(() => of());
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
@@ -132,9 +187,9 @@ describe('LoginNavigationHandlerService', () => {
                 logo: ''
             }));
             mockProfileService.isDefaultChannelProfile = jest.fn(() => of(true));
-
+        
             // act
-            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true});
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, '');
             // assert
             setTimeout(() => {
                 expect(mockAuthService.setSession).toHaveBeenCalled();
@@ -148,12 +203,9 @@ describe('LoginNavigationHandlerService', () => {
                 done();
             }, 0);
         });
-
+        
         it('should go to error part if setSession throws error', (done) => {
             // arrange
-            jest.spyOn(loginNavigationHandlerService, 'logoutOnImpropperLoginProcess').mockImplementation(() => {
-                Promise.resolve();
-            });
             const signInError = new SignInError('error');
             mockAuthService.setSession = jest.fn(() => throwError(signInError));
             mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
@@ -162,29 +214,81 @@ describe('LoginNavigationHandlerService', () => {
             loginNavigationHandlerService.setSession({},{}, 'sub');
             // assert
             setTimeout(() => {
-            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(signInError.message);
-            done();
-        }, 0);
-    });
-
-    it('should go to error part if setSession throws error', (done) => {
-        // arrange
-        jest.spyOn(loginNavigationHandlerService, 'logoutOnImpropperLoginProcess').mockImplementation(() => {
-            Promise.resolve();
+                expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(signInError.message);
+                done();
+            }, 0);
         });
-        const signInError = new SignInError('error');
-        mockAuthService.setSession = jest.fn(() => throwError('ERROR_WHILE_LOGIN'));
-        mockCommonUtilService.showToast = jest.fn();
-        // act
-        loginNavigationHandlerService.setSession({},{}, 'sub');
-        // assert
-        setTimeout(() => {
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
-        done();
-    }, 0);
-});
-});
+
+        it('should resign previuos session', () => {
+            // arrange
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'))
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            // act
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, '');
+            // assert
+            setTimeout(() => {
+                expect(mockAuthService.resignSession).toHaveBeenCalled();
+            })
+        });
+        
+        it('should not call preferences put boolean if return value is false ', () => {
+            // arrange
+            mockSharedPreferences.getBoolean = jest.fn(() => of(false));
+            mockSharedPreferences.putBoolean = jest.fn(() => of());
+            // act
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, '');
+            // assert
+            expect(mockSharedPreferences.putBoolean).not.toHaveBeenCalled();
+        });
+       
+        it('should logout google', () => {
+            const res = mockSharedPreferences.getBoolean = jest.fn(() => of(true));
+            mockGooglePlus.disconnect = jest.fn();
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
+            // act
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, '');
+            // assert
+            expect(res).toBeTruthy();
+            setTimeout(() => {  
+                expect(mockGooglePlus.disconnect).toHaveBeenCalled()
+                expect(mockSharedPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN, false);
+            })
+        });
+        
+        it('should catch error on disconnect and do try silent login', () => {
+            const res = mockSharedPreferences.getBoolean = jest.fn(() => of(true));
+            mockGooglePlus.disconnect = jest.fn(() => throwError({}));
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
+            const clientId = {
+                value: "some_id"
+            }
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of(clientId));
+            mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
+                webClientId: clientId.value
+            }));
+            // act
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, '');
+            // assert
+            expect(res).toBeTruthy();
+            setTimeout(() => {  
+                expect(mockGooglePlus.disconnect).toHaveBeenCalled();
+                expect(mockSharedPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN, false);
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalledWith({ id: SystemSettingsIds.GOOGLE_CLIENT_ID })
+            })
+        });
+        
+        it('should catch error on refresh tenant data', () => {
+            // arrange
+            mockProfileService.getTenantInfo = jest.fn(() => throwError("error"));
+            // act
+            loginNavigationHandlerService.setSession({}, {source: 'profile', redirectUrlAfterLogin: true}, 'sub');
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getTenantInfo).toHaveBeenCalled();
+            }, 0);
+        });
+    });
 
     describe('setProfileDetails', () => {
         it('should fetch Current user details and update the profile and set current profile as active and publish the events', () => {
@@ -195,7 +299,7 @@ describe('LoginNavigationHandlerService', () => {
                 medium: [''],
                 board: [''],
                 subject: [''],
-                profileType: ProfileType.TEACHER,
+                profileType: ProfileType.TEACHER.toUpperCase(),
                 grade: [''],
                 syllabus: [''],
                 source: ProfileSource.SERVER
@@ -214,8 +318,7 @@ describe('LoginNavigationHandlerService', () => {
                 expect(mockProfileService.updateProfile).toHaveBeenCalled();
             });
         });
-    });
-    describe('logoutOnImpropperLoginProcess', () => {
+
         it('should fetch Current user details and update the profile and set current profile as active and publish the events', () => {
             // arrange
             const mockProfile = {
@@ -224,18 +327,15 @@ describe('LoginNavigationHandlerService', () => {
                 medium: [''],
                 board: [''],
                 subject: [''],
-                profileType: ProfileType.TEACHER,
+                profileType: ProfileType.TEACHER.toUpperCase(),
                 grade: [''],
                 syllabus: [''],
                 source: ProfileSource.SERVER
             };
-            jest.spyOn(loginNavigationHandlerService, 'logoutGoogle').mockImplementation(() => {
-                Promise.resolve();
-            });
             mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
             mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfile));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => throwError({}));
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             // act
             loginNavigationHandlerService.setDefaultProfileDetails().then(() => {
@@ -247,4 +347,4 @@ describe('LoginNavigationHandlerService', () => {
             });
         });
     });
-});
+})
