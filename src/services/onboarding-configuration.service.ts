@@ -258,7 +258,7 @@ export class OnboardingConfigurationService {
         return this.onBoardingConfig.onboarding.find((element) => (element.name === page))
     }  
 
-    getAppConfig(): any{
+    getAppConfig(): any {
         return this.onBoardingConfig
     }
 

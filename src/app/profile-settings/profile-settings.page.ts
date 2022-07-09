@@ -157,7 +157,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
-    this.showQRScanner = !!this.onboardingConfigurationService.getOnboardingConfig('profile-settings').params['showQrScanPage']
+    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings') && this.onboardingConfigurationService.getOnboardingConfig('profile-settings'))
   }
 
 

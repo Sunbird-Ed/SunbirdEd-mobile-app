@@ -136,12 +136,10 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private translate: TranslateService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private container: ContainerService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private profileHandler: ProfileHandler,
-    private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
