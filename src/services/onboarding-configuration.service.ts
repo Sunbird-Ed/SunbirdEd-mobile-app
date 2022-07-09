@@ -12,7 +12,16 @@ interface OnBoardingConfig {
     name: string;
     skip: boolean;
     default: any;
+    data: Array<any>
+    params: { [key: string]: string }
 }
+
+interface Category {
+    code: string;
+    value: string;
+    translation_key: string;
+}
+
 interface ICON {
     active: string;
     inactive: string;
@@ -30,13 +39,21 @@ interface TabConfig {
     theme: string;
     userTypeAdmin?: string;
   }
+  interface Theme {
+    name: string;
+  }
 
 @Injectable({
     providedIn: 'root'
 })
 export class OnboardingConfigurationService {
 
-    onBoardingConfig: { onboarding: Array<OnBoardingConfig> };
+    onBoardingConfig: { 
+        overriddenDefaultChannelId: string,
+        theme: Theme
+        onboarding: Array<OnBoardingConfig> ,
+        categories: Array<Category>
+    };
     initialOnboardingScreenName;
     tabList: { tab: Array<TabConfig> };
 
@@ -232,5 +249,17 @@ export class OnboardingConfigurationService {
         return this.tabList = onboarding.tabs.filter((tab) =>
         (tab.theme === theme || tab.theme === 'ALL') && (tab.status === 'ALL' || tab.status === status));
       }
+
+    getCategoryTranslationKey(category: string): string {
+            return this.onBoardingConfig.categories.find((element) => (element.code === category)).translation_key
+      }
+
+    getOnboardingConfig(page: String): OnBoardingConfig {
+        return this.onBoardingConfig.onboarding.find((element) => (element.name === page))
+    }  
+
+    getAppConfig(): any {
+        return this.onBoardingConfig
+    }
 
 }

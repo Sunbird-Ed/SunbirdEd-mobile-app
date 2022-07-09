@@ -37,7 +37,7 @@ import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { LoginHandlerService } from '@app/services';
+import { LoginHandlerService, OnboardingConfigurationService } from '@app/services';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
@@ -136,13 +136,12 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private translate: TranslateService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private container: ContainerService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private profileHandler: ProfileHandler,
-    private loginHandlerService: LoginHandlerService,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -184,11 +183,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
       PageId.CREATE_USER
     );
     this.addAttributeSubscription(this.profile.profileType || undefined);
-    this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
+    this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
   }
 
   private async addAttributeSubscription(userType: string) {
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, userType);
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, userType, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
   }

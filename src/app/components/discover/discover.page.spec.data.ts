@@ -618,3 +618,34 @@ export const mockDiscoverPageData = [
         }
     }
 ];
+
+export const mockOnboardingConfigData = {
+    overriddenDefaultChannelId : "SAMPLE_CHANNEL_ID",
+    theme: {
+        name: "aqua"
+    },
+    "onboarding": [
+        {
+          "name": "language-setting",
+          "skip": false,
+          "default": {
+            "code": "en",
+            "label": "English"
+          },
+          "data": [
+            {
+              "label": "हिंदी",
+              "code": "hi",
+              "isApplied": false,
+              "name": "Hindi"
+            },
+            {
+              "label": "English",
+              "code": "en",
+              "isApplied": false,
+              "name": "English"
+            }
+          ]
+        }
+    ]
+};
