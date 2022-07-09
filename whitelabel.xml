@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="is_customizable">false</bool>   
+    <color name="bg_color">#ffffff</color>
+    <color name="app_name_txt_color">#ffffff</color>
+</resources>

@@ -23,13 +23,15 @@ import {
     PageId,
     ImpressionType,
     ObjectType,
-    LoginHandlerService
+    LoginHandlerService,
+    OnboardingConfigurationService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { of, Subscription } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 
 describe('GuestEditPage', () => {
     let guestEditPage: GuestEditPage;
@@ -93,6 +95,10 @@ describe('GuestEditPage', () => {
         evalCriteria: jest.fn()
     };
 
+    const mockOnBoardingConfigService: Partial<OnboardingConfigurationService> = {
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+    };
+
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
             mockProfileService as ProfileService,
@@ -105,13 +111,12 @@ describe('GuestEditPage', () => {
             mockTranslate as TranslateService,
             mockEvents as Events,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockContainer as ContainerService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockLocation as Location,
             mockProfileHandler as ProfileHandler,
-            mockLoginHandlerService as LoginHandlerService,
-            mockSegmentationTagService as SegmentationTagService
+            mockSegmentationTagService as SegmentationTagService,
+            mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
 
@@ -510,6 +515,7 @@ describe('GuestEditPage', () => {
     describe('ngOnInit', () => {
         it('should generate INTERACT and IMPRESSION telemetry for new User', (done) => {
             // arrange
+            mockOnBoardingConfigService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
             mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
                 [{ code: 'teacher' }]));
             // act
@@ -534,6 +540,7 @@ describe('GuestEditPage', () => {
 
         it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
             // arrange
+            mockOnBoardingConfigService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
             guestEditPage['isNewUser'] = false;
             mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
                 [{ code: 'teacher' }]));
@@ -559,6 +566,7 @@ describe('GuestEditPage', () => {
 
         it('should populate the supported attributes', (done) => {
             // arrange
+            mockOnBoardingConfigService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
             mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
                 {
                     board: 'board',

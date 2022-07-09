@@ -84,6 +84,7 @@ import {LoginNavigationHandlerService} from '@app/services/login-navigation-hand
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import onboarding from './../assets/configurations/config.json';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -375,7 +376,8 @@ export const sunbirdSdkFactory =
           frameworkConfigDirPath: '/data/framework',
           channelConfigDirPath: '/data/channel',
           searchOrganizationApiPath: '/api/org/v2',
-          systemSettingsDefaultChannelIdKey: 'custodianOrgId'
+          systemSettingsDefaultChannelIdKey: 'custodianOrgId',
+          overriddenDefaultChannelId: onboarding.overriddenDefaultChannelId
         },
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
@@ -557,6 +559,8 @@ export class AppModule {
   constructor(
     private translate: TranslateService) {
     this.setDefaultLanguage();
+    console.log('Onboarding Config', onboarding);
+    
   }
 
   private setDefaultLanguage() {

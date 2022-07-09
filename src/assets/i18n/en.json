@@ -1318,5 +1318,11 @@
   "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number",
   "FRMELEMNTS_LBL_DISCARD_EDIT_PROJECT": "Save changes",
   "FRMELEMNTS_MSG_DISCARD_EDIT_PROJECT": "Would you like to save the changes you have made before you exit the page?",
-  "FRMELEMNTS_MSG_CERTIFICATE_CRITERIA_BFR_SUBMITTING":"Please ensure you have met the certificate criteria for this improvement project before submitting."
+  "FRMELEMNTS_MSG_CERTIFICATE_CRITERIA_BFR_SUBMITTING":"Please ensure you have met the certificate criteria for this improvement project before submitting.",
+  "FRMELEMENTS_LBL_CATEGORY1": "Board",
+  "FRMELEMENTS_LBL_CATEGORY2": "Medium",
+  "FRMELEMENTS_LBL_CATEGORY3": "Class",
+  "FRMELEMENTS_LBL_CATEGORY4": "Subject",
+  "FRMELEMENTS_LBL_SELECT_CATEGORY1": "Select {{category}}"
+  
 }
