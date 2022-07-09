@@ -695,8 +695,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.showQRScanner = false;
-    
-        /* New Telemetry */
+
+    /* New Telemetry */
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.MANUAL_PROFILE,
       Environment.ONBOARDING
@@ -716,7 +716,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     setTimeout(() => {
       this.boardSelect.open();
-      this.setAriaLabel();
     }, 0);
   }
 
@@ -813,17 +812,4 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     return subscriptionArray;
   }
 
-  public setAriaLabel() {
-        const selectDomTag = document.getElementsByTagName('ion-select');
-        Object.values(selectDomTag).forEach(element => {
-          if(element.multiple === false)
-          {
-            element.setAttribute('aria-label',   'single select');
-          }
-          else{
-          element.setAttribute('aria-label',   'multiple select');
-          }
-          element.setAttribute('tabindex', '0');
-        });
-    }
 }
