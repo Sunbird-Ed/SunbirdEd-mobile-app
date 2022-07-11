@@ -157,7 +157,7 @@ export class EditContactDetailsPopupComponent {
         }
         this.popOverCtrl.dismiss({ isEdited: false });
         if (err.hasOwnProperty(err) === 'UOS_OTPCRT0059') {
-          this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('OTP_ATTEMPT_LIMIT'));
         }
       });
   }

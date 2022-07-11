@@ -15,7 +15,7 @@
         },
         {
             "name": "profile-settings",
-            "skip": true,
+            "skip": false,
             "default": {
                 "syllabus": [
                     "ekstep_ncert_k-12"
