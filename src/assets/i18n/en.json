@@ -1545,5 +1545,6 @@
   "CERTIFICATE_VERIFICATION_FAIL": "Certificate verification failed",
   "FRMELEMNTS_LBL_DISCARD_EDIT_PROJECT": "Save changes",
   "FRMELEMNTS_MSG_DISCARD_EDIT_PROJECT": "Would you like to save the changes you have made before you exit the page?",
-  "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number"
+  "ERROR_RECOVERY_ID_PHONE_INVALID": "Enter 10 digit mobile number",
+  "ENTER_USER_NAME": "Enter your name"
 }
