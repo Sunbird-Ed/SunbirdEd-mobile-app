@@ -240,7 +240,7 @@ export class DistrictMappingPage implements OnDestroy {
           this.router.navigate([RouterLinks.SIGNUP_EMAIL], navigationExtras);
       } else {
         if (this.isGoogleSignIn) {
-          req['name'] = this.userData.name;
+          req['firstName'] = this.userData.name;
           req['dob'] = this.userData.dob;
         }
         const loader = await this.commonUtilService.getLoader();
