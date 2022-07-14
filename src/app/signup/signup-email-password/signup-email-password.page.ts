@@ -6,7 +6,6 @@ import { Platform, } from '@ionic/angular';
 import { IsProfileAlreadyInUseRequest, GenerateOtpRequest, ProfileService } from 'sunbird-sdk';
 import { FieldConfig, FieldConfigValidationType } from 'common-form-elements';
 import { Location } from '@angular/common';
-
 @Component({
   selector: 'app-signup-email-password',
   templateUrl: './signup-email-password.page.html',
@@ -25,7 +24,6 @@ export class SignupEmailPasswordPage implements OnInit {
   userId: string;
   userData: any;
   btnColor = '#8FC4FF';
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public platform: Platform,
@@ -36,7 +34,6 @@ export class SignupEmailPasswordPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
   }
-
   ngOnInit() {
     this.contactType = 'phone';
     this.passwordConfig = [{
@@ -58,7 +55,12 @@ export class SignupEmailPasswordPage implements OnInit {
       validations: [{
         type: FieldConfigValidationType.REQUIRED,
         value: null,
-        message: 'Your password must contain a minimum of 8 characters. It must include numerals, lower and upper case alphabets and special characters, without any spaces.'
+        message: this.commonUtilService.translateMessage('PASSWORD_VALIDATION')
+      },
+      {
+        type: FieldConfigValidationType.PATTERN,
+        value: '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~.,)(}{\\[!"#$%&\'()*+,-./:;<=>?@[^_`{|}~\\]])(?=\\S+$).{8,}',
+        message: this.commonUtilService.translateMessage('PASSWORD_PATTERN_VALIDATION')
       }]
     },
     {
@@ -108,7 +110,6 @@ export class SignupEmailPasswordPage implements OnInit {
   async setappname() {
     this.appName = await this.commonUtilService.getAppName();
   }
-
   contactTypeChange() {
     if (this.contactType === 'email') {
       this.emailConfig = [{
@@ -123,19 +124,21 @@ export class SignupEmailPasswordPage implements OnInit {
           type: FieldConfigValidationType.REQUIRED,
           value: null,
           message: this.commonUtilService.translateMessage('CONFIRM_EMAIL_VALIDATION')
+        },
+        {
+          type: FieldConfigValidationType.PATTERN,
+          value: /^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/,
+          message: this.commonUtilService.translateMessage('CONFIRM_EMAIL_PATTERN_VALIDATION')
         }]
       }];
       this.emailPasswordConfig = this.emailConfig.concat(this.passwordConfig);
     } else if (this.contactType === 'phone') {
       this.emailPasswordConfig = this.mobileNumberConfig.concat(this.passwordConfig);
     }
-    console.log(this.emailPasswordConfig);
   }
-
   back() {
    this.location.back()
   }
-  
   async continue() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.loader = await this.commonUtilService.getLoader();
@@ -152,7 +155,6 @@ export class SignupEmailPasswordPage implements OnInit {
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
       }
-
       this.profileService.isProfileAlreadyInUse(req).subscribe(async (success: any) => {
         await this.loader.dismiss();
         this.loader = undefined;
@@ -183,7 +185,6 @@ export class SignupEmailPasswordPage implements OnInit {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED'));
     }
   }
-  
   async generateOTP() {
     let req: GenerateOtpRequest;
     if (this.contactType === ProfileConstants.CONTACT_TYPE_PHONE) {
@@ -220,19 +221,15 @@ export class SignupEmailPasswordPage implements OnInit {
         }
       });
   }
-
   onFormEmailPasswordChange(value: any) {
     this.userData['contactInfo'] = value;
     this.userData['contactInfo']['type'] = this.contactType;
-    this.errorConfirmPassword = value.confirmPassword && (value.confirmPassword !== value.password);
+    this.errorConfirmPassword = value.confirmPassword && (value.confirmPassword !== value.password)
   }
-
   statusChanges(event) {
     this.isFormValid = event.isValid;
   }
-
   redirectToLogin() {
     this.router.navigate([RouterLinks.SIGN_IN]);
   }
-
 }
