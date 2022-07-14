@@ -1323,7 +1323,7 @@
   "OTP_VALID_FOR": "it is valid for 30 minutes",
   "OTP_PARENT_GUARDIAN": "Parent/Guardian should enter the OTP",
   "OTP_VALIDATION": "Please enter OTP",
-  "OTP_TERMS": "As a parent/guardian I understand & Accept the {{app_name}} Terms of Use and agree my child to register on DIKSHA with the given information.",
+  "OTP_TERMS": "As a parent/guardian I understand & Accept the {{app_name}} Terms of Use and agree my child to register on {{app_name}} with the given information.",
   "HAVE_ACCOUNT": "Already have an account?",
   "REGISTER_TO": "Register on {{appName}}",
   "ENTER_NAME": "Enter your name",
