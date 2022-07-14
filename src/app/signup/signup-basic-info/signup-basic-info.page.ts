@@ -16,7 +16,7 @@ export class SignupBasicInfoPage implements OnInit {
   currentYear: any = (new Date()).getFullYear();
   personalInfoForm: FormGroup;
   btnColor = '#8FC4FF';
-  appName = "";
+  appName = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,

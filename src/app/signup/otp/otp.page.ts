@@ -17,9 +17,9 @@ export class OtpPage implements OnInit {
   btnColor = '#8FC4FF';
   public otpInfoForm: FormGroup;
   userData: any;
-  appName = "";
+  appName = '';
   enableResend = true;
-  contactNumber = "";
+  contactNumber = '';
   acceptAgreement = false;
   invalidOtp = false;
   remainingAttempts: any;
@@ -33,7 +33,7 @@ export class OtpPage implements OnInit {
     public router: Router) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
-    this.contactNumber = this.userData?.contactInfo?.phone ? (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, "*")
+    this.contactNumber = this.userData?.contactInfo?.phone ? (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, '*')
       : this.userData?.contactInfo?.email;
   }
 
@@ -45,7 +45,7 @@ export class OtpPage implements OnInit {
     this.otpInfoForm =
       this._fb.group({
         otp: ['', Validators.required],
-      })
+      });
 
     this.appName = await this.commonUtilService.getAppName();
   }
@@ -109,10 +109,10 @@ export class OtpPage implements OnInit {
             }).catch(async (error) => {
               console.error(error);
               await this.loader.dismiss();
-              if (error.response.body.params.err === "UOS_USRUPD0003") {
+              if (error.response.body.params.err === 'UOS_USRUPD0003') {
                 this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
               }
-            })
+            });
         })
         .catch(error => {
           this.loader.dismiss();
@@ -122,7 +122,7 @@ export class OtpPage implements OnInit {
               if (error.response.body.params.err === 'UOS_OTPVERFY0063' &&
                 error.response.body.result.remainingAttempt > 0) {
                 this.remainingAttempts = error.response.body.result.remainingAttempt;
-                this.otpInfoForm.value.otp = "";
+                this.otpInfoForm.value.otp = '';
                 this.invalidOtp = true;
               } else {
                 this.commonUtilService.showToast(this.commonUtilService.translateMessage('OTP_FAILED'));

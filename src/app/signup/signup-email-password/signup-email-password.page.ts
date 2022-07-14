@@ -13,14 +13,14 @@ import { Location } from '@angular/common';
   styleUrls: ['./signup-email-password.page.scss'],
 })
 export class SignupEmailPasswordPage implements OnInit {
-  contactType: string = 'phone';
+  contactType = 'phone';
   appName = '';
-  mobileNumberConfig: FieldConfig<any>[] = [];;
-  emailConfig: FieldConfig<any>[] = [];;
-  passwordConfig: FieldConfig<any>[] = [];;
+  mobileNumberConfig: FieldConfig<any>[] = [];
+  emailConfig: FieldConfig<any>[] = [];
+  passwordConfig: FieldConfig<any>[] = [];
   emailPasswordConfig: FieldConfig<any>[] = [];
-  isFormValid: boolean = false;
-  errorConfirmPassword: boolean = false;
+  isFormValid = false;
+  errorConfirmPassword = false;
   loader: any;
   userId: string;
   userData: any;
@@ -222,11 +222,9 @@ export class SignupEmailPasswordPage implements OnInit {
   }
 
   onFormEmailPasswordChange(value: any) {
-    console.log('onFormEmailPasswordChange')
     this.userData['contactInfo'] = value;
     this.userData['contactInfo']['type'] = this.contactType;
-    this.errorConfirmPassword = value.confirmPassword && (value.confirmPassword !== value.password)
-    console.log(value)
+    this.errorConfirmPassword = value.confirmPassword && (value.confirmPassword !== value.password);
   }
 
   statusChanges(event) {
