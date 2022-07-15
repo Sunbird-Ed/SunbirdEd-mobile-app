@@ -1323,6 +1323,6 @@
   "FRMELEMENTS_LBL_CATEGORY2": "Medium",
   "FRMELEMENTS_LBL_CATEGORY3": "Class",
   "FRMELEMENTS_LBL_CATEGORY4": "Subject",
-  "FRMELEMENTS_LBL_SELECT_CATEGORY1": "Select {{category}}"
-  
+  "FRMELEMENTS_LBL_SELECT_CATEGORY1": "Select {{category}}",
+  "LOAD_MORE_DATA": "Loading more data..."
 }

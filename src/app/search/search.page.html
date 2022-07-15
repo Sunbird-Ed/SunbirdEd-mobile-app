@@ -209,6 +209,9 @@
           </sb-library-card>
         </div>
       </div>
+      <ion-infinite-scroll threshold="6.25rem" (ionInfinite)="loadData($event)" style="padding-top: 1rem;">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="{{ 'LOAD_MORE_DATA' | translate}}"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </div>
     <div class="empty-search-result ion-text-center ion-padding-top" *ngIf="!showLoader && showEmptyMessage">
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
@@ -218,6 +221,9 @@
   <ng-container *ngIf="!enableSearch">
     <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
   </ng-container>
+  <div class="scroll_up" (click)="scrollToTop()" *ngIf="searchContentResult && searchContentResult.length">
+    <ion-icon name="arrow-up-circle-outline"></ion-icon>
+  </div>
 </ion-content>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">	

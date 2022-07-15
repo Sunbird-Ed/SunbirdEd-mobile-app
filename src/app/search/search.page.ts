@@ -414,6 +414,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
+  loadData(event) {
+    console.log('event on data load inifinite ', event);
+    setTimeout(() => {
+      event.target.complete();
+      this.handleSearch(false, true);
+    }, 500);
+  }
+
   openCollection(collection) {
     const values = new Map();
     values.root = true;
@@ -895,8 +903,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.isEmptyResult = false;
   }
 
-  handleSearch(shouldApplyProfileFilter = false) {
-    this.scrollToTop();
+  handleSearch(shouldApplyProfileFilter = false, inifiniteScroll? : boolean) {
+    if (!inifiniteScroll) {
+      this.scrollToTop();
+    }
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL && !this.preAppliedFilter) {
       return;
     }
@@ -918,6 +928,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
+      offset: this.searchContentResult == undefined ? 0 : this.searchContentResult.length
     };
 
     if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
@@ -984,7 +995,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
               this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
             }
             this.addCorRelation(response.responseMessageId, 'API');
-            this.searchContentResult = response.contentDataList;
+            if (this.searchContentResult && this.searchContentResult.length > 0 && contentSearchRequest.offset > 0 && response.contentDataList.length > 0) {
+              response.contentDataList.forEach(ele => {
+                this.searchContentResult.push(ele);
+              })
+            } else {
+              this.searchContentResult = response.contentDataList;
+            }
             this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;
 
             this.updateFilterIcon();

@@ -417,3 +417,14 @@
     z-index: 8 !important;
   }
 }
+
+.scroll_up {
+  position: fixed;
+  bottom: 0.6rem;
+  right: 0.6rem;
+
+  ion-icon {
+    color: lightblue;
+    zoom: 2;
+  }
+}

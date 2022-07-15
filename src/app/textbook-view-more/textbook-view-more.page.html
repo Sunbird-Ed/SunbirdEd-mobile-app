@@ -1,4 +1,4 @@
-<ion-content overflow-scroll="true">
+<ion-content #contentView overflow-scroll="true">
   <div class="sb-textbook-container p-0 m-0">
     <div class="sb-textbook-items">
       <div class="sb-textbook-title-container">
@@ -10,7 +10,7 @@
         </span>
       </div>
       <!-- Card style -->
-      <div class="sb-card-container sb-card-textbook-container">
+      <div class="sb-card-container">
         <div class="mb-1" *ngFor="let content of contentList; let i = index">
           <sb-library-card [content]="content" [type]="LibraryCardTypes.MOBILE_TEXTBOOK"
             [layoutConfig]="{layout: 'v3'}"
@@ -18,8 +18,13 @@
             [cardImg]="commonUtilService.getContentImg(content)">
           </sb-library-card>
         </div>
+        <ion-infinite-scroll threshold="4.25rem" (ionInfinite)="loadData($event)" style="padding-top: 1.5rem;">
+          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="{{ 'LOAD_MORE_DATA' | translate}}"></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
       </div>
     </div>
   </div>
-
+  <div class="scroll_up" (click)="scrollUp()" *ngIf="contentList && contentList.length">
+    <ion-icon name="arrow-up-circle-outline"></ion-icon>
+  </div>
 </ion-content>
