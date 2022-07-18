@@ -16,7 +16,7 @@ export class SignupBasicInfoPage implements OnInit {
   currentYear: any = (new Date()).getFullYear();
   personalInfoForm: FormGroup;
   btnColor = '#8FC4FF';
-  appName = "";
+  appName = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -34,9 +34,6 @@ export class SignupBasicInfoPage implements OnInit {
   }
 
   async continue() {
-    console.log('....................', this.personalInfoForm);
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
     const req = {
       userId: this.appGlobalService.getCurrentUser().uid,
       name: this.personalInfoForm.value.name,
