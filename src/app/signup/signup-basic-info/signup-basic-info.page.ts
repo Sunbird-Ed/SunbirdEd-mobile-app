@@ -1,9 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { AppGlobalService, CommonUtilService } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService } from '@app/services';
 import { ProfileService } from 'sunbird-sdk';
 import { RouterLinks } from '../../app.constant';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-signup-basic-info',
@@ -23,13 +24,16 @@ export class SignupBasicInfoPage implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private appHeaderService: AppHeaderService,
+    private location: Location,
   ) {
     this.initializeForm();
   }
 
   async ngOnInit() {
     this.appName = await this.commonUtilService.getAppName();
+    this.appHeaderService.hideHeader();
     this.initiateYearSelecter();
   }
 
@@ -68,5 +72,9 @@ export class SignupBasicInfoPage implements OnInit {
 
   redirectToLogin() {
     this.router.navigate([RouterLinks.SIGN_IN]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

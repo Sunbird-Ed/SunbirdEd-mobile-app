@@ -2,7 +2,8 @@
   <div class="dm-header ion-padding" [ngClass]="{'dm-header-new': !isShowBackButton}">
     <span role="button" aria-label="back"><ion-icon *ngIf="isShowBackButton" name="arrow-back" role="button" aria-label="back" (click)="goBack(true)"
       class="top-back-button"></ion-icon></span>
-      <span class="preference-info" role="heading" aria-level="1">{{ 'SET_PREFERENCE' | translate }}</span>
+      <span class="preference-info" role="heading" aria-level="1" *ngIf="!isGoogleSignIn">{{ 'SET_PREFERENCE' | translate }}</span>
+      <span class="preference-info" role="heading" aria-level="1" *ngIf="isGoogleSignIn">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '2/4'} }}</span>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>

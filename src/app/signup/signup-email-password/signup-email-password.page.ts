@@ -16,8 +16,8 @@ export class SignupEmailPasswordPage implements OnInit {
   appName = '';
   mobileNumberConfig: FieldConfig<any>[] = [];
   emailConfig: FieldConfig<any>[] = [];
-  passwordConfig: FieldConfig<any>[] = [];
-  emailPasswordConfig: FieldConfig<any>[] = [];
+  // passwordConfig: FieldConfig<any>[] = [];
+  contactConfig: FieldConfig<any>[] = [];
   isFormValid = false;
   errorConfirmPassword = false;
   loader: any;
@@ -36,55 +36,6 @@ export class SignupEmailPasswordPage implements OnInit {
   }
   ngOnInit() {
     this.contactType = 'phone';
-    this.passwordConfig = [{
-      code: 'password',
-      type: 'input',
-      templateOptions: {
-        type: 'password',
-        label: this.commonUtilService.translateMessage('PASSWORD_PLACEHOLDER'),
-        placeHolder: this.commonUtilService.translateMessage('ENTER_PASSWORD'),
-        showIcon: {
-          show: true,
-          image: {
-              active: 'assets/imgs/eye.svg',
-              inactive: 'assets/imgs/eye-off.svg'
-          },
-          direction: 'right'
-        },
-      },
-      validations: [{
-        type: FieldConfigValidationType.REQUIRED,
-        value: null,
-        message: this.commonUtilService.translateMessage('PASSWORD_VALIDATION')
-      },
-      {
-        type: FieldConfigValidationType.PATTERN,
-        value: '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~.,)(}{\\[!"#$%&\'()*+,-./:;<=>?@[^_`{|}~\\]])(?=\\S+$).{8,}',
-        message: this.commonUtilService.translateMessage('PASSWORD_PATTERN_VALIDATION')
-      }]
-    },
-    {
-      code: 'confirmPassword',
-      type: 'input',
-      templateOptions: {
-        type: 'password',
-        label: this.commonUtilService.translateMessage('CONFIRM_PASSWORD_PLACEHOLDER'),
-        placeHolder: this.commonUtilService.translateMessage('RE_ENTER_PASSWORD'),
-        showIcon: {
-          show: true,
-          image: {
-              active: 'assets/imgs/eye.svg',
-              inactive: 'assets/imgs/eye-off.svg'
-          },
-          direction: 'right'
-        },
-      },
-      validations: [{
-        type: FieldConfigValidationType.REQUIRED,
-        value: null,
-        message: this.commonUtilService.translateMessage('CONFIRM_PASSWORD_VALIDATION')
-      }]
-    }];
     this.mobileNumberConfig = [{
       code: 'phone',
       type: 'input',
@@ -96,15 +47,15 @@ export class SignupEmailPasswordPage implements OnInit {
       validations: [{
         type: FieldConfigValidationType.REQUIRED,
         value: null,
-        message: this.commonUtilService.translateMessage('CONFIRM_CONTACT_VALIDATION')
+        message: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_CONFIRM_CONTACT_VALIDATION')
       },
       {
         type: FieldConfigValidationType.PATTERN,
         value: /^[6-9]\d{9}$/,
-        message: this.commonUtilService.translateMessage('CONTACT_PATTERN_VALIDATION')
+        message: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_CONTACT_PATTERN_VALIDATION')
       }]
     }];
-    this.emailPasswordConfig = (this.mobileNumberConfig.concat(this.passwordConfig));
+    this.contactConfig = this.mobileNumberConfig;
     this.setappname()
   }
   async setappname() {
@@ -118,27 +69,25 @@ export class SignupEmailPasswordPage implements OnInit {
         templateOptions: {
           type: 'email',
           label: '',
-          placeHolder: this.commonUtilService.translateMessage('ENTER_EMAIL'),
+          placeHolder: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_ENTER_EMAIL'),
         },
         validations: [{
           type: FieldConfigValidationType.REQUIRED,
           value: null,
-          message: this.commonUtilService.translateMessage('CONFIRM_EMAIL_VALIDATION')
+          message: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_CONFIRM_EMAIL_VALIDATION')
         },
         {
           type: FieldConfigValidationType.PATTERN,
           value: /^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/,
-          message: this.commonUtilService.translateMessage('CONFIRM_EMAIL_PATTERN_VALIDATION')
+          message: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_CONFIRM_EMAIL_PATTERN_VALIDATION')
         }]
       }];
-      this.emailPasswordConfig = this.emailConfig.concat(this.passwordConfig);
+      this.contactConfig = this.emailConfig;
     } else if (this.contactType === 'phone') {
-      this.emailPasswordConfig = this.mobileNumberConfig.concat(this.passwordConfig);
+      this.contactConfig = this.mobileNumberConfig;
     }
   }
-  back() {
-   this.location.back()
-  }
+
   async continue() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.loader = await this.commonUtilService.getLoader();
@@ -217,19 +166,22 @@ export class SignupEmailPasswordPage implements OnInit {
           this.loader = undefined;
         }
         if (err.response && err.response.body.params.err === 'UOS_OTPCRT0059') {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('OTP_ATTEMPT_LIMIT'));
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OTP_ATTEMPT_LIMIT'));
         }
       });
   }
   onFormEmailPasswordChange(value: any) {
     this.userData['contactInfo'] = value;
     this.userData['contactInfo']['type'] = this.contactType;
-    this.errorConfirmPassword = value.confirmPassword && (value.confirmPassword !== value.password)
   }
   statusChanges(event) {
     this.isFormValid = event.isValid;
   }
   redirectToLogin() {
     this.router.navigate([RouterLinks.SIGN_IN]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

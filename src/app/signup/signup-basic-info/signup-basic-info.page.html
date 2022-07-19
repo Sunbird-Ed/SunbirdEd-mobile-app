@@ -1,3 +1,14 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="birthYearOptions.length>0">
+      <ion-button icon-only (click)="goBack()">
+        <ion-icon class="arrow-icon back-arrow" role="button" aria-label="back" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title role="heading" aria-level="1">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '1/4'} }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
   <div class="sign-up-div">
     <div class="header">
@@ -5,13 +16,13 @@
         <img src="assets/imgs/ic_launcher.png" alt="app">
       </div>
       <h1 class="title">{{'APP_TITLE' | translate:{'%s': appName} }}</h1>
-      <h5 class="subtitle">{{'REGISTER_TO' | translate:{'appName': appName} }}</h5>
+      <h5 class="subtitle">{{'FRMELEMNTS_LBL_REGISTER_TO' | translate:{'appName': appName} }}</h5>
     </div>
 
     <form [formGroup]="personalInfoForm">
       <ion-item lines="none">
         <ion-label position="stacked" class="important">{{'FULL_NAME' | translate}}</ion-label>
-        <ion-input formControlName="name" type="text" placeholder="{{'ENTER_NAME' | translate}}" required></ion-input>
+        <ion-input formControlName="name" type="text" placeholder="{{'FRMELEMNTS_LBL_ENTER_NAME' | translate}}" required></ion-input>
       </ion-item>
 
       <ion-item lines="none">
