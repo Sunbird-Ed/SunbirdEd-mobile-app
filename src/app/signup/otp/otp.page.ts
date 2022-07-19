@@ -37,7 +37,7 @@ export class OtpPage implements OnInit {
       : this.userData?.contactInfo?.email;
   }
 
-  back() {
+  goBack() {
     this.location.back();
   }
 
