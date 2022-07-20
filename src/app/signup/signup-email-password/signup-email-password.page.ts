@@ -104,32 +104,11 @@ export class SignupEmailPasswordPage implements OnInit {
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
       }
-      this.profileService.isProfileAlreadyInUse(req).subscribe(async (success: any) => {
+      this.generateOTP();
+      if (this.loader) {
         await this.loader.dismiss();
         this.loader = undefined;
-        if (success && success.response) {
-          if (success.response.id === this.userId) {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_SAME_EMAIL_UPDATED'));
-          } else {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_EMAIL_EXISTS'));
-          }
-        }
-      }, async (error) => {
-        if (error.response && error.response.body.params.err === 'UOS_USRRED0013' || error.response.body.params.err === 'UOS_USRRED009') {
-          this.generateOTP();
-        } else if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
-          // this.blockedAccount = true;
-          if (this.loader) {
-            await this.loader.dismiss();
-            this.loader = undefined;
-          }
-        } else {
-          if (this.loader) {
-            await this.loader.dismiss();
-            this.loader = undefined;
-          }
-        }
-      });
+      }
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED'));
     }
