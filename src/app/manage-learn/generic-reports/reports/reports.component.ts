@@ -35,7 +35,6 @@ export class ReportsComponent implements OnInit {
     private modal: ModalController,
     private headerService: AppHeaderService
   ) {
-    console.log(this.router.getCurrentNavigation().extras.state);
     this.state = this.router.getCurrentNavigation().extras.state;
   }
 
@@ -65,7 +64,6 @@ export class ReportsComponent implements OnInit {
         this.loader.stopLoader();
         if (success.result === true && success.reportSections) {
           this.data = success;
-          console.log( this.data," this.data");
           this.reportSections = this.filterBySegment();
 
           if (this.data.filters && !this.filters) {
