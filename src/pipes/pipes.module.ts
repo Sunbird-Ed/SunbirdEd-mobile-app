@@ -13,6 +13,7 @@ import {AliasBoardName} from './alias-board-name/alias-board-name';
 import { TranslateJsonPipe } from './translate-json/translate-json';
 import { RandomColorMapPipe } from './theme-icon-mapper/random-color-map.pipe';
 import { ThemeInputsSelectorPipe } from './theme-icon-mapper/theme-inputs-selector.pipe';
+import {ImageContentPipe} from './image-content/image-content.pipe';
 
 @NgModule({
   declarations: [FileSizePipe,
@@ -27,7 +28,8 @@ import { ThemeInputsSelectorPipe } from './theme-icon-mapper/theme-inputs-select
     AliasBoardName,
     TranslateJsonPipe,
     RandomColorMapPipe,
-    ThemeInputsSelectorPipe
+    ThemeInputsSelectorPipe,
+    ImageContentPipe
   ],
   imports: [CommonModule],
   exports: [FileSizePipe,
@@ -42,9 +44,10 @@ import { ThemeInputsSelectorPipe } from './theme-icon-mapper/theme-inputs-select
     AliasBoardName,
     TranslateJsonPipe,
     RandomColorMapPipe,
-    ThemeInputsSelectorPipe
+    ThemeInputsSelectorPipe,
+    ImageContentPipe
   ],
-  providers: [DatePipe, CategoryKeyTranslator]
+  providers: [DatePipe, CategoryKeyTranslator, ImageContentPipe]
 })
 export class PipesModule {
 }
