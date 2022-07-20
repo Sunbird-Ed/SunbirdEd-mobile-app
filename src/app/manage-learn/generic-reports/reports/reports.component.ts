@@ -8,6 +8,7 @@ import { ModalController } from '@ionic/angular';
 import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
+import { ReportListComponent } from '../../shared';
 
 @Component({
   selector: 'app-reports',
@@ -25,14 +26,14 @@ export class ReportsComponent implements OnInit {
   filteredData: any;
   modalFilterData: any;
   reportSections: any;
-  _headerConfig
+  _headerConfig;
   constructor(
     private router: Router,
     private toast: ToastService,
     private loader: LoaderService,
     private dhiti: DhitiApiService,
     private modal: ModalController,
-    private headerService: AppHeaderService,
+    private headerService: AppHeaderService
   ) {
     console.log(this.router.getCurrentNavigation().extras.state);
     this.state = this.router.getCurrentNavigation().extras.state;
@@ -64,6 +65,7 @@ export class ReportsComponent implements OnInit {
         this.loader.stopLoader();
         if (success.result === true && success.reportSections) {
           this.data = success;
+          console.log( this.data," this.data");
           this.reportSections = this.filterBySegment();
 
           if (this.data.filters && !this.filters) {
@@ -187,5 +189,25 @@ export class ReportsComponent implements OnInit {
     this.router.navigate([RouterLinks.IMP_SUGGESTIONS], {
       state: state,
     });
+  }
+
+  async loadMoreReports(element,data,questionNumber){
+    const modal = await this.modal.create({
+      component: ReportListComponent,
+      componentProps: {
+        data:  JSON.parse(JSON.stringify(data)),
+        element : JSON.parse(JSON.stringify(element)),
+        questionNumber:questionNumber,
+        config :{
+          url : urlConstants.API_URLS.SURVEY_FEEDBACK.GET_ALL_ANSWERS,
+          payload:{
+            solutionId: this.state.solutionId,
+            questionExternalId: element.order,
+            completedDate:element.completedDate
+          }
+      },
+    }
+    });
+    await modal.present();
   }
 }
