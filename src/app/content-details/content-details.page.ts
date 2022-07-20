@@ -622,7 +622,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
-    if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') && !this.content.contentData["interceptionPoints"] ) {
+    if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') &&
+    !(typeof this.content.contentData['interceptionPoints'] === 'object' && this.content.contentData['interceptionPoints'] != null &&
+     Object.keys(this.content.contentData['interceptionPoints']).length !== 0) ) {
       this.getNextContent(data.hierarchyInfo, data.identifier);
       this.playContent(true, true);
     }
