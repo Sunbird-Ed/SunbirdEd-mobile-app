@@ -279,7 +279,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board', true);
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
-        contentSearchCriteria.limit = 20;
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
