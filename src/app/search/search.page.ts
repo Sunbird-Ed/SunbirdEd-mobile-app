@@ -166,6 +166,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
   hideSearchOption = false;
+  totalCount: number;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -415,10 +416,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   loadData(event) {
-    console.log('event on data load inifinite ', event);
     setTimeout(() => {
-      event.target.complete();
-      this.handleSearch(false, true);
+      let offset = this.searchContentResult == undefined ? 0 : this.searchContentResult.length;
+      this.applyFilter(offset);
     }, 500);
   }
 
@@ -849,7 +849,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
-  applyFilter() {
+  applyFilter(offset?: number) {
     this.showAddToGroupButtons = false;
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
@@ -862,16 +862,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         }
       }
     });
+    modifiedCriteria.offset = offset ? offset : 0;
     this.contentService.searchContent(modifiedCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
-
+        this.totalCount = responseData.count
         this.zone.run(() => {
           this.responseData = responseData;
           if (responseData) {
             if (this.isDialCodeSearch) {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
-              this.searchContentResult = responseData.contentDataList;
+              if (this.searchContentResult && this.searchContentResult.length > 0 && modifiedCriteria.offset > 0 && responseData.contentDataList.length > 0) {
+                responseData.contentDataList.forEach(ele => {
+                  this.searchContentResult.push(ele);
+                })
+              } else {
+                this.searchContentResult = responseData.contentDataList;
+              }
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
@@ -903,10 +910,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.isEmptyResult = false;
   }
 
-  handleSearch(shouldApplyProfileFilter = false, inifiniteScroll? : boolean) {
-    if (!inifiniteScroll) {
-      this.scrollToTop();
-    }
+  handleSearch(shouldApplyProfileFilter = false) {
+    this.scrollToTop();
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL && !this.preAppliedFilter) {
       return;
     }
@@ -928,7 +933,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
-      offset: this.searchContentResult == undefined ? 0 : this.searchContentResult.length
+      limit: 10
     };
 
     if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
@@ -987,6 +992,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
+        this.totalCount = response.count;
         this.zone.run(() => {
           this.responseData = response;
           this.preAppliedFilter = undefined;
@@ -995,13 +1001,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
               this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
             }
             this.addCorRelation(response.responseMessageId, 'API');
-            if (this.searchContentResult && this.searchContentResult.length > 0 && contentSearchRequest.offset > 0 && response.contentDataList.length > 0) {
-              response.contentDataList.forEach(ele => {
-                this.searchContentResult.push(ele);
-              })
-            } else {
-              this.searchContentResult = response.contentDataList;
-            }
+            this.searchContentResult = response.contentDataList;
             this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;
 
             this.updateFilterIcon();

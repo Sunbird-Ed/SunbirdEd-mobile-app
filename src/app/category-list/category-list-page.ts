@@ -183,7 +183,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             ...this.searchCriteria,
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
-            limit: 100
+            limit: 10
         }, true);
     }
 

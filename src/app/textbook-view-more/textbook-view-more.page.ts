@@ -154,8 +154,6 @@ export class TextbookViewMorePage {
 
   loadData(event) {
     setTimeout(() => {
-      console.log('Done');
-      event.target.complete();
       if (this.subjectName === "Recently published courses") {
         this.fetchRecentPlublishedCourses();
       } else {
@@ -163,7 +161,7 @@ export class TextbookViewMorePage {
           ...this.searchCriteria,
           facets: this.supportedFacets,
           searchType: SearchType.SEARCH,
-          limit: 100
+          limit: 10
         }, event)
       }
     }, 500);
@@ -184,6 +182,7 @@ export class TextbookViewMorePage {
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
         contentSearchCriteria.offset = this.contentList.length;
+        contentSearchCriteria.limit = 10
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
@@ -241,6 +240,7 @@ export class TextbookViewMorePage {
       }
     }
     searchCriteria.offset = this.contentList.length;
+    searchCriteria.limit = 10;
     const temp = ((await this.contentService.buildContentAggregator
       (this.formService, this.courseService, this.profileService)
       .aggregate({
