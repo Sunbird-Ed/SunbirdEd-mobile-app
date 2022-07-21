@@ -33,7 +33,8 @@ import {
   TaskCardComponent,
   AddLinkModalComponent,
   AttachmentCardComponent,
-  AttachmentListsComponent
+  AttachmentListsComponent,
+  ReportListComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -124,7 +125,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     TaskCardComponent,
     AddLinkModalComponent,
     AttachmentCardComponent,
-    AttachmentListsComponent
+    AttachmentListsComponent,
+    ReportListComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -216,7 +218,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
-    AddLinkModalComponent
+    AddLinkModalComponent,
+    ReportListComponent
   ],
   
 })

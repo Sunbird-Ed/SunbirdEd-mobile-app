@@ -1324,5 +1324,6 @@
   "FRMELEMENTS_LBL_CATEGORY3": "Class",
   "FRMELEMENTS_LBL_CATEGORY4": "Subject",
   "FRMELEMENTS_LBL_SELECT_CATEGORY1": "Select {{category}}",
-  "LOAD_MORE_DATA": "Loading more data..."
+  "FRMELEMNTS_MSG_BATCH_ALREADY_CLOSED": "The enrollment date has passed for this batch",
+  "FRMELEMNTS_LBL_ENROLLMENT_END_DATE": "Enrollment end date"
 }
