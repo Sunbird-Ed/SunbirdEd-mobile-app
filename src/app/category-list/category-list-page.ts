@@ -183,7 +183,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             ...this.searchCriteria,
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
-            limit: 100
+            limit: 10
         }, true);
     }
 
@@ -405,13 +405,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
             const corRelationList = [
                 { id: subject || '', type: CorReleationDataType.SECTION },
-                { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION }
+                { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION },
+                { id: this.formField || '', type: CorReleationDataType.CONTENT}
             ];
             this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
                 state: {
                     contentList: items,
                     subjectName: subject,
-                    corRelation: corRelationList
+                    corRelation: corRelationList,
+                    supportedFacets: this.supportedFacets
                 }
             });
         } else {

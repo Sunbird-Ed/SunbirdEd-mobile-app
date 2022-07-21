@@ -290,6 +290,7 @@
 
   .col {
     flex: 1 1 auto;
+    min-height: 2rem !important;
   }
 
   .skeleton-header{
@@ -416,4 +417,44 @@
   .sb--card__img.sb--card__image-pos {
     z-index: 8 !important;
   }
+}
+
+.scroll_up {
+  position: fixed;
+  bottom: 0.6rem;
+  right: 0.6rem;
+
+  ion-icon {
+    color: lightblue;
+    zoom: 2;
+  }
+}
+
+.pills-filter {
+  position: fixed;
+  z-index: 1;
+  top: 8.5rem;
+  padding-bottom: 0.5rem;
+  background-color: var(--app-tertiary-background);
+}
+
+.fixed-counter {
+  color: $blue;
+  font-size: 0.75rem;
+  position: fixed;
+  z-index: 1;
+  background-color: var(--app-tertiary-background);
+  width: 100%;
+  top: 13rem;
+  height: 3rem;
+  div {
+    background-color: white;
+    border-radius: 1rem;
+    width: 94%;
+    margin: 0 0.625rem;
+  }
+}
+
+.fixed-counter + .sc-container {  
+  margin-top: 7rem;
 }
