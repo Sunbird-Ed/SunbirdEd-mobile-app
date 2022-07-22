@@ -142,26 +142,26 @@ android {
             buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
         }
 
-        production {
-            applicationId "${production_app_id}"
-            flavorDimensions "default"
-            resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
-            resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
-            resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
-            resValue("string", "custom_scheme_url", "${production_custom_scheme}")
-            buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
-            buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
-            buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
-            buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
-            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
-            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
-            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
-            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
-            buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
-            buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
-            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${production_survey_base_url}\""
-            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${production_projects_base_url}\""
-        }
+        // production {
+        //     applicationId "${production_app_id}"
+        //     flavorDimensions "default"
+        //     resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
+        //     resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
+        //     resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
+        //     resValue("string", "custom_scheme_url", "${production_custom_scheme}")
+        //     buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
+        //     buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
+        //     buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
+        //     buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
+        //     buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+        //     buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+        //     buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
+        //     buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
+        //     buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
+        //     buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
+        //     buildConfigField 'String', 'SURVEY_BASE_URL', "\"${production_survey_base_url}\""
+        //     buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${production_projects_base_url}\""
+        // }
     }
 
     task myclean(type: Delete) {
