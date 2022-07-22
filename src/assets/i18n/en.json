@@ -1326,6 +1326,6 @@
   "FRMELEMENTS_LBL_SELECT_CATEGORY1": "Select {{category}}",
   "FRMELEMNTS_MSG_BATCH_ALREADY_CLOSED": "The enrollment date has passed for this batch",
   "FRMELEMNTS_LBL_ENROLLMENT_END_DATE": "Enrollment end date",
-  "SHOWING_RESULT_OUTOF_TOTAL": "Showing {{%count}} results out of '{{%query}}'"
-
+  "SHOWING_RESULT_OUTOF_TOTAL": "Showing {{%count}} results out of '{{%query}}'",
+  "FRMELEMNTS_MSG_CHANGE_PROFILE": "We have picked your BMG and role as {{role}}. if you want change then please change in profile page"
 }

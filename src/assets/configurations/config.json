@@ -2,6 +2,7 @@
     "overriddenDefaultChannelId": "",
     "theme": {
     },
+    "skipOnboardingForLoginUser": true,
     "onboarding": [
         {
             "name": "language-setting",

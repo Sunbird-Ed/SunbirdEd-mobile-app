@@ -28,3 +28,4 @@ export {LoginNavigationHandlerService} from './login-navigation-handler.service'
 export {SbProgressLoader} from './sb-progress-loader.service';
 export {SearchFilterService} from './search-filter/search-filter.service';
 export {OnboardingConfigurationService} from './onboarding-configuration.service';
+export {FrameworkDetailsService} from './framework-details.service';
