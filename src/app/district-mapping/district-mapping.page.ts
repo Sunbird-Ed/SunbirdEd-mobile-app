@@ -592,6 +592,18 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   isChangedLocation(prev, curr) {
+    if(prev.persona!= curr.persona){
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.ROLE_CHANGED, '',
+        this.getEnvironment(),
+        PageId.LOCATION,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined
+      );
+    }
     let newLocation;
     Object.keys(curr['children']['persona']).forEach((key) => {
       if (curr['children']['persona'][key] && (!prev['children']['persona'][key] ||

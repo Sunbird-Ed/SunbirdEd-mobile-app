@@ -299,7 +299,8 @@ export enum InteractType {
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
     SELECT_BANNER = 'select-banner',
     LOGIN_INITIATE = 'login-initiate',
-    LOGIN_SUCCESS = 'login-success'
+    LOGIN_SUCCESS = 'login-success',
+    ROLE_CHANGED = 'role-changed'
 }
 
 export enum InteractSubtype {
