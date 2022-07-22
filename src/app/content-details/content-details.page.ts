@@ -264,7 +264,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.nextContentToBePlayed = extras.content;
-      this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
@@ -430,15 +429,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-        return false;
-      }
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
-      this.didViewLoad = false;
-      this.popToPreviousPage(false);
-      this.generateEndEvent();
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+      } else {
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
+          false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
+        this.didViewLoad = false;
+        this.popToPreviousPage(false);
+        this.generateEndEvent();
+        if (this.shouldGenerateEndTelemetry) {
+          this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+        }
       }
     });
   }
@@ -555,6 +554,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
+    this.playerType = this.content.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
     if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
       this.licenseDetails = data.contentData.licenseDetails;
     }
@@ -629,7 +629,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
-    if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') && !this.content.contentData["interceptionPoints"] ) {
+    if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm')
+    && Object.keys(this.content.contentData["interceptionPoints"]).length === 0 ) {
       this.getNextContent(data.hierarchyInfo, data.identifier);
       this.playContent(true, true);
     }
