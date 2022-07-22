@@ -92,13 +92,13 @@ export class TncUpdateHandlerService {
        (userDetails.profileType === ProfileType.OTHER.toUpperCase() &&
         userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())
         || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
-      if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+      if (onboarding.skipOnboardingForLoginUser) {
         await this.updateUserAsGuest();
       } else {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       }
     } else {
-      if (!this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+      if (!onboarding.skipOnboardingForLoginUser) {
         this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
       }
     }
@@ -189,13 +189,6 @@ export class TncUpdateHandlerService {
       }
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-  }
-
-  private isProfileAutoFill(selectedPage) {
-    const config = onboarding.onboarding.find(obj => {
-      return (obj && obj.name === selectedPage);
-    });
-    return config.profileAutoFill;
   }
 
   private async updateUserAsGuest() {

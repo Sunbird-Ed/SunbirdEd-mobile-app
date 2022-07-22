@@ -176,7 +176,7 @@ export class TermsAndConditionsPage implements OnInit {
                 categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+                  if (onboarding.onboarding.skipOnboardingForLoginUser) {
                     await this.updateUserAsGuest();
                   } else {
                     this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -192,7 +192,7 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+                if (onboarding.onboarding.skipOnboardingForLoginUser) {
                   await this.updateUserAsGuest();
                 } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                     categoriesProfileData['status'] = value['status']
@@ -261,13 +261,6 @@ export class TermsAndConditionsPage implements OnInit {
       await loader.dismiss();
       loader = undefined;
     }
-  }
-
-  private isProfileAutoFill(selectedPage) {
-    const config = onboarding.onboarding.find(obj => {
-      return (obj && obj.name === selectedPage);
-    });
-    return config.profileAutoFill;
   }
 
   private async updateUserAsGuest() {

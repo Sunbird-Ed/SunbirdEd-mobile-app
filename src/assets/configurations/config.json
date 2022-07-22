@@ -2,6 +2,7 @@
     "overriddenDefaultChannelId": "",
     "theme": {
     },
+    "skipOnboardingForLoginUser": true,
     "onboarding": [
         {
             "name": "language-setting",
@@ -88,13 +89,11 @@
         {
             "name": "user-type-selection",
             "skip": false,
-            "default": "teacher",
-            "profileAutoFill": true
+            "default": "teacher"
         },
         {
             "name": "profile-settings",
             "skip": false,
-            "profileAutoFill": true,
             "params": {
                 "showQrScanPage": true
             },
@@ -117,7 +116,6 @@
         {
             "name": "district-mapping",
             "skip": false,
-            "profileAutoFill": true,
             "default": {
                 "state": "Andaman & Nicobar Islands",
                 "stateId": "1e01c46f-6b5a-4aa4-8cce-aae729c7670c",
