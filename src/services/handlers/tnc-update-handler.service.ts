@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -8,13 +8,16 @@ import { ModalController } from '@ionic/angular';
 import {
   AuthService,
   CachedItemRequestSourceFrom, Profile, ProfileService,
-  ProfileType, ServerProfile, ServerProfileDetailsRequest
+  ProfileType, ServerProfile, ServerProfileDetailsRequest, SharedPreferences
 } from 'sunbird-sdk';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
 import { ConsentService } from '../consent-service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
+import onboarding from '../../assets/configurations/config.json';
+import { FrameworkDetailsService } from '../framework-details.service';
+import { Events } from '@app/util/events';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +35,9 @@ export class TncUpdateHandlerService {
     private router: Router,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    private frameworkDetailsService: FrameworkDetailsService,
+    private events: Events
   ) { }
 
   public async checkForTncUpdate() {
@@ -40,7 +45,6 @@ export class TncUpdateHandlerService {
     if (!sessionData) {
       return;
     }
-
     const request: ServerProfileDetailsRequest = {
       userId: sessionData.userToken,
       requiredFields: ProfileConstants.REQUIRED_FIELDS,
@@ -83,14 +87,22 @@ export class TncUpdateHandlerService {
       await this.consentService.getConsent(userDetails, true);
     }
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
-        !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
-        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase()
-            || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
-        this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
+      !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
+      || ((userDetails.profileType === ProfileType.NONE && userDetails.serverProfile.profileUserType.type === ProfileType.NONE) ||
+       (userDetails.profileType === ProfileType.OTHER.toUpperCase() &&
+        userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())
+        || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
+      if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+        await this.updateUserAsGuest();
       } else {
+        this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
+      }
+    } else {
+      if (!this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
         this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
       }
     }
+  }
 
   private async preRequirementToBmcNavigation(userId, locationMappingConfig) {
     const serverProfile = await this.profileService.getServerProfilesDetails({
@@ -120,9 +132,9 @@ export class TncUpdateHandlerService {
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
           (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()
               || serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
-          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-            state: { categoriesProfileData }
-          });
+              this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: { categoriesProfileData }
+              });
         } else if (userprofile.profileType === ProfileType.NONE ||
             userprofile.profileType === ProfileType.OTHER.toUpperCase()
             || serverProfile.userType === ProfileType.OTHER.toUpperCase()) {
@@ -177,5 +189,28 @@ export class TncUpdateHandlerService {
       }
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+  }
+
+  private isProfileAutoFill(selectedPage) {
+    const config = onboarding.onboarding.find(obj => {
+      return (obj && obj.name === selectedPage);
+    });
+    return config.profileAutoFill;
+  }
+
+  private async updateUserAsGuest() {
+    const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
+      return data;
+    });
+    const request = {
+      ...req,
+      userId: this.appGlobalService.getCurrentUser().uid,
+    };
+    await this.profileService.updateServerProfile(request).toPromise()
+      .then((data) => {
+        this.commonUtilService.showToast(
+          this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
+        this.events.publish('profile_auto_update');
+      }).catch((e) => console.log('server error for update profile', e));
   }
 }
