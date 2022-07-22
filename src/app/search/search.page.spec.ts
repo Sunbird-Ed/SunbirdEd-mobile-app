@@ -39,7 +39,9 @@ describe('SearchPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
         isUserLoggedIn: jest.fn(() => true),
-        getCurrentUser: jest.fn(() => { })
+        getCurrentUser: jest.fn(() => { }),
+        getProfileSettingsStatus: jest.fn(),
+        setOnBoardingCompleted: jest.fn()
     };
     const dismissFn = jest.fn(() => Promise.resolve());
     const presentFn = jest.fn(() => Promise.resolve());
@@ -52,7 +54,8 @@ describe('SearchPage', () => {
             present: presentFn,
             dismiss: dismissFn,
             onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: jest.fn() } }))
-        }))
+        })),
+        getTranslatedValue: jest.fn()
     };
     const mockEvents: Partial<Events> = {
         unsubscribe: jest.fn()
@@ -61,10 +64,18 @@ describe('SearchPage', () => {
         unsubscribe: jest.fn(),
         subscribe: jest.fn()
     };
-    const mockFrameworkService: Partial<FrameworkService> = {};
-    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
+    const mockFrameworkService: Partial<FrameworkService> = {
+        getFrameworkDetails: jest.fn()
+    };
+    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
+        getFormFields: jest.fn(),
+        getActiveChannelSuggestedFrameworkList: jest.fn(),
+        getSupportedContentFilterConfig: jest.fn()
+    };
     const mockHeaderService: Partial<AppHeaderService> = {
-        hideHeader: jest.fn()
+        hideHeader: jest.fn(),
+        showHeaderWithBackButton: jest.fn(),
+        showHeaderWithHomeButton: jest.fn()
     };
     const mockLocation: Partial<Location> = {
         back: jest.fn()
@@ -72,7 +83,9 @@ describe('SearchPage', () => {
     const mockPlatform: Partial<Platform> = {
         is: jest.fn()
     };
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        updateProfile: jest.fn(() => of())
+    };
     const mockRouterExtras = {
         extras: {
             state: {
@@ -98,9 +111,18 @@ describe('SearchPage', () => {
     const mockTranslate: Partial<TranslateService> = {
         currentLang: 'en'
     };
-    const mockContentService: Partial<ContentService> = {};
-    const mockpageService: Partial<ContentService> = {};
-    const mockEventsBusService: Partial<EventsBusService> = {};
+    const mockContentService: Partial<ContentService> = {
+        searchContent: jest.fn(() => of()),
+        getContentDetails: jest.fn(() => of()),
+        importContent: jest.fn(() => of()),
+        cancelDownload: jest.fn(() => of())
+    };
+    const mockpageService: Partial<PageAssembleService> = {
+        getPageAssemble: jest.fn(() => of())
+    };
+    const mockEventsBusService: Partial<EventsBusService> = {
+        events: jest.fn()
+    };
     const mockZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
     };
@@ -113,18 +135,25 @@ describe('SearchPage', () => {
         getString: jest.fn(() => of('ka' as any))
     };
     const mockCourseService: Partial<CourseService> = {
+        getCourseBatches: jest.fn(() => of()),
         getEnrolledCourses: jest.fn(() => of([]))
     };
-    const mocksearchHistoryService: Partial<SearchHistoryService> = {};
+    const mocksearchHistoryService: Partial<SearchHistoryService> = {
+        getEntries: jest.fn(),
+        addEntry: jest.fn()
+    };
     const mockAppversion: Partial<AppVersion> = {
         getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app')),
         getAppName: jest.fn(() => Promise.resolve('Sunbird'))
     };
-    const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
+    const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {
+        detectChanges: jest.fn()
+    };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         init: jest.fn(),
         checkNewAppVersion: jest.fn(() => Promise.resolve({})),
-        getFormFields: jest.fn(() => Promise.resolve([]))
+        getFormFields: jest.fn(() => Promise.resolve([])),
+        getSupportedContentFilterConfig: jest.fn()
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -1458,7 +1487,7 @@ describe('SearchPage', () => {
             // act
             searchPage.updateFilterIcon();
             // assert
-            expect(searchPage.filterIcon).toEqual('./assets/imgs/ic_action_filter.png');
+            expect(searchPage.filterIcon).toEqual('./assets/imgs/ic_action_filter_applied.png');
         });
         it('should not set filter icon', () => {
             // arrange
@@ -1655,11 +1684,15 @@ describe('SearchPage', () => {
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                     ImpressionType.SEARCH,
                     Environment.HOME, false, undefined,
-                    [{ id: '', type: 'API' },
-                    { id: '', type: 'API' },
-                    { id: '', type: 'API' },
-                    { id: 'SearchResult', type: 'Section' },
-                    { id: 'filter', type: 'DiscoveryType' }]
+                    [
+                        { id: '', type: 'API' },
+                        { id: '', type: 'API' },
+                        { id: '', type: 'API' },
+                        { id: 'SearchResult', type: 'Section' },
+                        { id: 'filter', type: 'DiscoveryType' },
+                        { id: 'filter', type: 'DiscoveryType' },
+                        { id: 'filter', type: 'DiscoveryType' }
+      ]
                 );
             });
         });
@@ -2283,9 +2316,9 @@ describe('SearchPage', () => {
     describe('loadData', () => {
         it('should load data from infinite scroll', () => {
             // arrange
-            jest.spyOn(searchPage, 'handleSearch').mockImplementation()
+            jest.spyOn(searchPage, 'handleSearch').mockImplementation();
             // act
-            searchPage.loadData({target:{}});
+            searchPage.loadData();
             // assert
             setTimeout(() => {
             }, 500);
