@@ -16,7 +16,7 @@ import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, ProfileService, ProfileType, ServerProfile } from 'sunbird-sdk';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../app.constant';
 import { FieldConfig } from '../components/common-forms/field-config';
 import { FormConstants } from '../form.constants';
 import onboarding from '../../assets/configurations/config.json';
