@@ -210,7 +210,7 @@ export class TncUpdateHandlerService {
       .then((data) => {
         this.commonUtilService.showToast(
           this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
-        this.events.publish('profile_auto_update');
+        this.events.publish('refresh:loggedInProfile');
       }).catch((e) => console.log('server error for update profile', e));
   }
 }

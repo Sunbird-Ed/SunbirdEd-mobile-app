@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
+import { AppGlobalService, FormAndFrameworkUtilService, FrameworkDetailsService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ConsentService } from '@app/services/consent-service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
@@ -10,6 +10,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
@@ -18,6 +19,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 import { ProfileConstants, RouterLinks } from '../app.constant';
 import { FieldConfig } from '../components/common-forms/field-config';
 import { FormConstants } from '../form.constants';
+import onboarding from '../../assets/configurations/config.json';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -47,7 +49,9 @@ export class TermsAndConditionsPage implements OnInit {
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
     private sbProgressLoader: SbProgressLoader,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    private frameworkDetailsService: FrameworkDetailsService,
+    private events: Events
   ) {
   }
 
@@ -172,9 +176,13 @@ export class TermsAndConditionsPage implements OnInit {
                 categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                    state: {categoriesProfileData}
-                  });
+                  if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+                    await this.updateUserAsGuest();
+                  } else {
+                    this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                      state: {categoriesProfileData}
+                    });
+                  }
                 } else {
                   if (!this.appGlobalService.isJoinTraningOnboardingFlow) {
                     this.router.navigate(['/', RouterLinks.TABS]);
@@ -184,10 +192,12 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  categoriesProfileData['status'] = value['status']
+                if (this.isProfileAutoFill(OnboardingScreenType.USER_TYPE_SELECTION)) {
+                  await this.updateUserAsGuest();
+                } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                    categoriesProfileData['status'] = value['status']
                     categoriesProfileData['isUserLocationAvalable'] = false;
-                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }
                 });
                 } else {
@@ -251,5 +261,28 @@ export class TermsAndConditionsPage implements OnInit {
       await loader.dismiss();
       loader = undefined;
     }
+  }
+
+  private isProfileAutoFill(selectedPage) {
+    const config = onboarding.onboarding.find(obj => {
+      return (obj && obj.name === selectedPage);
+    });
+    return config.profileAutoFill;
+  }
+
+  private async updateUserAsGuest() {
+    const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
+      return data;
+    });
+    const request = {
+      ...req,
+      userId: this.appGlobalService.getCurrentUser().uid,
+    };
+    await this.profileService.updateServerProfile(request).toPromise()
+      .then((data) => {
+        this.commonUtilService.showToast(
+          this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
+        this.events.publish('refresh:loggedInProfile');
+      }).catch((e) => console.log('server error for update profile', e));
   }
 }
