@@ -392,7 +392,7 @@ export class DistrictMappingPage implements OnDestroy {
     } catch (e) {
       locationMappingConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     }
-    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    let selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
@@ -405,6 +405,12 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
+        if (this.isGoogleSignIn) {
+          const guestUser = await this.commonUtilService.getGuestUserConfig();
+          selectedUserType = (selectedUserType === ProfileType.NONE &&
+            this.profile.serverProfile && !this.profile.serverProfile.profileUserType.type) ?
+            guestUser.profileType : selectedUserType;
+        }
         config.default = (this.profile && this.profile.serverProfile
         && this.profile.serverProfile.profileUserType.type
         && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
