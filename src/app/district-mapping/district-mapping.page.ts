@@ -419,7 +419,7 @@ export class DistrictMappingPage implements OnDestroy {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
                   if(personaConfig.templateOptions.multiple){
-                    const subPersonaCodes = [];
+                    const subPersonaCodes = [];      
                     if(!this.profile.serverProfile.profileUserTypes && !this.profile.serverProfile.profileUserTypes.length && this.profile.serverProfile.profileUserType) {
                       if(typeof this.profile.serverProfile.profileUserType === 'string'){
                         subPersonaCodes.push(this.profile.serverProfile.profileUserType);
@@ -524,6 +524,7 @@ export class DistrictMappingPage implements OnDestroy {
           this.locationFormConfig = undefined;
           this.stateChangeSubscription = undefined;
           this.loader.present();
+          this.formGroup.value.children.persona.subPersona = [];
           this.prevFormValue = { ...this.formGroup.value };
           this.initialiseFormData({
             ...FormConstants.LOCATION_MAPPING,
