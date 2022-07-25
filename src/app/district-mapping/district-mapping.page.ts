@@ -626,7 +626,7 @@ export class DistrictMappingPage implements OnDestroy {
         undefined,
         undefined,
         undefined,
-        undefined
+        curr.persona
       );
     }
     let newLocation;
