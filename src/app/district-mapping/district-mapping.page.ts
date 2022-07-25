@@ -53,7 +53,8 @@ export class DistrictMappingPage implements OnDestroy {
   locationFormConfig: FieldConfig<any>[] = [];
   profile?: Profile;
   navigateToCourse = 0;
-  private name: string;
+  isGoogleSignIn = false;
+  userData: any;
   private backButtonFunc: Subscription;
   private presetLocation: { [locationType: string]: LocationSearchResult } = {};
   private loader?: any;
@@ -85,6 +86,8 @@ export class DistrictMappingPage implements OnDestroy {
     this.appGlobalService.closeSigninOnboardingLoader();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.navigateToCourse = extrasState.noOfStepsToCourseToc;
+    this.isGoogleSignIn = extrasState.isGoogleSignIn;
+    this.userData = this.isGoogleSignIn ? extrasState.userData : '';
   }
   goBack(isNavClicked: boolean) {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -225,50 +228,66 @@ export class DistrictMappingPage implements OnDestroy {
         lastName: '',
         profileUserTypes: userTypes
       };
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
-      const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
-      this.profileService.updateServerProfile(req).toPromise()
-        .then(async () => {
-          await loader.dismiss();
-          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
-          if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
-            await this.saveDeviceLocation();
-          }
-          this.isLocationUpdated = false;
-          this.generateLocationCaptured(false);
-          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          this.events.publish('loggedInProfile:update', req);
-          if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
-              this.location.back();
-          } else if (this.profile && this.source === PageId.PROFILE) {
-              this.location.back();
-              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
-          } else {
-            if (this.profile && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+      if (this.isGoogleSignIn && this.userData.isMinor) {
+          const navigationExtras: NavigationExtras = {
+            state: {
+              userData: {...this.userData,
+                location: this.formGroup.value.children['persona'],
+                profileUserTypes: userTypes,
+                userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid}
             }
-            if (this.appGlobalService.isJoinTraningOnboardingFlow) {
-              window.history.go(-this.navigateToCourse);
-              this.externalIdVerificationService.showExternalIdVerificationPopup();
+          };
+          this.router.navigate([RouterLinks.SIGNUP_EMAIL], navigationExtras);
+      } else {
+        if (this.isGoogleSignIn) {
+          req['firstName'] = this.userData.name;
+          req['dob'] = this.userData.dob;
+        }
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
+        this.profileService.updateServerProfile(req).toPromise()
+          .then(async () => {
+            await loader.dismiss();
+            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
+            if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
+              await this.saveDeviceLocation();
+            }
+            this.isLocationUpdated = false;
+            this.generateLocationCaptured(false);
+            this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+            this.events.publish('loggedInProfile:update', req);
+            if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+                this.location.back();
+            } else if (this.profile && this.source === PageId.PROFILE) {
+                this.location.back();
+                this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
             } else {
-              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+              if (this.profile && !isSSOUser) {
+                this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+              }
+              if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+                window.history.go(-this.navigateToCourse);
+                this.externalIdVerificationService.showExternalIdVerificationPopup();
+              } else {
+                this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+                this.events.publish('update_header');
+              }
+            }
+          }).catch(async () => {
+            await loader.dismiss();
+            this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
+            if (this.profile) {
+              this.location.back();
+            } else {
+              if (this.profile && !isSSOUser) {
+                this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+              }
+              this.router.navigate([`/${RouterLinks.TABS}`]);
               this.events.publish('update_header');
             }
-          }
-        }).catch(async () => {
-          await loader.dismiss();
-          this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
-          if (this.profile) {
-            this.location.back();
-          } else {
-            if (this.profile && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
-            }
-            this.router.navigate([`/${RouterLinks.TABS}`]);
-            this.events.publish('update_header');
-          }
-        });
+          });
+      }
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
       this.generateLocationCaptured(true); // is dirtrict or location edit  = true
       await this.saveDeviceLocation();
@@ -373,11 +392,12 @@ export class DistrictMappingPage implements OnDestroy {
     } catch (e) {
       locationMappingConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     }
-    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    let selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
-      if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+      if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)
+      && !this.isGoogleSignIn) {
         config.templateOptions.hidden = false;
         config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.firstName) ?
         this.profile.serverProfile.firstName : this.profile.handle;
@@ -385,11 +405,16 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
+        if (this.isGoogleSignIn && selectedUserType === ProfileType.NONE) {
+          const guestUser = await this.commonUtilService.getGuestUserConfig();
+          selectedUserType = (this.profile.serverProfile && !this.profile.serverProfile.profileUserType.type) ?
+            guestUser.profileType : selectedUserType;
+        }
         config.default = (this.profile && this.profile.serverProfile
         && this.profile.serverProfile.profileUserType.type
         && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
         this.profile.serverProfile.profileUserType.type : selectedUserType;
-        if (this.source === PageId.PROFILE) {
+        if (this.source === PageId.PROFILE || this.isGoogleSignIn) {
           config.templateOptions.hidden = false;
         }
       }
@@ -407,7 +432,7 @@ export class DistrictMappingPage implements OnDestroy {
           }));
         Object.keys(config.children).forEach((persona) => {
           config.children[persona].map((personaConfig) => {
-            if (!useCaseList.includes(personaConfig.templateOptions['dataSrc']['params']['useCase'])) {
+            if (!useCaseList.includes(personaConfig.templateOptions['dataSrc']['params']['useCase']) && !this.isGoogleSignIn) {
               personaConfig.templateOptions['hidden'] = true;
               personaConfig.validations = [];
             }
@@ -658,4 +683,7 @@ export class DistrictMappingPage implements OnDestroy {
       featureIdMap.location.LOCATION_CAPTURE);
   }
 
+  redirectToLogin() {
+    this.router.navigate([RouterLinks.SIGN_IN]);
+  }
 }

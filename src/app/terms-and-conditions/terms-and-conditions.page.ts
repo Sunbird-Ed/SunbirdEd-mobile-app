@@ -165,7 +165,9 @@ export class TermsAndConditionsPage implements OnInit {
               isRootPage: true,
               noOfStepsToCourseToc: 1
             };
-            if (value['status']) {
+            if (!profile.serverProfile.dob) {
+              this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+            } else if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();

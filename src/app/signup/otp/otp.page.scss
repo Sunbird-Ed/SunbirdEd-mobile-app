@@ -1,0 +1,161 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+.sign-up-div {
+    margin-top: 2vh;
+
+    .header {
+        text-align: center;
+        margin: auto;
+
+        .logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                width: 4rem;
+                padding: 10px;
+            }
+        }
+
+        .title {
+            color: #005A9E;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .subtitle {
+            font-weight: bold;
+            color: #333333;
+        }
+    }
+}
+
+
+ion-input,
+section {
+    border: 1px solid gray;
+    border-radius: 16px;
+    margin: 10px auto;
+    padding-left: 1rem !important;
+}
+
+section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 1rem;
+
+    ion-icon {
+        font-size: 23px;
+        color: gray;
+    }
+}
+
+ion-datetime {
+    width: 100%;
+    padding: 7px 0;
+}
+
+.important::after {
+    content: '*';
+    color: red;
+    margin-left: 5px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tablebox {
+    background: #F0F0F0;
+    padding: 10px;
+    margin-top: 7px;
+}
+
+table {
+    width: 100%;
+
+    tr {
+
+        td {
+            padding: 10px;
+        }
+
+        td:last-child {
+            font-weight: bold;
+        }
+
+        td:last-child::before {
+            content: ': ';
+
+        }
+
+    }
+
+
+}
+
+.center {
+    text-align: center;
+}
+
+.prb-3 {
+    padding-right: 7rem;
+}
+.pb-40{
+    padding-bottom: 40px;
+}
+.accepttext {
+    font-size: 12px;
+}
+
+.danger{
+    color: red;
+}
+
+.profile-info-section{
+    display: grid;
+    grid-template-columns: 100px 227px;
+  }
+
+  .profile-info{
+    color: map-get($colors, granite_gray);
+    font-family: "Noto Sans", sans-serif;
+    font-size: $font-size-base;
+    letter-spacing: 0;
+  }
+
+  .footer {
+    background: #F8FAFC;
+    border-top: 1px solid #d1d6dd;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+  
+    a {
+      color: #005A9E;
+    }
+  }
+
+  .btn-info{
+      padding: .75rem;
+  }
+
+  ion-button{
+      height: 2.5rem;
+  }

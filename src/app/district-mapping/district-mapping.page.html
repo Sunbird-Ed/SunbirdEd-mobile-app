@@ -2,7 +2,8 @@
   <div class="dm-header ion-padding" [ngClass]="{'dm-header-new': !isShowBackButton}">
     <span role="button" aria-label="back"><ion-icon *ngIf="isShowBackButton" name="arrow-back" role="button" aria-label="back" (click)="goBack(true)"
       class="top-back-button"></ion-icon></span>
-      <span class="preference-info" role="heading" aria-level="1">{{ 'SET_PREFERENCE' | translate }}</span>
+      <span class="preference-info" role="heading" aria-level="1" *ngIf="!isGoogleSignIn">{{ 'SET_PREFERENCE' | translate }}</span>
+      <span class="preference-info" role="heading" aria-level="1" *ngIf="isGoogleSignIn">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '2/4'} }}</span>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
@@ -10,6 +11,10 @@
     <div class="heading"><strong>{{'YOUR_LOCATION'| translate}}</strong></div>
     <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
   </div>
+
+  <div class="login-header" *ngIf="isGoogleSignIn">
+    To discover relevant content update the following details:
+</div>
 
   <div class="px-16">
     <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
@@ -19,6 +24,12 @@
              (valueChanges)="onFormValueChange($event)"
              (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
+  </div>
+  <div class="login-content" *ngIf="isGoogleSignIn">
+    <label>Already have an account?</label>
+    <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
+      aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()"
+      type="submit">Login</button>
   </div>
   <div class="bottom-section"></div>
   <div class="ios-footer" *ngIf="platform.is('ios')">
