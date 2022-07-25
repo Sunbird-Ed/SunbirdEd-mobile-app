@@ -405,10 +405,9 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        if (this.isGoogleSignIn) {
+        if (this.isGoogleSignIn && selectedUserType === ProfileType.NONE) {
           const guestUser = await this.commonUtilService.getGuestUserConfig();
-          selectedUserType = (selectedUserType === ProfileType.NONE &&
-            this.profile.serverProfile && !this.profile.serverProfile.profileUserType.type) ?
+          selectedUserType = (this.profile.serverProfile && !this.profile.serverProfile.profileUserType.type) ?
             guestUser.profileType : selectedUserType;
         }
         config.default = (this.profile && this.profile.serverProfile
