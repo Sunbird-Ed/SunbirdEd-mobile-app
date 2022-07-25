@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="birthYearOptions.length>0">
+      <ion-button icon-only (click)="goBack()">
+        <ion-icon class="arrow-icon back-arrow" role="button" aria-label="back" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title role="heading" aria-level="1">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '1/4'} }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="sign-up-div">
+    <div class="header">
+      <div class="logos">
+        <img src="assets/imgs/ic_launcher.png" alt="app">
+      </div>
+      <h1 class="title">{{'APP_TITLE' | translate:{'%s': appName} }}</h1>
+      <h5 class="subtitle">{{'FRMELEMNTS_LBL_REGISTER_TO' | translate:{'appName': appName} }}</h5>
+    </div>
+
+    <form [formGroup]="personalInfoForm">
+      <ion-item lines="none">
+        <ion-label position="stacked" class="important">{{'FULL_NAME' | translate}}</ion-label>
+        <ion-input formControlName="name" type="text" placeholder="{{'FRMELEMNTS_LBL_ENTER_NAME' | translate}}" required></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked" class="important" style="margin-bottom: .7rem;">{{'YOB_TITLE' | translate}}
+        </ion-label>
+        <ion-select formControlName="dob" placeholder="{{'SELECT_YOB' | translate}}" interface="popover" mode="ios"
+          class="yob-info ion-text-capitalize">
+          <ion-select-option *ngFor="let year of birthYearOptions" value="{{year}}">
+            {{year}}</ion-select-option>
+        </ion-select>
+
+      </ion-item>
+    </form>
+
+    <div style="padding: 1rem;">
+      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" (click)="continue()"
+        [disabled]="!personalInfoForm.valid">
+        <span>{{'CONTINUE' | translate}}</span>
+        <ion-icon class="mg-popup-btn-icon" name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>
+<div class="footer">
+  <label>{{'HAVE_ACCOUNT' | translate }}</label>
+  <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
+    aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()" type="submit">{{'SIGN_IN'
+    | translate}}</button>
+</div>

@@ -193,6 +193,9 @@
     .btn-info{
         padding: 20px
     }
+    .login-info{
+        border: none !important;
+    }
     .preference-info{
         font-size: 1.125rem;
         position: absolute;
@@ -227,3 +230,105 @@
 .dm-header-new {
     padding-bottom: 2rem;
 }
+
+.login-header {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 1.5rem 1rem 1.5rem 1rem;
+}
+
+  .login-content {
+      text-align: center;
+      padding-top: 1rem;
+  }
+
+  label {
+    display: inline-block;
+    font-weight: 700;
+  }
+
+  :host ::ng-deep {
+    --sbt-pill-bg-active: #004594;
+    --sbt-pill-text-hover: #ffffff;
+    --sbt-pill-hs: 212,100%;
+    --sbt-pill-bg: hsl(var(--sbt-pill-hs), 90%);
+    --sbt-box-shadow-black: rgba(0, 0, 0, 0.1);
+    --sbt-box-shadow-3px: 0.1875rem 0.1875rem 0.125rem 0 var(--sbt-box-shadow-black);
+    --sbt-theme-purple-selectbox: #6841B3;
+    --sbt-theme-purple-selectbox-lbg: #F2EEFF;
+    --sbt-bradius: 0.125rem;
+    --sbt-bradius-24: calc(var(--sbt-bradius) * 12);
+  
+    .cfe-multiselect-container {
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+          }
+      
+      margin-bottom: 1rem;
+  
+      .cfe-multiselect-field {
+        display: flex;
+  
+        height: 2.76rem;
+        line-height: 2.5rem;
+        border-radius: var(--sbt-bradius-24) !important;
+  
+        font-weight: 700;
+        font-size: .75rem;
+        width: 100%;
+        min-height: 2rem;
+  
+        border: 1px solid gray;
+        padding: 0.188rem 1.25rem;
+        white-space: normal;
+        outline: 0;
+        min-width: 14rem;
+        box-shadow: var(--sbt-box-shadow-3px);
+        transition: box-shadow .1s ease, width .1s ease;
+  
+        -webkit-tap-highlight-color: transparent;
+        text-align: left;
+  
+        .cfe-multiselect-field-label-container {
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+  
+          order: 1;
+          flex-grow: 1;
+          border-bottom-color: transparent !important;
+  
+          ul {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+  
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-left: 0 !important;
+          }
+  
+          .cfe-multiselect-field-label {
+            display: inline;
+            font-size: 0.95rem !important;
+          }
+        }
+  
+        .cfe-multiselect-field-caret {
+          order: 2;
+          flex-shrink: 0;
+  
+          box-sizing: border-box;
+          padding-right: .75rem;
+          top: .3rem !important
+        }
+      }
+
+      .sb-modal ul {
+        list-style-type: none;
+      }
+    }
+  }
