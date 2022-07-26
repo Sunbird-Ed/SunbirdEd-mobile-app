@@ -414,7 +414,7 @@ export class DistrictMappingPage implements OnDestroy {
         && this.profile.serverProfile.profileUserType.type
         && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
         this.profile.serverProfile.profileUserType.type : selectedUserType;
-        if (this.source === PageId.PROFILE || this.isGoogleSignIn) {
+        if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
       }
