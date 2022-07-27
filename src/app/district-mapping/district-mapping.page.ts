@@ -257,7 +257,15 @@ export class DistrictMappingPage implements OnDestroy {
             this.generateLocationCaptured(false);
             this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
             this.events.publish('loggedInProfile:update', req);
-            if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+            if (this.isGoogleSignIn) {
+              const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+              };
+              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: categoriesProfileData
+              });
+            } else if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
                 this.location.back();
             } else if (this.profile && this.source === PageId.PROFILE) {
                 this.location.back();
