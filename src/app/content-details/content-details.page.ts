@@ -1293,6 +1293,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     } else if (event.type === 'ended') {
+      this.isContentPlayed = true;
       this.rateContent('manual');
     } else if (event.type === 'REPLAY') {
       this.isPlayerPlaying = true;
