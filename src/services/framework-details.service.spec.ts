@@ -12,7 +12,6 @@ describe('FrameworkDetailsService', () => {
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
         getFrameworkCategoryTerms: jest.fn((arg) => {
             let value;
-            console.log('kkkkkkkkk', arg);
             switch (arg.currentCategoryCode) {
                 case 'board':
                     value = mockBoardCategory;
@@ -53,6 +52,41 @@ describe('FrameworkDetailsService', () => {
                 medium: ['assamese', 'bengali'],
                 grade: ['class1', 'class2'],
                 subject: ['accountancy', 'assamese']
+            };
+            mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve(profile));
+            mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([
+                {code: 'state-code', name: 'state-name', id: 'state-id', type: 'state'},
+                {code: 'dist-code', name: 'dist-name', id: 'dist-id', type: 'district'}
+            ])) as any;
+            mockLocationHandler.getLocationList = jest.fn(() => Promise.resolve(
+                [
+                    {
+                        id: 'state-id'
+                    },
+                    {
+                        id: 'dist-id'
+                    }
+                ]
+            )) as any;
+            // act
+            frameworkDetailsService.getFrameworkDetails();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getGuestUserConfig).toHaveBeenCalled();
+                expect(mockLocationHandler.getAvailableLocation).toHaveBeenCalled();
+                expect(mockLocationHandler.getLocationList).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return error', (done) => {
+            // arrange
+            const profile = {
+                syllabus: ['sample-syllabus'],
+                board: [],
+                medium: [],
+                grade: [],
+                subject: []
             };
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve(profile));
             mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([
