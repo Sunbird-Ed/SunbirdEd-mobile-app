@@ -47,6 +47,14 @@ export interface FieldConfig<T> {
     prefix?: string,
     multiple?: boolean,
     hidden?: boolean,
+    showIcon?: {
+      show?: boolean,
+      image?: {
+        active: string,
+        inactive: string,
+      },
+      direction: string
+    },
     options?: FieldConfigOption<T>[] | FieldConfigOptionsBuilder<T> | FieldConfigOptionAssociations<T>,
     labelHtml?: {
       contents: string,

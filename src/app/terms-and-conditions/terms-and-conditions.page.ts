@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
+import { AppGlobalService, FormAndFrameworkUtilService, FrameworkDetailsService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ConsentService } from '@app/services/consent-service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
@@ -10,14 +10,16 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, ProfileService, ProfileType, ServerProfile } from 'sunbird-sdk';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../app.constant';
 import { FieldConfig } from '../components/common-forms/field-config';
 import { FormConstants } from '../form.constants';
+import onboarding from '../../assets/configurations/config.json';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -47,7 +49,9 @@ export class TermsAndConditionsPage implements OnInit {
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
     private sbProgressLoader: SbProgressLoader,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    private frameworkDetailsService: FrameworkDetailsService,
+    private events: Events
   ) {
   }
 
@@ -161,7 +165,10 @@ export class TermsAndConditionsPage implements OnInit {
               isRootPage: true,
               noOfStepsToCourseToc: 1
             };
-            if (value['status']) {
+           // profile.serverProfile.dob = undefined;
+            if (!profile.serverProfile.dob) {
+              this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+            } else if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
@@ -172,9 +179,13 @@ export class TermsAndConditionsPage implements OnInit {
                 categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                    state: {categoriesProfileData}
-                  });
+                  if (onboarding.skipOnboardingForLoginUser) {
+                    await this.updateUserAsGuest();
+                  } else {
+                    this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                      state: {categoriesProfileData}
+                    });
+                  }
                 } else {
                   if (!this.appGlobalService.isJoinTraningOnboardingFlow) {
                     this.router.navigate(['/', RouterLinks.TABS]);
@@ -184,10 +195,12 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  categoriesProfileData['status'] = value['status']
+                if (onboarding.skipOnboardingForLoginUser) {
+                  await this.updateUserAsGuest();
+                } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                    categoriesProfileData['status'] = value['status']
                     categoriesProfileData['isUserLocationAvalable'] = false;
-                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }
                 });
                 } else {
@@ -203,9 +216,13 @@ export class TermsAndConditionsPage implements OnInit {
                 await this.consentService.getConsent(profile, true);
               }
               if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                  state: {categoriesProfileData}
-                });
+                if (onboarding.skipOnboardingForLoginUser) {
+                  await this.updateUserAsGuest();
+                } else {
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: {categoriesProfileData}
+                  });
+                }
               } else {
                 this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                   state: categoriesProfileData
@@ -251,5 +268,27 @@ export class TermsAndConditionsPage implements OnInit {
       await loader.dismiss();
       loader = undefined;
     }
+  }
+
+  private async updateUserAsGuest() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
+      return data;
+    });
+    const request = {
+      ...req,
+      userId: this.appGlobalService.getCurrentUser().uid,
+    };
+    await this.profileService.updateServerProfile(request).toPromise()
+      .then(async (data) => {
+        await loader.dismiss();
+        this.commonUtilService.showToast(
+          this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
+        this.events.publish('refresh:loggedInProfile');
+      }).catch(async (e) => {
+        await loader.dismiss();
+        console.log('server error for update profile', e);
+      });
   }
 }
