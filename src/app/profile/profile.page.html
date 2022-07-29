@@ -51,45 +51,45 @@
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
         <div>
-            <span>{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
-            <span class="bolder">{{profile?.persona?.name}}</span>
+            <span class="bolder">{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
+            <span>{{profile?.persona?.name}}</span>
         </div>
     </div>
     <div *ngIf="profile?.subPersona && profile?.subPersona.length" class="text-center">
         <div>
-            <span>{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
-            <span class="bolder">{{profile?.subPersona.join(', ')}}</span>
+            <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
+            <span>{{profile?.subPersona.join(', ')}}</span>
         </div>
     </div>
     <div *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">
-        <span>{{'STATE' | translate}}: </span>
-        <span class="bolder">{{userLocation.state.name}}</span>
+        <span class="bolder">{{'STATE' | translate}}: </span>
+        <span>{{userLocation.state.name}}</span>
         <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
             class="lighter">{{'ADD_STATE' | translate}}</span>
     </div>
     <div *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">
-        <span>{{'DISTRICT' | translate}}: </span>
-        <span class="bolder">{{userLocation.district.name}}</span>
+        <span class="bolder">{{'DISTRICT' | translate}}: </span>
+        <span>{{userLocation.district.name}}</span>
         <span
             *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
             class="lighter">{{'ADD_DISTRICT' | translate}}</span>
     </div>
     <div *ngIf="userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length">
-        <span>{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
-        <span class="bolder">{{userLocation.block.name}}</span>
+        <span class="bolder">{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
+        <span>{{userLocation.block.name}}</span>
         <span *ngIf="!(userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length)"
             class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
     </div>
     <div *ngIf="userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length">
-        <span>{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
-        <span class="bolder">{{userLocation.cluster.name}}</span>
+        <span class="bolder">{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
+        <span>{{userLocation.cluster.name}}</span>
         <span *ngIf="!(userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length)"
             class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
     </div>
     <div *ngIf="userLocation" class="location text-center">
         <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
-            <span>{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
-            <span class="bolder">{{userLocation.school.name}}</span>
+            <span  class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
+            <span>{{userLocation.school.name}}</span>
             <span *ngIf="!(userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length)"
                 class="lighter">{{'FRMELEMNTS_LBL_ADD_SCHOOL' | translate}}</span>
         </div>

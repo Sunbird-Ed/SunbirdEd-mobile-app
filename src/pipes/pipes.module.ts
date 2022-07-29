@@ -14,6 +14,7 @@ import { TranslateJsonPipe } from './translate-json/translate-json';
 import { RandomColorMapPipe } from './theme-icon-mapper/random-color-map.pipe';
 import { ThemeInputsSelectorPipe } from './theme-icon-mapper/theme-inputs-selector.pipe';
 import { CategoryPipe } from './category-pipe/category-pipe';
+import {ImageContentPipe} from './image-content/image-content.pipe';
 
 @NgModule({
   declarations: [FileSizePipe,
@@ -29,7 +30,8 @@ import { CategoryPipe } from './category-pipe/category-pipe';
     TranslateJsonPipe,
     RandomColorMapPipe,
     ThemeInputsSelectorPipe,
-    CategoryPipe
+    CategoryPipe,
+    ImageContentPipe
   ],
   imports: [CommonModule],
   exports: [FileSizePipe,
@@ -45,9 +47,10 @@ import { CategoryPipe } from './category-pipe/category-pipe';
     TranslateJsonPipe,
     RandomColorMapPipe,
     ThemeInputsSelectorPipe,
-    CategoryPipe
+    CategoryPipe,
+    ImageContentPipe
   ],
-  providers: [DatePipe, CategoryKeyTranslator, CategoryPipe]
+  providers: [DatePipe, CategoryKeyTranslator, CategoryPipe, ImageContentPipe]
 })
 export class PipesModule {
 }
