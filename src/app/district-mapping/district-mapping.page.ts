@@ -103,8 +103,9 @@ export class DistrictMappingPage implements OnDestroy {
   async ionViewWillEnter() {
     this.initializeLoader();
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    const isLoggedIn = this.appGlobalService.isUserLoggedIn();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
-      this.profile.serverProfile ? this.profile.serverProfile : this.profile))
+      this.profile.serverProfile ? this.profile.serverProfile : this.profile, isLoggedIn))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
         if (loc) { acc[loc.type] = loc; }
         return acc;
