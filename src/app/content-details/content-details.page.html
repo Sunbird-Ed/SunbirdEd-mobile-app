@@ -3,7 +3,7 @@
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'"
     [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier] && (content.mimeType === 'video/mp4' || content.mimeType === 'video/webm'), '': !contentDownloadable[content?.identifier]}">
     <div *ngIf="contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content | imageContent" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -35,7 +35,7 @@
       </div>
     </div>
     <div *ngIf="!contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content| imageContent" alt="">
       <div class="sb-overlay-container">
         <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
         (click)="handleNavBackButton();$event.stopPropagation()">
@@ -93,7 +93,7 @@
   </div>
   <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
     <div class="sb-play-container sb-player-container" *ngIf="contentDownloadable[content?.identifier] && playerType !== 'sunbird-video-player'">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content | imageContent" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
