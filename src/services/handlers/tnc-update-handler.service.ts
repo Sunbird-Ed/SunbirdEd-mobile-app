@@ -196,6 +196,8 @@ export class TncUpdateHandlerService {
   }
 
   private async updateUserAsGuest() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
       return data;
     });
@@ -204,10 +206,14 @@ export class TncUpdateHandlerService {
       userId: this.appGlobalService.getCurrentUser().uid,
     };
     await this.profileService.updateServerProfile(request).toPromise()
-      .then((data) => {
+      .then(async (data) => {
+        await loader.dismiss();
         this.commonUtilService.showToast(
           this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
         this.events.publish('refresh:loggedInProfile');
-      }).catch((e) => console.log('server error for update profile', e));
+      }).catch(async (e) => {
+        await loader.dismiss();
+        console.log('server error for update profile', e);
+      });
   }
 }

@@ -165,6 +165,7 @@ export class TermsAndConditionsPage implements OnInit {
               isRootPage: true,
               noOfStepsToCourseToc: 1
             };
+           // profile.serverProfile.dob = undefined;
             if (!profile.serverProfile.dob) {
               this.router.navigate([RouterLinks.SIGNUP_BASIC]);
             } else if (value['status']) {
@@ -178,7 +179,7 @@ export class TermsAndConditionsPage implements OnInit {
                 categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                  if (onboarding.onboarding.skipOnboardingForLoginUser) {
+                  if (onboarding.skipOnboardingForLoginUser) {
                     await this.updateUserAsGuest();
                   } else {
                     this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -194,7 +195,7 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (onboarding.onboarding.skipOnboardingForLoginUser) {
+                if (onboarding.skipOnboardingForLoginUser) {
                   await this.updateUserAsGuest();
                 } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                     categoriesProfileData['status'] = value['status']
@@ -215,9 +216,13 @@ export class TermsAndConditionsPage implements OnInit {
                 await this.consentService.getConsent(profile, true);
               }
               if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                  state: {categoriesProfileData}
-                });
+                if (onboarding.skipOnboardingForLoginUser) {
+                  await this.updateUserAsGuest();
+                } else {
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: {categoriesProfileData}
+                  });
+                }
               } else {
                 this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                   state: categoriesProfileData
@@ -266,6 +271,8 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   private async updateUserAsGuest() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
       return data;
     });
@@ -274,10 +281,14 @@ export class TermsAndConditionsPage implements OnInit {
       userId: this.appGlobalService.getCurrentUser().uid,
     };
     await this.profileService.updateServerProfile(request).toPromise()
-      .then((data) => {
+      .then(async (data) => {
+        await loader.dismiss();
         this.commonUtilService.showToast(
           this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
         this.events.publish('refresh:loggedInProfile');
-      }).catch((e) => console.log('server error for update profile', e));
+      }).catch(async (e) => {
+        await loader.dismiss();
+        console.log('server error for update profile', e);
+      });
   }
 }

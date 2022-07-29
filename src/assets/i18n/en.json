@@ -1348,5 +1348,7 @@
   "FRMELEMNTS_LBL_CONFIRM_EMAIL_PATTERN_VALIDATION": "Please enter valid email address",
   "FRMELEMNTS_LBL_OTP_NOT_RECEIVED": "Didn’t Receive an OTP?",
   "FRMELEMNTS_LBL_STEP": "Step {{page_number}}",
-  "ENTER_USER_NAME": "Enter your name"
+  "ENTER_USER_NAME": "Enter your name",
+  "CRS_TRK_AGREE_TO_SHARE_PROFILE_DETAILS": "I consent to share my details with the administrators of this course. All course administrators are bound by the ",
+  "TBK_TRK_AGREE_TO_SHARE_PROFILE_DETAILS": "I consent to share my details with the administrators of this book. All course administrators are bound by the "
 }

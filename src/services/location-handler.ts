@@ -18,18 +18,27 @@ export class LocationHandler {
         @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService
     ) { }
 
-    public async getAvailableLocation(profile?): Promise<LocationSearchResult[]> {
+    public async getAvailableLocation(profile?, isLoggedIn?): Promise<LocationSearchResult[]> {
         let locationResult: LocationSearchResult[] = [];
         if (profile && profile['userLocations'] && profile['userLocations'].length) {
             for (const userLocation of profile['userLocations']) {
                 locationResult.push(userLocation);
             }
-        } else if (await this.isDeviceLocationAvailable()) {
-            locationResult = await this.getLocation(PreferenceKey.DEVICE_LOCATION);
-        } else if (await this.isIpLocationAvailable()) {
-            locationResult = await this.getLocation(PreferenceKey.IP_LOCATION);
+        } else {
+            if (isLoggedIn) {
+                if (await this.isIpLocationAvailable()) {
+                    locationResult = await this.getLocation(PreferenceKey.IP_LOCATION);
+                } else if (await this.isDeviceLocationAvailable()) {
+                    locationResult = await this.getLocation(PreferenceKey.DEVICE_LOCATION);
+                }
+            } else {
+                if (await this.isDeviceLocationAvailable()) {
+                    locationResult = await this.getLocation(PreferenceKey.DEVICE_LOCATION);
+                } else if (await this.isIpLocationAvailable()) {
+                    locationResult = await this.getLocation(PreferenceKey.IP_LOCATION);
+                }
+            }
         }
-
         return locationResult || [];
 
     }

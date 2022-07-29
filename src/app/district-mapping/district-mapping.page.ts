@@ -103,8 +103,9 @@ export class DistrictMappingPage implements OnDestroy {
   async ionViewWillEnter() {
     this.initializeLoader();
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    const isLoggedIn = this.appGlobalService.isUserLoggedIn();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
-      this.profile.serverProfile ? this.profile.serverProfile : this.profile))
+      this.profile.serverProfile ? this.profile.serverProfile : this.profile, isLoggedIn))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
         if (loc) { acc[loc.type] = loc; }
         return acc;
@@ -257,7 +258,15 @@ export class DistrictMappingPage implements OnDestroy {
             this.generateLocationCaptured(false);
             this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
             this.events.publish('loggedInProfile:update', req);
-            if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+            if (this.isGoogleSignIn) {
+              const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+              };
+              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: categoriesProfileData
+              });
+            } else if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
                 this.location.back();
             } else if (this.profile && this.source === PageId.PROFILE) {
                 this.location.back();
@@ -414,7 +423,7 @@ export class DistrictMappingPage implements OnDestroy {
         && this.profile.serverProfile.profileUserType.type
         && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
         this.profile.serverProfile.profileUserType.type : selectedUserType;
-        if (this.source === PageId.PROFILE || this.isGoogleSignIn) {
+        if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
       }
