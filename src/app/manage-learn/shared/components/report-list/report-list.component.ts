@@ -11,7 +11,8 @@ export class ReportListComponent implements OnInit {
 @Input() config;
 @Input() element;
 @Input() questionNumber;
-
+page = 1;
+completedDate;
   constructor(
     private dhiti: DhitiApiService,
     private modalCtrl: ModalController,
@@ -23,8 +24,13 @@ export class ReportListComponent implements OnInit {
 
   loadData(){
     this.dhiti.post(this.config).subscribe(resp =>{
+    this.completedDate = resp.completedDate;
     this.element.answers = [...this.element.answers, ...resp.answers];
     })
+  }
+  loadMoreReports(){
+    this.config.payload.completedDate = this.completedDate
+    this.loadData();
   }
   close() {
     this.modalCtrl.dismiss();
