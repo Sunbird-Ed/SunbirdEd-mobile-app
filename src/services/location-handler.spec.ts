@@ -36,7 +36,7 @@ describe('LocationHandler', () => {
         }]
     };
     const mockProfileService: Partial<ProfileService> = {
-        searchLocation: jest.fn(() => of(mockProfile.userLocations))
+        searchLocation: jest.fn(() => of())
     };
     const mockFrameworkService: Partial<FrameworkService> = {
         searchOrganization: jest.fn(() => of({
@@ -70,13 +70,45 @@ describe('LocationHandler', () => {
     describe('getAvailableLocation', () => {
         it('should return location results from profile userLocation', (done) => {
             // arrange
+            mockSharedPreference.getString = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.DEVICE_LOCATION:
+                        value = undefined;
+                        break;
+                    case PreferenceKey.IP_LOCATION:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
             // act
-            locationHandler.getAvailableLocation(mockProfile).then((response) => {
+            locationHandler.getAvailableLocation(mockProfile, true).then((response) => {
                 // assert
                 expect(response).toEqual(mockProfile.userLocations);
                 done();
             });
         });
+        it('should get avaliable location for logged in user and ip location available', (done) => {
+            // arrange
+            mockSharedPreference.getString = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.DEVICE_LOCATION:
+                        value = undefined;
+                        break;
+                    case PreferenceKey.IP_LOCATION:
+                        value = '{\"district\":\"sample_district\"}';
+                        break;
+                }
+                return of(value);
+            });
+            // act
+            locationHandler.getAvailableLocation({}, true).then((response) => {
+                // assert
+                done();
+            })
+        })
         it('should return location results if device location is available with stateId and districtId', (done) => {
             // arrange
             mockSharedPreference.getString = jest.fn((arg) => {
@@ -110,6 +142,7 @@ describe('LocationHandler', () => {
                 }
                 return of(value);
             });
+            mockProfileService.searchLocation = jest.fn(() => of(mockProfile.userLocations));
             // act
             locationHandler.getAvailableLocation().then((response) => {
                 // assert
@@ -142,6 +175,7 @@ describe('LocationHandler', () => {
                     id: 'sample_id'
                 }]
             })) as any;
+            mockProfileService.searchLocation = jest.fn(() => of(mockProfile.userLocations));
             // act
             locationHandler.getAvailableLocation().then((response) => {
                 // assert
@@ -160,12 +194,96 @@ describe('LocationHandler', () => {
                 done();
             });
         });
+        it('should get avaliable location for logged in user and ip location available', (done) => {
+            // arrange
+            mockSharedPreference.getString = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.DEVICE_LOCATION:
+                        value = '{\"district\":\"sample_district\",\"districtId\":\"sample_id\",\"state\":\"sample_state\",\"stateId\":\"sample_id\",\"block\":\"sample_block\"}';
+                        break;
+                    case PreferenceKey.IP_LOCATION:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                count: 10,
+                content: [{
+                    id: 'sample_id'
+                }]
+            })) as any;
+            // act
+            locationHandler.getAvailableLocation({}, true).then((response) => {
+                // assert
+                done();
+            })
+        })
+        it('should get avaliable location for logged in user and device and ip location not available', (done) => {
+            // arrange
+            mockSharedPreference.getString = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.DEVICE_LOCATION:
+                        value = undefined;
+                        break;
+                    case PreferenceKey.IP_LOCATION:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                count: 10,
+                content: [{
+                    id: 'sample_id'
+                }]
+            })) as any;
+            // act
+            locationHandler.getAvailableLocation({}, true).then((response) => {
+                // assert
+                done();
+            })
+        })
+        it('should get avaliable location for else cndtn without device and ip location', (done) => {
+            // arrange
+            mockSharedPreference.getString = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.DEVICE_LOCATION:
+                        value = undefined;
+                        break;
+                    case PreferenceKey.IP_LOCATION:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                count: 10,
+                content: [{
+                    id: 'sample_id'
+                }]
+            })) as any;
+            // act
+            locationHandler.getAvailableLocation({}, false).then((response) => {
+                // assert
+                done();
+            })
+        })
     });
     describe('isUserLocationAvalable', () => {
         it('should return true if userLocation is available', () => {
             // arrange
             // act
             expect(locationHandler.isUserLocationAvalable(mockProfile)).toBeTruthy();
+        });
+
+        it('should return false if userLocation is not available', () => {
+            // arrange
+            // act
+            expect(locationHandler.isUserLocationAvalable({})).toBeFalsy();
         });
     });
     describe('getLocationList', () => {
@@ -180,6 +298,27 @@ describe('LocationHandler', () => {
             mockFrameworkService.searchOrganization = jest.fn(() => of({
                 content: [{
                     externalId: 'sample-id',
+                    orgName: 'sample-org'
+                }]
+            })) as any;
+            // act
+            locationHandler.getLocationList(request);
+            // assert
+            setTimeout(() => {
+                expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should return undefined for not external id for locationList for school', (done) => {
+            // arrange
+            const request = {
+                filters: {
+                    parentId: 'sample-parent-id',
+                    type: 'school'
+                }
+            };
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                content: [{
                     orgName: 'sample-org'
                 }]
             })) as any;
@@ -214,4 +353,14 @@ describe('LocationHandler', () => {
             }, 0);
         });
     });
+
+    describe('getLocationDetails', () => {
+        it('should return undefined for no location details', () => {
+            // arrange
+            mockProfileService.searchLocation = jest.fn(() => of({})) as any;
+            // act
+            locationHandler.getLocationDetails('cluster', 'school', 'loc-id')
+            // assert
+        })
+    })
 });
