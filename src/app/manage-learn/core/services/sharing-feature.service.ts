@@ -106,21 +106,23 @@ export class SharingFeatureService {
       }
       let fileName = name.replace(/[^A-Z0-9]/ig, "_") + '.pdf';
       const ft = this.fileTransfer.create();
-      ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
-      .then(
-        (res) => {
-          this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
-          },error =>{
-          })
-        },
-        (err) => {
-          this.requestPermission();
-          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-        }
-      )
-      .finally(() => {
-        this.loader.stopLoader();
-      });
+      setTimeout(() => {
+        ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
+        .then(
+          (res) => {
+            this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
+            },error =>{
+            })
+          },
+          (err) => {
+            this.requestPermission();
+            this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+          }
+        )
+        .finally(() => {
+          this.loader.stopLoader();
+        });
+      }, 1000)
     }else{
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
     }
