@@ -167,7 +167,7 @@
           <div *ngIf="content && !this.limitedShareContentFlag">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
-              [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only
+              [disabled]="isDownloadStarted || (isContentDownloading$ | async) || content.mimeType === 'video/webm'" fill="clear" icon-only
               class="sb-btn-tile">
               <img src="assets/imgs/outline_download.svg" alt="download content" class="mb-4">
               <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
