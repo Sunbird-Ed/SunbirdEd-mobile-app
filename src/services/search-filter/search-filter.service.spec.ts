@@ -228,7 +228,7 @@ describe('SearchFilterService', () => {
             //act
             searchFilterService.fetchFacetFilterFormConfig().then(() => {
             //assert
-            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest);
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
             done();
         });
     });
