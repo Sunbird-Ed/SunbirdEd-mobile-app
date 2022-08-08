@@ -51,7 +51,7 @@ import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
-import { GroupHandlerService } from '@app/services';
+import { GroupHandlerService, OnboardingConfigurationService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
@@ -166,7 +166,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
   hideSearchOption = false;
-
+  totalCount: number;
+  isFilterApplied: boolean = false;
+  rootOrgId: string;
+  
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -196,7 +199,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     private sbProgressLoader: SbProgressLoader,
     private groupHandlerService: GroupHandlerService,
     private navService: NavigationService,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -225,7 +229,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.searchKeywords = this.preAppliedFilter.query || '';
       }
     }
-
+    this.rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
     this.checkUserSession();
     this.isFirstLaunch = true;
     this.init();
@@ -919,7 +923,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
     };
-
+    if(this.rootOrgId){
+      contentSearchRequest.channel = [this.rootOrgId]
+    }
     if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
       if (this.profile.board && this.profile.board.length) {
         contentSearchRequest.board = applyProfileFilter(this.appGlobalService, this.profile.board,
