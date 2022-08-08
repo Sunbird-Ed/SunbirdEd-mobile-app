@@ -1610,6 +1610,19 @@ describe('SearchPage', () => {
             }, 0);
         });
 
+        it('should catch error on import content', () => {
+            // arrange
+            mockContentService.importContent = jest.fn(() => throwError({}));
+            const parent = { identifier: 'id' };
+            mockCommonUtilService.showToast = jest.fn()
+            // act
+            searchPage.downloadParentContent(parent);
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE')
+            }, 0);
+        })
+
         describe('handleDeviceBackButton', () => {
             it('should handle Device BackButton for dialcode', () => {
                 // arrange
@@ -1677,7 +1690,78 @@ describe('SearchPage', () => {
                 PageId.QR_BOOK_RESULT
             );
         });
+        it('should generate search telemetry for qrCode', () => {
+            searchPage.displayDialCodeResult = [{
+                dialCodeResult: []
+            }];
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            // act
+            searchPage.goBack();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.SEARCH, Environment.HOME, true, undefined, [{id: 'search', type: "API"}, {
+                        id: 'SearchResult',
+                        type: 'Section'
+                    }, {
+                        id: 'SearchResult',
+                        type: 'Section'
+                    }]
+                    );
+                }, 0);
+        });
     });
+
+    describe('getContentCount',  () => {
+        it('should check dail code result and return an count', () => {
+            // arrange
+            let totalCount;
+            const displayDialCodeResult = [{
+                dialCodeResult: [{content:['result-1']}],
+                dialCodeContentResult: ['Result-2']
+            }];
+            // act
+            searchPage.getContentCount(displayDialCodeResult)
+            // assert
+        })
+    });
+
+    describe('cancelDownload', () => {
+        it('should cancel download', () => {
+            // arrange
+            searchPage.parentContent = {identifier: "result"}
+            mockContentService.cancelDownload = jest.fn(() => of())
+            mockLocation.back = jest.fn();
+            mockZone.run = jest.fn((fn) => fn())
+                searchPage.showLoading = false
+                searchPage.isSingleContent = true
+            // act
+            searchPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.cancelDownload).toHaveBeenCalledWith(searchPage.parentContent.identifier);
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 0);
+        });
+        it('should catch a error on cancel download', () => {
+            // arrange
+            searchPage.parentContent = {identifier: ""}
+            mockContentService.cancelDownload = jest.fn(() => throwError({}))
+            mockLocation.back = jest.fn();
+            mockZone.run = jest.fn((fn) => fn(
+                ))
+                searchPage.showLoading = false
+                searchPage.isSingleContent = true
+            // act
+            searchPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.cancelDownload).toHaveBeenCalledWith(searchPage.parentContent.identifier);
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 0);
+        });
+    })
 
     describe('add activity', () => {
         it('should addActivityToGroup', () => {
@@ -1766,6 +1850,28 @@ describe('SearchPage', () => {
             // assert
             expect(mockLocation.back).toHaveBeenCalled();
         });
+        it('should break if the tab is home discover page config', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = false;
+            searchPage.enableSearch = false;
+            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("HOME_DISCOVER_TABS_CONFIG"))
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
+        });
+        it('should navigate back for other case', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = false;
+            searchPage.enableSearch = false;
+            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("somedata"))
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
+        });
     });
 
     describe('fetchPrimaryCategoryFilters()', () => {
@@ -1819,7 +1925,6 @@ describe('SearchPage', () => {
 
         it('should assign value to primaryCategoryFilters if the value is not assigned and primary category is present in facetfilters', () => {
             // arrange
-            searchPage.primaryCategoryFilters = undefined;
             const facetFilters = [
                 {
                     name: 'board',
@@ -1844,6 +1949,7 @@ describe('SearchPage', () => {
                     ]
                 }
             ]
+            searchPage.primaryCategoryFilters = facetFilters[1].value;
             // act
             searchPage.fetchPrimaryCategoryFilters(facetFilters);
             // assert
@@ -2044,5 +2150,154 @@ describe('SearchPage', () => {
             expect(searchPage.applyFilter).toHaveBeenCalled();
         });
     });
+    describe('ionViewWillEnter', () => {
+        it('show header with home button for download and notification on ionview enter', () => {
+            // arrange
+            searchPage.isFromGroupFlow = false;
+            searchPage.searchWithBackButton = false;
+            jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn => fn({ name: 'notification' })))}
+            mockHeaderService.showHeaderWithHomeButton = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of())
+            jest.spyOn(searchPage, 'handleSearch').mockImplementation();
+            // act
+            searchPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalledWith(['download', 'notification']);
+        });
+        it('show header with back button on ionview enter', () => {
+            // arrange
+            searchPage.isFromGroupFlow = true;
+            searchPage.searchWithBackButton = false;
+            jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn => fn({ name: '' })))}
+            mockHeaderService.showHeaderWithBackButton = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of())
+            jest.spyOn(searchPage, 'handleSearch').mockImplementation();
+            // act
+            searchPage.ionViewDidEnter();
+            // assert
+            setTimeout(() => {
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, mockCommonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': searchPage.appName}));
+            }, 0);
+        })
+    })
+    describe('ionViewWillLeave', () => {
+        it('should unsubscribe event ', () => {
+            // arrange
+            // searchPage.backButtonFunc = true;
+            searchPage.backButtonFunc = {
+                unsubscribe: jest.fn()
+            }
+            searchPage.eventSubscription = {
+                unsubscribe: jest.fn()
+            }
+            searchPage.headerObservable = {
+                unsubscribe: jest.fn()
+            }
+            searchPage.refresher = {
+                disabled: true
+            }
+            // act
+            searchPage.ionViewWillLeave();
+            // assert
+            expect(searchPage.eventSubscription.unsubscribe).toHaveBeenCalled();
+            expect(searchPage.headerObservable).toBeUndefined();
+        })
+    });
+    describe('redirectToNotifications', () => {
+        it('should call telemetry and redirect to notification', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            searchPage.redirectToNotifications();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith( InteractType.TOUCH,
+                InteractSubtype.NOTIFICATION_CLICKED,
+                Environment.HOME,
+                PageId.SEARCH);
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.NOTIFICATION]);
+        })
+    });
 
+    describe('hideRefresher', () => {
+        it ('should hide referesher ', () => {
+            // aarange
+            const hide = true;
+            searchPage.refresh = hide;
+            // act
+            searchPage.hideRefresher(hide);
+        })
+    });
+    describe('ngOnDestroy', () => {
+        it('should destory events subscribed ', () => {
+            // arrange
+            searchPage.eventSubscription = {
+                unsubscribe: jest.fn()
+            }
+            searchPage.headerObservable = {
+                unsubscribe: jest.fn()
+            }
+            // act
+            searchPage.ngOnDestroy();
+            // assert
+            expect(searchPage.eventSubscription.unsubscribe).toHaveBeenCalled();
+            expect(searchPage.headerObservable).toBeUndefined();
+        })
+    })
+    
+    describe('scrollToTop', () => {
+        it('should scroll up the content list to top ', () => {
+            searchPage.contentView = {
+                scrollToTop: jest.fn(() => Promise.resolve())
+            } as any;
+            // act
+            searchPage.scrollToTop();
+            // assert
+            expect(searchPage.contentView.scrollToTop).toHaveBeenCalled();
+        })
+    });
+
+    describe('tabViewWillEnter', () => {
+        it('show header with home button for download and notification', () => {
+            // arrange
+            searchPage.isFromGroupFlow = false;
+            searchPage.searchWithBackButton = false;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn => fn({ name: 'notification' })))}
+            mockHeaderService.showHeaderWithHomeButton = jest.fn()
+            // act
+            searchPage.tabViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalledWith(['download', 'notification']);
+        });
+        it('show header with back button', () => {
+            // arrange
+            searchPage.isFromGroupFlow = true;
+            searchPage.searchWithBackButton = false;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn => fn({ name: '' })))}
+            mockHeaderService.showHeaderWithBackButton = jest.fn()
+            // act
+            searchPage.tabViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, mockCommonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': searchPage.appName}));
+        })
+    })
+    describe('loadData', () => {
+        it('should load data from infinite scroll', () => {
+            // arrange
+            jest.spyOn(searchPage, 'handleSearch').mockImplementation()
+            // act
+            searchPage.loadData({target:{}});
+            // assert
+            setTimeout(() => {
+            }, 500);
+        })
+    })
 });

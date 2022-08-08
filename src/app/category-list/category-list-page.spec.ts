@@ -483,7 +483,9 @@ describe('CategoryListPage', () => {
                     subjectName: 'Mathematics',
                     corRelation: [
                         { id: 'Mathematics', type: 'Section' },
-                        { id: 'browse_by_audience', type: 'RootSection' }]
+                        { id: categoryListPage.sectionCode, type: 'RootSection' },
+                        { id: categoryListPage.formField, type: 'Content'}],
+                    supportedFacets: ["se_mediums", "subject", "primaryCategory", "audience"]
                 }
             });
         });

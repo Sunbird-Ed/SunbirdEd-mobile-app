@@ -418,6 +418,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
+  loadData(event) {
+    setTimeout(() => {
+      let offset = this.searchContentResult == undefined ? 0 : this.searchContentResult.length;
+      this.applyFilter(offset);
+    }, 500);
+  }
+
   openCollection(collection) {
     const values = new Map();
     values.root = true;
@@ -845,7 +852,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
-  applyFilter() {
+  applyFilter(offset?: number) {
     this.showAddToGroupButtons = false;
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
@@ -858,16 +865,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         }
       }
     });
+    modifiedCriteria.offset = offset ? offset : 0;
     this.contentService.searchContent(modifiedCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
-
+        this.totalCount = responseData.count
         this.zone.run(() => {
           this.responseData = responseData;
           if (responseData) {
             if (this.isDialCodeSearch) {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
-              this.searchContentResult = responseData.contentDataList;
+              if (this.searchContentResult && this.searchContentResult.length > 0 && modifiedCriteria.offset > 0 && responseData.contentDataList.length > 0) {
+                responseData.contentDataList.forEach(ele => {
+                  this.searchContentResult.push(ele);
+                })
+              } else {
+                this.searchContentResult = responseData.contentDataList;
+              }
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
@@ -922,6 +936,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
+      limit: 10
     };
     if(this.rootOrgId){
       contentSearchRequest.channel = [this.rootOrgId]
@@ -982,6 +997,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
+        this.totalCount = response.count;
         this.zone.run(() => {
           this.responseData = response;
           this.preAppliedFilter = undefined;
