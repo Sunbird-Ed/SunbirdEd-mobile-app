@@ -7,6 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter,ViewChild } from '@angul
 export class AccordionListComponent implements OnInit {
   @Input() data: any;
   @Input() title: any;
+  @Input() showCard :boolean = true;
   @Output() actionEvent = new EventEmitter();
   isListItemOpened : boolean = false;
   constructor() { }
