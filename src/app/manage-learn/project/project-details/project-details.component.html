@@ -1,6 +1,9 @@
 <ion-content class="ion-padding">
 
   <app-metadata-details translucent="true" [data]="cardMetaData" id="projectMetaDataCard">
+    <div class="certificate-tag" certificate *ngIf="data?.certificateTemplateId">
+      {{'CERTIFICATE' | translate}}
+    </div>
     <div class="sb-dt-card-actions">
       <div class="wrapper">
         <app-metadata-actions (actionEvent)="onAction($event)" [actionItems]="projectActions" id="projectActions"></app-metadata-actions>
@@ -58,6 +61,8 @@
     <app-accordion-list [data]="projectDetails?.learningResources" (actionEvent)="openResource($event)"
       [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" *ngIf="projectDetails?.learningResources?.length">
     </app-accordion-list>
+    <app-accordion-list *ngIf="projectDetails?.criteria?.length" [data]="projectDetails?.criteria" [showCard]="false"
+    [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
 
   <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetailsCopy" (actionEvent)="onTaskAction($event)"
