@@ -1,19 +1,34 @@
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { DownloadTranscriptPopupComponent } from './download-transcript-popup.component';
 import { ContentService } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
+import {
+  AndroidPermissionsService,
+  AppGlobalService,
+  TelemetryGeneratorService
+} from '@app/services';
 
 describe('DownloadTranscriptPopupComponent', () => {
   let downloadTranscriptPopupComponent: DownloadTranscriptPopupComponent;
   const mockCommonUtilService: Partial<CommonUtilService> = {};
   const mockContentService: Partial<ContentService> = {};
   const mockPopOverCtrl: Partial<PopoverController> = {};
+  const mockPlatform: Partial<Platform> = {
+    is: jest.fn(platform => platform === 'ios')
+};
+  const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+  const mockAppGlobalService: Partial<AppGlobalService> = {};
+  const mockPermissionService: Partial<AndroidPermissionsService> = {};
 
   beforeAll(() => {
     downloadTranscriptPopupComponent = new DownloadTranscriptPopupComponent(
       mockContentService as ContentService,
       mockPopOverCtrl as PopoverController,
       mockCommonUtilService as CommonUtilService,
+      mockPlatform as Platform,
+      mockTelemetryGeneratorService as TelemetryGeneratorService,
+      mockAppGlobalService as AppGlobalService,
+      mockPermissionService as AndroidPermissionsService
     );
   });
 

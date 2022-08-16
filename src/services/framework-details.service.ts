@@ -65,7 +65,7 @@ export class FrameworkDetailsService {
             framework['subject'] = Names;
         }
 
-        const presetLocation = (await this.locationHandler.getAvailableLocation(guestProfile))
+        const presetLocation = (await this.locationHandler.getAvailableLocation(guestProfile, true))
             .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
                 if (loc) { acc[loc.type] = loc; }
                 return acc;
