@@ -341,6 +341,9 @@ export class DistrictMappingPage implements OnDestroy {
       }
     } as any;
     this.deviceRegisterService.registerDevice(req).toPromise();
+    if (this.appGlobalService.isGuestUser) {
+      this.preferences.putString(PreferenceKey.GUEST_USER_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+    }
     this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     this.commonUtilService.handleToTopicBasedNotification();
     await loader.dismiss();
