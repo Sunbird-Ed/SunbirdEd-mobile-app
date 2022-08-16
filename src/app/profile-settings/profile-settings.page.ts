@@ -37,7 +37,8 @@ import {
   ContainerService,
   OnboardingConfigurationService,
   SunbirdQRScanner,
-  TelemetryGeneratorService
+  TelemetryGeneratorService,
+  UtilityService
 } from 'services';
 import { AlertController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -68,7 +69,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   loader: any;
   btnColor = '#8FC4FF';
   appName: string;
-  showQRScanner = true;
+  showQRScanner = false;
+  isScannerAvailable = true;
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -132,7 +134,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private utilityService: UtilityService,
   ) {
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([]),
@@ -220,6 +223,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    this.isQrScannerAvailable();
     if (this.router.url === '/' + RouterLinks.PROFILE_SETTINGS) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -343,7 +347,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.MANUAL_PROFILE
     );
 
-    if (this.showQRScanner === false) {
+    if (this.showQRScanner === false && this.isScannerAvailable) {
       this.showQRScanner = true;
       this.resetProfileSettingsForm();
     } else {
@@ -810,6 +814,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       })
     ));
     return subscriptionArray;
+  }
+
+  async isQrScannerAvailable() {
+    const deviceName = await this.utilityService.getBuildConfigValue('SUPPORTING_DEVICE');
+    if ((deviceName.toLowerCase() !== window['device'].manufacturer.toLowerCase()) && !this.platform.is('ios')) {
+      this.showQRScanner = true;
+    } else {
+      this.isScannerAvailable = false;
+    }
   }
 
 }
