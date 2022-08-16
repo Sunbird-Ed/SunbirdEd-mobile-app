@@ -21,6 +21,7 @@ import {
     AppHeaderService,
     FormAndFrameworkUtilService,
     OnboardingConfigurationService,
+    UtilityService,
 } from '../../services';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SplashScreenService } from '../../services/splash-screen.service';
@@ -80,7 +81,8 @@ describe('ProfileSettingsPage', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {}
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
         initialOnboardingScreenName: ''
-    }
+    };
+    const mockUtilityService: Partial<UtilityService> = {};
 
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
@@ -105,7 +107,8 @@ describe('ProfileSettingsPage', () => {
             mockActivatedRoute as ActivatedRoute,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockOnboardingConfigurationService as OnboardingConfigurationService
+            mockOnboardingConfigurationService as OnboardingConfigurationService,
+            mockUtilityService as UtilityService
         );
     });
 
@@ -478,6 +481,9 @@ describe('ProfileSettingsPage', () => {
             subscribeWithPriority: subscribeWithPriorityData,
 
         } as any;
+        jest.spyOn(profileSettingsPage, 'isQrScannerAvailable').mockImplementation(() => {
+            return Promise.resolve();
+        });
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
