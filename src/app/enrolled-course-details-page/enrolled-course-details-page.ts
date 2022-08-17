@@ -1988,7 +1988,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (this.courseHeirarchy.contentData.leafNodes) {
         leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
       }
-      this.course.progress = Math.floor((courseLevelViewedContents.length / leafNodeIds.length) * 100);
+      this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     } else {
       this.course.progress = 0;
     }
