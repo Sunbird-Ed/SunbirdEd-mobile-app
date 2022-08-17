@@ -51,3 +51,17 @@
 .text-transform-none {
     text-transform: none !important;
   }
+  .warning-block{
+    display: flex;
+    background: #e8baad;
+    padding: 5px 10px;
+    margin: 10px 15px;
+    border-radius: 12px;
+    .icon-box{
+        font-size: 20px;
+        margin-right: 5px;
+    }
+    .message{
+        font-size: 12px;
+    }
+}

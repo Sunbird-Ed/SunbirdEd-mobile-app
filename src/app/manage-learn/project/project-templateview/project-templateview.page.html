@@ -17,11 +17,16 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  <app-project-details-card [data]="project" *ngIf="segmentType == 'details'">
-  </app-project-details-card>
+  <div *ngIf="segmentType == 'details'">
+      <app-project-details-card [data]="project" >
+      </app-project-details-card>
+      <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
+      (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" [showCard]="true"> </app-accordion-list>
+      <app-accordion-list *ngIf="project?.criteria?.length" [data]="project?.criteria" [showCard]="false"
+    [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
+  </div>
   <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
     <app-task-card [data]="project" [viewOnly] ="true"></app-task-card>
   </div>
-  <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
-    (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'"> </app-accordion-list>
+
 </ion-content>

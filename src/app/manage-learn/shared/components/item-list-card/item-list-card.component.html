@@ -9,6 +9,7 @@
           <div class="title w-90 sb--card__title" [class.ellipsis]="ellipsis">
             {{ title | titlecase }}
           </div>
+          <ng-content select="[certificate]"></ng-content>
           <ng-content select="[arrow]"></ng-content>
           <ng-content select="[report]"></ng-content>
         </div>

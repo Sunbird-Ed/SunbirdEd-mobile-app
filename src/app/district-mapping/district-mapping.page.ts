@@ -561,6 +561,7 @@ export class DistrictMappingPage implements OnDestroy {
           this.locationFormConfig = undefined;
           this.stateChangeSubscription = undefined;
           this.loader.present();
+          this.formGroup.value.children.persona.subPersona = [];
           this.prevFormValue = { ...this.formGroup.value };
           this.initialiseFormData({
             ...FormConstants.LOCATION_MAPPING,
