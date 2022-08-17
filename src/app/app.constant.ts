@@ -244,6 +244,7 @@ export class PreferenceKey {
     public static readonly IS_GOOGLE_LOGIN = 'is_google_login';
     public static readonly IS_APPLE_LOGIN = 'is_apple_login';
     public static readonly ORIENTATION = 'orientation';
+    public static readonly GUEST_USER_LOCATION = 'guest-user-location';
 }
 
 export enum SwitchableTabsConfig {

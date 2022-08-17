@@ -1030,6 +1030,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       && !(await this.commonUtilService.isIpLocationAvailable())) {
       this.deviceRegisterService.getDeviceProfile().toPromise().then(async (response) => {
         if (response.userDeclaredLocation) {
+          if (this.appGlobalService.isGuestUser) {
+            await this.preferences.putString(PreferenceKey.GUEST_USER_LOCATION, JSON.stringify(response.userDeclaredLocation)).toPromise();
+          }
           await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(response.userDeclaredLocation)).toPromise();
         } else if (response.ipLocation) {
           const ipLocationMap = new Map();
