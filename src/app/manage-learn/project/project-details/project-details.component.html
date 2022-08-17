@@ -1,7 +1,7 @@
 <ion-content class="ion-padding">
 
   <app-metadata-details translucent="true" [data]="cardMetaData" id="projectMetaDataCard">
-    <div class="certificate-tag" certificate *ngIf="data?.certificateTemplateId">
+    <div class="certificate-tag" certificate *ngIf="projectDetails?.certificateTemplateId">
       {{'CERTIFICATE' | translate}}
     </div>
     <div class="sb-dt-card-actions">
