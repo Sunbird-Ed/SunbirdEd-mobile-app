@@ -21,6 +21,8 @@ import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';
 import { AuditState, CorrelationData } from '@project-sunbird/sunbird-sdk';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
+import { RouterLinks } from '../app.constant';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;
@@ -57,7 +59,13 @@ describe('DistrictMappingPage', () => {
         navigate: jest.fn(),
         getCurrentNavigation: jest.fn(() => ({
             extras: {
-                state: true
+                state: {
+                    noOfStepsToCourseToc : '2',
+                    isGoogleSignIn : true,
+                    userData : {
+                        isMinor : false
+                    }
+                }
             }
         })) as any
     };
@@ -83,12 +91,8 @@ describe('DistrictMappingPage', () => {
     };
     const mockProfileHandler: Partial<ProfileHandler> = {
     };
-    mockRouter.getCurrentNavigation = jest.fn(() => {
-        return {
-            extras: { state: {} }
-        };
-    }) as any;
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {};
+    const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {}
 
     beforeAll(() => {
         //  window.history.state.source({query: 'google'}, 'MOCK');
@@ -109,7 +113,8 @@ describe('DistrictMappingPage', () => {
             mockFormLocationFactory as FormLocationFactory,
             mockLocationHandler as LocationHandler,
             mockProfileHandler as ProfileHandler,
-            mockTncUpdateHandlerService as TncUpdateHandlerService
+            mockTncUpdateHandlerService as TncUpdateHandlerService,
+            mockExternalIdVerificationService as ExternalIdVerificationService
         );
     });
 
@@ -164,6 +169,9 @@ describe('DistrictMappingPage', () => {
     });
 
     it('should unsubscribe backButton', () => {
+        beforeEach(() => {
+            window.history.pushState({ isShowBackButton: true }, '', '');
+        });
         districtMappingPage.ionViewWillLeave();
     });
 
@@ -208,6 +216,17 @@ describe('DistrictMappingPage', () => {
 
         it('should generate generateSubmitInteractEvent', () => {
             // arrange
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const correlationList: Array<CorrelationData> = [];
             correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
@@ -238,12 +257,29 @@ describe('DistrictMappingPage', () => {
                     children: {
                         persona: {
                             type: { type: 'sample-type' },
-                            code: 'sample-code'
+                            code: 'sample-code',
+                            subPersona: 'sample-subpersona'
                         }
                     },
-                    name: 'sample name'
+                    name: 'sample name',
+                    persona: {
+                        type: { type: 'sample-type' },
+                        code: 'sample-code',
+                        subPersona: [{}]
+                    }
                 }
             } as any;
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
@@ -286,12 +322,29 @@ describe('DistrictMappingPage', () => {
                     children: {
                         persona: {
                             type: { type: 'sample-type' },
-                            code: 'sample-code'
+                            code: 'sample-code',
+                            subPersona: [{}]
                         }
                     },
-                    name: 'sample name'
+                    name: 'sample name',
+                    persona: {
+                        type: { type: 'sample-type' },
+                        code: 'sample-code',
+                        subPersona: [{}]
+                    }
                 }
             } as any;
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
@@ -321,11 +374,7 @@ describe('DistrictMappingPage', () => {
                 expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
                 expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-                expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
-                expect(mockTncUpdateHandlerService.isSSOUser).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -338,15 +387,32 @@ describe('DistrictMappingPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             districtMappingPage.formGroup = {
                 value: {
                     children: {
                         persona: {
                             type: { type: 'sample-type' },
-                            code: 'sample-code'
+                            code: 'sample-code',
+                            subPersona: [{}]
                         }
                     },
-                    name: 'sample name'
+                    name: 'sample name',
+                    persona: {
+                        type: { type: 'sample-type' },
+                        code: 'sample-code',
+                        subPersona: [{}]
+                    }
                 }
             } as any;
             mockCommonUtilService.networkInfo = {
@@ -379,10 +445,10 @@ describe('DistrictMappingPage', () => {
                 expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
                 expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                // expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-                expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                // expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
                 done();
             }, 0);
         });
@@ -406,6 +472,17 @@ describe('DistrictMappingPage', () => {
                     name: 'sample name'
                 }
             } as any;
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
@@ -437,10 +514,7 @@ describe('DistrictMappingPage', () => {
                 expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
                 expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_FAILED');
-                expect(mockLocation.back).toHaveBeenCalledWith();
                 done();
             }, 0);
         });
@@ -453,6 +527,17 @@ describe('DistrictMappingPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        noOfStepsToCourseToc : '2',
+                        isGoogleSignIn : true,
+                        userData : {
+                            isMinor : false
+                        }
+                    }
+                }
+            })) as any
             districtMappingPage.formGroup = {
                 value: {
                     children: {
@@ -917,6 +1002,16 @@ describe('DistrictMappingPage', () => {
                 ])
             );
 
+        })
+    })
+    describe('redirectToLogin', () => {
+        it('should redirect to signin page', () => {
+            // arrange
+            mockRouter.navigate = jest.fn();
+            // act
+            districtMappingPage.redirectToLogin();
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN])
         })
     })
 });
