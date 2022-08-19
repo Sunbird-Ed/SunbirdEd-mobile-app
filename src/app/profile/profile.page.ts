@@ -745,9 +745,9 @@ export class ProfilePage implements OnInit {
     const componentProps = {
       phone: this.profile.phone,
       title: this.profile.phone ?
-        this.commonUtilService.translateMessage('EDIT_PHONE_POPUP_TITLE') :
-        this.commonUtilService.translateMessage('ENTER_PHONE_POPUP_TITLE'),
-      description: '',
+      this.commonUtilService.translateMessage('EDIT_PHONE_POPUP_TITLE') :
+      this.commonUtilService.translateMessage('ENTER_PHONE_POPUP_TITLE'),
+      description: this.commonUtilService.translateMessage('ERROR_RECOVERY_ID_PHONE_INVALID'),
       type: ProfileConstants.CONTACT_TYPE_PHONE,
       userId: this.profile.userId
     };
@@ -763,7 +763,7 @@ export class ProfilePage implements OnInit {
       title: this.profile.email ?
         this.commonUtilService.translateMessage('EDIT_EMAIL_POPUP_TITLE') :
         this.commonUtilService.translateMessage('EMAIL_PLACEHOLDER'),
-      description: '',
+      description: this.commonUtilService.translateMessage('EMAIL_PLACEHOLDER'),
       type: ProfileConstants.CONTACT_TYPE_EMAIL,
       userId: this.profile.userId
     };
