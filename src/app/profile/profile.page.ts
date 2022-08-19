@@ -744,9 +744,7 @@ export class ProfilePage implements OnInit {
   async editMobileNumber() {
     const componentProps = {
       phone: this.profile.phone,
-      title: this.profile.phone ?
-      this.commonUtilService.translateMessage('EDIT_PHONE_POPUP_TITLE') :
-      this.commonUtilService.translateMessage('ENTER_PHONE_POPUP_TITLE'),
+      title: this.commonUtilService.translateMessage('UPDATE_PHONE_POPUP_TITLE'),
       description: this.commonUtilService.translateMessage('ERROR_RECOVERY_ID_PHONE_INVALID'),
       type: ProfileConstants.CONTACT_TYPE_PHONE,
       userId: this.profile.userId
@@ -760,9 +758,7 @@ export class ProfilePage implements OnInit {
   async editEmail() {
     const componentProps = {
       email: this.profile.email,
-      title: this.profile.email ?
-        this.commonUtilService.translateMessage('EDIT_EMAIL_POPUP_TITLE') :
-        this.commonUtilService.translateMessage('EMAIL_PLACEHOLDER'),
+      title: this.commonUtilService.translateMessage('UPDATE_EMAIL_POPUP_TITLE'),
       description: this.commonUtilService.translateMessage('EMAIL_PLACEHOLDER'),
       type: ProfileConstants.CONTACT_TYPE_EMAIL,
       userId: this.profile.userId
