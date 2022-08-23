@@ -199,7 +199,6 @@
     "cordova-plugin-buildconfig-reader": "git+https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git#release-2.1.0",
     "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0",
-    "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git#release-1.15.0",
     "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
@@ -298,8 +297,7 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.1.0"
       },
-      "cordova-plugin-sunbirdsplash": {},
-      "cordova-plugin-file-support": {}
+      "cordova-plugin-sunbirdsplash": {}
     },
     "platforms": [
       "android"
