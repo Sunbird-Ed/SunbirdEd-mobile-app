@@ -384,7 +384,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.subscribeSdkEvent();
     });
     this.ionContent.ionScroll.subscribe((event) => {
-      this.scrollPosition = event.scrollTop;
+      this.scrollPosition = event['scrollTop'];
     });
 
     this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, (data) => {

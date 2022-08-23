@@ -12,13 +12,10 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "ngx-build-plus:browser",
           "options": {
             "outputPath": "www",
             "index": "src/index.html",
-            "customWebpackConfig": {
-              "path": "config/webpack.config.js"
-            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -95,7 +92,7 @@
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
               "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
             ],
-            "es5BrowserSupport": true,
+          
             "preserveSymlinks": true
           },
           "configurations": {
@@ -145,7 +142,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-builders/dev-server:generic",
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "app:build"
           },
@@ -169,7 +166,7 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "ngx-build-plus:karma",
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
@@ -274,7 +271,7 @@
       "styleext": "scss"
     },
     "@schematics/angular:component": {
-      "styleext": "scss"
+      "style": "scss"
     }
   }
 }
