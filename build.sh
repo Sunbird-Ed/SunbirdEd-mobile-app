@@ -8,6 +8,7 @@ do
     esac
 done
 
+themeBranchName='apex-master'
 # Simple script to clean install
 rm -rf node_modules
 rm -rf platforms
@@ -20,6 +21,28 @@ SUNBIRD_CORDOVA_COUNTER=0
 # Pass build branch as input
 buildBranch="$1"
 rm package-lock.json && npm install
+
+#APEX theme install
+echo "Cloning Sb-styles"
+git clone https://github.com/shikshalokam/sb-styles.git
+cd sb-styles
+git checkout $themeBranchName
+npm pack
+cd ..
+echo "installing Sb-styles"
+npm i file:./sb-styles/project-sunbird-sb-styles-0.0.9.tgz
+rm -rf sb-styles
+echo "Cloning Sb-themes"
+git clone https://github.com/shikshalokam/sb-themes.git
+cd sb-themes
+git checkout $themeBranchName
+npm pack
+cd ..
+echo "installing Sb-themes"
+npm i file:./sb-themes/project-sunbird-sb-themes-0.0.39.tgz
+rm -rf sb-themes
+#APEX theme install Ends
+
 export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-6.5.1-all.zip"
 
 file="./build_config"
