@@ -168,6 +168,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   hideSearchOption = false;
   totalCount: number;
   isFilterApplied: boolean = false;
+  rootOrgId: string;
+  
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
