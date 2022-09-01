@@ -1,15 +1,22 @@
 import { FormRequest } from '@project-sunbird/sunbird-sdk';
 import { throwError } from 'rxjs';
+import { OnboardingConfigurationService } from '..';
+import { mockOnboardingConfigData } from '../../app/components/discover/discover.page.spec.data';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { SearchFilterService } from './search-filter.service';
 
 describe('SearchFilterService', () => {
     let searchFilterService: SearchFilterService;
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        initialOnboardingScreenName: '',
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+    }
 
     beforeAll(() => {
         searchFilterService = new SearchFilterService(
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 
@@ -30,6 +37,7 @@ describe('SearchFilterService', () => {
             component: "app",
             subType: subType,
             type: "filterConfig"}; 
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
                 code: 'name',
                 default: 'default',
@@ -119,7 +127,7 @@ describe('SearchFilterService', () => {
             //act
             searchFilterService.fetchFacetFilterFormConfig(subType).then(() => {
             //assert
-            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest);
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
             done();
         });
     });
@@ -130,6 +138,7 @@ describe('SearchFilterService', () => {
             component: "app",
             subType: 'default',
             type: "filterConfig"}; 
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
                 code: 'name',
                 default: 'default',
@@ -219,7 +228,7 @@ describe('SearchFilterService', () => {
             //act
             searchFilterService.fetchFacetFilterFormConfig().then(() => {
             //assert
-            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest);
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
             done();
         });
     });
@@ -230,12 +239,13 @@ describe('SearchFilterService', () => {
             component: "app",
             subType: 'default',
             type: "filterConfig"}; 
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.reject({
                 error: 'Error message'                
             }));
             //act
             const data = searchFilterService.fetchFacetFilterFormConfig().catch(() => {
-                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest);
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
                 done();
             });
     }); 
@@ -247,6 +257,7 @@ describe('SearchFilterService', () => {
             searchFilterService['facetFilterFormConfig'] = null;
             searchFilterService.fetchFacetFilterFormConfig = jest.fn();
             const subType = undefined;
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
             //act
             searchFilterService.getFacetFormAPIConfig().then(() => {
             //assert
@@ -275,6 +286,7 @@ describe('SearchFilterService', () => {
             {code: "se_gradeLevels", type: "dropdown", name: "language codes", placeholder: "Select Class", multiple: true, index: 2}
             ];
             searchFilterService.fetchFacetFilterFormConfig = jest.fn();
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
             const subType = undefined;
             //act
             searchFilterService.getFacetFormAPIConfig().then(() => {
@@ -326,6 +338,7 @@ describe('reformFilterValues', () => {
             {name: "class 6", apply: false}
         ]}
         ];
+        mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
         let formAPIFacets;
         searchFilterService.getFacetFormAPIConfig = jest.fn();
         //act
@@ -360,6 +373,7 @@ describe('reformFilterValues', () => {
             }
         ];
         searchFilterService['facetFilterFormConfig'] = null;
+        mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData)
         let formAPIFacets;
         //act
         searchFilterService.reformFilterValues(facetFilters, formAPIFacets).then(() => {
