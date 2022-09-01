@@ -47,3 +47,4 @@ oauth_redirect_url = OATH_REDIRECT_URL
 tou_base_url = TOU_BASE_URL
 survey_base_url= SURVEY_BASE_URL
 projects_base_url= PROJECTS_BASE_URL
+reverse_client_id=REVERSE_CLIENT_ID
