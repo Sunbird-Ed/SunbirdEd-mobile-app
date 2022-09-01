@@ -28,7 +28,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService } from '../../services';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService, OnboardingConfigurationService } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
@@ -36,6 +36,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
 import { Search } from '../app.constant';
 import { ContentEventType, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
+import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
@@ -181,6 +182,11 @@ describe('SearchPage', () => {
         getSupportedUserTypes: jest.fn(() => Promise.resolve(mockSupportedUserTypeConfig))
     };
 
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        initialOnboardingScreenName: '',
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+    }
+
 
     beforeAll(() => {
         searchPage = new SearchPage(
@@ -212,7 +218,8 @@ describe('SearchPage', () => {
             mockSbProgressLoader as SbProgressLoader,
             mockgroupHandlerService as GroupHandlerService,
             mockNavigationService as NavigationService,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 
