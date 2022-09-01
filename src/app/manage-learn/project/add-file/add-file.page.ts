@@ -90,7 +90,6 @@ export class AddFilePage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
         }
-        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
       (error) => { }
@@ -127,6 +126,7 @@ export class AddFilePage implements OnInit {
       this.project.attachments = this.project?.attachments ? this.project.attachments : [];
       this.attachments = this.project?.attachments ? this.project?.attachments : [];
     }
+    this.projectCopy = JSON.parse(JSON.stringify(this.project));
     this.remarks = this.taskId ? this.task.remarks : this.project?.remarks;
     this.headerService.updatePageConfig(this.headerConfig);
   }
