@@ -1,16 +1,16 @@
 <ion-content class="main-container">
-  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}"
+  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}" id="projectPageHeader"
     subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESC' | translate }}"> </app-common-header>
-  <ion-searchbar debounce="1000" placeholder="Search your projects here" [(ngModel)]="searchText"
+  <ion-searchbar debounce="1000" placeholder="Search your projects here" [(ngModel)]="searchText" id="projectSearch"
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
   <div class="container">
-    <sb-library-filters [list]="filters" class="text-transform-none" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"
+    <sb-library-filters [list]="filters" class="text-transform-none" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}" id="projectListFilters"
       (selectedFilter)="getDataByFilter($event);" *ngIf="filters?.length">
     </sb-library-filters>
   </div>
 
-  <app-item-list-card *ngIf="selectedFilterIndex==2" title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
+  <app-item-list-card *ngIf="selectedFilterIndex==2" title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}" id="createProjectCard"
     subTitle="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING' | translate}}" class="create_header"
     (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon clr-primary" name="ios-arrow-round-forward" arrow></ion-icon>
@@ -18,8 +18,11 @@
   <div class="header">
   <app-item-list-header *ngIf="selectedFilter" headerLabel="{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter | lowercase}}"></app-item-list-header>
   </div>
-  <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title"
+  <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title" id="projectsCard"
     [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">
+    <div class="certificate-tag" certificate *ngIf="project?.certificateTemplateId">
+      {{'CERTIFICATE' | translate}}
+    </div>
   </app-item-list-card>
   <app-no-data *ngIf="!projects?.length" [message]="noDataFound" [color]="'text-primary'"></app-no-data>
 </ion-content>

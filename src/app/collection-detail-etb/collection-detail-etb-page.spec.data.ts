@@ -55,7 +55,7 @@ export const mockcollectionData: Partial<Navigation> = {
                     'do_212911626086563840154',
                     'do_212911625643237376158'
                 ],
-                appId: 'staging.diksha.portal',
+                appId: 'staging.sunbird.portal',
                 contentEncoding: 'gzip',
                 lockKey: 'a8d2c96f-5921-4f88-861e-561046854667',
                 mimeTypesCount: '{\'application/vnd.ekstep.content-collection\:1,\'application/vnd.ekstep.ecml-archive\:5}',
@@ -134,9 +134,9 @@ export const contentDetailsMcokResponse1: any = {
         attributions: ['gd_1', 'gd_2'],
         me_averageRating: 1,
         contentFeedback: [{ rating: 'SAMPLE_RATING' }],
-        appId: 'staging.diksha.app',
+        appId: 'staging.sunbird.app',
         contentEncoding: 'gzip',
-        c_Diksha_Stage_open_batch_count: 1,
+        c_Sunbird_Stage_open_batch_count: 1,
         lockKey: '2e55369b-53e3-4e96-8ef1-25bd6da0642a',
         mimeTypesCount: '{\'application/vnd.ekstep.h5p-archive\:1,\'application/vnd.ekstep.html-archive\:1,\'video/webm\:1,\'application/pdf\:1,\'application/epub\:1,\'application/vnd.ekstep.content-collection\:7,\'video/x-youtube\:1,\'video/mp4\:1}',
         totalCompressedSize: 9617867,
@@ -184,7 +184,7 @@ export const contentDetailsMcokResponse1: any = {
         ],
         lastPublishedBy: 'dca7518d-5886-4251-94aa-360c762b1182',
         version: 2,
-        c_diksha_stage_open_batch_count: 1,
+        c_sunbird_stage_open_batch_count: 1,
         tags: [
             'test'
         ],
@@ -208,7 +208,7 @@ export const contentDetailsMcokResponse1: any = {
         idealScreenSize: 'normal',
         posterImage: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127857103817932801565/artifact/1500_1560755661944.jpg',
         createdOn: '2019-07 - 25T06: 33: 44.651+0000',
-        c_Diksha_Stage_private_batch_count: 0,
+        c_Sunbird_Stage_private_batch_count: 0,
         contentDisposition: 'inline',
         lastUpdatedOn: '2019-07 - 25T06: 54: 40.288+0000',
         originData: {
@@ -311,9 +311,9 @@ export const contentDetailsMcokResponse2: any = {
         attributions: ['gd_1', 'gd_2'],
         me_averageRating: 1,
         contentFeedback: [{ rating: 'SAMPLE_RATING' }],
-        appId: 'staging.diksha.app',
+        appId: 'staging.sunbird.app',
         contentEncoding: 'gzip',
-        c_Diksha_Stage_open_batch_count: 1,
+        c_Sunbird_Stage_open_batch_count: 1,
         lockKey: '2e55369b-53e3-4e96-8ef1-25bd6da0642a',
         mimeTypesCount: '{\'application/vnd.ekstep.h5p-archive\:1,\'application/vnd.ekstep.html-archive\:1,\'video/webm\:1,\'application/pdf\:1,\'application/epub\:1,\'application/vnd.ekstep.content-collection\:7,\'video/x-youtube\:1,\'video/mp4\:1}',
         totalCompressedSize: 9617867,
@@ -361,7 +361,7 @@ export const contentDetailsMcokResponse2: any = {
         ],
         lastPublishedBy: 'dca7518d-5886-4251-94aa-360c762b1182',
         version: 2,
-        c_diksha_stage_open_batch_count: 1,
+        c_sunbird_stage_open_batch_count: 1,
         tags: [
             'test'
         ],
@@ -385,7 +385,7 @@ export const contentDetailsMcokResponse2: any = {
         idealScreenSize: 'normal',
         posterImage: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127857103817932801565/artifact/1500_1560755661944.jpg',
         createdOn: '2019-07 - 25T06: 33: 44.651+0000',
-        c_Diksha_Stage_private_batch_count: 0,
+        c_Sunbird_Stage_private_batch_count: 0,
         contentDisposition: 'inline',
         lastUpdatedOn: '2019-07 - 25T06: 54: 40.288+0000',
         originData: {
@@ -489,9 +489,9 @@ export const contentDetailsMcokResponse3: any = {
         attributions: ['gd_1', 'gd_2'],
         me_averageRating: 1,
         contentFeedback: [{ rating: 'SAMPLE_RATING' }],
-        appId: 'staging.diksha.app',
+        appId: 'staging.sunbird.app',
         contentEncoding: 'gzip',
-        c_Diksha_Stage_open_batch_count: 1,
+        c_Sunbird_Stage_open_batch_count: 1,
         lockKey: '2e55369b-53e3-4e96-8ef1-25bd6da0642a',
         mimeTypesCount: '{\'application/vnd.ekstep.h5p-archive\:1,\'application/vnd.ekstep.html-archive\:1,\'video/webm\:1,\'application/pdf\:1,\'application/epub\:1,\'application/vnd.ekstep.content-collection\:7,\'video/x-youtube\:1,\'video/mp4\:1}',
         totalCompressedSize: 9617867,
@@ -539,7 +539,7 @@ export const contentDetailsMcokResponse3: any = {
         ],
         lastPublishedBy: 'dca7518d-5886-4251-94aa-360c762b1182',
         version: 2,
-        c_diksha_stage_open_batch_count: 1,
+        c_sunbird_stage_open_batch_count: 1,
         tags: [
             'test'
         ],
@@ -563,7 +563,7 @@ export const contentDetailsMcokResponse3: any = {
         idealScreenSize: 'normal',
         posterImage: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127857103817932801565/artifact/1500_1560755661944.jpg',
         createdOn: '2019-07 - 25T06: 33: 44.651+0000',
-        c_Diksha_Stage_private_batch_count: 0,
+        c_Sunbird_Stage_private_batch_count: 0,
         contentDisposition: 'inline',
         lastUpdatedOn: '2019-07 - 25T06: 54: 40.288+0000',
         originData: {

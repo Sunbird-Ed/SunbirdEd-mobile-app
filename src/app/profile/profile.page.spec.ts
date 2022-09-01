@@ -1335,7 +1335,7 @@ describe('Profile.page', () => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_USERNAME', {
             app_name: profilePage.appName,
             user_name: profilePage.profile.firstName + ' ' + profilePage.profile.lastName,
-            diksha_id: profilePage.profile.userName
+            sunbird_id: profilePage.profile.userName
         });
     });
 });

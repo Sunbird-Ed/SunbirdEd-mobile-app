@@ -17,8 +17,9 @@ import { Location } from '@angular/common';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { of } from 'rxjs';
-import { CorReleationDataType } from '../../services';
+import { CorReleationDataType, OnboardingConfigurationService } from '../../services';
 import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
+import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 
 
 describe('LanguageSettingsPage', () => {
@@ -75,6 +76,10 @@ describe('LanguageSettingsPage', () => {
 
     const mockNativeTransitions: Partial<NativePageTransitions> = {};
 
+    const mockOnBoardingConfigService: Partial<OnboardingConfigurationService> = {
+        getOnboardingConfig: jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
+    };
+
     beforeAll(() => {
         languageSettingsPage = new LanguageSettingsPage(
             mockPreferences as SharedPreferences,
@@ -89,7 +94,8 @@ describe('LanguageSettingsPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockActivatedRoute as ActivatedRoute,
-            mockNativeTransitions as NativePageTransitions
+            mockNativeTransitions as NativePageTransitions,
+            mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
 
@@ -634,6 +640,9 @@ describe('LanguageSettingsPage', () => {
     };
 
     const mockNativeTransitions: Partial<NativePageTransitions> = {};
+    const mockOnBoardingConfigService: Partial<OnboardingConfigurationService> = {
+        getOnboardingConfig: jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
+    };
 
     beforeAll(() => {
         languageSettingsPage = new LanguageSettingsPage(
@@ -649,7 +658,8 @@ describe('LanguageSettingsPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockActivatedRoute as ActivatedRoute,
-            mockNativeTransitions as NativePageTransitions
+            mockNativeTransitions as NativePageTransitions,
+            mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
 

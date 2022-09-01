@@ -18,7 +18,6 @@ export class GenericPopUpService {
                 message1: message1,
                 linkLabel: linkLabel,
                 header: header,
-                link: 'https://diksha.gov.in/term-of-use.html',
                 isPrivacyPolicy: type == 'privacyPolicy' ? true : false
             },
             cssClass: 'sb-popover',

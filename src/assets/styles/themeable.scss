@@ -1,5 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 @import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile.scss';
+@import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile-aqua.scss';
 
 html[data-theme="JOYFUL"]{
 
@@ -1943,6 +1944,24 @@ ion-picker{
   .picker-toolbar{
     .picker-button{
       text-transform: none !important;
+    }
+  }
+}
+
+app-signup-email-password {
+  .emailPasswordForm {
+    sb-form {
+      sb-textbox {
+        .sb-input {
+          margin: 1rem !important;
+          input {
+            border-radius: 1rem !important;
+            border: 1px solid #8080805c !important;
+            padding: 0.5rem 0.5rem !important;
+            // width: 90%;
+          }
+        }
+      }
     }
   }
 }

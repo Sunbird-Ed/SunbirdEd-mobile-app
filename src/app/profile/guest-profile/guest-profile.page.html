@@ -57,7 +57,7 @@
 
         <!-- Board -->
         <div *ngIf="!!supportedProfileAttributes['board']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category1'}}</div>
         <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
@@ -76,7 +76,7 @@
         <!-- Medium -->
 
         <div *ngIf="!!supportedProfileAttributes['medium']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category2'}}</div>
         <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'medium')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
@@ -96,7 +96,7 @@
 
         <!-- Class -->
         <div *ngIf="!!supportedProfileAttributes['gradeLevel']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category3'}}</div>
         <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'class')">
           <div
@@ -117,7 +117,7 @@
 
         <!-- Subject -->
         <div *ngIf="!!supportedProfileAttributes['subject']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
+          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category4'}}</div>
         <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'subjects')">
           <div

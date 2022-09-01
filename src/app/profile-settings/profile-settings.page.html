@@ -1,9 +1,8 @@
 <ion-content class="padding-bottom-if-header">
 	<div class="">
 		<form [formGroup]="profileSettingsForm" class="ps-container">
-			<div  role="button" aria-label="back" [ngClass]="{ 'back-btn-container': platform.is('android'), 'back-btn-container-ios': platform.is('ios')}">
+			<div  role="button" aria-label="back" (click)="handleBackButton(true)" [ngClass]="{ 'back-btn-container': platform.is('android'), 'back-btn-container-ios': platform.is('ios')}">
 				<img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !(showQRScanner && isInitialScreen)"
-					 (click)="handleBackButton(true)"
 					 class="top-back-button" alt="back">
 			</div>
 			<div class="qr-container ui-container" *ngIf="showQRScanner">
@@ -34,19 +33,19 @@
 					<div class="board-select-dummy" (click)="boardClicked($event)">
 						<ion-item appCustomIonSelect>
 							<ion-label position="stacked" class="label-font text-uppercase align-text">
-								{{'BOARD' | translate }}</ion-label>
+								{{'' | category: 'category1'}}</ion-label>
 							<ion-select multiple="false" class="ion-text-capitalize" formControlName="syllabus"
 										[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()"
 										okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-										placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+										placeholder="{{'FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category1'}}">
 								<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
 									{{eachSyllabus.name}}&lrm;</ion-select-option>
 							</ion-select>
 						</ion-item>
 						<div class="ps-board">
-							<div class="ps-board-label">{{'BOARD' | translate}}</div>
+							<div class="ps-board-label">{{'' | category: 'category1'}}</div>
 							<button class="sb-btn-secondary sb-btn-md PR35 W100 ellipsis btn-block">
-								{{ 'BOARD_OPTION_TEXT' | translate }}
+								{{'FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category1'}}
 								<img class="arrow-icon" src="assets/imgs/ic_back_black.svg" alt="">
 							</button>
 						</div>
@@ -55,24 +54,24 @@
 			</div>
 			<div novalidate class="form-position" *ngIf="!showQRScanner">
 				<ion-item *ngIf="!!supportedProfileAttributes['board']" appCustomIonSelect (click)="onCategoryCliked('board')">
-					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}
+					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'' | category: 'category1'}}
 					</ion-label>
 					<ion-select multiple="false" #boardSelect class="ion-text-capitalize" formControlName="syllabus"
 						[disabled]="!syllabusList.length" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent('board')"
 						okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-						placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+						placeholder="{{'FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category1'}}">
 						<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
 							{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 					</ion-select>
 				</ion-item>
 
 				<ion-item *ngIf="!!supportedProfileAttributes['medium']" appCustomIonSelect (click)="onCategoryCliked('medium')">
-					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}
+					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'' | category: 'category2'}}
 					</ion-label>
 					<ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize"
 						[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent('medium')" okText="{{'BTN_SUBMIT' | translate}}"
 						cancelText="{{'CANCEL' | translate}}" [disabled]="!mediumList.length || !boardControl.value.length"
-						placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
+						placeholder="{{'FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category2'}}">
 						<ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize"
 							value="{{medium.code}}">
 							{{medium.name}}</ion-select-option>
@@ -80,12 +79,12 @@
 				</ion-item>
 
 				<ion-item *ngIf="!!supportedProfileAttributes['gradeLevel']" appCustomIonSelect (click)="onCategoryCliked('grade')">
-					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}
+					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'' | category: 'category3'}}
 					</ion-label>
 					<ion-select multiple="true" #gradeSelect class="ion-text-capitalize" formControlName="grade"
 						[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
 						cancelText="{{'CANCEL' | translate}}" [disabled]="!gradeList.length || !mediumControl.value.length"
-						(ionCancel)="cancelEvent('grade')" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
+						(ionCancel)="cancelEvent('grade')" placeholder="{{'FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category3'}}">
 						<ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize"
 							value="{{grade.code}}">
 							{{grade.name}}</ion-select-option>

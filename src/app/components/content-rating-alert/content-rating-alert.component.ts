@@ -1,6 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { FormConstants } from '@app/app/form.constants';
+import { FormAndFrameworkUtilService } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -18,7 +20,6 @@ import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import {
   ContentFeedback,
   ContentFeedbackService,
-  FormRequest,
   FormService,
   SharedPreferences,
   TelemetryFeedbackRequest, TelemetryLogRequest,
@@ -60,7 +61,8 @@ export class ContentRatingAlertComponent {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
-    private location: Location
+    private location: Location,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.getUserId();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
@@ -184,6 +186,7 @@ export class ContentRatingAlertComponent {
     if (rating === 0) {
       return;
     }
+    console.log('this.contentRatingOptions[rating].ratingText', this.contentRatingOptions[rating].ratingText)
     this.ratingMetaInfo = {
       ratingText: this.contentRatingOptions[rating].ratingText,
       ratingQuestion: this.contentRatingOptions[rating].question
@@ -218,32 +221,19 @@ export class ContentRatingAlertComponent {
 
   async invokeContentRatingFormApi() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    const req: FormRequest = {
-      type: 'contentfeedback',
-      subType: selectedLanguage,
-      action: 'get'
-    };
-    this.formService.getForm(req).toPromise()
-      .then((res: any) => {
-        const data = res.form.data.fields;
-        this.populateComments(data);
-      }).catch((error: any) => {
-        this.getDefaultContentRatingFormApi();
-      });
+    await this.formAndFrameworkUtilService.getFormFields({...FormConstants.CONTENT_FEEDBACK, subType: selectedLanguage}).then((res) => {
+      this.populateComments(res);
+    }).catch((error) => {
+      this.getDefaultContentRatingFormApi();
+    });
   }
 
-  getDefaultContentRatingFormApi() {
-    const req: FormRequest = {
-      type: 'contentfeedback',
-      subType: 'en',
-      action: 'get'
-    };
-    this.formService.getForm(req).toPromise()
-      .then((res: any) => {
-        const data = res.form.data.fields;
-        this.populateComments(data);
-      }).catch((error: any) => {
-      });
+  async getDefaultContentRatingFormApi() {
+    await this.formAndFrameworkUtilService.getFormFields(FormConstants.CONTENT_FEEDBACK).then((res) => {
+      this.populateComments(res);
+    }).catch((error) => {
+      this.getDefaultContentRatingFormApi();
+    });
   }
 
   populateComments(data) {

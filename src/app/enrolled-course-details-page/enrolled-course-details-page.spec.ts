@@ -199,7 +199,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('ngOnInit()', () => {
         it('should get App name and subscribe utility service by invoked ngOnInit()', () => {
             // arrange
-            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('DIKSHA'));
+            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('SUNBIRD'));
             mockDownloadService.trackDownloads = jest.fn(() => of());
             spyOn(enrolledCourseDetailsPage, 'subscribeUtilityEvents').and.returnValue('BASE_URL');
             const mockProfileRes = {

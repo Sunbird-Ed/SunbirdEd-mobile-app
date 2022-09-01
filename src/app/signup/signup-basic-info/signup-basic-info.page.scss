@@ -1,0 +1,141 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
+
+.sign-up-div {
+  margin-top: 10vh;
+
+  .header {
+    text-align: center;
+    margin: auto;
+
+    .logos {
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: 4rem;
+        padding: 10px;
+      }
+    }
+
+    .title {
+      color: #005A9E;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
+    .subtitle {
+      font-weight: bold;
+      color: #333333;
+    }
+  }
+}
+
+
+ion-input,
+section {
+  border: 1px solid gray;
+  border-radius: 16px;
+  margin: 10px auto;
+  padding-left: 1rem !important;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 1rem;
+
+  ion-icon {
+    font-size: 23px;
+    color: gray;
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    transform: translateY(-50%);
+  }
+}
+
+ion-datetime {
+  width: 100%;
+  padding: 7px 0;
+}
+
+.important::after {
+  content: '*';
+  color: red;
+  margin-left: 5px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.footer {
+  background: #F8FAFC;
+  border-top: 1px solid #d1d6dd;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem;
+
+  a {
+    color: #005A9E;
+  }
+  label {
+    margin-bottom: 0!important;
+  }
+}
+
+ion-slides {
+  height: 100%;
+}
+.swiper-slide {
+  display: block;
+}
+
+.yob-info {
+  border: 1px solid #999999 !important;
+  border-radius: 22px;
+  padding-left: 0.75rem !important;
+}
+
+.btn-info{
+  padding: 12px;
+  text-align: center;
+}
+
+.button-disabled {
+  --background: #707070 !important;
+}
+
+ion-button{
+  height: 40px;
+  box-shadow: var(--button-style-shadow) !important;
+  border-radius: 1rem;
+}
+
+ion-select{
+  .select-text{
+    margin-left: .75rem !important;
+  }
+  padding-left: .75rem !important;
+  .select-placeholder{
+    margin-left: .75rem !important;
+  }
+}
+
+.select-text{
+  margin-left: .75rem !important;
+}
+.select-placeholder{
+  margin-left: .75rem !important;
+}
+

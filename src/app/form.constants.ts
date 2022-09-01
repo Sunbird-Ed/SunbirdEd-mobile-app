@@ -84,4 +84,142 @@ export class FormConstants {
         action: 'get',
         component: 'app'
     };
+
+    public static FACET_FILTERS: FormRequest = {
+        type: 'filterConfig',
+        subType: 'default',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static CONTENT_FEEDBACK: FormRequest = {
+        type: 'contentfeedback',
+        subType: 'en',
+        action: 'get'
+    };
+
+    public static MANAGED_USER: FormRequest = {
+        type: 'user',
+        subType: 'manageduser',
+        action: 'create',
+        component: 'app'
+    };
+
+    public static LOGIN_CONFIG: FormRequest = {
+        from: CachedItemRequestSourceFrom.SERVER,
+        type: 'config',
+        subType: 'login_v2',
+        action: 'get'
+    };
+
+    public static UPGRADE_INFO: FormRequest = {
+        type: 'app',
+        subType: 'install',
+        action: 'upgrade'
+    };
+
+    public static PAGEASSEMBLE_FILTER_COURSE: FormRequest = {
+        type: 'pageassemble',
+        subType: 'course',
+        action: 'filter_v2',
+    };
+
+    public static PAGEASSEMBLE_FILTER_LIBRARY: FormRequest = {
+        type: 'pageassemble',
+        subType: 'library',
+        action: 'filter_v2',
+    };
+
+    public static SUPPORTED_URL_REGEX: FormRequest = {
+        type: 'config',
+        subType: 'supportedUrlRegex',
+        action: 'get'
+    };
+
+    public static LOCATION_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'location',
+        action: 'get',
+    };
+
+    public static PDF_PLAYER_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'pdfPlayer_v2',
+        action: 'get',
+    };
+
+    public static CONTENT_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'content_v2',
+        action: 'filter',
+    };
+
+    public static EXTERNAL_ID_VERIFICATION: FormRequest = {
+        type: 'user',
+        subType: 'externalIdVerification',
+        action: 'onboarding',
+        from: CachedItemRequestSourceFrom.SERVER,
+    };
+
+    public static WEBVIEW_VERSION: FormRequest = {
+        type: 'config',
+        subType: 'webview_version',
+        action: 'get',
+    };
+
+    public static DYNAMIC_FORM_CONFIG: FormRequest = {
+        type: 'dynamicform',
+        subType: 'support_v2',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static CONTACT_INFO: FormRequest = {
+        type: 'form',
+        subType: 'boardContactInfo',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static DYNAMIC_CONTENT_REQUEST: FormRequest = {
+        type: 'dynamicForm',
+        subType: 'contentRequest',
+        action: 'submit',
+        component: 'app'
+    };
+
+    public static CONSENT_DECLARATION: FormRequest = {
+        type: 'dynamicForm',
+        subType: 'consentDeclaration_v3',
+        action: 'submit',
+        component: 'app'
+    };
+
+    public static NOTIFICATION: FormRequest = {
+        type: 'config',
+        subType: 'notification',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static BOARD_ALIAS: FormRequest = {
+        type: 'config',
+        subType: 'boardAlias',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static SEARCH_FILTER_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'search',
+        action: 'facet_filter',
+        component: 'app'
+    };
+
+    public static CONTENT_AGGREGATOR: FormRequest = {
+        type: 'config',
+        subType: 'default',
+        action: 'get',
+        component: 'app',
+    };
 }

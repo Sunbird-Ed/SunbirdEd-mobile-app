@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormRequest } from 'sunbird-sdk';
 import { FormAndFrameworkUtilService } from '@app/services';
+import { FormConstants } from '@app/app/form.constants';
 
 @Injectable({
     providedIn: 'root'
@@ -20,17 +21,12 @@ export class SearchFilterService {
     }
 
     async fetchFacetFilterFormConfig(subType?) {
-        const formRequest: FormRequest = {
-            type: 'filterConfig',
-            subType: subType || 'default',
-            action: 'get',
-            component: 'app'
-        };
-        try{
-            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+        FormConstants.FACET_FILTERS['subType'] = subType || 'default';
+        try {
+            this.facetFilterFormConfig = await this.formAndFrameworkUtilService
+               .getFormFields({...FormConstants.FACET_FILTERS, subType: subType || 'default'});
         } catch {
-            formRequest.subType = 'default';
-            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.FACET_FILTERS);
         }
         return this.facetFilterFormConfig;
     }

@@ -33,12 +33,15 @@ export class BarChartComponent implements OnInit {
           ticks: {
             callback: function (value: any, index, values) {
               // // return createSubstrArr(value, 5) || value;
-              let strArr = value.split(' ');
-              let tempString = '';
-              let result = [];
+              let tempString :any= '';
+              let result:any = [];
+                  if (value.length >45) {
+                    value = value.substring(0, 45) + '...';
+                 }
+                  let strArr = value.split(' ');
               for (let x = 0; x < strArr.length; x++) {
                 tempString += ' ' + strArr[x];
-                if ((x % 4 === 0 && x !== 0) || x == strArr.length - 1) {
+                if ((x % 5 === 0 && x !== 0) || x == strArr.length - 1) {
                   tempString = tempString.slice(1);
                   result.push(tempString);
                   tempString = '';
@@ -46,7 +49,7 @@ export class BarChartComponent implements OnInit {
               }
               return result || value;
             },
-            fontSize: 12,
+            fontSize: 10,
           },
           display: true,
 

@@ -789,7 +789,7 @@ export class CommonUtilService {
                     const element = ratingStars[index];
                     if (element && element.shadowRoot && element.shadowRoot.querySelector('button')) {
                         const starButton = element.shadowRoot.querySelector('button');
-                        starButton.setAttribute('aria-label', (slectedStar >= index + 1 ? 'selected ' : '') + (index + 1) + ' star');
+                        starButton.setAttribute('aria-label', (slectedStar >= index + 1 ? 'selected ' : '') + (index + 1) + 'out of five stars');
                         starButton.setAttribute('tabindex', '0');
                     }
                 }

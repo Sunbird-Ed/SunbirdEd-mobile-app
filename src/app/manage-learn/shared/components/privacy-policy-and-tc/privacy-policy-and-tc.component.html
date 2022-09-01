@@ -17,7 +17,7 @@
             </span>
             <span>
               <p class="cr-terms-checkbox-label">
-                <span>{{message | translate}} </span>
+                <span>{{message | translate: {'app_name': appName} }} </span>
                 <span (click)="openTermsOfUse()" class="terms-info"> {{linkLabel | translate }}</span>
                 <span> {{message1 | translate}}</span>
               </p>

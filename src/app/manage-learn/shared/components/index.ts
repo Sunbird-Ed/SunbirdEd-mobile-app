@@ -29,3 +29,4 @@ export * from './task-card/task-card.component';
 export * from './add-link-modal/add-link-modal.component';
 export * from './attachment-card/attachment-card.component';
 export * from './attachment-lists/attachment-lists.component';
+export * from './report-list/report-list.component';

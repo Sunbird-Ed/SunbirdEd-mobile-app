@@ -7,11 +7,18 @@
     </ion-item>
   </ion-card-header>
   <ion-card-content *ngIf="isListItemOpened" >
+    <div *ngIf="showCard">
     <ion-card slot="content" *ngFor="let content of data">
       <ion-item lines="none" (click)="action(content)">
         <ion-label>{{content?.name}}</ion-label>
         <ion-icon md="caret-forward-circle" ios="chevron-forward-circle" slot="end" color="primary"></ion-icon>
       </ion-item>
     </ion-card>
+    </div>
+    <div *ngIf="!showCard">
+      <div  *ngFor="let content of data" class="ion-padding">
+       <p> > {{content?.text}} </p>
+        </div>
+      </div>
   </ion-card-content>
 </ion-card>

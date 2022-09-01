@@ -1974,7 +1974,8 @@ app-search {
   .pills-filter{
     sb-pills-grid{
       .sb-label-grid{
-        margin: .5rem 0 0 !important;
+        margin: .5rem 0 0 0.475rem !important;
+        padding-left: 0 !important;
         .item{
           text-align: center;
           min-width: 5rem;

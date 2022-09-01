@@ -119,8 +119,8 @@
           *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
           <div class="pt-8 px-8">
             <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
-              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
-              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+              {{'SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
+              <strong>{{ totalCount }} </strong>
             </p>
           </div>
           <div class="sb-textbook-container">
@@ -193,9 +193,9 @@
           </sb-pill-item>
         </sb-pills-grid>
       </div>
-      <div class="sb-search-history-entry sb-search-header-meta row">
+      <div class="sb-search-history-entry fixed-counter row">
         <div class="col" *ngIf="searchKeywords">
-          {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+          {{'SHOWING_RESULT_OUTOF_TOTAL' | translate: {'%count': searchContentResult.length, '%query': totalCount} }}
         </div>
         <div class="col" *ngIf="!searchKeywords">
           {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
@@ -209,6 +209,9 @@
           </sb-library-card>
         </div>
       </div>
+      <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadData($event)" *ngIf="searchContentResult?.length > 0 && searchContentResult.length < totalCount">
+      {{ 'VIEW_MORE' | translate }} 
+      </ion-button>
     </div>
     <div class="empty-search-result ion-text-center ion-padding-top" *ngIf="!showLoader && showEmptyMessage">
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
@@ -218,6 +221,10 @@
   <ng-container *ngIf="!enableSearch">
     <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
   </ng-container>
+  <!-- scroll top  -->
+  <!-- <div class="scroll_up" (click)="scrollToTop()" *ngIf="searchContentResult && searchContentResult.length">
+    <ion-icon name="arrow-up-circle-outline"></ion-icon>
+  </div> -->   
 </ion-content>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">	

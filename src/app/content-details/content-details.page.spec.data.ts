@@ -52,7 +52,7 @@ export const mockContentData: Partial<Navigation> = {
                     'do_212911626086563840154',
                     'do_212911625643237376158'
                 ],
-                appId: 'staging.diksha.portal',
+                appId: 'staging.sunbird.portal',
                 contentEncoding: 'gzip',
                 lockKey: 'a8d2c96f-5921-4f88-861e-561046854667',
                 mimeTypesCount: '{\'application/vnd.ekstep.content-collection\:1,\'application/vnd.ekstep.ecml-archive\:5}',
