@@ -272,7 +272,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.nextContentToBePlayed = extras.content;
-      this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
+      this.playerType = extras.mimeType === 'video/mp4' && !this.content.contentData["interceptionPoints"] ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
@@ -1187,7 +1187,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async handlePlayer(playerData) {
     this.config = playerData.state.config;
     let playerConfig = await this.formFrameworkUtilService.getPdfPlayerConfiguration();
-    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer") {
+    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" && !this.content.contentData["interceptionPoints"]) {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
