@@ -33,6 +33,7 @@ export class ObservationDetailComponent implements OnInit {
     actionButtons: []
   };
   observationId: any;
+  disableAddEntity : boolean = true;
   solutionId: any;
   programId: any;
   submissionCount: any;
@@ -65,6 +66,7 @@ export class ObservationDetailComponent implements OnInit {
       this.solutionId = params.solutionId;
       this.programId = params.programId;
       this.solutionName = params.solutionName;
+      this.entityType =params.entityType;
       let parameters = {
         solutionId: this.solutionId,
         programId: this.programId,
@@ -116,15 +118,16 @@ export class ObservationDetailComponent implements OnInit {
         success => {
           this.loader.stopLoader();
           if (success && success.result && success.result.entities) {
+            this.disableAddEntity = false;
             this.solutionData = success.result;
             this.entities = success.result.entities;
-            this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
             this.localStorage.setLocalStorage(this.generatedKey,success.result);
 
           } else {
+            this.disableAddEntity = true;
             this.entities = [];
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
