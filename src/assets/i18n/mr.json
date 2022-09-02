@@ -497,7 +497,7 @@
   "FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS": "सेटिंग अपडेट करा ",
   "FRMELEMNTS_LBL_VIEW_ENTITY_REPORT": "एंटिटी अहवाल पहा ",
   "FRMELEMNTS_LBL_VIEW_RESOURCES": "स्रोत पहा ",
-  "FRMELEMNTS_LBL_PROJECTS\r\n": "प्रकल्प ",
+  "FRMELEMNTS_LBL_PROJECTS": "प्रकल्प ",
   "FRMELEMNTS_MSG_BATCH_ALREADY_CLOSED": "या बॅचसाठी नोंदणी {endDate} रोजी बंद झाली  ",
   "FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY": "तुमचे डेटा सेटिंग यशस्वीरीत्या सबमिट केले आहेत ",
   "FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION": "तुम्हाला कार्य नक्की रद्द करायचे आहे का? ",
