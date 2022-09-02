@@ -23,6 +23,8 @@ import {
     SplaschreenDeeplinkActionHandlerDelegate
 } from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '../../../services';
+import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -59,6 +61,10 @@ describe('UserHomePage', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
     const mockPopoverController: Partial<PopoverController> = {};
     const mockContentService: Partial<ContentService> = {};
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        initialOnboardingScreenName: '',
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+    }
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -83,7 +89,8 @@ describe('UserHomePage', () => {
             mockTranslateService as TranslateService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockSegmentationTagService as SegmentationTagService,
-            mockPopoverController as PopoverController
+            mockPopoverController as PopoverController,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 

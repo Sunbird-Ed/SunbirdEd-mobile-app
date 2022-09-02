@@ -22,7 +22,6 @@ Node JS Version - above 8
 **2. Project Setup**    
     - git clone the repo(https://github.com/Sunbird-Ed/SunbirdEd-mobile-app).    
     - Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.    
-    - Go to project folder and run npm i    
     - Run `./build.sh`    
 
 **3. Onboarding/Tabs Configuration**
@@ -173,23 +172,33 @@ Configure the tabs page according to the requirement. Fllowing are the configura
     5. ios-deploy  1.11.4 - using `brew install ios-deploy`
     all of the above should be installed globally
     Xcode 12.4 Build version 12D4e or above
+
+    NOTE: For M1 chipset users please go through FAQ section for ROSETA 2 compatibility and usage.
     
 ## Steps
-    1. Checkout sunbird-sdk repo from https://github.com/shikshalokam/sunbird-mobile-sdk with branch release-3.9.0-ios
-    2. cd to <sunbird-mobile-sdk> && npm i && npm run build:prod
-    3. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
-    4. Add `GoogleService-Info.plist` file
-    5. cd to <sunbird-mobile-app> local path
-    6. RUN npm i <sunbird-sdk repo local path>/dist
-    7. RUN npm i
-    8. RUN ./build-ios.sh
-    9. RUN cordova emulate ios
-## Possible Errors 
+    1. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
+    2. Add `GoogleService-Info.plist` file
+    3. cd to <sunbird-mobile-app> local path
+    4. Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.
+    5. RUN ./build-ios.sh
+    6. RUN cordova emulate ios
+## FAQ
 1. error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird') or Duplicate GoogleService-Info.plist file error
-### Solution
-    open platforms/ios/Sunbird.xcworkspace 
-    Select Sunbird 
-    Build setting Project, targets
-    update Swift language version to 4 
-    Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
-    and close Xcode then rerun the **cordova emulate ios**
+  open platforms/ios/Sunbird.xcworkspace 
+  Select Sunbird 
+  Build setting Project, targets
+  update Swift language version to 4 
+  Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
+  and close Xcode then rerun the **cordova emulate ios**
+2. M1 Chipset users - Turn off ROSETA for XCODE 
+  Open Applications -> Right Click Xcode -> Click on Get Info -> Unchek Open with Roseta
+  Once `build-ios.sh` is completed, open platforms/ios/Sunbird.xcworkspace and run the application by clicking on Play button
+3. Install Java on Mac
+  Check if JAVA is already insalled or not by running following command in terminal
+  `javac --version` if you get the verdetails then it's installed already
+  Check the installation path in `/Library/Java/JavaVirtualMachines`
+  Check is JAVA_HOME is set by runnig `echo $JAVA_HOME`, if you get the installation path as output then JAVA_HOME is set
+  For Further details follow the link - https://stackoverflow.com/a/50683158/4259981
+4. (iOS Setup only) POD installation - https://cocoapods.org/
+5. (Android Setup only) Gradle installation - https://gradle.org/install/
+
