@@ -61,7 +61,12 @@ describe('SignInPage', () => {
     const mockGooglePlusLogin: Partial<GooglePlus> = {};
     const mockLocation: Partial<Location> = {};
     const mockSignInWithApple: Partial<SignInWithApple> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = { is: jest.fn(platform => platform === 'ios') };
+    window.cordova.plugins = {
+        Keyboard: {
+            hideKeyboardAccessoryBar: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         signInPage = new SignInPage(
