@@ -456,6 +456,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.FILTER_BUTTON_CLICKED,
+            Environment.COURSE,
+            PageId.COURSE_PAGE_FILTER
+            );
         const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true;
         const inputFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria(isDataEmpty);
         const openFiltersPage = await this.modalController.create({
