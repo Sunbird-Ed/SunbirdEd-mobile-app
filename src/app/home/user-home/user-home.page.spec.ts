@@ -23,6 +23,8 @@ import {
     SplaschreenDeeplinkActionHandlerDelegate
 } from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '../../../services';
+import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -59,6 +61,10 @@ describe('UserHomePage', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
     const mockPopoverController: Partial<PopoverController> = {};
     const mockContentService: Partial<ContentService> = {};
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        initialOnboardingScreenName: '',
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+    }
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -83,7 +89,8 @@ describe('UserHomePage', () => {
             mockTranslateService as TranslateService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockSegmentationTagService as SegmentationTagService,
-            mockPopoverController as PopoverController
+            mockPopoverController as PopoverController,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 
@@ -633,4 +640,98 @@ describe('UserHomePage', () => {
             })
         })
     })
+
+    describe('should requestMoreContent', ()=> {
+        it('should requestMoreContent', ()=> {
+            //arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockFormAndFrameworkUtilService.getContentRequestFormConfig = jest.fn();
+            //act
+            userHomePage.requestMoreContent();
+            //assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockFormAndFrameworkUtilService.getContentRequestFormConfig).toHaveBeenCalled();
+        })
+    })
+
+    describe('ngOnDestroy', ()=>{
+        it('should unsubscribe', ()=>{
+            // arrange
+            userHomePage.headerObservable = {
+                unsubscribe: jest.fn(() => true)
+            } as any;
+            // act
+            userHomePage.ngOnDestroy();
+            // assert
+            expect(userHomePage.headerObservable.unsubscribe).toHaveBeenCalled();
+        })
+    })
+
+    describe('ionViewWillLeave', ()=>{
+        it('should unsubscribe', ()=>{
+            // arrange
+            userHomePage.refresher = { disabled: true };
+            mockEvents.unsubscribe = jest.fn(() => []);
+            // act
+            userHomePage.ionViewWillLeave();
+            //assert
+            expect(mockEvents.unsubscribe).toHaveBeenCalledWith('update_header');
+        })
+    })
+
+    describe('onFrameworkSelectionSubmit()', () => {
+        it('should prepare the delegate navigation method for Frameworkdetails page when internet is available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            const formOutput = {
+                board: {
+                    name: 'State (Karnataka)',
+                    code: 'ka_k-12_1'
+                },
+                medium: {
+                    name: 'English',
+                    code: 'english',
+                    frameworkCode: 'ka_k-12_1'
+                },
+                grade: {
+                    name: 'Class 9',
+                    code: 'class9',
+                    frameworkCode: 'ka_k-12_1'
+                },
+                subject: 'other',
+                contenttype: 'digitextbbok',
+                children: {
+                    subject: {
+                        other: 'Cdc'
+                    }
+                }
+            };
+            mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            userHomePage.onFrameworkSelectionSubmit({}, formOutput, mockRouter, mockCommonUtilService,
+                mockTelemetryGeneratorService, []).then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should show the offline toast when internet is now available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            userHomePage.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService, mockTelemetryGeneratorService, []).then(() => {
+                // assert
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI');
+                done();
+            });
+        });
+    });  
 });

@@ -67,6 +67,10 @@ export class SignInPage implements OnInit {
         } else {
             this.appHeaderService.showHeaderWithBackButton();
         }
+        if (this.platform.is('ios')) {
+            // this one is to make sure keyboard has done button on top to close the keyboard
+            window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
+        }
     }
 
     async ngOnInit() {

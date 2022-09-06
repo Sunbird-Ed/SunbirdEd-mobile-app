@@ -11,6 +11,7 @@ import {
   ImpressionSubtype,
   InteractSubtype,
   InteractType,
+  OnboardingConfigurationService,
   SunbirdQRScanner
 } from '@app/services';
 import {
@@ -143,6 +144,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
   }
 
@@ -282,7 +284,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
     this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);

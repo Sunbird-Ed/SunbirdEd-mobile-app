@@ -51,12 +51,15 @@ export class TncUpdateHandlerService {
       from: CachedItemRequestSourceFrom.SERVER
     };
     this.profileService.getServerProfilesDetails(request).toPromise()
-      .then((profile) => {
+      .then(async (profile) => {
         if (this.hasProfileTncUpdated(profile)) {
           this.presentTncPage({ profile });
         } else {
-          if (!profile.dob) {
-            this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+          const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+          if ((!profile.managedBy || await this.isSSOUser(userDetails)) && !profile.dob) {
+            if (await this.isSSOUser(userDetails)) {
+              this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+            }
           } else {
             this.checkBmc(profile);
           }
