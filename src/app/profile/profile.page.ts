@@ -585,6 +585,9 @@ export class ProfilePage implements OnInit {
               return;
             }
           }
+          if (this.platform.is('ios')) {
+            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
+          } else {
             this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
               state: { request }
             });
