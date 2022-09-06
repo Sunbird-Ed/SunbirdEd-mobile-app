@@ -575,6 +575,7 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
+
     await this.checkForPermissions().then(async (result) => {
       if (result) {
         if (course.issuedCertificate) {
@@ -591,6 +592,7 @@ export class ProfilePage implements OnInit {
             this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
               state: { request }
             });
+          }
         } else {
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
