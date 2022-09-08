@@ -395,7 +395,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    navigateToViewMorePage(items, subject) {
+    navigateToViewMorePage(items, subject, totalCount) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
@@ -412,7 +412,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     contentList: items,
                     subjectName: subject,
                     corRelation: corRelationList,
-                    supportedFacets: this.supportedFacets
+                    supportedFacets: this.supportedFacets,
+                    totalCount
                 }
             });
         } else {
