@@ -965,7 +965,7 @@
   "UPDATE_APP_SUPPORT_TITLE": "You are using an older version of the {{app_name}} app. Upgrade your app to the latest version to use this content.",
   "UPDATE_CONFIRMATION_TEXT": "Update Content?",
   "UPDATE_DETAILS": "Update details",
-  "UPDATE_RECOVERY_ID": "Update recovery account",
+  "UPDATE_RECOVERY_ID": "Update Recovery ID",
   "UPDATE_REQUIRED": "Update required",
   "UPDATE_YOUR_PREFERENCE_FROM_PROFILE": "You can edit your {{app_name}} profile details from the Profile setting",
   "UPDATING": "Updating",
