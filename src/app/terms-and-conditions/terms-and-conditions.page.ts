@@ -166,7 +166,7 @@ export class TermsAndConditionsPage implements OnInit {
               noOfStepsToCourseToc: 1
             };
            // profile.serverProfile.dob = undefined;
-            if ((!profile.serverProfile.managedBy || await tncUpdateHandlerService.isSSOUser(profile)) && !profile.serverProfile.dob) {
+            if (!profile.serverProfile.managedBy && !await tncUpdateHandlerService.isSSOUser(profile) && !profile.serverProfile.dob) {
               this.router.navigate([RouterLinks.SIGNUP_BASIC]);
             } else if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
