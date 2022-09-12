@@ -62,7 +62,6 @@ export class ObservationDetailComponent implements OnInit {
     public commonUtilService: CommonUtilService,
   ) {
     this.routerParam.queryParams.subscribe(params => {
-      console.log(params,"params");
       this.observationId = params.observationId;
       this.solutionId = params.solutionId;
       this.programId = params.programId;
