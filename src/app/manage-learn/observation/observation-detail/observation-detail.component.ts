@@ -121,6 +121,7 @@ export class ObservationDetailComponent implements OnInit {
             this.disableAddEntity = false;
             this.solutionData = success.result;
             this.entities = success.result.entities;
+            this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }

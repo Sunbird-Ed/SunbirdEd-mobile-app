@@ -300,6 +300,7 @@ export class EvidenceService {
     let alert = await this.alertCtrl.create({
       header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
       message: translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"],
+      cssClass: 'central-alert',
       buttons: [
         {
           text: translateObject["CANCEL"],
