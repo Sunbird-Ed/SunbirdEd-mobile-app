@@ -21,5 +21,5 @@
     <app-no-data *ngIf="!surveyList?.length"></app-no-data>
   </ion-content>
   <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadMore()"   *ngIf="surveyList?.length && count > surveyList?.length">
-    {{ "VIEW_MORE" | translate }}
+    {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
   </ion-button>
