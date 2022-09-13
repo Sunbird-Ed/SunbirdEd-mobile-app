@@ -732,21 +732,11 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
+        Promise.resolve([]));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(expect.arrayContaining([
-          'Course',
-          'Teacher Resource',
-          'Learning Resource',
-          'Explanation Content',
-          'Content Playlist',
-          'Digital Textbook',
-          'Practice Question Set',
-          'eTextbook',
-          'Course Assessment'
-        ]));
+        expect(response).toEqual(["Course", "Teacher Resource", "Learning Resource", "Explanation Content", "Content PlayList", "Digital Textbook", "Practice Question Set", "eTextbook", "Course Assessment"]);
         done();
       });
     });
@@ -755,19 +745,11 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve(mockContentConfigResponse.form.data.fields));
+        Promise.resolve([]));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('course').then((response) => {
-        expect(response).toContain('Course');
-        expect(response).toContain('Teacher Resource');
-        expect(response).toContain('Learning Resource');
-        expect(response).toContain('Explanation Content');
-        expect(response).toContain('Content Playlist');
-        expect(response).toContain('Digital Textbook');
-        expect(response).toContain('Practice Question Set');
-        expect(response).toContain('eTextbook');
-        expect(response).toContain('Course Assessment');
+        expect(response).toEqual(["Course", "Teacher Resource", "Learning Resource", "Explanation Content", "Content PlayList", "Digital Textbook", "Practice Question Set", "eTextbook", "Course Assessment"]);
         done();
       });
     });
@@ -776,20 +758,13 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
+        Promise.resolve([]));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
-        expect(response).toContain('Course');
-        expect(response).toContain('Teacher Resource');
-        expect(response).toContain('Learning Resource');
-        expect(response).toContain('Explanation Content');
-        expect(response).toContain('Content Playlist');
-        expect(response).toContain('Digital Textbook');
-        expect(response).toContain('Practice Question Set');
-        expect(response).toContain('eTextbook');
-        expect(response).toContain('Course Assessment');
-
+        expect(response).toEqual([
+          "Course", "Teacher Resource", "Learning Resource", "Explanation Content", "Content PlayList", "Digital Textbook", "Practice Question Set", "eTextbook", "Course Assessment"
+        ]);
         done();
       });
     });
@@ -1208,5 +1183,87 @@ describe('FormAndFrameworkUtilService', () => {
     });
 
   });
+
+  describe('invokeUrlRegexFormApi', () => {
+    it('should invoke Url Regex Form Api ', () => {
+      // arrange
+      jest.spyOn(formAndFrameworkUtilService, 'getFormFields').mockReturnValue([{code:"", values:""}] as any);
+      // act
+      formAndFrameworkUtilService.invokeUrlRegexFormApi();
+      // assert
+    })
+  });
+
+  describe('getSearchFilters', () => {
+    it('should get SearchFilters', () => {
+      // arrange
+      jest.spyOn(formAndFrameworkUtilService, 'getFormFields').mockImplementation();
+      // act
+      formAndFrameworkUtilService.getSearchFilters();
+      // assert
+    })
+  });
+
+  describe('changeChannelIdToName', () => {
+    it('should change ChannelId To Name', () => {
+      // arrange
+      const filterCriteria = {
+        facetFilters: [{
+          name: "channel",
+          values: [{
+            rootOrgId: "sample_orgId",
+            name: "sample_org"
+          }]
+        }]
+      }
+      // act
+      formAndFrameworkUtilService.changeChannelIdToName(filterCriteria)
+      // assert
+    })
+    it('should name is not channel or not present', () => {
+      // arrange
+      const filterCriteria = {
+        facetFilters: [{
+          name: "",
+        }]
+      }
+      // act
+      formAndFrameworkUtilService.changeChannelIdToName(filterCriteria)
+      // assert
+    });
+  })
+
+  describe('changeChannelNameToId', () => {
+    it('should change ChannelName ToId', () => {
+      // arrange
+      const filterCriteria = {
+        facetFilters: [{
+          name: "channel",
+          values: [{
+            rootOrgId: "",
+            name: ""
+          }]
+        }]
+      }
+      // act
+      formAndFrameworkUtilService.changeChannelNameToId(filterCriteria)
+      // assert
+    })
+    it('should check else case if name is not channel ', () => {
+      // arrange
+      const filterCriteria = {
+        facetFilters: [{
+          name: "channel2",
+          values: [{
+            rootOrgId: "",
+            name: ""
+          }]
+        }]
+      }
+      // act
+      formAndFrameworkUtilService.changeChannelNameToId(filterCriteria)
+      // assert
+    })
+  })
 
 });

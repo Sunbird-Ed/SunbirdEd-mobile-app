@@ -1,6 +1,6 @@
 import { ProfileHandler } from './profile-handler';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ContentDisposition, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import { mockSupportedUserTypeConfig, mockFormFielddata, profile, userLocation, subPersonaConfig} from './profile-handler.spec.data';
@@ -80,6 +80,19 @@ describe('ProfileHandler', () => {
                 done();
             });
         });
+
+        it('should return empty object is no specific user type config', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                mockFormFielddata
+            ));
+            // act
+            profileHandler.getSupportedProfileAttributes(true, 'name').then((response) => {
+                // assert
+                expect(response).toEqual({});
+                done();
+            });
+        });
     });
 
     describe('getAudience', () => {
@@ -106,14 +119,29 @@ describe('ProfileHandler', () => {
     });
 
     describe('getSubPersona', () => {
-        it('should get label', () =>{
+        it('should return undefined if profile user type is undefined', () => {
+            // arrange
+            const profile1 = {
+                "maskedPhone": null,
+                "tcStatus": null,
+                "channel": "sunbirdpreprodcustodian"
+            }
+            const persona = 'parent';
+            // act
+            profileHandler.getSubPersona(profile1, persona, userLocation);
+
+            // assert
+        })
+        it('should get label', () => {
             const subPersonaLabelArray = [
                 {
                     value: 'hm',
                     label: 'HM'
                 }
             ]
+            const persona = 'parent';
             subPersonaLabelArray.push({ value: 'sample', label : 'SAMPLE'});
+            profileHandler.getSubPersona(profile, persona, userLocation);
             expect(subPersonaLabelArray).toEqual(
                 expect.arrayContaining([
                 expect.objectContaining({label: 'SAMPLE'})
@@ -121,9 +149,9 @@ describe('ProfileHandler', () => {
             ); 
         })
 
-        it('should call getProfileFormConfig', async () => {
+        it('should call getProfileFormConfig and no subpersona', async () => {
             //arrange
-                const persona = 'parent';
+            const persona = 'student';
             const subPersonaCodes = [];
             subPersonaCodes.push(profile.profileUserType);
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
@@ -134,10 +162,87 @@ describe('ProfileHandler', () => {
             //assert
             expect(subPersonaCodes).toEqual(
                 expect.arrayContaining([
-                expect.objectContaining({type: 'parent'})
+                expect.objectContaining({"subType": "subType", "type": "parent"})
                 ])
             );
             expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
-              });   
+        }); 
+
+        it('should call getProfileFormConfig and with subpersona and profile user type', async () => {
+            //arrange
+            const persona = 'other';
+            const subPersonaCodes = [];
+            subPersonaCodes.push(profile.profileUserType);
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                mockFormFielddata
+            ));
+            //act
+            profileHandler.getSubPersona(profile, persona, userLocation);
+            //assert
+            expect(subPersonaCodes).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({"subType": "subType", "type": "parent"})
+                ])
+            );
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        }); 
+
+        it('should call getProfileFormConfig', async () => {
+            //arrange
+            const persona = 'parent';
+            const subPersonaCodes = [];
+            subPersonaCodes.push(profile.profileUserType);
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                mockFormFielddata
+            ));
+            //act
+            profileHandler.getSubPersona(profile, persona, userLocation);
+            //assert
+            expect(subPersonaCodes).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({"subType": "subType", "type": "parent"})
+                ])
+            );
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        });   
+
+        it('should call getProfileFormConfig and no profile user types', async () => {
+            //arrange
+            const persona = 'parent';
+            let profile1 = profile
+            const subPersonaCodes = [];
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                mockFormFielddata
+            ));
+            //act
+            profileHandler.getSubPersona(profile1, persona, userLocation);
+            //assert
+            expect(subPersonaCodes).toEqual([]);
+        });   
+
+        it('should call getProfileFormConfig as defaulf on error', async () => {
+            //arrange
+            const persona = 'parent';
+            const subPersonaCodes = [];
+            subPersonaCodes.push(profile.profileUserType);
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.reject({Error: "error"}));
+            //act
+            profileHandler.getSubPersona(profile, persona, userLocation);
+            //assert
+            expect(subPersonaCodes).toEqual(
+                expect.arrayContaining([
+                expect.objectContaining({"subType": "subType", "type": "parent"})
+                ])
+            );
+        });   
+    })
+
+    describe('getPersonaConfig', () => {
+        it('should get PersonaConfig', () => {
+            // arrange
+            // act
+            profileHandler.getPersonaConfig('');
+            // assert
         })
-    });
+    })
+});

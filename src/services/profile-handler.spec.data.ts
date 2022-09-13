@@ -535,6 +535,50 @@ export const mockFormFielddata = [
                             }
                         }
                     }
+                },
+                {
+                    "code": "subPersona",
+                    "type": "select",
+                    "context": "cluster",
+                    "default": null,
+                    "templateOptions": {
+                        "label": "School",
+                        "placeHolder": "Select School",
+                        "multiple": false,
+                        "dataSrc": {
+                            "marker": "LOCATION_LIST",
+                            "params": {
+                                "id": "subPersona",
+                                "useCase": "SIGNEDIN"
+                            }
+                        },
+                        "options": [
+                            {
+                                "value": "subType",
+                                "label": "HM"
+                            },
+                            {
+                                "value": "subType",
+                                "label": "CRP"
+                            },
+                            {
+                                "value": "chm",
+                                "label": "Complex HM"
+                            },
+                            {
+                                "value": "meo",
+                                "label": "MEO"
+                            },
+                            {
+                                "value": "dyeo",
+                                "label": "DyEO"
+                            },
+                            {
+                                "value": "atwo",
+                                "label": "ATWO"
+                            }
+                        ]
+                    }
                 }
             ],
             "parent": [
@@ -644,6 +688,50 @@ export const mockFormFielddata = [
                                 "useCase": "SIGNEDIN"
                             }
                         }
+                    }
+                },
+                {
+                    "code": "subPersona",
+                    "type": "select",
+                    "context": "cluster",
+                    "default": null,
+                    "templateOptions": {
+                        "label": "School",
+                        "placeHolder": "Select School",
+                        "multiple": true,
+                        "dataSrc": {
+                            "marker": "LOCATION_LIST",
+                            "params": {
+                                "id": "subPersona",
+                                "useCase": "SIGNEDIN"
+                            }
+                        },
+                        "options": [
+                            {
+                                "value": "subType",
+                                "label": "HM"
+                            },
+                            {
+                                "value": "subType",
+                                "label": "CRP"
+                            },
+                            {
+                                "value": "chm",
+                                "label": "Complex HM"
+                            },
+                            {
+                                "value": "meo",
+                                "label": "MEO"
+                            },
+                            {
+                                "value": "dyeo",
+                                "label": "DyEO"
+                            },
+                            {
+                                "value": "atwo",
+                                "label": "ATWO"
+                            }
+                        ]
                     }
                 }
             ]
