@@ -11,7 +11,7 @@ import {Location} from '@angular/common';
 import {PreferenceKey} from '../../app.constant';
 import {mockSelfDeclarationForm, mockTenantPersonaInfoForm} from '../../../services/formandframeworkutil.service.spec.data';
 import {FormConstants} from '../../form.constants';
-import {FieldConfigValidationType} from 'common-form-elements';
+import { FieldConfigValidationType } from '../../components/common-forms/field-config';
 import {ConsentService} from '../../../services/consent-service';
 import {ConsentStatus} from '@project-sunbird/client-services/models';
 import { FrameworkService } from '@project-sunbird/sunbird-sdk/framework/def/framework-service';
@@ -558,6 +558,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
             });
 
         });
+
+        it('should catch error', (done) => {
+            // arrange
+            mockEvents.public = jest.fn(() => throwError({Error: "Something went wrong"}))
+            // act
+            selfDeclaredTeacherEditPage.submit().then(() => {
+                // assert
+                done();
+            });
+
+        })
     });
 
     describe('tenantPersonaFormValueChanges', () => {
@@ -969,6 +980,57 @@ describe('SelfDeclaredTeacherEditPage', () => {
                 }
             };
             mockProfileService.updateConsent = jest.fn(() => of(mockConsentResponse));
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+
+        });
+        
+        it('should catch error on update consent on second call', () =>{
+            // arrange
+            const mockConsentResponse: UpdateConsentResponse = {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            };
+            mockProfileService.updateConsent = jest.fn(() => of((response: {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            }) => {
+                mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+        });
+
+        it('should catch error on update consent', () =>{
+            // arrange
+            mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+
+        });
+        it('should catch error on update consent on for Tenant not Changed', () =>{
+            // arrange
+            selfDeclaredTeacherEditPage.isTenantChanged = false;
+            const mockConsentResponse: UpdateConsentResponse = {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            };
+            mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            mockCommonUtilService.showToast = jest.fn();
             // act
             selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
             // assert
