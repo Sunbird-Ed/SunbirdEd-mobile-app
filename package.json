@@ -82,7 +82,6 @@
     "com-sarriaroman-photoviewer": "^1.2.5",
     "com.jjdltc.cordova.plugin.zip": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.7.0",
-    "common-form-elements-v9": "^4.6.1",
     "cordova-android": "^9.0.0",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-permissions": "^1.1.2",
@@ -357,10 +356,10 @@
         "<rootDir>/node_modules/@project-sunbird/common-consumption-v9/*"
       ],
       "common-form-elements": [
-        "<rootDir>/node_modules/common-form-elements-v9"
+        "<rootDir>/node_modules/@project-sunbird/common-form-elements-v9"
       ],
       "common-form-elements/*": [
-        "<rootDir>/node_modules/common-form-elements-v9/*"
+        "<rootDir>/node_modules/@project-sunbird/common-form-elements-v9/*"
       ]
     },
     "transformIgnorePatterns": [],
