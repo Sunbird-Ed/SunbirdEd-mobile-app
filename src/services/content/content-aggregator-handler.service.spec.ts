@@ -393,4 +393,103 @@ describe('ContentAggregatorHandler', () => {
             done();
         });
     });
+    describe('newAggregate', () => {
+        it('should get newAggregate', (done) => {
+            // arrange
+            const data = jest.fn(() => of({
+                result: [{
+                    theme: {orientation: 'horizontal'},
+                    title: JSON.stringify({ en: 'sample-enrolled-course' }),
+                    data: {
+                        sections: [{
+                            contents: [{
+                                appIcon: 'sample-icon',
+                                name: 'sample-name'
+                            }]
+                        }]
+                    }
+                }, {
+                    theme: {orientation: 'vertical'},
+                    title: JSON.stringify({ en: 'sample-course' }),
+                    data: {
+                        sections: [{
+                            contents: {
+                                appIcon: 'sample-icon',
+                                name: 'sample-name'
+                            }
+                        }]
+                    }
+                }]
+            }));
+            mockappGlobalService.isUserLoggedIn = jest.fn(() => true)
+            mockcontentService.buildContentAggregator = jest.fn(() => ({
+                aggregate: data
+            })) as any;
+            // act
+            contentAggregatorHandler.newAggregate({}, AggregatorPageType.COURSE, "")
+            // assert
+            done()
+        })
+        it('should get newAggregate on error', (done) => {
+            // arrange
+            const data = jest.fn(() => of({
+                result: [{
+                    theme: {orientation: 'horizontal'},
+                    title: JSON.stringify({ en: 'sample-enrolled-course' }),
+                    data: {
+                        sections: [{
+                            contents: [{
+                                appIcon: 'sample-icon',
+                                name: 'sample-name'
+                            }]
+                        }]
+                    }
+                }, {
+                    theme: {orientation: 'vertical'},
+                    title: JSON.stringify({ en: 'sample-course' }),
+                    data: {
+                        sections: [{
+                            contents: {
+                                appIcon: 'sample-icon',
+                                name: 'sample-name'
+                            }
+                        }]
+                    }
+                }]
+            }));
+            mockappGlobalService.isUserLoggedIn = jest.fn(() => false)
+            mockcontentService.buildContentAggregator = jest.fn(() => throwError({Error: ""})) as any;
+            // act
+            contentAggregatorHandler.newAggregate({}, AggregatorPageType.COURSE, "")
+            // assert
+            done()
+        })
+    })
+    describe('populateIcons', () => {
+        it('should populateIcons if no aggregrate response', () => {
+            // arrange
+            // act
+            contentAggregatorHandler.populateIcons('');
+            // assert
+        })
+        it('should populateIcons for type CONTENT_FACETS', () => {
+            // arrange
+            // act
+            contentAggregatorHandler.populateIcons([{dataSrc: {type:'CONTENT_FACETS'}, data:[{icon:''}]}]);
+            // assert
+        })
+        it('should populateIcons for data src type CONTENTS', () => {
+            // arrange
+            // act
+            contentAggregatorHandler.populateIcons([{dataSrc: {type:'CONTENTS'}, data: {sections: [{contents: [{cardImg: '', courseLogoUrl: "", appIcon: "", content: {appIcon: ""}}]}]}}]);
+            // assert
+        })
+
+        it('should populateIcons for data src type is some other', () => {
+            // arrange
+            // act
+            contentAggregatorHandler.populateIcons([{dataSrc: {type:'Some_type'}, data: {sections: [{contents: [{cardImg: '', courseLogoUrl: "", appIcon: "", content: {appIcon: ""}}]}]}}]);
+            // assert
+        })
+    })
 });

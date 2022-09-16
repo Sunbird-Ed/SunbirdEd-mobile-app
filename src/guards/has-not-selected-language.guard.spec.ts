@@ -46,9 +46,23 @@ describe('HasNotSelectedLanguageGuard', () => {
     });
 
     describe('resolve', () => {
+        it('should return false if route has onReload property true and skipOnboarding as true and navigate to user type selection page', (done) => {
+            // arrange
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            // act
+            const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);
+            // assert
+            expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(response).toBeTruthy();
+                done();
+            }, 0);
+        });
 
         it('should return true if route has onReload property true and skipOnboarding as false', (done) => {
             // arrange
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => false);
+
             // act
             const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);
             // assert
@@ -64,7 +78,7 @@ describe('HasNotSelectedLanguageGuard', () => {
         it('should  navigate to user type selection page if selected language is available', (done) => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
-
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
             // assert
@@ -83,7 +97,7 @@ describe('HasNotSelectedLanguageGuard', () => {
             // arrange
             hasNotSelectedLanguageGuard['guardActivated'] = false;
             mockSharedPreference.getString = jest.fn(() => of(undefined));
-
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn();
             // act
             hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'false' } } as any);
 
