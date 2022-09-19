@@ -92,7 +92,6 @@ export class AttachmentService {
     this.camera
       .getPicture(options)
       .then((imagePath) => {
-        debugger
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
           if(!newFilePath.includes("file://")){
@@ -103,9 +102,7 @@ export class AttachmentService {
             .then((filePath) => {
               this.copyFile(filePath);
             })
-            .catch(error => {
-              debugger
-            })
+            .catch(error => {})
         } else {
           this.copyFile(imagePath);
         }
