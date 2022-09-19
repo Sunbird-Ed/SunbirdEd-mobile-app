@@ -62,6 +62,8 @@ export class TextbookViewMorePage {
   supportedFacets: any;
   profile: Profile;
   displaySections?: any[];
+  totalCount: number;
+  viewMoreTotalCount: number;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -82,6 +84,8 @@ export class TextbookViewMorePage {
       this.subjectName = extras.subjectName;
       this.corRelationList = extras.corRelation;
       this.supportedFacets = extras.supportedFacets;
+      this.totalCount = this.contentList.length;
+      this.viewMoreTotalCount = extras.totalCount;
     }
     if(this.corRelationList) {
       this.corRelationList.forEach(list => {
@@ -170,6 +174,7 @@ export class TextbookViewMorePage {
   async fetchRecentPlublishedCourses() {
     let refresher = true;
     this.displaySections = undefined;
+    this.totalCount = 0;
     const request: ContentAggregatorRequest = {
       userPreferences: {
         board: this.getFieldDisplayValues(this.profile.board, 'board', true),
@@ -190,6 +195,7 @@ export class TextbookViewMorePage {
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.displaySections.forEach(section => {
       if (this.commonUtilService.getTranslatedValue(section.title, '') == this.subjectName) {
+        this.totalCount = section.data.sections[0].contents.length;
         section.data.sections[0].contents.forEach(list => {
           this.contentList.push(list);
         })
@@ -241,6 +247,7 @@ export class TextbookViewMorePage {
     }
     searchCriteria.offset = this.contentList.length;
     searchCriteria.limit = 10;
+    this.totalCount = 0;
     const temp = ((await this.contentService.buildContentAggregator
       (this.formService, this.courseService, this.profileService)
       .aggregate({
@@ -277,6 +284,8 @@ export class TextbookViewMorePage {
     this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
     this.sectionGroup.sections.forEach(section => {
       if (section.name == this.subjectName) {
+        this.viewMoreTotalCount = section.totalCount;
+        this.totalCount = section.contents.length;
         section.contents.forEach(list => {
           this.contentList.push(list);
         })
