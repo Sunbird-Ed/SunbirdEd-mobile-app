@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Camera, CameraOptions, PictureSourceType } from "@ionic-native/camera/ngx";
+import { Camera, CameraOptions, MediaType, PictureSourceType } from "@ionic-native/camera/ngx";
 import { Chooser } from "@ionic-native/chooser/ngx";
 import { FilePath } from "@ionic-native/file-path/ngx";
 import { File } from "@ionic-native/file/ngx";
@@ -79,22 +79,32 @@ export class AttachmentService {
     return actionSheet.onDidDismiss();
   }
 
-  takePicture(sourceType: PictureSourceType) {
+  takePicture(sourceType: PictureSourceType, mediaType:MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
       quality: 10,
       sourceType: sourceType,
       saveToPhotoAlbum: false,
       correctOrientation: true,
+      mediaType: mediaType,
+      destinationType: this.camera.DestinationType.FILE_URI,
     };
 
     this.camera
       .getPicture(options)
       .then((imagePath) => {
+        debugger
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+          let newFilePath = imagePath;
+          if(!newFilePath.includes("file://")){
+            newFilePath = "file://" +imagePath
+          }
           this.filePath
-            .resolveNativePath(imagePath)
+            .resolveNativePath(newFilePath)
             .then((filePath) => {
               this.copyFile(filePath);
+            })
+            .catch(error => {
+              debugger
             })
         } else {
           this.copyFile(imagePath);

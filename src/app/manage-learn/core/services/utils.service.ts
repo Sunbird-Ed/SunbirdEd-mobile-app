@@ -753,6 +753,11 @@ return data;
         value: "link",
         type: "link"
       },
+      {
+        name: "FRMELEMNTS_LBL_VIDEOS",
+        value: "video",
+        type: "video/mp4"
+      },
     ];
     return tabs;
   }
