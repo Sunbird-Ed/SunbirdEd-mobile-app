@@ -1,8 +1,70 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
+
 .login-div {
-  margin-top: 15vh;
+  margin-top: 2vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.signin {
+  margin: 1rem;
+  position: relative;
+  color: var(--app-gray) !important;
+  height: 3rem !important;
+  width: 86vw !important;
+  border: 1px solid map-get($colors , light_shade_gray );
+  box-sizing: border-box;
+  border-radius: 16px !important;
+  background-color: map-get($colors ,white ) !important;
+  box-shadow: 5px 5px 2px 0 rgb(0 0 0 / 10%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statesignin {
+  margin-top: -8px !important;
+}
+
+.log-in-button {
+  height: 3rem;
+  width: 86vw;
+  border-radius: 16px;
+  background-color: map-get($colors , medium_light_shade_gray );
+  box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+  margin-top: 9px;
+  margin-bottom: 12px;
+}
+
+.validLoginButton {
+  height: 3rem;
+  width: 86vw;
+  border-radius: 16px;
+  background-color: map-get($colors , light_green );
+  box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+  margin-top: 9px;
+  margin-bottom: 12px;
+}
+
+.signinpage {
+  --background: map-get($colors ,white );
+  background: map-get($colors ,white ) !important;
+}
+
+.img-con {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.img-container {
+  max-width: 20%;
 }
 
 .header {
@@ -16,24 +78,58 @@
   user-select: text;
 }
 
+.title-logo {
+  position: absolute;
+  left: 8.5rem;
+}
+
 .icon-logo {
   width: 1.5rem;
   height: 1.5rem;
-  position: absolute;
-  left: 1rem;
-  top: 0.8rem;
 }
 
 .hyper-link {
-  color: var(--app-tertiary);
+  color: #024F9D;
+  font-weight: bold;
 }
+.account-info {
+  width: 85%;
+  p {
+   font-size: 11px;
+   color: map-get($colors , medium_light_shade_gray );
+   font-family: "Noto Sans";
+   font-size: 12px;
+   letter-spacing: 0;
+   line-height: 17px;
+   text-align: center;
+  }
+}
+
+.title-head {
+  width: 100%;
+  text-align: center;
+  padding-top: 10px;
+  margin-top: 10px;
+  h3 {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 33px;
+     }
+  p {
+    font-size: 16px;
+    letter-spacing: 0;
+    line-height: 22px;
+  }  
+  }
+
 
 .option-or {
   font-size: 1rem;
   color: var(--app-gray);
   display: flex;
   align-items: center;
-  width: 65%;
+  width: 85%;
 
   hr {
     flex: 1;
@@ -42,9 +138,20 @@
   }
 
   span {
+    color: map-get($colors , medium_light_shade_gray );
+    font-family: "Noto Sans";
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 19px;
     padding: 0 0.75rem;
     text-transform: uppercase;
   }
+}
+
+.sign-in-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-to {
@@ -52,7 +159,7 @@
 }
 
 .text-overlay {
-  margin: 0.95rem;
+  margin: 0.85rem;
 }
 
 .p-lr-0 {
