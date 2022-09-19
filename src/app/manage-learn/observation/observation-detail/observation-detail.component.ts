@@ -177,7 +177,6 @@ export class ObservationDetailComponent implements OnInit {
 
   async addEntity() {
     if(this.networkFlag){
-      const type = this.entityType;
       let entityListModal;
       entityListModal = await this.modalCtrl.create({
         component: EntityfilterComponent,
@@ -189,38 +188,41 @@ export class ObservationDetailComponent implements OnInit {
       await entityListModal.present();
       await entityListModal.onDidDismiss().then(async entityList => {
         if (entityList.data) {
-          let payload = await this.utils.getProfileInfo();
-  
-          payload.data = [];
-          entityList.data.forEach(element => {
-            //if coming from state list page
-            if (type == "state" && element.selected) {
-                payload.data.push(element._id);
-              return;
-            }
-  
-            payload.data.push(element._id); // if coming from EntityListPage
-          });
-  
-          const config = {
-            url:
-              urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
-              `${this.observationId}`,
-            payload: payload
-          };
-          this.assessmentService.post(config).subscribe(
-            success => {
-              if (success) {
-                this.getObservationEntities();
-              }
-            },
-            error => {}
-          );
+          this.setPayloadAndPostAssessment(entityList);
         }
       });
     }else{
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
     }
+  }
+  
+  async setPayloadAndPostAssessment(entityList) {
+    const type = this.entityType;
+    let payload = await this.utils.getProfileInfo();
+    payload.data = [];
+    entityList.data.forEach(element => {
+      //if coming from state list page
+      if (type == "state" && element.selected) {
+          payload.data.push(element._id);
+        return;
+      }
+      payload.data.push(element._id); // if coming from EntityListPage
+    });
+
+    const config = {
+      url:
+        urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
+        `${this.observationId}`,
+      payload: payload
+    };
+    this.assessmentService.post(config).subscribe(
+      success => {
+        if (success) {
+          this.getObservationEntities();
+        }
+      },
+      error => {}
+    );
   }
   
   async removeEntity(entity) {

@@ -1,5 +1,5 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AppGlobalService, FormAndFrameworkUtilService, FrameworkDetailsService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -26,7 +26,7 @@ import onboarding from '../../assets/configurations/config.json';
   templateUrl: './terms-and-conditions.page.html'
 })
 export class TermsAndConditionsPage implements OnInit {
-  public tncLatestVersionUrl: SafeUrl;
+  public tncLatestVersionUrl: SafeResourceUrl;
   public termsAgreed = false;
   private loading?: any;
   private unregisterBackButtonAction: Subscription;
@@ -60,8 +60,8 @@ export class TermsAndConditionsPage implements OnInit {
     this.appName = await this.appVersion.getAppName();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
-
-    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustUrl(this.userProfileDetails.tncLatestVersionUrl);
+    let url = this.userProfileDetails.tncLatestVersionUrl;
+    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
@@ -170,69 +170,59 @@ export class TermsAndConditionsPage implements OnInit {
           isRootPage: true,
           noOfStepsToCourseToc: 1
         };
+        let userLocationAvailable = this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig);
+        let isSSoUser = await tncUpdateHandlerService.isSSOUser(profile)
         if (!profile.serverProfile.managedBy && !await tncUpdateHandlerService.isSSOUser(profile) && !profile.serverProfile.dob) {
           this.router.navigate([RouterLinks.SIGNUP_BASIC]);
         } else if (value['status']) {
-          await this.checkIssoUserAndNavigate(profile, value, locationMappingConfig, tncUpdateHandlerService, categoriesProfileData);
+          if (userLocationAvailable || isSSoUser) {
+            await tncUpdateHandlerService.dismissTncPage();
+            this.appGlobalService.closeSigninOnboardingLoader();
+            categoriesProfileData['status'] = value['status']
+            categoriesProfileData['isUserLocationAvalable'] = true;
+            await this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
+            this.splashScreenService.handleSunbirdSplashScreenActions();
+          } else {
+            if (onboarding.skipOnboardingForLoginUser) {
+              await this.updateUserAsGuest();
+            } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                categoriesProfileData['status'] = value['status']
+                categoriesProfileData['isUserLocationAvalable'] = false;
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: { categoriesProfileData }
+            });
+            } else {
+              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: categoriesProfileData
+              });
+            }
+          }
         } else {
           // closeSigninOnboardingLoader() is called in CategoryEdit page
           await tncUpdateHandlerService.dismissTncPage();
-          if (await tncUpdateHandlerService.isSSOUser(profile)) {
-            await this.consentService.getConsent(profile, true);
-          }
-          if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-            if (onboarding.skipOnboardingForLoginUser) {
-              await this.updateUserAsGuest();
-            } else {
-              this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                state: {categoriesProfileData}
-              });
-            }
-          } else {
-            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-              state: categoriesProfileData
-            });
-          }
+          this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
         }
       }).catch(async e => {
         this.dismissLoader(loader);
       });
   }
 
-  async checkIssoUserAndNavigate(profile, value, locationMappingConfig, tncUpdateHandlerService, categoriesProfileData) {
-    if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
-      || await tncUpdateHandlerService.isSSOUser(profile)) {
-        await tncUpdateHandlerService.dismissTncPage();
-        this.appGlobalService.closeSigninOnboardingLoader();
-        if (await tncUpdateHandlerService.isSSOUser(profile)) {
-          await this.consentService.getConsent(profile, true);
-        }
-        categoriesProfileData['status'] = value['status']
-        categoriesProfileData['isUserLocationAvalable'] = true;
-        if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-          if (onboarding.skipOnboardingForLoginUser) {
-            await this.updateUserAsGuest();
-          } else {
-            this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-              state: {categoriesProfileData}
-            });
-          }
-        } else {
-          if (!this.appGlobalService.isJoinTraningOnboardingFlow) {
-            this.router.navigate(['/', RouterLinks.TABS]);
-          }
-      }
-      this.externalIdVerificationService.showExternalIdVerificationPopup();
-      this.splashScreenService.handleSunbirdSplashScreenActions();
-    } else {
+  async handleNavigation(isSSoUser, profile, categoriesProfileData, value) {
+    if (isSSoUser) {
+      await this.consentService.getConsent(profile, true);
+    }
+    if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
       if (onboarding.skipOnboardingForLoginUser) {
         await this.updateUserAsGuest();
-      } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-          categoriesProfileData['status'] = value['status']
-          categoriesProfileData['isUserLocationAvalable'] = false;
-          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-          state: { categoriesProfileData }
-      });
+      } else {
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+          state: {categoriesProfileData}
+        });
+      }
+    } else {
+      if (value['status'] && !this.appGlobalService.isJoinTraningOnboardingFlow) {
+        this.router.navigate(['/', RouterLinks.TABS]);
       } else {
         this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
           state: categoriesProfileData
