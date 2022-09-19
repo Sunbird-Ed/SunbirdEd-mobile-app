@@ -56,7 +56,7 @@ describe('TermsAndConditionsPage', () => {
     };
 
     const mockSanitizer: Partial<DomSanitizer> = {
-        bypassSecurityTrustResourceUrl: jest.fn(() => 'some_safe_url')
+        bypassSecurityTrustUrl: jest.fn(() => 'some_safe_url')
     };
 
     const mockCommonUtilService: Partial<CommonUtilService> = {

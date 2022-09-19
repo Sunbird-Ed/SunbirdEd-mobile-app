@@ -194,8 +194,8 @@ export class ObservationDetailComponent implements OnInit {
           payload.data = [];
           entityList.data.forEach(element => {
             //if coming from state list page
-            if (type == "state") {
-              element.selected ? payload.data.push(element._id) : null;
+            if (type == "state" && element.selected) {
+                payload.data.push(element._id);
               return;
             }
   
@@ -222,6 +222,7 @@ export class ObservationDetailComponent implements OnInit {
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
     }
   }
+  
   async removeEntity(entity) {
     let entityId = entity._id;
     let translateObject;
@@ -264,10 +265,6 @@ export class ObservationDetailComponent implements OnInit {
     };
     this.assessmentService.delete(config).subscribe(
       success => {
-        let okMessage;
-        this.translate.get("FRMELEMNTS_LBL_OK").subscribe(translations => {
-          okMessage = translations;
-        });
         this.toast.openToast(success.message);
 
         this.loader.stopLoader();
