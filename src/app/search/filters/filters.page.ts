@@ -113,6 +113,13 @@ export class FiltersPage implements OnInit, OnDestroy {
       InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
+      PageId.COURSE_SEARCH_FILTER,
+      undefined,
+      values);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.APPLY_FILTER_CLICKED,
+      Environment.HOME,
       (this.source && this.source.match('courses')) ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);

@@ -167,6 +167,7 @@ export class SolutionListingComponent {
           solutionId: data._id,
           observationId: observationId,
           solutionName: data.name,
+          entityType: data.entityType ? data.entityType : ''
         },
       }
     );

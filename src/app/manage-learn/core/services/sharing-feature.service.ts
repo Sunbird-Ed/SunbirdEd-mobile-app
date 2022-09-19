@@ -98,6 +98,9 @@ export class SharingFeatureService {
   async getFileUrl(config, name) {
     if(this.network.isNetworkAvailable){
       this.loader.startLoader();
+      if(name?.length > 40){
+        name = name.slice(0, 40) + '...';
+      }
       let res = await this.unnatiSrvc.get(config).toPromise();
       if (res.result && !res.result.data && !res.result.data.downloadUrl) {
         this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
