@@ -60,8 +60,7 @@ export class TermsAndConditionsPage implements OnInit {
     this.appName = await this.appVersion.getAppName();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
-    let url = this.userProfileDetails.tncLatestVersionUrl;
-    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.userProfileDetails.tncLatestVersionUrl);
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
