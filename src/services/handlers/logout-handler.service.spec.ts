@@ -67,7 +67,6 @@ describe('LogoutHandlerService', () => {
 
     const mockGooglePlus: Partial<GooglePlus> = {
         trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
-        disconnect: jest.fn()
     };
 
     beforeAll(() => {
@@ -210,12 +209,31 @@ describe('LogoutHandlerService', () => {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
-            jest.spyOn(splashscreen, 'clearPrefs');
             // act
             logoutHandlerService.onLogout();
             // assert
             setTimeout(() => {
-                expect(splashscreen.clearPrefs).toHaveBeenCalled();
+            })
+        });
+
+        it('should not clear the splashscreen preferences if not present and check for different platforms', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockPlatform.is = jest.fn(platform => platform === 'android');
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            window['splashscreen'] = false
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: '1234567890',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
             })
         });
 

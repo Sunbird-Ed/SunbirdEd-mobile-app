@@ -42,7 +42,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         }
 
         const selectedUser = await this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-        if (selectedUser) {
+        if (selectedUser && selectedUser !== ProfileType.ADMIN) {
             this.navigateToProfileSettings()
             return false;
         }
