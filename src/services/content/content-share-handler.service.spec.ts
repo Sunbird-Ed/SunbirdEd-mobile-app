@@ -32,7 +32,7 @@ describe('ContentShareHandlerService', () => {
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockPlatform: Partial<Platform> = {
-        is: jest.fn()
+        is: jest.fn(platform => platform === 'ios')
     };
 
     beforeAll(() => {
@@ -61,7 +61,8 @@ describe('ContentShareHandlerService', () => {
         it('should go to catch block if throws error', (done) => {
             // arrange
             const shareParams = {
-                byFile: true
+                byFile: true,
+                saveFile: false
             };
             const content: Partial<Content> = {
                 identifier: 'do_id',
@@ -99,7 +100,7 @@ describe('ContentShareHandlerService', () => {
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
+                // expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
                     { contentIds: ['do_id'], destinationFolder: 'dirpath', subContentIds: [] }
                 );
@@ -121,6 +122,7 @@ describe('ContentShareHandlerService', () => {
                     primaryCategory: 'primaryCategory',
                 }
             };
+            mockPlatform.is = jest.fn(platform => platform === "android");
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -186,7 +188,8 @@ describe('ContentShareHandlerService', () => {
         it('should share textbook with selected child content', (done) => {
             // arrange
             const shareParams = {
-                byFile: true
+                byFile: true,
+                shareFile: false
             };
             const content: Partial<Content> = {
                 identifier: 'do_id',
@@ -196,6 +199,7 @@ describe('ContentShareHandlerService', () => {
                     primaryCategory: 'primaryCategory',
                 }
             };
+            mockPlatform.is = jest.fn(platform => platform === "ios");
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -242,9 +246,9 @@ describe('ContentShareHandlerService', () => {
                     values, { l1: 'textbook_do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
+                // expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
-                    { contentIds: ['textbook_do_id'], destinationFolder: 'dirpath', subContentIds: ['child_do_id'] }
+                    { contentIds: ['textbook_do_id'], destinationFolder: 'undefinedcontent/', subContentIds: ['child_do_id'] }
                 );
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
@@ -280,6 +284,7 @@ describe('ContentShareHandlerService', () => {
                         return 'SHARE_CONTENT_LINK';
                 }
             });
+            mockPlatform.is = jest.fn(platform => platform === "android")
             mockSocialSharing.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
@@ -337,6 +342,7 @@ describe('ContentShareHandlerService', () => {
                         return 'SHARE_CONTENT_LINK';
                 }
             });
+            mockPlatform.is = jest.fn(platform => platform === "ios");
             mockSocialSharing.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
@@ -368,7 +374,7 @@ describe('ContentShareHandlerService', () => {
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
+                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content');
                 done();
             }, 0);
         });
@@ -604,6 +610,7 @@ describe('ContentShareHandlerService', () => {
         it('should save content file on device', (done) => {
             // arrange
             const shareParams = {
+                byFile: false,
                 saveFile: true
             };
             const content: Partial<Content> = {
@@ -611,7 +618,6 @@ describe('ContentShareHandlerService', () => {
                 contentType: 'contentType',
                 contentData: {
                     contentType: 'contentType',
-                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -639,14 +645,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: ''
+                        id: 'do_id', type: 'contentType', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: ''
+                        id: 'do_id', type: 'contentType', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();

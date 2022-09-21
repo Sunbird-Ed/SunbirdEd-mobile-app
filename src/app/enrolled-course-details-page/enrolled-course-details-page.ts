@@ -1626,8 +1626,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   isCourseModifiedAfterEnrolment() {
     return (this.courseCardData && this.courseCardData.enrolledDate
-      && this.course && this.course.lastUpdatedOn
-      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime()));
+      && this.course && this.course.lastPublishedOn
+      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastPublishedOn).getTime()));
   }
 
   getCourseProgress() {
