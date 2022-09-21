@@ -13,7 +13,7 @@ import { AppGlobalService } from '../app-global-service.service';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
-import { it } from 'node:test';
+// import { it } from 'node:test';
 
 describe('ContentShareHandlerService', () => {
 
@@ -79,7 +79,7 @@ describe('ContentShareHandlerService', () => {
             })
         })
 
-        it('should show settinngs toast when user doesnt give permission', (done) => 9{
+        it('should show settinngs toast when user doesnt give permission', (done) => {
             // arrange
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
@@ -142,8 +142,6 @@ describe('ContentShareHandlerService', () => {
                 done()
             });
         })
-
-        it('it should ')
     })
 
 });
