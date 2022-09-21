@@ -13,8 +13,8 @@ import { localStorageConstants } from "../../constants/localStorageConstants";
 export class AttachmentService {
   mediaType: string;
   texts: any;
-  payload : any;
-  actionSheetOpen : boolean = false;
+  payload: any;
+  actionSheetOpen: boolean = false;
   constructor(
     private camera: Camera,
     private file: File,
@@ -35,7 +35,8 @@ export class AttachmentService {
         "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
-        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"
+        "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT",
+        "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -79,9 +80,9 @@ export class AttachmentService {
     return actionSheet.onDidDismiss();
   }
 
-  takePicture(sourceType: PictureSourceType, mediaType:MediaType = this.camera.MediaType.ALLMEDIA) {
+  takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
-      quality: 10,
+      quality: 100,
       sourceType: sourceType,
       saveToPhotoAlbum: false,
       correctOrientation: true,
@@ -94,25 +95,50 @@ export class AttachmentService {
       .then((imagePath) => {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
-          if(!newFilePath.includes("file://")){
-            newFilePath = "file://" +imagePath
+          if (!newFilePath.includes("file://")) {
+            newFilePath = "file://" + imagePath
           }
-          this.filePath
-            .resolveNativePath(newFilePath)
-            .then((filePath) => {
-              this.copyFile(filePath);
-            })
-            .catch(error => {})
+          this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
+            if (isValidFile) {
+              this.filePath
+                .resolveNativePath(newFilePath)
+                .then((filePath) => {
+                  this.copyFile(filePath);
+                })
+                .catch(error => { })
+            }
+          })
         } else {
-          this.copyFile(imagePath);
+          this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
+            if (isValidFile) {
+              this.copyFile(imagePath);
+            }
+          })
         }
       })
       .catch((err) => {
         console.log(err);
-        if(err !== "No Image Selected") {
+        if (err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
       });
+  }
+
+  checkForFileSizeRestriction(filePath): Promise<Boolean> {
+    return new Promise((resolve, reject) => {
+      this.file.resolveLocalFilesystemUrl(filePath).then(success => {
+        success.getMetadata((metadata) => {
+          if (metadata.size > localStorageConstants.FILE_LIMIT) {
+            this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"],'danger', 5000);
+            reject(false)
+          } else  {
+            resolve(true)
+          }
+        })
+      }).catch(error => {
+        reject(false)
+      })
+    })
   }
 
   copyFileToLocalDir(namePath, currentName, newFileName) {
@@ -126,7 +152,7 @@ export class AttachmentService {
         };
 
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-        this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
+        this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
       (error) => {
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
@@ -134,11 +160,11 @@ export class AttachmentService {
     );
   }
 
-  async presentToast(text, color = "danger") {
+  async presentToast(text, color = "danger", duration = 3000) {
     const toast = await this.toastController.create({
       message: text,
       position: "top",
-      duration: 3000,
+      duration: duration,
       color: color,
     });
     toast.present();
@@ -147,11 +173,11 @@ export class AttachmentService {
   async openFile() {
     try {
       const file = await this.chooser.getFile('application/pdf');
-      let sizeOftheFile:number = file.data.length
-      if(sizeOftheFile > localStorageConstants.FILE_LIMIT){
+      let sizeOftheFile: number = file.data.length
+      if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
         this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
-      }else{
+      } else {
         const pathToWrite = this.directoryPath();
         const newFileName = this.createFileName(file.name)
         const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
@@ -163,10 +189,10 @@ export class AttachmentService {
             url: "",
           };
           this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-          this.actionSheetOpen? this.actionSheetController.dismiss(data) : this.payload.push(data);
+          this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
         }
       }
-     
+
     } catch (error) {
       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
@@ -220,20 +246,20 @@ export class AttachmentService {
     return this.file.removeFile(this.directoryPath(), fileName);
   }
 
-  async openAttachmentSource(type,payload) {
-    let data:any ='';
+  async openAttachmentSource(type, payload) {
+    let data: any = '';
     this.actionSheetOpen = false;
     this.payload = payload;
-    switch(type){
+    switch (type) {
       case 'openCamera':
-       this.takePicture(this.camera.PictureSourceType.CAMERA);
-      break;
+        this.takePicture(this.camera.PictureSourceType.CAMERA);
+        break;
       case 'openGallery':
-       this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-      break;
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        break;
       case 'openFiles':
         this.openFile();
-      break;
+        break;
     }
   }
 }

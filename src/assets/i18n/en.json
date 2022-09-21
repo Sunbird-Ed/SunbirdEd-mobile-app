@@ -1295,7 +1295,7 @@
   "FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER": "Add links here, please seperate multiple links using space or comma (,)",
   "FRMELEMNTS_BTN_ADD_LINK": "Add links",
   "FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION": "would you like to add any remarks or attach any files before you mark your task complete?",
-  "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION": "Would you like to add any remarks or attach any files before you submit your Project?",
+  "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION": "Would you like to add any evidence of impact as photos, videos, remarks or documents before submitting? You can also add remarks, if any.",
   "FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM": "You will lose the attachments if you go back. Are you sure you want to go back?",
   "FRMELEMNTS_BTN_EXIT_PAGE": "Exit page",
   "FRMELEMNTS_BTN_YES_PAGE": "Yes exit",
@@ -1337,5 +1337,6 @@
   "FRMELEMNTS_LBL_CONFIRM_EMAIL_VALIDATION": "Please enter email address",
   "FRMELEMNTS_LBL_CONFIRM_EMAIL_PATTERN_VALIDATION": "Please enter valid email address",
   "FRMELEMNTS_LBL_OTP_NOT_RECEIVED": "Didn’t Receive an OTP?",
-  "FRMELEMNTS_LBL_STEP": "Step {{page_number}}"
+  "FRMELEMNTS_LBL_STEP": "Step {{page_number}}",
+  "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED":"The file is too large and cannot be uploaded. The file you are tying to upload has exceeded the maximum file size (50 MB)"
 }

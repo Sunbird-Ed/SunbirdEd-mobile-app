@@ -8,5 +8,5 @@ export const localStorageConstants = {
     USER_DETAILS:"usersInfo",
     SELECTED_LANGUAGE: "selectedLanguage",
     LIBRARY_CATEGORIES:"libraryCategories",
-    FILE_LIMIT:30000000
+    FILE_LIMIT:50000000
 };
