@@ -76,12 +76,12 @@ export class SignInPage implements OnInit {
     }
             
     ionViewWillEnter() {
-        this.statusBar.backgroundColorByHexString('#FFFFFF');
-        this.statusBar.styleDefault();
+        this.appHeaderService.hideStatusBar();
     }
 
     ionViewWillLeave() {
         this.appHeaderService.showStatusBar();
+        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
     }
 
     async ngOnInit() {
