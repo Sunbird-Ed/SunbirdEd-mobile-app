@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, Inject, Injector, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AppGlobalService, FormAndFrameworkUtilService, FrameworkDetailsService } from '@app/services';
@@ -60,7 +60,8 @@ export class TermsAndConditionsPage implements OnInit {
     this.appName = await this.appVersion.getAppName();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
-    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.userProfileDetails.tncLatestVersionUrl);
+    const url = this.sanitizer.sanitize(SecurityContext.URL, this.userProfileDetails.tncLatestVersionUrl.toString());
+    this.tncLatestVersionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
