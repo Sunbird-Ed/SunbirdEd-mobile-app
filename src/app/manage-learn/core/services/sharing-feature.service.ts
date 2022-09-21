@@ -132,7 +132,6 @@ export class SharingFeatureService {
    
   }
   directoryPath(): string {
-    // let dir_name = 'Download/';
     if (this.platform.is('ios')) {
       return this.file.documentsDirectory;
     } else {

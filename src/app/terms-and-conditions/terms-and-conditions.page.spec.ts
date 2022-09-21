@@ -56,6 +56,7 @@ describe('TermsAndConditionsPage', () => {
     };
 
     const mockSanitizer: Partial<DomSanitizer> = {
+        sanitize: jest.fn(),
         bypassSecurityTrustResourceUrl: jest.fn(() => 'some_safe_url')
     };
 
@@ -295,6 +296,12 @@ describe('TermsAndConditionsPage', () => {
     describe('onAcceptanceClick', () => {
         it('should updated user has guest if onboading skipped', (done) => {
             // arrange
+            termsAndConditionsPage['userProfileDetails'] = {
+                tncLatestVersion: 'sample_tnc_url',
+                declarations: [{ name: 'sample-name' }],
+                managedBy: "manager",
+                dob: 'sample_dob'
+            };
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
@@ -342,6 +349,11 @@ describe('TermsAndConditionsPage', () => {
         });
         it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN if logged in user', (done) => {
             // arrange
+            termsAndConditionsPage['userProfileDetails'] = {
+                tncLatestVersion: 'sample_tnc_url',
+                declarations: [{ name: 'sample-name' }],
+                dob: 'sample_dob'
+            };
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
