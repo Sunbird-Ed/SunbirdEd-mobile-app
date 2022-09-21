@@ -14,7 +14,6 @@ import {
     WebviewSessionProviderConfig,
     WebviewLoginSessionProvider,
     NativeGoogleSessionProvider,
-    AuthService,
     SystemSettingsService,
     SignInError,
     SharedPreferences,
@@ -35,7 +34,6 @@ import {
 } from '@ionic-native/sign-in-with-apple/ngx';
 import { Platform } from '@ionic/angular';
 import { FieldConfig } from 'common-form-elements';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @Component({
     selector: 'app-sign-in',
@@ -64,7 +62,6 @@ export class SignInPage implements OnInit {
         private signInWithApple: SignInWithApple,
         public platform: Platform,
         private appGlobalService: AppGlobalService,
-        private statusBar: StatusBar,
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
@@ -76,12 +73,12 @@ export class SignInPage implements OnInit {
     }
             
     ionViewWillEnter() {
-        this.statusBar.backgroundColorByHexString('#FFFFFF');
-        this.statusBar.styleDefault();
+        this.appHeaderService.hideStatusBar();
     }
 
     ionViewWillLeave() {
         this.appHeaderService.showStatusBar();
+        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
     }
 
     async ngOnInit() {
