@@ -146,8 +146,8 @@ export class ProjectTemplateviewPage implements OnInit {
       title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
-    if (this.project.tasks && this.project.tasks.length)
-      this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
+    // if (this.project.tasks && this.project.tasks.length)
+    //   this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
   async getTemplateByExternalId() {
