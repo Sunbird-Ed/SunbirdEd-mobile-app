@@ -44,7 +44,9 @@ describe('SignInPage', () => {
     };
     const mockAppHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn(),
-        showStatusBar: jest.fn()
+        showStatusBar: jest.fn(),
+        hideStatusBar: jest.fn(),
+        showHeaderWithHomeButton: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(),
@@ -83,10 +85,6 @@ describe('SignInPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         resetSavedQuizContent: jest.fn()
     }
-    const mockStatusBar: Partial<StatusBar> = {
-        styleDefault: jest.fn(),
-        backgroundColorByHexString: jest.fn()
-    };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     window.cordova.plugins = {
         Keyboard: { hideKeyboardAccessoryBar: jest.fn() }
@@ -106,8 +104,7 @@ describe('SignInPage', () => {
             mockLocation as Location,
             mockSignInWithApple as SignInWithApple,
             mockPlatform as Platform,
-            mockAppGlobalService as AppGlobalService,
-            mockStatusBar as StatusBar
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -136,12 +133,11 @@ describe('SignInPage', () => {
     describe('ionViewWillEnter', () => {
         it('should set status bar background white and default style', () => {
             // arrange
-            mockStatusBar.backgroundColorByHexString = jest.fn()
+            mockAppHeaderService.hideStatusBar = jest.fn()
             // act
             signInPage.ionViewWillEnter();
             // assert
-            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#FFFFFF');
-            expect(mockStatusBar.styleDefault).toHaveBeenCalled();
+            expect(mockAppHeaderService.hideStatusBar).toHaveBeenCalled();
         })
     });
 
@@ -149,10 +145,12 @@ describe('SignInPage', () => {
         it('should show status bar before view will leave', () => {
             // arrange
             mockAppHeaderService.showStatusBar = jest.fn(() => Promise.resolve());
+            mockAppHeaderService.showHeaderWithHomeButton = jest.fn(() => Promise.resolve());
             // act
             signInPage.ionViewWillLeave();
             // assert
             expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
+            expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
         })
     });
 

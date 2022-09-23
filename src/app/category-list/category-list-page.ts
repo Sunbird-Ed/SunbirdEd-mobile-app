@@ -395,7 +395,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    navigateToViewMorePage(items, subject) {
+    navigateToViewMorePage(items, subject, totalCount) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
@@ -412,7 +412,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     contentList: items,
                     subjectName: subject,
                     corRelation: corRelationList,
-                    supportedFacets: this.supportedFacets
+                    supportedFacets: this.supportedFacets,
+                    totalCount
                 }
             });
         } else {
@@ -456,6 +457,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.FILTER_BUTTON_CLICKED,
+            Environment.COURSE,
+            PageId.COURSE_PAGE_FILTER
+            );
         const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true;
         const inputFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria(isDataEmpty);
         const openFiltersPage = await this.modalController.create({

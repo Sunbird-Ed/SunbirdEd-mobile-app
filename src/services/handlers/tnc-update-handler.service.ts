@@ -56,10 +56,8 @@ export class TncUpdateHandlerService {
           this.presentTncPage({ profile });
         } else {
           const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-          if ((!profile.managedBy || await this.isSSOUser(userDetails)) && !profile.dob) {
-            if (await this.isSSOUser(userDetails)) {
+          if (!profile.managedBy && !await this.isSSOUser(userDetails) && !profile.dob) {
               this.router.navigate([RouterLinks.SIGNUP_BASIC]);
-            }
           } else {
             this.checkBmc(profile);
           }
