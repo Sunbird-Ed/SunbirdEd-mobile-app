@@ -26,7 +26,7 @@
     [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
   <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
-    <app-task-card [data]="project" [viewOnly] ="true"></app-task-card>
+    <app-task-card [data]="project" [viewOnly] ="true" (click)="openStartIMPPopup()"></app-task-card>
   </div>
 
 </ion-content>

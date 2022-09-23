@@ -22,6 +22,7 @@
     <div class="attachment-label" *ngIf="attachment?.type != 'link'">
       <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image/jpeg'"></ion-icon>
       <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'application/pdf'"></ion-icon>
+      <ion-icon name="videocam" slot="start" *ngIf="attachment?.type == 'video/mp4'"></ion-icon>
       <span>{{attachment?.name || attachment?.url}} </span>
     </div>
     <div class="attachment-label" *ngIf="attachment?.type == 'link'">
