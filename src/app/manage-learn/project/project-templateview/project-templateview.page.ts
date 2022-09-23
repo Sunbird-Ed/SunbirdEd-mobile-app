@@ -295,4 +295,11 @@ export class ProjectTemplateviewPage implements OnInit {
     });
     await alert.present();
   }
+  openStartIMPPopup(){
+    this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
+      if(data){
+        this.doAction();
+      }
+    })
+   }
 }

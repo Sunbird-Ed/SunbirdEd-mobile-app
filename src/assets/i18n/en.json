@@ -1338,5 +1338,8 @@
   "FRMELEMNTS_LBL_CONFIRM_EMAIL_PATTERN_VALIDATION": "Please enter valid email address",
   "FRMELEMNTS_LBL_OTP_NOT_RECEIVED": "Didn’t Receive an OTP?",
   "FRMELEMNTS_LBL_STEP": "Step {{page_number}}",
+  "FRMELEMNTS_LBL_START_IMP_POPUP_MSG1":"You must click on the Start improvement button to access and edit the project details.",
+  "FRMELEMNTS_LBL_START_IMP_POPUP_MSG2":"Click on the Start improvement to get complete access to the content",
+  "FRMELEMNTS_LBL_TO_SUBMIT_PROJECT":"To finish submission, click on Submit button below",
   "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED":"The file is too large and cannot be uploaded. The file you are tying to upload has exceeded the maximum file size (50 MB)"
 }

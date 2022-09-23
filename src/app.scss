@@ -2127,6 +2127,12 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
     filter: invert(0) !important;
     background: var(--app-secondary-background);
   }
+  .task-card .display-flex-space-btn .title-break{
+    color: #fff !important;
+  }
+  .success{
+    color: #FFD954 !important;
+  }
 }
 
 app-user-home{
@@ -2377,7 +2383,7 @@ app-metadata-details,app-add-file {
     background: black;
   }
 .segment-card{
-    background: #fff;
+    background: var(--sb-pill-bg);
     border-radius: 12px;
     box-shadow: var(--button-style-shadow) !important;
     ion-segment-button{
