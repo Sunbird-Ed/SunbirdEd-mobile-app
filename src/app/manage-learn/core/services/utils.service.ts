@@ -526,9 +526,8 @@ export class UtilsService {
           text: "Update Profile",
           role: "cancel",
           handler: blah => {
-            this.router.navigate([
-              `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`
-            ]);
+            this.router.navigate([`${RouterLinks.HOME}`], {replaceUrl:true});
+            this.router.navigate([`${RouterLinks.TABS}/${RouterLinks.PROFILE}`]);
           }
         }
       ],

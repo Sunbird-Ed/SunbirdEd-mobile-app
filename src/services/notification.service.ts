@@ -34,6 +34,7 @@ export class NotificationService implements SbNotificationService {
     private _notificationPaylod: any;
     notificationList$ = new BehaviorSubject([]);
     showNotificationModel$ = new Subject<boolean>();
+    notificationData: any;
 
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -66,18 +67,12 @@ export class NotificationService implements SbNotificationService {
         if (!notificationData || !notificationData.data || !notificationData.data.action) {
             return;
         }
-        const notification = notificationData.data;
-        const valuesMap = new Map();
-        valuesMap['notificationBody'] = notification.action;
-        if (notification.action.deepLink && notification.action.deepLink.length) {
-            valuesMap['notificationDeepLink'] = notification.action.deepLink;
-        }
-        this.generateClickInteractEvent(valuesMap, InteractSubtype.NOTIFICATION_READ);
+        this.notificationData = notificationData.data;
 
-        notification.isRead = 1;
+        this.notificationData.isRead = 1;
 
-        this.notificationId = notification.id || '';
-        this.setNotificationParams(notification);
+        this.notificationId = this.notificationData.id || '';
+        this.setNotificationParams(this.notificationData);
         this.handleNotification();
     }
 
@@ -296,6 +291,12 @@ export class NotificationService implements SbNotificationService {
                 id: this.notificationId,
                 type: CorReleationDataType.NOTIFICATION_ID
             });
+        const valuesMap = corRelationList;
+        valuesMap['notificationBody'] = this.notificationData.action;
+        if (this.notificationData.action.deepLink && this.notificationData.action.deepLink.length) {
+            valuesMap['notificationDeepLink'] = this.notificationData.action.deepLink;
+        }
+        this.generateClickInteractEvent(valuesMap, InteractSubtype.NOTIFICATION_READ);
         }
         if (this.identifier) {
             this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier, false, null, null, null, corRelationList);
@@ -317,15 +318,18 @@ export class NotificationService implements SbNotificationService {
         this.notificationId = undefined;
     }
 
-    private generateClickInteractEvent(valuesMap, interactSubType) {
+    private generateClickInteractEvent(valuesMap, interactSubType) {     
+        const correlationData = valuesMap[0]? [valuesMap[0]]:undefined;
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             interactSubType,
             Environment.NOTIFICATION,
             PageId.NOTIFICATION,
             undefined,
-            valuesMap
-        );
+            valuesMap,
+            undefined,
+            correlationData
+             );
     }
 
     updateNotification(notificationData) {
