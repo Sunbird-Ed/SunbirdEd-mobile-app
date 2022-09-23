@@ -9,7 +9,7 @@ import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { CorrelationData, TelemetryService, GetByIdRequest, CachedItemRequestSourceFrom, GroupService, ProfileService, ContentSearchCriteria, ContentService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
-import { EventNotification, SbNotificationService } from 'sb-notification';
+import { EventNotification, SbNotificationService } from '@project-sunbird/sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
