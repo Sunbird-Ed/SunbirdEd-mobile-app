@@ -1295,7 +1295,7 @@
   "FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER": "Add links here, please seperate multiple links using space or comma (,)",
   "FRMELEMNTS_BTN_ADD_LINK": "Add links",
   "FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION": "would you like to add any remarks or attach any files before you mark your task complete?",
-  "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION": "Would you like to add any evidence of impact as photos, videos, remarks or documents before submitting? You can also add remarks, if any.",
+  "FRMELEMNTS_LBL_PROJECT_ATTACHMENTS_DESCRIPTION": "Would you like to add any evidence of impact as photos, videos, remarks or documents before submitting?",
   "FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM": "You will lose the attachments if you go back. Are you sure you want to go back?",
   "FRMELEMNTS_BTN_EXIT_PAGE": "Exit page",
   "FRMELEMNTS_BTN_YES_PAGE": "Yes exit",
