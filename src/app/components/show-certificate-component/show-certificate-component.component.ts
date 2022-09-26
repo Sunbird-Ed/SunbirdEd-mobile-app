@@ -27,11 +27,10 @@ export class ShowCertificateComponent implements OnInit {
     ) {
     }
     ngOnInit() {
-
         this.objId = this.content.identifier;
         this.objType = this.content.contentType;
         this.objVer = this.content.pkgVersion; 
-        for(var key in this.certificateDetails) {
+        for(let key in this.certificateDetails) {
             const certCriteria = this.certificateDetails[key]['criteria'];
             if (certCriteria) { 
             this.showCompletionCertificate = certCriteria.enrollment && certCriteria.enrollment.status === 2 ? true : false;     
