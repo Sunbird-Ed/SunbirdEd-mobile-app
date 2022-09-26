@@ -744,6 +744,11 @@ return data;
         type: 'image/jpeg'
       },
       {
+        name: "FRMELEMNTS_LBL_VIDEOS",
+        value: "video",
+        type: "video/mp4"
+      },
+      {
         name: "FRMELEMNTS_LBL_FILES",
         value: "file",
         type: "application/pdf"
@@ -753,11 +758,7 @@ return data;
         value: "link",
         type: "link"
       },
-      {
-        name: "FRMELEMNTS_LBL_VIDEOS",
-        value: "video",
-        type: "video/mp4"
-      },
+     
     ];
     return tabs;
   }
