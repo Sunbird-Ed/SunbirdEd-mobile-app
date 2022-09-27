@@ -7,6 +7,8 @@ import { ActionSheetController, Platform, ToastController } from "@ionic/angular
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 import { localStorageConstants } from "../../constants/localStorageConstants";
+import { LoaderService } from "../loader/loader.service";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +26,8 @@ export class AttachmentService {
     private filePath: FilePath,
     private chooser: Chooser,
     // private filePickerIOS: IOSFilePicker,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private loader: LoaderService
   ) {
     this.translate
       .get([
@@ -82,12 +85,12 @@ export class AttachmentService {
 
   takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
-      quality: 100,
+      quality: 20,
       sourceType: sourceType,
       saveToPhotoAlbum: false,
       correctOrientation: true,
       mediaType: mediaType,
-      destinationType: this.camera.DestinationType.FILE_URI,
+      destinationType: this.camera.DestinationType.DATA_URL,
     };
 
     this.camera
@@ -122,6 +125,37 @@ export class AttachmentService {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
       });
+  }
+
+  writeFileToPrivateFolder(filePath) {
+    this.checkForFileSizeRestriction(filePath).then(isValidFile => {
+      if (isValidFile) {
+        let path = filePath.substr(0, filePath.lastIndexOf("/") + 1);
+        let currentName = filePath.split("/").pop();
+        this.loader.startLoader();
+        this.file.readAsArrayBuffer(path, currentName).then(success => {
+          const pathToWrite = this.directoryPath();
+          const newFileName = this.createFileName(currentName)
+          this.file.writeFile(pathToWrite, newFileName, success).then(fileWrite => {
+            const data = {
+              name: newFileName,
+              type: this.mimeType(newFileName),
+              isUploaded: false,
+              url: "",
+            };
+            this.loader.stopLoader();
+            this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+            this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
+          }).catch(error => {
+            this.loader.stopLoader();
+            this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+          })
+        }).catch(error => {
+          this.loader.stopLoader();
+          this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+        })
+      }
+    }).catch(error => { })
   }
 
   checkForFileSizeRestriction(filePath): Promise<Boolean> {
