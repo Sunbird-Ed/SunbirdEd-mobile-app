@@ -72,5 +72,7 @@ export const FILE_EXTENSION_HEADERS = {
     "3g2": "video/3gpp2",
     "7z": "application/x-7z-compressed",
     mp4: "video/mp4",
+    mov: "video/mp4",
+    mkv:"video/mp4"
   };
   
