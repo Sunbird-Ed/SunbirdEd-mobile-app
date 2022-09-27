@@ -398,8 +398,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         id: this.groupId
       };
       try {
-        const resp = await this.groupService.suspendById(deactivateByIdRequest).toPromise();
-        // await loader.dismiss();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
@@ -444,15 +442,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         id: this.groupId
       };
       try {
-        // const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
-        const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
-        // await loader.dismiss();
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
 
         this.fetchGroupDetails();
-        // }
       } catch (e) {
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPFAILED');
@@ -667,7 +661,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.fetchGroupDetails();
         }
       } catch (e) {
-        // await loader.dismiss();
         this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
@@ -715,7 +708,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
 
-        // await loader.dismiss();
         this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
@@ -776,7 +768,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       };
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
-        // await loader.dismiss();
         this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
@@ -788,7 +779,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.fetchGroupDetails();
         }
       } catch (e) {
-        // await loader.dismiss();
         this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });

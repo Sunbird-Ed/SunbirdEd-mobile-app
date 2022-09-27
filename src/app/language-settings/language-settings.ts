@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';

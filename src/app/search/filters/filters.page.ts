@@ -1,5 +1,4 @@
-import { OnInit } from '@angular/core';
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import find from 'lodash/find';

@@ -63,8 +63,6 @@ export class TabsPage implements OnInit, AfterViewInit {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
     }
-    // initTabs(this.container, await this.getInitialTabs(session));
-    // this.tabs = this.container.getAllTabs();
     this.refreshTabs();
     this.events.subscribe('UPDATE_TABS', async (data) => {
       this.refreshTabs(data);
@@ -103,7 +101,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   checkAndroidWebViewVersion() {
-    var that = this;
+    let that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {

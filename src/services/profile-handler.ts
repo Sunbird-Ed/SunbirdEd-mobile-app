@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormConfigCategories, PreferenceKey } from '@app/app/app.constant';
-import { FieldConfig, FieldConfigOption } from '@app/app/components/common-forms/field-config';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 import { SharedPreferences } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
@@ -68,7 +68,6 @@ export class ProfileHandler {
         }
         let formFields;
         try {
-            // const state = await this.locationHandler.getLocationDetails(Location.TYPE_STATE, userLocation.name);
             const state = userLocation.state;
             formFields = await this.getProfileFormConfig(state && state.code ? state.code : 'default');
         } catch (e) {
