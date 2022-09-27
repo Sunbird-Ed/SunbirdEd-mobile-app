@@ -90,7 +90,7 @@ export class AttachmentService {
       saveToPhotoAlbum: false,
       correctOrientation: true,
       mediaType: mediaType,
-      destinationType: this.camera.DestinationType.DATA_URL,
+      destinationType: this.camera.DestinationType.FILE_URI,
     };
 
     this.camera
@@ -175,7 +175,7 @@ export class AttachmentService {
     })
   }
 
-  copyFileToLocalDir(namePath, currentName, newFileName) {
+  copyFileToLocalDir(namePath, currentName, newFileName, completeFilePath) {
     this.file.copyFile(namePath, currentName, this.directoryPath(), newFileName).then(
       (success) => {
         const data = {
@@ -189,7 +189,9 @@ export class AttachmentService {
         this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
       (error) => {
-        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+        alert(completeFilePath);
+        this.writeFileToPrivateFolder(completeFilePath);
+        // this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
       }
     );
   }
@@ -252,7 +254,7 @@ export class AttachmentService {
     let correctPath = filePath.substr(0, filePath.lastIndexOf("/") + 1);
     let currentName = filePath.split("/").pop();
     currentName = currentName.split("?")[0];
-    this.copyFileToLocalDir(correctPath, currentName, this.createFileName(currentName));
+    this.copyFileToLocalDir(correctPath, currentName, this.createFileName(currentName), filePath);
   }
 
   createFileName(name) {
