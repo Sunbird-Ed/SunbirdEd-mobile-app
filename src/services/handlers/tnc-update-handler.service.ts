@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -8,7 +8,7 @@ import { ModalController } from '@ionic/angular';
 import {
   AuthService,
   CachedItemRequestSourceFrom, Profile, ProfileService,
-  ProfileType, ServerProfile, ServerProfileDetailsRequest, SharedPreferences
+  ProfileType, ServerProfile, ServerProfileDetailsRequest
 } from 'sunbird-sdk';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';

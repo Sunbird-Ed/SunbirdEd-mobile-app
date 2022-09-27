@@ -85,8 +85,10 @@ export class SolutionListingComponent {
         break;
       case 'survey':
         this.surveyRedirect(data);
+        break;
       case 'course':
-        this.courseRedirect(data)
+        this.courseRedirect(data);
+        break;
       default:
         break;
     }
