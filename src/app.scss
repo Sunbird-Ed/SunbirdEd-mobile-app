@@ -2134,6 +2134,22 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
   .success{
     color: #FFD954 !important;
   }
+  .task-card {
+    .mandatory-ribben-label{
+      color: #000 !important;
+      background-color: #FFD954  !important;
+    }
+    .action-btn{
+      color: #000 !important;
+      --background: #FFD954  !important;
+  }
+
+  }
+  .attachments-list{
+    .card-text{
+      color: #000 !important;
+    }
+  }
 }
 
 app-user-home{

@@ -101,16 +101,16 @@ export class AttachmentService {
           if (!newFilePath.includes("file://")) {
             newFilePath = "file://" + imagePath
           }
-          this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
-            if (isValidFile) {
-              this.filePath
-                .resolveNativePath(newFilePath)
-                .then((filePath) => {
-                  this.copyFile(filePath);
-                })
-                .catch(error => { })
-            }
-          })
+            this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
+              if (isValidFile) {
+                this.filePath
+                  .resolveNativePath(newFilePath)
+                  .then((filePath) => {
+                    this.copyFile(filePath);
+                  })
+                  .catch(error => { })
+              }
+            })
         } else {
           this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
             if (isValidFile) {
