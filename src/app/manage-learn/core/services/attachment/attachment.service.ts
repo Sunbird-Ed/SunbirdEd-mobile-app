@@ -96,9 +96,8 @@ export class AttachmentService {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
           if (!newFilePath.includes("file://")) {
-            // newFilePath = "file://" + imagePath
-            this.getVideo(newFilePath);
-          }else{
+            newFilePath = "file://" + imagePath
+          }
             this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
               if (isValidFile) {
                 this.filePath
@@ -109,8 +108,6 @@ export class AttachmentService {
                   .catch(error => { })
               }
             })
-          }
-        
         } else {
           this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
             if (isValidFile) {
@@ -265,55 +262,4 @@ export class AttachmentService {
         break;
     }
   }
-
-  async getVideo(file){
-    alert("in getVideo");
-    this.file.resolveLocalFilesystemUrl(file).then(success => {
-    debugger
-    alert("in 177");
-      success.getMetadata((metadata) => {
-        alert("in 179");
-
-        if (metadata.size > localStorageConstants.FILE_LIMIT) {
-          this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"],'danger', 5000);
-        } else  {
-          let correctPath = file.substr(0, file.lastIndexOf("/") + 1);
-          let currentName = file.split("/").pop();
-          currentName = currentName.split("?")[0];
-          const pathToWrite = this.directoryPath();
-          const newFileName = this.createFileName(currentName);
-          this.filePath
-                  .resolveNativePath(file)
-                  .then((filePath) => {
-                    this.file.readAsArrayBuffer(filePath,file).then(filePaths =>{
-                      console.log(filePaths,"filePaths");
-                      alert('filePaths' + filePaths);
-                      this.file.writeFile(pathToWrite, newFileName, filePaths).then(writtenFile =>{
-                        debugger
-                         if (writtenFile.isFile) {
-                           const data = {
-                             name: newFileName,
-                             type: this.mimeType(newFileName),
-                             isUploaded: false,
-                             url: "",
-                           };
-                           this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
-                           this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
-                         }
-                       })
-                    })
-
-                  })
-                  .catch(error => { 
-    alert("in 312" + JSON.parse(error));
-
-                  })
-        
-        }
-      })
-  }).catch(error => {
-    alert("in 316" +  JSON.parse(error));
-    debugger
-  })
-}
 }
