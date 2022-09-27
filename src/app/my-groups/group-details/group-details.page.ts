@@ -394,9 +394,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
-        id: this.groupId
-      };
       try {
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
@@ -438,9 +435,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
       this.isGroupLoading = true;
-      const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
-        id: this.groupId
-      };
       try {
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
