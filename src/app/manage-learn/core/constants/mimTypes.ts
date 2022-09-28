@@ -76,6 +76,7 @@ export const FILE_EXTENSION_HEADERS = {
     mkv:"video/mp4",
     wmv: "video/mp4",
     ogg: "video/mp4",
-    m4v:"video/mp4"
+    m4v:"video/mp4",
+    flv:"video/mp4"
   };
   
