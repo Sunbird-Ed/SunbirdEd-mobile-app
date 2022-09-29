@@ -189,7 +189,6 @@ export class AttachmentService {
         this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
       (error) => {
-        alert(completeFilePath);
         this.writeFileToPrivateFolder(completeFilePath);
         // this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
       }
