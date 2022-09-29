@@ -10,7 +10,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 
-declare var cordova: any;
+declare let cordova: any;
 
 @Component({
   selector: 'app-image-listing',

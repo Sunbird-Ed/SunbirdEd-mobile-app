@@ -1032,7 +1032,6 @@ export class ProfilePage implements OnInit {
   }
 
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
-    // await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {

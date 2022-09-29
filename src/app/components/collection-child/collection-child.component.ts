@@ -155,8 +155,7 @@ export class CollectionChildComponent implements OnInit {
         contentClicked: content.identifier
       };
       this.zone.run(async () => {
-        switch (ContentUtil.isTrackable(content)) {
-          case 0:
+         if(ContentUtil.isTrackable(content)) {
             this.isDepthChild = true;
             const collectionDetailsParams: NavigationExtras = {
               state: {
@@ -167,8 +166,9 @@ export class CollectionChildComponent implements OnInit {
               }
             };
             this.navService.navigateToCollection(collectionDetailsParams.state);
-            break;
-          default:
+          }
+
+          else{
             const goToContentDetails = () => {
               this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
@@ -226,7 +226,6 @@ export class CollectionChildComponent implements OnInit {
             } else {
               goToContentDetails();
             }
-            break;
         }
       });
     }
