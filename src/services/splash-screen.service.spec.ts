@@ -68,7 +68,7 @@ describe('SplashScreenService', () => {
                 }
                 return isIos;
             });
-            // act
+            //  act
             splashScreenService.handleSunbirdSplashScreenActions();
             // assert
             setTimeout(() => {
