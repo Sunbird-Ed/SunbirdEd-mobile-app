@@ -76,7 +76,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
   async submitRecoveryId(type: RecoveryType) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let loader = await this.commonUtilService.getLoader();
-      const req: UpdateServerProfileInfoRequest = await this.getReqPayload(type);
+      const req: UpdateServerProfileInfoRequest = this.getReqPayload(type);
       await loader.present();
       this.profileService.updateServerProfile(req).pipe(
         finalize(async () => {

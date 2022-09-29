@@ -1325,9 +1325,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  async onFilterMimeTypeChange(val, idx, currentFilter?) {
-    const values = new Map();
-    values['filter'] = currentFilter;
+  async onFilterMimeTypeChange(val, idx, currentFilter?) {  
     this.activeMimeTypeFilter = val;
     this.currentFilter = this.commonUtilService.translateMessage(currentFilter);
     this.mimeTypes.forEach((type) => {
@@ -1359,8 +1357,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.shownGroups = undefined;
     this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
       { childrenData: this.childrenData, parentId: this.identifier });
-    const values = new Map();
-    values['selectChapterVisible'] = this.isChapterVisible;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DROPDOWN_CLICKED,

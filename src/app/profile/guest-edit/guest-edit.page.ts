@@ -30,14 +30,13 @@ import {
   ObjectType,
   PageId,
 } from '@app/services/telemetry-constants';
-import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { LoginHandlerService, OnboardingConfigurationService } from '@app/services';
+import { OnboardingConfigurationService } from '@app/services';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({

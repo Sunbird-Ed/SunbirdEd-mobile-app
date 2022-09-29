@@ -17,10 +17,6 @@ export class DashboardComponent implements OnInit {
   DashletRowData = { values: [] };
   columnConfig = {
     columnConfig: [],
-    // scrollX: true
-    // fixedColumns:   {
-    //   left: 1
-    // }
   };
 
 
