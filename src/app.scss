@@ -2128,6 +2128,9 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
     filter: invert(0) !important;
     background: var(--app-secondary-background);
   }
+  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked ion-label {
+    color: black !important;
+  }
   .task-card .display-flex-space-btn .title-break{
     color: #fff !important;
   }
