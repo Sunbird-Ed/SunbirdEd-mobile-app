@@ -80,7 +80,7 @@ export class AttachmentService {
   }
 
   takePicture(sourceType: PictureSourceType) {
-    var options: CameraOptions = {
+    let options: CameraOptions = {
       quality: 10,
       sourceType: sourceType,
       saveToPhotoAlbum: false,

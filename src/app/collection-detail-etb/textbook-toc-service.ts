@@ -11,7 +11,9 @@ export class TextbookTocService {
     };
 
     constructor(
-    ) { }
+    ) { 
+        console.log('textbook-toc-service');    
+    }
 
     setTextbookIds(textbookIds) {
         this.textbookIds = textbookIds;

@@ -240,13 +240,6 @@ export class DomainEcmLsitingComponent {
       selectedEvidence: this.selectedEvidenceIndex,
       selectedSection: selectedSection,
     };
-    // //
-    // if (!this.entityEvidences[this.selectedEvidenceIndex].startTime) {
-    //   const entity = { _id: this.submissionId, name: this.entityName };
-    //   let action = await this.openAction(entity, this.selectedEvidenceIndex);
-    // }
-
-    // //
     if (!this.evidenceSections[selectedSection].progressStatus && this.submissionId) {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);

@@ -266,7 +266,6 @@ export class SignInPage implements OnInit {
     async appleSignIn() {
         this.loginNavigationHandlerService.generateLoginInteractTelemetry
         (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
-        // const sd = 'https://sandrino.auth0.com/.well-known/jwks.json';
         this.signInWithApple.signin({
             requestedScopes: [
               ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail

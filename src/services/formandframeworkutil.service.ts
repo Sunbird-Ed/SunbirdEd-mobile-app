@@ -4,7 +4,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@app/util/events';
 import {
-    CachedItemRequestSourceFrom,
     CategoryTerm,
     FormRequest,
     FormService,
@@ -24,7 +23,7 @@ import {
     FrameworkCategoryCode,
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';

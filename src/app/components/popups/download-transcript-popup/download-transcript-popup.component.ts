@@ -1,5 +1,4 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { RouterLinks } from '@app/app/app.constant';
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
@@ -29,6 +28,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     private permissionService: AndroidPermissionsService,
   ) { }
   ngOnInit(): void {
+    console.log('download-transcript-popup.component');   
   }
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {

@@ -45,7 +45,7 @@ import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile-settings',
