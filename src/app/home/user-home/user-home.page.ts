@@ -292,7 +292,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.showorHideBanners();
     this.refresh = false;
-    refresher ? refresher.target.complete() : null;
+    if (refresher) {
+       refresher.target.complete();
+    }
   }
 
   handlePillSelect(event, section, isFromPopover?: boolean) {
@@ -847,8 +849,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       }
     } catch (error) {
       this.otherCategories = [],
-        this.events.publish('onPreferenceChange:showReport', false);
-
+      this.events.publish('onPreferenceChange:showReport', false);
     }
   }
 
