@@ -330,43 +330,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'gradeLevel',
-            values: [],
-            name: 'Class',
-            index: 2
-          },
-          {
-            code: 'subject',
-            values: [],
-            name: 'Subject',
-            index: 3
-          },
-          {
-            code: 'medium',
-            values: [],
-            name: 'Medium',
-            index: 4
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -424,43 +388,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'gradeLevel',
-            values: [],
-            name: 'Class',
-            index: 2
-          },
-          {
-            code: 'subject',
-            values: [],
-            name: 'Subject',
-            index: 3
-          },
-          {
-            code: 'medium',
-            values: [],
-            name: 'Medium',
-            index: 4
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -558,25 +486,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeCourseFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -638,12 +548,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLocationConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            name: 'Skip Location',
-            code: 'skip',
-            values: []
-          }]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });

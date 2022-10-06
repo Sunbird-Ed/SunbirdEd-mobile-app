@@ -601,8 +601,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     // Check locally available
     if (Boolean(data.isAvailableLocally)) {
       this.isUpdateAvail = data.isUpdateAvailable && !this.isUpdateAvail;
-    } else {
-      this.content.contentData.size = this.content.contentData.size;
     }
 
     if (this.content.contentData.me_totalDownloads) {
@@ -1001,7 +999,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       corRelationData
     );
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      this.isUpdateAvail ? InteractSubtype.DOWNLOAD_CANCEL_CLICKED : InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+      InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
       Environment.HOME,
       PageId.CONTENT_DETAIL,
       this.telemetryObject,

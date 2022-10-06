@@ -71,11 +71,15 @@ export class SegmentationTagService {
                     this.segmentationService.saveTags(JSON.stringify(window['segmentation'].SBTagService), userProfile.uid)
                         .subscribe(response => {
                             console.log(response);
-                            response ? window['segmentation'].SBTagService.removeAllTags() : null;
+                            if (response) {
+                                window['segmentation'].SBTagService.removeAllTags();
+                            }
                         });
                     this.segmentationService.saveCommandList(JSON.stringify(this.exeCommands), userProfile.uid).subscribe(response => {
                         console.log(response);
-                        response ? this.exeCommands = [] : null;
+                        if (response) {
+                            this.exeCommands = [] 
+                        }
                     });
                 }
             });
