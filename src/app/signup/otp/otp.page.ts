@@ -77,7 +77,7 @@ export class OtpPage implements OnInit {
       this.profileService.verifyOTP(req).toPromise()
         .then(() => {
           const locationCodes = [];
-          (Object.keys(this.userData.location).map((acc, key) => {
+          for(const acc in this.userData.location) {
             if (this.userData.location[acc]) {
               const location: SbLocation = this.userData.location[acc] as SbLocation;
               if (location.type) {
@@ -87,7 +87,7 @@ export class OtpPage implements OnInit {
                 });
               }
             }
-          }, {}));
+          };
           const profileReq = {
             userId: this.userData.userId,
             profileLocation: locationCodes,

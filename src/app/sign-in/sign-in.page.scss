@@ -95,9 +95,8 @@
 .account-info {
   width: 85%;
   p {
-   font-size: 11px;
    color: map-get($colors , medium_light_shade_gray );
-   font-family: "Noto Sans";
+   font-family: "Noto Sans", sans-serif;
    font-size: 12px;
    letter-spacing: 0;
    line-height: 17px;
@@ -139,7 +138,7 @@
 
   span {
     color: map-get($colors , medium_light_shade_gray );
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
@@ -163,6 +162,5 @@
 }
 
 .p-lr-0 {
-  margin-left: 0px !important;
   margin-left: 0px !important;
 }

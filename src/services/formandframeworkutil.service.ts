@@ -217,7 +217,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
-            courseFilterConfig = fields;
+            fields.forEach(config => {
+                courseFilterConfig.push(config);
+            });
             this.appGlobalService.setCourseFilterConfig(courseFilterConfig);
             resolve(courseFilterConfig);
         }).catch((error: any) => {
@@ -235,7 +237,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
-            libraryFilterConfig = fields;
+            fields.forEach(config => {
+                libraryFilterConfig.push(config);
+            });
             this.appGlobalService.setLibraryFilterConfig(libraryFilterConfig);
             resolve(libraryFilterConfig);
         }).catch((error: any) => {
@@ -271,7 +275,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.LOCATION_CONFIG).then((res) => {
-            locationConfig = res;
+            res.forEach(config => {
+                locationConfig.push(config);
+            });
             this.appGlobalService.setLocationConfig(locationConfig);
             resolve(locationConfig);
         }).catch((error: any) => {

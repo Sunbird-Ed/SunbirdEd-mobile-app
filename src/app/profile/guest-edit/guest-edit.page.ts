@@ -368,7 +368,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
         } catch (e) {
           console.error(e);
         } finally {
-          this.loader.dismiss();
+          if (this.loader) {
+            this.loader.dismiss();
+          }
         }
       })
     );
