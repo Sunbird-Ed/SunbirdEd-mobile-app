@@ -132,7 +132,6 @@ export class DistrictMappingPage implements OnDestroy {
       this.getEnvironment(), '', '', '', undefined,
       featureIdMap.location.LOCATION_CAPTURE);
     this.headerService.hideHeader();
-    // await this.checkLocationAvailability();
     const correlationList: Array<CorrelationData> = [];
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
@@ -225,7 +224,7 @@ export class DistrictMappingPage implements OnDestroy {
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
-        ...((name ? { firstName: name } : {})),
+        ...(name ? { firstName: name } : {}),
         lastName: '',
         profileUserTypes: userTypes
       };

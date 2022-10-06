@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FormRequest } from 'sunbird-sdk';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { FormConstants } from '@app/app/form.constants';
 import { OnboardingConfigurationService } from '../onboarding-configuration.service';

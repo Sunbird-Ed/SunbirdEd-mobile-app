@@ -835,7 +835,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
-      this.otherCategories = [],
+        this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
 
     }

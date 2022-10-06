@@ -393,7 +393,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   private generateLogTelemetry(){
-
+     
   }
 
   takeAction(action?: string) {
@@ -472,7 +472,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       } else if (this.formValues.children && this.formValues.children.category && this.formValues.children.category) {
         this.value.initiateEmailBody = this.formValues.children.category.details;
       }
-      window.parent.postMessage(this.value, '*');
+      window.parent.postMessage(this.value, window.parent.origin);
     }
     setTimeout(() => {
       this.location.back();
