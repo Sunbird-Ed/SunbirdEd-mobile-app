@@ -1071,8 +1071,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.preferences.addListener(CsClientStorage.TRACE_ID, (value) => {
       if (value) {
         // show toast
-      } else {
-        // do not show the toast.
       }
     });
   }

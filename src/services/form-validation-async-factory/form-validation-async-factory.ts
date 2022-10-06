@@ -115,7 +115,6 @@ export class FormValidationAsyncFactory {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       }
       throw e;
-      return false;
     } finally {
       if (loader) {
         await loader.dismiss();

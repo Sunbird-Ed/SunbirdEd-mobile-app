@@ -111,12 +111,12 @@ export class DistrictMappingPage implements OnDestroy {
         return acc;
       }, {});
     try {
-        this.initialiseFormData({
+        await this.initialiseFormData({
           ...FormConstants.LOCATION_MAPPING,
           subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
         });
       } catch (e) {
-        this.initialiseFormData(FormConstants.LOCATION_MAPPING);
+        await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
       }
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
@@ -168,7 +168,7 @@ export class DistrictMappingPage implements OnDestroy {
   async submit() {
     this.saveDeviceLocation();
     const locationCodes = [];
-    (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
+    for(const acc in this.formGroup.value.children['persona']) {
       if (this.formGroup.value.children['persona'][acc]) {
         const location: SbLocation = this.formGroup.value.children['persona'][acc] as SbLocation;
         if (location.type) {
@@ -178,7 +178,8 @@ export class DistrictMappingPage implements OnDestroy {
           });
         }
       }
-    }, {}));
+    }
+
     const corRelationList: CorrelationData[] =  locationCodes.map(r => ({ type: r.type, id: r.code || '' }));
     this.generateSubmitInteractEvent(corRelationList);
     this.telemetryGeneratorService.generateInteractTelemetry(
