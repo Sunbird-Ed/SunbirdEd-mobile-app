@@ -191,7 +191,7 @@ export class AttachmentListingPage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab,
+      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab + '?',
       buttons: [
         {
           text: data['YES'],
