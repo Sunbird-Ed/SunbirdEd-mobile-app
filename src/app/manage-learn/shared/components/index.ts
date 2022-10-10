@@ -30,3 +30,4 @@ export * from './add-link-modal/add-link-modal.component';
 export * from './attachment-card/attachment-card.component';
 export * from './attachment-lists/attachment-lists.component';
 export * from './report-list/report-list.component';
+export * from './start-improvement/start-improvement.component';

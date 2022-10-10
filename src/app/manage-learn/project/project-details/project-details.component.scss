@@ -54,3 +54,17 @@
       }
     }
   }
+  .submit-text{
+    color: red;
+    font-weight: 600;
+    padding: 10px 5px;
+    padding-bottom: 0px !important;
+    ion-icon{
+      background: red;
+      color: #fff;
+      border-radius: 50%;
+      padding: 2px;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+  }
