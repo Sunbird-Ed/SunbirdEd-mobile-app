@@ -241,6 +241,7 @@ export class ObservationDetailComponent implements OnInit {
     let alert = await this.alertCntrl.create({
       header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
       message: translateObject["FRMELEMNTS_LBL_DELETE_ENTITY"],
+      cssClass: 'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],
