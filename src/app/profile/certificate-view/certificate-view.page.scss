@@ -24,12 +24,15 @@
       }
     }
     .download-btn{
-      width: 50%;
+      width: 50%;   
       .cert-btn{
         padding: 0.5rem;
         background-color: var(--app-primary-medium);
+        width: 8.75rem !important;
+        height: 3.75rem !important;
         img{
           float: left;
+          margin-top: 0.2rem;
         }
         span{
           padding: 0 0.5rem;

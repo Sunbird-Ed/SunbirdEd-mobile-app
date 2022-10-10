@@ -15,7 +15,7 @@ import { filter, map } from 'rxjs/operators';
 import {
   CachedItemRequestSourceFrom,
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
-  EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
+  EventNamespace, EventsBusService, NotificationService as PushNotificationService,
   Profile, ProfileService, ProfileType,
   ServerProfile, SharedPreferences, UserFeedStatus
 } from 'sunbird-sdk';
@@ -283,7 +283,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitSideMenuItemEvent($event, menuItem) {
-    // this.toggleMenu();
     this.menuCtrl.close().then(() => {
       this.sideMenuItemEvent.emit({ menuItem });
     }).catch((e) => {

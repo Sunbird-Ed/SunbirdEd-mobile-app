@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfileConstants, OTPTemplates, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
-import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
+import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService } from 'sunbird-sdk';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { Location } from '@angular/common';
@@ -77,7 +77,7 @@ export class OtpPage implements OnInit {
       this.profileService.verifyOTP(req).toPromise()
         .then(() => {
           const locationCodes = [];
-          (Object.keys(this.userData.location).map((acc, key) => {
+          for(const acc in this.userData.location) {
             if (this.userData.location[acc]) {
               const location: SbLocation = this.userData.location[acc] as SbLocation;
               if (location.type) {
@@ -87,7 +87,7 @@ export class OtpPage implements OnInit {
                 });
               }
             }
-          }, {}));
+          };
           const profileReq = {
             userId: this.userData.userId,
             profileLocation: locationCodes,

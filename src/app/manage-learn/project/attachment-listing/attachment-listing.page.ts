@@ -10,7 +10,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { statusType, taskStatus, UtilsService } from '../../core';
+import { statusType, UtilsService } from '../../core';
 import * as _ from "underscore";
 
 @Component({

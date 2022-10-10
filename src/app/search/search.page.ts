@@ -272,7 +272,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
-    this.refresher ? this.refresher.disabled = false : null;
+    if (this.refresher) {
+      this.refresher.disabled = false;
+    }
   }
 
   hideRefresher(hide) {

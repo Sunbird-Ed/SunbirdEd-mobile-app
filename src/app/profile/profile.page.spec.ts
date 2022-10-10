@@ -346,7 +346,6 @@ describe('Profile.page', () => {
                     Environment.USER,
                     PageId.PROFILE);
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
                 done();
             }, 0);
         });
