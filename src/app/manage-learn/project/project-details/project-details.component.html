@@ -23,6 +23,8 @@
       </div>
 
     </div>
+    <div class="submit-text" *ngIf="(taskCount && projectCompletionPercent?.completedTasks == projectCompletionPercent?.totalTasks) && projectDetails?.status != allStatusTypes.submitted"> {{'FRMELEMNTS_LBL_TO_SUBMIT_PROJECT' | translate}} <ion-icon name="arrow-down"></ion-icon>
+    </div>
     <ion-button (click)="submitImprovment()" id="submitImprovement"
       *ngIf="projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted" expand="block"
       class="ion-text-none ion-margin-top custom-btn-txt-transform-none"
@@ -30,7 +32,6 @@
       [disabled]="!taskCount || (projectCompletionPercent?.completedTasks !== projectCompletionPercent?.totalTasks)">
       {{'FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT' | translate}}
     </ion-button>
-
     <div class="sb-course-complete-container ion-padding" *ngIf="projectDetails?.status === allStatusTypes.submitted">
       <div class="img-container">
         <img class="success-badge" src='assets/imgs/Badge green.svg' alt="completed">
