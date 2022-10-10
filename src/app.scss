@@ -2128,6 +2128,28 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
     filter: invert(0) !important;
     background: var(--app-secondary-background);
   }
+  .task-card .display-flex-space-btn .title-break{
+    color: #fff !important;
+  }
+  .success{
+    color: #FFD954 !important;
+  }
+  .task-card {
+    .mandatory-ribben-label{
+      color: #000 !important;
+      background-color: #FFD954  !important;
+    }
+    .action-btn{
+      color: #000 !important;
+      --background: #FFD954  !important;
+  }
+
+  }
+  .attachments-list{
+    .card-text{
+      color: #000 !important;
+    }
+  }
   .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked ion-label {
     color: black !important;
   }
@@ -2381,11 +2403,11 @@ app-metadata-details,app-add-file {
     background: black;
   }
 .segment-card{
-    background: #fff;
+    background: var(--sb-pill-bg);
     border-radius: 12px;
     box-shadow: var(--button-style-shadow) !important;
     ion-segment-button{
-        margin: 0px 10px;
+        margin: 0px 0px;
         text-transform: none;
       ion-label {
         font-size: 0.875rem;
