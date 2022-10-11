@@ -249,7 +249,7 @@ export class TaskViewPage {
   // task and project delete permission.
   async askPermissionToDelete(subtask, type) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "No", "YES"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "NO", "YES"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
