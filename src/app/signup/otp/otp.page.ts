@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProfileConstants, OTPTemplates, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, OTPTemplates, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
-import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
+import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, SharedPreferences } from 'sunbird-sdk';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { Location } from '@angular/common';
@@ -26,6 +26,7 @@ export class OtpPage implements OnInit {
   loader: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private _fb: FormBuilder,
     private commonUtilService: CommonUtilService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
@@ -98,6 +99,9 @@ export class OtpPage implements OnInit {
           };
           this.profileService.updateServerProfile(profileReq).toPromise()
             .then(async (data) => {
+              if (this.userData.profileUserTypes.length && this.userData.profileUserTypes[0].type) {
+                await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, this.userData.profileUserTypes[0].type).toPromise();
+              }
               await this.loader.dismiss();
               const categoriesProfileData = {
                 hasFilledLocation: true,
