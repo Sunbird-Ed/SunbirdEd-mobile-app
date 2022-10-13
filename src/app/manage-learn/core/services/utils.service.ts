@@ -521,9 +521,10 @@ export class UtilsService {
           ? this.requiredFields + " in"
           : ""
         }   your profile to access the feature.`,
+        cssClass:'central-alert',
       buttons: [
         {
-          text: "Update Profile",
+          text: "Update profile",
           role: "cancel",
           handler: blah => {
             this.router.navigate([`${RouterLinks.HOME}`], {replaceUrl:true});
