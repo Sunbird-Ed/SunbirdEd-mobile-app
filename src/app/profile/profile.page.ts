@@ -464,7 +464,9 @@ export class ProfilePage implements OnInit {
           this.enrolledCourseList = res.sort((a, b) => (a.enrolledDate > b.enrolledDate ? -1 : 1));
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
-        refreshCourseList ? await loader.dismiss() : false;
+        if (refreshCourseList) {
+          await loader.dismiss();
+        } 
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
@@ -511,7 +513,7 @@ export class ProfilePage implements OnInit {
   async getLearnerPassbook() {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
-      this.learnerPassbookCount ? request.size = this.learnerPassbookCount : null;
+      request.size = this.learnerPassbookCount ? this.learnerPassbookCount : null;
       const getCertsReq: CSGetLearnerCerificateRequest = {
         userId: this.profile.userId || this.profile.id,
         schemaName: 'certificate',
@@ -1032,7 +1034,6 @@ export class ProfilePage implements OnInit {
   }
 
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
-    // await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {

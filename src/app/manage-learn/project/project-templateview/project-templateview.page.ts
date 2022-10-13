@@ -146,8 +146,8 @@ export class ProjectTemplateviewPage implements OnInit {
       title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
-    if (this.project.tasks && this.project.tasks.length)
-      this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
+    // if (this.project.tasks && this.project.tasks.length)
+    //   this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
   async getTemplateByExternalId() {
@@ -295,4 +295,11 @@ export class ProjectTemplateviewPage implements OnInit {
     });
     await alert.present();
   }
+  openStartIMPPopup(){
+    this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
+      if(data){
+        this.doAction();
+      }
+    })
+   }
 }

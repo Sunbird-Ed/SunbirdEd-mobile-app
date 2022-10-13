@@ -9,6 +9,7 @@
         <ion-icon class="prefix-attachment" *ngIf="type == 'application/pdf'" name="document" slot="start">
         </ion-icon>
         <ion-icon class="prefix-attachment" *ngIf="type == 'link'" name="link-outline" slot="start"></ion-icon>
+        <ion-icon class="prefix-attachment" *ngIf="type == 'video/mp4'" name="videocam" slot="start"></ion-icon>
         <span>{{attachment.name}} </span>
       </h5>
       <button slot="icon-only" *ngIf="!viewOnly" (click)="$event.stopPropagation();deleteConfirmation(i,attachment)">

@@ -570,7 +570,6 @@ export class CommonUtilService {
         });
 
         toast = this.addPopupAccessibility(toast, this.translateMessage(description, appName));
-        toast.setAttribute
         toast.present();
 
         toast.onWillDismiss().then((res) => {
