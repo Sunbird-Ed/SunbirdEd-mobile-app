@@ -57,7 +57,7 @@
                     <div *ngFor="let instance of answer.value; let j = index" class="instanceQuest">
                       <h5 class="instacnce">{{ answer?.instanceIdentifier }} {{ j + 1 }}</h5>
                       <div *ngFor="let ans of instance; let k = index" class="matrixQuestion">
-                        <h3>{{ answer?.questionNumber}}.  {{ ans?.question[0] }}</h3>
+                        <h3>{{ ans?.questionNumber}}.  {{ ans?.question[0] }}</h3>
                         <p *ngIf="ans?.responseType !== 'radio' && ans?.responseType !== 'multiselect' && ans?.responseType !== 'date'">
                           Ans. {{ ans?.value }}
                         </p>
