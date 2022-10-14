@@ -563,7 +563,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
-    this.playerType = this.content.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
     if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
       this.licenseDetails = data.contentData.licenseDetails;
     }
