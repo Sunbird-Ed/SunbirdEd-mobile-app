@@ -25,6 +25,7 @@
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
         <hook src="scripts/copyBundledData.js" type="before_run" />
         <hook src="scripts/application/add_application.js" type="before_run" />
+        <hook src="scripts/android/android-10-migration-fix.js" type="before_build" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <resource-file src="whitelabel.xml" target="app/src/main/res/values/whitelabel.xml" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
