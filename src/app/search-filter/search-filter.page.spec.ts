@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
-import { FormAndFrameworkUtilService, SearchFilterService } from '../../services';
+import { FormAndFrameworkUtilService, SearchFilterService, TelemetryGeneratorService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
 import { ContentSearchCriteria, SearchType } from '@project-sunbird/sunbird-sdk';
 import { doesNotReject } from 'assert';
@@ -40,6 +40,7 @@ describe('SearchFilterPage', () => {
     const mockSearchFilterService: Partial<SearchFilterService> = {
         getFacetFormAPIConfig: jest.fn(() => Promise.resolve('string' as any))
     };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFilterFormConfigMapper: Partial<FilterFormConfigMapper> = {};
 
     JSON.parse = jest.fn().mockImplementationOnce(() => {
@@ -56,7 +57,8 @@ describe('SearchFilterPage', () => {
             mockCommonUtilService as CommonUtilService,
             mockFilterFormConfigMapper as FilterFormConfigMapper,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockSearchFilterService as SearchFilterService
+            mockSearchFilterService as SearchFilterService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
