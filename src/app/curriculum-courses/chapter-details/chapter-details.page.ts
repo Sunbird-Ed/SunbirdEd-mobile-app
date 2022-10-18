@@ -262,7 +262,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async getAllBatches() {
-    // const loader = await this.commonUtilService.getLoader();
     this.courseBatchesRequest = {
       filters: {
         courseId: this.courseContentData.identifier,
@@ -615,11 +614,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       return;
     }
 
-    // if (!this.batches || !this.batches.length) {
-    //   this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-    //   await loader.dismiss();
-    //   return;
-    // }
 
     if (!this.localCourseService.isEnrollable(this.batches, this.courseContentData)) {
       return;
@@ -670,7 +664,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
       this.localCourseService.enrollIntoBatch(enrollCourse, this, this.courseContent).toPromise()
         .then(async (data: boolean) => {
-          // await this.loader.dismiss();
           this.courseContent.batchId = item.id;
           this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.courseContent));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
