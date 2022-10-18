@@ -22,7 +22,7 @@
         *ngSwitchCase="'multiselect'" [enableQuestionReadOut]="enableQuestionReadOut"></app-multiple-type-input>
       <app-matrix-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
       [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
-      (updateLocalData)="updateLocalData()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
+      (updateLocalData)="updateLocalDataInPageQuestion()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
       [enableQuestionReadOut]="enableQuestionReadOut">
     </app-matrix-type-input>
       <app-slider-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
