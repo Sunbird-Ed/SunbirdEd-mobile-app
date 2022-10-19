@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ProjectService, ToastService, UtilsService } from '../../core';
+import { ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
@@ -36,13 +36,11 @@ export class DeeplinkRedirectComponent implements OnInit {
     private route: ActivatedRoute,
     private assessmentService: AssessmentApiService,
     private utils: UtilsService,
-    private http: HttpClient,
     private kendra: KendraApiService,
     private toast: ToastService,
     private location: Location,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
-    private projectService : ProjectService
   ) {
     this.extra = this.route.snapshot.paramMap.get('extra');
     const extrasState = this.router.getCurrentNavigation().extras.state;

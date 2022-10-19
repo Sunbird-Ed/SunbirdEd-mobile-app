@@ -34,7 +34,8 @@ import {
   AddLinkModalComponent,
   AttachmentCardComponent,
   AttachmentListsComponent,
-  ReportListComponent
+  ReportListComponent,
+  StartImprovementComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -126,7 +127,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     AddLinkModalComponent,
     AttachmentCardComponent,
     AttachmentListsComponent,
-    ReportListComponent
+    ReportListComponent,
+    StartImprovementComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -182,7 +184,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     TaskCardComponent,
     AddLinkModalComponent,
     AttachmentCardComponent,
-    AttachmentListsComponent
+    AttachmentListsComponent,
+    StartImprovementComponent
   ],
   providers: [
     Camera,
@@ -219,7 +222,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
     AddLinkModalComponent,
-    ReportListComponent
+    ReportListComponent,
+    StartImprovementComponent
   ],
   
 })

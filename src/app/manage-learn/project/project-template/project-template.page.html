@@ -20,7 +20,7 @@
       {{categories}}
     </ion-col>
   </ion-row>
-  <app-project-task-list *ngIf="sortedTasks" [sortedTasks]="sortedTasks" [schedules]="schedules"
+  <app-project-task-list *ngIf="sortedTasks" [sortedTasks]="sortedTasks" [schedules]="schedules" (click)="openStartIMPPopup()"
     [viewOnlyMode]="true">
   </app-project-task-list>
 </ion-content>

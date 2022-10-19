@@ -839,7 +839,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     } catch (error) {
         this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
-
     }
   }
 

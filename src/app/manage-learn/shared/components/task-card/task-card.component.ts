@@ -40,6 +40,9 @@ export class TaskCardComponent implements OnInit {
    }
 
   onCardClick(task) {
+    if(this.viewOnly){
+      return;
+    }
     const viewOnlyMode = (this.data.status === statusType.submitted);
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.data?._id, task?._id], {
       queryParams: { viewOnlyMode: viewOnlyMode },
