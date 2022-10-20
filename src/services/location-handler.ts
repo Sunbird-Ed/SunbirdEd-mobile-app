@@ -82,26 +82,29 @@ export class LocationHandler {
         } else {
             if (location && location.state) {
                 const state = await this.getLocationDetails(Location.TYPE_STATE, location.state);
-                locationResult.push(state);
-                if(location.district){
-                    const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
-                    locationResult.push(district);
-                    let block, cluster, school;
-                    if (location.block) {
-                        block = await this.getLocationDetails(Location.TYPE_BLOCK, location.block, district.id);
-                        locationResult.push(block);
-                    }
-    
-                    if (location.block && location.cluster) {
-                        cluster = await this.getLocationDetails(Location.TYPE_CLUSTER, location.cluster, block.id);
-                        locationResult.push(cluster);
-                    }
-    
-                    if (location.block && location.cluster && location.school) {
-                        school = await this.getLocationDetails(Location.TYPE_SCHOOL, location.school, cluster.id);
-                        locationResult.push(school);
+                if(state && state.id){
+                    locationResult.push(state);
+                    if(location.district){
+                        const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
+                        locationResult.push(district);
+                        let block, cluster, school;
+                        if (location.block) {
+                            block = await this.getLocationDetails(Location.TYPE_BLOCK, location.block, district.id);
+                            locationResult.push(block);
+                        }
+        
+                        if (location.block && location.cluster) {
+                            cluster = await this.getLocationDetails(Location.TYPE_CLUSTER, location.cluster, block.id);
+                            locationResult.push(cluster);
+                        }
+        
+                        if (location.block && location.cluster && location.school) {
+                            school = await this.getLocationDetails(Location.TYPE_SCHOOL, location.school, cluster.id);
+                            locationResult.push(school);
+                        }
                     }
                 }
+                
             }
         }
         return locationResult;
