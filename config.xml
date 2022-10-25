@@ -25,6 +25,7 @@
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
         <hook src="scripts/copyBundledData.js" type="before_run" />
         <hook src="scripts/application/add_application.js" type="before_run" />
+        <hook src="scripts/android/android-10-migration-fix.js" type="before_build" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <resource-file src="whitelabel.xml" target="app/src/main/res/values/whitelabel.xml" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
@@ -51,6 +52,8 @@
         <preference name="loadUrlTimeoutValue" value="700000" />
         <preference name="CodePushDeploymentKey" value="agojO-OZt4dZlt_pu9r9j2Ipy_jY90dbb065-3633-45a5-9c55-c0405eafaebb" />
         <preference name="AndroidXEnabled" value="true" />
+        <preference name="AndroidPersistentFileLocation" value="Internal" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -129,19 +132,18 @@
     <content src="index.html" />
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
-    <plugin name="cordova-plugin-code-push" spec="^1.11.18" />
+    <plugin name="cordova-plugin-code-push" spec="^2.0.0" />
     <plugin name="cordova-plugin-file-opener2" spec="^2.2.0" />
     <plugin name="cordova-plugin-printer" spec="^0.8.0" />
     <plugin name="com.jjdltc.cordova.plugin.zip" spec="https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
     <plugin name="cordova-plugin-ionic-webview" spec="^4.2.1" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.3" />
     <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.3" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
-    <plugin name="cordova-plugin-file" spec="^6.0.2" />
-    <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
+    <plugin name="cordova-plugin-file" spec="^7.0.0" />
+    <plugin name="cordova-plugin-file-transfer" spec="https://github.com/apache/cordova-plugin-file-transfer" />
     <plugin name="cordova-plugin-inappbrowser" spec="^5.0.0" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
@@ -150,11 +152,11 @@
     <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
-    <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0">
+    <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-5.0.2">
         <variable name="FCM_CORE_VERSION" value="16.0.9" />
         <variable name="FCM_VERSION" value="18.0.0" />
         <variable name="GRADLE_TOOLS_VERSION" value="3.5.0" />
-        <variable name="GOOGLE_SERVICES_VERSION" value="4.2.0" />
+        <variable name="GOOGLE_SERVICES_VERSION" value="4.3.8" />
         <variable name="ANDROID_DEFAULT_NOTIFICATION_ICON" value="@mipmap/ic_launcher" />
     </plugin>
     <plugin name="cordova-plugin-advanced-http" spec="^2.5.1" />
