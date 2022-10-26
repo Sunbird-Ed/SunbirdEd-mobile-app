@@ -32,6 +32,17 @@ describe('ShowCertificateComponent', () => {
         showCertificateComponent.ngOnInit();
     });
 
+    it('ngOnInit if no criteria', () => {
+        showCertificateComponent.content = {
+            identifier: 'do_123',
+            contentType: 'course',
+            pkgVersion: 1
+        };
+        let scoreKey = '>=';
+        showCertificateComponent.certificateDetails = { key1: {  } }
+        showCertificateComponent.ngOnInit();
+    });
+
     describe('showCertificate', () => {
         it('should expand certificate and generate telemetry', () => {
             // arrange
