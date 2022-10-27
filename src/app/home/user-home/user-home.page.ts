@@ -228,6 +228,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
     await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
         this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
@@ -236,10 +237,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }, {});
         this.preferenceList = [];
         setTimeout(() => {
-          this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
-          this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
-          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
-          this.subjectList = this.getFieldDisplayValues(this.profile.subject, 'subject');
+          this.boardList = this.getFieldDisplayValues(this.profile.board.length > 0 ? this.profile.board : guestUser.board, 'board');
+          this.mediumList = this.getFieldDisplayValues(this.profile.medium.length > 0 ? this.profile.medium : guestUser.medium, 'medium');
+          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade.length > 0 ?  this.profile.grade : guestUser.grade, 'gradeLevel');
+          this.subjectList = this.getFieldDisplayValues(this.profile.subject.length > 0 ? this.profile.subject : guestUser.subject, 'subject');
 
           this.preferenceList.push(this.boardList);
           this.preferenceList.push(this.mediumList);
