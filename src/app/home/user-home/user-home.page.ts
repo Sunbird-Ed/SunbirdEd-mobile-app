@@ -257,7 +257,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
 
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
-      if (field.includes(element.code)) {
+      if (field.includes(element.code) || field.includes(element.name.replace(/\s+/g, "").toLowerCase())) {
         if (lowerCase) {
           displayValues.push(element.name.toLowerCase());
         } else {
