@@ -224,11 +224,17 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   private async getFrameworkDetails(frameworkId?: string) {
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
+    let id = "";
+    if(this.profile && this.profile.syllabus && this.profile.syllabus[0]) {
+      id = this.profile.syllabus[0]
+    } else if(guestUser && guestUser.syllabus && guestUser.syllabus[0]) {
+      id = guestUser.syllabus[0];
+    }
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
-      frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
+      frameworkId: id,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
-    const guestUser = await this.commonUtilService.getGuestUserConfig();
     await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
         this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
