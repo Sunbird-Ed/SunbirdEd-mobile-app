@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -8,7 +8,8 @@ import { ModalController } from '@ionic/angular';
 import {
   AuthService,
   CachedItemRequestSourceFrom, Profile, ProfileService,
-  ProfileType, ServerProfile, ServerProfileDetailsRequest
+  ProfileType, ServerProfile, ServerProfileDetailsRequest,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
@@ -29,6 +30,7 @@ export class TncUpdateHandlerService {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
@@ -206,6 +208,7 @@ export class TncUpdateHandlerService {
       ...req,
       userId: this.appGlobalService.getCurrentUser().uid,
     };
+    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, request.profileUserTypes[0].type).toPromise();
     await this.profileService.updateServerProfile(request).toPromise()
       .then(async (data) => {
         await loader.dismiss();
