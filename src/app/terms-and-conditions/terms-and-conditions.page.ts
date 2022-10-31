@@ -14,9 +14,9 @@ import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { CachedItemRequestSourceFrom, ProfileService, ProfileType, ServerProfile } from 'sunbird-sdk';
+import { CachedItemRequestSourceFrom, ProfileService, ProfileType, ServerProfile, SharedPreferences } from 'sunbird-sdk';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '../app.constant';
 import { FieldConfig } from '../components/common-forms/field-config';
 import { FormConstants } from '../form.constants';
 import onboarding from '../../assets/configurations/config.json';
@@ -36,6 +36,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private platform: Platform,
     private logoutHandlerService: LogoutHandlerService,
     private sanitizer: DomSanitizer,
@@ -267,6 +268,7 @@ export class TermsAndConditionsPage implements OnInit {
       ...req,
       userId: this.appGlobalService.getCurrentUser().uid,
     };
+    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, request.profileUserTypes[0].type).toPromise();
     await this.profileService.updateServerProfile(request).toPromise()
       .then(async (data) => {
         await loader.dismiss();

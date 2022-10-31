@@ -6,10 +6,9 @@ import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
-import { FormAndFrameworkUtilService, SearchFilterService, TelemetryGeneratorService } from '../../services';
+import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, SearchFilterService, TelemetryGeneratorService } from '../../services';
 import { FilterCriteriaData } from './search-filter.page.spec.data';
-import { ContentSearchCriteria, SearchType } from '@project-sunbird/sunbird-sdk';
-import { doesNotReject } from 'assert';
+import { InteractType } from '@project-sunbird/sunbird-sdk';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -292,6 +291,7 @@ describe('SearchFilterPage', () => {
             // arrange
             mockModalController.dismiss = jest.fn(() => { }) as any;
             searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
             // act
             searchFilterPage.applyFilter();
             // assert
@@ -299,6 +299,11 @@ describe('SearchFilterPage', () => {
                 expect(mockModalController.dismiss).toHaveBeenCalledWith(expect.objectContaining({
                     appliedFilterCriteria: FilterCriteriaData
                 }));
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                    InteractSubtype.APPLY_FILTER_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_SEARCH_FILTER,
+                    undefined);
             }, 0);
         });
     });
