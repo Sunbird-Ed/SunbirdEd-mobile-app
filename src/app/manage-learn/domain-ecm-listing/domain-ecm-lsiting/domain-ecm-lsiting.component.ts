@@ -168,12 +168,6 @@ export class DomainEcmLsitingComponent {
 
   async openAction(assessment, evidenceIndex) {
     this.utils.setCurrentimageFolderName(this.entityEvidences[evidenceIndex].externalId, assessment._id);
-    const options = {
-      _id: assessment._id,
-      name: assessment.name,
-      selectedEvidence: evidenceIndex,
-      entityDetails: this.entityData,
-    };
     return 'view'
   }
 
@@ -191,7 +185,6 @@ export class DomainEcmLsitingComponent {
       this.checkForEvidenceCompletion();
     } else {
       const entity = { _id: this.submissionId, name: this.entityName };
-      let action = this.submissionId ?  await this.openAction(entity, evidenceIndex) : null;
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
@@ -234,12 +227,6 @@ export class DomainEcmLsitingComponent {
   }
 
   async goToQuestioner(selectedSection) {
-    const params = {
-      _id: this.submissionId,
-      name: this.entityName,
-      selectedEvidence: this.selectedEvidenceIndex,
-      selectedSection: selectedSection,
-    };
     if (!this.evidenceSections[selectedSection].progressStatus && this.submissionId) {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
