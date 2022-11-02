@@ -11,6 +11,7 @@ import { ConsentService } from "../consent-service";
 import { ProfileConstants, RouterLinks } from "../../app/app.constant";
 import { FormConstants } from '../../app/form.constants';
 import { FieldConfig } from "../../app/components/common-forms/field-config";
+import { SharedPreferences } from "@project-sunbird/sunbird-sdk";
 import { FrameworkDetailsService } from "../framework-details.service";
 import { Events } from '@app/util/events';
 import onboarding from '../../assets/configurations/config.json';
@@ -56,6 +57,9 @@ describe('TncUpdateHandlerService', () => {
   const mockConsentService: Partial<ConsentService> = {
     getConsent: jest.fn()
   };
+  const mockPreference: Partial<SharedPreferences> = {
+    putString: jest.fn(() => of()) as any
+  }
   
   const mockFrameworkDetailsService: Partial<FrameworkDetailsService> = {
     getFrameworkDetails: jest.fn(() => Promise.resolve({}) as any),
@@ -575,6 +579,7 @@ describe('TncUpdateHandlerService', () => {
     tncUpdateHandlerService = new TncUpdateHandlerService(
       mockProfileService as ProfileService,
       mockAuthService as AuthService,
+      mockPreference as SharedPreferences,
       mockCommonUtilService as CommonUtilService,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
       mockModalController as ModalController,

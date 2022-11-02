@@ -30,6 +30,7 @@ import { RouterLinks } from '../app.constant';
 import { ConsentService } from '../../services/consent-service';
 import { Events } from '@app/util/events';
 import onboarding from '../../assets/configurations/config.json';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
@@ -115,10 +116,13 @@ describe('TermsAndConditionsPage', () => {
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
     };
-
+    const mockPreference: Partial<SharedPreferences> = {
+        putString: jest.fn(() => of()) as any
+    }
     beforeAll(() => {
         termsAndConditionsPage = new TermsAndConditionsPage(
             mockProfileService as ProfileService,
+            mockPreference as SharedPreferences,
             mockPlatform as Platform,
             mockLogoutHandlerService as LogoutHandlerService,
             mockSanitizer as DomSanitizer,
