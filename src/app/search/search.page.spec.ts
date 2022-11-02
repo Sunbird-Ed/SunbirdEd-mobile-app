@@ -2755,4 +2755,13 @@ describe('SearchPage', () => {
             }, 0);
         })
     })
+
+    // describe('ngAfterViewInit', () => {
+    //     it('should ngAfterViewInit ', () => {
+    //         // arrange
+    //         // act
+    //         searchPage.ngAfterViewInit();
+    //         // assert
+    //     })
+    // })
 });
