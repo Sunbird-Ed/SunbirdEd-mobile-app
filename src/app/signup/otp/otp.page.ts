@@ -148,7 +148,7 @@ export class OtpPage implements OnInit {
           key: this.userData.contactInfo.phone,
           type: ProfileConstants.CONTACT_TYPE_PHONE,
           ...(this.userData.contactInfo &&
-            this.userData.contactInfo.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+            this.userData.contactInfo.phone.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
             { userId: this.userData.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       } else {
