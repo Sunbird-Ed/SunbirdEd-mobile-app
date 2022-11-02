@@ -58,4 +58,25 @@ describe('ExploreBooksSortComponent', () => {
     it('should create instance of exploreBooksSortComponent', () => {
         expect(exploreBooksSortComponent).toBeTruthy();
     });
+
+    describe('dismiss', () => {
+        it('should sort and dismiss', () => {
+            // arrange
+            mockModalController.dismiss = jest.fn();
+            exploreBooksSortComponent['sortForm'] = {value:{ board: "cbse", medium: "english" }} as any;
+            // act
+            exploreBooksSortComponent.dismiss()
+            // assert
+            expect(mockModalController.dismiss).toHaveBeenCalled()
+        })
+        it('should sort and dismiss if any one is same', () => {
+            // arrange
+            mockModalController.dismiss = jest.fn();
+            exploreBooksSortComponent['sortForm'] = {value:{ board: "cbse", medium: "medium" }} as any;
+            // act
+            exploreBooksSortComponent.dismiss()
+            // assert
+            expect(mockModalController.dismiss).toHaveBeenCalledWith({values:{ board: "cbse", medium: "medium" }})
+        })
+    })
 });
