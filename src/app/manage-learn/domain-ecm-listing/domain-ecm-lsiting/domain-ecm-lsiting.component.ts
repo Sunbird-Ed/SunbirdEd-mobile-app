@@ -184,7 +184,6 @@ export class DomainEcmLsitingComponent {
       this.evidenceSections = this.currentEvidence['sections'];
       this.checkForEvidenceCompletion();
     } else {
-      const entity = { _id: this.submissionId, name: this.entityName };
       this.selectedEvidenceIndex = evidenceIndex;
       this.currentEvidence = this.entityData['assessment']['evidences'][this.selectedEvidenceIndex];
       this.evidenceSections = this.currentEvidence['sections'];
