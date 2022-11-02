@@ -52,7 +52,7 @@ export class ProjectService {
     })
   }
   async getTemplateBySoluntionId(id) {
-    let payload = await this.utils.getProfileData();
+    let payload = await this.utils.getProfileInfo();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + id,
       payload: payload,
