@@ -260,6 +260,52 @@ android {
         tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
 
+    tasks.whenTaskAdded { task ->
+    def name = task.name
+
+    //Skip some unnecessary tasks
+    if (name.startsWith("bundle")
+            && !name.contains("Classes")
+            && !name.contains("Resources")
+            && name != "bundle"
+            && name != "bundleDebug"
+            && name != "bundleRelease") {
+
+        def renameTaskName = "rename${task.name.capitalize()}Aab"
+        def version = "${android.defaultConfig.versionName}-${android.defaultConfig.versionCode}"
+        println "task.name ${task.name}"
+        def flavor = task.name.substring("bundle".length()).toLowerCase().replace("debug", "").replace("release", "")
+        def type = task.name.toLowerCase().replace("bundle", "").replace("${flavor}", "").toLowerCase()
+        println "Flavour ${flavor}"
+        println "Type ${type}"
+        if(flavor == null || type == null) return
+
+        def outputName = "${app_name}-$flavor-$version".toLowerCase()
+        if (!flavor.equals("production")) {
+            outputName = "${app_name}-$flavor-$version".toLowerCase();
+        } else {
+            outputName = "${app_name}-$version".toLowerCase();
+        }
+        
+
+        tasks.create(renameTaskName) {
+            def typeInCaps = "${type}".capitalize()
+            def path = "${rootDir}/app/build/outputs/bundle/${flavor}${typeInCaps}/"
+            def originalFile = "${path}app-${flavor}-${type}.aab"
+            println "originalFile ${originalFile}"
+            println "outputName ${outputName}"
+            doLast {
+                if (file("$originalFile").exists()) {
+                    ant.move file: "$originalFile",
+                            tofile: "$path/${outputName}.aab"
+                }
+            }
+        }
+
+        task.finalizedBy(renameTaskName)
+    }
+}
+
     applicationVariants.all { variant ->
         def flavor = variant.mergedFlavor
         def name = flavor.getVersionName()
