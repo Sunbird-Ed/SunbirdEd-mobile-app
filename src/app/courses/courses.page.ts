@@ -957,7 +957,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   async getAggregatorResult(resetFilter?: boolean) {
     this.spinner(true);
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {},
       userPreferences: {

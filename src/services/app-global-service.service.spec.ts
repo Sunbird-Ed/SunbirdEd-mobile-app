@@ -97,6 +97,7 @@ describe('AppGlobalService', () => {
         // arrange
         const key = 'media';
         const value = true;
+        mockPreferences.getString = jest.fn(() => of(false))
         mockPreferences.putString = jest.fn(() => of(undefined));
         // act
         appGlobalService.setIsPermissionAsked(key, value);
@@ -245,7 +246,12 @@ describe('AppGlobalService', () => {
             appGlobalService.isGuestUser = true;
             // act
             // assert
-            appGlobalService.getProfileSettingsStatus().then((response) => {
+            appGlobalService.getProfileSettingsStatus({
+                syllabus: ['AP'],
+                board: ['AP'],
+                grade: ['class1'],
+                medium: ['English']
+            }).then((response) => {
                 expect(response).toBeTruthy();
                 done();
             });
@@ -507,10 +513,17 @@ describe('AppGlobalService', () => {
     describe('getNameForCodeInFramework()', () => {
         it('should return the name of the provided code in the framework', () => {
             // arrange
+            appGlobalService['frameworkData'] = {gradeLevel: {terms: [{code: 'class1'}]}}
             appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
             // act
             // assert
-            // expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+        it('should not return if no framework data present', () => {
+            // arrange
+            appGlobalService['frameworkData'] = {gradeLevel: {}}
+            appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
+            // act
+            // assert
         });
     });
 
@@ -771,6 +784,42 @@ describe('AppGlobalService', () => {
             });
         });
 
+        it('should return  profileType OTHER', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(ProfileType.OTHER));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual(ProfileType.OTHER);
+                done();
+            });
+        });
+
+        it('should return  profileType ADMIN', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(ProfileType.ADMIN));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual(ProfileType.ADMIN);
+                done();
+            });
+        });
+
+        it('should return  profileType PARENT', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(ProfileType.PARENT));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual(ProfileType.PARENT);
+                done();
+            });
+        });
+
         it('should handle error scenario', (done) => {
             // arrange
             mockPreferences.getString = jest.fn(() => throwError({}));
@@ -1005,4 +1054,165 @@ describe('AppGlobalService', () => {
         });
     });
 
+    describe('setisDiscoverBackEnabled', () => {
+        it('should return the isDiscoverBackEnabled', () => {
+            // arrange
+            appGlobalService.isDiscoverBackEnabled = true;
+            // act
+            // assert
+            expect(appGlobalService.isDiscoverBackEnabled).toBeTruthy();
+        });
+    });
+
+    describe('setpreSignInData', () => {
+        it('should return the preSignInData', () => {
+            // arrange
+            appGlobalService.preSignInData = true;
+            // act
+            // assert
+            expect(appGlobalService.preSignInData).toBeTruthy();
+        });
+    });
+
+    describe('setredirectUrlAfterLogin', () => {
+        it('should return the redirectUrlAfterLogin', () => {
+            // arrange
+            appGlobalService.redirectUrlAfterLogin = 'true';
+            // act
+            // assert
+            expect(appGlobalService.redirectUrlAfterLogin).toBeTruthy();
+        });
+    });
+
+    describe('setselectedActivityCourseId', () => {
+        it('should return the selectedActivityCourseId', () => {
+            // arrange
+            appGlobalService.selectedActivityCourseId = 'true';
+            // act
+            // assert
+            expect(appGlobalService.selectedActivityCourseId).toBeTruthy();
+        });
+    });
+
+    describe('setformConfig', () => {
+        it('should return the formConfig', () => {
+            // arrange
+            appGlobalService.formConfig = 'true';
+            // act
+            // assert
+            expect(appGlobalService.formConfig).toBeTruthy();
+        });
+    });
+
+    describe('setshowCourseCompletePopup', () => {
+        it('should return the showCourseCompletePopup', () => {
+            // arrange
+            appGlobalService.showCourseCompletePopup = true;
+            // act
+            // assert
+            expect(appGlobalService.showCourseCompletePopup).toBeTruthy();
+        });
+    });
+
+    describe('setgenerateCourseUnitCompleteTelemetry', () => {
+        it('should return the generateCourseUnitCompleteTelemetry', () => {
+            // arrange
+            appGlobalService.generateCourseUnitCompleteTelemetry = true;
+            // act
+            // assert
+            expect(appGlobalService.generateCourseUnitCompleteTelemetry).toBeTruthy();
+        });
+    });
+
+    describe('setgenerateCourseCompleteTelemetry', () => {
+        it('should return the generateCourseCompleteTelemetry', () => {
+            // arrange
+            appGlobalService.generateCourseCompleteTelemetry = true;
+            // act
+            // assert
+            expect(appGlobalService.generateCourseCompleteTelemetry).toBeTruthy();
+        });
+    });
+
+    describe('showJoyfulPopup ', () => {
+        it('should show showJoyfulPopup skipCoachScreenForDeeplink is true ', () => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = true
+            // act
+            appGlobalService.showJoyfulPopup()
+            // assert
+            setTimeout(() => {
+            }, 0);
+        })
+
+        it('should show showJoyfulPopup skipCoachScreenForDeeplink is true and joyfull theme true', () => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            // act
+            appGlobalService.showJoyfulPopup()
+            // assert
+            expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED);
+        })
+
+        it('should show showJoyfulPopup skipCoachScreenForDeeplink is true', () => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve(''))
+            // act
+            appGlobalService.showJoyfulPopup()
+            // assert
+            expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED);
+        })
+    })
+
+    describe('showNewTabsSwitchPopup ', () => {
+        it('should show showNewTabsSwitchPopup ', () => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(''))
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve(''))
+            // act
+            appGlobalService.showNewTabsSwitchPopup()
+            // assert
+        })
+    })
+
+    describe('getActiveProfileUid ', () => {
+        it('should show getActiveProfileUid ', () => {
+            // arrange
+            mockProfile.getActiveProfileSession = jest.fn(() => throwError({}));
+            // act
+            appGlobalService.getActiveProfileUid()
+            // assert
+        })
+
+        it('should show getActiveProfileUid and get active session profile ', () => {
+            // arrange
+            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: 'some_id', managedSession: {uid: 'id'}}))
+            // act
+            appGlobalService.getActiveProfileUid()
+            // assert
+        })
+    })
+
+    describe('showYearOfBirthPopup ', () => {
+        it('should show showYearOfBirthPopup ', () => {
+            // arrange
+            // act
+            appGlobalService.showYearOfBirthPopup({})
+            // assert
+        })
+    })
+
+    describe('setAccessibilityFocus ', () => {
+        it('should show setAccessibilityFocus ', () => {
+            // arrange
+            // act
+            appGlobalService.setAccessibilityFocus('some_id')
+            setTimeout(() => {
+                // assert
+            }, 0);
+        })
+    })
 });
