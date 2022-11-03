@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, DiscussionService, ProfileService, FormService
+  CorrelationData, DiscussionService, ProfileService, FormService, ActivateAndDeactivateByIdRequest
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -395,6 +395,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       try {
+       const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+          id: this.groupId
+        };
+        await this.groupService.suspendById(deactivateByIdRequest).toPromise();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
