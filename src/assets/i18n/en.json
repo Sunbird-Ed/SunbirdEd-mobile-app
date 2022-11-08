@@ -1360,7 +1360,7 @@
   "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile number for State or Org",
   "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email address of State or Org",
   "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit details from your Profile page",
-  "FRMELEMENTS_BTN_APPLY_FILTER":"Apply Filter",
+  "FRMELEMENTS_BTN_APPLY_FILTER":"Apply filter",
   "FRMELEMNTS_LBL_START_IMP_POPUP_MSG1":"You must click on the Start improvement button to access and edit the project details.",
   "FRMELEMNTS_LBL_START_IMP_POPUP_MSG2":"Click on the Start improvement to get complete access to the content",
   "FRMELEMNTS_LBL_TO_SUBMIT_PROJECT":"To finish submission, click on Submit button below",
