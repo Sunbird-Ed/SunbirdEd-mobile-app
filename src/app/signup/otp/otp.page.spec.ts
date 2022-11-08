@@ -7,7 +7,7 @@ import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-h
 import { OtpPage } from './otp.page';
 import { OTPTemplates, ProfileConstants, RouterLinks } from '../../app.constant';
 import { of, throwError } from 'rxjs';
-import { HttpClientError } from '@project-sunbird/sunbird-sdk';
+import { HttpClientError, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 describe('OtpPage', () => {
     let otpPage: OtpPage;
@@ -44,14 +44,16 @@ describe('OtpPage', () => {
             }
         })) as any
     }
+    const mockSharedPreferences: Partial<SharedPreferences> = {}
     beforeAll(() => {
         otpPage = new OtpPage(
             mockProfileService as ProfileService,
+            mockSharedPreferences as SharedPreferences,
             mockFormBuilder as FormBuilder,
             mockCommonUtilService as CommonUtilService,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockLocation as Location,
-            mockRouter as Router
+            mockRouter as Router,
         );
     });
 
