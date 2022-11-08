@@ -7,7 +7,7 @@ import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-h
 import { OtpPage } from './otp.page';
 import { OTPTemplates, ProfileConstants, RouterLinks } from '../../app.constant';
 import { of, throwError } from 'rxjs';
-import { HttpClientError } from '@project-sunbird/sunbird-sdk';
+import { HttpClientError, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 describe('OtpPage', () => {
     let otpPage: OtpPage;
@@ -16,6 +16,7 @@ describe('OtpPage', () => {
         updateServerProfile: jest.fn(() => of()),
         verifyOTP: jest.fn(() => of())
     }
+    const mockSharedPreference: Partial<SharedPreferences> = {}
     const mockFormBuilder: Partial<FormBuilder> = {}
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(),
@@ -47,6 +48,7 @@ describe('OtpPage', () => {
     beforeAll(() => {
         otpPage = new OtpPage(
             mockProfileService as ProfileService,
+            mockSharedPreference as SharedPreferences,
             mockFormBuilder as FormBuilder,
             mockCommonUtilService as CommonUtilService,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
