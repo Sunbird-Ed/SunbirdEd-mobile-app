@@ -204,6 +204,7 @@ export class CreateProjectPage implements OnInit {
       cssClass: 'central-alert',
       header: text[translateText.header],
       message: text[translateText.message],
+      backdropDismiss:false,
       buttons: [
         {
           text: text[translateText.yes],
