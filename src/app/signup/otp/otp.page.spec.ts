@@ -16,6 +16,7 @@ describe('OtpPage', () => {
         updateServerProfile: jest.fn(() => of()),
         verifyOTP: jest.fn(() => of())
     }
+    const mockSharedPreference: Partial<SharedPreferences> = {}
     const mockFormBuilder: Partial<FormBuilder> = {}
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(),
