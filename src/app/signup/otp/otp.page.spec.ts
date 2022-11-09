@@ -45,15 +45,16 @@ describe('OtpPage', () => {
             }
         })) as any
     }
+    const mockSharedPreferences: Partial<SharedPreferences> = {}
     beforeAll(() => {
         otpPage = new OtpPage(
             mockProfileService as ProfileService,
-            mockSharedPreference as SharedPreferences,
+            mockSharedPreferences as SharedPreferences,
             mockFormBuilder as FormBuilder,
             mockCommonUtilService as CommonUtilService,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockLocation as Location,
-            mockRouter as Router
+            mockRouter as Router,
         );
     });
 
