@@ -99,7 +99,7 @@ export class TncUpdateHandlerService {
        (userDetails.profileType === ProfileType.OTHER.toUpperCase() &&
         userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())
         || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
-      if (onboarding.skipOnboardingForLoginUser) {
+      if (onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN) {
         await this.updateUserAsGuest();
       } else {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
