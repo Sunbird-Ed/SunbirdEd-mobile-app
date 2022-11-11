@@ -823,6 +823,15 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
       background: transparent !important;
     }
   }
+
+  lib-lib-entry {
+    &.main_discuss_lib {
+      .ng2-tag-input__text-input {
+        width: 100%;
+        color: white !important;
+      }
+    }
+  }
 }
 
 .btn-block {
