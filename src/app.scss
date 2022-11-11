@@ -801,6 +801,12 @@ ion-toast.green-toast{
   --background: #{map-get($colors, office_green)};
 }
 
+html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
+  ion-toast {
+    --background: #{map-get($colors, granite_gray)};
+  }
+}
+
 .btn-block {
   margin: 0 !important;
   position: relative;
