@@ -808,6 +808,17 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
   }
 }
 
+html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+  sb-library-card sb-library-card-v4 .sb--card.sb--card--theme2 {
+    .sb--card__info{
+      .subject-info,
+      .sb--card__meta{
+        color: white !important;
+      }
+    }
+  }
+}
+
 .btn-block {
   margin: 0 !important;
   position: relative;
