@@ -817,6 +817,12 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
       }
     }
   }
+
+  sb-course-curiculum-card .sb--card.sb--card--course--curiculum .sb--card__main-area{
+    .sb--card__info .sb--card__title {
+      background: transparent !important;
+    }
+  }
 }
 
 .btn-block {
