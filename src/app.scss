@@ -802,6 +802,7 @@ ion-toast.green-toast{
 }
 
 html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
+  .loading-wrapper,
   ion-toast {
     --background: #{map-get($colors, granite_gray)};
   }
