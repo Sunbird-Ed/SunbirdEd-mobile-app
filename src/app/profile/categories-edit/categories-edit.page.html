@@ -33,8 +33,8 @@
       <ion-select formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
         placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [attr.disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))">
-        <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">{{medium?.name}}
+        [attr.disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))" (ionChange)="onCategoryChanged('medium', $event)">
+        <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">{{medium?.name}} 
         </ion-select-option>
       </ion-select>
     </ion-item>
@@ -47,7 +47,7 @@
         placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
         [attr.disabled]="(!gradeList.length || !(profileEditForm.value.medium != ''))"
-        (ionChange)="enableSubmitButton();">
+         (ionChange)="enableSubmitButton(); onCategoryChanged('grade',$event)">
         <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
           {{grade?.name}}
         </ion-select-option>

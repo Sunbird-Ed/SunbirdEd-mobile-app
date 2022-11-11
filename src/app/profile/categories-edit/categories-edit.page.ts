@@ -32,6 +32,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
+import isEqual from 'lodash/isEqual';
 
 
 @Component({
@@ -78,6 +79,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   shouldUpdatePreference: boolean;
   noOfStepsToCourseToc = 0;
   guestUserProfile: any;
+  profileForTelemetry: any = {};
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -156,6 +158,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     }
     this.shouldUpdatePreference = extrasState && extrasState.shouldUpdatePreference ? extrasState.shouldUpdatePreference : false;
     this.initializeForm();
+    this.profileForTelemetry = Object.assign({}, this.profile);
   }
 
   async ngOnInit() {
@@ -309,8 +312,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
       tap(async () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SUBMIT_CLICKED,
-          Environment.USER, PageId.PROFILE);
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -345,8 +346,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SUBMIT_CLICKED,
-          Environment.USER, PageId.PROFILE);
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -373,6 +372,25 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     );
   }
 
+  onCategoryChanged(name, event) {
+    if (event.detail.value && event.detail.value.length) {
+      const oldAttribute: any = {};
+      const newAttribute: any = {};
+      oldAttribute[name] = this.profileForTelemetry[name] ? this.profileForTelemetry[name] : '';
+      newAttribute[name] = event.detail.value ? event.detail.value : '';
+      if (!isEqual(oldAttribute, newAttribute)) {
+          const values = new Map();
+          values['oldValue'] = oldAttribute;
+          values['newValue'] = newAttribute;
+          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+              InteractSubtype.SUBMIT_CLICKED,
+              Environment.USER,
+              PageId.PROFILE,
+              undefined,
+              values);
+      }
+    }
+  } 
   /**
    * It will validate the forms and internally call submit method
    */
