@@ -2095,7 +2095,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
-}
+  }
   .message,.projects-labels, .clr-primary {
     color: $white;
   }
@@ -2116,13 +2116,13 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
   .button-clr{
   color: map-get($colors, black) !important;
-}
-.clr-downloaded-btn{
-  color:green !important;
-}
-ion-icon.mg-popup-btn-icon.md.hydrated{
-  filter: invert(0) !important;
-}
+  }
+  .clr-downloaded-btn{
+    color:green !important;
+  }
+  ion-icon.mg-popup-btn-icon.md.hydrated{
+    filter: invert(0) !important;
+  }
   .loading-spinner.sc-ion-loading-md,
   .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md{
     filter: invert(0) !important;
@@ -2142,7 +2142,7 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
     .action-btn{
       color: #000 !important;
       --background: #FFD954  !important;
-  }
+    }
 
   }
   .attachments-list{
@@ -2150,8 +2150,11 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
       color: #000 !important;
     }
   }
-  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked ion-label {
+  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked {
+    ion-label {
     color: balck !important;
+    }
+    --ion-background-color: transparent
   }
 }
 
