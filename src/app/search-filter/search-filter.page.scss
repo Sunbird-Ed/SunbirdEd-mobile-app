@@ -35,7 +35,6 @@
   --sbt-box-shadow-black: rgba(0, 0, 0, 0.1);
   --sbt-box-shadow-3px: 0.1875rem 0.1875rem 0.125rem 0 var(--sbt-box-shadow-black);
   --sbt-theme-purple-selectbox: #6841B3;
-  --sbt-theme-purple-selectbox-lbg: #F2EEFF;
   --sbt-bradius: 0.125rem;
   --sbt-bradius-24: calc(var(--sbt-bradius) * 12);
 
@@ -51,7 +50,7 @@
     .cfe-multiselect-label {
       margin: .5rem 0;
       display: flex;
-      color: var(--gray-800);
+      color: var(--app-black);
       font-size: var(--font-size-normal);
     }
 
