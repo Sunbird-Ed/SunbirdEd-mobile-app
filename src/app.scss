@@ -808,6 +808,35 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
   }
 }
 
+html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+  sb-library-card sb-library-card-v4 .sb--card.sb--card--theme2 {
+    .sb--card__info{
+      .subject-info,
+      .sb--card__meta{
+        color: white !important;
+      }
+    }
+  }
+
+  sb-course-curiculum-card .sb--card.sb--card--course--curiculum .sb--card__main-area{
+    .sb--card__info .sb--card__title {
+      background: transparent !important;
+    }
+  }
+
+  lib-lib-entry {
+    &.main_discuss_lib {
+      .ng2-tag-input__text-input {
+        width: 100%;
+        color: white !important;
+      }
+      .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-content .start-form-label {
+        color: white !important;
+      }
+    }
+  }
+}
+
 .btn-block {
   margin: 0 !important;
   position: relative;
