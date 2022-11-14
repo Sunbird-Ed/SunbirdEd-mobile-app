@@ -38,6 +38,8 @@ html[data-theme="JOYFUL"]{
   --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
+  --sbt-theme-purple-selectbox-lbg: #F2EEFF;
+
   ion-toolbar {
     --background: var(--app-primary-header);
     border-bottom-left-radius: 20px;
