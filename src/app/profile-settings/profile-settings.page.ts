@@ -828,8 +828,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     });
 }
 
-  private async fetchCategories() {
-    this.categories = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  private fetchCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
   }
 
 }

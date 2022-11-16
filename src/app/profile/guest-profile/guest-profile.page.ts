@@ -73,7 +73,7 @@ export class GuestProfilePage implements OnInit {
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-    await this.getCategories();
+    this.getCategories();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -94,7 +94,7 @@ export class GuestProfilePage implements OnInit {
 
     this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
     this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, rootOrgId);
   }
 
@@ -293,7 +293,9 @@ export class GuestProfilePage implements OnInit {
 
   signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 
-  private async getCategories() {
-    this.frameworkData = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.frameworkData = categories;
+    });
   }
 }

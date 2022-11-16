@@ -170,7 +170,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.getCategories();
+    this.getCategories();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_USER,
@@ -639,8 +639,10 @@ export class GuestEditPage implements OnInit, OnDestroy {
     return subscriptionArray;
   }
 
-  private async getCategories() {
-    this.categories = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
   }
 
 }

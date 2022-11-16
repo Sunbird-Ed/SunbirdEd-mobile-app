@@ -162,7 +162,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.getCategories();
+    this.getCategories();
     this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(false);
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
@@ -585,7 +585,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     });
   }
 
-  private async getCategories() {
-    this.frameworkData = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.frameworkData = categories;
+    });
   }
 }

@@ -218,7 +218,7 @@ export class ProfilePage implements OnInit {
   }
 
   async ngOnInit() {
-    await this.getCategories();
+    this.getCategories();
     this.doRefresh();
     this.appName = await this.appVersion.getAppName();
   }
@@ -1236,7 +1236,9 @@ export class ProfilePage implements OnInit {
     return displayValues;
   }
 
-  private async getCategories() {
-    this.categories = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
   }
 }
