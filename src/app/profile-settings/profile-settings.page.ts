@@ -69,6 +69,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   btnColor = '#8FC4FF';
   appName: string;
   showQRScanner = true;
+  categories = [];
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -143,8 +144,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.fetchCategories();
     this.handleActiveScanner();
-
     this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
     });
@@ -826,5 +827,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       element.setAttribute('tabindex', '0');
     });
 }
+
+  private fetchCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
+  }
 
 }

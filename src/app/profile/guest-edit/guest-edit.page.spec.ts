@@ -24,7 +24,8 @@ import {
     ImpressionType,
     ObjectType,
     LoginHandlerService,
-    OnboardingConfigurationService
+    OnboardingConfigurationService,
+    FormAndFrameworkUtilService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { of, Subscription, throwError } from 'rxjs';
@@ -101,6 +102,8 @@ describe('GuestEditPage', () => {
         getAppConfig: jest.fn(() => mockOnboardingConfigData)
     };
 
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
             mockProfileService as ProfileService,
@@ -118,7 +121,8 @@ describe('GuestEditPage', () => {
             mockLocation as Location,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockOnBoardingConfigService as OnboardingConfigurationService
+            mockOnBoardingConfigService as OnboardingConfigurationService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -612,6 +616,7 @@ describe('GuestEditPage', () => {
     describe('ngOnInit', () => {
         it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
             // arrange
+            mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -647,6 +652,7 @@ describe('GuestEditPage', () => {
             // act
             guestEditPage.ngOnInit();
             setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.EDIT_USER_INITIATED,
@@ -666,6 +672,7 @@ describe('GuestEditPage', () => {
 
         it('should populate the supported attributes', (done) => {
             // arrange
+            mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
             mockOnBoardingConfigService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
             mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
                 {
@@ -688,6 +695,7 @@ describe('GuestEditPage', () => {
             guestEditPage.ngOnInit();
             setTimeout(() => {
                 // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
                 expect(guestEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',
                     medium: 'medium',

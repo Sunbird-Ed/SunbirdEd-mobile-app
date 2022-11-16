@@ -27,16 +27,17 @@
         placeholder="{{'NAME_HINT' | translate }}"></ion-input>
     </ion-item>
 
-    <!-- Syllabus -->
-    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['board']">
-      <ion-label *ngIf="!!supportedProfileAttributes['board']" position="stacked" class="label-font ge-label ion-text-uppercase">{{'' | category: 'category1'}} &lrm;
+    <div *ngIf="categories.length>0">
+          <!-- Syllabus -->
+    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['board'] && categories[0].code==='category1'">
+      <ion-label *ngIf="!!supportedProfileAttributes['board']" position="stacked" class="label-font ge-label ion-text-uppercase">{{categories[0].label | translateJson}} &lrm;
         <ion-text>
           <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select *ngIf="!!supportedProfileAttributes['board']" [disabled]="!syllabusList.length" multiple="false" formControlName="syllabus"
         [interfaceOptions]="syllabusOptions" class="ion-text-capitalize" (ionChange)="onCategoryChanged('board',$event)"
-        placeholder="{{ syllabusList.length ? ('FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category4') : ('NO_DATA_FOUND' | translate) }}"
+        placeholder="{{ syllabusList.length ? (categories[0].placeHolder | translateJson) : ('NO_DATA_FOUND' | translate) }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
           {{eachSyllabus.name | aliased}}&lrm;
@@ -45,9 +46,9 @@
     </ion-item>
 
     <!-- Medium -->
-    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['medium']">
+    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['medium'] && categories[1].code==='category2'">
       <ion-label *ngIf="!!supportedProfileAttributes['medium']" position="stacked" class="label-font ge-label ion-text-uppercase">
-        {{'' | category: 'category2'}}
+        {{categories[1].label | translateJson}}
         <ion-text>
           <span class="ge-danger">&nbsp;*</span>
         </ion-text>
@@ -55,7 +56,7 @@
       <ion-select *ngIf="!!supportedProfileAttributes['medium']" multiple="true" class="ion-text-capitalize"
         [disabled]="(!mediumList.length || !(guestEditForm.value.boards != ''))" [interfaceOptions]="mediumOptions"
         formControlName="medium" (ionChange)="onCategoryChanged('medium', $event)"
-        placeholder="{{ mediumList.length ? ('FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category4') : ('NO_DATA_FOUND' | translate) }}"
+        placeholder="{{ mediumList.length ? (categories[1].placeHolder | translateJson) : ('NO_DATA_FOUND' | translate) }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize" value="{{medium?.code}}">
           {{medium?.name}}
@@ -64,15 +65,15 @@
     </ion-item>
 
     <!-- Grade -->
-    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['gradeLevel']">
-      <ion-label *ngIf="!!supportedProfileAttributes['gradeLevel']" position="stacked" class="label-font ge-label ion-text-uppercase">{{'' | category: 'category3'}}<ion-text>
+    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['gradeLevel'] && categories[2].code==='category3'">
+      <ion-label *ngIf="!!supportedProfileAttributes['gradeLevel']" position="stacked" class="label-font ge-label ion-text-uppercase">{{categories[2].label | translateJson}}<ion-text>
           <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select *ngIf="!!supportedProfileAttributes['gradeLevel']" multiple="true" class="ion-text-capitalize"
         [disabled]="(!gradeList.length || !(guestEditForm.value.medium != ''))" [interfaceOptions]="classOptions"
         formControlName="grades" (ionChange)="onCategoryChanged('grade',$event)"
-        placeholder="{{ gradeList.length ? ('FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category4') : ('NO_DATA_FOUND' | translate) }}"
+        placeholder="{{ gradeList.length ? (categories[2].placeHolder | translateJson) : ('NO_DATA_FOUND' | translate) }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
           {{grade?.name}}
@@ -81,19 +82,20 @@
     </ion-item>
 
     <!-- Subjects -->
-    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['subject']">
-      <ion-label *ngIf="!!supportedProfileAttributes['subject']" position="stacked" class="label-font ge-label ion-text-uppercase">{{'' | category: 'category4'}}
+    <ion-item class="ge-item-16" *ngIf="!!supportedProfileAttributes['subject'] && categories[3].code==='category4'">
+      <ion-label *ngIf="!!supportedProfileAttributes['subject']" position="stacked" class="label-font ge-label ion-text-uppercase">{{categories[3].label | translateJson}}
       </ion-label>
       <ion-select *ngIf="!!supportedProfileAttributes['subject']" multiple="true" [interfaceOptions]="subjectsOptions" class="ion-text-capitalize"
         [disabled]="(!subjectList.length || !(guestEditForm.value.grades != ''))" formControlName="subjects"
         (ionChange)="onCategoryChanged('subject', $event)"
-        placeholder="{{ subjectList.length ? ('FRMELEMENTS_LBL_SELECT_CATEGORY1' | category: 'category4') : ('NO_DATA_FOUND' | translate) }}"
+        placeholder="{{ subjectList.length ? (categories[3].placeHolder | translateJson) : ('NO_DATA_FOUND' | translate) }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let subject of subjectList" class="ion-text-capitalize" value="{{subject?.code}}">
           {{subject?.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
+    </div>
 
   </form>
 </ion-content>

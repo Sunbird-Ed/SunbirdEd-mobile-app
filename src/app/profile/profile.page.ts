@@ -152,6 +152,7 @@ export class ProfilePage implements OnInit {
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
   enrolledCourseList = [];
+  categories: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -217,6 +218,7 @@ export class ProfilePage implements OnInit {
   }
 
   async ngOnInit() {
+    this.getCategories();
     this.doRefresh();
     this.appName = await this.appVersion.getAppName();
   }
@@ -1234,4 +1236,9 @@ export class ProfilePage implements OnInit {
     return displayValues;
   }
 
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
+  }
 }
