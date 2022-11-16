@@ -128,7 +128,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
+      if(!this.platform.is('ios')){
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      }
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
@@ -273,6 +275,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.pauseSubscription.unsubscribe();
     }
 
+  }
+
+  handleNavBackButton() {
+    this.showConfirm();
   }
 
   async playerEvents(event) {
