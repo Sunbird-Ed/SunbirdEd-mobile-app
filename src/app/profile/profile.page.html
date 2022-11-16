@@ -101,22 +101,12 @@
         </div>
     </div>
     </div>
-    <div class="framework-block" *ngIf="profile?.framework">
-        <div class="container" *ngIf="profile?.framework?.board">
-            <span>{{'BOARD' | translate }}: </span>
-            <span class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</span>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.medium">
-            <span>{{'MEDIUM' | translate }}: </span>
-            <span class="bolder">{{profile?.framework?.medium.join(', ')}}</span>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.gradeLevel">
-            <span>{{'CLASSES' | translate }}: </span>
-            <span class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</span>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.subject">
-            <span>{{'SUBJECTS' | translate }}: </span>
-            <span class="bolder">{{profile?.framework?.subject.join(', ')}}</span>
+    <div class="framework-block" *ngIf="profile?.framework && categories.length>0">
+        <div *ngFor="let category of categories">
+            <div class="container" *ngIf="profile?.framework[category.value]">
+                <span>{{category.label | translateJson}}: </span>
+                <span class="bolder">{{profile?.framework[category.value].join(', ') | aliased}} &lrm;</span>
+            </div>
         </div>
         <div class="container">
             <ion-button shape="round" aria-label="Edit Board, Medium, Classes, subjects" (click)="navigateToCategoriesEditPage()" class="custom-round ion-text-capitalize">

@@ -24,7 +24,8 @@ import {
     ImpressionType,
     ObjectType,
     LoginHandlerService,
-    OnboardingConfigurationService
+    OnboardingConfigurationService,
+    FormAndFrameworkUtilService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { of, Subscription, throwError } from 'rxjs';
@@ -101,6 +102,8 @@ describe('GuestEditPage', () => {
         getAppConfig: jest.fn(() => mockOnboardingConfigData)
     };
 
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
             mockProfileService as ProfileService,
@@ -118,7 +121,8 @@ describe('GuestEditPage', () => {
             mockLocation as Location,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockOnBoardingConfigService as OnboardingConfigurationService
+            mockOnBoardingConfigService as OnboardingConfigurationService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 

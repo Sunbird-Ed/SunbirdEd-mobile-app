@@ -727,4 +727,8 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
+    async getFrameworkCategories() {
+        return (await this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then() as any);
+    }
+
 }

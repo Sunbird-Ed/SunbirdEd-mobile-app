@@ -33,6 +33,7 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
+import { LocationHandler } from '../../services/location-handler';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -144,6 +145,7 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
+    const mockLocationHandler: Partial<LocationHandler> = {};
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -174,7 +176,8 @@ describe('Profile.page', () => {
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockLocationHandler as LocationHandler
         );
     });
 
@@ -521,9 +524,10 @@ describe('Profile.page', () => {
         // arrange
         jest.spyOn(profilePage, 'doRefresh').mockImplementation();
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
+        mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
         // act
         profilePage.ngOnInit().then(() => {
-
+            expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             // assert
             done();

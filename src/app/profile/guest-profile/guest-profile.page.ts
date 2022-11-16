@@ -23,7 +23,7 @@ import { PageId, Environment, InteractType, InteractSubtype } from '@app/service
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OnboardingConfigurationService } from '@app/services';
+import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
 
 @Component({
   selector: 'app-guest-profile',
@@ -49,6 +49,7 @@ export class GuestProfilePage implements OnInit {
   deviceLocation: any;
   public supportedProfileAttributes: { [key: string]: string } = {};
   public currentUserTypeConfig: any = {};
+  frameworkData = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -66,12 +67,13 @@ export class GuestProfilePage implements OnInit {
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     public platform: Platform,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) { }
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-
+    await this.getCategories();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -290,4 +292,8 @@ export class GuestProfilePage implements OnInit {
   }
 
   signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
+
+  private async getCategories() {
+    this.frameworkData = await this.formAndFrameworkUtilService.getFrameworkCategories();
+  }
 }

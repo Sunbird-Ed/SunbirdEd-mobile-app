@@ -14,7 +14,8 @@ import {
     ContainerService,
     AppHeaderService,
     ActivePageService,
-    FormAndFrameworkUtilService
+    FormAndFrameworkUtilService,
+    TelemetryGeneratorService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
@@ -109,6 +110,7 @@ describe('CategoryEditPage', () => {
         }
     };
     const mockCategoriesEditService: Partial<CategoriesEditService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
 
     beforeAll(() => {
@@ -129,7 +131,9 @@ describe('CategoryEditPage', () => {
             mockProgressLoader as SbProgressLoader,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockCategoriesEditService as CategoriesEditService
+            mockCategoriesEditService as CategoriesEditService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -291,9 +295,11 @@ describe('CategoryEditPage', () => {
                 },
             } as any));
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',
