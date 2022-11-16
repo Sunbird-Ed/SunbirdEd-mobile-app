@@ -16,6 +16,11 @@
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
   </div>
   <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
+    <div class="sb-player-container-ios" *ngIf="platform.is('ios')" (click)="handleNavBackButton();$event.stopPropagation()">
+      <div class="sb-circle">
+        <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+      </div>
+    </div>
     <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
   </div>

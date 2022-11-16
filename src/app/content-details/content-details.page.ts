@@ -420,7 +420,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleNavBackButton() {
-    if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+    if (this.platform.is('ios') && (this.screenOrientation.type === 'landscape-secondary' || this.screenOrientation.type === 'landscape-primary')) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       return false;
     }
@@ -1297,10 +1297,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
       } else if (event.edata['type'] === 'FULLSCREEN') {
-        if (this.screenOrientation.type === 'portrait-primary') {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-        } else if (this.screenOrientation.type === 'landscape-primary') {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if(!this.platform.is('ios') || (this.platform.is('ios') && this.playerType !== "sunbird-video-player")) {
+          if (this.screenOrientation.type === 'portrait-primary') {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+          } else if (this.screenOrientation.type === 'landscape-primary') {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          }
         }
       }
     } else if (event.type === 'ended') {
