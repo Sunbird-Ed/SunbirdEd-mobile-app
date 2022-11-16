@@ -19,8 +19,8 @@ import { finalize } from 'rxjs/operators';
 import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../app.constant';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { IterableDiffers } from '@angular/core';
 import { Environment, InteractSubtype } from '../../services';
+import { File } from '@ionic-native/file/ngx';
 
 
 
@@ -37,7 +37,9 @@ describe('PlayerPage', () => {
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {
         handleAction: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockScreenOrientation: Partial<ScreenOrientation> = {
         unlock: jest.fn(),
         ORIENTATIONS: {
@@ -103,6 +105,11 @@ describe('PlayerPage', () => {
     const mockprofileService: Partial<ProfileService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
+    const mockFile: Partial<File> = {
+        checkDir: jest.fn(),
+        checkFile: jest.fn(),
+        createDir: jest.fn()
+    };
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
@@ -127,7 +134,8 @@ describe('PlayerPage', () => {
             mockFileOpener as FileOpener,
             mockTransfer as FileTransfer,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockprintPdfService as PrintPdfService
+            mockprintPdfService as PrintPdfService,
+            mockFile as File
         );
     });
 
