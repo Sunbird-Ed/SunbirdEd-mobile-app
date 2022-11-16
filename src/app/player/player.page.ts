@@ -87,7 +87,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
     private file: File,
-    private fileTransfer: FileTransfer
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -377,7 +376,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     const fileUri = content.contentData.downloadUrl;
     const fileName = content.name;
     setTimeout(() => {
-      const transfer = this.fileTransfer.create();
+      const transfer = this.transfer.create();
       transfer.download(fileUri, path + 'downloads/' + fileName + '.pdf').then(entry => {
         this.commonUtilService.showToast('CONTENT_DOWNLOADED');
       }).catch(err => {
