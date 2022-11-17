@@ -10,7 +10,7 @@ import {
 import { MenuController, Platform, PopoverController } from "@ionic/angular";
 import { ActivePageService, AppGlobalService, AppHeaderService, CommonUtilService, CorReleationDataType, Environment, ID, InteractSubtype, InteractType, NotificationService, PageId, TelemetryGeneratorService, UtilityService } from "../../../services";
 import { Events } from "../../../../src/util/events";
-import { ChangeDetectorRef, EventEmitter, NgZone } from "@angular/core";
+import { ChangeDetectorRef, ElementRef, EventEmitter, NgZone, Renderer2 } from "@angular/core";
 import { NavigationExtras, Router } from "@angular/router";
 import { AppVersion } from "@ionic-native/app-version/ngx";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
@@ -59,11 +59,11 @@ describe('ApplicationHeaderComponent', () => {
         isAccessibleForNonStudentRole: jest.fn()
     };
     const mockEvents: Partial<Events> = {
-        subscribe: jest.fn((_, fn) => fn(param)),
+        subscribe: jest.fn((_, fn) => fn()),
         publish: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        isUserLoggedIn: jest.fn(() => true),
+        isUserLoggedIn: jest.fn(),
         getGuestUserType: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {
@@ -116,7 +116,20 @@ describe('ApplicationHeaderComponent', () => {
         feeds: [
             {name: 'name', status: 'unread'}
         ]
-    } as any
+    } as any;
+    const mockRenderer: Partial<Renderer2> = {
+        setAttribute: jest.fn(() => {}),
+        removeAttribute: jest.fn(() => {})
+    };
+    const increaseFontSize: Partial<ElementRef> = {
+        nativeElement: jest.fn(() => {})
+    };
+    const decreaseFontSize: Partial<ElementRef> = {
+        nativeElement: jest.fn(() => {})
+    };
+    const resetFontSize: Partial<ElementRef> = {
+        nativeElement: jest.fn(() => {})
+    };
 
     beforeAll(() => {
         applicationHeaderComponent = new ApplicationHeaderComponent(
@@ -141,7 +154,8 @@ describe('ApplicationHeaderComponent', () => {
             mockActivePageService as ActivePageService,
             mockPopoverCtrl as PopoverController,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
-            mockAppHeaderService as AppHeaderService
+            mockAppHeaderService as AppHeaderService,
+            mockRenderer as Renderer2
         );
     });
 
@@ -152,28 +166,68 @@ describe('ApplicationHeaderComponent', () => {
     it('should create instance of application header component', () => {
         expect(applicationHeaderComponent).toBeTruthy();
     });
-    it('should check the orientation on chnage tp landscape', () => {
-        mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'orientation') {
-                fn(() => {mockSharedPreference.getString = jest.fn(() => of('Potrait'))});
-            }
+
+    describe('checkCurrentOrientation', ()=> {
+        it('should check the orientation on chnage tp landscape', () => {
+            mockSharedPreference.getString = jest.fn(() => of('Potrait'));
+            applicationHeaderComponent.orientationToSwitch = AppOrientation.LANDSCAPE;
+            applicationHeaderComponent = new ApplicationHeaderComponent(
+                mockSharedPreference as SharedPreferences,
+                mockDownloadService as DownloadService,
+                mockPushNotificationService as PushNotificationService,
+                mockEventsBusService as EventsBusService,
+                mockProfileService as ProfileService,
+                mockMenuController as MenuController,
+                mockCommonUtilService as CommonUtilService,
+                mockEvents as Events,
+                mockAppGlobalService as AppGlobalService,
+                mockAppVersion as AppVersion,
+                mockUtilityService as UtilityService,
+                mockChangeDetectionRef as ChangeDetectorRef,
+                mockNotification as NotificationService,
+                mockTranslate as TranslateService,
+                mockPlatform as Platform,
+                mockRouter as Router,
+                mockNgZone as NgZone,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockActivePageService as ActivePageService,
+                mockPopoverCtrl as PopoverController,
+                mockTncUpdateHandlerService as TncUpdateHandlerService,
+                mockAppHeaderService as AppHeaderService,
+                mockRenderer as Renderer2
+            );
         });
-        applicationHeaderComponent.orientationToSwitch = AppOrientation.LANDSCAPE;
-        setTimeout(() => {
-            expect(mockEvents.subscribe).toHaveBeenCalled();
-        }, 0);
-    });
-    it('should check the orientation on change to potrait', () => {
-        mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'orientation') {
-                fn(() => {mockSharedPreference.getString = jest.fn(() => of('Landscape'))});
-            }
+        it('should check the orientation on change to potrait', () => {
+            mockSharedPreference.getString = jest.fn(() => of('Landscape'));
+            applicationHeaderComponent.orientationToSwitch = AppOrientation.PORTRAIT;
+            applicationHeaderComponent = new ApplicationHeaderComponent(
+                mockSharedPreference as SharedPreferences,
+                mockDownloadService as DownloadService,
+                mockPushNotificationService as PushNotificationService,
+                mockEventsBusService as EventsBusService,
+                mockProfileService as ProfileService,
+                mockMenuController as MenuController,
+                mockCommonUtilService as CommonUtilService,
+                mockEvents as Events,
+                mockAppGlobalService as AppGlobalService,
+                mockAppVersion as AppVersion,
+                mockUtilityService as UtilityService,
+                mockChangeDetectionRef as ChangeDetectorRef,
+                mockNotification as NotificationService,
+                mockTranslate as TranslateService,
+                mockPlatform as Platform,
+                mockRouter as Router,
+                mockNgZone as NgZone,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockActivePageService as ActivePageService,
+                mockPopoverCtrl as PopoverController,
+                mockTncUpdateHandlerService as TncUpdateHandlerService,
+                mockAppHeaderService as AppHeaderService,
+                mockRenderer as Renderer2
+            );
         });
-        applicationHeaderComponent.orientationToSwitch = AppOrientation.POTRAIT;
-        setTimeout(() => {
-            expect(mockEvents.subscribe).toHaveBeenCalled();
-        }, 0);
-    });
+    })
+
     describe('onInit', () => {
         it('should check for app update when returns true', (done) => {
             // arrange
@@ -687,7 +741,6 @@ describe('ApplicationHeaderComponent', () => {
             mockEvents.publish = jest.fn();
             mockMenuController.close = jest.fn(() => Promise.resolve(true));
             mockTncUpdateHandlerService.checkForTncUpdate = jest.fn();
-            // jest.spyOn(applicationHeaderComponent, 'showSwitchSuccessPopup').mockImplementation();
             mockSharedPreference.putString = jest.fn(() => of());
             // act
             applicationHeaderComponent.switchUser(user);
@@ -954,6 +1007,164 @@ describe('ApplicationHeaderComponent', () => {
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.SIGN_IN}`]);
             }, 0)
+        })
+    });
+
+    describe('ngAfterViewInit', () => {
+        it('should reset the value on after view init ', () => {
+            // arrange
+            applicationHeaderComponent.decreaseFontSize = {
+                nativeElement: {'aria-passed': true}
+            }
+            applicationHeaderComponent.increaseFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            applicationHeaderComponent.resetFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            // act
+            applicationHeaderComponent.ngAfterViewInit();
+            // assert
+            setTimeout(() => {
+                expect(applicationHeaderComponent.changeFontSize).toHaveBeenCalledWith('reset');
+            }, 0);
+        })
+    })
+
+    describe('changeFontSize', () => {
+        it('font size accessibile on increase', () => {
+            // arrange
+            const value = 'increase';
+            window.getComputedStyle(document.documentElement).getPropertyValue('font-size');
+            const localFontSize = localStorage.getItem('fontSize');
+            const currentFontSize = 20;
+            // applicationHeaderComponent.fontSize = 20;
+            applicationHeaderComponent.increaseFontSize = {
+                nativeElement: {'aria-passed': true}
+            }
+            applicationHeaderComponent.decreaseFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            applicationHeaderComponent.resetFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            // act
+            applicationHeaderComponent.changeFontSize(value);
+            // assert
+            setTimeout(() => {
+                expect(currentFontSize).toBeLessThanOrEqual(20);
+                expect(applicationHeaderComponent.setLocalFontSize).toHaveBeenCalledWith();
+            });
+        });
+        it('font size accessibile on decrease', () => {
+            // arrange
+            const value = 'decrease';
+            localStorage.getItem = jest.fn();
+            window.getComputedStyle(document.documentElement).getPropertyValue('font-size');
+            applicationHeaderComponent.decreaseFontSize = {
+                nativeElement: {'aria-passed': true}
+            }
+            applicationHeaderComponent.increaseFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            applicationHeaderComponent.resetFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            // act
+            applicationHeaderComponent.changeFontSize(value);
+            // assert
+            setTimeout(() => {
+                expect(applicationHeaderComponent.fontSize).toBeGreaterThanOrEqual(12);
+                expect(applicationHeaderComponent.setLocalFontSize).toHaveBeenCalledWith();
+            })
+        });
+        it('font size accessibile on reset to default', () => {
+            // arrange
+            localStorage.getItem = jest.fn();
+            applicationHeaderComponent.increaseFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            applicationHeaderComponent.decreaseFontSize = {
+                nativeElement: {'aria-passed': false}
+            }
+            applicationHeaderComponent.resetFontSize = {
+                nativeElement: {'aria-passed': true}
+            }
+            // act
+            applicationHeaderComponent.changeFontSize('reset');
+            // assert
+            setTimeout(() => {
+                expect(applicationHeaderComponent.setLocalFontSize).toHaveBeenCalled();
+            })
+        })
+    });
+
+    describe('setLocalFontSize', () => {
+        it('set font size to local', () => {
+            // arrange
+            const value = 12;
+            document.documentElement.style.setProperty('font-size', value + 'px', 'important');
+            // act
+            applicationHeaderComponent.setLocalFontSize(12);
+            // assert
+            setTimeout(() => {
+                expect(localStorage.setItem).toHaveBeenCalledWith('font-size', value);
+            })
+        })
+    });
+
+    describe('isDisableFontSize', () => {
+        it('set disable on max font size', () => {
+            // arrange
+            const val = 20;
+            // act
+            applicationHeaderComponent.isDisableFontSize(val);
+            // assert
+            setTimeout(() => {
+                expect(mockRenderer.setAttribute).toHaveBeenCalledWith(increaseFontSize.nativeElement, 'disabled', true);
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(decreaseFontSize.nativeElement, 'disabled');
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(resetFontSize.nativeElement, 'disabled');
+            }, 0);
+        })
+        it('set disable on min font size', () => {
+            // arrange
+            const val = 12;
+            // act
+            applicationHeaderComponent.isDisableFontSize(val);
+            // assert
+            setTimeout(() => {
+                expect(mockRenderer.setAttribute).toHaveBeenCalledWith(decreaseFontSize.nativeElement, 'disabled', true);
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(increaseFontSize.nativeElement, 'disabled');
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(resetFontSize.nativeElement, 'disabled');
+            }, 0);
+        })
+        it('set disable on default font size', () => {
+            // arrange
+            const val = 16;
+            // act
+            applicationHeaderComponent.isDisableFontSize(val);
+            // assert
+            setTimeout(() => {
+                expect(mockRenderer.setAttribute).toHaveBeenCalledWith(resetFontSize.nativeElement, 'disabled', true);
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(increaseFontSize.nativeElement, 'disabled');
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(decreaseFontSize.nativeElement, 'disabled');
+            }, 0);
+        })
+        it('set disable on other font size', () => {
+            // arrange
+            mockRenderer.removeAttribute = jest.fn(() => {
+                increaseFontSize.nativeElement = { disabled: false }
+                decreaseFontSize.nativeElement = { disabled: false }
+                resetFontSize.nativeElement = { disabled: false }
+            })
+            // act
+            applicationHeaderComponent.isDisableFontSize('');
+            // assert
+            setTimeout(() => {
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(increaseFontSize.nativeElement, 'disabled');
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(decreaseFontSize.nativeElement, 'disabled');
+                expect(mockRenderer.removeAttribute).toHaveBeenCalledWith(resetFontSize.nativeElement, 'disabled');
+            }, 0);
         })
     });
 })

@@ -35,7 +35,7 @@
 
     <!-- for question and criteria filter modal/ only show when report is present -->
     <div *ngIf="filter.filter.type == 'modal' && !error" class="d-flex flex-jc-flex-end py-10">
-      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin>
+      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin class="custom-btn-txt-transform-none">
         <ion-icon name="options"></ion-icon>
         {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
       </ion-button>
@@ -86,6 +86,9 @@
         <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'bar'"></bar-chart>
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
       </ion-card>
+      <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadMoreReports(element,section?.questionArray,i+1)"   *ngIf="element?.answers?.length && element?.count > element?.answers?.length">
+        {{ "VIEW_MORE" | translate }}
+      </ion-button>
       <ion-grid>
         <ion-row>
           <ion-col size="4" *ngFor="let e of element.evidences">
@@ -108,7 +111,7 @@
     {{ error?.message }}
   </div>
   <div class="_flex-box _justify-content-center" *ngIf="data?.improvementProjectSuggestions && data?.improvementProjectSuggestions.length ">
-    <ion-button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
+    <ion-button ion-button round class="custom-btn-txt-transform-none viewReportBtn" (click)="goToImpSugg()">
       {{'FRMELEMNTS_CLICK_TO_IMPROVE' | translate}}
     </ion-button>
   </div>

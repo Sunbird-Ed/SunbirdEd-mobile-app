@@ -109,7 +109,7 @@ export class AttachmentListingPage implements OnInit {
       if(this.project.attachments && this.project.attachments.length){
         this.getEvidences(this.project.attachments, evidence);
       }
-      if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+      if ((this.type && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
       }
     }
@@ -124,7 +124,7 @@ export class AttachmentListingPage implements OnInit {
           if (task.attachments && task.attachments.length) {
             this.getEvidences(task.attachments, evidence);
           }
-          if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+          if ((this.type  && evidence.remarks) || evidence.attachments.length) {
             this.attachments.tasks.push(evidence);
           }
         }
@@ -160,7 +160,11 @@ export class AttachmentListingPage implements OnInit {
   }
 
   viewDocument(attachment) {
-    if (attachment.url) {
+    if(attachment.type == 'link'){
+      const options
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+    (window as any).cordova.InAppBrowser.open(attachment.name, '_blank', options)
+    }else if (attachment.url) {
       this.downloadFile(attachment);
     } else {
       this.openFile(attachment);
@@ -230,6 +234,7 @@ export class AttachmentListingPage implements OnInit {
     this.getAttachments();
   }
   attachmentAction(event) {
+    console.log(event,"event");
     if (event.action == 'delete') {
       this.deleteConfirmation(event.attachment);
     } else if (event.action == 'view') {

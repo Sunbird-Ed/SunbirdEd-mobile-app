@@ -42,8 +42,8 @@
 }
 
 .custom-loader-class{
-  --height:50px;
-  --width:50px;
+  --height:3.13rem;
+  --width:3.13rem;
 }
 
 .custom-loader-message-class {
@@ -54,7 +54,7 @@
 
 .sb-course-container .header .title {
   color: #000000 !important;
-  font-size: 18px !important;
+  font-size: 1.125rem !important;
 }
 
 .text-transform-free{
@@ -77,7 +77,7 @@
   }
   .my-discussion{
     .topic-list-container{
-      height: 300px !important;
+      height: 18.75rem !important;
     }
   }
   .discuss-details-content{
@@ -107,7 +107,7 @@
 
 .video-js {
   height: 100% !important;
-  padding-top: inherit !important;
+  padding-top: 0 !important;
 }
 
 // dashlet
@@ -209,4 +209,18 @@ sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
 }
 .ion-text-none{
   text-transform: none;
+}
+
+.sb-popover .sb-popover-footer .sb-popover-action-btn {
+  height: 3rem;
+}
+.certificate-tag{
+  background-color: var(--app-primary-header) !important;
+  padding: 2px 15px;
+  color: #000;
+  text-transform: uppercase;
+  font-size: 0.813rem !important;
+  border-radius: 4px;
+  font-weight: 500;
+  align-self: flex-start;
 }

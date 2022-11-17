@@ -62,7 +62,7 @@ export class FilterModalComponent implements OnInit {
       url:
         urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
         // this.entityId +
-        `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
+        `?search=${encodeURIComponent(searchText)}&page=${this.page}&limit=${this.limit}`,
       payload: payload,
     };
     this.unnatiSrvc.post(config).subscribe(

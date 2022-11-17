@@ -1,6 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 .filter-style {
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: bold;
   color: var(--app-gray);
   white-space: nowrap;
@@ -12,13 +12,13 @@
 
 .user-profile {
   padding: 0.5rem 1.5rem 0;
-  font-size: 3.2vh;
+  font-size: 1.188rem;
   color: var(--app-gray);
   .welcome-text{
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .user-name-text{
-    font-size: 22px;
+    font-size: 1.375rem;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -36,7 +36,7 @@
 .preference-container {
   margin: 0 1rem;
   padding: 0 .5rem;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--app-gray);
   .user-preference {
     display: flex;
@@ -50,7 +50,7 @@
       button{
         float: right;
         color: var(--app-primary);
-        height: 24px !important;
+        height: 1.5rem !important;
       }
     }
   }
@@ -63,8 +63,8 @@
 .sb-card-recently-container {
   .recently-viewed-card-size{
     margin: 0 8px; 
-    min-width:288px;
-    max-width:288px;
+    min-width:18rem;
+    max-width:18rem;
     &:only-child {
       min-width: 100%;
       max-width: calc(100vw - 32px);

@@ -5,14 +5,14 @@
         "solution": {
             "_id": "5fe45212b4eacd03141f89d2",
             "externalId": "849f72ec-45c2-11eb-ade0-0adfd2b35fc6-1608798738561",
-            "name": "Survey of Diksha awareness - Test",
-            "description": "The survey is to understand if parents have been able to enroll child into diksha courses and the challenges if not.",
+            "name": "Survey of Sunbird awareness - Test",
+            "description": "The survey is to understand if parents have been able to enroll child into sunbird courses and the challenges if not.",
             "captureGpsLocationAtQuestionLevel": false,
             "enableQuestionReadOut": false
         },
         "assessment": {
-            "name": "Survey of Diksha awareness - Test",
-            "description": "The survey is to understand if parents have been able to enroll child into diksha courses and the challenges if not.",
+            "name": "Survey of Sunbird awareness - Test",
+            "description": "The survey is to understand if parents have been able to enroll child into sunbird courses and the challenges if not.",
             "externalId": "849f72ec-45c2-11eb-ade0-0adfd2b35fc6-1608798738561",
             "submissionId": "5fe45777c567d70331fc46b6",
             "evidences": [{
@@ -382,7 +382,7 @@
                             "file": ""
                         }, {
                             "_id": "5fe45212b4eacd03141f89ce",
-                            "question": ["Were you able to enroll your child in courses on Diksha?", ""],
+                            "question": ["Were you able to enroll your child in courses on Sunbird?", ""],
                             "isCompleted": false,
                             "showRemarks": false,
                             "options": [{
@@ -449,7 +449,7 @@
                                 "label": "Not able to use the app"
                             }, {
                                 "value": "R2",
-                                "label": "Not aware of classrooms on DIKSHA"
+                                "label": "Not aware of classrooms on SUNBIRD"
                             }, {
                                 "value": "R3",
                                 "label": "Not aware of the enrolment process in the classroom"

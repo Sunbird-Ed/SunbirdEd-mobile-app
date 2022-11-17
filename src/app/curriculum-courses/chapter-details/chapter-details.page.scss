@@ -10,17 +10,17 @@
     }
     .cd-header-title {
         color: map-get($colors, gray_3A);
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: bold;
     }
 
     .cd-of-menu{
         position: absolute;
-        top: 16px;
-        right: 16px;
+        top: 1rem;
+        right: 1rem;
         .cd-menu-icon{
-            height: 16px;
-            width: 20px;
+            height: 1rem;
+            width: 1.25rem;
             margin: 8px 8px 8px 16px;
         }
     }
@@ -32,7 +32,7 @@
         width: auto;
 
         .progress-label {
-            font-size: 10px !important;
+            font-size: 0.625rem !important;
             color: map-get($colors, primary_black);
             font-weight: bold;
         }
@@ -40,7 +40,7 @@
 
     .cd-unblock-text {
         color: map-get($colors, gray_3A);
-        font-size: 10px;
+        font-size: 0.625rem;
         padding: 8px 0px;
     }
 
@@ -49,7 +49,7 @@
         border: 1px solid $green;
         color: white;
         display: inline-block;
-        font-size: 16px;
+        font-size: 1rem;
         cursor: pointer;
         outline: none;
         width: 100%;
@@ -67,18 +67,18 @@
 
     .cd-container-title {
         color: map-get($colors, gray_3A);
-        font-size: 18px;
+        font-size: 1.125rem;
         font-weight: bold;
     }
 
     .cd-container-progress {
         color: map-get($colors, granite_gray);
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 
     .cd-container-sub-title {
         color: map-get($colors, gray_3A);
-        font-size: 14px;
+        font-size: $font-size-base;
     }
 }
 
@@ -95,5 +95,5 @@
 
 .cd-label {
     color: map-get($colors, granite_gray);
-    font-size: 10px;
+    font-size: 0.625rem;
 }

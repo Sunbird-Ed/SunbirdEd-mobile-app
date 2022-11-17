@@ -4,8 +4,8 @@
 @import "src/assets/styles/_variables.scss";
 
 ion-icon {
-    width: 32px;
-    height: 30px;
+    width: 2rem;
+    height: 1.88rem;
     color: $primary-color;
 }
 .z-index-0 {
@@ -19,7 +19,7 @@ ion-icon {
 }
 
 .sb-menu-list > ion-item {
-    padding: 3px 0;
+    padding: 0.188rem 0;
 }
 
 .new-feature-badge{
@@ -27,9 +27,9 @@ ion-icon {
     margin-left: 8px;
     background-color: map-get($colors, bright_red);
     background-color: #B30012;
-    font-size: 8px;
+    font-size: 0.5rem;
     font-weight: bold;
-    height: 12px;
+    height: 0.75rem;
     display: inline-flex;
     .square-badge{
         padding: 1px 6px;
@@ -41,8 +41,8 @@ ion-icon {
         border: 1px solid map-get($colors, white);
         border-radius: 16px 0 0 16px;
         background-color: map-get($colors, white);
-        height: 12px;
-        width: 16px;
+        height: 0.75rem;
+        width: 1rem;
     }
 }
 
@@ -53,9 +53,9 @@ ion-icon {
     .use-app-label{
         color: map-get($colors, granite_gray);
         font-family: "Noto Sans", serif;
-        font-size: 14px;
+        font-size: $font-size-base;
         letter-spacing: 0;
-        line-height: 14px;
+        line-height: 0.875rem;
         margin: 8px 8px 0;
     }
 
@@ -73,20 +73,20 @@ ion-icon {
     background-color: map-get($colors, light_grayish_green);
     color: $green;
     font-family: "Noto Sans", serif;
-    font-size: 16px;
+    font-size: 1rem;
     letter-spacing: 0;
-    line-height: 16px;
+    line-height: 1rem;
     padding: 12px 16px;
 }
 
 .add-sign{
-    font-size: 24px;
+    font-size: 1.5rem;
     padding: 0 4px ;
 }
 
 .sb-menu-item-switch{
     position: relative;
-    top: 5px;
+    top: 0.313rem;
 }
 .badge-container{
     position: absolute;
@@ -94,7 +94,7 @@ ion-icon {
     left: 0.2rem;
     background: var(--app-tertiary);
     color: white;
-    font-size: 9px;
+    font-size: 0.563rem;
     padding-bottom: 3px;
     border-radius: 6px;
 }
@@ -111,12 +111,12 @@ ion-icon {
 }
   // Modified CSS for on/off switch
   .onoffswitch {
-      position: relative; 
-      width: 41px;
-      margin-left: 8px;
-    font-size: 8px;
+    position: relative;
+    width: 2.563rem;
+    margin-left: 8px;
+    font-size: 0.5rem;
     font-weight: 700;
-      -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
   }
   
   .onoffswitch-checkbox {
@@ -139,8 +139,8 @@ ion-icon {
   }
   
   .onoffswitch-inner:before, .onoffswitch-inner:after {
-      float: left; width: 50%; height: 15px; padding: 0; line-height: 15px;
-      font-size: 8px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+      float: left; width: 50%; height: 0.938rem; padding: 0; line-height: 0.938rem;
+      font-size: 0.5rem; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
       -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
   }
   
@@ -158,11 +158,11 @@ ion-icon {
   }
   
   .onoffswitch-switch {
-      width: 13px; margin: 1px;
-      height: 16px;
+      width: 0.813rem; margin: 1px;
+      height: 1rem;
       background: #fff!important;
       border: 1px solid #fff; border-radius: 20px;
-      position: absolute; top: -0.5px; bottom: 0; right: 26px;
+      position: absolute; top: -0.031rem; bottom: 0; right: 1.625rem;
       -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
       -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
   }
@@ -175,6 +175,6 @@ ion-icon {
       right: 0px; 
   }
   .dark-mode-icon{
-      height: 36px !important;
+      height: 2.25rem !important;
   }
   

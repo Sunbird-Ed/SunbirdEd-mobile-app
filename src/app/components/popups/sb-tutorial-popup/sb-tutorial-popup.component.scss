@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
 img.arrow-icon{
   display: inline-block;
-  width: 22px;
+  width: 1.375rem;
   margin-top: -3px;
   &.animate {
     position: relative;
@@ -27,13 +27,13 @@ img.arrow-icon{
   display: inline-block;
   float: right;
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -0.625rem;
+  right: -0.625rem;
 }
 
 #details-text {
-  font-size: 14px;
-  line-height: 19px;
+  font-size: $font-size-base;
+  line-height: 1.188rem;
   text-align: center;
   color: map-get($colors, primary_black);
 }

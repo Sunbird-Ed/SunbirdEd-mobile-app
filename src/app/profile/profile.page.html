@@ -61,37 +61,37 @@
             <span>{{profile?.subPersona.join(', ')}}</span>
         </div>
     </div>
+    <div *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">
+        <span class="bolder">{{'STATE' | translate}}: </span>
+        <span>{{userLocation.state.name}}</span>
+        <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
+            class="lighter">{{'ADD_STATE' | translate}}</span>
+    </div>
+    <div *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">
+        <span class="bolder">{{'DISTRICT' | translate}}: </span>
+        <span>{{userLocation.district.name}}</span>
+        <span
+            *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
+            class="lighter">{{'ADD_DISTRICT' | translate}}</span>
+    </div>
+    <div *ngIf="userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length">
+        <span class="bolder">{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
+        <span>{{userLocation.block.name}}</span>
+        <span *ngIf="!(userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length)"
+            class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
+    </div>
+    <div *ngIf="userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length">
+        <span class="bolder">{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
+        <span>{{userLocation.cluster.name}}</span>
+        <span *ngIf="!(userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length)"
+            class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
+    </div>
     <div *ngIf="userLocation" class="location text-center">
         <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
-            <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
+            <span  class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
             <span>{{userLocation.school.name}}</span>
             <span *ngIf="!(userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length)"
                 class="lighter">{{'FRMELEMNTS_LBL_ADD_SCHOOL' | translate}}</span>
-        </div>
-        <div *ngIf="userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length">
-            <span class="bolder">{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
-            <span>{{userLocation.cluster.name}}</span>
-            <span *ngIf="!(userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length)"
-                class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
-        </div>
-        <div *ngIf="userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length">
-            <span class="bolder">{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
-            <span>{{userLocation.block.name}}</span>
-            <span *ngIf="!(userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length)"
-                class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
-        </div>
-        <div *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">
-            <span class="bolder">{{'DISTRICT' | translate}}: </span>
-            <span>{{userLocation.district.name}}</span>
-            <span
-                *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
-                class="lighter">{{'ADD_DISTRICT' | translate}}</span>
-        </div>
-        <div *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">
-            <span class="bolder">{{'STATE' | translate}}: </span>
-            <span>{{userLocation.state.name}}</span>
-            <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
-                class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
             <ion-button shape="round" aria-label="Edit Role, Block, District, State"  (click)="onEditProfileClicked()"
@@ -103,23 +103,23 @@
     </div>
     <div class="framework-block" *ngIf="profile?.framework">
         <div class="container" *ngIf="profile?.framework?.board">
-            <div>{{'BOARD' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
+            <span>{{'BOARD' | translate }}: </span>
+            <span class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</span>
         </div>
         <div class="container" *ngIf="profile?.framework?.medium">
-            <div>{{'MEDIUM' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.medium.join(', ')}}</div>
+            <span>{{'MEDIUM' | translate }}: </span>
+            <span class="bolder">{{profile?.framework?.medium.join(', ')}}</span>
         </div>
         <div class="container" *ngIf="profile?.framework?.gradeLevel">
-            <div>{{'CLASSES' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</div>
+            <span>{{'CLASSES' | translate }}: </span>
+            <span class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</span>
         </div>
         <div class="container" *ngIf="profile?.framework?.subject">
-            <div>{{'SUBJECTS' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
+            <span>{{'SUBJECTS' | translate }}: </span>
+            <span class="bolder">{{profile?.framework?.subject.join(', ')}}</span>
         </div>
         <div class="container">
-            <ion-button shape="round" aria-label="Edit Board, Medium, Classes, subjects" (click)="navigateToCategoriesEditPage()" class="custom-round">
+            <ion-button shape="round" aria-label="Edit Board, Medium, Classes, subjects" (click)="navigateToCategoriesEditPage()" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
         </div>
@@ -181,7 +181,7 @@
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
-                <span class="value align-middle">{{'ADD_RECOVERY_ACCOUNT' | translate}}</span>
+                <span class="value align-middle">{{'ADD_RECOVERY_ID' | translate}}</span>
             </div>
         </div>
     </div>
@@ -229,8 +229,8 @@
                     (click)="getEnrolledCourses(true, true)"></ion-icon></span>
             </div>
             <div class="content">
-                <div class="flex-nowrap"
-                    *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
+                <div *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc'; let i = index;"
+                    [ngClass]="{'flex-nowrap': i !== mappedTrainingCertificates.length-1, 'flex-nowrap-last': i == mappedTrainingCertificates.length-1}">
                     <div class="training-1">
                         <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(training)">
                             {{training.courseName}}
@@ -274,8 +274,8 @@
                 <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>
             </div>
             <div class="content">
-                <div class="flex-nowrap"
-                    *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc';">
+                <div *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc'; let i = index;"
+                    [ngClass]="{'flex-nowrap': i !== learnerPassbook.length-1, 'flex-nowrap-last': i == learnerPassbook.length-1}">
                     <div class="training-1">
                         <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
@@ -318,7 +318,7 @@
                     <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
                         <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
                             (click)="navigateToDetailPage(courseItem, layoutPopular, i);"
-                            style="min-width: 84%;height: 165px;">
+                            style="min-width: 84%;height: 10.313rem;">
                             <ion-card-content>
                                 <ion-row class="top">
                                     <ion-col size="3" class="img-container">

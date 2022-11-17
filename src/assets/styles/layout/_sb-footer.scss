@@ -234,8 +234,8 @@
 .tabs-md .tab-button:nth-child(3) .tab-button-icon,
 .tabs-ios .tab-button:nth-child(3) .tab-button-icon {
   background: $primary-color;
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -245,28 +245,28 @@
 }
 
 .tabs-md[tabsLayout="icon-top"] .has-icon .tab-button-text {
-  font-size: 10px;
+  font-size: 0.625rem;
   text-align: center;
   @include margin(0, null, null, null);
   font-weight: normal;
   text-transform: capitalize;
-  line-height: 20px;
+  line-height: 1.25rem;
 }
 
 .tabs-md .tab-button[aria-selected="true"],
 .tabs-md .tab-button[aria-selected="false"] {
   .tab-button-icon {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .has-icon .tab-button-text {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 
 .tabs-md .tab-button[aria-selected="true"],
 .tabs-md .tab-button[aria-selected="false"] {
   .tab-button-icon:not(.ion-md-qrscanner) {
-    font-size: 20px;
+    font-size: 1.25rem;
     margin-top: 8px;
     // height:20px;
   }

@@ -3,7 +3,7 @@
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'"
     [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier] && (content.mimeType === 'video/mp4' || content.mimeType === 'video/webm'), '': !contentDownloadable[content?.identifier]}">
     <div *ngIf="contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content | imageContent" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -28,14 +28,14 @@
         </div>
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" role="button" name="play" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
       </div>
     </div>
     <div *ngIf="!contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content| imageContent" alt="">
       <div class="sb-overlay-container">
         <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
         (click)="handleNavBackButton();$event.stopPropagation()">
@@ -63,7 +63,7 @@
         <div class="sb-common-player-group sb-play-title-group"
           *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(true)">
-            <img src="assets/imgs/play_circle.svg" role="button" name="play" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -77,7 +77,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType === 'sunbird-video-player'" 
+  <div *ngIf="playerType === 'sunbird-video-player'"
   class="sb-play-container sb-player-container standalone-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
     <div class="sb-overlay-container">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
@@ -86,14 +86,14 @@
         </div>
       </div>
     </div>
-    <div *ngIf="playerType === 'sunbird-video-player'"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
+    <div *ngIf="playerType === 'sunbird-video-player' && config"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
       <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
         (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
     </div>
   </div>
-  <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
+  <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'">
     <div class="sb-play-container sb-player-container" *ngIf="contentDownloadable[content?.identifier] && playerType !== 'sunbird-video-player'">
-      <img class="sb-player-container" [src]="getImageContent()" alt="">
+      <img class="sb-player-container" [src]="content | imageContent" alt="">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -120,7 +120,7 @@
 
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" role="button" name="play" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -136,7 +136,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="playerType === 'sunbird-video-player'" [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}"
+      <div *ngIf="playerType === 'sunbird-video-player' && config" [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}"
         data-ratio="16:9" #aspectRatio>
         <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
           (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
@@ -167,7 +167,7 @@
           <div *ngIf="content && !this.limitedShareContentFlag">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
-              [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only
+              [disabled]="isDownloadStarted || (isContentDownloading$ | async) || content.mimeType === 'video/webm'" fill="clear" icon-only
               class="sb-btn-tile">
               <img src="assets/imgs/outline_download.svg" alt="download content" class="mb-4">
               <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
@@ -219,6 +219,13 @@
           <strong>{{'CONTENT_RELEVANT_MSG' | translate }}</strong>
           <span class="sb-content-title-data">{{content?.contentData?.audience}}</span>
         </ion-card-title>
+      </div>
+
+      <div *ngIf="content?.contentData?.transcripts" (click)="showDownloadTranscript()" class="transcript-download audience-info">
+        <strong>{{ 'DOWNLOAD_TRANSCRIPT' | translate}}</strong>
+        <span>
+          <img src="./assets/imgs/download-icon.svg" alt="download">
+        </span>
       </div>
 
       <ion-card class="sb-content-info-card"

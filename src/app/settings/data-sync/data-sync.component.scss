@@ -1,12 +1,13 @@
 @import "src/assets/styles/_variables.scss";
 
 .label {
-    font-size: 15px;
+    font-size: 0.938rem;
 }
 
 .ds-m0 {
     margin-top: 0px !important;
     margin-bottom: 0px !important;
+    font-size: 1rem;
 }
 
 .ds-item{
@@ -15,7 +16,7 @@
 
 hr {
     -webkit-margin-before: 16px;
-    height: 2px;
+    height: 0.125rem;
     border-width: 0;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
@@ -29,6 +30,15 @@ hr {
 
 .item-radio input[type="radio"] {
     display: none;
+}
+
+ion-radio {
+    width: 3rem;
+    height: 3rem;
+}
+
+.btn {
+    font-size: 0.875rem;
 }
 
 .item-md {

@@ -23,6 +23,7 @@ import { PageId, Environment, InteractType, InteractSubtype } from '@app/service
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '@app/services';
 
 @Component({
   selector: 'app-guest-profile',
@@ -64,7 +65,8 @@ export class GuestProfilePage implements OnInit {
     private router: Router,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
-    public platform: Platform
+    public platform: Platform,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
   async ngOnInit() {
@@ -90,7 +92,8 @@ export class GuestProfilePage implements OnInit {
 
     this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes();
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, rootOrgId);
   }
 
   ionViewWillEnter() {
@@ -145,8 +148,9 @@ export class GuestProfilePage implements OnInit {
         this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
         this.refreshSignInCard();
-        this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType);
-        const supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
+        const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+        this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType,rootOrgId);
+        const supportedUserTypes = await this.profileHandler.getSupportedUserTypes(rootOrgId);
         this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
@@ -160,9 +164,8 @@ export class GuestProfilePage implements OnInit {
   refreshSignInCard() {
     const profileType = this.appGlobalService.getGuestUserType();
 
-    if ((this.commonUtilService.isAccessibleForNonStudentRole(profileType)
-      && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
-      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) { 
+    if (this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
+      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT) {
       this.showSignInCard = true;
     } else {
       this.showSignInCard = false;

@@ -1,11 +1,13 @@
 @import "../../../../assets/styles/base/variables";
 .create_header ::ng-deep .title.w-90 {
     color:black;
+    font-weight: bold;
+    font-size: 16px;
   }
   .remove-icon{
     margin-top: -10px;
     margin-left: -10px;
-    font-size: 15px;
+    font-size: 0.938rem;
     margin-right: 10px;
   } 
   .task-board{
@@ -20,7 +22,7 @@
 
 .label-text{
   font-weight: bold;
-  font-size: 17px;
+  font-size: 1.063rem;
   color:$primary-color;
 } 
 

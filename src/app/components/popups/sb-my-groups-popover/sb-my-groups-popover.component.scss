@@ -1,6 +1,6 @@
 img.arrow-icon{
     display: inline-block;
-    width: 22px;
+    width: 1.375rem;
     margin-top: -3px;
     &.animate {
       position: relative;
@@ -29,8 +29,10 @@ img.arrow-icon{
     display: inline-block;
     float: right;
     position: absolute;
-    top: -10px;
-    right: -10px;
+    top: -0.825rem;
+    right: -0.825rem;
+    width: 2rem !important;
+    height: 2rem !important
   }
   #main-content {
     height: calc(100vh - 52px);

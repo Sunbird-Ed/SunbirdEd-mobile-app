@@ -2,7 +2,7 @@
   <ion-toolbar position="bottom">
     <ion-row>
       <ion-col>
-        <ion-button icon-start color="light" (click)="enableGps ? gpsFlowChecks('back') :back()"
+        <ion-button icon-start color="light" (click)="enableGps ? gpsFlowChecks('back') :back()" class="custom-btn-txt-transform-none"
           *ngIf="!isFirst">
           <ion-icon role="button" aria-label="back" name="arrow-back" color="primary"></ion-icon>{{'FRMELEMENTS_BTN_BACK'| translate}}
         </ion-button>
@@ -10,22 +10,27 @@
       <ion-col style=" margin: auto;">
         <!-- {{completedQuestionCount}} {{questionCount}} -->
         <progress-bar [progress]="percentage" [total]="questionCount" [showTracker]="true"
-          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount && !showStartButton">
+          [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount && !showStartButton && !viewOnly">
         </progress-bar>
-        <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_BTN_SUBMIT'| translate}}
+        <ion-button  round small class="custom-btn-txt-transform-none " *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_BTN_SUBMIT'| translate}}
           <ion-icon name="chevron-up-circle" style="padding: 0 9px;" color="primary"></ion-icon></ion-button>
         <div class="_flex-box _justify-content-center">
-          <ion-button round small *ngIf="showStartButton" (click)="startBtnAction()"
+          <ion-button round small *ngIf="showStartButton" (click)="startBtnAction()" class="custom-btn-txt-transform-none"
             [ngClass]="{'btn-disabled': !isStartBTNEnabled}">{{'FRMELEMNTS_BTN_START'| translate}}
+          </ion-button>
+        </div>
+        <div *ngIf="viewOnly && showStartButton === undefined" class="_flex-box _justify-content-center">
+          <ion-button round small (click)="allowStartingObservation()" class=" custom-btn-txt-transform-none"
+            >{{'FRMELEMNTS_BTN_START'| translate}}
           </ion-button>
         </div>
 
       </ion-col>
       <ion-col>
-        <ion-button  icon-end class="ion-float-right" color="light" aria-label="Next" (click)="next()"
+        <ion-button  icon-end class="ion-float-right custom-btn-txt-transform-none" color="light" aria-label="Next" (click)="next()"
           *ngIf="!isLast">{{'FRMELEMENTS_BTN_NEXT'|
           translate}} <ion-icon name="arrow-forward" color="primary"></ion-icon></ion-button>
-        <ion-button  icon-start class="ion-float-right" color="light"
+        <ion-button  icon-start class="ion-float-right custom-btn-txt-transform-none" color="light"
           (click)="next('completed')" *ngIf="isLast && !showStartButton">
           <ion-icon name="save" class="ion-margin-end" color="primary"></ion-icon>{{'SAVE'| translate}}
         </ion-button>

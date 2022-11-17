@@ -2,9 +2,9 @@
 .attachments-card{
     border-radius: 16px;
     background: $white-color;
-    margin: 0px;
+    margin: 0 0 10px 0;
    ion-card-header{
-    font-size: 16px;
+    font-size: 1rem;
     border-bottom: 1px solid $gray-200;
     padding: 10px;
     font-weight:900;
@@ -27,20 +27,20 @@
        box-shadow: none !important;
        /* margin-top: -7px; */
        color: var(--blue);
-       font-size: 12px;
+       font-size: 0.75rem;
        p{
           margin-bottom: 0px;
-          font-size: 8px !important;
+          font-size: 0.5rem !important;
           margin-top: -5px;
           text-align: center;
           font-weight: 600;
         }
         ion-icon{
-          font-size: 20px;
+          font-size: 1.25rem;
         }
     }
     .prefix-attachment{
-       font-size: 20px;
+       font-size: 1.25rem;
        position: absolute;
      }
   }

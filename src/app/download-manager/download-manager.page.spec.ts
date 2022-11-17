@@ -78,6 +78,12 @@ describe('DownloadManagerPage', () => {
     };
 
     const mockEvents: Partial<Events> = {
+        subscribe: jest.fn((topic, fn) => {
+            switch (topic) {
+                case EventTopics.LAST_ACCESS_ON:
+                    return fn(true);
+            }
+        }),
         publish: jest.fn(),
         unsubscribe: jest.fn()
     };
@@ -553,16 +559,18 @@ describe('DownloadManagerPage', () => {
         it('should unsubscribe all events', () => {
             // arrange
             mockContentService.deleteContent = jest.fn(() => of([{ status: 'CONTENT_DELETED' }] as any));
+            mockEvents.unSubscribe = jest.fn((topic, fn) => {
+                switch (topic) {
+                    case EventTopics.LAST_ACCESS_ON:
+                        return fn('some_page_id');
+                }
+            });
             // act
             downloadManagerPage.ionViewWillLeave();
-
             // assert
-            expect(mockEvents.unsubscribe).toHaveBeenCalledWith('update_header');
-            expect(mockEvents.unsubscribe).toHaveBeenCalledWith(EventTopics.HAMBURGER_MENU_CLICKED);
-
+            expect(mockEvents.unsubscribe).toHaveBeenNthCalledWith(1, 'update_header');
+            expect(mockEvents.unsubscribe).toHaveBeenNthCalledWith(2, EventTopics.HAMBURGER_MENU_CLICKED);
+            expect(mockEvents.unsubscribe).toHaveBeenNthCalledWith(3, EventTopics.LAST_ACCESS_ON);
         });
-
     });
-
-
 });

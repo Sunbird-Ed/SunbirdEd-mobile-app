@@ -109,7 +109,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isInitialScreen = false;
-
+  
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -153,11 +153,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes();
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
+    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings') && this.onboardingConfigurationService.getOnboardingConfig('profile-settings'))
   }
 
 
@@ -716,6 +716,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     setTimeout(() => {
       this.boardSelect.open();
+      this.setAriaLabel();
     }, 0);
   }
 
@@ -811,5 +812,19 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     ));
     return subscriptionArray;
   }
+
+  public setAriaLabel() {
+    const selectDomTag = document.getElementsByTagName('ion-select');
+    Object.values(selectDomTag).forEach(element => {
+      if(element.multiple === false)
+      {
+        element.setAttribute('aria-label',   'single select');
+      }
+      else{
+      element.setAttribute('aria-label',   'multiple select');
+      }
+      element.setAttribute('tabindex', '0');
+    });
+}
 
 }

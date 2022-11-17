@@ -1,14 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input,OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { RouterLinks } from '@app/app/app.constant';
-import { UtilityService } from '@app/services';
+import { CommonUtilService,UtilityService } from '@app/services';
 
 @Component({
   selector: 'app-privacy-policy-and-tc',
   templateUrl: './privacy-policy-and-tc.component.html',
   styleUrls: ['./privacy-policy-and-tc.component.scss'],
 })
-export class PrivacyPolicyAndTCComponent {
+export class PrivacyPolicyAndTCComponent implements OnInit {
   @Input() header;
   @Input() link;
   @Input() message;
@@ -17,9 +17,11 @@ export class PrivacyPolicyAndTCComponent {
   @Input() isPrivacyPolicy;
   isChecked = false;
   isClicked = false;
+  appName;
   constructor(
     private popOverCtrl: PopoverController,
-    private utilityService: UtilityService
+    private utilityService: UtilityService,
+    private commonUtilService : CommonUtilService
   ) { }
 
   closePopover() {
@@ -36,7 +38,9 @@ export class PrivacyPolicyAndTCComponent {
       this.isChecked = false;
     }
   }
-
+  ngOnInit(){
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+  }
   async openTermsOfUse() {
     const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;

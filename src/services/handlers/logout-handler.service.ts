@@ -68,6 +68,10 @@ export class LogoutHandlerService {
           const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
+        if (await this.commonUtilService.isDeviceLocationAvailable()) {
+          const availableLocationData = await this.preferences.getString(PreferenceKey.GUEST_USER_LOCATION).toPromise();
+          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, availableLocationData).toPromise();
+        }
         if(window.splashscreen && splashscreen){
           splashscreen.clearPrefs();
         }

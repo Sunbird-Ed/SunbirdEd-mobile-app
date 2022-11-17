@@ -33,6 +33,7 @@ export class ObservationDetailComponent implements OnInit {
     actionButtons: []
   };
   observationId: any;
+  disableAddEntity : boolean = true;
   solutionId: any;
   programId: any;
   submissionCount: any;
@@ -65,6 +66,7 @@ export class ObservationDetailComponent implements OnInit {
       this.solutionId = params.solutionId;
       this.programId = params.programId;
       this.solutionName = params.solutionName;
+      this.entityType =params.entityType;
       let parameters = {
         solutionId: this.solutionId,
         programId: this.programId,
@@ -116,6 +118,7 @@ export class ObservationDetailComponent implements OnInit {
         success => {
           this.loader.stopLoader();
           if (success && success.result && success.result.entities) {
+            this.disableAddEntity = false;
             this.solutionData = success.result;
             this.entities = success.result.entities;
             this.entityType = success.result.entityType;
@@ -125,6 +128,7 @@ export class ObservationDetailComponent implements OnInit {
             this.localStorage.setLocalStorage(this.generatedKey,success.result);
 
           } else {
+            this.disableAddEntity = true;
             this.entities = [];
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
@@ -173,7 +177,6 @@ export class ObservationDetailComponent implements OnInit {
 
   async addEntity() {
     if(this.networkFlag){
-      const type = this.entityType;
       let entityListModal;
       entityListModal = await this.modalCtrl.create({
         component: EntityfilterComponent,
@@ -185,39 +188,43 @@ export class ObservationDetailComponent implements OnInit {
       await entityListModal.present();
       await entityListModal.onDidDismiss().then(async entityList => {
         if (entityList.data) {
-          let payload = await this.utils.getProfileInfo();
-  
-          payload.data = [];
-          entityList.data.forEach(element => {
-            //if coming from state list page
-            if (type == "state") {
-              element.selected ? payload.data.push(element._id) : null;
-              return;
-            }
-  
-            payload.data.push(element._id); // if coming from EntityListPage
-          });
-  
-          const config = {
-            url:
-              urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
-              `${this.observationId}`,
-            payload: payload
-          };
-          this.assessmentService.post(config).subscribe(
-            success => {
-              if (success) {
-                this.getObservationEntities();
-              }
-            },
-            error => {}
-          );
+          this.setPayloadAndPostAssessment(entityList);
         }
       });
     }else{
       this.toast.showMessage('FRMELEMENTS_MSG_FEATURE_USING_OFFLINE', 'danger');
     }
   }
+  
+  async setPayloadAndPostAssessment(entityList) {
+    const type = this.entityType;
+    let payload = await this.utils.getProfileInfo();
+    payload.data = [];
+    entityList.data.forEach(element => {
+      //if coming from state list page
+      if (type == "state" && element.selected) {
+          payload.data.push(element._id);
+        return;
+      }
+      payload.data.push(element._id); // if coming from EntityListPage
+    });
+
+    const config = {
+      url:
+        urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES +
+        `${this.observationId}`,
+      payload: payload
+    };
+    this.assessmentService.post(config).subscribe(
+      success => {
+        if (success) {
+          this.getObservationEntities();
+        }
+      },
+      error => {}
+    );
+  }
+  
   async removeEntity(entity) {
     let entityId = entity._id;
     let translateObject;
@@ -234,6 +241,7 @@ export class ObservationDetailComponent implements OnInit {
     let alert = await this.alertCntrl.create({
       header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
       message: translateObject["FRMELEMNTS_LBL_DELETE_ENTITY"],
+      cssClass: 'central-alert',
       buttons: [
         {
           text: translateObject["FRMELEMNTS_LBL_NO"],
@@ -260,10 +268,6 @@ export class ObservationDetailComponent implements OnInit {
     };
     this.assessmentService.delete(config).subscribe(
       success => {
-        let okMessage;
-        this.translate.get("FRMELEMNTS_LBL_OK").subscribe(translations => {
-          okMessage = translations;
-        });
         this.toast.openToast(success.message);
 
         this.loader.stopLoader();

@@ -2,6 +2,9 @@
   <div   id="stop">
   <div class="_container"  *ngIf="submissionId || extrasState">
     <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
+      <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+        <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+      </ion-item-divider>
       <ng-container [ngSwitch]="question.responseType.toLowerCase()">
         <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
           [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
@@ -36,9 +39,9 @@
   </div>
   </div>
 </ion-content>
-<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState"
+<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState" [viewOnly]="isViewOnly"
   [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
   [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
-  [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (startAction)="startAction()" (openSheetAction)="openActionSheet()" >
+  [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (startAction)="startAction()" (allowStart)="allowStart()" (openSheetAction)="openActionSheet()" >
 
 </app-footer-buttons>

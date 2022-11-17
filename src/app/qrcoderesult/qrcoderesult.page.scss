@@ -26,7 +26,7 @@
         color: map-get($colors, primary_black);
         border-radius: 100px;
         border: solid 0.5px map-get($colors, pale_cyan);
-        font-size: 11px;
+        font-size: 0.688rem;
         @include margin(null, 10px, null, null);
     }
     .sc-ion-card-md-h.sc-ion-card-md-s  {
@@ -44,7 +44,7 @@
         }
     
         .author {
-            font-size: 11px;
+            font-size: 0.688rem;
             font-weight: normal;
             font-style: normal;
             font-stretch: normal;
@@ -54,7 +54,7 @@
         }
     
         .size{
-            font-size: 11px;
+            font-size: 0.688rem;
             color: map-get($colors, granite_gray);
         }
     
@@ -70,9 +70,9 @@
             text-overflow: ellipsis;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            font-size: 14px !important;
+            font-size: 0.875rem !important;
             color: map-get($colors, primary_black);
-            min-height: 32px;
+            min-height: 2rem;
         }
     
         .bottom-fix{
@@ -113,7 +113,7 @@
             display: inline-block;
             color: map-get($colors, primary_blue);
             font-weight: bold !important;
-            font-size: 10px;
+            font-size: 0.625rem;
         }
     
     
@@ -177,7 +177,7 @@
     }
     .downloadicon {
         display: inline-block;
-        font-size: 1.1em;
+        font-size: 1.1rem;
         margin-top: -2px;
         font-weight: 700;
         vertical-align: middle;
@@ -198,15 +198,15 @@
         position: relative;
         z-index: 10;
         padding: 8px 8px 0px 16px;
-        font-size:20px;
+        font-size: 1.25rem;
         .pull-left{
-          line-height: 30px;
+          line-height: 1.88rem;
         }
         ion-icon{
-          height: 24px;
-          width: 24px;
+          height: 1.5rem;
+          width: 1.5rem;
           border-radius: 12px;
-          font-size: 28px;
+          font-size: 1.75rem;
           color: orangered;
         }
     }

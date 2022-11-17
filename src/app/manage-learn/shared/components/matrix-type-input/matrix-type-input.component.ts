@@ -163,6 +163,7 @@ export class MatrixTypeInputComponent implements OnInit {
     let alert = await this.alertCtrl.create({
       header: translateObject['FRMELEMNTS_LBL_COFIRMATION_DELETE'],
       message: translateObject['FRMELEMNTS_LBL_COFIRMATION_DELETE_INSTANCE'],
+      cssClass:'attachment-delete-alert',
       buttons: [
         {
           text: translateObject['NO'],

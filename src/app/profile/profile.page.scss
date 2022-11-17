@@ -6,10 +6,10 @@
 :host {
   .refreshspinner {
     stroke: $blue !important;
-    width: 30px;
+    width: 1.875rem;
     left: 0;
     top: 0;
-    height: 40px;
+    height: 2.5rem;
     position: relative !important;
   }
   .spinner-div {
@@ -38,14 +38,14 @@
     position: relative;
     .profile-symbol {
       position: absolute;
-      top: -6px;
+      top: -0.375rem;
      }
   }
   .profile-share-icon{
     .share-icon{
       color: $blue;
       position: relative;
-      top: 6px;
+      top: 0.375rem;
       margin-left: 8px;
     }
   }
@@ -58,10 +58,10 @@
   ion-spinner {
     position: absolute;
     display: inline-block;
-    width: 20px;
+    width: 1.25rem;
     left: 47vw;
     top: 10vh;
-    height: 20px;
+    height: 1.25rem;
   }
 
   .badges {
@@ -82,25 +82,25 @@
 
     .badge {
       color: map-get($colors, primary);
-      font-size: 11px;
-      height: 20px;
+      font-size: 0.688rem;
+      height: 1.25rem;
       box-shadow: none;
-      --border-width: 0.5px;
+      --border-width: 0.031rem;
       @extend .font-weight-400;
       text-transform: capitalize;
       letter-spacing: normal;
     }
     .top {
-      min-height: 85px;
+      min-height: 5.313rem;
       .img-container {
         border: 1px solid map-get($colors, pale_cyan);
         @include padding(0 !important);
         background: map-get($colors, white_e9);
-        min-height: 85px;
-        max-height: 85px;
+        min-height: 5.313rem;
+        max-height: 5.313rem;
         border-radius: 4px;
         img {
-          max-height: 85px;
+          max-height: 5.313rem;
           @include margin(0 auto);
           width: auto;
           transform: translateY(-56%);
@@ -115,8 +115,8 @@
     h6.name {
       word-break: break-all;
       white-space: normal;
-      min-height: 32px;
-      font-size: 14px !important;
+      min-height: 2rem;
+      font-size: 0.875rem !important;
       color: map-get($colors, primary_black);
       width: 100%;
     }
@@ -127,18 +127,18 @@
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      height: 32px;
+      height: 2rem;
     }
 
     .author {
-      font-size: 13px;
+      font-size: 0.813rem;
       font-weight: normal;
       font-style: normal;
       font-stretch: normal;
       line-height: normal;
       letter-spacing: normal;
       color: map-get($colors, granite_gray);
-      min-height: 20px;
+      min-height: 1.25rem;
     }
   }
 
@@ -161,7 +161,7 @@
   .sb-btn-footer-text {
     color : $gray;
     font-weight: 100;
-    font-size: ($font-size-base - 2);
+    font-size: ($font-size-base - 0.125);
     text-align: center;
     text-transform: initial;
   }
@@ -169,8 +169,8 @@
     position: relative;
     flex-direction: column;
     background-color: $white;
-    width:72px;
-    height:72px;
+    width:4.5rem;
+    height:4.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +187,7 @@
   }
 
   .sb-dt-card-blue-icon{
-    font-size : ($font-size-base * 2) + 2;
+    font-size : ($font-size-base * 2) + 0.125;
     color: $primary-color;
     @include margin(0, 0, ($base-block-space * .5), 0);
   }
@@ -252,13 +252,13 @@
   }
 
   .contributions {
-    min-height: 230px;
+    min-height: 14.375rem;
     @include margin(0, 0, 16px, 0);
     background: map-get($colors, white);
   }
 
   .short-btn {
-    height: 26px;
+    height: 1.625rem;
   }
 
   .custom-round {
@@ -285,12 +285,11 @@
   .training-1 {
     width: 80%;
     float: left;
-    padding-left: 10%;
+    padding-left: 2rem;
     @include padding(16px, null, 8px, null);
   }
 
   .training-2 {
-    width: 20%;
     .sb-btn-tile {
       margin: 0.5rem 0 !important;
     }
@@ -308,6 +307,13 @@
     @include padding(null, 16px, null, 16px);
   }
 
+  .flex-nowrap-last {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    @include padding(null, 16px, null, 16px);
+  }
+
   .margin-pull-up {
       margin-top: -18px;
   }
@@ -317,19 +323,19 @@
   }
 
   .cert-download {
-      width:35px;
-      height:25px;
+      width:2.188rem;
+      height:1.563rem;
       margin-bottom: 4px;
   }
   
   .add-size{
-    font-size: 24px;
+    font-size: 1.5rem;
     padding-right: 8px;
   }
 
   .enrolled-status-text {
     font-family: "Noto Sans", sans-serif;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: bold;
   }
 
@@ -358,7 +364,7 @@
     background-color: map-get($colors, bright_blue_19);
     text-align: center;
     color: map-get($colors, white);
-    font-size: 14px;
+    font-size: $font-size-base;
     
     .container{
       @include margin(null, null, 8px, null);
@@ -372,7 +378,7 @@
 
     .declare-info{
       margin: 0;
-      font-size: 14px;
+      font-size: $font-size-base;
       font-weight: bold;
     }
   }
@@ -387,9 +393,9 @@
   .refresh-icon {
     color: map-get($colors, primary_blue);
     float: right;
-    height: 40px;
-    width: 40px;
-    margin-top: -8px;
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+    margin-top: -0.5rem;
   }
   ion-icon.refresh-icon.md.hydrated:active {
     background: map-get($colors, white_e8);

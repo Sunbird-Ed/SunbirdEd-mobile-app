@@ -13,7 +13,7 @@
           background: none;
           color: $info-color;
           ion-icon {
-            font-size: (($font-size-base * 3) - 2);
+            font-size: (($font-size-base * 3) - 0.125);
           }
         }
       }
@@ -22,25 +22,25 @@
   .main-title{
     .meta-info{
       padding: 5px 0 16px 0 !important;
-      font-size: 14px !important;
+      font-size: $font-size-base !important;
     }
     .rating-qstn{
       margin-left: 16px;
       padding: 16px 0;
       border-top: 1px solid map-get($colors, gray_solid);
-      font-size: 16px;
+      font-size: 1rem;
     }
   }
   .rating-opts{
     .rating-item{
-      --min-height: 30px;
+      --min-height: 1.88rem;
       display: flex;
       padding: 8px 8px 8px 0;
       border-bottom: 1px solid map-get($colors, light_gray_8c);
       margin-left: 16px;
       .rating-label{
         color: map-get($colors, primary_black);
-        font-size: 14px;
+        font-size: $font-size-base;
         margin: 0;
         flex: 1 1 0;
         text-align: left;
@@ -71,7 +71,7 @@
 
   // ************** iOS start **************
   .footer-ios {
-      bottom: 60px;
+      bottom: 3.75rem;
   }
   // ************** iOS end ****************
 }

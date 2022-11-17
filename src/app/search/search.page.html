@@ -62,7 +62,7 @@
                 {{'FRMELEMENTS_LBL_SEARCH_SUB_HEADING' | translate: {'appName': appName, 'searchText': searchKeywords} }}
               </div>
               <div class="col-auto">
-                <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search.svg" alt="search">
+                <img style="width: 0.875rem; height: 0.875rem" src="./assets/imgs/ic_action_search.svg" alt="search">
               </div>
             </div>
           </ng-container>
@@ -71,13 +71,13 @@
             <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
               class="sb-search-history-entry row">
               <div class="col-auto">
-                <img style="width: 14px; height: 14px" src="./assets/imgs/icon_recent.svg" alt="recent">
+                <img style="width: 0.875rem; height: 0.875rem" src="./assets/imgs/icon_recent.svg" alt="recent">
               </div>
               <div class="col">
                 {{searchEntry.query}}
               </div>
               <div class="col-auto">
-                <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search_grey.svg" alt="search">
+                <img style="width: 0.875rem; height: 0.875rem" src="./assets/imgs/ic_action_search_grey.svg" alt="search">
               </div>
             </div>
           </ng-container>
@@ -95,18 +95,18 @@
 
     <div class="m-n" *ngIf="showLoader">
       <div class="skeleton-header">
-        <app-skeleton-item height="12px" width="75%" style="height:12px; width:75%;"></app-skeleton-item>
-        <app-skeleton-item height="12px" width="40%" style="height:12px; width:40%; margin-top:8px;"></app-skeleton-item>
+        <app-skeleton-item height="0.75rem" width="75%" style="height:0.75rem; width:75%;"></app-skeleton-item>
+        <app-skeleton-item height="0.75rem" width="40%" style="height:0.75rem; width:40%; margin-top:8px;"></app-skeleton-item>
       </div>
       <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
         <ion-avatar slot="end" class="skleton-avatar">
-          <app-skeleton-item height="56px" width="56px" style="height:56px; width:56px;"></app-skeleton-item>
+          <app-skeleton-item height="3.5rem" width="3.5rem" style="height:3.5rem; width:3.5rem;"></app-skeleton-item>
         </ion-avatar>
         <div style=" flex: 22 auto;">
-          <app-skeleton-item height="12px" width="40%" style="height:12px; width:100%; padding-bottom: 8px;">
+          <app-skeleton-item height="0.75rem" width="40%" style="height:0.75rem; width:100%; padding-bottom: 8px;">
           </app-skeleton-item>
-          <app-skeleton-item height="12px" width="30%"
-            style="height:12px; width:100%; padding-bottom: 8px;margin-top:8px;"></app-skeleton-item>
+          <app-skeleton-item height="0.75rem" width="30%"
+            style="height:0.75rem; width:100%; padding-bottom: 8px;margin-top:8px;"></app-skeleton-item>
         </div>
       </div>
     </div>
@@ -119,8 +119,8 @@
           *ngIf="resultlist && resultlist.isCourse && resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
           <div class="pt-8 px-8">
             <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
-              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
-              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+              {{'SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
+              <strong>{{ totalCount }} </strong>
             </p>
           </div>
           <div class="sb-textbook-container">
@@ -193,9 +193,9 @@
           </sb-pill-item>
         </sb-pills-grid>
       </div>
-      <div class="sb-search-history-entry sb-search-header-meta row">
+      <div class="sb-search-history-entry fixed-counter row">
         <div class="col" *ngIf="searchKeywords">
-          {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+          {{'SHOWING_RESULT_OUTOF_TOTAL' | translate: {'%count': searchContentResult.length, '%query': totalCount} }}
         </div>
         <div class="col" *ngIf="!searchKeywords">
           {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
@@ -209,6 +209,9 @@
           </sb-library-card>
         </div>
       </div>
+      <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadData($event)" *ngIf="searchContentResult?.length > 0 && searchContentResult.length < totalCount">
+      {{ 'VIEW_MORE' | translate }} 
+      </ion-button>
     </div>
     <div class="empty-search-result ion-text-center ion-padding-top" *ngIf="!showLoader && showEmptyMessage">
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
@@ -218,6 +221,10 @@
   <ng-container *ngIf="!enableSearch">
     <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
   </ng-container>
+  <!-- scroll top  -->
+  <!-- <div class="scroll_up" (click)="scrollToTop()" *ngIf="searchContentResult && searchContentResult.length">
+    <ion-icon name="arrow-up-circle-outline"></ion-icon>
+  </div> -->   
 </ion-content>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">	

@@ -22,16 +22,16 @@
             </ion-col>
           </ion-row>
           <div class="viewBtn">
-            <ion-button size="small" *ngIf="task?.type=='content'&&task?.learningResources?.length"
+            <ion-button size="small" *ngIf="task?.type=='content'&&task?.learningResources?.length" class="custom-btn-txt-transform-none"
               (click)="$event.stopPropagation();openResources(task)">
               {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
             </ion-button>
-            <ion-button size="small"
+            <ion-button size="small" class="custom-btn-txt-transform-none"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
               (click)="$event.stopPropagation();startAssessment(task)">
               {{'START' | translate}} {{task?.type}}
             </ion-button>
-            <ion-button size="small"
+            <ion-button size="small" class="custom-btn-txt-transform-none"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
               (click)="$event.stopPropagation();checkReport(task)">
               {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}

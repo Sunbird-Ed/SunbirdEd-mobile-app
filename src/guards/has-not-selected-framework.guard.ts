@@ -45,11 +45,6 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
             return true;
         }
 
-        if (this.platform.is('ios')) {
-            this.router.navigate(['/', 'user-type-selection']);
-            return false;
-        }
-
         this.guardActivated = true;
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (!HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {

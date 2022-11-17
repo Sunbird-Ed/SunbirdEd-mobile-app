@@ -1,0 +1,13 @@
+<ion-toolbar>
+  <ion-buttons (click)="close()" slot="start" class="padding" color="primary">
+    <ion-icon role="button" name="close" aria-label="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content>
+  <ion-card>
+    <reports-text [data]="element" [questionNumber]="questionNumber"></reports-text>
+  </ion-card>
+  <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadMoreReports()"   *ngIf="element?.answers?.length && element?.count > element?.answers?.length">
+    {{ "VIEW_MORE" | translate }}
+  </ion-button>
+  </ion-content>

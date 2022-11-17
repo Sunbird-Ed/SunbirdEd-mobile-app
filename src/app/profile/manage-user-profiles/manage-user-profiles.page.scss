@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
 
 .mu-title{
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: map-get($colors, granite_gray);
   margin: 16px;
@@ -16,7 +16,7 @@
 
 .mu-selected-checkbox{
   position: absolute;
-  right: 10px;
+  right: 0.625rem;
   top: 30%;
 }
 
@@ -24,7 +24,7 @@
   display: none;
 }
 ion-button{
-  height: 40px !important;
+  height: 2.5rem !important;
 }
 
 .add-user{
@@ -42,7 +42,7 @@ ion-footer{
 }
 
 .add-size{
-  font-size: 24px;
+  font-size: 1.5rem;
   padding-right: 8px;
 }
 
@@ -55,18 +55,18 @@ ion-footer{
   background-color: $blue;
   color: map-get($colors, white);
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .sb-new-btn-success {
   background-color: map-get($colors, light_grayish_green);
   color: $green;
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }

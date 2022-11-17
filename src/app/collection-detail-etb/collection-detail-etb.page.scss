@@ -6,7 +6,7 @@
 .sb-slider-pills-container {
   .sb-grade-pills-container {
     .pill {
-      min-height: 35px;
+      min-height: 2.188rem;
       border-radius: 50px;
     }
   }
@@ -14,31 +14,31 @@
 
 .heading {
   margin-top: 50px;
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: bold;
-  line-height: 19px;
+  line-height: 1.188rem;
   text-align: center;
   color: map-get($colors, granite_gray);
 }
 
 .sub-heading {
   color: map-get($colors, granite_gray);
-  font-size: 12px;
-  line-height: 17px;
+  font-size: 0.75rem;
+  line-height: 1.063rem;
   text-align: center;
 }
 
 .filter-icon {
   // margin-right: 8px;
-  height: 15px;
-  width: 15px;
+  height: 0.938rem;
+  width: 0.938rem;
 }
 
 .img-align {
   margin-top: 5px;
   display: inline-block;
   vertical-align: middle;
-  width: 15px;
+  width: 0.938rem;
   margin-right: 8px;
 }
 
@@ -157,7 +157,7 @@ ion-card .card .card-md {
 }
 
 .f24 {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 
 .yellow-gold {
@@ -166,7 +166,7 @@ ion-card .card .card-md {
 
 .font-blue {
   color: $blue;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .text-selected {
@@ -182,11 +182,11 @@ ion-card .card .card-md {
 
 .play-icon {
   color: map-get($colors, vivid_green);
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .font-14 {
-  font-size: 14px !important;
+  font-size: $font-size-base !important;
 }
 
 .view-credits {
@@ -196,7 +196,7 @@ ion-card .card .card-md {
     ion-icon {
       padding: 0 0 4px 8px;
       vertical-align: middle;
-      font-size: 18px;
+      font-size: 1.125rem;
       float: right !important;
     }
   }
@@ -226,7 +226,7 @@ ion-card .card .card-md {
 }
 
 .font-12 {
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
 }
 
 .showLicensce {
@@ -237,13 +237,13 @@ ion-card .card .card-md {
 
 .grey-icon-span {
   position: relative;
-  top: 8px;
+  top: 0.5rem;
   vertical-align: super;
 }
 
 .checkmark-icon {
   color: map-get($colors, vivid_green);
-  font-size: 18px;
+  font-size: 1.125rem;
   margin-left: 5px;
 }
 
@@ -259,7 +259,7 @@ ion-card .card .card-md {
 
 .grey-icon {
   color: map-get($colors, dark_gray);
-  font-size: ($font-size-base + 4);
+  font-size: ($font-size-base + 0.25);
 }
 
 .horizontal-scroll {
@@ -268,8 +268,8 @@ ion-card .card .card-md {
 }
 
 .separator-dot {
-  width: 4px;
-  height: 4px;
+  width: 0.25rem;
+  height: 0.25rem;
   background-color: map-get($colors, light_silver);
   border-radius: 50%;
   display: inline-block;
@@ -277,7 +277,7 @@ ion-card .card .card-md {
 }
 
 .separator-line {
-  height: 1px;
+  height: 0.063rem;
   opacity: 0.36;
   background-color: map-get($colors, dark_gray);
   width: 100%;
@@ -359,7 +359,7 @@ ion-card .card .card-md {
   }
 
   .W-88 {
-    width: 88px;
+    width: 5.5rem;
   }
 
   .rating {
@@ -392,8 +392,8 @@ ion-card .card .card-md {
       .img-container {
         // background-color: grey;
         width: 100%;
-        min-height: 54px;
-        max-height: 54px;
+        min-height: 3.375rem;
+        max-height: 3.375rem;
       }
     }
 
@@ -426,11 +426,11 @@ ion-card .card .card-md {
         line-height: normal;
         letter-spacing: -0.4px;
         color: map-get($colors, primary_black);
-        height: 42px;
+        height: 2.625rem;
       }
 
       .info {
-        font-size: 12px;
+        font-size: 0.75rem;
         font-weight: 500;
         font-style: normal;
         font-stretch: normal;
@@ -452,7 +452,7 @@ ion-card .card .card-md {
         border-radius: 2px;
         @include padding(3px, 7px);
         color: map-get($colors, light-blue);
-        font-size: 10px;
+        font-size: 0.625rem;
         font-weight: normal;
         font-style: normal;
         font-stretch: normal;
@@ -494,7 +494,7 @@ ion-card .card .card-md {
       height: auto;
 
       ion-icon {
-        line-height: 30px;
+        line-height: 1.88rem;
 
       }
 
@@ -539,8 +539,8 @@ ion-card .card .card-md {
   height: 2.44%;
   width: 80%;
   color: $blue;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: $font-size-base;
+  line-height: 1.25rem;
 }
 
 .box-align {
@@ -557,14 +557,14 @@ ion-card .card .card-md {
   background-color: map-get($colors, white);
 
   .pull-left {
-    line-height: 30px;
+    line-height: 1.88rem;
   }
 
   ion-icon {
-    height: 24px;
-    width: 24px;
+    height: 1.5rem;
+    width: 1.5rem;
     border-radius: 12px;
-    font-size: 28px;
+    font-size: 1.75rem;
     color: map-get($colors, light-blue);
   }
 }
@@ -598,11 +598,11 @@ ion-card .card .card-md {
 .drop-arrow{
   border-radius: 50%;
   background-color: map-get($colors, white);
-  height: 24px;
-  width: 24px;
+  height: 1.5rem;
+  width: 1.5rem;
   padding-top: 8px;
   img{
-    height: 8px;
+    height: 0.5rem;
   }
 }
 

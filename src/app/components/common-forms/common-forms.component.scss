@@ -3,8 +3,8 @@
   .label-font {
     color: map-get($colors, primary_black) !important;
     font-family: "Noto Sans", sans-serif !important;
-    font-size: 20px !important;
-    line-height: 22px !important;
+    font-size: 1.25rem !important;
+    line-height: 1.375rem !important;
     font-weight: normal;
   }
 
@@ -35,7 +35,7 @@
     margin-top: 16px;
     padding-left: 8px;
     padding-right: 16px !important;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: "Noto Sans", sans-serif;
     .select-icon {
       .select-icon-inner {
@@ -80,7 +80,7 @@
     border-radius: 5px;
     padding-left: 16px !important;
     padding-right: 16px !important;
-    font-size: 14px;
+    font-size: $font-size-base;
   }
 
   .cf-input-primary ion-input{
@@ -104,15 +104,15 @@
   ion-label {
     color: map-get($colors, primary_black);
     font-family: "Noto Sans", sans-serif;
-    font-size: 14px;
+    font-size: $font-size-base;
     letter-spacing: 0;
-    line-height: 19px;
+    line-height: 1.188rem;
   }
 
 }
 
 .cf-title{
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: $blue;
   margin: 16px 16px 0;
@@ -121,9 +121,9 @@
 .cf-input-title{
   color: map-get($colors, primary_black);
   font-family: "Noto Sans", sans-serif;
-  font-size: 14px;
+  font-size: $font-size-base;
   letter-spacing: 0;
-  line-height: 19px;
+  line-height: 1.188rem;
   margin: 16px 0 8px;
 }
 
@@ -138,9 +138,9 @@
 .cf-error{
   margin-top: 8px;
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: red;
-  line-height: 10px;
+  line-height: 0.625rem;
 }
 
 .input-item{
@@ -155,21 +155,21 @@
   background-color: $blue;
   color: map-get($colors, white);
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .sb-new-btn-outline {
   background-color: map-get($colors, white);
   color: $blue;
   width: 100%;
-  height: 40px;
+  height: 2.5rem;
   border: 1px solid $blue;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
   font-family: "Noto Sans", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .blur-btn {
@@ -194,7 +194,7 @@ ion-checkbox {
   border-radius: 6px;
   .decorator {
     display: inline-block;
-    max-width: 50px;
+    max-width: 3.125rem;
   }
   .custom {
     display: inline-block;
@@ -203,7 +203,7 @@ ion-checkbox {
     border: none;
   }
   span{
-    font-size: 14px;
+    font-size: $font-size-base;
     opacity: 0.7;
     margin: auto;
   }

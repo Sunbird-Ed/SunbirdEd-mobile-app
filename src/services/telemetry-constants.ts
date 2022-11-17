@@ -217,7 +217,7 @@ export enum ImpressionSubtype {
     UPGRADE_POPUP = 'upgrade-popup',
     DEEPLINK = 'deeplink',
     CREATE_GROUP_FORM = 'create-group-form',
-    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
+    DISPLAY_SUNBIRD_ID_TUTORIAL = 'display-sunbird-id-tutorial',
     GROUP_TUTORIAL = 'my-group-tutorial-popup',
     OFFLINE_MODE = 'offline-mode',
     AUTO = 'auto',
@@ -299,7 +299,8 @@ export enum InteractType {
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
     SELECT_BANNER = 'select-banner',
     LOGIN_INITIATE = 'login-initiate',
-    LOGIN_SUCCESS = 'login-success'
+    LOGIN_SUCCESS = 'login-success',
+    ROLE_CHANGED = 'role-changed'
 }
 
 export enum InteractSubtype {

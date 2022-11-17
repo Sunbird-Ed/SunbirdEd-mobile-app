@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuditState, CorrelationData, SharedPreferences } from 'sunbird-sdk';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '@app/services';
 
 export interface ILanguages {
   label: string;
@@ -58,7 +59,8 @@ export class LanguageSettingsPage {
     private router: Router,
     private location: Location,
     private activatedRoute: ActivatedRoute,
-    private nativePageTransitions: NativePageTransitions
+    private nativePageTransitions: NativePageTransitions,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
   ionViewDidEnter() {
@@ -147,7 +149,7 @@ export class LanguageSettingsPage {
   }
 
   init(): void {
-    this.languages = appLanguages;
+    this.languages = this.onboardingConfigurationService.getOnboardingConfig('language-setting').data;
 
     this.zone.run(() => {
       this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()

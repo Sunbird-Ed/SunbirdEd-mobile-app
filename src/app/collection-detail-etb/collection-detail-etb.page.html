@@ -17,7 +17,7 @@
     <div class="m-n" *ngIf="showSheenAnimation">
       <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
         <div style=" flex: 22 auto;">
-          <app-skeleton-item height="60px" width="100%" style="height:60px; width:100%; margin-bottom: 10px;">
+          <app-skeleton-item height="60px" width="100%" style="height:3.75rem; width:100%; margin-bottom: 10px;">
           </app-skeleton-item>
         </div>
       </div>
@@ -42,15 +42,14 @@
             <span class="img-align" *ngIf="type?.iconNormal && !type?.selected">
               <img aria-hidden="true" class="filter-icon" src="{{type?.iconNormal}}" alt="interactive">
             </span>
-            <span class="allign-middle" [attr.aria-label]="type?.selected ?
-              'selected ' + type?.name : type?.name">{{type?.name | translate}}</span>
+            <span  class="allign-middle" attr.aria-label="{{type?.name | translate}}">{{type?.name | translate}}</span>
           </div>
         </div>
       </div>
     </div>
 
   </div>
-  <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
+  <div *ngIf="shouldPillsStick" style="height: 3rem;"></div>
   <div>
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">

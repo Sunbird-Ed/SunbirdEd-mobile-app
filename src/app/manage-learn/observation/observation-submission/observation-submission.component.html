@@ -46,7 +46,7 @@
       ></ion-icon>
       <ion-button
         report
-        round
+        round class="custom-btn-txt-transform-none"
         *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
         (click)="$event.stopPropagation(); openMenu($event, submission, i)"
       >
@@ -69,7 +69,7 @@
   <ion-toolbar position="bottom">
     <ion-row>
       <ion-col *ngIf="!disableObserveAgain">
-        <ion-button ion-button full (click)="observeAgain()" class="footerButton w-100">
+        <ion-button ion-button full (click)="observeAgain()" class="footerButton w-100 custom-btn-txt-transform-none">
           {{ 'FRMELEMNTS_LBL_OBSERVE_AGAIN' | translate }}
         </ion-button>
       </ion-col>
@@ -78,7 +78,7 @@
           ion-button
           full
           (click)="entityActions($event)"
-          class="footerButton w-100"
+          class="footerButton w-100 custom-btn-txt-transform-none"
           [disabled]="!submissions?.length"
         >
           {{ 'FRMELEMNTS_LBL_VIEW_ENTITY_REPORT' | translate }}

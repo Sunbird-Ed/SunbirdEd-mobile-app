@@ -8,7 +8,6 @@ import {
   SharedPreferences,
   CorrelationData,
   FormService,
-  FormRequest,
   CachedItemRequestSourceFrom,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -21,6 +20,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { ProfileConstants } from '@app/app/app.constant';
 import {LocationHandler} from '@app/services/location-handler';
+import { FormAndFrameworkUtilService } from '@app/services';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-sub-profile-edit',
@@ -54,7 +55,8 @@ export class SubProfileEditPage {
     private location: Location,
     private platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private locationHandler: LocationHandler
+    private locationHandler: LocationHandler,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
 
@@ -91,21 +93,13 @@ export class SubProfileEditPage {
   }
 
   getCreateManagedUserFormApi() {
-    const req: FormRequest = {
-      type: 'user',
-      subType: 'manageduser',
-      action: 'create',
-      component: 'app'
-    };
-    this.formService.getForm(req).toPromise()
-    .then((res: any) => {
-        const data = res.form.data.fields;
-        if (data.length) {
-          this.managedUserFormList = data;
-          this.initializeFormData();
-          console.log('this.managedUserFormList', this.managedUserFormList);
-        }
-    }).catch((error: any) => {
+    this.formAndFrameworkUtilService.getFormFields(FormConstants.MANAGED_USER).then((data) => {
+      if (data.length) {
+        this.managedUserFormList = data;
+        this.initializeFormData();
+        console.log('this.managedUserFormList', this.managedUserFormList);
+      }
+    }).catch((error) => {
       console.log(error);
     });
   }
@@ -180,7 +174,7 @@ export class SubProfileEditPage {
 
     } catch (err) {
       this.generateTelemetryInteract(InteractType.CREATE_FAILURE, ID.MUA_USER_CREATION);
-      if (err.response.body && err.response.body.params && err.response.body.params.status === 'MANAGED_USER_LIMIT_EXCEEDED') {
+      if (err.response.body && err.response.body.params && err.response.body.params.err === 'UOS_USRCRT0066') {
         this.commonUtilService.showToast('FRMELEMNTS_MSG_USER_CREATION_LIMIT_EXCEEDED');
       } else {
         this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');

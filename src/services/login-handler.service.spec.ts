@@ -1,16 +1,16 @@
-import {LoginHandlerService} from './login-handler.service';
-import {Router} from '@angular/router';
-import {TelemetryGeneratorService} from './telemetry-generator.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {CommonUtilService} from './../services/common-util.service';
-import {FormAndFrameworkUtilService} from './../services/formandframeworkutil.service';
+import { LoginHandlerService } from './login-handler.service';
+import { Router } from '@angular/router';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { CommonUtilService } from './../services/common-util.service';
+import { FormAndFrameworkUtilService } from './../services/formandframeworkutil.service';
 import {
     SharedPreferences,
 } from 'sunbird-sdk';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
-import {of} from 'rxjs';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { LoginNavigationHandlerService } from '@app/services/login-navigation-handler.service';
+import { of } from 'rxjs';
 
 jest.mock('sunbird-sdk', () => {
     const actual = require.requireActual('sunbird-sdk');
@@ -63,35 +63,77 @@ describe('LoginHandlerService', () => {
             expect(loginHandlerService).toBeDefined();
         });
 
-        it('should fetch from form configuration for login session ', (done) => {
-            // arrange
-            mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockSharedPreferences.putString = jest.fn(() => of(undefined));
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
-            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
-                access_token: 'SOME_ACCESS_TOKEN',
-                refresh_token: 'SOME_REFRESH_TOKEN',
-                userToken: 'SOME_USER_TOKEN'
-            }));
-            mockLoginNavigationHandlerService.setSession = jest.fn();
-            mockSbProgressLoader.hide = jest.fn();
-            // act
-            loginHandlerService.signIn({fromEnrol: false});
-            // assert
-            setTimeout(() => {
-                expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
-                done();
-            }, 0);
+        describe('signin', () => {
+            it('should do  nothing if the network is unavailable', (done) => {
+                //arrange
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+                //act
+                loginHandlerService.signIn({ fromEnrol: false });
+                //assert
+                setTimeout(() => {
+                    expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                    expect(!mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                    done();
+                }, 0)
+            });
+            it('should fetch from form configuration for login session ', (done) => {
+                // arrange
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockSharedPreferences.putString = jest.fn(() => of(undefined));
+                mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                const dismissFn = jest.fn(() => Promise.resolve());
+                const presentFn = jest.fn(() => Promise.resolve());
+                mockCommonUtilService.getLoader = jest.fn(() => ({
+                    present: presentFn,
+                    dismiss: dismissFn,
+                }));
+                mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }));
+                mockLoginNavigationHandlerService.setSession = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
+                // act
+                loginHandlerService.signIn({ fromEnrol: false });
+                // assert
+                setTimeout(() => {
+                    expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                    expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                    expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
+                    done();
+                }, 0);
+            });
+            it('should execute catch block ', (done) => {
+                // arrange
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockSharedPreferences.putString = jest.fn(() => of(undefined));
+                mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                const dismissFn = jest.fn(() => Promise.resolve());
+                const presentFn = jest.fn(() => Promise.resolve());
+                mockCommonUtilService.getLoader = jest.fn(() => ({
+                    present: presentFn,
+                    dismiss: dismissFn,
+                }));
+                mockCommonUtilService.showToast = jest.fn();
+                mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject());
+                mockLoginNavigationHandlerService.setSession = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
+                // act
+                loginHandlerService.signIn({ fromEnrol: false });
+                // assert
+                setTimeout(() => {
+                    expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                    expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                    expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                    done();
+                }, 0);
+            });
         });
 
     });

@@ -29,6 +29,7 @@ import { PageId, Environment, InteractSubtype, InteractType } from '../../servic
 import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
+import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -79,7 +80,8 @@ describe('ProfileSettingsPage', () => {
     };
     const mockSegmentationTagService: Partial<SegmentationTagService> = {}
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
-        initialOnboardingScreenName: ''
+        initialOnboardingScreenName: '',
+        getAppConfig: jest.fn(() => mockOnboardingConfigData)
     }
 
     beforeAll(() => {
@@ -157,6 +159,7 @@ describe('ProfileSettingsPage', () => {
 
     it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
+        mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
             return;
@@ -182,6 +185,7 @@ describe('ProfileSettingsPage', () => {
 
     it('should populate the supported userTypes', (done) => {
         // arrange
+        mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
             {board: 'board',
@@ -638,7 +642,9 @@ describe('ProfileSettingsPage', () => {
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockSegmentationTagService as SegmentationTagService,
+            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
         profileSettingsPage.boardSelect = { open: jest.fn() };
         profileSettingsPage.mediumSelect = ['hindi'];

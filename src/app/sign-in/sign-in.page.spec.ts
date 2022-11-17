@@ -61,7 +61,12 @@ describe('SignInPage', () => {
     const mockGooglePlusLogin: Partial<GooglePlus> = {};
     const mockLocation: Partial<Location> = {};
     const mockSignInWithApple: Partial<SignInWithApple> = {};
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Partial<Platform> = { is: jest.fn(platform => platform === 'ios') };
+    window.cordova.plugins = {
+        Keyboard: {
+            hideKeyboardAccessoryBar: jest.fn()
+        }
+    };
 
     beforeAll(() => {
         signInPage = new SignInPage(
@@ -299,7 +304,8 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSignInWithApple.signin = jest.fn(() => Promise.resolve(mockAppleResponse));
             mockSbProgressLoaderService.show = jest.fn();
-            mockSharedPreferences.putBoolean = jest.fn(() => of({true}));
+            mockSharedPreferences.putBoolean = jest.fn(() => of());
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
 
             // act
@@ -323,7 +329,8 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSignInWithApple.signin = jest.fn(() => Promise.resolve(mockAppleResponse));
             mockSbProgressLoaderService.show = jest.fn();
-            mockSharedPreferences.putBoolean = jest.fn(() => of({true}));
+            mockSharedPreferences.putBoolean = jest.fn(() => of());
+            mockSharedPreferences.putBoolean = jest.fn(() => of(true));
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.reject());
             mockCommonUtilService.showToast = jest.fn();
             // act

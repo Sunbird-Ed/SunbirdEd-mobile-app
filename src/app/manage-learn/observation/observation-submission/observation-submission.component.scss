@@ -11,7 +11,7 @@
   }
 
   .font-12 {
-    font-size: 12px !important;
+    font-size: 0.75rem !important;
   }
   .text-transform-none {
     text-transform: none !important;
@@ -23,7 +23,7 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: #{$blue};
 }
@@ -31,7 +31,7 @@
   margin-right:10px;
 }
 .mg-popup-btn-icon{
-  font-size: 14px;
+  font-size: $font-size-base;
   margin: auto;
   color: $primary-800;
 }

@@ -44,7 +44,7 @@
   flex-shrink: 0;
   color: #222222;
   font-family: "Noto Sans", sans-serif;
-  font-size: 20px;
+  font-size: 1.25rem;
   letter-spacing: 0;
   font-weight: bold;
   margin-bottom: 16px;
@@ -75,7 +75,7 @@
 .save-changes{
   color: white;
   background-color: $blue;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 8px 0;
   margin-left: 18px;
   border: 2px solid $blue;
@@ -84,7 +84,7 @@
 .save-changes-not-agree{
   color: $blue !important;
   background-color: white;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 8px 0;
   border: 2px solid $blue;
   width: 45%;
@@ -98,7 +98,7 @@
 .profile-info{
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans", sans-serif;
-  font-size: 14px;
+  font-size: $font-size-base;
   letter-spacing: 0;
 }
 
@@ -131,8 +131,8 @@ ion-icon {
     background-image: none;
   }
   .sb-popover-toolbar {
-    min-height: 40px;
-    max-height: 40px;
+    min-height: 2.5rem;
+    max-height: 2.5rem;
     background-color: $info-color;
     border-radius: 4px 4px 0 0;
     text-align: center;
@@ -156,11 +156,11 @@ ion-icon {
   }
   .sb-modal-close {
     position: absolute;
-    right: 5px;
-    width: 20px;
-    height: 20px;
+    right: 0.313rem;
+    width: 1.25rem;
+    height: 1.25rem;
     display: flex;
-    top: -2px;
+    top: -0.125rem;
     text-align: center;
     justify-content: center;
     align-items: center;

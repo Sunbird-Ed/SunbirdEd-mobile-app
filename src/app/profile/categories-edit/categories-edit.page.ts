@@ -76,6 +76,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   userType: string;
   shouldUpdatePreference: boolean;
   noOfStepsToCourseToc = 0;
+  guestUserProfile: any;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -169,6 +170,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
    * Ionic life cycle event - Fires every time page visits
    */
   ionViewWillEnter() {
+    this.setDefaultBMG();
     this.initializeLoader();
     if (this.appGlobalService.isUserLoggedIn()) {
       this.getLoggedInFrameworkCategory();
@@ -236,7 +238,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           return;
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
+        const syllabus = (this.profile.syllabus && this.profile.syllabus[0]) ||
+          (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus[0]);
+        this.syllabusControl.patchValue([syllabus] || []);
         await this.loader.dismiss();
       });
   }
@@ -287,7 +291,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.mediumControl.value) {
-            this.mediumControl.patchValue(this.profile.medium || []);
+            this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : this.guestUserProfile.medium) || []);
           } else {
             this.mediumControl.patchValue([]);
           }
@@ -321,7 +325,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.gradeControl.value) {
-            this.gradeControl.patchValue(this.profile.grade || []);
+            this.gradeControl.patchValue((this.profile.grade.length ?  this.profile.grade : this.guestUserProfile.grade) || []);
           } else {
             this.gradeControl.patchValue([]);
           }
@@ -350,7 +354,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.subjectList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.subjectControl.value) {
-            this.subjectControl.patchValue(this.profile.subject || []);
+            this.subjectControl.patchValue((this.profile.subject.length ?  this.profile.subject : this.guestUserProfile.subject)  || []);
           } else {
             this.subjectControl.patchValue([]);
           }
@@ -517,13 +521,15 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       if (boardCategory) {
         this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
         this.isBoardAvailable = true;
-        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
+        const syllabus = (this.profile.syllabus && this.profile.syllabus[0]) ||
+         (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus[0]);
+        this.syllabusControl.patchValue([syllabus] || []);
       } else {
         await this.getFrameworkData(this.frameworkId);
         this.categories.unshift([]);
         this.isBoardAvailable = false;
         this.mediumList = mediumCategory.terms;
-        this.mediumControl.patchValue(this.profile.medium || []);
+        this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : this.guestUserProfile.medium) || []);
       }
     } catch (err) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -561,5 +567,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   goBack() {
     this.location.back();
+  }
+
+  async setDefaultBMG() {
+    await this.commonUtilService.getGuestUserConfig().then((profile) => {
+      this.guestUserProfile = profile;
+    });
   }
 }

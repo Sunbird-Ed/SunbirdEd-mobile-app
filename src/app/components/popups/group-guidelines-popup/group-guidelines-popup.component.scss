@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
 .gg-terms-container{
     padding: 0 16px;
-    font-size: 14px;
+    font-size: $font-size-base;
     .gg-terms-checkbox-label{
         margin-left: 16px;
         display: inline-block;
@@ -15,7 +15,7 @@
 .cr-error{
     margin-top: 8px;
     display: block;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: $red;
-    line-height: 10px;
+    line-height: 0.625rem;
 }

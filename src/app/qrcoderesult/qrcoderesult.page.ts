@@ -456,7 +456,7 @@ export class QrcoderesultPage implements OnDestroy {
    * Play content
    */
   playContent(content: Content, isStreaming: boolean, contentInfo?: ContentInfo) {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+    if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
       return;
     }
@@ -540,7 +540,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+    if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
       return;
     }

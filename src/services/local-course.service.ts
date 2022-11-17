@@ -378,7 +378,9 @@ export class LocalCourseService {
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
-    if (today.diff(endDate) > 0) {
+    const countTimeOfEOD = new Date(endDate);
+    countTimeOfEOD.setDate(countTimeOfEOD.getDate() + 1);
+    if (today.diff(countTimeOfEOD) > 0) {
       return undefined;
     }
     const duration = window.dayjs.duration(enrollmentEndDate.diff(today));

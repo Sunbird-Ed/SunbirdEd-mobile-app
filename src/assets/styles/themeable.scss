@@ -1,5 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 @import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile.scss';
+@import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile-aqua.scss';
 
 html[data-theme="JOYFUL"]{
 
@@ -152,6 +153,7 @@ html[data-theme="JOYFUL"]{
     .alert-button {
       border-color: var(--app-primary) !important;
       border-radius: 20px !important;
+      text-transform: none;
     }
     .alert-button:first-child:not(:only-child) {
       background: transparent !important;
@@ -164,6 +166,9 @@ html[data-theme="JOYFUL"]{
     .alert-wrapper{
       background-color: var(--app-secondary-background);
       border-radius: 1rem 1rem 0 0;
+      button{
+        text-transform: none;
+      }
     }
     .alert-tappable {
       box-shadow: none !important;
@@ -187,6 +192,26 @@ html[data-theme="JOYFUL"]{
   }
 
   .sb-btn-primary-outline{
+    color: var(--app-primary) !important;
+    background-color: var(--app-white) !important;
+  }
+  app-user-home, app-discover {
+    sb-library-cards-hlist {
+      .sb-btn-outline-secondary{
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+    }
+    
+    sb-course-cards-hlist {
+      .sb-btn-outline-secondary{
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  .sb-btn-outline-primary {
     color: var(--app-primary) !important;
     background-color: var(--app-white) !important;
   }
@@ -629,6 +654,10 @@ html[data-theme="JOYFUL"]{
       .trainings{
         .heading{
           border-radius: 1rem;
+          .refresh-icon { 
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+          }
         }
         .content{
           border-radius: 1rem !important;
@@ -816,7 +845,7 @@ html[data-theme="JOYFUL"]{
     &::after {
       content: '';
       width: 100%;
-      height: 172px;
+      height: 10.75rem;
       display: block;
       position: absolute;
       z-index: 0;
@@ -830,7 +859,7 @@ html[data-theme="JOYFUL"]{
     }
   }
   .backgrond-div::after{
-    top: -56px;
+    top: -3.5rem;
   }
   .ui-content{
     z-index: 2;
@@ -844,7 +873,7 @@ html[data-theme="JOYFUL"]{
         content: '';
         background-color: var(--app-primary-header) !important;
         width: 100vw;
-        height: 50px;
+        height: 3.125rem;
         position: absolute;
         z-index: -1;
         border-bottom-left-radius: 20px;
@@ -899,6 +928,7 @@ html[data-theme="JOYFUL"]{
     .sb-curiculum{
       border: none !important;
       border-radius: 12px !important;
+      min-height: 3rem !important;
       .title{
         color: var(--app-primary) !important;
         font-weight: bold;
@@ -948,7 +978,7 @@ html[data-theme="JOYFUL"]{
         .placeholder{
           color: var(--app-light-gray) !important;
           margin-left: 0 !important;
-          font-size: 16px !important;
+          font-size: 1rem !important;
         }
       }
       .multi-select-container{
@@ -959,7 +989,7 @@ html[data-theme="JOYFUL"]{
           padding-left: 0 !important;
           margin-left: 0 !important;
           span{
-            font-size: 16px !important;
+            font-size: 1rem !important;
           }
         }
         .list-border{
@@ -1017,11 +1047,11 @@ html[data-theme="JOYFUL"]{
         input::placeholder {
           color: var(--app-light-gray);
           margin-left: 0 !important;
-          font-size: 16px !important;
+          font-size: 1rem !important;
           font-weight: normal !important;
         }
         input{
-          font-size: 16px !important;
+          font-size: 1rem !important;
         }
         .async-text{
           border: none !important;
@@ -1040,7 +1070,7 @@ html[data-theme="JOYFUL"]{
       }
       textarea::placeholder {
         color: var(--app-light-gray);
-        font-size: 16px !important;
+        font-size: 1rem !important;
         font-weight: normal !important;
       }
     }
@@ -1227,19 +1257,20 @@ html[data-theme="JOYFUL"]{
     ion-header{
       ion-toolbar{
         --background: var(--app-secondary-background) !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
+        min-height: 3.75rem !important;
+        max-height: 3.75rem !important;
       }
     }
 
     .sb-popover-title{
       color: var(--app-dark-gray) !important;
-      padding: 0 16px !important;
-      font-size: 20px !important;
+      padding: 1.75rem !important;
+      font-size: 1.25rem !important;
       text-align: unset !important;
       ion-icon{
-        height: 30px !important;
-        width: 60px !important;
+        height: 1.875rem;
+        width: 3.75rem !important;
+        padding: 1rem 0 1rem;
       }
     }
 
@@ -1254,7 +1285,7 @@ html[data-theme="JOYFUL"]{
       }
 
       .sb-popover-action-btn{
-        height: 40px !important;
+        height: 2.5rem !important;
       }
     }
   }
@@ -1567,11 +1598,11 @@ html[data-theme="JOYFUL"]{
         background: var(--app-secondary-background) !important;
         border-radius: 20px !important;
         width: 94% !important;
-        height: 55px !important;
+        height: 3.438rem !important;
         left: 3% !important;
         padding: 10px !important;
         margin-bottom: 10px !important;
-        top: 8px !important;
+        top: 0.5rem !important;
         .sb-view-all-title{
           color: unset !important;
           margin-left: 8px !important;
@@ -1627,6 +1658,11 @@ html[data-theme="JOYFUL"]{
   }
 
   // DiscussionForum
+
+  // For now adding this styles to override the default behaviour of mobile app as there are no proper design guidelines for DF.
+  .df-btn-primary, .df-btn-secondary, .df-btn-tertiary, .df-btn-danger {
+    color: var(--df-btn-default-color);
+  }
 
   .discussion-forum {
     .reply-btn {
@@ -1741,7 +1777,7 @@ html[data-theme="JOYFUL"]{
   .ui-content-ios{
     z-index: 2;
     position: relative;
-    top: 45px;
+    top: 2.813rem;
   }
   .ui-container-ios {
     &::part(scroll) {
@@ -1750,7 +1786,7 @@ html[data-theme="JOYFUL"]{
     &::after {
       content: '';
       width: 100%;
-      height: 50px;
+      height: 3.125rem;
       display: block;
       position: absolute;
       z-index: 0;
@@ -1830,4 +1866,102 @@ html[data-theme="JOYFUL"]{
   }
 
   // ************ iOS end ***************
+}
+
+html[data-theme="DARKMODE"] {
+  --df-category-card-label: var(--app-white);
+}
+
+// Discussion Forum starts here
+lib-lib-entry {
+  &.main_discuss_lib {
+    background: var(--app-primary-background);
+
+    .sbt-inside-page-container.ui.container {
+      margin: 0 !important;
+    }
+
+    .df-header,
+    .no-card-content,
+    .ng2-tag-input,
+    .kabab-menu-dropdown-content {
+      background: var(--app-secondary-background);
+    }
+
+    .discussion-forum-content {
+      margin: 0 1rem;
+    }
+
+    .discussion-forum-content,
+    .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-field .start-form-field-control,
+    .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-field .select-category {
+      background: var(--app-primary-background) !important;
+      color: var(--app-black) !important;
+    }
+
+    .category-card .category-card-header .category-card-header-label,
+    .no-card-content,
+    .discuss-card-content .discuss-card-title,
+    .discussion-card-title,
+    .kabab-menu-dropdown-content,
+    .post-reply-card,
+    .post-card,
+    .related-discuss-card {
+      color: var(--app-black) !important;
+    }
+
+    .discuss-card-content {
+      .discuss-card-subtitle .card-label-container .discuss-card-label,
+      .discuss-card-comments .comments-count {
+        color: var(--app-primary) !important;
+      }
+    }
+
+    .kabab-menu {
+      color: var(--app-primary) !important;
+    }
+
+    .delete-icon, .edit-icon {
+      filter: invert(1);
+    }
+
+    .ng2-tag-input__text-input {
+      width: 100%;
+    }
+
+    .post-icons {
+      margin-right: .75rem;
+    }
+  }
+}
+// Discussion Forum ends here
+.central-alert, .attachment-delete-alert,.background-theme-color, .select-box {
+  button{
+    text-transform: none !important;
+  }
+}
+ion-picker{
+  .picker-toolbar{
+    .picker-button{
+      text-transform: none !important;
+    }
+  }
+}
+
+app-signup-email-password {
+  .emailPasswordForm {
+    sb-form {
+      sb-textbox {
+        .sb-input {
+          margin: 1rem !important;
+          input {
+            border-radius: 1rem !important;
+            border: 1px solid #8080805c !important;
+            padding: 0.5rem 0.5rem !important;
+            // width: 90%;
+          }
+        }
+      }
+    }
+  }
 }

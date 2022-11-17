@@ -21,7 +21,7 @@ import {
   AuditState,
   Consent, CorrelationData, LocationSearchResult, ProfileService,
   ServerProfile, SharedPreferences,
-  TelemetryObject
+  TelemetryObject, FrameworkService, OrganizationSearchCriteria
 } from 'sunbird-sdk';
 import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 
@@ -51,10 +51,12 @@ export class SelfDeclaredTeacherEditPage {
   selectedTenant = '';
   isTenantChanged = false;
   previousOrgId;
+  organisationList = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
     private router: Router,
@@ -96,6 +98,20 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTenantPersonaForm() {
+    const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string, rootOrgId: string}> = {
+      filters: {
+          isTenant: true
+      },
+      fields: ['orgName', 'rootOrgId']
+  };
+    const organisations = (await this.frameworkService.searchOrganization(searchOrganizationReq).toPromise()).content;
+    let index = 0;
+    this.organisationList = organisations.map((org) => ({
+      value: org.rootOrgId,
+      label: org.orgName,
+      index: index++
+    }));
+    index = 0;
     const personaTenantFormData: FieldConfig<any>[] = await this.formnFrameworkService.getFormFields(FormConstants.TENANT_PERSONAINFO,
       this.profile.rootOrg.rootOrgId);
 
@@ -110,6 +126,7 @@ export class SelfDeclaredTeacherEditPage {
     });
 
     this.tenantPersonaForm = personaTenantFormData;
+    this.tenantPersonaForm[0].templateOptions.options = this.organisationList;
     if (this.selectedTenant) {
       this.initTenantSpecificForm(this.selectedTenant, false);
     }

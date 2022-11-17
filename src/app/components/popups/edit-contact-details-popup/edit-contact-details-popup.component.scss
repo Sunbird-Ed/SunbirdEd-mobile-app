@@ -15,7 +15,7 @@
     @include padding(null, 14px, null, null);
   }
   .close-button.button-outline-md [icon-only] ion-icon {
-    font-size: 1.4em;
+    font-size: 1.4rem;
   }
   .padding-left-5 {
     @include padding(null, null, null, 5% !important);
@@ -61,7 +61,7 @@
     border-radius: 4px;
     .decorator {
       display: inline-block;
-      max-width: 50px;
+      max-width: 3.125rem;
     }
     .custom {
       display: inline-block;

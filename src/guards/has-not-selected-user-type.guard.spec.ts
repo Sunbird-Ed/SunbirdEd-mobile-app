@@ -51,6 +51,37 @@ describe('HasNotSelectedUserTypeGuard', () => {
     });
 
     describe('resolve', () => {
+        it('should return false if route has onReload property true and skip onboard for Admin', (done) => {
+            // arrange
+            mockActivatedRoute.snapshot = { params: { comingFrom: false } } as any;
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            mockSharedPreference.getString = jest.fn(() => of("administrator"))
+            // act
+            const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'true' } } as any);
+            // assert
+            setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+                expect(response).toBeTruthy();
+                done()
+            }, 0);
+
+        });
+
+        it('should return false if route has onReload property true and skip onboard and naviagte to profile settings page', (done) => {
+            // arrange
+            mockActivatedRoute.snapshot = { params: { comingFrom: false } } as any;
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            mockSharedPreference.getString = jest.fn(() => of("teacher"))
+            // act
+            const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'true' } } as any);
+            // assert
+            setTimeout(() => {
+                expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
+                expect(response).toBeTruthy();
+                done()
+            }, 0);
+
+        });
 
         it('should return true if route has onReload property true', (done) => {
             // arrange

@@ -1,17 +1,5 @@
 <ion-content class="ion-padding">
   <app-metadata-details translucent="true" [data]="metaData">
-    <!-- <div class="sb-dt-card-actions">
-    <div class="wrapper"> 
-      <app-metadata-actions (actionEvent)="action($event)" [actionItems]="actionItems"></app-metadata-actions>
-    </div>
-    <div class="sb-course-progress-container" *ngIf="taskCount">
-      <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
-      </p>
-      <p>{{projectProgress?.completedTasks}} / {{taskCount}} {{'COMPLETED' | translate}}
-      </p>
-        <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
-    </div>
-  </div> -->
     <ion-button (click)="doAction()" expand="block" class="ion-text-none ion-margin-top">{{buttonLabel |
       translate}}</ion-button>
   </app-metadata-details>
@@ -29,11 +17,16 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  <app-project-details-card [data]="project" *ngIf="segmentType == 'details'">
-  </app-project-details-card>
-  <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
-    <app-task-card [data]="project" [viewOnly] ="true"></app-task-card>
+  <div *ngIf="segmentType == 'details'">
+      <app-project-details-card [data]="project" >
+      </app-project-details-card>
+      <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
+      (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" [showCard]="true"> </app-accordion-list>
+      <app-accordion-list *ngIf="project?.criteria?.length" [data]="project?.criteria" [showCard]="false"
+    [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
-  <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
-    (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'"> </app-accordion-list>
+  <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
+    <app-task-card [data]="project" [viewOnly] ="true" (click)="openStartIMPPopup()"></app-task-card>
+  </div>
+
 </ion-content>

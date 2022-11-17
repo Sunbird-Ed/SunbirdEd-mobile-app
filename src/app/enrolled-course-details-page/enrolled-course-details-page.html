@@ -53,7 +53,7 @@
 				<div class="sb-course-end-container"
 					*ngIf="batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate)">
 					<p class="main-heading">
-						<strong>{{'ENROLLMENT_ENDED_ON'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date: 'dd/MM/yyyy') : ''} }}</strong>
+						<strong>{{'FRMELEMNTS_MSG_BATCH_ALREADY_CLOSED'  | translate}}</strong>
 					</p>
 					<p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : course }}</p>
 				</div>
@@ -104,7 +104,7 @@
 
 								<div *ngIf="isCourseModifiedAfterEnrolment()" class="course-modified">
 									<img src="assets/imgs/alert.svg" alt="course-modified-icon" class="alert" />
-									{{'FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | categoryKeyTranslate : course : {'last_updated_on_date': (course?.lastUpdatedOn | date: 'dd/MM/yyyy') } }}
+									{{'FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | categoryKeyTranslate : course : {'last_updated_on_date': (course?.lastPublishedOn | date: 'dd/MM/yyyy') } }}
 								</div>
 
 								<div *ngIf="courseCardData?.batchId">
@@ -141,7 +141,7 @@
 				</div>
 				<div *ngIf="activityData && activityData.isGroupCreatorOrAdmin">
 					<button (click)="navigateToDashboard()" slot="icon-only" class="enrolled-course-card-button">
-						<span><img src="assets/imgs/dashboard-icon-white.svg" class="card-icons-red play-icon">
+						<span><img src="assets/imgs/dashboard-icon-white.svg" class="card-icons-red play-icon" alt="">
 						{{'ACTIVITY_DASHBOARD' | translate}}</span>
 					</button>
 				</div>
@@ -278,7 +278,8 @@
 										   [isAlreadyEnrolled]="isAlreadyEnrolled"
 										   [isCertifiedCourse]="isCertifiedCourse"
 										   [certificateDescription]="certificateDescription"
-				[batchEndDate]="batchEndDate"></app-relevant-content-card>
+				[batchEndDate]="batchEndDate"
+				[enrollmentEndDate]="batchDetails?.enrollmentEndDate"></app-relevant-content-card>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">

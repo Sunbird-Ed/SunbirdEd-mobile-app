@@ -8,13 +8,13 @@
   }
 }
 .cancel-download {
-  font-size: 50px;
+  font-size: 3.125rem;
   float: right;
   padding-top: 3px;
 }
 .sb-url {
   color: var(--app-primary);
-  font-size: 14px;
+  font-size: $font-size-base;
 }
 
 .scroll-content {
@@ -23,7 +23,7 @@
 .btn-progress-highlight {
   left: 0;
   background: $primary-800;
-  height: 5px;
+  height: 0.313rem;
   position: absolute;
   border-radius: inherit;
   border: 0;
@@ -34,12 +34,12 @@
   border-radius: 33px;
   display: inline-block;
   background: $primary-200;
-  height: 5px;
-  width: 56px;
+  height: 0.313rem;
+  width: 3.5rem;
 }
 .sb-back-transparent {
-  width: 50px;
-  min-height: 50px;
+  width: 3.13rem;
+  min-height: 3.13rem;
   background: transparent;
 }
 
@@ -79,7 +79,7 @@
 }
 .play-text {
   color: $gray-0;
-  font-size: 14px;
+  font-size: $font-size-base;
   margin-top: 0;
   text-transform: capitalize;
 }
@@ -89,11 +89,11 @@
 .sb-dt-source {
   margin-top: 10px;
   .sb-by-gray {
-    font-size: ($font-size-base - 4);
+    font-size: ($font-size-base - 0.25);
     color: $gray-0;
   }
   .sb-user {
-    font-size: ($font-size-base - 2);
+    font-size: ($font-size-base - 0.125);
     color: $gray-0;
   }
 }
@@ -110,7 +110,7 @@
 }
 .content-vertical-line {
   border-left: 2px solid white;
-  height: 18px;
+  height: 1.125rem;
   position: relative;
   margin-left: 8px;
   margin-right: 8px;
@@ -153,7 +153,7 @@
 .read-more{
   color: $blue;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding-left: 0.5rem;
 }
 
@@ -168,7 +168,7 @@
   margin-top: 1rem;
 }
 .font-12 {
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
 }
 .subtitle-color{
   color: map-get($colors, granite_gray);
@@ -176,8 +176,8 @@
 
 // **** iOS
 .sb-back-transparent-ios {
-  width: 50px;
-  min-height: 100px;
+  width: 3.13rem;
+  min-height: 6.25rem;
   background: transparent;
 }
 // **** iOS
@@ -244,4 +244,12 @@ sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
 
 .standalone-player-container {
   height: auto !important;
+}
+
+.transcript-download{
+  color: $blue;
+  font-family: "Noto Sans";
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.125rem;
 }

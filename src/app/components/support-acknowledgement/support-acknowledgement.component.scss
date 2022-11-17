@@ -20,8 +20,8 @@
 
 .header {
     background-color: $white;
-    width: 331px;
-    height: 279px;
+    width: 20.688rem;
+    height: 17.438rem;
     margin: 0 auto;
     border-radius: 10px;
     text-align: center;
@@ -35,8 +35,8 @@
 .close {
     float: right;
     font-weight: bold;
-    height: 30px;
-    width: 30px;
+    height: 1.875rem;
+    width: 1.875rem;
     margin: 6px 6px 0px 0px;
 }
 
@@ -62,7 +62,7 @@
 .btn-call {
     width: 95%;
     height: 16%;
-    font-size: 16px;
+    font-size: 1rem;
     color: $white;
     background: $green;
     margin-top: 24px;

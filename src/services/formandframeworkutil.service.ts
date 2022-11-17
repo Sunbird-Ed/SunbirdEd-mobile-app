@@ -24,10 +24,11 @@ import {
     FrameworkCategoryCode,
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
+import { FormConstants } from '@app/app/form.constants';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -56,24 +57,14 @@ export class FormAndFrameworkUtilService {
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate' | 'register' | 'state'): Promise<WebviewSessionProviderConfig> {
-        const request: FormRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
-            type: 'config',
-            subType: 'login_v2',
-            action: 'get'
-        };
+        return this.getFormFields(FormConstants.LOGIN_CONFIG).then((fields) => {
+            const config = fields.find(c => c.context === context);
+            if (!config) {
+                throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
+            }
 
-        return this.formService.getForm(request).pipe(
-            map((result) => {
-                const config = result['form']['data']['fields'].find(c => c.context === context);
-
-                if (!config) {
-                    throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
-                }
-
-                return config;
-            })
-        ).toPromise();
+            return config;
+        });
     }
 
     /**
@@ -170,60 +161,50 @@ export class FormAndFrameworkUtilService {
             return this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
-                    // form api request
-                    const req: FormRequest = {
-                        type: 'app',
-                        subType: 'install',
-                        action: 'upgrade'
-                    };
-                    // form api call
-                    return this.formService.getForm(req).toPromise()
-                        .then((res: any) => {
-                            let fields: Array<any> = [];
-                            let ranges: Array<any> = [];
-                            let upgradeTypes: Array<any> = [];
-                            if (res && res.form && res.form.data) {
-                                fields = res.form.data.fields;
-                                for (const element of fields) {
-                                    if (element.language === this.selectedLanguage) {
-                                        if (element.range) {
-                                            ranges = element.range;
-                                        }
-
-                                        if (element.upgradeTypes) {
-                                            upgradeTypes = element.upgradeTypes;
-                                        }
-                                    }
-                                }
-
-                                if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
-                                    const range = ranges.reduce((acc, r) => {
-                                        if (versionCode >= r.minVersionCode && versionCode <= r.maxVersionCode) {
-                                            if (acc && (acc.type === 'force' || acc.type === 'forced')) {
-                                                return acc;
-                                            }
-                                            return r;
-                                        }
-                                        return acc;
-                                    }, undefined);
-
-                                    if (!range) {
-                                        resolve(undefined);
-                                        return;
+                    this.getFormFields(FormConstants.UPGRADE_INFO).then((fields: any) => {
+                        let ranges: Array<any> = [];
+                        let upgradeTypes: Array<any> = [];
+                        if (fields && fields.length) {
+                            for (const element of fields) {
+                                if (element.language === this.selectedLanguage) {
+                                    if (element.range) {
+                                        ranges = element.range;
                                     }
 
-                                    const result = upgradeTypes.find((u) => u.type === range.type);
-                                    result.minVersionCode = range.minVersionCode;
-                                    result.maxVersionCode = range.maxVersionCode;
-                                    result.currentAppVersionCode = versionCode;
-                                    resolve(result);
-                                    return;
+                                    if (element.upgradeTypes) {
+                                        upgradeTypes = element.upgradeTypes;
+                                    }
                                 }
                             }
-                            resolve(undefined);
-                        }).catch((error: any) => {
-                            reject(error);
-                        });
+
+                            if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
+                                const range = ranges.reduce((acc, r) => {
+                                    if (versionCode >= r.minVersionCode && versionCode <= r.maxVersionCode) {
+                                        if (acc && (acc.type === 'force' || acc.type === 'forced')) {
+                                            return acc;
+                                        }
+                                        return r;
+                                    }
+                                    return acc;
+                                }, undefined);
+
+                                if (!range) {
+                                    resolve(undefined);
+                                    return;
+                                }
+
+                                const result = upgradeTypes.find((u) => u.type === range.type);
+                                result.minVersionCode = range.minVersionCode;
+                                result.maxVersionCode = range.maxVersionCode;
+                                result.currentAppVersionCode = versionCode;
+                                resolve(result);
+                                return;
+                            }
+                        }
+                        resolve(undefined);
+                    }).catch((error: any) => {
+                        reject(error);
+                    });
                 });
         });
     }
@@ -236,21 +217,14 @@ export class FormAndFrameworkUtilService {
         resolve: (value?: any) => void,
         reject: (reason?: any) => void) {
 
-        const req: FormRequest = {
-            type: 'pageassemble',
-            subType: 'course',
-            action: 'filter_v2',
-        };
-        // form api call
-        this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                courseFilterConfig = res.form.data.fields;
-                this.appGlobalService.setCourseFilterConfig(courseFilterConfig);
-                resolve(courseFilterConfig);
-            }).catch((error: any) => {
-                console.log('Error - ' + error);
-                resolve(courseFilterConfig);
-            });
+        this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
+            courseFilterConfig = fields;
+            this.appGlobalService.setCourseFilterConfig(courseFilterConfig);
+            resolve(courseFilterConfig);
+        }).catch((error: any) => {
+            console.log('Error - ' + error);
+            resolve(courseFilterConfig);
+        });
     }
 
     /**
@@ -261,34 +235,21 @@ export class FormAndFrameworkUtilService {
         resolve: (value?: any) => void,
         reject: (reason?: any) => void) {
 
-        const req: FormRequest = {
-            type: 'pageAssemble',
-            subType: 'library',
-            action: 'filter',
-        };
-        // form api call
-        this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                libraryFilterConfig = res.form.data.fields;
-                this.appGlobalService.setLibraryFilterConfig(libraryFilterConfig);
-                resolve(libraryFilterConfig);
-            }).catch((error: any) => {
-                console.log('Error - ' + error);
-                resolve(libraryFilterConfig);
-            });
+        this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
+            libraryFilterConfig = fields;
+            this.appGlobalService.setLibraryFilterConfig(libraryFilterConfig);
+            resolve(libraryFilterConfig);
+        }).catch((error: any) => {
+            console.log('Error - ' + error);
+            resolve(libraryFilterConfig);
+        });
     }
     /**
      * Network call to form api to fetch Supported URL regex
      */
     invokeUrlRegexFormApi(): Promise<any> {
-        const req: FormRequest = {
-            type: 'config',
-            subType: 'supportedUrlRegex',
-            action: 'get'
-        };
-        return this.formService.getForm(req).toPromise().then((res: any) => {
-            const data = res.form.data.fields;
-            if (res && data.length) {
+        return this.getFormFields(FormConstants.SUPPORTED_URL_REGEX).then((data) => {
+            if (data && data.length) {
                 const regObj = {};
                 for (const ele of data) {
                     regObj[ele.code] = ele.values;
@@ -310,21 +271,14 @@ export class FormAndFrameworkUtilService {
         resolve: (value?: any) => void,
         reject: (reason?: any) => void) {
 
-        const req: FormRequest = {
-            type: 'config',
-            subType: 'location',
-            action: 'get',
-        };
-        // form api call
-        this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                locationConfig = res.form.data.fields;
-                this.appGlobalService.setLocationConfig(locationConfig);
-                resolve(locationConfig);
-            }).catch((error: any) => {
-                console.log('Error - ' + error);
-                resolve(locationConfig);
-            });
+        this.getFormFields(FormConstants.LOCATION_CONFIG).then((res) => {
+            locationConfig = res;
+            this.appGlobalService.setLocationConfig(locationConfig);
+            resolve(locationConfig);
+        }).catch((error: any) => {
+            console.log('Error - ' + error);
+            resolve(locationConfig);
+        });
     }
 
     async getPdfPlayerConfiguration() {
@@ -349,15 +303,10 @@ export class FormAndFrameworkUtilService {
         pdfPlayerConfig: any,
         resolve: (value?: any) => void,
         reject: (reason?: any) => void) {
-        const req: FormRequest = {
-            type: 'config',
-            subType: 'pdfPlayer_v2',
-            action: 'get',
-        };
         let currentConfiguration;
-        this.formService.getForm(req).toPromise()
+        this.formService.getForm(FormConstants.PDF_PLAYER_CONFIG).toPromise()
             .then((res: any) => {
-                currentConfiguration = res.form.data; 
+                currentConfiguration = res.form.data;
                 this.appGlobalService.setpdfPlayerconfiguration(currentConfiguration);
                 resolve(currentConfiguration);
             }).catch((error: any) => {
@@ -374,17 +323,10 @@ export class FormAndFrameworkUtilService {
     }
 
     public async invokeContentFilterConfigFormApi(): Promise<any> {
-        const req: FormRequest = {
-            type: 'config',
-            subType: 'content_v2',
-            action: 'filter',
-        };
-
-        // form api call
-        return this.formService.getForm(req).toPromise()
+        return this.getFormFields(FormConstants.CONTENT_CONFIG)
             .then((res: any) => {
-                this.setContentFilterConfig(res.form.data.fields);
-                return res.form.data.fields;
+                this.setContentFilterConfig(res);
+                return res;
             }).catch((error: any) => {
                 console.log('Error - ' + error);
                 return error;
@@ -649,16 +591,9 @@ export class FormAndFrameworkUtilService {
 
     async getTenantSpecificMessages(rootOrgId) {
         return new Promise((resolve, reject) => {
-            const req: FormRequest = {
-                type: 'user',
-                subType: 'externalIdVerification',
-                action: 'onboarding',
-                rootOrgId,
-                from: CachedItemRequestSourceFrom.SERVER,
-            };
-            this.formService.getForm(req).toPromise()
+            this.getFormFields(FormConstants.EXTERNAL_ID_VERIFICATION, rootOrgId)
                 .then((res: any) => {
-                    const data = res.form.data.fields;
+                    const data = res;
                     if (data && data.length) {
                         resolve(data);
                     }
@@ -672,16 +607,10 @@ export class FormAndFrameworkUtilService {
     // get the required webview version
     getWebviewConfig() {
         return new Promise((resolve, reject) => {
-            const req: FormRequest = {
-                type: 'config',
-                subType: 'webview_version',
-                action: 'get',
-            };
-            // form api call
-            this.formService.getForm(req).toPromise()
+            this.getFormFields(FormConstants.WEBVIEW_VERSION)
                 .then((res: any) => {
-                    if (res.form && res.form.data && res.form.data.fields[0].version) {
-                        resolve(parseInt(res.form.data.fields[0].version, 10));
+                    if (res && res.length && res[0].version) {
+                        resolve(parseInt(res[0].version, 10));
                     } else {
                         resolve(54);
                     }
@@ -692,73 +621,31 @@ export class FormAndFrameworkUtilService {
     }
 
     async getFormConfig() {
-        const req: FormRequest = {
-            type: 'dynamicform',
-            subType: 'support_v2',
-            action: 'get',
-            component: 'app'
-        };
-        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.DYNAMIC_FORM_CONFIG).then() as any);
     }
 
     async getStateContactList() {
-        const req: FormRequest = {
-            type: 'form',
-            subType: 'boardContactInfo',
-            action: 'get',
-            component: 'app'
-        };
-        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.CONTACT_INFO).then() as any);
     }
 
     async getContentRequestFormConfig() {
-        const req: FormRequest = {
-            type: 'dynamicForm',
-            subType: 'contentRequest',
-            action: 'submit',
-            component: 'app'
-        };
-        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.DYNAMIC_CONTENT_REQUEST).then() as any);
     }
 
     async getConsentFormConfig() {
-        const req: FormRequest = {
-            type: 'dynamicForm',
-            subType: 'consentDeclaration_v3',
-            action: 'submit',
-            component: 'app'
-        };
-        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.CONSENT_DECLARATION).then() as any);
     }
 
     async getNotificationFormConfig() {
-        const req: FormRequest = {
-            type: 'config',
-            subType: 'notification',
-            action: 'get',
-            component: 'app'
-        };
-        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.NOTIFICATION).then() as any);
     }
 
     async getBoardAliasName() {
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: 'boardAlias',
-            action: 'get',
-            component: 'app'
-        };
-        return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+        return (await this.getFormFields(FormConstants.BOARD_ALIAS).then() as any);
     }
 
     async getSearchFilters(): Promise<any[]>{
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: 'search',
-            action: 'facet_filter',
-            component: 'app'
-        };
-        return await this.getFormFields(formRequest);
+        return await this.getFormFields(FormConstants.SEARCH_FILTER_CONFIG);
     }
 
     async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
