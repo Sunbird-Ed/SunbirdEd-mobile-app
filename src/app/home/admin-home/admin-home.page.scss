@@ -1,6 +1,6 @@
 @import "src/assets/styles/_variables.scss";
 .filter-style {
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: 500;
   color: $blue;
   white-space: nowrap;
@@ -12,11 +12,11 @@
 
 .user-profile {
   padding: 8px 8px 0;
-  font-size: 3.2vh;
+  font-size: 1.188rem;
 }
 
 .label {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
   padding-left: 8px;
 }
@@ -28,8 +28,8 @@
 .sb-card-recently-container {
   .recently-viewed-card-size{
     margin: 0 8px; 
-    min-width:288px;
-    max-width:288px;
+    min-width:18rem;
+    max-width:18rem;
     &:only-child {
       min-width: 100%;
       max-width: calc(100vw - 32px);

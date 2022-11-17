@@ -76,7 +76,7 @@ export class EditContactVerifyPopupComponent {
           if (HttpClientError.isInstance(error)
            && error.response.responseCode === 400) {
             if (typeof error.response.body  === 'object') {
-              if (error.response.body.params.err === 'OTP_VERIFICATION_FAILED' &&
+              if (error.response.body.params.err === 'UOS_OTPVERFY0063' &&
               error.response.body.result.remainingAttempt > 0) {
                 this.remainingAttempts = error.response.body.result.remainingAttempt;
                 this.otp = '';

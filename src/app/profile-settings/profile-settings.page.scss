@@ -49,17 +49,17 @@
   }
 
   .fill-in-style {
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: center;
     margin-top: 40px;
     @include padding(0, 5px);
     .fill-in-head{
       font-weight: bold;
-      font-size: 16px;
+      font-size: 1rem;
       margin-bottom: 8px;
     }
     .fill-in-content{
-      font-size: 14px;
+      font-size: $font-size-base;
     }
   }
   .item-select-disabled {
@@ -131,24 +131,24 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: -15px;
+        top: -0.938rem;
         .or-circle {
           display: block;
-          width: 60px;
-          height: 30px;
+          width: 3.75rem;
+          height: 1.875rem;
           border-radius: 15px;
           background-color: #555;
           text-align: center;
           color: map-get($colors, white);
-          font-size: 16px;
-          line-height: 30px;
+          font-size: 1rem;
+          line-height: 1.88rem;
           margin: 0 auto;
         }
       }
   }
 
   .back-btn-container{
-    height: 32px;
+    height: 2rem;
     @include ltr() {
       top: 0;
       left: 0;
@@ -161,13 +161,13 @@
     flex-shrink: 0;
     .top-back-button{
       position: absolute;
-      width: 30px;
+      width: 1.875rem;
       @include ltr() {
-        left: 16px;
+        left: 1rem;
         transform: rotate(180deg);
       }
       @include rtl() {
-        right: 16px;
+        right: 1rem;
         transform: rotate(0deg);
       }
     }
@@ -205,7 +205,7 @@
       }
       .sub-title {
         padding: 8px 10% 0 10%;
-        font-size: 14px;
+        font-size: $font-size-base;
       }
     }
     .qr-btn-container {
@@ -225,7 +225,7 @@
         span {
           display: inline-block;
           vertical-align: middle;
-          font-size: 20px;
+          font-size: 1.25rem;
           padding-left: 10px;
         }
       }
@@ -308,7 +308,7 @@
   }
   img.arrow-icon {
     display: inline-block;
-    width: 22px;
+    width: 1.375rem;
     margin-top: -3px;
     float: right;
 
@@ -370,9 +370,9 @@
 
 // ************* iOS start*************
 .back-btn-container-ios{
-  height: 32px;
+  height: 2rem;
   @include ltr() {
-    top: 50px;
+    top: 3.125rem;
     left: 0;
     position: relative;
   }
@@ -384,13 +384,13 @@
   flex-shrink: 0;
   .top-back-button{
     position: absolute;
-    width: 30px;
+    width: 1.875rem;
     @include ltr() {
-      left: 16px;
+      left: 1rem;
       transform: rotate(180deg);
     }
     @include rtl() {
-      right: 16px;
+      right: 1rem;
       transform: rotate(0deg);
     }
   }

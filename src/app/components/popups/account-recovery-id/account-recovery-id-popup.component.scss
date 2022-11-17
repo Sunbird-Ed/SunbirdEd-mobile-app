@@ -9,7 +9,7 @@
     border-radius: 4px;
     .decorator {
         display: inline-block;
-        max-width: 50px;
+        max-width: 3.125rem;
     }
     .custom {
         display: inline-block;
@@ -38,7 +38,7 @@
 
 .recovery-desc{
     @include padding(null, 16px, null, null);
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .custom-shadow {

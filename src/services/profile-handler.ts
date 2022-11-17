@@ -16,14 +16,15 @@ export class ProfileHandler {
         private commonUtilService: CommonUtilService,
         private locationHandler: LocationHandler
     ) { }
-    private async getFormFields(): Promise<PersonaConfig[]> {
+    private async getFormFields(rooOrgId?: string): Promise<PersonaConfig[]> {
         if (!this.formFields) {
-            this.formFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES);
+            this.formFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES, rooOrgId);
         }
         return this.formFields;
     }
-    public async getSupportedProfileAttributes(showOptionalCategories?: boolean, userType?: string): Promise<{ [key: string]: string }> {
-        const formFields = await this.getFormFields();
+
+    public async getSupportedProfileAttributes(showOptionalCategories?: boolean, userType?: string, rootOrgId?: string): Promise<{ [key: string]: string }> {
+        const formFields = await this.getFormFields(rootOrgId);
         if (!userType) {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
@@ -41,8 +42,8 @@ export class ProfileHandler {
             return map;
         }, {});
     }
-    public async getSupportedUserTypes(): Promise<Array<PersonaConfig>> {
-        const supportedUserTypes = await this.getFormFields();
+    public async getSupportedUserTypes(rootOrgId?: string): Promise<Array<PersonaConfig>> {
+        const supportedUserTypes = await this.getFormFields(rootOrgId);
         return supportedUserTypes.map((element) => {
             element.name = element.translations ?
                 this.commonUtilService.getTranslatedValue(element.translations, element.name) : element.name;
@@ -50,12 +51,12 @@ export class ProfileHandler {
             return element;
         });
     }
-    public async getPersonaConfig(persona: string): Promise<PersonaConfig> {
-        const formFields = await this.getFormFields();
+    public async getPersonaConfig(persona: string, rootOrgId?: string): Promise<PersonaConfig> {
+        const formFields = await this.getFormFields(rootOrgId);
         return formFields.find(config => config.code === persona);
     }
-    public async getAudience(userType: string): Promise<string[]> {
-        const formFields = await this.getFormFields();
+    public async getAudience(userType: string, rootOrgId?: string): Promise<string[]> {
+        const formFields = await this.getFormFields(rootOrgId);
         const userTypeConfig = formFields.find(formField => formField.code === userType);
         return userTypeConfig ? userTypeConfig['searchFilter'] : [];
     }

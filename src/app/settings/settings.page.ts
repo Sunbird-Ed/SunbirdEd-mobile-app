@@ -72,7 +72,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    this.headerService.showHeaderWithBackButton(['font-accessibility']);
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;

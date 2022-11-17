@@ -6,16 +6,16 @@
 
     .wrapper {
         border: 3px solid transparent;
-        width: 50px;
-        height: 50px;
-        margin: 10px auto;
-        border-radius: 50px;
+        width: 3.13rem;
+        height: 3.13rem;
+        margin: 0.625rem auto;
+        border-radius: 3.13rem;
 
         .block {
-            width: 44px;
-            height: 44px;
-            padding: 10px;
-            border-radius: 50px;
+            width: 2.75rem;
+            height: 2.75rem;
+            padding: 0.625rem;
+            border-radius: 3.13rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,6 +24,11 @@
     }
 }
 
+._inline_flex-box{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+}
 .color-green {
     color: white !important;
     background: green !important;

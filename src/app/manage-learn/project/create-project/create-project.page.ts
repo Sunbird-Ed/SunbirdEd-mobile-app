@@ -174,34 +174,57 @@ export class CreateProjectPage implements OnInit {
   }
   async confirmToClose() {
     let text;
-    this.translate
+    let translateText ={
+      header: 'FRMELEMNTS_LBL_DISCARD_PROJECT',
+      message:'FRMELEMNTS_MSG_DISCARD_PROJECT',
+      yes:'YES',
+      no:'NO'
+    }
+    if(this.project._id){
+      translateText ={
+        header: 'FRMELEMNTS_LBL_DISCARD_EDIT_PROJECT',
+        message:'FRMELEMNTS_MSG_DISCARD_EDIT_PROJECT',
+        yes:'YES',
+        no:'NO'
+      }
+    }
+      this.translate
       .get([
-        'FRMELEMNTS_LBL_DISCARD_PROJECT',
-        'FRMELEMNTS_MSG_DISCARD_PROJECT',
-        'YES',
-        'NO',
+        translateText.header,
+        translateText.message,
+        translateText.yes,
+        translateText.no,
       ])
       .subscribe((data) => {
         text = data;
       });
     const alertPopup = await this.alertPopup.create({
       cssClass: 'central-alert',
-      header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
-      message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
+      header: text[translateText.header],
+      message: text[translateText.message],
       buttons: [
         {
-          text: text['YES'],
+          text: text[translateText.yes],
           role: 'cancel',
           cssClass: 'text-transform-free',
           handler: (blah) => {
-            this.location.back();
-            this.backButtonFunc.unsubscribe();
+            if(this.project._id){
+              this.next();
+            }else{
+              this.location.back();
+              this.backButtonFunc.unsubscribe();
+            }
           },
         },
         {
-          text: text['NO'],
+          text: text[translateText.no],
           cssClass: 'text-transform-free',
-          handler: () => { },
+          handler: () => { 
+            if(this.project._id){
+              this.location.back();
+              this.backButtonFunc.unsubscribe();
+            }
+          },
         },
       ],
     });

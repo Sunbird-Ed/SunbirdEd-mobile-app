@@ -1,4 +1,8 @@
 {
+    "overriddenDefaultChannelId": "",
+    "theme": {
+    },
+    "skipOnboardingForLoginUser": true,
     "onboarding": [
         {
             "name": "language-setting",
@@ -6,7 +10,81 @@
             "default": {
                 "code": "en",
                 "label": "English"
-            }
+            },
+            "data": [
+                {
+                    "label": "हिंदी",
+                    "code": "hi",
+                    "isApplied": false,
+                    "name": "Hindi"
+                },
+                {
+                    "label": "English",
+                    "code": "en",
+                    "isApplied": false,
+                    "name": "English"
+                },
+                {
+                    "label": "অসমীয়া",
+                    "code": "as",
+                    "isApplied": false,
+                    "name": "Assamese"
+                },
+                {
+                    "label": "বাংলা",
+                    "code": "bn",
+                    "isApplied": false,
+                    "name": "Bengali"
+                },
+                {
+                    "label": "ગુજરાતી",
+                    "code": "gu",
+                    "isApplied": false,
+                    "name": "Gujarati"
+                },
+                {
+                    "label": "ಕನ್ನಡ",
+                    "code": "kn",
+                    "isApplied": false,
+                    "name": "Kannada"
+                },
+                {
+                    "label": "मराठी",
+                    "code": "mr",
+                    "isApplied": false,
+                    "name": "Marathi"
+                },
+                {
+                    "label": "ଓଡ଼ିଆ",
+                    "code": "or",
+                    "isApplied": false,
+                    "name": "Oriya"
+                },
+                {
+                    "label": "ਪੰਜਾਬੀ",
+                    "code": "pa",
+                    "isApplied": false,
+                    "name": "Punjabi"
+                },
+                {
+                    "label": "தமிழ்",
+                    "code": "ta",
+                    "isApplied": false,
+                    "name": "Tamil"
+                },
+                {
+                    "label": "తెలుగు",
+                    "code": "te",
+                    "isApplied": false,
+                    "name": "Telugu"
+                },
+                {
+                    "label": "اردو",
+                    "code": "ur",
+                    "isApplied": false,
+                    "name": "Urdu"
+                }
+            ]
         },
         {
             "name": "user-type-selection",
@@ -16,6 +94,9 @@
         {
             "name": "profile-settings",
             "skip": false,
+            "params": {
+                "showQrScanPage": true
+            },
             "default": {
                 "syllabus": [
                     "ekstep_ncert_k-12"
@@ -170,6 +251,28 @@
             "theme": "OLD",
             "status": "ALL",
             "userTypeAdmin": true
+        }
+    ],
+    "categories": [
+        {
+            "code": "category1",
+            "value": "Board",
+            "translation_key": "FRMELEMENTS_LBL_CATEGORY1"
+        },
+        {
+            "code": "category2",
+            "value": "Medium",
+            "translation_key": "FRMELEMENTS_LBL_CATEGORY2"
+        },
+        {
+            "code": "category3",
+            "value": "GradleLevel",
+            "translation_key": "FRMELEMENTS_LBL_CATEGORY3"
+        },
+        {
+            "code": "category4",
+            "value": "Subject",
+            "translation_key": "FRMELEMENTS_LBL_CATEGORY4"
         }
     ]
 }

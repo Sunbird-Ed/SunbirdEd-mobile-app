@@ -62,7 +62,7 @@ export const mockPlayerConfigData = {
      did :  'ef37fc07aee31d87b386a408e0e4651e00486618' ,
      origin :  'https://staging.ntp.net.in' ,
      pdata : {
-       id :  'staging.diksha.app' ,
+       id :  'staging.sunbird.app' ,
        pid :  'sunbird.app' ,
        ver :  '2.7.197staging-debug'
     },

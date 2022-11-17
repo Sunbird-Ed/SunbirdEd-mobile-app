@@ -2,7 +2,7 @@
   <div>
     <h4>{{evidenceMethod}} - {{sectionName}}</h4>
   </div>
-  <div class="_flex-box _flex-wrap ion-margin-top" *ngIf="questions?.length">
+  <div class="_inline_flex-box _flex-wrap ion-margin-top" *ngIf="questions?.length">
     <ng-container *ngFor="let question of questions; let i = index">
       <div class="container _flex-box _justify-content-center" (click)="goToQuestion(i)"
         *ngIf="checkForQuestionDisplay(question)">
@@ -25,7 +25,7 @@
 
 <ion-footer>
   <div class="sb-popover-footer">
-    <ion-button expand="full" class="sb-popover-action-btn popover-color" (click)='close()'
+    <ion-button expand="full" class="sb-popover-action-btn popover-color custom-btn-txt-transform-none" (click)='close()'
       >{{ 'CANCEL' | translate}}</ion-button>
   </div>
 </ion-footer>

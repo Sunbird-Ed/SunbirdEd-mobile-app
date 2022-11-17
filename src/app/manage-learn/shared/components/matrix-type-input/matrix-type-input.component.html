@@ -9,7 +9,7 @@
   <div class="_tip _flex-box "> {{data?.tip}}</div>
   <div class="_flex-box alignBtn">
     <button class="btn-block px-10 sb-bg-color-primary" (click)="addInstances()">{{'FRMELEMENTS_BTN_ADD'|
-      translate}} {{data.instanceIdentifier}}</button>
+      translate}} {{data.instanceIdentifier | lowercase}}</button>
   </div>
   <ion-list class="ion-margin-top ion-text-wrap" *ngIf="data?.value?.length">
     <ion-item text-capitalize class="_flex-box" *ngFor="let instance of data?.value; let i = index">
@@ -22,4 +22,12 @@
       <ion-icon name="trash" class="deletOption ion-margin-right" item-end (click)="deleteInstanceAlert(i)"></ion-icon>
     </ion-item>
   </ion-list>
+  <app-image-upload
+    [submissionId]="submissionId"
+    [data]="data"
+    [generalQuestion]="generalQuestion"
+    [imageLocalCopyId]="imageLocalCopyId"
+    [evidenceId]="evidenceId"
+    [schoolId]="schoolId"
+  ></app-image-upload>
 </ion-card>

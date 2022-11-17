@@ -1,16 +1,16 @@
 @import "src/assets/styles/_variables.scss";
     .profile-avatar{
-        font-size: 50px;
+        font-size: 3.125rem;
         font-weight: bold !important;
-        line-height: 50px;
+        line-height: 3.13rem;
         color: map-get($colors, vivid_purple);
         border-radius: 50%;
         -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
         box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
         padding: 5px;
         text-align: center;
-        min-width: 80px;
-        min-height: 80px;
+        min-width: 5rem;
+        min-height: 5rem;
         margin: 0 auto;
         display: table;
 

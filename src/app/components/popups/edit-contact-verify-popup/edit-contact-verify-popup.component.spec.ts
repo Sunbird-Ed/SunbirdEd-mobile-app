@@ -149,7 +149,7 @@ describe('EditContactVerifyPopupComponent', () => {
         response.errorMesg = "RASD";
         response.body = {
             params: {
-                err: 'OTP_VERIFICATION_FAILED'
+                err: 'UOS_OTPVERFY0063'
             },
             result: {
                 remainingAttempt: 1
@@ -206,7 +206,7 @@ describe('EditContactVerifyPopupComponent', () => {
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         editContactVerifyPopupComponent.type = 'phone';
         mockProfileService.generateOTP = jest.fn(() => throwError(
-            { err: 'ERROR_RATE_LIMIT_EXCEEDED' }));
+            { err: '0060' }));
         // act
         editContactVerifyPopupComponent.resendOTP();
         // assert

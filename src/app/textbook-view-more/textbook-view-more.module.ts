@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TextbookViewMorePage } from './textbook-view-more.page';
 import { ComponentsModule } from '../components/components.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    TranslateModule.forChild(),
     ComponentsModule,
     CommonConsumptionModule
   ],

@@ -3,7 +3,7 @@
 :host {
     .subtitle {
       text-transform: capitalize;
-      font-size: 1.3em;
+      font-size: 1.3rem;
       font-weight: 700 !important;
       color: map-get($colors, primary_black);
     } 
@@ -12,9 +12,9 @@
       margin: 16px !important;
       background-color: map-get($colors, white_f0);
       color: map-get($colors, dark_gray);
-      font-size: 1em;
+      font-size: 1rem;
       font-weight: 600 !important;
-      height: 2em;
+      height: 2rem;
       ion-icon {
         color: map-get($colors, dark_gray);
       }
@@ -66,8 +66,8 @@
     margin: 16px !important;
     background-color: map-get($colors, white_f0);
     color: map-get($colors, dark_gray);
-    font-size: 1em;
-    height: 2em;
+    font-size: 1rem;
+    height: 2rem;
     padding-top: 0.5em;
   }
   .text-end {
@@ -86,7 +86,7 @@
       width: 100%;
     }
     .card-icon{
-      width: 20px;   
+      width: 1.25rem;   
     }
   } 
   .filter-item {
@@ -94,9 +94,9 @@
     margin: 16px !important;
     background-color: map-get($colors, white_f0);
     color: map-get($colors, dark_gray);
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 600 !important;
-    height: 2em;
+    height: 2rem;
     ion-icon {
       color: map-get($colors, dark_gray);
     }

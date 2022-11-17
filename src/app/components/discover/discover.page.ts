@@ -9,7 +9,7 @@ import {
   CommonUtilService,
   ContentAggregatorHandler,
   CorReleationDataType,
-  Environment, ImpressionType, InteractType, PageId, TelemetryGeneratorService
+  Environment, ImpressionType, InteractType, OnboardingConfigurationService, PageId, TelemetryGeneratorService
 } from '@app/services';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -55,7 +55,8 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    private platform: Platform
+    private platform: Platform,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
   ngOnInit() {
@@ -76,7 +77,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
 
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.DISCOVER);
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.DISCOVER, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.hideRefresher.emit(false);

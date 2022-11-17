@@ -47,7 +47,7 @@ export class MyGroupsPopoverComponent implements OnInit {
 
     if (this.isFromAddMember) {
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-        ImpressionSubtype.DISPLAY_DIKSHA_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP);
+        ImpressionSubtype.DISPLAY_SUNBIRD_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP);
     } else {
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
         ImpressionSubtype.GROUP_TUTORIAL, PageId.MY_GROUP, Environment.GROUP);

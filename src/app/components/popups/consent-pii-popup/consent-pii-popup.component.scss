@@ -10,7 +10,7 @@
   --background-checked: #{$blue};
   --border-color: #{$blue};
   --border-radius: 4px;
-  --border-width: 1px;
+  --border-width: 0.063rem;
   --border-color-checked:#{$blue};
 }
 .cr-input-primary {
@@ -45,7 +45,7 @@
   flex-shrink: 0;
   color: #222222;
   font-family: "Noto Sans", sans-serif;
-  font-size: 20px;
+  font-size: 1.25rem;
   letter-spacing: 0;
   font-weight: bold;
   margin-bottom: 16px;
@@ -75,7 +75,7 @@
 .save-changes{
   color: white;
   background-color: $blue;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 8px 0;
   margin-left: 18px;
   border: 2px solid $blue;
@@ -84,7 +84,7 @@
 .save-changes-not-agree{
   color: $blue;
   background-color: white;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 8px 0;
   border: 2px solid $blue;
   width: 45%;
@@ -98,7 +98,7 @@
 .profile-info{
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans", sans-serif;
-  font-size: 14px;
+  font-size: $font-size-base;
   letter-spacing: 0;
 }
 

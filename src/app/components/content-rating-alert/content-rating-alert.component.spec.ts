@@ -6,7 +6,7 @@ import { ContentFeedbackService,
     FormService,
     SharedPreferences
 } from 'sunbird-sdk';
-import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../../services';
+import { CommonUtilService, AppGlobalService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { Observable, of, throwError } from 'rxjs';
 import {
@@ -97,6 +97,7 @@ describe('ContentRatingAlertComponent', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn( () => {})
     };
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
 
     beforeAll(() => {
@@ -111,7 +112,8 @@ describe('ContentRatingAlertComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,
             mockCommonUtilService as CommonUtilService,
-            mockLocation as Location
+            mockLocation as Location,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -123,9 +125,171 @@ describe('ContentRatingAlertComponent', () => {
         expect(contentRatingAlertComponent).toBeTruthy();
     });
 
+    describe('createRatingForm', () => {
+
+        it('should return if contentRating is 0', () => {
+            // arrange
+            // act
+            const data =  contentRatingAlertComponent.createRatingForm(0);
+            // assert
+            expect(data).toBeUndefined();
+        });
+
+        it('', () => {
+            // arrange
+            contentRatingAlertComponent.contentRatingOptions = {
+                5: {
+                    question: 'Would you like to tell us more?',
+                    options: [
+                        {
+                            key: 'opt_1',
+                            idx: 1,
+                            value: 'Content is inaccurate'
+                        }
+                    ],
+                    ratingText: 'Very Bad'
+                }
+            };
+            // contentRatingAlertComponent.contentRatingOptions = ContentRatingOptions;
+            // act
+            contentRatingAlertComponent.createRatingForm(5);
+            // assert
+            expect(contentRatingAlertComponent.ratingMetaInfo.ratingText).toEqual('Very Bad');
+            expect(contentRatingAlertComponent.ratingMetaInfo.ratingQuestion).toEqual('Would you like to tell us more?');
+        });
+    });
+
+    describe('populateComments', () => {
+        it('should not populate ratingOptions', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = undefined;
+            // act
+            contentRatingAlertComponent.populateComments([]);
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions).toBeFalsy();
+        });
+
+        it('should not populate ratingOptions', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = undefined;
+            contentRatingAlertComponent.allComments = undefined;
+            contentRatingAlertComponent.userRating = 1;
+            // act
+            contentRatingAlertComponent.populateComments(
+                [{1: {options: [{key: 'CONTENT_INACCURATE', idx: 1, value: 'Content is inaccurate'}],
+                ratingText: 'Very Bad', question: 'Would you like to tell us more?'}}]);
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions).toBeTruthy();
+        });
+    });
+
+    describe('extractComments', () => {
+        it('should extract comments', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            // act
+            contentRatingAlertComponent.extractComments('opt1');
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions[0].isChecked).toBe(true);
+        });
+    });
+
+    describe('invokeContentRatingFormApi', () => {
+        it('should call form API', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of('ka' as any));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{id: 'sample-id'}]));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
+            jest.spyOn(contentRatingAlertComponent, 'extractComments').mockImplementation();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should fallback to form in english in case of error', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of('en' as any));
+          //  mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.reject({error: 'error'}));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
+            jest.spyOn(contentRatingAlertComponent, 'extractComments').mockImplementation();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should call form in english', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{1: {ratingText: 'poor'}}]));
+            mockPreferences.getString = jest.fn(() => of('en' as any));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
+            jest.spyOn(contentRatingAlertComponent, 'extractComments').mockImplementation();
+            // act
+            contentRatingAlertComponent.getDefaultContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(
+                    {action: 'get', subType: 'en', type: 'contentfeedback'}
+                );
+                done();
+            }, 100);
+        });
+
+        it('should return undefined if there is no data in form', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{4: {ratingText: 'good'}}]));
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                done();
+            }).catch((e) => {
+                fail(e);
+            });
+        });
+
+        it('should return undefined if there is no allComments', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{1: {ratingText: 'poor'}}]));
+            contentRatingAlertComponent.allComments = undefined;
+            contentRatingAlertComponent.ratingOptions = [
+                    {key: 'opt1', idx: 1, value: 'sample value'}
+                ];
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                expect(contentRatingAlertComponent.allComments).toBeUndefined();
+                done();
+            }).catch((e) => {
+                fail(e);
+            });
+        });
+    });
+
+
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
         // arrange
-
+        jest.spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').mockImplementation(() => {
+            return Promise.resolve();
+        });
         // act
         contentRatingAlertComponent.ionViewWillEnter();
         // assert
@@ -150,13 +314,13 @@ describe('ContentRatingAlertComponent', () => {
         contentRatingAlertComponent.commentText = '';
         const feebackRequest: ContentFeedback = {
             contentId: 'do_12345',
-            rating: 5,
+            rating: 1,
             comments: 'key',
             contentVersion: '1'
         };
         const viewDissMissData = {
             message: 'rating.success',
-            rating: 5,
+            rating: 1,
             comment: 'key'
         };
         const paramsMap = new Map();
@@ -196,13 +360,13 @@ describe('ContentRatingAlertComponent', () => {
         contentRatingAlertComponent.commentText = '';
         const feebackRequest: ContentFeedback = {
             contentId: 'do_12345',
-            rating: 5,
+            rating: 1,
             comments: 'key',
             contentVersion: '1'
         };
         const viewDissMissData = {
             message: 'rating.success',
-            rating: 5,
+            rating: 1,
             comment: 'key'
         };
         const paramsMap = new Map();
@@ -301,8 +465,7 @@ describe('ContentRatingAlertComponent', () => {
 
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
         // arrange
-        // jest.spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').mockImplementation();
-        spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').and.stub();
+        jest.spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').mockImplementation();
         // act
         contentRatingAlertComponent.ionViewWillEnter();
         // assert
@@ -372,7 +535,7 @@ describe('ContentRatingAlertComponent', () => {
     describe('rateContent', () => {
         it('should call createRatingForm', () => {
             // arrange
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
             // act
             contentRatingAlertComponent.rateContent({});
             // assert
@@ -423,176 +586,27 @@ describe('ContentRatingAlertComponent', () => {
         });
     });
 
-    describe('createRatingForm', () => {
-
-        it('should return if contentRating is 0', () => {
-            // arrange
-            // act
-            const data =  contentRatingAlertComponent.createRatingForm(0);
-            // assert
-            expect(data).toBeUndefined();
-        });
-
-        it('', () => {
-            // arrange
-            contentRatingAlertComponent.contentRatingOptions = {
-                5: {
-                    question: 'Would you like to tell us more?',
-                    options: [
-                        {
-                            key: 'opt_1',
-                            idx: 1,
-                            value: 'Content is inaccurate'
-                        }
-                    ],
-                    ratingText: 'Very Bad'
-                }
-            };
-            // contentRatingAlertComponent.contentRatingOptions = ContentRatingOptions;
-            // act
-            contentRatingAlertComponent.createRatingForm(5);
-            // assert
-            expect(contentRatingAlertComponent.ratingMetaInfo.ratingText).toEqual('Very Bad');
-            expect(contentRatingAlertComponent.ratingMetaInfo.ratingQuestion).toEqual('Would you like to tell us more?');
-        });
-    });
-
-    describe('extractComments', () => {
-        it('should extract comments', () => {
-            // arrange
-            contentRatingAlertComponent.ratingOptions = [
-                {key: 'opt1', idx: 1, value: 'sample value'}
-            ];
-            // act
-            contentRatingAlertComponent.extractComments('opt1');
-            // assert
-            expect(contentRatingAlertComponent.ratingOptions[0].isChecked).toBe(true);
-        });
-    });
-
-    describe('invokeContentRatingFormApi', () => {
-        it('should call form API', (done) => {
-            // arrange
-            const form = {
-                    form: {
-                        data: {
-                            fields : [{1: {ratingText: 'poor'}}]
-                        }
-                    }
-            };
-            mockFormService.getForm = jest.fn(() => of(form as any));
-            mockPreferences.getString = jest.fn(() => of('ka' as any));
-            contentRatingAlertComponent.ratingOptions = [
-                {key: 'opt1', idx: 1, value: 'sample value'}
-            ];
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
-            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
-            // act
-            contentRatingAlertComponent.invokeContentRatingFormApi();
-            // assert
-            setTimeout(() => {
-                expect(mockFormService.getForm).toHaveBeenCalled();
-                done();
-            }, 100);
-        });
-        it('should fallback to form in english in case of error', (done) => {
-            // arrange
-            mockFormService.getForm = jest.fn(() => throwError('err' as any));
-            mockPreferences.getString = jest.fn(() => of('en' as any));
-            contentRatingAlertComponent.ratingOptions = [
-                {key: 'opt1', idx: 1, value: 'sample value'}
-            ];
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
-            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
-            // act
-            contentRatingAlertComponent.invokeContentRatingFormApi();
-            // assert
-            setTimeout(() => {
-                expect(mockFormService.getForm).toHaveBeenCalled();
-                done();
-            }, 100);
-        });
-        it('should call form in english', (done) => {
-            // arrange
-            const form = {
-                    form: {
-                        data: {
-                            fields : [{1: {ratingText: 'poor'}}]
-                        }
-                    }
-            };
-            mockFormService.getForm = jest.fn(() => of(form as any));
-            mockPreferences.getString = jest.fn(() => of('en' as any));
-            contentRatingAlertComponent.ratingOptions = [
-                {key: 'opt1', idx: 1, value: 'sample value'}
-            ];
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
-            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
-            // act
-            contentRatingAlertComponent.getDefaultContentRatingFormApi();
-            // assert
-            setTimeout(() => {
-                expect(mockFormService.getForm).toHaveBeenCalledWith(
-                    {action: 'get', subType: 'en', type: 'contentfeedback'}
-                );
-                done();
-            }, 100);
-        });
-
-        it('should return undefined if there is no data in form', (done) => {
-            // arrange
-            mockFormService.getForm = jest.fn(() => of({ data: { fields: [] } }));
-            // act
-            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
-                // assert
-                expect(mockFormService.getForm).toHaveBeenCalled();
-                done();
-            }).catch((e) => {
-                fail(e);
-            });
-        });
-
-        it('should return undefined if there is no allComments', (done) => {
-            // arrange
-            mockFormService.getForm = jest.fn(() => of({data: { fields: [{5: {ratingText: 'G0od'}}]}}));
-            contentRatingAlertComponent.allComments = undefined;
-            contentRatingAlertComponent.ratingOptions = [
-                    {key: 'opt1', idx: 1, value: 'sample value'}
-                ];
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
-            // act
-            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
-                // assert
-                expect(mockFormService.getForm).toHaveBeenCalled();
-                expect(contentRatingAlertComponent.allComments).toBeUndefined();
-                done();
-            }).catch((e) => {
-                fail(e);
-            });
-        });
-    });
-
     describe('getDefaultContentRatingFromApi', () => {
         it('should return undefined if there is no data in form', (done) => {
             // arrange
-            mockFormService.getForm = jest.fn(() => of({ data: { fields: [] } }));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([]));
             // act
             contentRatingAlertComponent.getDefaultContentRatingFormApi();
-            expect(mockFormService.getForm).toHaveBeenCalled();
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
             done();
         });
         it('should return undefined if there is no allComments', (done) => {
             // arrange
-            mockFormService.getForm = jest.fn(() => of({data: { fields: [{5: {ratingText: 'G0od'}}]}}));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{5: {ratingText: 'G0od'}}]));
             contentRatingAlertComponent.allComments = undefined;
             contentRatingAlertComponent.ratingOptions = [
                 {key: 'opt1', idx: 1, value: 'sample value'}
             ];
-            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            jest.spyOn(contentRatingAlertComponent, 'createRatingForm').mockImplementation();
             // act
             contentRatingAlertComponent.getDefaultContentRatingFormApi();
             // assert
-            expect(mockFormService.getForm).toHaveBeenCalled();
+            expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
             expect(contentRatingAlertComponent.allComments).toBeUndefined();
             done();
         });
@@ -621,7 +635,7 @@ describe('ContentRatingAlertComponent', () => {
             // act
             contentRatingAlertComponent.extractComments('OTHER-,comment1,comment2');
             // assert
-            expect(contentRatingAlertComponent.commentText).toEqual('');
+            expect(contentRatingAlertComponent.commentText).toEqual('comment text');
         });
     });
 
@@ -677,29 +691,4 @@ describe('ContentRatingAlertComponent', () => {
 
         });
     });
-
-    describe('populateComments', () => {
-        it('should not populate ratingOptions', () => {
-            // arrange
-            contentRatingAlertComponent.ratingOptions = undefined;
-            // act
-            contentRatingAlertComponent.populateComments([]);
-            // assert
-            expect(contentRatingAlertComponent.ratingOptions).toBeFalsy();
-        });
-
-        it('should not populate ratingOptions', () => {
-            // arrange
-            contentRatingAlertComponent.ratingOptions = undefined;
-            contentRatingAlertComponent.allComments = undefined;
-            contentRatingAlertComponent.userRating = 1;
-            // act
-            contentRatingAlertComponent.populateComments(
-                [{1: {options: [{key: 'CONTENT_INACCURATE', idx: 1, value: 'Content is inaccurate'}],
-                ratingText: 'Very Bad', question: 'Would you like to tell us more?'}}]);
-            // assert
-            expect(contentRatingAlertComponent.ratingOptions).toBeTruthy();
-        });
-    });
-
 });

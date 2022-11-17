@@ -67,7 +67,6 @@ describe('LogoutHandlerService', () => {
 
     const mockGooglePlus: Partial<GooglePlus> = {
         trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
-        disconnect: jest.fn()
     };
 
     beforeAll(() => {
@@ -108,21 +107,24 @@ describe('LogoutHandlerService', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
 
-        it('should persist segmentation', () => {
+        it('should persist segmentation', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
             mockSegmentationTagService.persistSegmentation = jest.fn();
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             // act
             logoutHandlerService.onLogout();
             // assert
             setTimeout(() => {
                 expect(mockSegmentationTagService.persistSegmentation).toHaveBeenCalled();
+                expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
+                done();
             })
         });
 
-        it('should generare LOGOUT_INITIATE telemetry', () => {
+        it('should generare LOGOUT_INITIATE telemetry', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -131,6 +133,7 @@ describe('LogoutHandlerService', () => {
             const valuesMap = {};
             valuesMap['UID'] = "";
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             // act
             logoutHandlerService.onLogout();
             // assert
@@ -141,22 +144,26 @@ describe('LogoutHandlerService', () => {
                     PageId.LOGOUT,
                     undefined,
                     valuesMap);
-            })
+                expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
+                done();
+            });
         });
 
 
         it('should logout_google', async(done) => {
             // arrange
-             mockCommonUtilService.networkInfo = {
+            mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.putBoolean = jest.fn(() => of(undefined));
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             // act
             logoutHandlerService.onLogout();
             // assert
             setTimeout(() => {
                 expect(mockSharedPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN);
                 expect(mockSharedPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.IS_GOOGLE_LOGIN, false);
+                expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
                 done();
             });
         });
@@ -202,12 +209,31 @@ describe('LogoutHandlerService', () => {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
-            jest.spyOn(splashscreen, 'clearPrefs');
             // act
             logoutHandlerService.onLogout();
             // assert
             setTimeout(() => {
-                expect(splashscreen.clearPrefs).toHaveBeenCalled();
+            })
+        });
+
+        it('should not clear the splashscreen preferences if not present and check for different platforms', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockPlatform.is = jest.fn(platform => platform === 'android');
+            mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            window['splashscreen'] = false
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: '1234567890',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
             })
         });
 

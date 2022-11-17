@@ -11,9 +11,10 @@ import {Location} from '@angular/common';
 import {PreferenceKey} from '../../app.constant';
 import {mockSelfDeclarationForm, mockTenantPersonaInfoForm} from '../../../services/formandframeworkutil.service.spec.data';
 import {FormConstants} from '../../form.constants';
-import {FieldConfigValidationType} from 'common-form-elements';
+import { FieldConfigValidationType } from '../../components/common-forms/field-config';
 import {ConsentService} from '../../../services/consent-service';
 import {ConsentStatus} from '@project-sunbird/client-services/models';
+import { FrameworkService } from '@project-sunbird/sunbird-sdk/framework/def/framework-service';
 
 describe('SelfDeclaredTeacherEditPage', () => {
     let selfDeclaredTeacherEditPage: SelfDeclaredTeacherEditPage;
@@ -30,6 +31,11 @@ describe('SelfDeclaredTeacherEditPage', () => {
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {
 
+    };
+    const mockFrameworkService: Partial<FrameworkService> = {
+        searchOrganization: jest.fn(() => of(
+            {content: {map: jest.fn()}}
+        ))as any
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getUserLocation: jest.fn(() => {
@@ -106,6 +112,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
         selfDeclaredTeacherEditPage = new SelfDeclaredTeacherEditPage(
             mockProfileService as ProfileService,
             mockSharedPreferences as SharedPreferences,
+            mockFrameworkService as FrameworkService,
             mockAppHeaderService as AppHeaderService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
@@ -489,7 +496,6 @@ describe('SelfDeclaredTeacherEditPage', () => {
             selfDeclaredTeacherEditPage.submit().then(() => {
                 // assert
                 expect(mockProfileService.updateServerProfileDeclarations).toHaveBeenCalled();
-                expect(mockProfileService.updateConsent).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
             });
         });
@@ -552,6 +558,17 @@ describe('SelfDeclaredTeacherEditPage', () => {
             });
 
         });
+
+        it('should catch error', (done) => {
+            // arrange
+            mockEvents.public = jest.fn(() => throwError({Error: "Something went wrong"}))
+            // act
+            selfDeclaredTeacherEditPage.submit().then(() => {
+                // assert
+                done();
+            });
+
+        })
     });
 
     describe('tenantPersonaFormValueChanges', () => {
@@ -969,5 +986,159 @@ describe('SelfDeclaredTeacherEditPage', () => {
             expect(mockProfileService.updateConsent).toHaveBeenCalled();
 
         });
+        
+        it('should catch error on update consent on second call', () =>{
+            // arrange
+            const mockConsentResponse: UpdateConsentResponse = {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            };
+            mockProfileService.updateConsent = jest.fn(() => of((response: {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            }) => {
+                mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+        });
+
+        it('should catch error on update consent', () =>{
+            // arrange
+            mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+
+        });
+        it('should catch error on update consent on for Tenant not Changed', () =>{
+            // arrange
+            selfDeclaredTeacherEditPage.isTenantChanged = false;
+            const mockConsentResponse: UpdateConsentResponse = {
+                message: 'successful',
+                consent: {
+                    userId: 'sampleUid'
+                }
+            };
+            mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');
+            // assert
+            expect(mockProfileService.updateConsent).toHaveBeenCalled();
+
+        });
     });
+
+    describe('getTenantPersonaForm()', () => {
+        it('it should have tenant data', (done) => {
+            //arrange
+            const organisations = [{
+                "orgName": "BRS global ",
+                "rootOrgId": "013054764359245824761"
+            },
+            {
+                "orgName": "BRS global school",
+                "rootOrgId": "013054764359245824761"
+            }
+        ]
+        let index = 0;
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                content: [
+                    {
+                        rootOrgId :'orgId_1',
+                        orgName : 'sample_orgName_1'
+                    },
+                    {
+                        rootOrgId :'orgId_2',
+                        orgName : 'sample_orgName_2'
+                    }
+                ]
+            }))as any;
+           selfDeclaredTeacherEditPage['profile'] =  {
+                rootOrg: { rootOrgId: '7856464646' },
+            };
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(
+                [
+                {
+                    "code": "tenant",
+                    "type": "select",
+                    "templateOptions": {
+                        "label": "I wish to share my data with:",
+                        "placeHolder": "Select State/Institution",
+                        "options": [
+                            {
+                                "label": "State (Punjab)",
+                                "value": "012775810960252928563",
+                                "index": 1
+                            },
+                            {
+                                "label": "Andra Pradesh",
+                                "value": "0129109366089728000",
+                                "index": 2
+                            },
+                            {
+                                "label": "Haryana State",
+                                "value": "0127674553846579203",
+                                "index": 3
+                            },
+                            {
+                                "label": "Karnataka State Org",
+                                "value": "0127236218321879040",
+                                "index": 4
+                            },
+                            {
+                                "label": "Tamil Nadu",
+                                "value": "01269878797503692810",
+                                "index": 5
+                            },
+                            {
+                                "label": "NCERT",
+                                "value": "01283607456185548825093",
+                                "index": 6
+                            },
+                            {
+                                "label": "CBSE",
+                                "value": "0128325322816552960",
+                                "index": 7
+                            },
+                            {
+                                "label": "Jharkhand State Board",
+                                "value": "012811889750941696475",
+                                "index": 8
+                            },
+                            {
+                                "label": "Kerala State",
+                                "value": "013051342708842496208",
+                                "index": 9
+                            }
+                        ],
+                        "validations": [
+                            {
+                                "type": "required",
+                                "value": true,
+                                "message": "Tenant name is required"
+                            }
+                        ]
+                    }
+                }]));
+            //act
+            selfDeclaredTeacherEditPage.getTenantPersonaForm();
+            //assert
+            setTimeout(() => {
+                expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                done();
+            }, 0); 
+        })
+    })
 });

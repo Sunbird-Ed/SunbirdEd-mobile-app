@@ -33,10 +33,10 @@
         padding-left: 6px;
     }
     .enroll-msg-style {
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
     .font-size-20{
-        font-size: 18px !important;
+        font-size: 1.125rem !important;
     }
     .background-gray{
         background: map-get($colors, gray_white);
@@ -48,11 +48,11 @@
         .msg-holder {
             padding-top: 30px;
             .empty-batch-icon{
-                width: 50px; 
+                width: 3.125rem; 
                 @include margin(null, null, null, 118px);
             }
             .text-holder{
-                font-size: 18px;
+                font-size: 1.125rem;
                 font-weight: 300 !important;
             }
         }
@@ -62,7 +62,7 @@
     }
     .batch-name {
         margin-top: 0px; 
-        font-size: 12px;
+        font-size: 0.75rem;
         @extend .NotoSans-semi-bold;
     }
     .selected-filter {
@@ -104,7 +104,7 @@
     .batch-font{
         @extend .NotoSans-bold;
         padding: 15px 0 12px 7px;
-        font-size: 16px;
+        font-size: 1rem;
     }
     button:disabled {
         opacity: 0.7 !important;
@@ -133,11 +133,11 @@
       }
       .sb-btn-outline-info {
         font-weight: bold;
-        font-size: 12px;
+        font-size: 0.75rem;
     }
     .enroll-msg-ended {
         color: $orange;
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
 }
 button:disabled{

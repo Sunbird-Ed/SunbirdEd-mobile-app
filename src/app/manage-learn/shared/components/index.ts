@@ -1,6 +1,5 @@
 
 
-export * from './audio-list/audio-list.component';
 export * from './common-header/common-header.component';
 export * from './date-type-input/date-type-input.component';
 export * from './footer-buttons/footer-buttons.component';
@@ -18,7 +17,6 @@ export * from './popover/popover.component';
 export * from './entityfilter/entityfilter.component';
 export * from './progress-bar/progress-bar.component';
 export * from './no-data/no-data.component';
-export * from './chart/chart.component';
 export * from './create-task-form/create-task-form.component';
 export * from './privacy-policy-and-tc/privacy-policy-and-tc.component';
 export * from './project-metadata-card/project-metadata-card.component';
@@ -31,3 +29,5 @@ export * from './task-card/task-card.component';
 export * from './add-link-modal/add-link-modal.component';
 export * from './attachment-card/attachment-card.component';
 export * from './attachment-lists/attachment-lists.component';
+export * from './report-list/report-list.component';
+export * from './start-improvement/start-improvement.component';

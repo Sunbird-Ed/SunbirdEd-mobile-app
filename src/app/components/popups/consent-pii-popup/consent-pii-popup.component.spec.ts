@@ -33,6 +33,7 @@ describe('ConsentPiiPopupComponent', () => {
     it('should be create a instance of consentPiiPopupComponent', () => {
         expect(consentPiiPopupComponent).toBeTruthy();
     });
+
     it('should return consentForm for user name', (done) => {
         // arrange
         const profile = {
@@ -65,6 +66,7 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
     it('should return consentForm if requird properties is empty', (done) => {
         // arrange
         consentPiiPopupComponent.consentForm = [];
@@ -98,6 +100,7 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
     it('should return consentForm for location', (done) => {
         // arrange
         consentPiiPopupComponent.consentForm = [];
@@ -133,6 +136,7 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
     it('should return consentForm of location if location type is not matched', (done) => {
         // arrange
         consentPiiPopupComponent.consentForm = [];
@@ -140,12 +144,12 @@ describe('ConsentPiiPopupComponent', () => {
             serverProfile: {
                 firstName: 'sample-User-name',
                 id: 'sample-user-id',
-                userLocations: [{ type: 'school', name: 'sample-state', code: 'state-code' }]
+                userLocations: [{ type: 'state', name: 'sample-state' }]
             }
         };
         mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'schoolId',
+            code: 'dist',
             templateOptions: {
                 placeHolder: JSON.stringify({ en: 'State' }),
                 dataSrc: {
@@ -164,10 +168,11 @@ describe('ConsentPiiPopupComponent', () => {
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
             expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
             expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: 'state-code' }]);
+            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
             done();
         }, 0);
     });
+
     it('should return empty consentForm for location if userlocation is empty', (done) => {
         // arrange
         consentPiiPopupComponent.consentForm = [];
@@ -203,252 +208,7 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
-    it('should return consentForm for declaration', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                firstName: 'sample-User-name',
-                id: 'sample-user-id',
-                userLocations: [{ type: 'state', name: 'sample-state' }],
-                declarations: [
-                    { info: { name: 'sample-info' } }
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'state',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: 'sample-info' }]);
-            done();
-        }, 0);
-    });
-    it('should return - for declaration', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                firstName: 'sample-User-name',
-                id: 'sample-user-id',
-                userLocations: [{ type: 'state', name: 'sample-state' }],
-                declarations: [
-                    { info: { name: undefined } }
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'state',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
-            done();
-        }, 0);
-    });
-    it('should return consentForm for declaration if declarations is empty and code is emailId', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                maskedEmail: 'sample@sample.com',
-                declarations: [
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'emailId',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: 'sample@sample.com' }]);
-            done();
-        }, 0);
-    });
-    it('should return consentForm for declaration if declarations is empty, code is emailId and maskedEmail is empty', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                declarations: [
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'emailId',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
-            done();
-        }, 0);
-    });
-    it('should return consentForm for declaration if declarations is empty and code is phoneNumber', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                maskedPhone: '9999999999',
-                declarations: [
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'phoneNumber',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '9999999999' }]);
-            done();
-        }, 0);
-    });
-    it('should return consentForm for declaration if declarations is empty, code is phoneNumber and maskedPhone is empty', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                declarations: [
-                ]
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            code: 'phoneNumber',
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
-            done();
-        }, 0);
-    });
-    it('should return consentForm for declaration if all conditions become false', (done) => {
-        // arrange
-        consentPiiPopupComponent.consentForm = [];
-        const profile = {
-            serverProfile: {
-                declarations: []
-            }
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
-            templateOptions: {
-                placeHolder: JSON.stringify({ en: 'State' }),
-                dataSrc: {
-                    marker: 'SERVER_PROFILE_DECLARED',
-                    params: {
-                        categoryCode: 'name'
-                    }
-                }
-            }
-        }]));
-        mockCommonUtilService.getTranslatedValue = jest.fn(() => 'State');
-        // act
-        consentPiiPopupComponent.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
-            expect(mockFormAndFrameworkUtilService.getConsentFormConfig).toHaveBeenCalled();
-            expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalled();
-            expect(consentPiiPopupComponent.consentForm).toStrictEqual([{ key: 'State', value: '-' }]);
-            done();
-        }, 0);
-    });
+
     it('should return empty consentForm for default value', (done) => {
         // arrange
         consentPiiPopupComponent.consentForm = [];
@@ -484,17 +244,20 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
     it('should close the popUp for clicked on dont share button', () => {
         mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
         consentPiiPopupComponent.dontShare();
         expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
     });
+
     it('should submit profile details and close the popUp for clicked on share button', () => {
         mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
         mockCommonUtilService.showToast = jest.fn();
         consentPiiPopupComponent.share();
         expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
     });
+
     it('should return to terms of use page', (done) => {
         // arrange
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('sample-url'));
@@ -506,6 +269,7 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
     it('should return button disable and enable thing', () => {
         const event = {
             detail: {
@@ -515,6 +279,7 @@ describe('ConsentPiiPopupComponent', () => {
         consentPiiPopupComponent.changeEvent(event);
         expect(consentPiiPopupComponent.isAgreed).toBeTruthy();
     });
+
     it('should return button disable and enable thing', () => {
         const event = {
             detail: {
@@ -524,6 +289,7 @@ describe('ConsentPiiPopupComponent', () => {
         consentPiiPopupComponent.changeEvent(event);
         expect(consentPiiPopupComponent.isAgreed).toBeFalsy();
     });
+
     describe('converDataSrcToObject', () => {
         it('should return maskedEmail for empty email', () => {
             const ele = {
@@ -531,16 +297,13 @@ describe('ConsentPiiPopupComponent', () => {
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'declared-email'
-                        }
+                        params: { categoryCode: 'declared-email' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
                 serverProfile: {
-                    declarations: [],
-                    maskedEmail: 'sample@sample.com',
+                    maskedEmail: 'sample@sample.com'
                 }
             };
             // act
@@ -554,17 +317,12 @@ describe('ConsentPiiPopupComponent', () => {
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'declared-email'
-                        }
+                        params: { categoryCode: 'declared-email' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
-                serverProfile: {
-                    declarations: [],
-                    email: 'sample@sample.com',
-                }
+                serverProfile: { email: 'sample@sample.com' }
             };
             // act
             const data = consentPiiPopupComponent.converDataSrcToObject(ele);
@@ -577,15 +335,12 @@ describe('ConsentPiiPopupComponent', () => {
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'declared-email'
-                        }
+                        params: { categoryCode: 'declared-email' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
-                serverProfile: {
-                }
+                serverProfile: {}
             };
             // act
             const data = consentPiiPopupComponent.converDataSrcToObject(ele);
@@ -621,17 +376,12 @@ describe('ConsentPiiPopupComponent', () => {
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'declared-phone'
-                        }
+                        params: { categoryCode: 'declared-phone' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
-                serverProfile: {
-                    declarations: [],
-                    phone: '9999999999'
-                }
+                serverProfile: { phone: '9999999999' }
             };
             // act
             const data = consentPiiPopupComponent.converDataSrcToObject(ele);
@@ -658,51 +408,153 @@ describe('ConsentPiiPopupComponent', () => {
             // assert
             expect(data).toBe('-');
         });
-        it('should return externalId', () => {
+        it('should return external id', () => {
+            //arrange
             const ele = {
                 code: 'externalIds',
                 templateOptions: {
                     dataSrc: {
                         marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: 'dataSrc'
-                        }
+                        params: { categoryCode: 'externaId' }
                     }
                 }
             };
             consentPiiPopupComponent.profile = {
                 serverProfile: {
-                    channel: 'sample',
-                    dataSrc: [
-                        { id: 'id', provider: 'sample' }
+                    channel: 'p1',
+                    externaId: [{ id: 'id1', provider: 'p1' }, { id: 'id2', provider: 'p2' }]
+                }
+            };
+            //act
+            consentPiiPopupComponent.converDataSrcToObject(ele);
+            //assert
+            expect(consentPiiPopupComponent.converDataSrcToObject).toBeTruthy();
+        });
+        it('should return location', () => {
+            //arrange
+            const ele = {
+                code: 'schoolId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_LOCATIONS' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    userLocations: [{ code: 'schoolId1', type: 'school', name: 'na1' }, { code: 'school', type: 'schoolId', name: 'na2' }]
+                }
+            };
+            //act
+            consentPiiPopupComponent.converDataSrcToObject(ele);
+            //assert
+            expect(consentPiiPopupComponent.converDataSrcToObject).toBeTruthy();
+        });
+        it('should return declaration info if the marker is SERVER_PROFILE_DECLARED', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [
+                        { info: { code1: 'cd1' } }
                     ]
                 }
             };
             // act
             const data = consentPiiPopupComponent.converDataSrcToObject(ele);
             // assert
-            expect(data).toBe('id');
+            expect(data).toBe('cd1');
         });
-        it('should return externalId when category code is undefined', () => {
+        it('should return - instead of declaration info if the marker is SERVER_PROFILE_DECLARED', () => {
             const ele = {
-                code: 'externalIds',
+                code: 'emailId',
                 templateOptions: {
-                    dataSrc: {
-                        marker: 'SERVER_PROFILE',
-                        params: {
-                            categoryCode: undefined
-                        }
-                    }
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
                 }
             };
             consentPiiPopupComponent.profile = {
                 serverProfile: {
-                    channel: 'sample',
-                    dataSrc: {
-                        params: {
-                            categoryCode: ''
-                        }
-                    }
+                    declarations: [
+                        { info: {} }
+                    ]
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return maskedEmail for code is emailId', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [], maskedEmail: 'sample@sample.com' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample@sample.com');
+        });
+        it('should return  - for code is maskedEmail', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [] }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return maskedphone for code phone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [], maskedPhone: '9999999999' }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('9999999999');
+        });
+        it('should return  - for code is maskedPhone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED' }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: { declarations: [] }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('-');
+        });
+        it('should return - when all conditions are false if the marker is SERVER_PROFILE_DECLARED', () => {
+            const ele = {
+                templateOptions: {
+                    dataSrc: { marker: 'SERVER_PROFILE_DECLARED', params: { categoryCode: 'code1' } }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: []
                 }
             };
             // act

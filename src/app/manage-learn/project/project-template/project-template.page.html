@@ -20,13 +20,13 @@
       {{categories}}
     </ion-col>
   </ion-row>
-  <app-project-task-list *ngIf="sortedTasks" [sortedTasks]="sortedTasks" [schedules]="schedules"
+  <app-project-task-list *ngIf="sortedTasks" [sortedTasks]="sortedTasks" [schedules]="schedules" (click)="openStartIMPPopup()"
     [viewOnlyMode]="true">
   </app-project-task-list>
 </ion-content>
 <ion-footer>
   <ion-toolbar class="toolbar start-btn">
-    <ion-button size="small" expand="block" shape="round" class="btn" (click)="mapProjectToUser()">
+    <ion-button size="small" expand="block" shape="round" class="btn" class="custom-btn-txt-transform-none" (click)="mapProjectToUser()">
       {{'START' | translate}}
     </ion-button>
   </ion-toolbar>

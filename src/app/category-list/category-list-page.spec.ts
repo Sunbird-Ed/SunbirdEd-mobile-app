@@ -483,7 +483,26 @@ describe('CategoryListPage', () => {
                     subjectName: 'Mathematics',
                     corRelation: [
                         { id: 'Mathematics', type: 'Section' },
-                        { id: 'browse_by_audience', type: 'RootSection' }]
+                        { id: 'browse_by_audience', type: 'RootSection' },
+                        { id: {
+                            searchCriteria: {
+                             "subjects": ["maths"],
+                            },
+                            facet: 'Course',
+                            aggregate: {
+                                "groupBy": "subject",
+                                "groupSortBy": [{
+                                    "name": {
+                                      "order": "asc",
+                                      "preference": [
+                                        "accountancy",
+                                        ["subject 1", "subject 2"],
+                                      ],
+                                    },
+                                  }]},
+                            filterPillBy: null
+                          }, type: 'Content'}],
+                    supportedFacets: ["se_mediums", "subject", "primaryCategory", "audience"]
                 }
             });
         });

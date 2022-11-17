@@ -31,7 +31,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest, DiscussionService, LogLevel
+  UnenrollCourseRequest, DiscussionService, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -811,6 +811,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objVer = this.course.pkgVersion;
       this.showLoading = false;
       this.pageId = this.commonUtilService.appendTypeToPrimaryCategory(this.course);
+      this.markContent();
 
       this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
       if (!this.didViewLoad) {
@@ -896,6 +897,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             } else {
               this.isCertifiedCourse = false;
             }
+
+            
           }
           if (this.batchRemaningTimingIntervalRef) {
             clearInterval(this.batchRemaningTimingIntervalRef);
@@ -927,6 +930,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       })
       .catch((error: any) => {
         if (this.courseCardData.batch) {
+          this.batchDetails = this.courseCardData.batch;
           if (this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate) {
             this.batchEndDateStatus(this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate);
           }
@@ -1247,7 +1251,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         }
       })
       .catch(async (error: any) => {
-        if (NetworkError.isInstance(error)) {
+        if (NetworkError.isInstance(error) && !this.courseCardData) {
           this.showOfflineSection = true;
         } else {
           this.showOfflineSection = false;
@@ -1622,8 +1626,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   isCourseModifiedAfterEnrolment() {
     return (this.courseCardData && this.courseCardData.enrolledDate
-      && this.course && this.course.lastUpdatedOn
-      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime()));
+      && this.course && this.course.lastPublishedOn
+      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastPublishedOn).getTime()));
   }
 
   getCourseProgress() {
@@ -1986,7 +1990,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (this.courseHeirarchy.contentData.leafNodes) {
         leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
       }
-      this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
+      this.course.progress = Math.floor((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     } else {
       this.course.progress = 0;
     }
@@ -2569,6 +2573,29 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         loggedinUser: this.userId
       }
     });
+  }
+
+  markContent() {
+    const addContentAccessRequest: ContentAccess = {
+      status: ContentAccessStatus.PLAYED,
+      contentId: this.identifier,
+      contentType: this.content.contentType || this.courseCardData.content.contentType
+    };
+    const profile: Profile = this.appGlobalService.getCurrentUser();
+    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
+      if (data) {
+        this.events.publish(EventTopics.LAST_ACCESS_ON, true);
+      }
+    });
+    const contentMarkerRequest: ContentMarkerRequest = {
+      uid: profile.uid,
+      contentId: this.identifier,
+      data: JSON.stringify(this.content.contentData || this.courseCardData.content),
+      marker: MarkerType.PREVIEWED,
+      isMarked: true,
+      extraInfo: {}
+    };
+    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
 }

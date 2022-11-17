@@ -35,7 +35,12 @@ import {
   ContentUpdate,
   CourseService,
   SunbirdSdk,
-  PlayerService
+  PlayerService,
+  ContentAccess,
+  ContentAccessStatus,
+  ContentMarkerRequest,
+  MarkerType,
+  Profile
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -86,6 +91,7 @@ import {FormConstants} from '@app/app/form.constants';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 
 
 declare const cordova;
@@ -190,6 +196,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   config: any;
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
+  // displayTranscripts = false;
+  // transcriptList = [];
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -263,7 +272,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.nextContentToBePlayed = extras.content;
-      this.playerType = extras.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
+      this.playerType = extras.mimeType === 'video/mp4' && !this.content.contentData["interceptionPoints"] ? 'sunbird-video-player' : undefined;
       this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
@@ -276,6 +285,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         map((requests) => !!requests.find((request) => request.identifier === this.identifier))
       );
 
+  }
+
+  iosCheck() {
+    if (this.platform.is('ios') && this.content.mimeType === 'application/vnd.sunbird.questionset') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async ngOnInit() {
@@ -403,6 +420,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleNavBackButton() {
+    if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      return false;
+    }
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
       true, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
     this.didViewLoad = false;
@@ -415,13 +436,17 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
-      this.didViewLoad = false;
-      this.popToPreviousPage(false);
-      this.generateEndEvent();
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+      if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      } else {
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
+          false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
+        this.didViewLoad = false;
+        this.popToPreviousPage(false);
+        this.generateEndEvent();
+        if (this.shouldGenerateEndTelemetry) {
+          this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+        }
       }
     });
   }
@@ -538,6 +563,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
+    this.playerType = this.content.mimeType === 'video/mp4' ? 'sunbird-video-player' : undefined;
     if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
       this.licenseDetails = data.contentData.licenseDetails;
     }
@@ -572,6 +598,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
     this.playingContent = data;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
+    this.markContent();
 
     // Check locally available
     if (Boolean(data.isAvailableLocally)) {
@@ -612,10 +639,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.showSwitchUserAlert(false);
       }
     }
-    if (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') {
+    if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') &&
+    !(typeof this.content.contentData['interceptionPoints'] === 'object' && this.content.contentData['interceptionPoints'] != null &&
+     Object.keys(this.content.contentData['interceptionPoints']).length !== 0) ) {
+      this.getNextContent(data.hierarchyInfo, data.identifier);
       this.playContent(true, true);
     }
   }
+
   getImageContent() {
     if(this.platform.is('ios')) {
       return this.sanitizer.bypassSecurityTrustUrl(this.content.contentData.appIcon);
@@ -1173,7 +1204,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async handlePlayer(playerData) {
     this.config = playerData.state.config;
     let playerConfig = await this.formFrameworkUtilService.getPdfPlayerConfiguration();
-    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer") {
+    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" && !this.content.contentData["interceptionPoints"]) {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
@@ -1273,14 +1304,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     } else if (event.type === 'ended') {
+      this.isContentPlayed = true;
       this.rateContent('manual');
     } else if (event.type === 'REPLAY') {
       this.isPlayerPlaying = true;
     }
   }
 
-  playNextContent(){
+  playNextContent() {
     const content = this.nextContentToBePlayed;
+    this.config = undefined;
     this.events.publish(EventTopics.NEXT_CONTENT, {
       content,
       course: this.course
@@ -1620,7 +1653,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
       for (var key in batchDetails.cert_templates) {
         return (batchDetails && batchDetails.cert_templates[key] &&
-        batchDetails.cert_templates[key].description) || '';
+          batchDetails.cert_templates[key].description) || '';
       }
     } catch (e) {
       console.log(e);
@@ -1648,4 +1681,39 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     await popoverElement.present();
   }
 
+  async showDownloadTranscript() {
+      const newThemePopover = await this.popoverCtrl.create({
+          component: DownloadTranscriptPopupComponent,
+          componentProps: {
+            contentData: this.content.contentData
+          },
+          backdropDismiss: false,
+          showBackdrop: true,
+          cssClass: 'download-transcript-popup'
+      });
+      newThemePopover.present();
+  }
+
+  markContent() {
+    const addContentAccessRequest: ContentAccess = {
+      status: ContentAccessStatus.PLAYED,
+      contentId: this.identifier,
+      contentType: this.content.contentType
+    };
+    const profile: Profile = this.appGlobalService.getCurrentUser();
+    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
+      if (data) {
+        this.events.publish(EventTopics.LAST_ACCESS_ON, true);
+      }
+    });
+    const contentMarkerRequest: ContentMarkerRequest = {
+      uid: profile.uid,
+      contentId: this.identifier,
+      data: JSON.stringify(this.content.contentData),
+      marker: MarkerType.PREVIEWED,
+      isMarked: true,
+      extraInfo: {}
+    };
+    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
+  }
 }

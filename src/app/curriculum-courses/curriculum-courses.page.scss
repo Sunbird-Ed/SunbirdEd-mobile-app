@@ -7,7 +7,7 @@
     box-shadow: 0 2px 7px 0 rgba(255,226,222,0.52);
 
     .cc-header-name{
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 600;
         color: #EA2E52;
         text-transform: capitalize;
@@ -15,14 +15,14 @@
 
     .cc-header-desc{
         color: #666666;
-        font-size: 8px;
+        font-size: 0.5rem;
         text-transform: uppercase;
     }
 
     .cd-header-icon {
         img {
-            height: 36px;
-            width: 36px;
+            height: 2.25rem;
+            width: 2.25rem;
         }
     }
 }

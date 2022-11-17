@@ -444,13 +444,26 @@ describe('Profile.page', () => {
             profilePage.isCustodianOrgId = true;
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockFormData));
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                content: [
+                    {
+                        rootOrgId :'orgId_1',
+                        orgName : 'sample_orgName_1'
+                    },
+                    {
+                        rootOrgId :'orgId_2',
+                        orgName : 'sample_orgName_2'
+                    }
+                ]
+            }))as any;
             // act
             profilePage.getSelfDeclaredDetails();
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_LBL_SHARE_DATA_WITH', {
-                    '%tenant': 'sample_label'
+                    '%tenant': ""
                 });
+                expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1322,7 +1335,7 @@ describe('Profile.page', () => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_USERNAME', {
             app_name: profilePage.appName,
             user_name: profilePage.profile.firstName + ' ' + profilePage.profile.lastName,
-            diksha_id: profilePage.profile.userName
+            sunbird_id: profilePage.profile.userName
         });
     });
 });

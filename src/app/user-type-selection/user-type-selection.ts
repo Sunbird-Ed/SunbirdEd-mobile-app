@@ -103,6 +103,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.appGlobalService.isUserLoggedIn()) {
       this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     }
+    this.setUserTypeForNewUser();
     this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
@@ -456,5 +457,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+  }
+
+  async setUserTypeForNewUser() {
+    if (this.selectedUserType === 'none') {
+      await this.commonUtilService.getGuestUserConfig().then((profile) => {
+        this.selectedUserType = profile.profileType;
+        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
+      });
+    }
+    this.isUserTypeSelected = this.selectedUserType !== 'none' ? true : false;
   }
 }

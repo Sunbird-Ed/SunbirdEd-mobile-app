@@ -562,7 +562,7 @@ export const mockUserHomeData = [
                                         status: 'Retired'
                                     }
                                 ],
-                                appId: 'prod.diksha.portal',
+                                appId: 'prod.sunbird.portal',
                                 contentEncoding: 'gzip',
                                 artifactUrl: 'https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31263780400280371213182/artifact/1545651413930_do_31263780400280371213182.zip',
                                 sYS_INTERNAL_LAST_UPDATED_ON: '2019-11-08T01:31:01.556+0000',
@@ -793,7 +793,7 @@ export const mockUserHomeData = [
                                         status: 'Retired'
                                     }
                                 ],
-                                appId: 'prod.diksha.portal',
+                                appId: 'prod.sunbird.portal',
                                 contentEncoding: 'gzip',
                                 artifactUrl: 'https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31263780400280371213182/artifact/1545651413930_do_31263780400280371213182.zip',
                                 sYS_INTERNAL_LAST_UPDATED_ON: '2019-11-08T01:31:01.556+0000',

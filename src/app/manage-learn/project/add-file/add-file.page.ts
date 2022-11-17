@@ -90,7 +90,6 @@ export class AddFilePage implements OnInit {
         if (success?.docs.length) {
           this.project = success.docs[0];
         }
-        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         this.taskId ? this.getTask() : this.setHeaderConfig();
       },
       (error) => { }
@@ -119,7 +118,7 @@ export class AddFilePage implements OnInit {
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerConfig.pageTitle = this.taskId ? this.task.name : this.project.title;
-    this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_PROJECT";
+    this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT";
     if (this.taskId) {
       this.task.attachments = this.task?.attachments ? this.task.attachments : [];
       this.attachments = this.task?.attachments ? this.task.attachments : [];
@@ -127,6 +126,7 @@ export class AddFilePage implements OnInit {
       this.project.attachments = this.project?.attachments ? this.project.attachments : [];
       this.attachments = this.project?.attachments ? this.project?.attachments : [];
     }
+    this.projectCopy = JSON.parse(JSON.stringify(this.project));
     this.remarks = this.taskId ? this.task.remarks : this.project?.remarks;
     this.headerService.updatePageConfig(this.headerConfig);
   }
@@ -243,7 +243,6 @@ export class AddFilePage implements OnInit {
         }
       })
   }
-
   doSyncAction() {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
@@ -260,7 +259,7 @@ export class AddFilePage implements OnInit {
       data = text;
     });
     const alert = await this.alert.create({
-      cssClass: 'attachment-delete-alert',
+      cssClass: 'central-alert',
       header: data['FRMELEMNTS_BTN_EXIT_PAGE'],
       message: data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
       buttons: [
@@ -285,12 +284,12 @@ export class AddFilePage implements OnInit {
 
   async submitProjectConfirmation() {
     let data;
-    this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_PROJECT", "CANCEL", "FRMELEMNTS_BTN_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_MSG_SUBMIT_PROJECT", "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT", "CANCEL", "FRMELEMNTS_BTN_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
       cssClass: 'central-alert',
-      header: data['FRMELEMNTS_LBL_SUBMIT_PROJECT'],
+      header: data['FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT'],
       message: data["FRMELEMNTS_MSG_SUBMIT_PROJECT"],
       buttons: [
         {

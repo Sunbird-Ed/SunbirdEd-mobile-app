@@ -6,7 +6,6 @@ import { CamelToTitlePipe } from './pipe/camel-to-title.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MultipleTypeInputComponent,
-  AudioListComponent,
   CommonHeaderComponent,
   DateTypeInputComponent,
   FooterButtonsComponent,
@@ -23,7 +22,6 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
-  ChartComponent,
   CreateTaskFormComponent,
   PrivacyPolicyAndTCComponent,
   ProjectMetadataCardComponent,
@@ -35,7 +33,9 @@ import {
   TaskCardComponent,
   AddLinkModalComponent,
   AttachmentCardComponent,
-  AttachmentListsComponent
+  AttachmentListsComponent,
+  ReportListComponent,
+  StartImprovementComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -50,14 +50,12 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { CreateTaskComponent } from './components/create-task/create-task.component';
 import { GetLabelsPipe } from './pipe/get-labels.pipe';
-import { ScroreReportMenusComponent } from './components/scrore-report-menus/scrore-report-menus.component';
 import { ReportsTextComponent } from './components/reports-text/reports-text.component';
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.component';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { ReportModalFilter } from './components/report-modal-filter/report.modal.filter';
-import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
 import { DownloadShareComponent } from './components/download-share/download-share.component';
 import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
 import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
@@ -83,7 +81,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     RadioTypeInputComponent,
     RemarksComponent,
     DateTypeInputComponent,
-    AudioListComponent,
     FooterButtonsComponent,
     ImageUploadComponent,
     MatrixTypeInputComponent,
@@ -98,7 +95,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     PopoverComponent,
     ProgressBarComponent,
     GetLabelsPipe,
-    ScroreReportMenusComponent,
     ReportsTextComponent,
     PieChartComponent,
     BarChartComponent,
@@ -106,7 +102,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     MatrixChartComponent,
     AttachmentComponent,
     ReportModalFilter,
-    CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
     FilterModalComponent,
@@ -115,7 +110,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     NoDataComponent,
     SearchPipe,
     SurveyMsgComponent,
-    ChartComponent,
     CreateTaskFormComponent,
     HintComponent,
     RemarksModalComponent,
@@ -132,7 +126,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     TaskCardComponent,
     AddLinkModalComponent,
     AttachmentCardComponent,
-    AttachmentListsComponent
+    AttachmentListsComponent,
+    ReportListComponent,
+    StartImprovementComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -143,7 +139,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     RadioTypeInputComponent,
     RemarksComponent,
     DateTypeInputComponent,
-    AudioListComponent,
     FooterButtonsComponent,
     ImageUploadComponent,
     MatrixTypeInputComponent,
@@ -165,7 +160,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     ScatterChartComponent,
     MatrixChartComponent,
     ReportModalFilter,
-    CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
     FilterModalComponent,
@@ -174,7 +168,6 @@ import { HTTP } from '@ionic-native/http/ngx';
     NoDataComponent,
     SearchPipe,
     SurveyMsgComponent,
-    ChartComponent,
     HintComponent,
     ChartsModule,
     CreateTaskFormComponent,
@@ -191,7 +184,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     TaskCardComponent,
     AddLinkModalComponent,
     AttachmentCardComponent,
-    AttachmentListsComponent
+    AttachmentListsComponent,
+    StartImprovementComponent
   ],
   providers: [
     Camera,
@@ -215,9 +209,7 @@ import { HTTP } from '@ionic-native/http/ngx';
     EntityfilterComponent,
     PopoverComponent,
     CreateTaskComponent,
-    ScroreReportMenusComponent,
     ReportModalFilter,
-    CriteriaListComponent,
     DownloadShareComponent,
     FilterModalComponent,
     SubmissionActionsComponent,
@@ -229,7 +221,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
-    AddLinkModalComponent
+    AddLinkModalComponent,
+    ReportListComponent,
+    StartImprovementComponent
   ],
   
 })

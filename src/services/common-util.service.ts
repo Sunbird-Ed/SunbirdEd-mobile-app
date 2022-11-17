@@ -789,7 +789,7 @@ export class CommonUtilService {
                     const element = ratingStars[index];
                     if (element && element.shadowRoot && element.shadowRoot.querySelector('button')) {
                         const starButton = element.shadowRoot.querySelector('button');
-                        starButton.setAttribute('aria-label', (slectedStar >= index + 1 ? 'selected ' : '') + (index + 1) + ' star');
+                        starButton.setAttribute('aria-label', (slectedStar >= index + 1 ? 'selected ' : '') + (index + 1) + 'out of five stars');
                         starButton.setAttribute('tabindex', '0');
                     }
                 }
@@ -801,4 +801,14 @@ export class CommonUtilService {
         const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType ? content.contentType : '';
         return primaryCategory ? (primaryCategory.replace(/\s/g, '')+'-'+type).toLowerCase() : '';
       }
+
+    public async getGuestUserConfig() {
+        let guestProfile;
+        await this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).toPromise()
+            .then(async (guestUserId: string) => {
+                const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+                guestProfile = allProfileDetais.find(ele => ele.uid === guestUserId);
+            });
+        return guestProfile;
+    }
 }

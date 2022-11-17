@@ -11,6 +11,7 @@ import {
   ImpressionSubtype,
   InteractSubtype,
   InteractType,
+  OnboardingConfigurationService,
   SunbirdQRScanner
 } from '@app/services';
 import {
@@ -143,6 +144,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
   }
 
@@ -222,8 +224,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   private async getFrameworkDetails(frameworkId?: string) {
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
+    let id = "";
+    if(this.profile && this.profile.syllabus && this.profile.syllabus[0]) {
+      id = this.profile.syllabus[0]
+    } else if(guestUser && guestUser.syllabus && guestUser.syllabus[0]) {
+      id = guestUser.syllabus[0];
+    }
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
-      frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
+      frameworkId: id,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -234,10 +243,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }, {});
         this.preferenceList = [];
         setTimeout(() => {
-          this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
-          this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
-          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
-          this.subjectList = this.getFieldDisplayValues(this.profile.subject, 'subject');
+          this.boardList = this.getFieldDisplayValues(this.profile.board.length > 0 ? this.profile.board : guestUser.board, 'board');
+          this.mediumList = this.getFieldDisplayValues(this.profile.medium.length > 0 ? this.profile.medium : guestUser.medium, 'medium');
+          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade.length > 0 ?  this.profile.grade : guestUser.grade, 'gradeLevel');
+          this.subjectList = this.getFieldDisplayValues(this.profile.subject.length > 0 ? this.profile.subject : guestUser.subject, 'subject');
 
           this.preferenceList.push(this.boardList);
           this.preferenceList.push(this.mediumList);
@@ -254,7 +263,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
 
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
-      if (field.includes(element.code)) {
+      if (field.includes(element.code) || field.includes(element.name.replace(/[^a-zA-Z0-9]/g,'').toLowerCase())) {
         if (lowerCase) {
           displayValues.push(element.name.toLowerCase());
         } else {
@@ -282,7 +291,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
     this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);

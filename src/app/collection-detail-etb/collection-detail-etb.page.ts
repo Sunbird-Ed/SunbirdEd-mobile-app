@@ -392,6 +392,14 @@ export class CollectionDetailEtbPage implements OnInit {
         this.refreshContentDetails(data);
       }
     });
+    this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
+      console.log('Next Content', data);
+      this.content = data.content;
+      this.playContent(data);
+      setTimeout(() => {
+        this.contentPlayerHandler.setLastPlayedContentId('');
+      }, 1000);
+    });
   }
 
   ionViewDidEnter() {
@@ -432,7 +440,11 @@ export class CollectionDetailEtbPage implements OnInit {
       contentType: this.content.contentType
     };
     const profile: Profile = this.appGlobalService.getCurrentUser();
-    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then();
+    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
+      if (data) {
+        this.events.publish(EventTopics.LAST_ACCESS_ON, true);
+      }
+    });
     const contentMarkerRequest: ContentMarkerRequest = {
       uid: profile.uid,
       contentId: this.identifier,

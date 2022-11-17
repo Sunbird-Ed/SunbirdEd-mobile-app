@@ -16,12 +16,12 @@ ion-tabs {
   }
 
   ion-tab-button.tab-layout-icon-top.tab-has-label.tab-has-icon ion-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     text-align: center;
     @include margin(0, null, null, null);
     font-weight: normal;
     text-transform: capitalize;
-    line-height: 20px;
+    line-height: 1.25rem;
   }
 
   ion-tab-button.qrscanner {
@@ -38,8 +38,8 @@ ion-tabs {
       bottom: 0;
       left: 50%;
       transform: translateX(-40px);
-      width: 80px;
-      height: 64px;
+      width: 5rem;
+      height: 4rem;
       // background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 25px, rgba(0, 0, 0, 0.1) 35px);
       z-index: 1;
     }
@@ -50,21 +50,21 @@ ion-tabs {
       bottom: 0;
       left: 50%;
       transform: translateX(-40px);
-      width: 80px;
-      height: 64px;
+      width: 5rem;
+      height: 4rem;
       // background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 36px, rgba(255, 255, 255, 1) 35px);
       z-index: 2;
     }
 
     ion-icon {
-      bottom: 6px;
+      bottom: 0.375rem;
       position: relative;
       background: var(--app-white);
-      width: 64px;
-      height: 64px;
+      width: 4rem;
+      height: 4rem;
       margin: 0px;
       padding: 0px;
-      min-height: 64px;
+      min-height: 4rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -73,8 +73,8 @@ ion-tabs {
       color: $white;
 
       .icon-inner {
-        width: 56px;
-        height: 56px;
+        width: 3.5rem;
+        height: 3.5rem;
       }
     }
   }
@@ -82,8 +82,8 @@ ion-tabs {
   ion-icon {
     background-repeat: no-repeat;
     background-position: center;
-    height: 20px;
-    width: 20px;
+    height: 1.25rem;
+    width: 1.25rem;
     background-size: contain;
   }
   ion-tab-button {
@@ -98,10 +98,10 @@ ion-tabs {
   ion-tab-button.tab-selected,
   ion-tab-button:not(.tab-selected) {
     ion-icon {
-      font-size: 20px;
+      font-size: 1.25rem;
     }
     ion-label {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   }
 }

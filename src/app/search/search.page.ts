@@ -51,7 +51,7 @@ import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
-import { GroupHandlerService } from '@app/services';
+import { GroupHandlerService, OnboardingConfigurationService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
@@ -166,7 +166,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   searchWithBackButton = false;
   private selectedSwitchableTab: string;
   hideSearchOption = false;
-
+  totalCount: number;
+  isFilterApplied: boolean = false;
+  rootOrgId: string;
+  
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -196,7 +199,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     private sbProgressLoader: SbProgressLoader,
     private groupHandlerService: GroupHandlerService,
     private navService: NavigationService,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -225,7 +229,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.searchKeywords = this.preAppliedFilter.query || '';
       }
     }
-
+    this.rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
     this.checkUserSession();
     this.isFirstLaunch = true;
     this.init();
@@ -412,6 +416,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           Environment.HOME, false, undefined, this.corRelationList);
       }
     });
+  }
+
+  loadData() {
+    setTimeout(() => {
+      let offset = this.searchContentResult == undefined ? 0 : this.searchContentResult.length;
+      if(this.isFilterApplied) {
+        this.applyFilter(offset);
+      } else {
+        this.handleSearch(true, offset);
+      }
+    }, 500);
   }
 
   openCollection(collection) {
@@ -841,7 +856,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
-  applyFilter() {
+  applyFilter(offset?: number) {
     this.showAddToGroupButtons = false;
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
@@ -854,16 +869,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         }
       }
     });
+    modifiedCriteria.offset = offset ? offset : 0;
     this.contentService.searchContent(modifiedCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
-
+        this.totalCount = responseData.count
         this.zone.run(() => {
           this.responseData = responseData;
           if (responseData) {
             if (this.isDialCodeSearch) {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
-              this.searchContentResult = responseData.contentDataList;
+              if (this.searchContentResult && this.searchContentResult.length > 0 && modifiedCriteria.offset > 0 && responseData.contentDataList.length > 0) {
+                responseData.contentDataList.forEach(ele => {
+                  this.searchContentResult.push(ele);
+                })
+              } else {
+                this.searchContentResult = responseData.contentDataList;
+              }
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
@@ -895,8 +917,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.isEmptyResult = false;
   }
 
-  handleSearch(shouldApplyProfileFilter = false) {
-    this.scrollToTop();
+  handleSearch(shouldApplyProfileFilter = false, offset?: number) {
+    if (offset == undefined) {
+      this.scrollToTop();
+    }
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL && !this.preAppliedFilter) {
       return;
     }
@@ -918,8 +942,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
+      limit: 10,
+      offset: offset
     };
-
+    if(this.rootOrgId){
+      contentSearchRequest.channel = [this.rootOrgId]
+    }
     if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
       if (this.profile.board && this.profile.board.length) {
         contentSearchRequest.board = applyProfileFilter(this.appGlobalService, this.profile.board,
@@ -976,6 +1004,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
+        this.totalCount = response.count;
         this.zone.run(() => {
           this.responseData = response;
           this.preAppliedFilter = undefined;
@@ -984,7 +1013,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
               this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
             }
             this.addCorRelation(response.responseMessageId, 'API');
-            this.searchContentResult = response.contentDataList;
+            if (this.searchContentResult && this.searchContentResult.length > 0 && contentSearchRequest.offset > 0 && this.responseData.contentDataList.length > 0) {
+              this.responseData.contentDataList.forEach(ele => {
+                this.searchContentResult.push(ele);
+              })
+            } else {
+              this.searchContentResult = response.contentDataList;
+            }
             this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;
 
             this.updateFilterIcon();
@@ -1361,8 +1396,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   updateFilterIcon() {
-    let isFilterApplied = false;
-
     if (!this.responseData.filterCriteria) {
       return;
     }
@@ -1371,13 +1404,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       if (facet.values && facet.values.length > 0) {
         facet.values.forEach(value => {
           if (value.apply) {
-            isFilterApplied = true;
+            this.isFilterApplied = true;
           }
         });
       }
     });
 
-    if (isFilterApplied) {
+    if (this.isFilterApplied) {
       this.filterIcon = './assets/imgs/ic_action_filter_applied.png';
       this.corRelationList.push({
         id: 'filter',

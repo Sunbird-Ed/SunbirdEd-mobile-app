@@ -4,69 +4,80 @@ export const actions = {
       title: "DOWNLOAD",
       icon: "cloud-download",
       action: "download",
-      color: 'primary'
+      color: 'primary',
+      id:'download'
     },
     {
       title: "SHARE",
       icon: "share",
       action: "share",
-      color: 'primary'
+      color: 'primary',
+      id:'share'
     },
     {
       title: "EDIT",
       icon: "create",
       action: "edit",
-      color: 'primary'
+      color: 'primary',
+      id:'edit'
     },
     {
       title: "FRMELEMNTS_LBL_FILES",
       icon: "folder-open",
       action: "files",
-      color: 'primary'
+      color: 'primary',
+      id:'files'
     },
     {
       title: "FRMELEMNTS_LBL_SYNCED",
       icon: "sync-circle",
       action: "synced",
-      color: 'success'
+      color: 'success',
+      id:'synced'
     }
   ],
   SYNC_ACTION: {
     title: "FRMELEMNTS_LBL_SYNC",
     icon: "sync-circle",
     action: "sync",
-    color: 'primary'
+    color: 'primary',
+    id:'sync'
   },
   SYNCED_ACTION: {
     title: "FRMELEMNTS_LBL_SYNCED",
     icon: "sync-circle",
     action: "synced",
-    color: 'success'
+    color: 'success',
+    id:'sync'
   },
   DOWNLOADED_ACTION: {
     title: "FRMELEMNTS_LBL_DOWNLOADED",
     icon: "checkmark-circle",
     action: "downloaded",
-    color: 'success'
+    color: 'success',
+    id:'downloaded'
   },
   NOT_DOWNLOADED: {
       title: "DOWNLOAD",
       icon: "cloud-download",
       action: "download",
-      color: 'primary'
+      color: 'primary',
+      id:'download'
   },
   SUBMITTED_PROJECT_ACTIONS: [
     {
       title: "SHARE",
       icon: "share",
       action: "share",
-      color: 'primary'
+      color: 'primary',
+      id:'share'
     },
     {
       title: "FRMELEMNTS_LBL_FILES",
       icon: "folder-open",
       action: "files",
-      color: 'primary'
+      color: 'primary',
+      id:'files'
     }
   ],
 
@@ -81,25 +92,29 @@ export const actions = {
       title: "CAMERA",
       icon: "camera",
       action: "openCamera",
-      color: 'primary'
+      color: 'primary',
+      id:'camera'
     },
     {
       title: "FRMELEMNTS_LBL_GALLERY",
       icon: "images",
       action: "openGallery",
-      color: 'primary'
+      color: 'primary',
+      id:'images'
     },
     {
       title: "FRMELEMNTS_LBL_FILES",
       icon: "document", 
       action: "openFiles",
-      color: 'primary'
+      color: 'primary',
+      id:'document'
     },
     {
       title: "FRMELEMNTS_LBL_LINKS",
       icon: "link-outline", 
       action: "openLink",
-      color: 'primary'
+      color: 'primary',
+      id:'openLink'
     }
   ]
 }

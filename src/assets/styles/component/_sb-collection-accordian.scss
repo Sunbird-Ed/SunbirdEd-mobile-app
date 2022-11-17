@@ -1,7 +1,7 @@
 
  /* Collection Accordian Component Style */
  .sb-separator-line {
-    height: 1px;
+    height: 0.063rem;
     opacity: 0.36;
     background-color: $gray-300;
     @include margin(0,$base-block-space);
@@ -84,31 +84,31 @@
   .sb-accordian-grey-icon
   {
     color : $gray-300;
-    font-size : (($font-size-base * 2) + 2);
+    font-size : (($font-size-base * 2) + 0.125);
   }
   .sb-play-icon
   {
       color : $primary-color;
-      font-size: (($font-size-base * 2) + 2);
+      font-size: (($font-size-base * 2) + 0.125);
   }
   .sb-topic-text{
     color:$primary-color;
-    font-size:$font-size-base;
+    font-size: $font-size-base;
     @include padding(0,($base-block-space * 1));
-    line-height: 30px;
+    line-height: 1.88rem;
    }
     .sb-accordian-arrow
     {
         color : $primary-color;
-        font-size: (($font-size-base * 2) + 2);
-        line-height: 30px;
+        font-size: (($font-size-base * 2) + 0.125);
+        line-height: 1.88rem;
     }
     .sb-play-selected
     {
       @include padding(($base-block-space * 0.5), ($base-block-space * 0.5), ($base-block-space * 0.5), ($base-block-space * 1));
       color : $primary-color;
       font-weight: bolder;
-     font-size:$font-size-base;
+     font-size: $font-size-base;
     }
     .sb-play-unselected
     {
@@ -119,7 +119,7 @@
     .sb-checkmark-icon
     {
       color : $secondary-200;
-      font-size: ($font-size-base + 4);
+      font-size: ($font-size-base + 0.25);
       @include margin(null,null,null,($base-block-space * .5));
     }
     .sb-accordian-grey-text

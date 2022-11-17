@@ -6,13 +6,13 @@ ul {
         background: none;
         color: $info-color;
         ion-icon {
-          font-size: (($font-size-base * 3) - 2);
+          font-size: (($font-size-base * 3) - 0.125);
         }
       }
     }
     .sb-line {	
       box-sizing: border-box;	
-      height: 1px;	
+      height: 0.063rem;	
       border: 0.5px 
       solid $primary-300;
     }

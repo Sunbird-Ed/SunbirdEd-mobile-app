@@ -3,6 +3,7 @@ import { PrivacyPolicyAndTCComponent } from './components/privacy-policy-and-tc/
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { StartImprovementComponent } from './components/start-improvement/start-improvement.component';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,6 @@ export class GenericPopUpService {
                 message1: message1,
                 linkLabel: linkLabel,
                 header: header,
-                link: 'https://diksha.gov.in/term-of-use.html',
                 isPrivacyPolicy: type == 'privacyPolicy' ? true : false
             },
             cssClass: 'sb-popover',
@@ -27,7 +27,6 @@ export class GenericPopUpService {
         const { data } = await alert.onDidDismiss();
         return data;
     }
-
   async confirmBox(...args:any) {
     args = Object.assign({}, ...args);
     let buttons = [];
@@ -59,4 +58,19 @@ export class GenericPopUpService {
     const { data } = await alert.onDidDismiss();
     return data.isLeftButtonClicked;
   }
+
+  async showStartIMPForProjectPopUp(header,message, message1, ) {
+    const alert = await this.popOverCtrl.create({
+        component: StartImprovementComponent,
+        componentProps: {
+            message: message,
+            message1: message1,
+            header: header,
+        },
+        cssClass: 'sb-popover',
+    });
+    await alert.present();
+    const { data } = await alert.onDidDismiss();
+    return data;
+}
 }

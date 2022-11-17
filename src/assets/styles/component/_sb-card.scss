@@ -46,7 +46,7 @@
             font-size: $font-size-base;
           }
           .info{
-            font-size: 12px;
+            font-size: 0.75rem;
             // font-weight: 500;
             font-style: normal;
             font-stretch: normal;
@@ -58,7 +58,7 @@
             display: block;
             ion-label{
               margin-bottom: 1px;
-              font-size: ($font-size-base - 2);
+              font-size: ($font-size-base - 0.125);
               color: $gray-200;
             }
             p{
@@ -108,7 +108,7 @@
 
               .offline-icon{
                 margin: auto;
-                font-size: ($font-size-base + 10);
+                font-size: ($font-size-base + 0.625);
                 color: $white-color;
               }
               .sb-card-details{
@@ -186,8 +186,6 @@
           flex-direction: row-reverse;
           align-items: flex-end;
           position: absolute;
-          bottom: 0;
-          left: 0;
           right: 0;
           .action-btn {
             outline: none;
@@ -202,8 +200,8 @@
             @include padding(null, ($base-block-space * 1));
 
             .button-inner {
-              font-size: ($font-size-base - 2);
-              line-height: 17px;
+              font-size: ($font-size-base - 0.125);
+              line-height: 1.063rem;
               font-weight: 100;
               font-style: normal;
               font-stretch: normal;
@@ -233,10 +231,11 @@
 .sb-textbook-container {
   // margin-top: ($base-block-space * 3);
   @include padding(($base-block-space * 1));
-  width: 98.5%;
+  width: auto;
   &:last-child{
       margin-bottom: ($base-block-space * 2);
       margin-left: 3px;
+      margin-right: 3px;
   }
 
   .sb-textbook-items {
@@ -245,19 +244,19 @@
           @include margin(null, null, $base-block-space, null);
 
           .textbook-icon {
-              height: 17px;	
+              height: 1.063rem;	
               transform: scaleX(-1);
               @include margin(0, ($base-block-space * 1), 0, 0);
               color: $tertiary-color;
               ion-icon{
-                  font-size: 19px;
+                  font-size: 1.188rem;
               }
               vertical-align: middle;
           }
           .textbook-title {
               height: ($base-block-space * 3);	
               color: $blue;	
-              font-size: 18px;	
+              font-size: 1.125rem;
               font-weight: bold;
               text-transform: capitalize;
               line-height: ($base-block-space * 3)
@@ -282,15 +281,15 @@
       .sb-view-all-title{
           color: $white-color;
           .page-heading{
-              font-size: $font-size-base + 2;
+              font-size: ($font-size-base + 0.125);
               font-weight: bold;
-              line-height: 22px;
+              line-height: 1.375rem;
           }
       
           .page-info{
               display: block;
-              font-size: $font-size-base - 2;
-              line-height: 15px;
+              font-size: ($font-size-base - 0.125);
+              line-height: 0.938rem;
           }
       }
       .sb-card-scroll-container{
@@ -330,7 +329,7 @@
 }
 
 .sb-recently-viewed-container {
-  min-height: 135px;
+  min-height: 8.438rem;
   padding-top: 8px;
   .sb-recently-viewed-items{
     height: ($base-block-space * 11);
@@ -339,7 +338,7 @@
     @include padding(($base-block-space * 1), 0);
     .sb-recenlty-viewed-title {
       font-weight: 700;
-      font-size: 18px;
+      font-size: 1.125rem;
       padding-top: 5px;
       font-family: "Noto Sans";	
       overflow: auto;

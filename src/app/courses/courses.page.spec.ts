@@ -1,18 +1,18 @@
-import {CoursesPage} from './courses.page';
-import {FormAndFrameworkUtilService} from '../../services/formandframeworkutil.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {NgZone} from '@angular/core';
-import {SunbirdQRScanner} from '../../services/sunbirdqrscanner.service';
-import {PopoverController, ToastController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {AppGlobalService} from '../../services/app-global-service.service';
-import {CourseUtilService} from '../../services/course-util.service';
-import {CommonUtilService} from '../../services/common-util.service';
-import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
-import {Network} from '@ionic-native/network/ngx';
-import {Router} from '@angular/router';
-import {AppHeaderService} from '../../services/app-header.service';
-import {Environment, InteractSubtype, InteractType, PageId} from '../../services/telemetry-constants';
+import { CoursesPage } from './courses.page';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { NgZone } from '@angular/core';
+import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CourseUtilService } from '../../services/course-util.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { Network } from '@ionic-native/network/ngx';
+import { Router } from '@angular/router';
+import { AppHeaderService } from '../../services/app-header.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import {
     Content,
     ContentService,
@@ -27,15 +27,17 @@ import {
     ProfileType,
     SharedPreferences
 } from 'sunbird-sdk';
-import {of, throwError} from 'rxjs';
-import {BatchConstants, ContentCard, PageName} from '../app.constant';
-import {SbProgressLoader} from '../../services/sb-progress-loader.service';
-import {CsNetworkError} from '@project-sunbird/client-services/core/http-service';
+import { of, throwError } from 'rxjs';
+import { BatchConstants, ContentCard, PageName } from '../app.constant';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { CsNetworkError } from '@project-sunbird/client-services/core/http-service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
-import { FrameworkUtilService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ContentAggregatorRequest, ContentSearchCriteria, FrameworkCategoryCodesGroup, FrameworkUtilService, GetFrameworkCategoryTermsRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
+import { mockCategoryTermsResponse } from '../../services/formandframeworkutil.service.spec.data';
+import { mockFrameworkList } from '../faq-report-issue/faq-report-issue.page.spec.data';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -48,7 +50,9 @@ describe('CoursesPage', () => {
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({ profileType: 'Student'} as any))
+        getActiveSessionProfile: jest.fn(() => of(
+            { profileType: 'Student', grade: ['g1', 'g2'], medium: ['m1', 'm2'], subject: 'Sunbject' } as any
+        ))
     };
     const mockFrameworkService: Partial<FrameWorkService> = {};
     const mockCourseUtilService: Partial<CourseUtilService> = {};
@@ -92,13 +96,15 @@ describe('CoursesPage', () => {
     const mockProfileHandler: Partial<ProfileHandler> = {
         getAudience: jest.fn(() => Promise.resolve(['Student']))
     };
-
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
-        getFrameworkCategoryTerms: jest.fn(() => of([]))
+        getFrameworkCategoryTerms: jest.fn(() => of(mockFrameworkList)) as any
     };
 
     const mockTranslateService: Partial<TranslateService> = {
         currentLang: 'en'
+    };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform !== 'ios')
     };
 
     beforeAll(() => {
@@ -109,7 +115,7 @@ describe('CoursesPage', () => {
             mockContentService as ContentService,
             mockFrameworkService as FrameWorkService,
             mockProfileService as ProfileService,
-            mockFormAndFrameworkUtilService as FrameworkUtilService,
+            mockFrameworkUtilService as FrameworkUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppVersion as AppVersion,
             mockNgZone as NgZone,
@@ -128,7 +134,8 @@ describe('CoursesPage', () => {
             mockNavService as NavigationService,
             mockContentAggregatorHandler as ContentAggregatorHandler,
             mockProfileHandler as ProfileHandler,
-            mockTranslateService as Trans
+            mockTranslateService as TranslateService,
+            mockPlatform as Platform
         );
     });
 
@@ -142,15 +149,19 @@ describe('CoursesPage', () => {
 
     describe('getAggregatorResult', () => {
         it('should return course for loggedIn user', (done) => {
-            jest.spyOn(coursesPage, 'spinner').mockImplementation();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(
+                { profileType: 'Student', grade: ['g1', 'g2'], medium: ['m1', 'm2'], subject: 'Sunbject' } as any
+            ));
+            mockProfileHandler.getAudience = jest.fn(() => Promise.resolve(['Student']));
             mockContentAggregatorHandler.newAggregate = jest.fn(() => {
                 Promise.resolve([{
-                        orientation: 'horaizontal',
-                        section: {
-                            sections: [{name: 'sample-name'}]
+                    orientation: 'horaizontal',
+                    section: {
+                        sections: [{ name: 'sample-name' }]
                     }
                 }]);
             }) as any;
+            
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
@@ -163,9 +174,9 @@ describe('CoursesPage', () => {
             jest.spyOn(coursesPage, 'spinner').mockImplementation();
             mockContentAggregatorHandler.newAggregate = jest.fn(() => {
                 Promise.resolve([{
-                        orientation: 'horaizontal',
-                        section: {
-                            sections: [{name: 'sample-name'}]
+                    orientation: 'horaizontal',
+                    section: {
+                        sections: [{ name: 'sample-name' }]
                     }
                 }]);
             }) as any;
@@ -181,8 +192,8 @@ describe('CoursesPage', () => {
     describe('ngOnInit', () => {
         it('should return enrolledCourse data and course tab data by invoked ngOnIt', (done) => {
             // arrange
-            jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
-            const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
+            const refresher = true;
+            const param = { isOnBoardingCardCompleted: true, contentId: 'do_123' };
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
             jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
                 return Promise.resolve();
@@ -191,7 +202,6 @@ describe('CoursesPage', () => {
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);
@@ -200,7 +210,7 @@ describe('CoursesPage', () => {
         it('should not return enrolledCourse data if data is available by invoked ngOnIt', (done) => {
             // arrange
             jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
-            const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
+            const param = { isOnBoardingCardCompleted: true, contentId: 'do_123' };
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
             jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
                 return Promise.resolve();
@@ -218,7 +228,7 @@ describe('CoursesPage', () => {
         it('should return enrolledCourse data if enrolledCourses length is zero by invoked ngOnIt', (done) => {
             // arrange
             jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
-            const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
+            const param = { isOnBoardingCardCompleted: true, contentId: 'do_123' };
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
             const course: Course[] = [];
             jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
@@ -232,6 +242,19 @@ describe('CoursesPage', () => {
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);
+        });
+    });
+
+    describe('getCourseTabData', () => {
+        it('should be the refresher false', () => {
+            //arrange
+            const refresher = false;
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            //act
+            coursesPage.getCourseTabData(refresher);
+            //assert
         });
     });
 
@@ -260,7 +283,7 @@ describe('CoursesPage', () => {
             // arrange
             jest.spyOn(coursesPage, 'search').mockImplementation();
             // act
-            coursesPage.handleHeaderEvents({name: 'search'});
+            coursesPage.handleHeaderEvents({ name: 'search' });
             // assert
             setTimeout(() => {
                 expect(coursesPage.search).toHaveBeenCalled();
@@ -270,23 +293,24 @@ describe('CoursesPage', () => {
         it('should trigger showFilter() if event name receives search', () => {
             // arrange
             let data = [{
-                selected: [1,2]
+                selected: [1, 2]
             }];
             jest.spyOn(coursesPage, 'showFilter');
             coursesPage.resetCourseFilter = true;
             mockFormAndFrameworkUtilService.getCourseFilterConfig = jest.fn(() => Promise.resolve(data))
             // act
-            coursesPage.handleHeaderEvents({name: 'filter'});
+            coursesPage.handleHeaderEvents({ name: 'filter' });
             // assert
             expect(coursesPage.showFilter).toHaveBeenCalled();
         });
 
-        it('call showFilter method', () => {
+        it('call showFilter method and set ifFilterOpen as true', () => {
             // arrange
-            jest.spyOn(coursesPage, 'showFilter').mockImplementation();
+            coursesPage['isFilterOpen'] = true
+            jest.spyOn(coursesPage, 'showFilter');
             coursesPage.resetCourseFilter = true;
             // act
-            coursesPage.handleHeaderEvents({name: 'filter'});
+            coursesPage.handleHeaderEvents({ name: 'filter' });
             // assert
             expect(coursesPage.showFilter).toHaveBeenCalled();
         });
@@ -296,7 +320,7 @@ describe('CoursesPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockRouter.navigate = jest.fn();
             // act
-            coursesPage.handleHeaderEvents({name: 'download'});
+            coursesPage.handleHeaderEvents({ name: 'download' });
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
@@ -339,7 +363,7 @@ describe('CoursesPage', () => {
         it('should start qrScanner if pageId is course', () => {
             // arrange
             const isOnboardingComplete = coursesPage.isOnBoardingCardCompleted = true;
-            const data = {pageName: 'courses'};
+            const data = { pageName: 'courses' };
             mockAppGlobalService.generateConfigInteractEvent = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockQrScanner.startScanner = jest.fn(() => Promise.resolve('start'));
@@ -356,7 +380,7 @@ describe('CoursesPage', () => {
         it('should not start qrScanner if pageId is not course', () => {
             // arrange
             const isOnboardingComplete = coursesPage.isOnBoardingCardCompleted = true;
-            const data = {pageName: 'library'};
+            const data = { pageName: 'library' };
             mockAppGlobalService.generateConfigInteractEvent = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockSbProgressLoader.hide = jest.fn();
@@ -372,11 +396,14 @@ describe('CoursesPage', () => {
     describe('ionViewWillLeave', () => {
         it('should unsubscribe eventservice and headerObservable by invoked ionViewWillLeave', () => {
             // arrange
-            coursesPage.refresher = {disabled: true};
+            coursesPage.refresher = { disabled: true };
             coursesPage.headerObservable = true;
             coursesPage.headerObservable = {
                 unsubscribe: jest.fn(() => true)
             };
+            coursesPage['eventSubscription'] = {
+                unsubscribe: jest.fn(() => true)
+            } as any;
             mockEvents.unsubscribe = jest.fn((_) => true);
             mockNgZone.run = jest.fn((fn) => fn());
             // act
@@ -404,13 +431,40 @@ describe('CoursesPage', () => {
 
     it('should generate network type and generate telemetry', () => {
         // arrange
-        mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
         const values = new Map();
         values['network-type'] = mockNetwork.type = '4g';
+        mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
         // act
         coursesPage.generateNetworkType();
         // assert
         expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
+    });
+
+    describe('generateExtraInfoTelemetry', () => {
+        it('should generate extra info telemetry and network is unavailable', () => {
+            //arrange
+            const sectionsCount = 1;
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            const values = new Map();
+            values['network-type'] = mockNetwork.type = '4g';
+            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
+            //act
+            coursesPage.generateExtraInfoTelemetry(sectionsCount);
+            //assert
+            expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.COURSES);
+        });
+        it('should generate extra info telemetry and network is available', () => {
+            //arrange
+            const sectionsCount = 1;
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const values = new Map();
+            values['network-type'] = mockNetwork.type = '4g';
+            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
+            //act
+            coursesPage.generateExtraInfoTelemetry(sectionsCount);
+            //assert
+            expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.COURSES);
+        });
     });
 
     describe('getContentDetails', () => {
@@ -443,14 +497,14 @@ describe('CoursesPage', () => {
                 isChildContent: true,
                 destinationFolder: './///',
                 contentId: 'do123',
-                correlationData: [{id: 'do123', type: 'resource'}],
-                rollup: {l1: 'do123'}
+                correlationData: [{ id: 'do123', type: 'resource' }],
+                rollup: { l1: 'do123' }
             }]);
             mockContentService.importContent = jest.fn(() => of([
-                {identifier: 'do123', status: 1}, {identifier: 'do1234', status: 0}
+                { identifier: 'do123', status: 1 }, { identifier: 'do1234', status: 0 }
             ]));
             mockCommonUtilService.showToast = jest.fn();
-            coursesPage.tabBarElement = {style: {display: 'flex'}};
+            coursesPage.tabBarElement = { style: { display: 'flex' } };
             // act
             coursesPage.getContentDetails(mockCourse);
             // assert
@@ -492,12 +546,12 @@ describe('CoursesPage', () => {
                 isChildContent: true,
                 destinationFolder: './///',
                 contentId: 'do123',
-                correlationData: [{id: 'do123', type: 'resource'}],
-                rollup: {l1: 'do123'}
+                correlationData: [{ id: 'do123', type: 'resource' }],
+                rollup: { l1: 'do123' }
             }]);
             mockContentService.importContent = jest.fn(() => throwError('error'));
             mockCommonUtilService.showToast = jest.fn();
-            coursesPage.tabBarElement = {style: {display: 'flex'}};
+            coursesPage.tabBarElement = { style: { display: 'flex' } };
             // act
             coursesPage.getContentDetails(mockCourse);
             // assert
@@ -566,14 +620,14 @@ describe('CoursesPage', () => {
                 isChildContent: true,
                 destinationFolder: './///',
                 contentId: 'do123',
-                correlationData: [{id: 'do123', type: 'resource'}],
-                rollup: {l1: 'do123'}
+                correlationData: [{ id: 'do123', type: 'resource' }],
+                rollup: { l1: 'do123' }
             }]);
             mockContentService.importContent = jest.fn(() => of([
-                {identifier: 'do123', status: 1}, {identifier: 'do1234', status: 0}
+                { identifier: 'do123', status: 1 }, { identifier: 'do1234', status: 0 }
             ]));
             mockCommonUtilService.showToast = jest.fn();
-            coursesPage.tabBarElement = {style: {display: 'flex'}};
+            coursesPage.tabBarElement = { style: { display: 'flex' } };
 
             coursesPage.getContentDetails(mockCourse);
             // assert
@@ -625,7 +679,7 @@ describe('CoursesPage', () => {
     describe('subscribeUtilityEvents', () => {
         it('should applied filter for tab change and data trim as course', (done) => {
             // arrange
-            const data = {trim: jest.fn(() => 'courses'), update: true, batchId: 'd0_0123', selectedLanguage: 'en'};
+            const data = { trim: jest.fn(() => 'courses'), update: true, batchId: 'd0_0123', selectedLanguage: 'en' };
             coursesPage.isUpgradePopoverShown = false;
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
@@ -647,7 +701,7 @@ describe('CoursesPage', () => {
 
         it('should not applied filter for tab change and data trim as course', (done) => {
             // arrange
-            const data = {trim: jest.fn(() => 'courses')};
+            const data = { trim: jest.fn(() => 'courses') };
             coursesPage.isUpgradePopoverShown = false;
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
@@ -670,7 +724,7 @@ describe('CoursesPage', () => {
 
         it('should not apply filter for tab change and data trim is not course', (done) => {
             // arrange
-            const data = {trim: jest.fn(() => 'library')};
+            const data = { trim: jest.fn(() => 'library') };
             coursesPage.isUpgradePopoverShown = false;
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
@@ -712,8 +766,8 @@ describe('CoursesPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.CONTENT_CLICKED,
-                    'home', 'Course', {id: 'do123', type: 'Course', version: undefined},
-                    values, {l1: 'do123'}, undefined
+                    'home', 'Course', { id: 'do123', type: 'Course', version: undefined },
+                    values, { l1: 'do123' }, undefined
                 );
                 done();
             });
@@ -744,8 +798,8 @@ describe('CoursesPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.CONTENT_CLICKED,
-                    'home', 'Collection', {id: 'do123', type: 'collection', version: ''},
-                    values, {l1: 'do123'}, undefined
+                    'home', 'Collection', { id: 'do123', type: 'collection', version: '' },
+                    values, { l1: 'do123' }, undefined
                 );
                 done();
             });
@@ -774,8 +828,8 @@ describe('CoursesPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.CONTENT_CLICKED,
-                    'home', 'library', {id: 'do123', type: 'Resource', version: ''},
-                    values, {l1: 'do123'}, undefined
+                    'home', 'library', { id: 'do123', type: 'Resource', version: '' },
+                    values, { l1: 'do123' }, undefined
                 );
                 done();
             });
@@ -787,7 +841,7 @@ describe('CoursesPage', () => {
     describe('navigateToBatchListPopup', () => {
         it('should show a message saying, the user is offline', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             const content = {
                 identifier: 'sample_id'
             };
@@ -806,7 +860,7 @@ describe('CoursesPage', () => {
 
         it('should navigate tocourse batchs page if user is not logged in', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const content = {
                 identifier: 'sample_id'
             };
@@ -825,7 +879,7 @@ describe('CoursesPage', () => {
 
         it('should navigate tocourse batchs page if user is logged in and batchlist is not empty', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const content = {
                 identifier: 'sample_id',
                 contentId: 'sample_id'
@@ -854,7 +908,7 @@ describe('CoursesPage', () => {
             ];
             mockPopCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
             mockCourseService.getCourseBatches = jest.fn(() => of(data));
             coursesPage.loader = {
@@ -875,7 +929,7 @@ describe('CoursesPage', () => {
 
         it('should navigate tocourse batchs page if user is logged in and batchlist is empty', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const content = {
                 identifier: 'sample_id',
                 contentId: 'sample_id'
@@ -899,7 +953,7 @@ describe('CoursesPage', () => {
             const data = [];
             mockPopCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
             mockCourseService.getCourseBatches = jest.fn(() => of(data));
             coursesPage.loader = {
@@ -930,7 +984,7 @@ describe('CoursesPage', () => {
             })) as any;
             coursesPage.loader = mockCommonUtilService.getLoader;
             const enrolledCourses = [{
-                batch: {status: 1},
+                batch: { status: 1 },
                 cProgress: 80,
                 contentId: 'sample_id1'
             }];
@@ -960,7 +1014,7 @@ describe('CoursesPage', () => {
                 dismiss: dismissFn,
             })) as any;
             const enrolledCourses = [{
-                batch: {status: 1},
+                batch: { status: 1 },
                 cProgress: 80,
                 contentId: 'sample_id1'
             }];
@@ -992,7 +1046,7 @@ describe('CoursesPage', () => {
             })) as any;
             coursesPage.loader = mockCommonUtilService.getLoader;
             const enrolledCourses = [{
-                batch: {status: 2},
+                batch: { status: 2 },
                 cProgress: 80,
                 contentId: 'sample_id1'
             }];
@@ -1020,7 +1074,7 @@ describe('CoursesPage', () => {
         it('should prepare the request parameters to open the enrolled training', () => {
             // arrange
             const contentData = {
-                data: {name: 'sample_name'}
+                data: { name: 'sample_name' }
             };
             coursesPage.checkRetiredOpenBatch = jest.fn();
             // act
@@ -1062,6 +1116,9 @@ describe('CoursesPage', () => {
 
     describe('ngOnDestroy()', () => {
         it('destroy should unsubscribe 12 events', () => {
+            coursesPage['headerObservable'] = {
+                unsubscribe: jest.fn(),
+            } as any;
             jest.spyOn(coursesPage, 'unsubscribeUtilityEvents');
             // act
             coursesPage.ngOnDestroy();
@@ -1108,7 +1165,7 @@ describe('CoursesPage', () => {
     describe('navigateToViewMoreContents page', () => {
         it('should present toast for offline', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             mockToastController.create = jest.fn(() => {
                 return Promise.resolve({
                     present: jest.fn(() => Promise.resolve({})),
@@ -1128,7 +1185,7 @@ describe('CoursesPage', () => {
 
         it('should translate message for courses in progress and generate telemetry and navigate to viewmore activity', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockCommonUtilService.translateMessage = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockRouter.navigate = jest.fn();
@@ -1156,7 +1213,7 @@ describe('CoursesPage', () => {
                 contentId: 'do123'
             };
             mockNgZone.run = jest.fn((fn) => fn());
-            coursesPage.tabBarElement = {style: {display: 'flex'}};
+            coursesPage.tabBarElement = { style: { display: 'flex' } };
             mockContentService.cancelDownload = jest.fn(() => of(undefined));
             // act
             coursesPage.cancelDownload();
@@ -1172,7 +1229,7 @@ describe('CoursesPage', () => {
                 identifier: 'do123'
             };
             mockNgZone.run = jest.fn((fn) => fn());
-            coursesPage.tabBarElement = {style: {display: 'flex'}};
+            coursesPage.tabBarElement = { style: { display: 'flex' } };
             mockContentService.cancelDownload = jest.fn(() => throwError('error'));
             // act
             coursesPage.cancelDownload();
@@ -1186,7 +1243,7 @@ describe('CoursesPage', () => {
     describe('retryShowingPopularCourses test cases', () => {
         it('should check for isNetworkAvailable and showRefresh', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             jest.spyOn(coursesPage, 'getCourseTabData').mockImplementation();
             // act
             coursesPage.retryShowingPopularCourses(true);
@@ -1196,7 +1253,7 @@ describe('CoursesPage', () => {
 
         it('should check for isNetworkAvailable returns false and showRefresh also false', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             jest.spyOn(coursesPage, 'getCourseTabData').mockImplementation();
             // act
             coursesPage.retryShowingPopularCourses(false);
@@ -1225,13 +1282,71 @@ describe('CoursesPage', () => {
         it('return reset values', () => {
             // arrange
             let data = [{
-                selected: [1,2]
+                selected: [1, 2]
             }];
             // act
             data = coursesPage.resetFilter(data);
             // assert
             expect(data[0].selected).toEqual([]);
         });
+    });
+
+    describe('navigateToTextbookPage', () => {
+        it('should navigate to textbook page if network is available', () => {
+            //arrange
+            const items = { isAvailableLocally: true }, subject = 'English';
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            //act
+            coursesPage.navigateToTextbookPage(items, subject);
+            //assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+            expect(mockRouter.navigate).toBeTruthy();
+        });
+        it('should navigate to textbook page if network  and items are unavailable', () => {
+            //arrange
+            const items = 'item', subject = 'English';
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve())
+            //act
+            coursesPage.navigateToTextbookPage(items, subject);
+            //assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI');
+        });
+    });
+
+    it('exploreOtherContents', (done) => {
+        //arrange
+        const mockCurrentProfile = {
+            profileType: 'some_type'
+        } as any;
+        mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }])) as any;
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        //act
+        coursesPage.exploreOtherContents();
+        //assert
+        setTimeout(() => {
+            done();
+        }, 0);
+    });
+
+    it('isGroupedCoursesAvailable', () => {
+        //arrange
+        const displayItems = [
+            {
+                data: {
+                    sections: [
+                        { contents: 'content1' }, { contents: 'content2' }
+                    ]
+                }
+            }
+        ]
+        //act
+        coursesPage.isGroupedCoursesAvailable(displayItems);
+        //assert
+        expect(coursesPage.isGroupedCoursesAvailable).toBeTruthy();
     });
 });
 

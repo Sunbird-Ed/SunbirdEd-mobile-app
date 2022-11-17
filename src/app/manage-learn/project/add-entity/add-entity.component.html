@@ -2,7 +2,7 @@
   <ion-title>
     {{title | translate}}
   </ion-title>
-  <ion-buttons (click)="close()" slot="start" class="padding">
+  <ion-buttons (click)="close()" slot="start" class="padding custom-btn-txt-transform-none">
     <ion-icon role="button" name="arrow-back" aria-label="back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
@@ -34,7 +34,7 @@
         </ion-card>
       </ion-radio-group>
       <div class="loadmore-btn" *ngIf="entities.length && entityCount > entities.length">
-        <ion-button (click)="loadMoreEntities()">
+        <ion-button (click)="loadMoreEntities()" class="custom-btn-txt-transform-none">
           {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
       </div>
 

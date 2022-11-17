@@ -122,4 +122,16 @@ describe('SbGenericPopoverComponent', () => {
         expect(groupGuideLinesPopoverComponent.showGroupGuideLinesError).toBe(true);
     });
 
+    it('openTermsOfUse', (done) => {
+        //arrange
+        mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('TOU_BASE_URL'));
+        //act
+        groupGuideLinesPopoverComponent.openTermsOfUse();
+        //assert
+        setTimeout(() => {
+            expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('TOU_BASE_URL');
+            done();
+        }, 0);
+    });
+
 });

@@ -85,8 +85,10 @@ export class SolutionListingComponent {
         break;
       case 'survey':
         this.surveyRedirect(data);
+        break;
       case 'course':
-        this.courseRedirect(data)
+        this.courseRedirect(data);
+        break;
       default:
         break;
     }
@@ -167,6 +169,7 @@ export class SolutionListingComponent {
           solutionId: data._id,
           observationId: observationId,
           solutionName: data.name,
+          entityType: data.entityType ? data.entityType : ''
         },
       }
     );

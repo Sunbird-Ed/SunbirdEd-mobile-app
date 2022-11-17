@@ -349,7 +349,8 @@ export class UtilsService {
     if (
       question.validation.required &&
       question.value === "" &&
-      question.responseType !== "multiselect"
+      question.responseType !== "multiselect" &&
+      question.responseType !== 'matrix'
     ) {
       return false;
     }
@@ -360,6 +361,12 @@ export class UtilsService {
       question.responseType === "multiselect"
     ) {
       return false;
+    }
+    if (
+      question.validation.required &&
+      question.responseType === 'matrix'
+    ) {
+      return this.isMatrixQuestionComplete(question);
     }
     if (
       question.validation.regex &&
@@ -526,9 +533,8 @@ export class UtilsService {
           text: "Update Profile",
           role: "cancel",
           handler: blah => {
-            this.router.navigate([
-              `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`
-            ]);
+            this.router.navigate([`${RouterLinks.HOME}`], {replaceUrl:true});
+            this.router.navigate([`${RouterLinks.TABS}/${RouterLinks.PROFILE}`]);
           }
         }
       ],
@@ -744,6 +750,11 @@ return data;
         type: 'image/jpeg'
       },
       {
+        name: "FRMELEMNTS_LBL_VIDEOS",
+        value: "video",
+        type: "video/mp4"
+      },
+      {
         name: "FRMELEMNTS_LBL_FILES",
         value: "file",
         type: "application/pdf"
@@ -753,6 +764,7 @@ return data;
         value: "link",
         type: "link"
       },
+     
     ];
     return tabs;
   }

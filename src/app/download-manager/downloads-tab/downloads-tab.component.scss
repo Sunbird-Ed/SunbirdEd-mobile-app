@@ -16,7 +16,7 @@
   }
 
   ion-checkbox {
-    --border-width: 1px;
+    --border-width: 0.063rem;
     --border-color: #{map-get($colors, bright_blue_a0)};
     --background-checked: #{$blue};
     --border-color-checked: #{$blue};
@@ -26,4 +26,8 @@
 
 .flex-50{
   flex: 0 0 50%;
+}
+
+.sb-card-content {
+  width: 65%;
 }

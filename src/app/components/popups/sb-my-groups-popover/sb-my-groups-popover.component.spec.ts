@@ -98,7 +98,7 @@ describe('MyGroupsPopoverComponent', () => {
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
-                ImpressionSubtype.DISPLAY_DIKSHA_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP
+                ImpressionSubtype.DISPLAY_SUNBIRD_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP
             );
         });
 

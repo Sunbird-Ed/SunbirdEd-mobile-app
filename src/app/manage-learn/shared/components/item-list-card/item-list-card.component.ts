@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonUtilService } from '@app/services';
 
 @Component({
@@ -6,21 +6,25 @@ import { CommonUtilService } from '@app/services';
   templateUrl: './item-list-card.component.html',
   styleUrls: ['./item-list-card.component.scss'],
 })
-export class ItemListCardComponent {
+export class ItemListCardComponent implements OnChanges {
   @Input() title: any;
   @Input() subTitle: any;
-  @Input() case:any ={subTitle:'titleCase'}
+  @Input() description:any;
+  @Input() case:any ={subTitle:'titleCase', description:'titleCase'}
   @Input() id: any;
   @Output() cardSelect = new EventEmitter();
   @Input() ellipsis:Boolean =false
-
+  @Input() arrIndex:any;
+  @Input() selectedEvidenceIndex:any;
   constructor(private commonUtilService: CommonUtilService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+  }
   isNumber(val): boolean {
     return typeof val === 'number';
   }
-
-  programDetails(id) {
+ 
+  programDetails(id){
     this.cardSelect.emit(id);
   }
 }

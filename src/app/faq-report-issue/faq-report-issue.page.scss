@@ -21,7 +21,7 @@
     margin-left: 5px;
 }
 P{
-    font-size: 13px;
+    font-size: 0.813rem;
 }
 .help-header, .help-header-send-email{
     background: $blue;
@@ -31,12 +31,12 @@ P{
 .help-header>h4,.help-header-send-email>h4{
     padding:0;
     font-weight: 700;
-    max-width: 1024px;
+    max-width: 64rem;
     margin: 0 auto;
 }
 .help-header>p,.help-header-send-email>p{
     font-weight: 100;
-    max-width: 1024px;
+    max-width: 64rem;
     margin: 0 auto;
 }
 .panel-title {
@@ -51,7 +51,7 @@ P{
 
     .info-msg-send-email>p,.info-msg>p{
         padding: 8px 16px;
-        max-width: 1024px;
+        max-width: 64rem;
         margin: 0 auto;
     }
    
@@ -60,7 +60,7 @@ P{
 
     .info-msg-send-email>p,.info-msg>p{
         padding: 16px 0px;
-        max-width: 1024px;
+        max-width: 64rem;
         margin: 0 auto;
     }
 }
@@ -82,7 +82,7 @@ P{
 }
 .panel-group{
     margin: 0 auto;
-    max-width: 1024px;
+    max-width: 64rem;
 }
 .panel-group .panel+.panel{
     border-radius: 0;
@@ -99,18 +99,18 @@ P{
 .panel-interact{
     text-align: center; 
     padding: 20px;
-    height: 100px;
+    height: 6.25rem;
 }
 .panel-interact>button{
     margin: 10px 5px 0px 5px;
     background-color: map-get($colors, white_fa);
     border-color: map-get($colors, white_fa);
-    width: 80px;
+    width: 5rem;
     color: $blue;
-    font-size: 13px;
+    font-size: 0.813rem;
     font-weight: 700;
     outline: none;
-    height: 20px;
+    height: 1.125rem;
 
 }
 .panel-interact>p{
@@ -121,7 +121,7 @@ P{
     margin: auto !important;
     margin-top:10px !important;
     background: map-get($colors, white_fa);
-    width: 200px;
+    width: 12.5rem;
     border-radius: 4px;
     color: $green;
     text-align: center;
@@ -129,7 +129,7 @@ P{
 
 .panel-info{
     text-align: center;
-    max-width: 1024px;
+    max-width: 64rem;
     margin: 0 auto;
 }
 .panel-info>h6{
@@ -140,7 +140,7 @@ P{
 
 .input-text{
     width: 100%;
-    height: 70px;
+    height: 4.375rem;
     border-radius: 5px;
     @include padding(8px 0px 0px 8px);
     resize: none;
@@ -149,7 +149,7 @@ P{
     width: 100%;
     color: map-get($colors, white);
     background: map-get($colors, light_blue_f5);
-    height: 40px;
+    height: 2.5rem;
     border-radius: 4px;
     margin: 10px 0px 16px 0px;
     outline: none;
@@ -161,7 +161,7 @@ P{
         min-width: 90vw;
         color: map-get($colors, white);
         background: $blue;
-        height: 40px;
+        height: 2.5rem;
         border-radius: 4px;
         border-style:solid;
         border-color:  $blue;
@@ -178,10 +178,10 @@ P{
     #textareainfo{
         opacity: .5;
         position: absolute;
-        bottom: -13px;
+        bottom: -0.813rem;
         right: 0px;
         font-weight: normal;
-        font-size: 12px;
+        font-size: 0.75rem;
         padding-right: 16px;
     }
     .initiate-email-info-button {
@@ -199,10 +199,10 @@ P{
 }
 @media only screen and (min-width : 1025px) {
     .report-button{
-        min-width: 1024px;
+        min-width: 64rem;
         color: map-get($colors, white);
         background: $blue;
-        height: 40px;
+        height: 2.5rem;
         border-radius: 4px;
         border-style:solid;
         border-color: $blue;
@@ -229,7 +229,7 @@ img>.report-button{
 .send-email-info{
     padding: 10px 0px;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: justify;
 
 }
@@ -238,17 +238,17 @@ img>.report-button{
     }
 @media only screen and (min-width : 1025px) {
     .send-email-form{
-        max-width: 1025px;
+        max-width: 64.063rem;
         margin: auto;
     }
     .send-email-info{
-        max-width: 570px;
+        max-width: 35.625rem;
         padding: 10px 0 !important;
         margin: initial;
         float: left;
     }
     .submit-button{
-        width: 150px;
+        width: 9.375rem;
         float: right;
         color: map-get($colors, white);
         background: $blue;
@@ -256,7 +256,7 @@ img>.report-button{
         border-style:solid;
         border-color:  $blue;
         margin: 10px 0 16px 0;
-        height: 32px;
+        height: 2rem;
         outline: none;
     }
     .panel-info{
@@ -276,7 +276,7 @@ img>.report-button{
 }
 .input-text-form{
     width: 100%;
-    height: 128px;
+    height: 8rem;
     border-radius: 5px;
     box-shadow: none;
     @include padding(8px 0px 0px 8px);
@@ -284,7 +284,7 @@ img>.report-button{
 }
 ::placeholder {
   color: $gray-300;
-  font-size: 14px;
+  font-size: $font-size-base;
   font-weight: normal;
 }
 .initiate-email-info{
@@ -294,7 +294,7 @@ img>.report-button{
 @media only screen and (min-width : 1025px) {
     .input-text-form{
         width: 100%;
-        height: 128px;
+        height: 8rem;
         border-radius: 0px;
         box-shadow: none;
         border-width: 1px;
@@ -307,10 +307,10 @@ img>.report-button{
     #textareainfo{
     opacity: .5;
     position: absolute;
-    bottom: -24px;
+    bottom: -1.5rem;
     right: 0px;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 0.75rem;
     }
     
 }
