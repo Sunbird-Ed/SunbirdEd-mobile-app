@@ -2,7 +2,6 @@
 
 const shell = require('child_process').execSync
 var pathList = [
-    "platforms/android/com-sarriaroman-photoviewer/app-photoviewer.gradle",
     "platforms/android/cordova-plugin-code-push/app-build-extras.gradle",
     "platforms/android/cordova-plugin-local-notification/app-localnotification.gradle",
 ]
