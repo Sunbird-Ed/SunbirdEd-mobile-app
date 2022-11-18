@@ -736,7 +736,7 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    getFrameworkCategories(): Promise<any> {
+    getFrameworkCategoryList(): Promise<any> {
         return new Promise((resolve, reject) => {
             const framework = this.appGlobalService.getCachedFrameworkCategory();
             if (!framework || framework.length === 0) {
