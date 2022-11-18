@@ -10,6 +10,7 @@
     <allow-intent href="geo:*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
+    <preference name="android-targetSdkVersion" value="31" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreenDelay" value="5000" />
     <preference name="Orientation" value="portrait" />
@@ -45,6 +46,12 @@
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" android:largeHeap="true" android:networkSecurityConfig="@xml/network_security_config" android:usesCleartextTraffic="true" />
+        </edit-config>
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/service[@android:name='com.gae.scaffolder.plugin.MyFirebaseMessagingService']" xmlns:android="http://schemas.android.com/apk/res/android">
+            <service android:exported="true" />
+        </edit-config>
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:name='org.sunbird.customtabs.CallbackActivity']" xmlns:android="http://schemas.android.com/apk/res/android">
+            <activity android:exported="true" />
         </edit-config>
         <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
         <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
@@ -149,9 +156,6 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
     <plugin name="cordova-plugin-webview-checker" spec="^1.0.1" />
     <plugin name="cordova-plugin-awesome-shared-preferences" spec="https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git" />
-    <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
-        <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
-    </plugin>
     <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-5.0.2">
         <variable name="FCM_CORE_VERSION" value="16.0.9" />
         <variable name="FCM_VERSION" value="18.0.0" />
