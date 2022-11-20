@@ -20,7 +20,7 @@ SUNBIRD_CORDOVA_COUNTER=0
 # Pass build branch as input
 buildBranch="$1"
 rm package-lock.json && npm install
-export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-6.5.1-all.zip"
+export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-7.0.2-all.zip"
 
 file="./build_config"
 while IFS="=" read -r key value; do
@@ -50,7 +50,7 @@ done
 rm -rf platforms
 #Temporary Workaround to generate build as webpack was complaining of Heap Space
 #need to inspect on webpack dependdencies at the earliest
-NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@9.0.0
+NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@10.1.2
 
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --verbose --buildConfig ./buildConfig/build.json
 
