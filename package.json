@@ -205,7 +205,7 @@
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
     "cordova-plugin-proguard": "git+https://github.com/greybax/cordova-plugin-proguard.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-4.6.0",
-    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-4.10.1",
+    "cordova-plugin-screen-orientation": "git+https://github.com/521dimensions/cordova-plugin-screen-orientation.git",
     "cordova-plugin-telerik-imagepicker": "^2.3.3",
     "cordova-zip-plugin": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "fs-extra": "^8.1.0",
@@ -302,7 +302,8 @@
       "cordova-plugin-file-support": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   },
   "jest": {
