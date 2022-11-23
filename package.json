@@ -63,7 +63,7 @@
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "5.0.0",
+    "@project-sunbird/client-services": "5.0.1",
     "@project-sunbird/common-consumption-v9": "5.0.0",
     "@project-sunbird/common-form-elements-v9": "5.0.3",
     "@project-sunbird/content-player": "4.4.0",
@@ -288,7 +288,6 @@
       "cordova-sqlite-storage": {},
       "cordova-plugin-telerik-imagepicker": {},
       "cordova-plugin-filechooser": {},
-      "cordova-plugin-inappupdatemanager": {},
       "cordova-plugin-googleplus": {
         "PLAY_SERVICES_VERSION": "15.0.1"
       },
