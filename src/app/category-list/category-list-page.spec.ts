@@ -18,7 +18,7 @@ describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(),
-        convertFileToBase64: jest.fn(() => of()) as any
+        convertFileToBase64: jest.fn(() => of(fn => fn())) as any
     };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({
@@ -416,6 +416,9 @@ describe('CategoryListPage', () => {
                 mode: "soft",
                 offset: 0
             }
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+                profileType: 'Student', subject: ['subject 1']
+            } as any))
             categoryListPage['preFetchedFilterCriteria'] = null;
             //act
             categoryListPage.deduceFilterCriteria();
@@ -423,6 +426,28 @@ describe('CategoryListPage', () => {
         })
     });
     describe('onPrimaryFacetFilterSelect', () => {
+        it('should check name values for facetFilterValue and toApply are equal on else case ', (done) => {
+            //arrange
+            const primaryFacetFilter = { code: "subject", values: [], name: "Subject", index: 2 };
+            const toApply = [{ name: "audience", count: 124, apply: false }];
+            categoryListPage.deduceFilterCriteria = jest.fn(() => {
+                return {
+                    query: 'a query',
+                    facetFilters: [
+                        { name: 'subject1', code: 'code1', values: [{ name: 'audience' }] },
+                        { name: 'course', code: 'code2', values: [{ name: 'maths' }] }
+                    ]
+                }
+            });
+            const refreshPillFilter = true;
+            const onSelectedFilter = [];
+            //act
+            categoryListPage.onPrimaryFacetFilterSelect(primaryFacetFilter, toApply);
+            //assert
+            setTimeout(() => {
+                done();
+            }, 0)
+        });
         it('should check name values for facetFilterValue and toApply are equal', (done) => {
             //arrange
             const primaryFacetFilter = { code: "subject", values: [], name: "Subject", index: 2 };
@@ -509,7 +534,7 @@ describe('CategoryListPage', () => {
                                 "groupSortBy": [{
                                     "name": {
                                       "order": "asc",
-                                      "preference": ["accountancy",["subject 1", "subject 2"]]
+                                      "preference": ["accountancy",["subject 1"]]
                                     },
                                   }]},
                             filterPillBy: null
@@ -622,6 +647,30 @@ describe('CategoryListPage', () => {
                 done();
             });
         })
+        it('should navigate to filter form page else on dismiss', (done) => {
+            //arrange
+            const isDataEmpty = true;
+            const openFiltersPage = (mockModalController.create = jest.fn(() => {
+                return Promise.resolve({
+                    present: jest.fn(() => Promise.resolve({})),
+                    onDidDismiss: jest.fn(() => Promise.resolve({
+                        data: ""
+                    })),
+                }) as any;
+            }));
+            categoryListPage.displayFacetFilters = {
+                name1: [{ name: 'na 1', apply: false }, { name: 'na 2', apply: false }],
+                name2: [{ name: 'na 1', apply: false }, { name: 'na 2', apply: false }]
+            };
+            jest.spyOn(categoryListPage, 'deduceFilterCriteria').mockImplementation();
+            //act
+            categoryListPage.navigateToFilterFormPage();
+            //assert
+            setTimeout(() => {
+                expect(mockModalController.create).toHaveBeenCalled();
+                done();
+            });
+        })
     });
     it('should call scrollService() to id', () => {
         // arrange
@@ -700,8 +749,102 @@ describe('CategoryListPage', () => {
                 return {
                     query: 'a query',
                     facetFilters: [
+                        { name: 'subject', code: 'code1', values: [] },
+                        { name: 'course', code: 'code2', values: [] }
+                    ]
+                }
+            });
+            const refreshPillFilter = true;
+            //act
+            categoryListPage.pillFilterHandler(pill);
+            //assert
+            setTimeout(() => {
+                done();
+            })
+        })
+        it('should check facetFilter if it return true, if no filter values', (done) => {
+            //arrange
+            const pill = { name: "course", count: 3034, apply: true };
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
+            categoryListPage['formField'] = {
+                searchCriteria: { subjects: ['maths'] },
+                facet: 'Course',
+                aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
+                filterPillBy: "subject"
+            };
+            categoryListPage['preFetchedFilterCriteria'] = null;
+            categoryListPage['supportedUserTypesConfig'] = [{code: 'audience'}];
+            categoryListPage['primaryFacetFiltersFormGroup'] = {
+                value: {
+                    children: {
+                        persona: {
+                            type: { type: 'sample-type' },
+                            code: 'sample-code',
+                            subPersona: 'sample-subpersona'
+                        }
+                    },
+                    name: 'sample name',
+                    persona: {
+                        type: { type: 'sample-type' },
+                        code: 'sample-code',
+                        subPersona: [{}]
+                    }
+                },
+                patchValue: jest.fn()
+            } as any;
+            categoryListPage.deduceFilterCriteria = jest.fn(() => {
+                return {
+                    query: 'a query',
+                    facetFilters: [
+                        // { name: 'subject', code: 'code1', values: [{ name: 'audience', apply: true }] },
+                        // { name: 'course', code: 'code2', values: [{ name: 'maths', apply: false }] }
+                    ]
+                }
+            });
+            const refreshPillFilter = true;
+            //act
+            categoryListPage.pillFilterHandler(pill);
+            //assert
+            setTimeout(() => {
+                done();
+            })
+        })
+        it('should check facetFilter if it return true on else case', (done) => {
+            //arrange
+            const pill = { name: "course", count: 3034, apply: true };
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
+            categoryListPage['formField'] = {
+                searchCriteria: { subjects: ['maths'] },
+                facet: 'Course',
+                aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
+                filterPillBy: "subject1"
+            };
+            categoryListPage['preFetchedFilterCriteria'] = null;
+            categoryListPage['supportedUserTypesConfig'] = [{code: 'audience'}];
+            categoryListPage['primaryFacetFiltersFormGroup'] = {
+                value: {
+                    children: {
+                        persona: {
+                            type: { type: 'sample-type' },
+                            code: 'sample-code',
+                            subPersona: 'sample-subpersona'
+                        }
+                    },
+                    name: 'sample name',
+                    persona: {
+                        type: { type: 'sample-type' },
+                        code: 'sample-code',
+                        subPersona: [{}]
+                    }
+                },
+                patchValue: jest.fn()
+            } as any;
+            categoryListPage.deduceFilterCriteria = jest.fn(() => {
+                return {
+                    query: 'a query',
+                    facetFilters: [
                         { name: 'subject', code: 'code1', values: [{ name: 'audience', apply: true }] },
-                        { name: 'course', code: 'code2', values: [{ name: 'maths', apply: false }] }
+                        { name: 'audience', code: 'code2', values: [{ name: 'maths', apply: false }] }
                     ]
                 }
             });
@@ -731,6 +874,29 @@ describe('CategoryListPage', () => {
             categoryListPage.getExistingFilters(formFields);
             //assert
             expect(formFields.filterPillBy).toBeTruthy();
+        })
+
+        it('should check whether formFields.filterPillBy is true or not and else on primaryFacetFilters', () => {
+            //arrange
+            const existingSearchFilters = {};
+            const formFields = {
+                facet: "Digital Textbook",
+                index: 0,
+                filterPillBy: "primaryCategory",
+                primaryFacetFilters: ''
+            }
+            //act
+            categoryListPage.getExistingFilters(formFields);
+            //assert
+            expect(formFields.filterPillBy).toBeTruthy();
+        })
+
+        it('should check else case if no formfields', () => {
+            //arrange
+            const formFields = ''
+            //act
+            categoryListPage.getExistingFilters(formFields);
+            //assert
         })
     });
 });

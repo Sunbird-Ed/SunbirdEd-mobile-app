@@ -17,7 +17,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
 import { TelemetryService } from '@project-sunbird/sunbird-sdk';
@@ -806,4 +806,23 @@ describe('CommonUtilService', () => {
       }, 0);
     });
   });
+
+  describe('convertFileToBase64', () => {
+    it('should convert file to base64 ', (done) => {
+      // arrange
+      fetch = jest.fn(() => { jest.fn(); }) as any
+      let file = "assets/imgs/ic_launcher.png"
+        const sub = new Subject<any>();
+        sub.next = jest.fn()
+        sub.complete = jest.fn()
+        sub.asObservable = jest.fn()
+        const reader = new FileReader();
+        reader.onload = jest.fn(() => ({result: ''}))
+        reader.readAsDataURL = jest.fn()
+      // act
+      commonUtilService.convertFileToBase64(file);
+      // assert
+      done();
+    })
+  })
 });
