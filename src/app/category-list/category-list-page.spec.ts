@@ -7,19 +7,18 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { ScrollToService } from '../../services/scroll-to.service';
 import {
-    Environment, FormAndFrameworkUtilService, ImpressionType, InteractSubtype, InteractType, PageId, SearchFilterService,
+    Environment, InteractSubtype, InteractType, PageId, SearchFilterService,
     TelemetryGeneratorService
 } from '../../services';
 import { ContentUtil } from '@app/util/content-util';
 import { RouterLinks } from '@app/app/app.constant';
 import { ModalController } from '@ionic/angular';
-import { promises } from 'dns';
-import { hostname } from 'os';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        convertFileToBase64: jest.fn()
     };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({
@@ -323,7 +322,7 @@ describe('CategoryListPage', () => {
                 done();
             }, 0);
         });
-        xit('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_category', (done) => {
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_category', (done) => {
             //arrange
             mockCommonUtilService.getAppName = jest.fn();
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -337,7 +336,7 @@ describe('CategoryListPage', () => {
                 done();
             }, 0);
         });
-        xit('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_audience', (done) => {
+        it('should get Appname and supportedFacets should not be defined and extras.state.code should be browse_by_audience', (done) => {
             //arrange
             mockCommonUtilService.getAppName = jest.fn();
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -351,7 +350,7 @@ describe('CategoryListPage', () => {
                 done();
             }, 0);
         });
-        xit('should get Appname and supportedFacets should be defined', (done) => {
+        it('should get Appname and supportedFacets should be defined', (done) => {
             //arrange
             mockCommonUtilService.getAppName = jest.fn();
             categoryListPage['supportedFacets'] = ["se_mediums", "subject", "primaryCategory", "audience"];
@@ -424,7 +423,7 @@ describe('CategoryListPage', () => {
         })
     });
     describe('onPrimaryFacetFilterSelect', () => {
-        xit('should check name values for facetFilterValue and toApply are equal', (done) => {
+        it('should check name values for facetFilterValue and toApply are equal', (done) => {
             //arrange
             const primaryFacetFilter = { code: "subject", values: [], name: "Subject", index: 2 };
             const toApply = [{ name: "audience", count: 124, apply: false }];
@@ -446,7 +445,7 @@ describe('CategoryListPage', () => {
                 done();
             }, 0)
         });
-        xit('should check name values for facetFilterValue and toApply are not equal', (done) => {
+        it('should check name values for facetFilterValue and toApply are not equal', (done) => {
             //arrange
             const primaryFacetFilter = { code: "subject", values: [], name: "Subject", index: 2 };
             const toApply = [{ name: "accountancy", count: 124, apply: false }];
@@ -499,7 +498,7 @@ describe('CategoryListPage', () => {
                     subjectName: 'Mathematics',
                     corRelation: [
                         { id: 'Mathematics', type: 'Section' },
-                        { id: 'browse_by_subject', type: 'RootSection' },
+                        { id: 'browse_by_audience', type: 'RootSection' },
                         { id: {
                             searchCriteria: {
                              "subjects": ["maths"],
@@ -509,12 +508,13 @@ describe('CategoryListPage', () => {
                                 "groupBy": "subject",
                                 "groupSortBy": [{
                                     "name": {
-                                      "order": "asc"
+                                      "order": "asc",
+                                      "preference": ["accountancy",["subject 1", "subject 2"]]
                                     },
                                   }]},
                             filterPillBy: null
                           }, type: 'Content'}],
-                    supportedFacets: ["code1", "code2"],
+                    supportedFacets: ["se_mediums", "subject", "primaryCategory", "audience",],
                     totalCount: undefined
                 }
             });
@@ -590,7 +590,7 @@ describe('CategoryListPage', () => {
         });
     });
     describe('navigateToFilterFormPage', () => {
-        xit('should navigate to filter form page', (done) => {
+        it('should navigate to filter form page', (done) => {
             //arrange
             const isDataEmpty = true;
             const openFiltersPage = (mockModalController.create = jest.fn(() => {
@@ -655,7 +655,7 @@ describe('CategoryListPage', () => {
         expect(formControlSubscriptions.forEach(s => s.unsubscribe()));
     });
     describe('pillFilterHandler', () => {
-        xit('should return nothing if pill is not defined', (done) => {
+        it('should return nothing if pill is not defined', (done) => {
             //arrange
             const pill = null;
             //act
@@ -733,12 +733,4 @@ describe('CategoryListPage', () => {
             expect(formFields.filterPillBy).toBeTruthy();
         })
     });
-    describe('convertFileToBase64', () => {
-        it('should convert file to base64 ', () => {
-            // arrange
-            // act
-            categoryListPage.convertFileToBase64();
-            // assert
-        })
-    })
 });
