@@ -18,7 +18,7 @@ describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(),
-        convertFileToBase64: jest.fn()
+        convertFileToBase64: jest.fn(() => of()) as any
     };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({
