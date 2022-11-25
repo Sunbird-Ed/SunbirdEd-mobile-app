@@ -34,7 +34,8 @@ import {
   AddLinkModalComponent,
   AttachmentCardComponent,
   AttachmentListsComponent,
-  ReportListComponent
+  ReportListComponent,
+  EntitySearchLocalComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -72,7 +73,7 @@ import { ExpansionPanelComponent } from './components/expansion-panel/expansion-
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
 import { HTTP } from '@ionic-native/http/ngx';
-
+import { EntitySearchPipe } from './pipe/entity-local-search';
 @NgModule({
   declarations: [
     CreateTaskComponent,
@@ -126,7 +127,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     AddLinkModalComponent,
     AttachmentCardComponent,
     AttachmentListsComponent,
-    ReportListComponent
+    ReportListComponent,
+    EntitySearchPipe,
+    EntitySearchLocalComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -182,7 +185,9 @@ import { HTTP } from '@ionic-native/http/ngx';
     TaskCardComponent,
     AddLinkModalComponent,
     AttachmentCardComponent,
-    AttachmentListsComponent
+    AttachmentListsComponent,
+    EntitySearchPipe,
+    EntitySearchLocalComponent
   ],
   providers: [
     Camera,
@@ -219,7 +224,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
     AddLinkModalComponent,
-    ReportListComponent
+    ReportListComponent,
+    EntitySearchLocalComponent
   ],
   
 })
