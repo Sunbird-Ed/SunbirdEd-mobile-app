@@ -43,7 +43,7 @@ export class ProjectDetailsComponent implements OnInit {
   taskCount = 0;
   projectDetailsCopy;
   taskNoDataFound="FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS"
-
+  certificateCriteria:any =[];
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -126,6 +126,15 @@ export class ProjectDetailsComponent implements OnInit {
           if (success.docs.length) {
             this.categories = [];
             this.projectDetails = success.docs.length ? success.docs[0] : {};
+            if(this.projectDetails.certificate){
+              let criteria = Object.keys(this.projectDetails?.certificate?.criteria?.conditions);
+              criteria.forEach(element => {
+                let config ={
+                  name:this.projectDetails?.certificate?.criteria?.conditions[element].validationText
+                }
+                this.certificateCriteria.push(config);
+              })
+            }
             this.setActionButtons();
             this.isNotSynced = this.projectDetails ? (this.projectDetails.isNew || this.projectDetails.isEdit) : false;
             this.projectDetails.categories.forEach((category: any) => {
