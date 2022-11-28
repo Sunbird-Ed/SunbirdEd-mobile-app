@@ -98,6 +98,9 @@ export class SharingFeatureService {
   async getFileUrl(config, name) {
     if(this.network.isNetworkAvailable){
       this.loader.startLoader();
+      if(name?.length > 40){
+        name = name.slice(0, 40) + '...';
+      }
       let res = await this.unnatiSrvc.get(config).toPromise();
       if (res.result && !res.result.data && !res.result.data.downloadUrl) {
         this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
@@ -106,28 +109,29 @@ export class SharingFeatureService {
       }
       let fileName = name.replace(/[^A-Z0-9]/ig, "_") + '.pdf';
       const ft = this.fileTransfer.create();
-      ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
-      .then(
-        (res) => {
-          this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
-          },error =>{
-          })
-        },
-        (err) => {
-          this.requestPermission();
-          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-        }
-      )
-      .finally(() => {
-        this.loader.stopLoader();
-      });
+      setTimeout(() => {
+        ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
+        .then(
+          (res) => {
+            this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
+            },error =>{
+            })
+          },
+          (err) => {
+            this.requestPermission();
+            this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+          }
+        )
+        .finally(() => {
+          this.loader.stopLoader();
+        });
+      }, 1000)
     }else{
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
     }
    
   }
   directoryPath(): string {
-    // let dir_name = 'Download/';
     if (this.platform.is('ios')) {
       return this.file.documentsDirectory;
     } else {

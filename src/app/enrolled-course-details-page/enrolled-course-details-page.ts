@@ -905,7 +905,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchRemaningTimingIntervalRef = undefined;
           }
           if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
-            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
+            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.saveContentContext(this.appGlobalService.getUserId(),
@@ -1626,8 +1626,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   isCourseModifiedAfterEnrolment() {
     return (this.courseCardData && this.courseCardData.enrolledDate
-      && this.course && this.course.lastUpdatedOn
-      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime()));
+      && this.course && this.course.lastPublishedOn
+      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastPublishedOn).getTime()));
   }
 
   getCourseProgress() {

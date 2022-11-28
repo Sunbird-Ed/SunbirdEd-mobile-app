@@ -14,7 +14,8 @@ import {
     ContainerService,
     AppHeaderService,
     ActivePageService,
-    FormAndFrameworkUtilService
+    FormAndFrameworkUtilService,
+    TelemetryGeneratorService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
@@ -23,8 +24,8 @@ import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, throwError } from 'rxjs';
-import { Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences } from '@project-sunbird/sunbird-sdk';
-import { PreferenceKey, RouterLinks } from '../../app.constant';
+import { CachedItemRequestSourceFrom, Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app.constant';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
 
@@ -109,6 +110,7 @@ describe('CategoryEditPage', () => {
         }
     };
     const mockCategoriesEditService: Partial<CategoriesEditService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
 
     beforeAll(() => {
@@ -129,7 +131,9 @@ describe('CategoryEditPage', () => {
             mockProgressLoader as SbProgressLoader,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockCategoriesEditService as CategoriesEditService
+            mockCategoriesEditService as CategoriesEditService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -203,13 +207,99 @@ describe('CategoryEditPage', () => {
                     medium: 'medium',
                     gradeLevel: 'gradeLevel'
                 }));
-            categoryEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
-            categoryEditPage['onMediumChange'] = jest.fn(() => of({} as any));
-            categoryEditPage['onGradeChange'] = jest.fn(() => of({} as any));
+            categoryEditPage['onSyllabusChange'] = jest.fn(() => of({
+                value: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'profileType':
+                            value = { value: '' };
+                            break;
+                    }
+                    return value;
+                }),
+                patchValue: jest.fn(),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    },
+                    profileType: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any));
+            categoryEditPage['onMediumChange'] = jest.fn(() => of({
+                value: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'profileType':
+                            value = { value: '' };
+                            break;
+                    }
+                    return value;
+                }),
+                patchValue: jest.fn(),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    },
+                    profileType: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any));
+            categoryEditPage['onGradeChange'] = jest.fn(() => of({
+                value: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'profileType':
+                            value = { value: '' };
+                            break;
+                    }
+                    return value;
+                }),
+                patchValue: jest.fn(),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    },
+                    profileType: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any));
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',
@@ -599,9 +689,6 @@ describe('CategoryEditPage', () => {
                     grades: ['class 1']
                 }
             } as any;
-            jest.spyOn(categoryEditPage, 'submitForm').mockImplementation(() => {
-                return Promise.resolve();
-            });
             // act
             categoryEditPage.onSubmit();
             // assert
@@ -663,4 +750,70 @@ describe('CategoryEditPage', () => {
                 expect(mockLocation.back).toHaveBeenCalled();
             });
         });
+    describe('submitForm', () => {
+            it('should update the form value', () => {
+                //arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn
+            }));
+            const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
+            framework: {} }
+            const formVal =  { boards: [ 'cbsc' ], medium: [ 'english' ], grades: [ 'class 1' ] };
+            mockProfileService.updateServerProfile = jest.fn(() => of({req} as any));
+                //act
+                categoryEditPage.submitForm({});
+                //assert
+                expect(mockProfileService.updateServerProfile).toBeTruthy;
+            })
+        })
+
+    describe('refreshSegmentTags', () => {
+        it('should get Server ProfilesDetails', () => {
+            //arrange
+            const reqObj = {
+                userId: 'uid',
+                requiredFields: ProfileConstants.REQUIRED_FIELDS,
+                from: CachedItemRequestSourceFrom.SERVER
+                };
+            const updatedProfile = {
+                framework : 'sample_framework'
+                }
+            let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of({
+                userId: 'user_id',
+                requiredFields: [
+                    'completeness',
+                    'missingFields',
+                    'lastLoginTime',
+                    'topics',
+                    'organisations',
+                    'roles',
+                    'locations',
+                    'declarations',
+                    'externalIds'
+                ],
+                from: 'server'
+                }));       
+            //act
+            categoryEditPage.refreshSegmentTags();
+            //assert
+            expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+        })
+        })
+        
+    describe('ngOnDestroy', () => {
+            it('should unsubscribe', () => {
+                // arrange
+            categoryEditPage['formControlSubscriptions'] = {
+                unsubscribe: jest.fn(),
+    
+            } as any;
+            // act
+            categoryEditPage.ngOnDestroy();
+            // assert
+            expect( categoryEditPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
+            })
+        })
+
 });

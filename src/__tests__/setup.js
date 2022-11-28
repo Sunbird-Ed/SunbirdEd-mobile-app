@@ -38,6 +38,7 @@ global.cordova = {
     },
     InAppBrowser: {
         open: () => ({
+            executeScript: () => { },
             addEventListener: () => { },
             close: () => { }
         })
@@ -71,7 +72,19 @@ global.splashscreen = {
     markImportDone: () => { },
     hide: () => { },
     clearPrefs: () => { },
-    setContent: () => { }
+    setContent: () => { },
+    getActions: (data) => {data(JSON.stringify([
+        {
+            type: 'TELEMETRY',
+            payload: 'sample-payload'
+        }, {
+            type: 'IMPORT',
+            payload: 'sample-payload'
+        }, {
+            type: 'DEEPLINK',
+            payload: 'payload'
+        }
+    ]))}
 }
 
 global.codePush = {

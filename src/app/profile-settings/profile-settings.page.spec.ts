@@ -159,6 +159,7 @@ describe('ProfileSettingsPage', () => {
 
     it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
+        mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
         mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {

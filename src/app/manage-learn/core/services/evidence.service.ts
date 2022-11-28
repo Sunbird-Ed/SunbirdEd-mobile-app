@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { RemarksModalComponent } from '../../questionnaire/remarks-modal/remarks-modal.component';
@@ -25,7 +24,6 @@ export class EvidenceService {
     private utils: UtilsService,
     private translate: TranslateService,
     private alertCtrl: AlertController,
-    private router: Router,
     private modalCtrl: ModalController,
     private loader: LoaderService,
     private toast: ToastService,
@@ -33,7 +31,10 @@ export class EvidenceService {
   ) { }
 
   openActionSheet(params, type?) {
-    type = type ? type : '';
+    let sheetType = "";
+    if (type) {
+      sheetType = type;
+    }
     console.log(JSON.stringify(params) + ' test');
     this.entityDetails = params.entityDetails;
     this.schoolId = params._id;
@@ -58,7 +59,7 @@ export class EvidenceService {
             cssClass: 'actionSheet-custom-class',
             buttons: [
               {
-                text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),
+                text: translateObject['START'] + ' ' + (translateObject[sheetType]),
                 icon: 'arrow-forward',
                 handler: () => {
                   params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
@@ -73,7 +74,7 @@ export class EvidenceService {
                 },
               },
               {
-                text: translateObject['VIEW'] + ' ' + (type ? translateObject[type] : ''),
+                text: translateObject['VIEW'] + ' ' + (translateObject[sheetType]),
                 icon: 'eye',
                 handler: () => {
                   delete params.entityDetails;
@@ -81,18 +82,17 @@ export class EvidenceService {
                   resolve('view');
                 },
               },
-              {
-                text: selectedECM.canBeNotAllowed
-                  ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
-                  : translateObject['CANCEL'],
-                role: !selectedECM.canBeNotAllowed ? 'destructive' : '',
-                icon: selectedECM.canBeNotAllowed ? 'alert' : '',
-                handler: () => {
-                  if (selectedECM.canBeNotAllowed) {
-                    this.openAlert(selectedECM);
-                  }
-                },
-              },
+              selectedECM.canBeNotAllowed ? { 
+                text: translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'],
+                role: '',
+                icon: 'alert',
+                handler: () => {this.openAlert(selectedECM);}
+                } : {
+                  text: translateObject['CANCEL'],
+                  role: 'destructive',
+                  icon: '',
+                  handler: () => {}
+                }
             ],
           });
           const notAvailable = {
@@ -300,6 +300,7 @@ export class EvidenceService {
     let alert = await this.alertCtrl.create({
       header: translateObject["FRMELEMNTS_LBL_CONFIRM"],
       message: translateObject["FRMELEMNTS_LBL_ECM_NOT_APPLICABLE"],
+      cssClass: 'central-alert',
       buttons: [
         {
           text: translateObject["CANCEL"],

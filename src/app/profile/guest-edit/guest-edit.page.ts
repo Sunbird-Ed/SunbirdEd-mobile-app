@@ -30,14 +30,13 @@ import {
   ObjectType,
   PageId,
 } from '@app/services/telemetry-constants';
-import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { LoginHandlerService, OnboardingConfigurationService } from '@app/services';
+import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
@@ -141,7 +140,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private location: Location,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -170,6 +170,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.getCategories();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_USER,
@@ -369,7 +370,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
         } catch (e) {
           console.error(e);
         } finally {
-          this.loader.dismiss();
+          if (this.loader) {
+            this.loader.dismiss();
+          }
         }
       })
     );
@@ -634,6 +637,12 @@ export class GuestEditPage implements OnInit, OnDestroy {
       })
     ));
     return subscriptionArray;
+  }
+
+  private getCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
   }
 
 }

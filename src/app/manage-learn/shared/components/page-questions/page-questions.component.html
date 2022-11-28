@@ -1,11 +1,10 @@
 <div *ngIf="data?.pageQuestions?.length">
   <ng-container 
     *ngFor="let question of data?.pageQuestions; let j=index" [ngSwitch]="question?.responseType.toLowerCase()">
-    <ion-item-divider color="light" *ngIf="question?.sectionHeader">
-      <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
-    </ion-item-divider>
     <div class="_fullScreenCard" *ngIf="checkForVisibility(j)" >
-
+      <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+        <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+      </ion-item-divider>
       <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
         [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
         [enableQuestionReadOut]="enableQuestionReadOut"></app-text-type-input>
@@ -23,7 +22,7 @@
         *ngSwitchCase="'multiselect'" [enableQuestionReadOut]="enableQuestionReadOut"></app-multiple-type-input>
       <app-matrix-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
       [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
-      (updateLocalData)="updateLocalData()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
+      (updateLocalData)="updateLocalDataInPageQuestion()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
       [enableQuestionReadOut]="enableQuestionReadOut">
     </app-matrix-type-input>
       <app-slider-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"

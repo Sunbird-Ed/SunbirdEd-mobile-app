@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="is_customizable">false</bool>   
+    <bool name="should_use_image_as_splash">false</bool> 
     <color name="bg_color">#ffffff</color>
     <color name="app_name_txt_color">#ffffff</color>
 </resources>

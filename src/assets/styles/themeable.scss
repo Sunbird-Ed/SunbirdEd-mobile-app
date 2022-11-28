@@ -1075,11 +1075,47 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
+  // app-sign-in {
+  .login-div {
+    sb-form {
+      sb-textbox {
+        input {
+          box-sizing: border-box;
+          width: 86vw;
+          height: 2.5rem;
+          border: 0.063rem solid #024F9D !important;
+          border-radius: 0.75rem !important;
+          background-color: #FFFFFF !important;
+          font-size: 0.75rem !important;
+          padding-left: 0.938rem !important;
+        }
+        input:focus {
+          border: 0.063rem solid #024F9D !important;
+        }
+         input::placeholder {
+          color: var(--app-lighter-gray);
+          margin-left: 0 !important;
+          font-size: 0.75rem !important;
+          font-weight: normal !important;
+        }
+        .sb-input {
+          label {
+            display: inline !important;
+          }
+          .fgt-pwsd-lbl {
+            color: #024F9D;
+            float: right;
+        }
+      }
+      }
+    }
+  }
+// }
 
   // permission page
   app-permission{
     .permission-container{
-      margin-right: 16px;
+      margin-right: 1rem;
     }
   }
 
@@ -1264,7 +1300,7 @@ html[data-theme="JOYFUL"]{
 
     .sb-popover-title{
       color: var(--app-dark-gray) !important;
-      padding: 1rem !important;
+      padding: 1.75rem !important;
       font-size: 1.25rem !important;
       text-align: unset !important;
       ion-icon{
@@ -1659,6 +1695,11 @@ html[data-theme="JOYFUL"]{
 
   // DiscussionForum
 
+  // For now adding this styles to override the default behaviour of mobile app as there are no proper design guidelines for DF.
+  .df-btn-primary, .df-btn-secondary, .df-btn-tertiary, .df-btn-danger {
+    color: var(--df-btn-default-color);
+  }
+
   .discussion-forum {
     .reply-btn {
       background-color: var(--app-lighter-gray);
@@ -1863,6 +1904,73 @@ html[data-theme="JOYFUL"]{
   // ************ iOS end ***************
 }
 
+html[data-theme="DARKMODE"] {
+  --df-category-card-label: var(--app-white);
+}
+
+// Discussion Forum starts here
+lib-lib-entry {
+  &.main_discuss_lib {
+    background: var(--app-primary-background);
+
+    .sbt-inside-page-container.ui.container {
+      margin: 0 !important;
+    }
+
+    .df-header,
+    .no-card-content,
+    .ng2-tag-input,
+    .kabab-menu-dropdown-content {
+      background: var(--app-secondary-background);
+    }
+
+    .discussion-forum-content {
+      margin: 0 1rem;
+    }
+
+    .discussion-forum-content,
+    .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-field .start-form-field-control,
+    .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-field .select-category {
+      background: var(--app-primary-background) !important;
+      color: var(--app-black) !important;
+    }
+
+    .category-card .category-card-header .category-card-header-label,
+    .no-card-content,
+    .discuss-card-content .discuss-card-title,
+    .discussion-card-title,
+    .kabab-menu-dropdown-content,
+    .post-reply-card,
+    .post-card,
+    .related-discuss-card {
+      color: var(--app-black) !important;
+    }
+
+    .discuss-card-content {
+      .discuss-card-subtitle .card-label-container .discuss-card-label,
+      .discuss-card-comments .comments-count {
+        color: var(--app-primary) !important;
+      }
+    }
+
+    .kabab-menu {
+      color: var(--app-primary) !important;
+    }
+
+    .delete-icon, .edit-icon {
+      filter: invert(1);
+    }
+
+    .ng2-tag-input__text-input {
+      width: 100%;
+    }
+
+    .post-icons {
+      margin-right: .75rem;
+    }
+  }
+}
+// Discussion Forum ends here
 .central-alert, .attachment-delete-alert,.background-theme-color, .select-box {
   button{
     text-transform: none !important;

@@ -67,7 +67,7 @@ export class DownloadsTabComponent implements OnInit {
         contentId: identifier,
         isChildContent: false
       };
-      type=='project'||  type=='observation' ? contentDelete['type']=type:null
+      contentDelete['type'] = (type == 'project' || type == 'observation') ? type : null
       this.selectedContents = [contentDelete];
     }
 
@@ -226,7 +226,7 @@ export class DownloadsTabComponent implements OnInit {
           contentId: element.identifier,
           isChildContent: false
         };
-        element['type']=='project'||element['type']=='observation'?contentDelete['type']=element['type']:null
+        contentDelete['type'] = (element['type'] == 'project' || element['type'] == 'observation') ? element['type'] : null;
         this.selectedContentsInfo.totalSize += element.sizeOnDevice;
         this.selectedContents.push(contentDelete);
       }

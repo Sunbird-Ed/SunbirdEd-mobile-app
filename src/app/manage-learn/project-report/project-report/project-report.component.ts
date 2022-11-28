@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
 import { AlertController, IonSelect, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { statusType, UtilsService } from '../../core';

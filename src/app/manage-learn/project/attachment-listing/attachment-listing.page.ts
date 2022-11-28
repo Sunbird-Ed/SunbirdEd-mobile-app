@@ -10,7 +10,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { statusType, taskStatus, UtilsService } from '../../core';
+import { statusType, UtilsService } from '../../core';
 import * as _ from "underscore";
 
 @Component({
@@ -109,7 +109,7 @@ export class AttachmentListingPage implements OnInit {
       if(this.project.attachments && this.project.attachments.length){
         this.getEvidences(this.project.attachments, evidence);
       }
-      if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+      if ((this.type && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
       }
     }
@@ -124,7 +124,7 @@ export class AttachmentListingPage implements OnInit {
           if (task.attachments && task.attachments.length) {
             this.getEvidences(task.attachments, evidence);
           }
-          if ((this.type == 'image/jpeg' && evidence.remarks) || evidence.attachments.length) {
+          if ((this.type  && evidence.remarks) || evidence.attachments.length) {
             this.attachments.tasks.push(evidence);
           }
         }
@@ -191,7 +191,7 @@ export class AttachmentListingPage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab,
+      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab + '?',
       buttons: [
         {
           text: data['YES'],

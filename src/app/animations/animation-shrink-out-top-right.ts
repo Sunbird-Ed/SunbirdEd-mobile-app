@@ -10,7 +10,6 @@ export const animationShrinkOutTopRight: AnimationBuilder = (baseEl: HTMLElement
     const wrapperAnimation = createAnimation();
     const wrapperEl = baseEl.querySelector('.popover-wrapper');
     wrapperAnimation.addElement(wrapperEl);
-    const wrapperElRect = wrapperEl!.getBoundingClientRect();
 
     wrapperAnimation
         .beforeStyles({

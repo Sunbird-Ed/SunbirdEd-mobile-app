@@ -1,5 +1,4 @@
-import { OnInit } from '@angular/core';
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import find from 'lodash/find';
@@ -109,6 +108,13 @@ export class FiltersPage implements OnInit, OnDestroy {
       appliedFilter: {}
     };
     values.appliedFilter = this.filterCriteria;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.APPLY_FILTER_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_SEARCH_FILTER,
+      undefined,
+      values);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,

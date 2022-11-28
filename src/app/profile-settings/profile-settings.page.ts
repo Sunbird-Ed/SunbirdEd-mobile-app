@@ -45,7 +45,7 @@ import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -69,6 +69,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   btnColor = '#8FC4FF';
   appName: string;
   showQRScanner = true;
+  categories = [];
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -143,8 +144,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.fetchCategories();
     this.handleActiveScanner();
-
     this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
     });
@@ -157,7 +158,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
-    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings') && this.onboardingConfigurationService.getOnboardingConfig('profile-settings'))
+    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings'));
   }
 
 
@@ -826,5 +827,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       element.setAttribute('tabindex', '0');
     });
 }
+
+  private fetchCategories() {
+    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+      this.categories = categories;
+    });
+  }
 
 }

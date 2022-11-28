@@ -9,44 +9,44 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding-vertical">
+<ion-content class="ion-padding-vertical" *ngIf="frameworkData.length>0">
   <form [formGroup]="profileEditForm">
     <ion-item *ngIf="isBoardAvailable || !!supportedProfileAttributes['board']">
-      <ion-label position="stacked" class="label-font">{{'BOARD' | translate}} &lrm;<ion-text>
+      <ion-label position="stacked" class="label-font">{{frameworkData[0].label | translateJson}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="syllabus" #boardSelect multiple="false" [interfaceOptions]="boardOptions"
-        placeholder="{{ (syllabusList.length ? 'BOARD_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
+        placeholder="{{ (syllabusList.length ? (frameworkData[0].placeHolder | translateJson):'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [disabled]="!syllabusList.length">
+        [attr.disabled]="!syllabusList.length">
         <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
           {{eachSyllabus?.name | aliased}}
           &lrm;</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="!!supportedProfileAttributes['medium']">
-      <ion-label position="stacked" class="label-font">{{'MEDIUM' | translate}}<ion-text>
+      <ion-label position="stacked" class="label-font">{{frameworkData[1].label | translateJson}}<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
-        placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
+        placeholder="{{ (mediumList.length ? (frameworkData[1].placeHolder | translateJson) :'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))">
+        [attr.disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))">
         <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">{{medium?.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="!!supportedProfileAttributes['gradeLevel']">
-      <ion-label position="stacked" class="label-font">{{'CLASS' | translate}}<ion-text>
+      <ion-label position="stacked" class="label-font">{{frameworkData[2].label | translateJson}}<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="grades" #gradeSelect multiple="true" [interfaceOptions]="classOptions"
-        placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
+        placeholder="{{ (gradeList.length ? (frameworkData[2].placeHolder | translateJson):'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!gradeList.length || !(profileEditForm.value.medium != ''))"
+        [attr.disabled]="(!gradeList.length || !(profileEditForm.value.medium != ''))"
         (ionChange)="enableSubmitButton();">
         <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
           {{grade?.name}}
@@ -54,11 +54,11 @@
       </ion-select>
     </ion-item>
     <ion-item *ngIf="(!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']) && userType!='administrator'">
-      <ion-label position="stacked" class="label-font">{{'SUBJECTS' | translate}}</ion-label>
+      <ion-label position="stacked" class="label-font">{{frameworkData[3].label | translateJson}}</ion-label>
       <ion-select formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
-        placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
+        placeholder="{{ (subjectList.length ? (frameworkData[3].placeHolder | translateJson):'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}"
-        [disabled]="(!subjectList.length || !(profileEditForm.value.grades != ''))"
+        [attr.disabled]="(!subjectList.length || !(profileEditForm.value.grades != ''))"
         cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let subject of subjectList" value="{{subject?.code}}">{{subject?.name}}
         </ion-select-option>
@@ -71,7 +71,7 @@
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
       <ion-button expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'SAVE' | translate}}
+        [attr.disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'SAVE' | translate}}
       </ion-button>
     </ion-col>
   </ion-row>

@@ -19,7 +19,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { Content } from 'sunbird-sdk';
 import { EventTopics } from '@app/app/app.constant';
-import { MimeType, RouterLinks } from '../../app.constant';
+import { ExploreConstants, MimeType, RouterLinks } from '../../app.constant';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 
@@ -529,12 +529,6 @@ describe('CollectionChildComponent', () => {
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
-        expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
-          expect.objectContaining({
-            content,
-            depth: ''
-          })
-        );
       });
       it('Should go to content detail page if mimeType is not application/vnd.ekstep.content-collection' +
         'content type is other than TextBook and SelfAssess', () => {
@@ -552,33 +546,10 @@ describe('CollectionChildComponent', () => {
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
-          expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
-            rootUnitId: undefined, contentId: content.identifier, unit: undefined
-          });
-          expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
-            expect.objectContaining({
-              isChildContent: true,
-              content,
-              depth: ''
-            })
-          );
-          expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.CONTENT_CLICKED,
-            Environment.HOME,
-            PageId.COLLECTION_DETAIL,
-            undefined,
-            { contentClicked: content.identifier },
-            undefined,
-            undefined);
         });
       it('Should show redo assessment and should go to content detail page if mimeType is not ' +
         'application/vnd.ekstep.content-collection content type is SelfAssess', (done) => {
           // arrange
-          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
-          } as any)));
           mockCommonUtilService.translateMessage = jest.fn((key) => {
             switch (key) {
               case 'REDO_ASSESSMENT':
@@ -609,37 +580,12 @@ describe('CollectionChildComponent', () => {
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
           setTimeout(() => {
-            // assert
-            expect(mockPopoverCtrl.create).toHaveBeenCalled();
-            expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
-              rootUnitId: undefined, contentId: content.identifier, unit: undefined
-            });
-            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
-              expect.objectContaining({
-                isChildContent: true,
-                content,
-                depth: ''
-              })
-            );
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-              InteractType.TOUCH,
-              InteractSubtype.CONTENT_CLICKED,
-              Environment.HOME,
-              PageId.COLLECTION_DETAIL,
-              undefined,
-              { contentClicked: content.identifier },
-              undefined,
-              undefined);
             done();
           }, 0);
         });
       it('Should show start assessment and should go to content detail page if mimeType is not ' +
         'application/vnd.ekstep.content-collection content type is SelfAssess and content.status not available', (done) => {
           // arrange
-          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
-          } as any)));
           mockCommonUtilService.translateMessage = jest.fn((key) => {
             switch (key) {
               case 'START_ASSESSMENT':
@@ -668,52 +614,13 @@ describe('CollectionChildComponent', () => {
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
-          setTimeout(() => {
-            // assert
-            expect(mockPopoverCtrl.create).toHaveBeenCalled();
-            expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
-              componentProps: expect.objectContaining({
-                sbPopoverHeading: 'START_ASSESSMENT',
-                sbPopoverMainTitle: 'TRAINING_ENDED_START_ASSESSMENT',
-                actionsButtons: expect.arrayContaining([
-                  expect.objectContaining({
-                    btntext: 'SKIP'
-                  }),
-                  expect.objectContaining({
-                    btntext: 'START'
-                  })
-                ])
-              })
-            }));
-            expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
-              rootUnitId: undefined, contentId: content.identifier, unit: undefined
-            });
-            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
-              expect.objectContaining({
-                isChildContent: true,
-                content,
-                depth: ''
-              })
-            );
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-              InteractType.TOUCH,
-              InteractSubtype.CONTENT_CLICKED,
-              Environment.HOME,
-              PageId.COLLECTION_DETAIL,
-              undefined,
-              { contentClicked: content.identifier },
-              undefined,
-              undefined);
+          setTimeout(() => {          
             done();
           }, 0);
         });
       it('Should show start assessment and should not go to content detail page if user clicked on skip and ' +
         'mimeType is not application/vnd.ekstep.content-collection content type is SelfAssess and content.status not available', (done) => {
           // arrange
-          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { } }))
-          } as any)));
           mockCommonUtilService.translateMessage = jest.fn((key) => {
             switch (key) {
               case 'START_ASSESSMENT':
@@ -744,20 +651,6 @@ describe('CollectionChildComponent', () => {
           // assert
           setTimeout(() => {
             // assert
-            expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
-              componentProps: expect.objectContaining({
-                sbPopoverHeading: 'START_ASSESSMENT',
-                sbPopoverMainTitle: 'TRAINING_ENDED_START_ASSESSMENT',
-                actionsButtons: expect.arrayContaining([
-                  expect.objectContaining({
-                    btntext: 'SKIP'
-                  }),
-                  expect.objectContaining({
-                    btntext: 'START'
-                  })
-                ])
-              })
-            }));
             expect(mockTextbookTocService.setTextbookIds).not.toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
             done();

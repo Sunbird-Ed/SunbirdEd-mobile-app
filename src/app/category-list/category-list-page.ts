@@ -1,4 +1,3 @@
-import { PreferenceKey } from './../app.constant';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
@@ -31,7 +30,6 @@ import { ContentUtil } from '@app/util/content-util';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ScrollToService } from '@app/services/scroll-to.service';
-import { FormConstants } from '@app/app/form.constants';
 import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -395,7 +393,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    navigateToViewMorePage(items, subject) {
+    navigateToViewMorePage(items, subject, totalCount) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
@@ -412,7 +410,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     contentList: items,
                     subjectName: subject,
                     corRelation: corRelationList,
-                    supportedFacets: this.supportedFacets
+                    supportedFacets: this.supportedFacets,
+                    totalCount
                 }
             });
         } else {
@@ -456,6 +455,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.FILTER_BUTTON_CLICKED,
+            Environment.COURSE,
+            PageId.COURSE_PAGE_FILTER
+            );
         const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true;
         const inputFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria(isDataEmpty);
         const openFiltersPage = await this.modalController.create({
@@ -479,7 +483,6 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === primaryFacetFilter.code);
-        const onSelectedFilter = [];
         if (facetFilter) {
             facetFilter.values.forEach(facetFilterValue => {
                 if (toApply.find(apply => facetFilterValue.name === apply.name)) {
@@ -487,9 +490,6 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 } else {
                     facetFilterValue.apply = false;
                 }
-            });
-            toApply.forEach((selectedValue) => {
-                onSelectedFilter.push(selectedValue.name);
             });
 
             await this.applyFilter(appliedFilterCriteria, true, toApply);

@@ -11,6 +11,7 @@ import {
   ImpressionSubtype,
   InteractSubtype,
   InteractType,
+  OnboardingConfigurationService,
   SunbirdQRScanner
 } from '@app/services';
 import {
@@ -58,7 +59,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView, IonRefresher, ModalController } from '@ionic/angular';
+import { IonContent as ContentView, IonRefresher, ModalController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -69,7 +70,6 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { FormConstants } from '@app/app/form.constants';
 import { SbPopoverComponent } from '../../components/popups';
-import { PopoverController } from '@ionic/angular'
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
@@ -143,6 +143,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
+    private onboardingConfigurationService: OnboardingConfigurationService
   ) {
   }
 
@@ -222,8 +223,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   private async getFrameworkDetails(frameworkId?: string) {
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
+    let id = "";
+    if(this.profile && this.profile.syllabus && this.profile.syllabus[0]) {
+      id = this.profile.syllabus[0]
+    } else if(guestUser && guestUser.syllabus && guestUser.syllabus[0]) {
+      id = guestUser.syllabus[0];
+    }
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
-      frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
+      frameworkId: id,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -234,10 +242,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }, {});
         this.preferenceList = [];
         setTimeout(() => {
-          this.boardList = this.getFieldDisplayValues(this.profile.board, 'board');
-          this.mediumList = this.getFieldDisplayValues(this.profile.medium, 'medium');
-          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
-          this.subjectList = this.getFieldDisplayValues(this.profile.subject, 'subject');
+          this.boardList = this.getFieldDisplayValues(this.profile.board.length > 0 ? this.profile.board : guestUser.board, 'board');
+          this.mediumList = this.getFieldDisplayValues(this.profile.medium.length > 0 ? this.profile.medium : guestUser.medium, 'medium');
+          this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade.length > 0 ?  this.profile.grade : guestUser.grade, 'gradeLevel');
+          this.subjectList = this.getFieldDisplayValues(this.profile.subject.length > 0 ? this.profile.subject : guestUser.subject, 'subject');
 
           this.preferenceList.push(this.boardList);
           this.preferenceList.push(this.mediumList);
@@ -254,7 +262,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
 
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
-      if (field.includes(element.code)) {
+      if (field.includes(element.code) || field.includes(element.name.replace(/[^a-zA-Z0-9]/g,'').toLowerCase())) {
         if (lowerCase) {
           displayValues.push(element.name.toLowerCase());
         } else {
@@ -282,14 +290,17 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
     this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.showorHideBanners();
     this.refresh = false;
-    refresher ? refresher.target.complete() : null;
+    if (refresher) {
+       refresher.target.complete();
+    }
   }
 
   handlePillSelect(event, section, isFromPopover?: boolean) {
@@ -733,16 +744,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }
         break;
       case 'banner_search':
-        // const extras = {
-        //   state: {
-        //     source: PageId.HOME,
-        //     corRelation: corRelationList,
-        //     preAppliedFilter: event.data.action.params.filter,
-        //     hideSearchOption: true,
-        //     searchWithBackButton: true
-        //   }
-        // };
-        // this.router.navigate(['search'], extras);
         if (banner.action && banner.action.params && banner.action.params.filter) {
           (banner['searchCriteria'] as ContentSearchCriteria) =
             this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
@@ -843,9 +844,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
-      this.otherCategories = [],
+        this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
-
     }
   }
 

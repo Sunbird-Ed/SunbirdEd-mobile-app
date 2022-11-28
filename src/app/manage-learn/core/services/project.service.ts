@@ -52,7 +52,7 @@ export class ProjectService {
     })
   }
   async getTemplateBySoluntionId(id) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + id,
       payload: payload,
@@ -425,19 +425,12 @@ export class ProjectService {
   }
 
   getLinks(links) {
-    let formattedLinks = links.replace(/[ ]/g, ',').split(',');
-    let linkArray = [];
-    formattedLinks.forEach(element => {
-      if(element){
-        let link = {
-          name: element,
-          type: 'link',
-          isUploaded: false,
-          url: "",
-        };
-        linkArray.push(link);
-      }
-    });
-    return linkArray.length ? linkArray : links;
+    let link = {
+      name: links,
+      type: 'link',
+      isUploaded: false,
+      url: "",
+    };
+    return links ? link : links;
   }
 }
