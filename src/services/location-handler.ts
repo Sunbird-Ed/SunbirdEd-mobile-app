@@ -210,7 +210,7 @@ export class LocationHandler {
             locations = schoolDetails;
         } else {
             const req: LocationSearchCriteria = {
-                from: CachedItemRequestSourceFrom.CACHE,
+                from: CachedItemRequestSourceFrom.SERVER,
                 filters: locationFilter
             };
             locations = await this.profileService.searchLocation(req).toPromise();
