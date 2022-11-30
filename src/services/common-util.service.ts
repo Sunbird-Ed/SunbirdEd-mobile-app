@@ -811,4 +811,18 @@ export class CommonUtilService {
             });
         return guestProfile;
     }
+
+    // Used to convert file to base png, updated function to handle default image in consumption library.
+    public async convertFileToBase64(file): Promise<Observable<string>> {
+        let res = await fetch(file);
+        let blob = await res.blob();
+        return new Observable(res => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                res.next(reader.result as string);
+                res.complete();
+            }
+            reader.readAsDataURL(blob);
+        });
+    }
 }
