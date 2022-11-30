@@ -642,8 +642,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') &&
     !(typeof this.content.contentData['interceptionPoints'] === 'object' && this.content.contentData['interceptionPoints'] != null &&
      Object.keys(this.content.contentData['interceptionPoints']).length !== 0) ) {
-      this.getNextContent(data.hierarchyInfo, data.identifier);
-      this.playContent(true, true);
+       if (data && data.hierarchyInfo) {
+        this.getNextContent(data.hierarchyInfo, data.identifier);
+       }
+       this.playContent(true, true);
     }
   }
 
@@ -1204,7 +1206,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async handlePlayer(playerData) {
     this.config = playerData.state.config;
     let playerConfig = await this.formFrameworkUtilService.getPdfPlayerConfiguration();
-    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" && !this.content.contentData["interceptionPoints"]) {
+    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" &&
+    (!this.content.contentData['interceptionPoints'] || Object.keys(this.content.contentData['interceptionPoints'].length === 0))) {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
