@@ -13,16 +13,12 @@ export class FrameworkDetailsService {
 
     constructor(
         @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-        private commonUtilService: CommonUtilService,
         private translate: TranslateService,
         private locationHandler: LocationHandler,
     ) { }
 
-    async getFrameworkDetails() {
+    async getFrameworkDetails(guestProfile?: any) {
         const framework = {};
-        const guestProfile = await this.commonUtilService.getGuestUserConfig().then((profile) => {
-            return profile;
-        });
         const boardList = await this.getBoardList(guestProfile).then((board) => {
             return board.map(t => ({ name: t.name, code: t.code }));
         });
