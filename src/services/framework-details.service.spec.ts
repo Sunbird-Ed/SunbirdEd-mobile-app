@@ -1,14 +1,11 @@
 import { TranslateService } from '@ngx-translate/core';
 import { FrameworkUtilService } from 'sunbird-sdk';
 import { of } from 'rxjs';
-import { CommonUtilService } from '.';
 import { FrameworkDetailsService } from './framework-details.service';
 import { LocationHandler } from './location-handler';
-import { FrameworkUtilServiceImpl } from '@project-sunbird/sunbird-sdk';
 import { mockBoardCategory, mockGradeLevelCategory, mockMediumCategory, mockSubjectCategory } from './framework-details.service.spec.data';
 describe('FrameworkDetailsService', () => {
     let frameworkDetailsService: FrameworkDetailsService;
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
         getFrameworkCategoryTerms: jest.fn((arg) => {
             let value;
@@ -32,12 +29,13 @@ describe('FrameworkDetailsService', () => {
     const mockLocationHandler: Partial<LocationHandler> = {};
     const mockTranslate: Partial<TranslateService> = {};
 
-    frameworkDetailsService = new FrameworkDetailsService(
-        mockFrameworkUtilService as FrameworkUtilService,
-        mockCommonUtilService as CommonUtilService,
-        mockTranslate as TranslateService,
-        mockLocationHandler as LocationHandler
-    );
+    beforeAll(() => {
+        frameworkDetailsService = new FrameworkDetailsService(
+            mockFrameworkUtilService as FrameworkUtilService,
+            mockTranslate as TranslateService,
+            mockLocationHandler as LocationHandler
+        );
+    })
 
     it('should be create a instance of FrameworkDetailsService', () => {
         expect(frameworkDetailsService).toBeTruthy();
@@ -53,7 +51,6 @@ describe('FrameworkDetailsService', () => {
                 grade: ['class1', 'class2'],
                 subject: ['accountancy', 'assamese']
             };
-            mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve(profile));
             mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([
                 {code: 'state-code', name: 'state-name', id: 'state-id', type: 'state'},
                 {code: 'dist-code', name: 'dist-name', id: 'dist-id', type: 'district'}
@@ -69,10 +66,9 @@ describe('FrameworkDetailsService', () => {
                 ]
             )) as any;
             // act
-            frameworkDetailsService.getFrameworkDetails();
+            frameworkDetailsService.getFrameworkDetails(profile);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getGuestUserConfig).toHaveBeenCalled();
                 expect(mockLocationHandler.getAvailableLocation).toHaveBeenCalled();
                 expect(mockLocationHandler.getLocationList).toHaveBeenCalled();
                 done();
@@ -88,7 +84,6 @@ describe('FrameworkDetailsService', () => {
                 grade: [],
                 subject: []
             };
-            mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve(profile));
             mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([
                 {code: 'state-code', name: 'state-name', id: 'state-id', type: 'state'},
                 {code: 'dist-code', name: 'dist-name', id: 'dist-id', type: 'district'}
@@ -104,10 +99,9 @@ describe('FrameworkDetailsService', () => {
                 ]
             )) as any;
             // act
-            frameworkDetailsService.getFrameworkDetails();
+            frameworkDetailsService.getFrameworkDetails(profile);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getGuestUserConfig).toHaveBeenCalled();
                 expect(mockLocationHandler.getAvailableLocation).toHaveBeenCalled();
                 expect(mockLocationHandler.getLocationList).toHaveBeenCalled();
                 done();
