@@ -640,7 +640,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.categories = categories;
     });
   }

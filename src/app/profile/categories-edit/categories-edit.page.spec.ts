@@ -295,11 +295,11 @@ describe('CategoryEditPage', () => {
                 },
             } as any));
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
-            mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
-                expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',

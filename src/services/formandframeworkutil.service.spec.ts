@@ -33,6 +33,7 @@ import {
   mockSelfDeclarationForm
 } from './formandframeworkutil.service.spec.data';
 import { FormConstants } from '../app/form.constants';
+import { doesNotReject } from 'assert';
 
 
 describe('FormAndFrameworkUtilService', () => {
@@ -1170,5 +1171,67 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
     })
   })
+
+  fdescribe('getFrameworkCategories', () => {
+    it('should invoked formApi and store in local storage for empty framework', (done) => {
+      // arrange
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn();
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+            fields: [
+              {
+                "code": "category1",
+                "label": "{\"en\":\"Organization\"}",
+                "placeHolder": "{\"en\":\"Selecte Organization\"}",
+                "value": "board"
+              },
+              {
+                "code": "category2",
+                "label": "{\"en\":\"Verical\"}",
+                "placeHolder": "{\"en\":\"Selected Vertical\"}",
+                "value": "medium"
+              }
+            ]
+          }
+        }
+      }));
+      mockAppGlobalService.setFramewokCategory = jest.fn();
+      // act
+      formAndFrameworkUtilService.getFrameworkCategoryList().then(() => {
+        // assert
+        expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
+        expect(mockFormService.getForm).toHaveBeenCalled();
+        expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should resolved framework category if already store', (done) => {
+      // arrange
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => [
+        {
+          "code": "category1",
+          "label": "{\"en\":\"Organization\"}",
+          "placeHolder": "{\"en\":\"Selecte Organization\"}",
+          "value": "board"
+        },
+        {
+          "code": "category2",
+          "label": "{\"en\":\"Verical\"}",
+          "placeHolder": "{\"en\":\"Selected Vertical\"}",
+          "value": "medium"
+        }
+      ]);
+      // act
+      formAndFrameworkUtilService.getFrameworkCategoryList().then(() => {
+        // assert
+        expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
+        // expect(mockFormService.getForm).toHaveBeenCalled();
+        // expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
+        done();
+      });
+    })
+  });
 
 });

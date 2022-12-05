@@ -524,10 +524,10 @@ describe('Profile.page', () => {
         // arrange
         jest.spyOn(profilePage, 'doRefresh').mockImplementation();
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
-        mockFormAndFrameworkUtilService.getFrameworkCategories = jest.fn(() => Promise.resolve());
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
         // act
         profilePage.ngOnInit().then(() => {
-            expect(mockFormAndFrameworkUtilService.getFrameworkCategories).toHaveBeenCalled();
+            expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             // assert
             done();

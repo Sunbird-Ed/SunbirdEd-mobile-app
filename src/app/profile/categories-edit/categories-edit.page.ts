@@ -586,7 +586,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.frameworkData = categories;
     });
   }

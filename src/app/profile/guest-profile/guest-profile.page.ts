@@ -294,7 +294,7 @@ export class GuestProfilePage implements OnInit {
   signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategories().then((categories) => {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.frameworkData = categories;
     });
   }

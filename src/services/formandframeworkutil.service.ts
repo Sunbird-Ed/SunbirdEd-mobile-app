@@ -727,8 +727,26 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    async getFrameworkCategories() {
-        return (await this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then() as any);
+    private invokeFrameworkCategoriesFormApi(): Promise<any> {
+        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then((res) => {
+            this.appGlobalService.setFramewokCategory(res);
+            return res;
+        }).catch((error) => {
+            return error;
+        });
+    }
+
+    getFrameworkCategoryList(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const framework = this.appGlobalService.getCachedFrameworkCategory();
+            if (!framework || framework.length === 0) {
+                this.invokeFrameworkCategoriesFormApi().then((res) => {
+                resolve(res);
+                });
+            } else {
+                resolve(framework);
+            }
+        });
     }
 
 }
