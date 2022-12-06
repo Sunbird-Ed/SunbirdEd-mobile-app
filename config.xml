@@ -32,6 +32,19 @@
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
             <meta-data android:name="io.fabric.ApiSecret" android:value="${fabricSecret}" />
         </config-file>
+        <config-file parent="/manifest/application/activity[@android:name='MainActivity']" target="AndroidManifest.xml">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="@string/deeplink_base_url" />
+                <data android:scheme="https" />
+                <data android:host="@string/deeplink_ncert_url" />
+                <data android:scheme="https" />
+                <data android:host="@string/deeplink_igot_url" />
+            </intent-filter>
+        </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
             <queries>
