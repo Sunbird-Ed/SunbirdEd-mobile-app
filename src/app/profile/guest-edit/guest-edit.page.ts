@@ -170,7 +170,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.getCategories();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_USER,
@@ -183,12 +182,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
       Environment.USER,
       PageId.CREATE_USER
     );
-    this.addAttributeSubscription(this.profile.profileType || undefined);
+    this.getCategoriesAndUpdateAttributes(this.profile.profileType || undefined);
     this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
   }
 
-  private async addAttributeSubscription(userType: string) {
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, userType, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
+  private async addAttributeSubscription() {
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
   }
@@ -215,7 +213,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     if (this.formControlSubscriptions) {
       this.formControlSubscriptions.unsubscribe();
     }
-    this.addAttributeSubscription(this.guestEditForm.value.profileType);
+    this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
     this.guestEditForm.patchValue({
       syllabus: [],
       boards: [],
@@ -639,9 +637,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
     return subscriptionArray;
   }
 
-  private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories;
+  private getCategoriesAndUpdateAttributes(userType: string) {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then((categories) => {
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.categories = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+        this.addAttributeSubscription();
+      }
     });
   }
 

@@ -162,11 +162,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.getCategories();
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(false);
-    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
-    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    this.getCategoriesAndUpdateAttributes(this.profile.serverProfile.profileUserTypes[0].type || undefined);
   }
 
   ngOnDestroy() {
@@ -585,9 +582,18 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     });
   }
 
-  private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.frameworkData = categories;
+  private addAttributeSubscription() {
+    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+  }
+
+  private getCategoriesAndUpdateAttributes(userType) {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then((categories) => {
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.frameworkData = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+        this.addAttributeSubscription();
+      }
     });
   }
 }

@@ -224,6 +224,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.getCategories();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton();
     });
@@ -1238,7 +1239,7 @@ export class ProfilePage implements OnInit {
 
   private getCategories() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories;
+      this.categories = categories.supportedFrameworkConfig;
     });
   }
 }

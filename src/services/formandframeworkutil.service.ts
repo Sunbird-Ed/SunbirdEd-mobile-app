@@ -727,20 +727,44 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    private invokeFrameworkCategoriesFormApi(): Promise<any> {
-        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then((res) => {
-            this.appGlobalService.setFramewokCategory(res);
-            return res;
+    async setSupportedAttributes(framework, userType?: string) {
+        if (!userType) {
+            userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        }
+        const frameworkDetails = {};
+        frameworkDetails['userType'] = userType;
+        const supportedFrameworkConfig = framework.filter((item) => {
+            return (item.supportedUserTypes.find((type) => type === userType));
+        });
+        frameworkDetails['supportedFrameworkConfig'] = supportedFrameworkConfig;
+        const  supportedAttributes = supportedFrameworkConfig.reduce((map, item) => {
+            map[item.frameworkCode] = item.frameworkCode;
+            return map;
+        }, {});
+        frameworkDetails['supportedAttributes'] = supportedAttributes;
+        return frameworkDetails;
+    }
+
+    private invokeFrameworkCategoriesFormApi(userType?: string): Promise<any> {
+        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then(async (res) => {
+            const categoryConfig = await this.setSupportedAttributes(res, userType);
+            this.appGlobalService.setFramewokCategory(categoryConfig);
+            return categoryConfig;
         }).catch((error) => {
             return error;
         });
     }
 
-    getFrameworkCategoryList(): Promise<any> {
+    getFrameworkCategoryList(userType?: string): Promise<any> {
         return new Promise((resolve, reject) => {
+            if (!userType) {
+                this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
+                    userType = type;
+                });
+            }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
-            if (!framework || framework.length === 0) {
-                this.invokeFrameworkCategoriesFormApi().then((res) => {
+            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 && framework.userType !== userType)) {
+                  this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
                 resolve(res);
                 });
             } else {

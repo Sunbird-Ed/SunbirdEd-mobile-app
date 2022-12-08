@@ -73,7 +73,7 @@ export class GuestProfilePage implements OnInit {
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-    this.getCategories();
+    this.getCategoriesAndUpdateAttributes();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -94,8 +94,6 @@ export class GuestProfilePage implements OnInit {
 
     this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, rootOrgId);
   }
 
   ionViewWillEnter() {
@@ -151,7 +149,6 @@ export class GuestProfilePage implements OnInit {
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-        this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType,rootOrgId);
         const supportedUserTypes = await this.profileHandler.getSupportedUserTypes(rootOrgId);
         this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
@@ -293,9 +290,12 @@ export class GuestProfilePage implements OnInit {
 
   signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
 
-  private getCategories() {
+  private getCategoriesAndUpdateAttributes() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.frameworkData = categories;
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.frameworkData = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+      }
     });
   }
 }

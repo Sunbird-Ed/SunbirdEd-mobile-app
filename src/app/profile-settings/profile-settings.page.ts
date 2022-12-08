@@ -144,7 +144,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.fetchCategories();
+    this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
     this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
@@ -153,10 +153,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.activeSessionProfile = await this.profileService.getActiveSessionProfile({
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
-
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
-    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
-    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
     this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings'));
   }
@@ -447,7 +443,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
             values
           );
         }
-        selector.open();
+        if (selector) {
+          selector.open();
+        }
         return;
       }
     }
@@ -786,8 +784,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
-    console.log('attributes', attributes);
-    
     Object.keys(attributes).forEach((attribute) => {
       console.log('attribute', attribute);
       switch (attribute) {
@@ -828,9 +824,18 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     });
 }
 
-  private fetchCategories() {
+private addAttributeSubscription() {
+  const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+  this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+}
+
+  private getCategoriesAndUpdateAttributes() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories;
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.categories = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+        this.addAttributeSubscription();
+      }
     });
   }
 
