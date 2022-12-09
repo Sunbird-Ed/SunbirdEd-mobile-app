@@ -727,7 +727,7 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    async setSupportedAttributes(framework, userType?: string) {
+    private async setSupportedAttributes(framework, userType?: string) {
         if (!userType) {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
@@ -763,6 +763,7 @@ export class FormAndFrameworkUtilService {
                 });
             }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
+            console.log('................', framework);
             if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 && framework.userType !== userType)) {
                   this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
                 resolve(res);

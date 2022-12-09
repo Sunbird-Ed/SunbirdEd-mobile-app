@@ -201,12 +201,11 @@ describe('CategoryEditPage', () => {
     describe('ngOnInit', () => {
         it('should populate the supported attributes', (done) => {
             // arrange
-            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
-                {
-                    board: 'board',
-                    medium: 'medium',
-                    gradeLevel: 'gradeLevel'
-                }));
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
             categoryEditPage['onSyllabusChange'] = jest.fn(() => of({
                 value: jest.fn((arg) => {
                     let value;
@@ -295,16 +294,44 @@ describe('CategoryEditPage', () => {
                 },
             } as any));
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board'},
+                  userType: 'teacher'
+            }));
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
                 expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
-                    board: 'board',
-                    medium: 'medium',
-                    gradeLevel: 'gradeLevel'
+                    board: 'board'
                 });
                 done();
             });
