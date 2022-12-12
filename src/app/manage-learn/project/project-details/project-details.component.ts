@@ -197,7 +197,11 @@ export class ProjectDetailsComponent implements OnInit {
       defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
     if (this.projectDetails.status === statusType.submitted) {
-      defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+      if(this.projectDetails.certificate){
+        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS.concat(actions.CERTIFICATE_ACTION);
+      }else{
+        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+      }
     }
     this.projectActions = defaultOptions;
   }
@@ -242,6 +246,12 @@ export class ProjectDetailsComponent implements OnInit {
       case 'edit':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
+      case 'certificate':
+        const request = { type:'project',name:this.projectDetails.title, project: this.projectDetails._id, certificate: this.projectDetails.certificate, templateUrl : this.projectDetails.certificate.templateUrl };
+        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+          state: { request }
+        });
+        break
     }
   }
 

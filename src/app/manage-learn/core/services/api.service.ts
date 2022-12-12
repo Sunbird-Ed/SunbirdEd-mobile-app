@@ -51,11 +51,15 @@ export class ApiService {
   get(requestParam: RequestParams): Observable<any> {
     return this.checkTokenValidation().pipe(
       mergeMap(session => {
-        const headers = session ? this.setHeaders(session) : {};
+        const headers :any = session ? this.setHeaders(session) : {};
+        if(requestParam?.headers){
+          headers.Accept =  requestParam?.headers.accept ? requestParam?.headers.accept :'';
+          headers.template =  requestParam?.headers.template ? requestParam?.headers.template :'';
+        }
           this.ionicHttp.setDataSerializer('json');
           return this.ionicHttp.get(this.baseUrl + requestParam.url, '', headers).then(
             data => {
-              return JSON.parse(data.data);
+              return requestParam?.headers ? data.data : JSON.parse(data.data);
             }, error => {
               catchError(this.handleError(error))
             },

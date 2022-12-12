@@ -1367,5 +1367,6 @@
   "FRMELEMNTS_LBL_TO_SUBMIT_PROJECT":"To finish submission, click on Submit button below",
   "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED":"The file is too large and cannot be uploaded. The file you are tying to upload has exceeded the maximum file size (50 MB)",
   "FRMELEMNTS_LBL_CERTIFICATION_CRITERIA":"Certificate Critera",
-  "FRMELEMNTS_MSG_CERTIFICATION_NAME_DISPLAY":"This name will be printed on your improvement cerificate. Check if this is correct"
+  "FRMELEMNTS_MSG_CERTIFICATION_NAME_DISPLAY":"This name will be printed on your improvement cerificate. Check if this is correct",
+  "FRMELEMNTS_LBL_IMP_CERTIFICATE":"Improvement certificate"
 }

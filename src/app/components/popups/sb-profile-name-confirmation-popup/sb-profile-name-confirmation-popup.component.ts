@@ -16,10 +16,11 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 })
 export class ProfileNameConfirmationPopoverComponent {
   @Input() content;
+  @Input() projectContent;
   appName;
   profile;
   doNotShowAgain = false;
-
+  buttonLabel ="START_LEARNING";
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -30,6 +31,7 @@ export class ProfileNameConfirmationPopoverComponent {
   ) { }
 
   async ionViewWillEnter() {
+    this.buttonLabel = this.projectContent ? "FRMELEMNTS_LBL_START_IMPROVEMENT" : "START_LEARNING";
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
 
     const userId = await this.appGlobalService.getActiveProfileUid();
