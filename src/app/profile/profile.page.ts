@@ -118,7 +118,7 @@ export class ProfilePage implements OnInit {
 
   readonly DEFAULT_PAGINATION_LIMIT = 3;
   readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
-  readonly DEFAULT_PROJECTS_LIMIT = 2;
+  readonly DEFAULT_PROJECTS_LIMIT = 1;
   rolesLimit = 2;
   badgesLimit = 2;
   myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;

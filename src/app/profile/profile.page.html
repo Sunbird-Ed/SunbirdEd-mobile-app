@@ -295,13 +295,13 @@
                 </div>
                 <div class="ion-text-center"
                     *ngIf="projects.length > myImprovementsLimit">
-                    <ion-button shape="round" class="txt-capitalize custom-round"
+                    <ion-button shape="round" class="custom-btn-txt-transform-none  custom-round"
                         *ngIf="myImprovementsLimit < projects?.length"
                         (click)="showMoreTrainings('myImprovements')">
-                        + {{projects?.length - myImprovementsLimit}} {{'MORE' | translate}}
+                        {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}
                         <ion-icon class="ML10" name="arrow-down" aria-label="show more trainings"></ion-icon>
                     </ion-button>
-                    <ion-button shape="round" class="txt-capitalize custom-round"
+                    <ion-button shape="round" class="custom-btn-txt-transform-none custom-round"
                         *ngIf="myImprovementsLimit >= projects?.length"
                         (click)="showLessTrainings('myImprovements')">
                         {{'SHOW_LESS' | translate }}

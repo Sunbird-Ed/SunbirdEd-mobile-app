@@ -127,6 +127,7 @@ export class ProjectDetailsComponent implements OnInit {
             this.categories = [];
             this.projectDetails = success.docs.length ? success.docs[0] : {};
             if(this.projectDetails.certificate){
+              this.certificateCriteria =[];
               let criteria = Object.keys(this.projectDetails?.certificate?.criteria?.conditions);
               criteria.forEach(element => {
                 let config ={
