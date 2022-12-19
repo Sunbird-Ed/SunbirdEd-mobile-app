@@ -81,7 +81,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     const config ={
       url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
      headers:{
-      template : this.projectData.templateUrl.startsWith('https://sunbirdstagingpublic.blob.core.windows.net/samiksha/') ?this.projectData.templateUrl: 'https://sunbirdstagingpublic.blob.core.windows.net/samiksha/' + this.projectData.templateUrl,
+      template :this.projectData.templateUrl,
       accept:this.acceptType
      }
     }
