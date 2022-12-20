@@ -5,8 +5,8 @@ import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
 import { of, throwError } from 'rxjs';
-import { PreferenceKey, EventTopics } from '../app/app.constant';
-import { InteractSubtype, Environment, PageId, InteractType, ImpressionType, ImpressionSubtype } from './telemetry-constants';
+import { PreferenceKey } from '../app/app.constant';
+import { InteractSubtype, Environment, PageId, InteractType, ID } from './telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { mockFrameworkData } from './app-global-service.service.spec.data';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
@@ -25,7 +25,7 @@ describe('AppGlobalService', () => {
     };
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockEvent: Partial<Events> = {
-        subscribe: jest.fn(),
+        subscribe: jest.fn(() => of({skipSession: false})),
         publish: jest.fn(),
         unsubscribe: jest.fn()
     };
@@ -45,7 +45,7 @@ describe('AppGlobalService', () => {
         getBuildConfigValue: jest.fn(() => Promise.resolve('org.sunbird.app'))
     };
     const mockAppVersion: Partial<AppVersion> = {};
-
+    window.console.error = jest.fn();
     beforeAll(() => {
         appGlobalService = new AppGlobalService(
             mockProfile as ProfileService,
@@ -182,6 +182,19 @@ describe('AppGlobalService', () => {
         }, 1);
     });
 
+
+    it('should handle else case if no signin Onboarding loader', (done) => {
+        // arrange
+        appGlobalService.signinOnboardingLoader = undefined;
+        // act
+        appGlobalService.closeSigninOnboardingLoader();
+        // assert
+        setTimeout(() => {
+            // expect(appGlobalService.signinOnboardingLoader).toBeNull();
+            done();
+        }, 1);
+    });
+
     describe('getPageIdForTelemetry()', () => {
         it('should return expected pageId', () => {
             // arrange
@@ -210,6 +223,12 @@ describe('AppGlobalService', () => {
 
             // arrange
             appGlobalService.currentPageId = PageId.CONTENT_DETAIL;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.LIBRARY);
+
+            // arrange
+            appGlobalService.currentPageId = '';
             // act
             // assert
             expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.LIBRARY);
@@ -427,6 +446,32 @@ describe('AppGlobalService', () => {
                 undefined,
                 paramsMap);
         });
+
+        it('should generate telemetry with GUEST_PROFILE page config for STUDENT profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.STUDENT;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.PROFILE, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+
+        it('should handle else if isguestuser is false', () => {
+            // arrange
+            appGlobalService.isGuestUser = false;
+            // act
+            appGlobalService.generateConfigInteractEvent('', false);
+        })
     });
 
     describe('generateAttributeChangeTelemetry()', () => {
@@ -486,9 +531,20 @@ describe('AppGlobalService', () => {
                 values);
         });
 
+        it('should generate save clicked telemetry for else case', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = false;
+            const values = new Map();
+            values['profile'] = profile;
+            values['validation'] = 'medium is required';
+            // act
+            appGlobalService.generateSaveClickedTelemetry(profile, 'medium is required', PageId.LIBRARY, 'medium-clicked');
+            // assert
+        });
+
         it('should generate attribute change telemetry when env is not given', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = true;
+            appGlobalService.TRACK_USER_TELEMETRY = false;
             const values = new Map();
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
@@ -528,10 +584,31 @@ describe('AppGlobalService', () => {
     describe('getNameForCodeInFramework()', () => {
         it('should return the name of the provided code in the framework', () => {
             // arrange
+            appGlobalService['frameworkData'] = {
+                gradeLevel: {terms: [{code: 'class1'}]}
+            } as any
             // act
             appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
             // assert
-            // expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+
+        it('should return the name handling with no matching terms', () => {
+            // arrange
+            appGlobalService['frameworkData'] = {
+                gradeLevel: {terms: [{code: 'class2'}]}
+            } as any
+            // act
+            appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
+            // assert
+        });
+
+        it('should return the name handling else case if condition false', () => {
+            // arrange
+            appGlobalService['frameworkData'] = {
+            } as any
+            // act
+            appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
+            // assert
         });
     });
 
@@ -826,6 +903,18 @@ describe('AppGlobalService', () => {
             });
         });
 
+        it('should return  profileType new', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of('new'));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual('parent');
+                done();
+            });
+        });
+
         it('should handle error scenario', (done) => {
             // arrange
             mockPreferences.getString = jest.fn(() => throwError({}));
@@ -988,16 +1077,32 @@ describe('AppGlobalService', () => {
 
         it('should show force upgrade popup with shouldDismissAlert as true if type is optional', () => {
             // arrange
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {}}))
+            } as any)));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            appGlobalService.openPopover({ type: 'optional' });
+            appGlobalService.openPopover({ type: 'optional', isOnboardingCompleted: true });
             // assert
             expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
                 component: UpgradePopoverComponent,
-                componentProps: { upgrade: { type: 'optional' } },
+                componentProps: { upgrade: { isOnboardingCompleted: true, type: 'optional' } },
                 cssClass: 'upgradePopover',
                 showBackdrop: true,
                 backdropDismiss: true
             });
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.BACKDROP_DISMISSED,
+                    '',
+                    Environment.HOME,
+                    PageId.UPGRADE_POPUP,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    ID.BACKDROP_CLICKED);
+            }, 0);
         });
     });
 
@@ -1190,6 +1295,13 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.getActiveProfileUid()
             // assert
+        });
+        it('should get active profile uid', () => {
+            // arrange
+            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: "some_id", managedSession: ''}))
+            // act
+            appGlobalService.getActiveProfileUid()
+            // assert
         })
         it('should get active profile uid on error return userid', () => {
             // arrange
@@ -1224,16 +1336,43 @@ describe('AppGlobalService', () => {
         })
     })
     describe('setAccessibilityFocus', () =>{
-        it('should set accssibility focus', () => {
+        it('should set accssibility focus and set null if no ele focus', () => {
             // arrange
             const id = 123
-            document.getElementById = jest.fn(() => null)
+            window.setTimeout = jest.fn((fn) => fn(
+                document.getElementById = jest.fn(() => null)
+            ))
             // act
             appGlobalService.setAccessibilityFocus(id)
             // assert
             setTimeout(() => {
                 
             }, 0);
+        })
+
+        it('should set accssibility focus and handle ele focus', () => {
+            // arrange
+            const id = 123
+            window.setTimeout = jest.fn((fn) => fn(
+                document.getElementById = jest.fn(() => ({focus: jest.fn()})) as any
+            )) as any;
+            // act
+            appGlobalService.setAccessibilityFocus(id)
+            // assert
+            setTimeout(() => {
+                
+
+            }, 0);
+        })
+    })
+
+    describe('setFramewokCategory', () => {
+        it('setFramewokCategory ', () => {
+            // arrange
+            // act
+            appGlobalService.setFramewokCategory({});
+            // assert
+            expect(appGlobalService.getCachedFrameworkCategory()).toEqual({});
         })
     })
 });

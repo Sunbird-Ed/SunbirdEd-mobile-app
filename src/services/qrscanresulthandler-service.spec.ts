@@ -65,6 +65,7 @@ describe('QRScannerResultHandler', () => {
   };
   const mockCertificateService: Partial<CertificateService> = {}
   const mockPopoverController: Partial<PopoverController> = {};
+  window.console.error = jest.fn()
 
   beforeAll(() => {
     qRScannerResultHandler = new QRScannerResultHandler(
@@ -97,6 +98,32 @@ describe('QRScannerResultHandler', () => {
 
 
   describe('parseDialCode()', () => {
+    it('should return parsed data from the link else without channel', (done) => {
+      // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=';
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+      // act
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
+        done();
+      }, 600);
+    });
+
+    it('should return parsed data from the link else without channel on error', (done) => {
+      // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=""';
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+      // act
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
+        done();
+      }, 600);
+    });
+
     it('should return parsed data from the link', (done) => {
       // arrange
       const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=ChannelId%20';
@@ -217,6 +244,37 @@ describe('QRScannerResultHandler', () => {
         [{id: 'sample//ABCD', type: 'Source'}]
       );
     });
+
+    it('should return interact telemetry event, if network not available', () => {
+      // arrange
+      mockCommonUtilService.networkInfo = {
+        isNetworkAvailable: false
+      };
+      qRScannerResultHandler.scannedUrlMap = {
+        sunbird1: 'app'
+      };
+      const scannedData = 'sample/dial/ABCD';
+      const action = {type: 'te'};
+      const dialCode = 'ABCD';
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      qRScannerResultHandler.generateQRScanSuccessInteractEvent(scannedData, action, dialCode,
+        {certificateId: 'cr-id', scannedFrom: 'genericApp'});
+      // assert
+      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+        InteractType.OTHER,
+        InteractSubtype.QRCodeScanSuccess,
+        Environment.HOME,
+        PageId.QRCodeScanner,
+        {
+          id: 'cr-id',
+          type: 'certificate',
+          version: undefined,
+        }, new Map(),
+        undefined,
+        [{id: 'sample//ABCD', type: 'Source'}]
+      );
+    });
   });
 
   describe('handleDialCode()', () => {
@@ -256,6 +314,37 @@ describe('QRScannerResultHandler', () => {
         PageId.QRCodeScanner, { id: 'ABCDEF', type: 'qr', version: ' ' },
         corRelationData);
     });
+
+    it('should navigate to Search page if the scanned data is a dialocde link for else case', () => {
+      // arrange
+      const scannData =  'https://sunbirded.org/get/dial/ABCDEF';
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+      const params = {channel: 'igot', role: 'other'};
+      mockTelemetryService.updateCampaignParameters = jest.fn();
+      jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
+        return;
+      });
+      const corRelationData: CorrelationData[] = [{
+        id: CorReleationDataType.SCAN,
+        type: CorReleationDataType.ACCESS_TYPE
+      }];
+      // act
+      qRScannerResultHandler.handleDialCode('', scannData, 'ABCDEF');
+      // assert
+      setTimeout(() => {
+        
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
+        const values = new Map();
+        values['networkAvailable'] = 'N';
+        values['scannedData'] = 'https://sunbirded.org/get/dial/ABCDEF';
+        values['action'] = 'SearchResult';
+        
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
+          params,
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: '' },
+          corRelationData);
+        }, 0);
+      });
   });
 
   describe('handleContentId()', () => {
@@ -712,11 +801,77 @@ describe('QRScannerResultHandler', () => {
       }, 0);
     });
 
-    it('should not match all criteria for else part', (done) => {
-      const request = 'course';
+    it('should match all criteria for else case', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
       mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
         pattern: '(?<quizId>fox)',
+        code: 'guest'
+      }]));
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        expect(mockNavController.navigateForward).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part and deeplink config match', (done) => {
+      const request = 'course';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<content_id>fox)',
         code: 'profile'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part and content_id pattern', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<content_id>fox)',
+        code: 'profile'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part for course id pattern', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<course_id>fox)',
+        code: 'guest'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part for course id pattern for undefined url match groups', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
       }]));
       mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
       mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
