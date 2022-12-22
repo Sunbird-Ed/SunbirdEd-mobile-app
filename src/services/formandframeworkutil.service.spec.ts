@@ -34,6 +34,7 @@ import {
 } from './formandframeworkutil.service.spec.data';
 import { FormConstants } from '../app/form.constants';
 import { doesNotReject } from 'assert';
+import { PreferenceKey } from '../app/app.constant';
 
 
 describe('FormAndFrameworkUtilService', () => {
@@ -1172,36 +1173,46 @@ describe('FormAndFrameworkUtilService', () => {
     })
   })
 
-  fdescribe('getFrameworkCategories', () => {
+  describe('getFrameworkCategories', () => {
     it('should invoked formApi and store in local storage for empty framework', (done) => {
       // arrange
-      mockAppGlobalService.getCachedFrameworkCategory = jest.fn();
-      mockFormService.getForm = jest.fn(() => of({
-        form: {
-          data: {
-            fields: [
-              {
-                "code": "category1",
-                "label": "{\"en\":\"Organization\"}",
-                "placeHolder": "{\"en\":\"Selecte Organization\"}",
-                "value": "board"
-              },
-              {
-                "code": "category2",
-                "label": "{\"en\":\"Verical\"}",
-                "placeHolder": "{\"en\":\"Selected Vertical\"}",
-                "value": "medium"
-              }
+      mockSharedPreferences.getString = jest.fn(() => of('teacher'));
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({}));
+      jest.spyOn(formAndFrameworkUtilService, 'getFormFields').mockImplementation(() => {
+        return Promise.resolve([
+          {
+            "code": "category1",
+            "label": "{\"en\":\"Board\"}",
+            "placeHolder": "{\"en\":\"Selected Board\"}",
+            "frameworkCode": "board",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "administrator",
+                "parent",
+                "other"
             ]
-          }
+        },
+        {
+            "code": "category2",
+            "label": "{\"en\":\"Medium\"}",
+            "placeHolder": "{\"en\":\"Selected Medium\"}",
+            "frameworkCode": "medium",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "parent",
+                "other"
+            ]
         }
-      }));
+        ]);
+      });
       mockAppGlobalService.setFramewokCategory = jest.fn();
       // act
-      formAndFrameworkUtilService.getFrameworkCategoryList().then(() => {
+      formAndFrameworkUtilService.getFrameworkCategoryList(undefined).then(() => {
         // assert
+        expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
-        expect(mockFormService.getForm).toHaveBeenCalled();
         expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
         done();
       });
@@ -1209,26 +1220,41 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should resolved framework category if already store', (done) => {
       // arrange
-      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => [
-        {
-          "code": "category1",
-          "label": "{\"en\":\"Organization\"}",
-          "placeHolder": "{\"en\":\"Selecte Organization\"}",
-          "value": "board"
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({
+        supportedFrameworkConfig: [
+          {
+            "code": "category1",
+            "label": "{\"en\":\"Board\"}",
+            "placeHolder": "{\"en\":\"Selected Board\"}",
+            "frameworkCode": "board",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "administrator",
+                "parent",
+                "other"
+            ]
         },
         {
-          "code": "category2",
-          "label": "{\"en\":\"Verical\"}",
-          "placeHolder": "{\"en\":\"Selected Vertical\"}",
-          "value": "medium"
+            "code": "category2",
+            "label": "{\"en\":\"Medium\"}",
+            "placeHolder": "{\"en\":\"Selected Medium\"}",
+            "frameworkCode": "medium",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "parent",
+                "other"
+            ]
         }
-      ]);
+        ],
+        supportedAttributes: {board: 'board'},
+        userType: 'teacher'
+      }));
       // act
-      formAndFrameworkUtilService.getFrameworkCategoryList().then(() => {
+      formAndFrameworkUtilService.getFrameworkCategoryList('teacher').then(() => {
         // assert
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
-        // expect(mockFormService.getForm).toHaveBeenCalled();
-        // expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
         done();
       });
     })

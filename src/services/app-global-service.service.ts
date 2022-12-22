@@ -92,7 +92,7 @@ export class AppGlobalService implements OnDestroy {
     private _isNativePopupVisible: boolean;
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
-    private frameworkCategory: Array<any>;
+    private frameworkCategory = {};
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -282,7 +282,7 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /** This method return the framework categories if available */
-    getCachedFrameworkCategory(): Array<any> {
+    getCachedFrameworkCategory(): any {
         return this.frameworkCategory;
     }
 

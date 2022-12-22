@@ -616,7 +616,37 @@ describe('GuestEditPage', () => {
     describe('ngOnInit', () => {
         it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
             // arrange
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board'},
+                  userType: 'teacher'
+            }));
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -627,12 +657,6 @@ describe('GuestEditPage', () => {
             guestEditPage['isNewUser'] = false;
             mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
                 [{ code: 'teacher' }]));
-            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
-                {
-                    board: ['board'],
-                    medium: ['medium'],
-                    gradeLevel: ['gradeLevel']
-                }));
             guestEditPage.guestEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -672,14 +696,39 @@ describe('GuestEditPage', () => {
 
         it('should populate the supported attributes', (done) => {
             // arrange
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board', medium: 'medium',
+                  gradeLevel: 'gradeLevel'},
+                  userType: 'teacher'
+            }));
             mockOnBoardingConfigService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
-            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
-                {
-                    board: 'board',
-                    medium: 'medium',
-                    gradeLevel: 'gradeLevel'
-                }));
             guestEditPage.guestEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -713,12 +762,38 @@ describe('GuestEditPage', () => {
             guestEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
             guestEditPage['onMediumChange'] = jest.fn(() => of({} as any));
             guestEditPage['onGradeChange'] = jest.fn(() => of({} as any));
-            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
-                {
-                    board: 'board',
-                    medium: 'medium',
-                    gradeLevel: 'gradeLevel'
-                }));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board', medium: 'medium',
+                  gradeLevel: 'gradeLevel'},
+                  userType: 'teacher'
+            }));
             guestEditPage.guestEditForm = {
                 get: jest.fn((arg) => {
                     let value;

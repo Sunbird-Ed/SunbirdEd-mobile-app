@@ -53,7 +53,7 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item *ngIf="(!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']) && userType!='administrator'">
+    <ion-item *ngIf="(!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']) && userType!='administrator' && frameworkData.length>3">
       <ion-label position="stacked" class="label-font">{{frameworkData[3].label | translateJson}}</ion-label>
       <ion-select formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
         placeholder="{{ (subjectList.length ? (frameworkData[3].placeHolder | translateJson):'NO_DATA_FOUND') | translate }}"

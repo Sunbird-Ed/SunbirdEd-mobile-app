@@ -214,6 +214,38 @@ describe('Profile.page', () => {
                 return fn();
             }
         });
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            supportedFrameworkConfig: [
+                {
+                  "code": "category1",
+                  "label": "{\"en\":\"Board\"}",
+                  "placeHolder": "{\"en\":\"Selected Board\"}",
+                  "frameworkCode": "board",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "administrator",
+                      "parent",
+                      "other"
+                  ]
+              },
+              {
+                  "code": "category2",
+                  "label": "{\"en\":\"Medium\"}",
+                  "placeHolder": "{\"en\":\"Selected Medium\"}",
+                  "frameworkCode": "medium",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "parent",
+                      "other"
+                  ]
+              }
+              ],
+              supportedAttributes: {board: 'board', medium: 'medium',
+              gradeLevel: 'gradeLevel'},
+              userType: 'teacher'
+        }));
         const headerData = jest.fn((fn => fn()));
         mockAppHeaderService.headerEventEmitted$ = {
             subscribe: headerData
@@ -225,6 +257,7 @@ describe('Profile.page', () => {
         // assert
         expect(mockEvents.subscribe).toHaveBeenCalled();
         expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+        expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
     });
 
     it('should unsubscribe headerObservable, events, and refresher set to true', () => {
@@ -524,7 +557,38 @@ describe('Profile.page', () => {
         // arrange
         jest.spyOn(profilePage, 'doRefresh').mockImplementation();
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
-        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            supportedFrameworkConfig: [
+                {
+                  "code": "category1",
+                  "label": "{\"en\":\"Board\"}",
+                  "placeHolder": "{\"en\":\"Selected Board\"}",
+                  "frameworkCode": "board",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "administrator",
+                      "parent",
+                      "other"
+                  ]
+              },
+              {
+                  "code": "category2",
+                  "label": "{\"en\":\"Medium\"}",
+                  "placeHolder": "{\"en\":\"Selected Medium\"}",
+                  "frameworkCode": "medium",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "parent",
+                      "other"
+                  ]
+              }
+              ],
+              supportedAttributes: {board: 'board', medium: 'medium',
+              gradeLevel: 'gradeLevel'},
+              userType: 'teacher'
+        }));
         // act
         profilePage.ngOnInit().then(() => {
             expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
