@@ -163,7 +163,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-    this.getCategoriesAndUpdateAttributes(this.profile.serverProfile.profileUserTypes[0].type || undefined);
+    this.getCategoriesAndUpdateAttributes((this.profile.serverProfile.profileUserTypes.length > 1 ?
+      this.profile.serverProfile.profileUserTypes[0].type : this.profile.profileType) || undefined);
   }
 
   ngOnDestroy() {
