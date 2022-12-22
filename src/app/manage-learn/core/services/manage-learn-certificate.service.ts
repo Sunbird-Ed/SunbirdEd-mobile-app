@@ -17,7 +17,6 @@ export class ManageLearnCertificateService {
 
   ) { }
   getProjectCertificate(data){
-    console.log(data, data.split('certs/')[1].split('?')[0]);
     const config ={
       url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + data.split('certs/')[1].split('?')[0]
     }

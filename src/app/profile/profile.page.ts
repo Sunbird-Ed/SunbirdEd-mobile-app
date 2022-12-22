@@ -1286,7 +1286,6 @@ export class ProfilePage implements OnInit {
       url : urlConstants.API_URLS.PROJECT_CERTIFICATES
     }
     this.unnatiDataService.get(config).subscribe(resp =>{
-      console.log(resp,"resp getProjectsCertificate");
       this.projects =  resp.result.data;
     })
   }
