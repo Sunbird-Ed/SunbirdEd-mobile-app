@@ -61,7 +61,8 @@ export class ProfileNameConfirmationPopoverComponent {
   }
 
   onProfilePageClick() {
-    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP);
+    let payload = this.projectContent ? {code:'name',children:[]} : ''
+    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP,payload);
     this.closePopover({ editProfileClicked: true });
   }
 

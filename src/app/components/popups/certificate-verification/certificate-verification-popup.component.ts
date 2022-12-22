@@ -14,7 +14,7 @@ export class CertificateVerificationPopoverComponent implements OnInit, OnDestro
   @Input() actionsButtons: any;
   @Input() certificateData: any;
   @Input() showHeader = true;
-  @Input() isProject = false;
+  @Input() isProject :boolean;
   backButtonFunc: Subscription;
   appName: string;
   content ='SUCCESSFULLY_COMPLETING_COURSE';
