@@ -7,7 +7,9 @@
       <div class="flex-dc d-flex flex-basis-1">
         <div class="d-flex flex-ai-center flex-jc-space-between">
           <div class="title w-90 sb--card__title" [class.ellipsis]="ellipsis">
-            {{ title | titlecase }}
+            {{ title  }} <span *ngIf="code">
+              , {{code}}
+              </span>
           </div>
           <ng-content select="[certificate]"></ng-content>
           <ng-content select="[arrow]"></ng-content>

@@ -1,4 +1,12 @@
 <ion-content fullscreen>
+  <div class="_flex-box searchCard" (click)="localSearch()">
+    <ion-searchbar 
+      placeholder="Search {{entityType}}"
+    ></ion-searchbar>
+    <ion-button ion-button icon-only class="serachBtn">
+      <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
+    </ion-button>
+  </div>
   <app-common-header title=" {{ solutionName }}"></app-common-header>
   <div class="d-flex flex-jc-flex-end grade_ellipsis info">
     <ion-button
@@ -9,7 +17,7 @@
     >
   </div>
   <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
-    <app-item-list-card [title]="entity?.name">
+    <app-item-list-card [title]="entity?.name" [code]=entity?.externalId>
       <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
       <ion-icon
         class="delete-icon clr-primary"
