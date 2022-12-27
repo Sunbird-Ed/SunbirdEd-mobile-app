@@ -436,10 +436,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
+      const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+        id: this.groupId
+      };
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
       this.isGroupLoading = true;
       try {
+        const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
