@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1442px" height="268px" viewBox="0 0 1442 268" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>discuss_background</title>
+    <defs>
+        <linearGradient x1="94.0742121%" y1="61.7045066%" x2="3.45760171%" y2="61.7045066%" id="linearGradient-1">
+            <stop stop-color="#D95181" offset="0%"></stop>
+            <stop stop-color="#A63446" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="264" height="138"></rect>
+        <rect id="path-4" x="0" y="0" width="142" height="103" rx="8"></rect>
+        <rect id="path-6" x="0" y="0" width="103" height="91" rx="8"></rect>
+        <linearGradient x1="35.5586014%" y1="50.6731797%" x2="94.3536938%" y2="51.2623662%" id="linearGradient-8">
+            <stop stop-color="#911F31" offset="0.0437062937%"></stop>
+            <stop stop-color="#830B1E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Screens" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home---Expanded" transform="translate(0.000000, -2469.000000)">
+            <g id="discuss_background" transform="translate(0.000000, 2469.000000)">
+                <rect id="Rectangle" fill="url(#linearGradient-1)" x="0" y="0" width="1442" height="268"></rect>
+                <g id="Rectangle" transform="translate(691.000000, 0.000000)">
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <path d="M43,-31 L221,-31 C225.418278,-31 229,-27.418278 229,-23 L229,94.3695367 C229,98.7878147 225.418278,102.369537 221,102.369537 L192.075449,102.369537 L192.075449,102.369537 L155.575957,134 L155.575957,102.369537 L43,102.369537 C38.581722,102.369537 35,98.7878147 35,94.3695367 L35,-23 C35,-27.418278 38.581722,-31 43,-31 Z" fill="#A73447" opacity="0.413760231" mask="url(#mask-3)"></path>
+                </g>
+                <g id="Rectangle-Copy-5" transform="translate(1179.000000, 0.000000)">
+                    <mask id="mask-5" fill="white">
+                        <use xlink:href="#path-4"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <path d="M19,-29 L159,-29 C163.418278,-29 167,-25.418278 167,-21 L167,69.6956294 C167,74.1139074 163.418278,77.6956294 159,77.6956294 L137.308093,77.6956294 L137.308093,77.6956294 L107.957986,103 L107.957986,77.6956294 L19,77.6956294 C14.581722,77.6956294 11,74.1139074 11,69.6956294 L11,-21 C11,-25.418278 14.581722,-29 19,-29 Z" fill="#A73447" opacity="0.309105283" mask="url(#mask-5)"></path>
+                </g>
+                <g id="Rectangle-Copy-6" transform="translate(1116.000000, 81.000000)">
+                    <mask id="mask-7" fill="white">
+                        <use xlink:href="#path-6"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <path d="M14,14 L89,14 C93.418278,14 97,17.581722 97,22 L97,68.5376785 C97,72.9559565 93.418278,76.5376785 89,76.5376785 L38.8421053,76.5376785 L38.8421053,76.5376785 L22.7631579,90 L22.7631579,76.5376785 L14,76.5376785 C9.581722,76.5376785 6,72.9559565 6,68.5376785 L6,22 C6,17.581722 9.581722,14 14,14 Z" id="Rectangle-Copy-5" fill="#A73447" opacity="0.309105283" mask="url(#mask-7)"></path>
+                </g>
+                <path d="M598,268 C750.201587,212.626099 865.674653,180.909478 944.4192,172.85014 C1031.23084,163.965151 1174.10736,175.07407 1287.4497,153 C1341.56697,142.460351 1392.56697,117.460351 1440.4497,78 L1440.4497,268 L598,268 Z" id="Path-2" fill="url(#linearGradient-8)" opacity="0.297665551"></path>
+            </g>
+        </g>
+    </g>
+</svg>

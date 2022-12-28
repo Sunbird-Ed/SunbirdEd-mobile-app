@@ -147,6 +147,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   ngOnInit() {
+    console.log('USER login homeeeeeeeeeeeee @@@@@@@@@@@@@@@@@@@')
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.getUserProfileDetails();
     });
@@ -164,12 +165,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+      this.headerService.hideHeader();
+      //this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.headerService.hideHeader();
+    //this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     this.getUserProfileDetails();
   }
 
@@ -619,7 +622,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
       {
         state: {
-          showHeader: true,
+          showHeader: false,
           corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
           title: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_REQUEST_CONTENT'),
           subTitle: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_RELEVANT_CONTENT_SUB_HEADING'),
@@ -706,7 +709,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.headerService.hideHeader();
+    //this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     this.getUserProfileDetails();
   }
 

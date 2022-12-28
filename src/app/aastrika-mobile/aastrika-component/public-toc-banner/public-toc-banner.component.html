@@ -1,0 +1,136 @@
+<div class="toc-banner-body box">
+  <div>
+    <div class="title">
+      <span [title]="content?.extras?.queryParams?.subTitle">
+        {{ content?.extras?.queryParams?.subTitle }}
+      </span>
+    </div>
+    <div class="subtitle">{{ content?.extras?.queryParams?.subTitle }}</div>
+    <div
+      class="details"
+      *ngIf="
+        tocConfig?.atAGlance?.duration?.enabled &&
+        content?.extras?.queryParams?.duration
+      "
+    >
+      Duration:
+      {{
+        content?.extras?.queryParams?.duration | pipeDurationTransform : "hms"
+      }}
+    </div>
+    <div
+      class="details"
+      *ngIf="
+        tocConfig?.atAGlance?.lastUpdatedOn?.enabled &&
+        content?.extras?.queryParams?.lastUpdatedOn
+      "
+    >
+      {{ tocConfig?.atAGlance?.lastUpdatedOn?.displayName }}:
+      {{ content?.extras?.queryParams?.lastUpdatedOn | date }}
+    </div>
+    <div class="details">
+      Source:{{ content?.extras?.queryParams?.sourceName }}
+    </div>
+    <div class="details" *ngIf="content?.extras?.queryParams?.creator">
+      Author: {{ content?.extras?.queryParams?.creator }}
+    </div>
+  </div>
+  <div class="lable1" [ngClass]="{'ws-mat-primary-text link-active': routelinK === 'license'}" wsUtilsRetain i18n>View License Terms</div>
+</div>
+
+<div role="main" class="toc-body">
+  <mat-tab-group class="mat-tab-group mat-primary" mat-align-tabs="start">
+    <mat-tab label="Overview">
+      <div class="flex flex-between flex-wrapped mt-4">
+        <div class="meta-section">
+          <!-- Description : Conditional : If not shown here, will be shown over banner -->
+          <div
+            *ngIf="
+              tocConfig?.overview?.description?.enabled &&
+              content?.extras?.queryParams?.description
+            "
+            class="unit-meta-item"
+          >
+            <h2>{{ tocConfig?.overview?.description?.displayName }}</h2>
+            <mat-card-content>
+                <div
+                  class="mat-subheading-1"
+                  [innerHTML]="content?.extras?.queryParams?.description"
+                ></div>
+            </mat-card-content>
+          </div>
+          <!-- Content Body -->
+          <div
+            *ngIf="
+              tocConfig?.overview?.body?.enabled &&
+              content?.extras?.queryParams?.instructions
+            "
+            class="unit-meta-item"
+          >
+            <h2>{{ tocConfig?.overview?.body?.displayName }}</h2>
+            <mat-card-content>
+                <div
+                  class="break-words"
+                  [innerHTML]="content?.extras?.queryParams?.instructions"
+                ></div>
+            </mat-card-content>
+          </div>
+          <div class="width-1-1 mt-5 mb-4">
+            <div
+              class="margin-bottom-m mr-0"
+              *ngIf="content?.extras?.queryParams?.creator?.length"
+            >
+              <ng-container
+                [ngTemplateOutlet]="creators"
+                [ngTemplateOutletContext]="{
+                  authors: content?.extras?.queryParams?.creator,
+                  title: 'AUTHOR'
+                }"
+              >
+              </ng-container>
+            </div>
+            <div
+              class="hidden sm:block margin-bottom-m mr-0"
+              *ngIf="content?.extras?.queryParams?.creatorContacts?.length"
+            >
+              <ng-container
+                [ngTemplateOutlet]="creators"
+                [ngTemplateOutletContext]="{
+                  authors: content?.extras?.queryParams?.creatorContacts,
+                  title: 'CONTACT'
+                }"
+              >
+              </ng-container>
+            </div>
+          </div>
+
+          <ng-template #creators let-authors="authors" let-title="title">
+            <div class="unit-meta-item">
+              <h2 i18n *ngIf="title === 'AUTHOR'">Authors</h2>
+              <ion-item-divider></ion-item-divider>
+              <div class="author">
+                <ws-widget-user-image
+                  class="author-image"
+                  [imageType]="'name-initial'"
+                  [userName]="authors || ''"
+                >
+                </ws-widget-user-image> 
+                <div
+                  class="width-expand flex flex-middle flex-between author-name"
+                >
+                  <h3 class="author-format">{{ authors }}</h3>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+
+         <ng-container *ngIf="currentLicenseData">
+            <ws-public-license
+              [currentLicenseData]="currentLicenseData"
+            ></ws-public-license> 
+          </ng-container> 
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

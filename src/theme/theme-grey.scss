@@ -1,0 +1,35 @@
+@import '~@angular/material/theming';
+@import './theme-mixins';
+// Plus imports for other components in your app.
+@include mat-core();
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+$theme-primary: mat-palette($mat-grey);
+$theme-accent: mat-palette($mat-blue-grey);
+$theme-warn: mat-palette($mat-red);
+// $background-color: mat-palette($mat-red);
+// $theme-background: mat-palette($mat-red);
+
+.theme-grey {
+  &.day-mode {
+    $theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
+    // $custom-background-color: map_get($mat-blue-grey, 50);
+
+    // -or- Can set colour by hex value too
+    // $custom-background-color: #F5F6FA;
+
+    // $background: map-get($theme, background);
+    // $background: map_merge($background, (background: $custom-background-color));
+    // $theme: map_merge($theme, (background: $background));
+    @include angular-material-theme($theme);
+    @include theme-based-configurations($theme);
+    // $background: $background-color;
+  }
+
+  &.night-mode {
+    $theme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
+    @include angular-material-theme($theme);
+    @include theme-based-configurations($theme);
+  }
+}

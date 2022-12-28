@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { IonicModule } from '@ionic/angular';
-import { UserHomePage } from './user-home/user-home.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
 import { CoreModule } from '../manage-learn/core/core.module';
 import { UserTypeGuard } from './user-type.guard';
 import { ComponentsModule } from '@app/app/components/components.module';
+import { AastrikaHomePage } from '../aastrika-mobile/aastrika-home/aastrika-home.page';
 
 const routes: Routes = [
   {
@@ -21,11 +21,13 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    component: UserHomePage
+    //component: UserHomePage
+    component: AastrikaHomePage
   },
   {
     path: 'admin',
-    component: AdminHomePage
+    component: AastrikaHomePage
+    //component: AdminHomePage
   }
 ];
 @NgModule({
@@ -40,7 +42,8 @@ const routes: Routes = [
     PipesModule,
     CoreModule
   ],
-  declarations: [UserHomePage, AdminHomePage],
+  //declarations: [UserHomePage, AdminHomePage],
+  declarations: [AastrikaHomePage, AdminHomePage],
   providers: [UserTypeGuard]
 })
 export class HomePageModule {}

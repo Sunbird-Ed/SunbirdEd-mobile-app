@@ -1,0 +1,30 @@
+.home-header {
+    margin: 10px;
+}
+
+/* ion-button {
+    width: 90px !important;
+    border: 1px solid rgb(63, 81, 181) !important;
+    border-radius: 20px !important;
+    color: rgb(63, 81, 181) !important;
+    font-size: medium !important;
+} */
+
+.form-group {
+    float: right;
+  }
+
+  .ws-btn {
+    --background: none !important;
+    --color: rgb(63, 81, 181) !important;
+    --line-height: 19px !important;
+    --border-radius: 20px !important;
+    --width: 90px !important;
+    --border: 1px solid rgb(63, 81, 181) !important;
+    --width: 90px;
+    --font-family: Roboto;
+    --font-weight: 400;
+    --box-shadow: unset;
+    --padding-top: 15px;
+    --padding-bottom: 15px;
+  }

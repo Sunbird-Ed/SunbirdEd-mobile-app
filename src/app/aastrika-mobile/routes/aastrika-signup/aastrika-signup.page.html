@@ -1,0 +1,131 @@
+<ws-header></ws-header>
+<!-- Create Account Form -->
+<div class="login-page-content" *ngIf="!otpPage">
+  <div class="login-card">
+    <div>
+      <div class="lang-subtitle">
+        <h1 class="display-h1">Create your account</h1>
+
+      </div>
+      <div class="display-language">
+        <h3 class="mb-2"><span i18n>Language for Learning </span>: <span class="display-language" i18n>
+            {{preferedLanguage.lang}}</span></h3>
+        <!-- <img src="/fusion-assets/icons/lang-icon.png" class="lang-img" (click)="changeLanguage()" /> -->
+      </div>
+      <div class="input-content">
+        <div class="input-content-wrapper">
+          <form [formGroup]="createAccountForm" id="form-login" action="" method="post">
+            <div class="form-group">
+              <input id="firstname-field" i18n class="form-control" formControlName="firstname" type="text"
+                i18n-placeholder placeholder="First Name" autocomplete="off">
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['firstname'].hasError('required') &&
+                          (createAccountForm.controls['firstname'].dirty || createAccountForm.controls['firstname'].touched)">
+                This field is required</mat-error>
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['firstname'].hasError('pattern') &&
+                          (createAccountForm.controls['firstname'].dirty || createAccountForm.controls['firstname'].touched)">
+                Invalid name Format</mat-error>
+            </div>
+
+
+            <div class="form-group">
+              <input id="lastname-field" class="form-control" i18n-placeholder formControlName="lastname" type="text"
+                placeholder="Last Name" autocomplete="off">
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['lastname'].hasError('required') &&
+                                    (createAccountForm.controls['lastname'].dirty || createAccountForm.controls['lastname'].touched)">
+                This field is required</mat-error>
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['lastname'].hasError('pattern') &&
+                                    (createAccountForm.controls['lastname'].dirty || createAccountForm.controls['lastname'].touched)">
+                Invalid name Format</mat-error>
+              <label class="label-text">( <span i18n>This is the name that will show up on your certificate)
+                </span></label>
+            </div>
+
+            <div class="form-group">
+              <input id="email-field" class="form-control" i18n formControlName="emailOrMobile" type="text"
+                i18n-placeholder placeholder="Phone Number/Email ID" autocomplete="off">
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['emailOrMobile'].hasError('required') &&
+                (createAccountForm.controls['emailOrMobile'].dirty || createAccountForm.controls['emailOrMobile'].touched)">
+                This field is required</mat-error>
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['emailOrMobile'].hasError('pattern')">
+                Invalid email or number</mat-error>
+            </div>
+            <div class="form-group">
+              <div class="input-group pwd" id="show_hide_password_1">
+                <ion-item  lines="none" class="item-password">
+                <input class="form-control" i18n formControlName="password" placeholder="Password" id="password-field"
+                  i18n-placeholder [type]="hide1 ? 'password' : 'text'">
+                    <a class="type-toggle" (click)="toggleShow1()">
+                      <ion-icon class="show-option" [hidden]="showPassword1" [src]="eyeoff" slot="end"></ion-icon>
+                      <ion-icon class="hide-option" [hidden]="!showPassword1" name="eye" slot="end"></ion-icon>
+                   </a> 
+                  </ion-item>
+              </div>
+              <label class="label-text">( <span i18n>Password must contain a minimum of 8 characters including numerals,
+                  lower and
+                  upper
+                  case alphabets and special characters without space </span>)</label>
+              <mat-error class="text-danger" i18n *ngIf="createAccountForm.controls['password'].hasError('required') &&
+                  (createAccountForm.controls['password'].dirty || createAccountForm.controls['password'].touched)">
+                This field is required</mat-error>
+              <mat-error class="text-danger" i18n *ngIf="createAccountForm.controls['password'].hasError('pattern') &&
+                (createAccountForm.controls['password'].dirty || createAccountForm.controls['password'].touched)">
+                Invalid Password Format</mat-error>
+            </div>
+            <div class="form-group">
+              <div class="input-group pwd">
+                <ion-item  lines="none" class="item-password">
+                  <input class="form-control" i18n formControlName="confirmPassword" [type]="hide2 ? 'password' : 'text'"
+                  i18n-placeholder placeholder="Confirm Password" id="confpassword-field">
+                  <a class="type-toggle" (click)="toggleShow2()">
+                    <ion-icon class="show-option" [hidden]="showPassword2" [src]="eyeoff" slot="end"></ion-icon>
+                    <ion-icon class="hide-option" [hidden]="!showPassword2" name="eye" slot="end"></ion-icon>
+                 </a> 
+              </ion-item>
+              </div>
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['confirmPassword'].hasError('required') &&
+                  (createAccountForm.controls['confirmPassword'].dirty || createAccountForm.controls['confirmPassword'].touched)">
+                This field is required.</mat-error>
+              <mat-error class="text-danger" i18n
+                *ngIf="createAccountForm.controls['confirmPassword'].hasError('mustMatch') &&
+                (createAccountForm.controls['confirmPassword'].dirty || createAccountForm.controls['confirmPassword'].touched)">
+                Password does not match</mat-error>
+            </div>
+            <div class="next-btn-div">
+              <button class="btn next-button" name="login" type="submit" id="next-btn" i18n
+                [disabled]="!createAccountForm?.valid" (click)="onSubmit(createAccountForm)">Next</button>
+            </div>
+            <div class="rel">
+              <span class="whatsApp">
+                <img alt="Logo" src="../../../../assets/fusion-assets/icons/whatsapp.png" width="30">
+              </span>
+              <a href="https://wa.me/919632013414?text=Hi%2C%20Need%20help%20on%20Aastrika%20Platform" target="_blank"
+                class="greenButton" mat-button i18n
+                (click)="eventTrigger('WhatsApp', 'WhatsApp-CreateAccount Page')">Get help on
+                WhatsApp</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Create Account Form Close-->
+<input type="hidden" i18-value i18-aria-value aria-value="Signup successful" value="Thanks for Signing up"
+  #toastSuccess />
+<input type="hidden" i18-value i18-aria-value aria-value="unable to signup" value="Error Signing up!" #toastError />
+
+<!-- OTP Form -->
+<div *ngIf="otpPage">
+  <ws-login-otp [signUpdata]="createAccountForm" (redirectToParent)="showParentForm($event)"></ws-login-otp>
+</div>
+<!-- OTP Form Close-->

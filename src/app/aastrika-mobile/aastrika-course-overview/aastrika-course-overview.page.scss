@@ -1,0 +1,69 @@
+@import 'src/assets/styles/_ws-mixins.scss';
+@import 'src/assets/styles/_ws-vars.scss';
+
+.title {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 38px;
+  }
+  
+  .subtitle {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    margin-bottom: 10px;
+  }
+
+  .lbl-overview {
+    font-family: 'Roboto';
+    color: #000000DE;
+    font-size: 14px;
+  }
+  
+  .details {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    color: #000000;
+    letter-spacing: -0.02em;
+  }
+  
+  .lable1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #1c5d95;
+    flex: none;
+    flex-grow: 0;
+    padding-top: 20px;
+    cursor: pointer !important;
+  }
+
+  .toc-body {
+    padding-top: 0px !important;
+    @include breakpoint-s {
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+    .toc-links {
+      position: sticky;
+      top: 0px;
+      width: 100%;
+      z-index: 1;
+      .mat-tab-link {
+        font-size: 18px !important;
+        min-width:130px !important
+      }
+      .link-active {
+        color: #424242 !important;
+        border-bottom: 2px solid;
+      }
+    }
+  }

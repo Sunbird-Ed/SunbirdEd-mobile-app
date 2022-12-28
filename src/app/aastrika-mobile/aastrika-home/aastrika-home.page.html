@@ -1,0 +1,47 @@
+<app-aastrika-header></app-aastrika-header>
+
+<ion-content class="home-content">
+  <!--page banner-->
+  <div>
+    <div class="text-center banner-container">
+      <img
+        src="../../../assets/fusion-assets\icons\join-movement-image_new.png"
+        width="175"
+        height="168"
+      />
+    </div>
+    <!--upskill now section-->
+    <div class="header2 banner-container">Upskill now</div>
+    <div class="sub-points banner-container">
+      <ul>
+        <li>Access free healthcare courses</li>
+        <li>Get Certified on completing a Course</li>
+        <!-- <li>Get certified</li> -->
+      </ul>
+    </div>
+    <div class="courses-block">
+      <div class="courseList">
+          <div class="title"> Latest Courses</div>
+          <ion-slides slidesPerView="1.5" spaceBetween="10">
+            <ion-slide *ngFor="let course of content" class="slideConfig">
+              <ion-col>
+                <ion-row>
+                  <a  (click)="courseDetails(course)">
+                    <img class="poster-image" [src]="course.posterImage" [alt]=course.name/>
+                  </a>
+                </ion-row>
+                <ion-row>
+                  <div class="course-name">{{course.name}}</div>
+                </ion-row>
+                <ion-row>
+                  <div class="truncate">{{course.description}}</div>
+                </ion-row>
+              </ion-col>
+            </ion-slide>
+          </ion-slides>
+        </div>
+    </div>
+  </div>
+</ion-content>
+
+<app-aastrika-footer></app-aastrika-footer>

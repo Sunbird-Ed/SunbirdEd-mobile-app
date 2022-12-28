@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="174px" height="116px" viewBox="0 0 174 116" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>numbers_background</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="174" height="116" rx="8"></rect>
+        <linearGradient x1="70.1898286%" y1="50.0025183%" x2="39.5753925%" y2="51.8076465%" id="linearGradient-3">
+            <stop stop-color="#F58634" offset="0%"></stop>
+            <stop stop-color="#F5B88B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="numbers_background">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+            <path d="M-29.6304348,116 C42.5647656,82 95.8244703,65 130.148679,65 C164.472888,65 186.024778,82 194.804348,116 L-29.6304348,116 Z" id="Path" fill="url(#linearGradient-3)" opacity="0.1" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,115 @@
+.home-content {
+  background: white;
+}
+
+
+.login-button {
+  width: 90px;
+  border: 1px solid;
+  border-radius: 20px;
+  color: #3f51b5;
+  font-size: medium;
+}
+
+.header2 {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 29px;
+}
+
+.lable1 {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+}
+
+.sub-points {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  ;
+  color: #000000;
+  margin-top: 16px;
+}
+
+.banner-container {
+  margin: 20px;
+}
+
+.title {
+  font-weight: 400 !important;
+  font-size: 24px !important;
+  font-family: Roboto !important;
+  letter-spacing: -.02em;
+  color: #4a4a4a;
+}
+
+.slideConfig {
+  margin: 10px 10px 10px 0px;
+}
+
+.course-block {
+  background: var(--app-secondary-background) !important;
+}
+
+.poster-image {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 5px;
+}
+
+ion-card {
+  border: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-style: none !important;
+  position: relative;
+  // border-top: 3px solid colorofyourchosing
+}
+
+ion-slide {
+  width: 80% !important;
+}
+
+.course-name {
+  margin-top: 10px;
+  color: #007bff;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: left;
+  -webkit-line-clamp: 2;
+  /* number of lines to show */
+  line-clamp: 2;
+}
+
+.courseList {
+  margin: 20px;
+}
+
+.truncate {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+  margin-top: 16px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

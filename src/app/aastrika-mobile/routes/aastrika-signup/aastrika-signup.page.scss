@@ -1,0 +1,232 @@
+@import 'src/assets/styles/ws-common';
+@import 'src/assets/styles/ws-mixins';
+
+
+.login-page-content {
+  box-sizing: border-box;
+  // padding: $size-m;
+  @extend %page-center;
+  @extend %height-mat-toolbar-sibling;
+  padding: 0;
+  box-sizing: border-box;
+
+  @include breakpoint-gt-s {
+    max-width: 30%;
+  }
+
+  @include breakpoint-gt-m {
+    max-width: 25%;
+  }
+
+  @include breakpoint-gt-l {
+    max-width: 20%;
+  }
+
+  @include breakpoint-s {
+    max-width: 50%;
+    padding: 12px;
+  }
+
+  @include breakpoint-xs {
+    max-width: 90%;
+    margin: auto;
+  }
+}
+
+.login-card {
+  margin: 0;
+  padding: 20px 20px 30px 20px;
+  color: #000;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.label-text {
+  color: #5f6368;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.display-language {
+  font-style: normal;
+  font-variant-caps: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-variant-east-asian: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-size: 16px;
+  line-height: 28px;
+  font-family: Roboto;
+  margin: 0 0 16px !important;
+}
+
+.iconPosition1 {
+  position: absolute;
+  right: -18px;
+  top: 10px;
+}
+
+
+
+.input-field{
+  padding:8px 12px;
+  border:1px solid gray;
+  position: relative;
+}
+
+.input-field.medium {
+  width:200px;
+}
+
+.icon{
+  position:absolute;
+  right:8px;
+  top:8px;
+}
+
+a {
+  color: #000 !important;
+}
+
+:host::ng-deep .pwd {
+  width: 100% !important;
+  padding: unset !important;
+} 
+
+.type-toggle {
+  padding-inline-start: 0.5rem;
+.show-option,
+  .hide-option {
+    font-size: 1.2rem;
+    display: block;}
+  }
+
+.item-password {
+  --inner-padding-end: 0px;
+  --inner-padding-start: 0px;
+  --padding-start: 0px !important;
+  padding:0px !important;
+}
+
+.next-button {
+  width: 100%;
+  height: 38px;
+  background: #1C5D95;
+  border-radius: 50px;
+  color: #fff;
+  border: 0;
+  font-size: 16px;
+  line-height: 19px;
+  cursor: pointer;
+}
+
+.next-button:disabled {
+  background: #BFBFBF;
+  color: #808080;
+  cursor: default;
+}
+
+.next-btn-div {
+  text-align: right;
+  margin: 1rem 0;
+}
+
+@media screen and (max-width:600px) {
+  .input-content {
+    width: 100%;
+  }
+
+  .next-button {
+    right: 12px;
+  }
+}
+
+.mat-error {
+  padding: 6px;
+}
+
+span.display-language {
+  color: #1C5D95;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+
+img.lang-img {
+  width: 35px;
+  height: 24px;
+}
+
+.lang-subtitle {
+  padding-bottom: 15px;
+}
+
+span.mat-button-wrapper {
+  color: white;
+}
+
+.text {
+  color: #1C5D95 !important;
+  font-weight: 500 !important;
+  text-decoration: underline !important;
+}
+
+.greenButton {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  color: #4BCA59 !important;
+  background-color: #fff !important;
+}
+
+.rel {
+  margin-top: 10px;
+  padding: 5px;
+  border: 1px solid #4BCA59 !important;
+  border-radius: 50px;
+  width: 100%;
+  transition: all 0.25s ease-in;
+  text-align: center;
+}
+
+.whatsApp {
+  z-index: 6;
+  left: 53px;
+  top: 3px;
+  cursor: pointer;
+}
+
+.display-h1 {
+  font-style: normal;
+  font-variant-caps: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-variant-east-asian: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-size: 24px;
+  line-height: 32px;
+  font-family: Roboto;
+  margin: 0 0 16px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  border-radius: unset !important;
+  padding: 3px;
+}
+
+.form-group {
+  border: unset;
+  padding: unset;
+  padding: 0 0 0.75rem 0;
+}

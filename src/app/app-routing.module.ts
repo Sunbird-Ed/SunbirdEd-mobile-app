@@ -127,6 +127,26 @@ const routes: Routes = [
     loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
   },
   { path: RouterLinks.SIGN_IN, loadChildren: './sign-in/sign-in.module#SignInPageModule'},
+  {
+    path: RouterLinks.AASTRIKA_HOME,
+    loadChildren: './aastrika-mobile/aastrika-home/aastrika-home.module#AastrikaHomePageModule'
+  },
+  {
+    path: RouterLinks.AASTRIKA_LOGIN,
+    loadChildren: './aastrika-mobile/aastrika-login/aastrika-login.module#AastrikaLoginPageModule'
+  },
+  {
+    path: RouterLinks.AASTRIKA_COURSE_OVERVIEW,
+    loadChildren: './aastrika-mobile/aastrika-course-overview/aastrika-course-overview.module#AastrikaCourseOverviewPageModule'
+  },
+  {
+    path: `${RouterLinks.AASTRIKA_COURSE_OVERVIEW}/:courseDetails`,
+    loadChildren: './aastrika-mobile/aastrika-course-overview/aastrika-course-overview.module#AastrikaCourseOverviewPageModule'
+  },
+  {
+    path: RouterLinks.AASTRIKA_SIGNUP,
+    loadChildren: './aastrika-mobile/routes/aastrika-signup/aastrika-signup.module#AastrikaSignupPageModule'
+  },
 
 ];
 

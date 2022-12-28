@@ -12,7 +12,7 @@ export class UserTypeSpecificTabGuard implements CanActivate {
   async canActivate(): Promise<boolean | UrlTree> {
     const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (selectedUserType === ProfileType.ADMIN) {
-        return this.router.createUrlTree([RouterLinks.HOME_TAB]);
+        return this.router.createUrlTree([RouterLinks.HOME]);
     }
     return true;
   }

@@ -612,6 +612,16 @@ export class RouterLinks {
     public static readonly DOMAIN_ECM_LISTING = 'domain-ecm-listing';
     public static readonly IMP_SUGGESTIONS = 'imp-suggestions';
 
+    // aastrika-home route
+    public static readonly AASTRIKA_HOME = 'aastrika-home'
+
+    // aastrika-login route
+    public static readonly AASTRIKA_LOGIN = 'aastrika-login'
+
+    //aastrika-course-overview route
+    public static readonly AASTRIKA_COURSE_OVERVIEW = 'aastrika-course-overview'
+    public static readonly AASTRIKA_SIGNUP = 'aastrika-signup'
+
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';

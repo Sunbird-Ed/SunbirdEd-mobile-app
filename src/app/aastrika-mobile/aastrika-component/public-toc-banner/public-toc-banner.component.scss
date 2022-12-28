@@ -1,0 +1,245 @@
+@import 'src/assets/styles/_ws-mixins.scss';
+@import 'src/assets/styles/_ws-vars.scss';
+
+%container-padding {
+  padding: $size-xl 12rem;
+
+  @include breakpoint-xs {
+    padding: $size-m $size-l;
+  }
+}
+
+.box {
+  /* width: 100%;
+  height: 100%; */
+  background: #f7f7f7;
+
+  @include breakpoint-xs {
+    /* width: 100% !important;
+    height: 100% !important; */
+    margin-top: 50px;
+  }
+}
+
+.toc-banner-body {
+  @extend %container-padding;
+  padding-top: 0px !important;
+
+  @include breakpoint-s {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+.toc-body {
+  @extend %container-padding;
+  padding-top: 0px !important;
+  @include breakpoint-s {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+  .toc-links {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    z-index: 1;
+    .mat-tab-link {
+      font-size: 18px !important;
+      min-width:130px !important
+    }
+    .link-active {
+      color: #424242 !important;
+      border-bottom: 2px solid;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .toc-body .toc-links .mat-tab-link{
+    min-width: 100px !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .toc-body .toc-links .mat-tab-link{
+    min-width: 90px !important;
+  }
+}
+
+.back-icon {
+  padding-right: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.title {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.subtitle {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  margin-bottom: 10px;
+}
+
+.details {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: -0.02em;
+}
+
+.lable1 {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  color: #1c5d95;
+  flex: none;
+  flex-grow: 0;
+  padding-top: 20px;
+  cursor: pointer !important;
+}
+
+.header-actions {
+  display: flex;
+  margin-top: 24px;
+
+  &.top {
+    margin-top: 0;
+    margin-bottom: 40px;
+  }
+
+  .action-btns {
+    // margin-left: auto;
+    order: 2;
+    // color: white;
+  }
+}
+
+.header-act-btn {
+  margin-top: 5px;
+}
+
+// .btn {
+//  display: flex;
+// flex-direction: row;
+// justify-content: center;
+// align-items: center;
+// padding: 8px 32px;
+// gap: 8px;
+// position: absolute;
+// width: 122px;
+// height: 35px;
+// left: 112px;
+// top: 369px;
+// background: #1C5D95;
+// border-radius: 50px;
+// }
+
+.btn {
+  width: 13%;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0px 32px !important;
+  background: #1c5d95 !important;
+  border-radius: 50px !important;
+  color: #f7f7f7 !important;
+
+  @include breakpoint-xs {
+    width: 100% !important;
+  }
+}
+
+.btn-active {
+  color: #1c5d95 !important;
+  border-radius: 50px;
+  border: 1px solid #1c5d95 !important;
+  margin-left: 10px;
+  width: 13%;
+
+  @include breakpoint-xs {
+    width: 100% !important;
+  }
+}
+
+.share-img {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #1c5d95;
+  box-sizing: border-box;
+  border-radius: 49%;
+  padding: 9px 12px 0px;
+  margin-left: 10px;
+}
+
+.theme-igot.day-mode .mat-typography .unit-meta-item h2{
+  margin-bottom: 0px;
+}
+
+.break-words {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.meta-section {
+  flex: 1;
+  min-width: 1px;
+
+  .unit-meta-item {
+    border-radius: 2px;
+    box-sizing: border-box;
+    margin-bottom: $size-xl;
+    margin-top: $size-m;
+    clear: both;
+    border-bottom: solid 1px #dfdfdf;
+    h2 {
+      font-size: 22px;
+      margin-bottom: 0px;
+    }
+  }
+
+  @include breakpoint-xs {
+    width: 100%;
+  }
+}
+
+.author {
+  padding: $size-s 0;
+  display: flex;
+
+  .author-image {
+    margin-right: $size-s;
+    $size: 44px;
+    height: $size;
+    width: $size;
+    background-color: #f5d58d;
+    border-radius: 60px;
+    margin: auto 0 0 0;
+    color: #FFFFFF;
+    font-weight: bold;
+  }
+  .author-name{
+    margin-left: 10px;
+    justify-content: space-between;
+  }
+  .author-format{
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+    font-family: Roboto;
+  }
+}

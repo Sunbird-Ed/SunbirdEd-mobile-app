@@ -1,0 +1,9 @@
+<mat-card class="p-0 m-0" [ngClass]="{'mb-5': isXSmall}" id="scroll-height" *ngIf="currentLicenseData && loadLicense">
+  <h2 class="margin-bottom-m">License terms</h2>
+  <p>{{currentLicenseData[0].licenseName}}</p>
+  <p>{{currentLicenseData[0].desc}}</p>
+  <p>{{currentLicenseData[0].licenseName}} For details see below:‎</p>
+  <div class="license-link">
+    <a class="blue-link" href="{{currentLicenseData[0].link}}" target="_blank">{{currentLicenseData[0].link}}</a>
+  </div>
+</mat-card>

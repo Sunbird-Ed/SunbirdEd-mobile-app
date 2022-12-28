@@ -1,0 +1,105 @@
+@import '~@angular/material/theming';
+@import './theme-mixins';
+
+$mat-blue: (
+  50: #eff1f3,
+  100: #d2dde8,
+  200: #a5c1dc,
+  300: #68a0d6,
+  400: #4788c7,
+  500: #0072ce,
+  600: #0358ab,
+  700: #0c4f90,
+  800: #154a7d,
+  900: #103c67,
+  A100: #617284,
+  A200: #587594,
+  A400: #3e6792,
+  A700: #062c54,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text
+  )
+);
+
+$mat-orange: (
+  50: #fff3e0,
+  100: #ffe0b2,
+  200: #ffcc80,
+  300: #ffb74d,
+  400: #ffa726,
+  500: #fc4c02,
+  600: #fb8c00,
+  700: #f57c00,
+  800: #ef6c00,
+  900: #fc4c02,
+  A100: #ffd180,
+  A200: #ffab40,
+  A400: #ff9100,
+  A700: #ff6d00,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $dark-primary-text,
+    600: $dark-primary-text,
+    700: $dark-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: black
+  )
+);
+
+// Plus imports for other components in your app.
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$theme-primary: mat-palette($mat-blue);
+$theme-accent: mat-palette($mat-orange, 900);
+
+// The warn palette is optional (defaults to red).
+$theme-warn: mat-palette($mat-red);
+// $background-color: mat-palette($mat-red);
+// $theme-background: mat-palette($mat-red);
+
+.theme-blue {
+  &.day-mode {
+    $theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
+
+    // $custom-background-color: map_get($mat-blue-grey, 50);
+
+    // -or- Can set colour by hex value too
+    // $custom-background-color: #F5F6FA;
+
+    // $background: map-get($theme, background);
+    // $background: map_merge($background, (background: $custom-background-color));
+    // $theme: map_merge($theme, (background: $background));
+    @include angular-material-theme($theme);
+    @include theme-based-configurations($theme);
+    // $background: $background-color;
+  }
+
+  &.night-mode {
+    $theme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
+    @include angular-material-theme($theme);
+    @include theme-based-configurations($theme);
+  }
+}

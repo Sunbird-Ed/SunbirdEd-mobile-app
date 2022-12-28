@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="583px" height="238px" viewBox="0 0 583 238" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>career_path</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="583" height="238" rx="4"></rect>
+        <linearGradient x1="70.1898286%" y1="50.0018143%" x2="40.098902%" y2="51.2800892%" id="linearGradient-3">
+            <stop stop-color="#707070" offset="0%"></stop>
+            <stop stop-color="#C5C5C5" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="70.1898286%" y1="50.0040155%" x2="40.098902%" y2="52.8331393%" id="linearGradient-4">
+            <stop stop-color="#707070" offset="0%"></stop>
+            <stop stop-color="#C5C5C5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Screens" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home---Expanded" transform="translate(-121.000000, -1037.000000)">
+            <g id="Group-6" transform="translate(120.000000, 1037.000000)">
+                <g id="career_path" transform="translate(1.000000, 0.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <path d="M319,239 C427.404688,195.666667 507.376786,174 558.916295,174 C610.455803,174 642.817039,195.666667 656,239 L319,239 Z" id="Path" fill="url(#linearGradient-3)" opacity="0.1" mask="url(#mask-2)"></path>
+                    <path d="M23,4.54747351e-13 C54.3008041,56.8525269 95.5429407,85.2787904 146.72641,85.2787904 C197.909879,85.2787904 255.733248,56.8525269 320.196519,4.54747351e-13 L23,4.54747351e-13 Z" id="Path" fill="url(#linearGradient-4)" opacity="0.1" mask="url(#mask-2)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

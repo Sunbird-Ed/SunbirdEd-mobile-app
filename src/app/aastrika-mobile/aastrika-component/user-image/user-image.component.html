@@ -1,0 +1,8 @@
+<ng-container>
+  <mat-icon class="user-icon" *ngIf="imageType === 'initial'">person</mat-icon>
+  <span class="mat-app-background rounded-icon" *ngIf="imageType === 'rounded'">
+    <mat-icon class="user-icon">person</mat-icon>
+  </span>
+  <span class="name-initials-image font-normal ws-mat-primary-default-text ws-mat-accent-background"
+    *ngIf="imageType === 'name-initial'">{{ shortName }}</span>
+</ng-container>

@@ -858,7 +858,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
+        console.log('**************************************************************************')
+        this.router.navigate([`/${RouterLinks.AASTRIKA_HOME}`]);
+        //this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
       case 'SETTINGS': {

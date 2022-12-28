@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440px" height="268px" viewBox="0 0 1440 268" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>careers_background</title>
+    <defs>
+        <linearGradient x1="11.3849241%" y1="50%" x2="90.2386922%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#2C77A6" offset="0%"></stop>
+            <stop stop-color="#07446B" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="35.5586014%" y1="50.7042608%" x2="94.3536938%" y2="51.3206505%" id="linearGradient-2">
+            <stop stop-color="#2675A6" offset="0.0437062937%"></stop>
+            <stop stop-color="#084469" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-3" x="0" y="0" width="43" height="130" rx="8"></rect>
+        <linearGradient x1="90.3986845%" y1="52.0277286%" x2="18.4398457%" y2="50.0636463%" id="linearGradient-5">
+            <stop stop-color="#165B86" offset="0%"></stop>
+            <stop stop-color="#00395D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Screens" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home---Expanded" transform="translate(0.000000, -3557.000000)">
+            <g id="careers_background" transform="translate(0.000000, 3557.000000)">
+                <rect id="Rectangle" fill="url(#linearGradient-1)" x="0" y="0" width="1440" height="268"></rect>
+                <path d="M573,268 C736.884354,217.274369 861.605442,176.196547 947.163265,144.766534 C1032.72109,113.336521 1197,87.747676 1440,68 L1440,268 L1245.65378,268 L573,268 Z" id="Path-2" fill="url(#linearGradient-2)" opacity="0.515671503"></path>
+                <path d="M1244,141 L1282,141 L1282,262 C1282,265.313708 1279.31371,268 1276,268 L1250,268 C1246.68629,268 1244,265.313708 1244,262 L1244,141 L1244,141 Z" id="Rectangle-Copy-6" fill="#216793" opacity="0.232445126" transform="translate(1263.000000, 204.500000) rotate(-180.000000) translate(-1263.000000, -204.500000) "></path>
+                <g id="Rectangle-Copy-16" transform="translate(1277.000000, 138.000000)">
+                    <mask id="mask-4" fill="white">
+                        <use xlink:href="#path-3"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <path d="M21,32 L59,32 L59,124 C59,127.313708 56.3137085,130 53,130 L27,130 C23.6862915,130 21,127.313708 21,124 L21,32 L21,32 Z" fill="#216793" opacity="0.232445126" mask="url(#mask-4)" transform="translate(40.000000, 81.000000) rotate(-180.000000) translate(-40.000000, -81.000000) "></path>
+                </g>
+                <path d="M0,196 C218.814074,192.666667 371.288852,178.666667 457.424334,154 C543.559817,129.333333 632.751705,78 725,0 L0,0 L0,196 Z" id="Path-3" fill="url(#linearGradient-5)" opacity="0.501511347"></path>
+                <path d="M1278,150 L1316,150 L1316,262 C1316,265.313708 1313.31371,268 1310,268 L1284,268 C1280.68629,268 1278,265.313708 1278,262 L1278,150 L1278,150 Z" id="Rectangle-Copy-7" fill="#216793" opacity="0.729143415" transform="translate(1297.000000, 209.000000) rotate(-180.000000) translate(-1297.000000, -209.000000) "></path>
+                <path d="M1336,168 L1374,168 L1374,262 C1374,265.313708 1371.31371,268 1368,268 L1342,268 C1338.68629,268 1336,265.313708 1336,262 L1336,168 L1336,168 Z" id="Rectangle-Copy-18" fill="#216793" opacity="0.438616071" transform="translate(1355.000000, 218.000000) rotate(-180.000000) translate(-1355.000000, -218.000000) "></path>
+                <path d="M1224,106 L1262,106 L1262,262 C1262,265.313708 1259.31371,268 1256,268 L1230,268 C1226.68629,268 1224,265.313708 1224,262 L1224,106 L1224,106 Z" id="Rectangle-Copy-8" fill="#216793" opacity="0.729143415" transform="translate(1243.000000, 187.000000) rotate(-180.000000) translate(-1243.000000, -187.000000) "></path>
+                <path d="M947,77 L985,77 L985,262 C985,265.313708 982.313708,268 979,268 L953,268 C949.686292,268 947,265.313708 947,262 L947,77 L947,77 Z" id="Rectangle-Copy-9" fill="#165A85" opacity="0.729143415" transform="translate(966.000000, 172.500000) rotate(-180.000000) translate(-966.000000, -172.500000) "></path>
+                <path d="M893,34 L931,34 L931,262 C931,265.313708 928.313708,268 925,268 L899,268 C895.686292,268 893,265.313708 893,262 L893,34 L893,34 Z" id="Rectangle-Copy-10" fill="#1F648F" opacity="0.81905692" transform="translate(912.000000, 151.000000) rotate(-180.000000) translate(-912.000000, -151.000000) "></path>
+                <path d="M839,91 L877,91 L877,262 C877,265.313708 874.313708,268 871,268 L845,268 C841.686292,268 839,265.313708 839,262 L839,91 L839,91 Z" id="Rectangle-Copy-11" fill="#1F648F" opacity="0.81905692" transform="translate(858.000000, 179.500000) rotate(-180.000000) translate(-858.000000, -179.500000) "></path>
+                <path d="M785,176 L823,176 L823,262 C823,265.313708 820.313708,268 817,268 L791,268 C787.686292,268 785,265.313708 785,262 L785,176 L785,176 Z" id="Rectangle-Copy-12" fill="#165A85" opacity="0.729143415" transform="translate(804.000000, 222.000000) rotate(-180.000000) translate(-804.000000, -222.000000) "></path>
+                <path d="M219,176 L257,176 L257,262 C257,265.313708 254.313708,268 251,268 L225,268 C221.686292,268 219,265.313708 219,262 L219,176 L219,176 Z" id="Rectangle-Copy-13" fill="#216793" opacity="0.729143415" transform="translate(238.000000, 222.000000) rotate(-180.000000) translate(-238.000000, -222.000000) "></path>
+                <path d="M273,106 L311,106 L311,262 C311,265.313708 308.313708,268 305,268 L279,268 C275.686292,268 273,265.313708 273,262 L273,106 L273,106 Z" id="Rectangle-Copy-14" fill="#216793" opacity="0.729143415" transform="translate(292.000000, 187.000000) rotate(-180.000000) translate(-292.000000, -187.000000) "></path>
+                <path d="M327,158 L365,158 L365,262 C365,265.313708 362.313708,268 359,268 L333,268 C329.686292,268 327,265.313708 327,262 L327,158 L327,158 Z" id="Rectangle-Copy-15" fill="#216793" opacity="0.729143415" transform="translate(346.000000, 213.000000) rotate(-180.000000) translate(-346.000000, -213.000000) "></path>
+                <path d="M381,213 L419,213 L419,262 C419,265.313708 416.313708,268 413,268 L387,268 C383.686292,268 381,265.313708 381,262 L381,213 L381,213 Z" id="Rectangle-Copy-17" fill="#216793" opacity="0.729143415" transform="translate(400.000000, 240.500000) rotate(-180.000000) translate(-400.000000, -240.500000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

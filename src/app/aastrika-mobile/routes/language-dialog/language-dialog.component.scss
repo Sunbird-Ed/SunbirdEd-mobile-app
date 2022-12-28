@@ -1,0 +1,45 @@
+button.primary-color.mat-raised-button.mat-button-base.mat-primary {
+  background-color: rgb(63, 81, 181) !important;
+  font-size: 14px;
+  border-radius: 20px;
+  padding-right: 30px;
+  padding-left: 32px;
+  color: white !important;
+}
+
+
+.icon-rtl {
+  width: 23px;
+  position: absolute;
+  padding-top: 8px;
+  right: 65px;
+}
+
+.lang-box {
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep .mat-list-base {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px;
+}
+
+.form-control {
+  border-radius: 100px;
+}
+
+.btn-done {
+  background: #1C5D95;
+  border-radius: 50px;
+  color: #ffffff;
+  width: 101px;
+  height: 35px;
+  border: none;
+}
+
+.line-bottom {
+  border-bottom: 1px solid #DDDDDD;
+  text-transform: capitalize;
+}

@@ -1,0 +1,109 @@
+@import 'src/assets/styles/_ws-mixins.scss';
+@import 'src/assets/styles/_ws-vars.scss';
+
+%container-padding {
+  padding: $size-xl 12rem;
+  @include breakpoint-xs {
+    padding: $size-m $size-l;
+  }
+}
+
+.toc-body {
+  @extend %container-padding;
+  padding-top: 0px !important;
+  @include breakpoint-s {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+  .toc-links {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    z-index: 1;
+    .mat-tab-link {
+      font-size: 18px !important;
+      min-width:130px !important
+    }
+    .link-active {
+      color: #424242 !important;
+      border-bottom: 2px solid;
+    }
+  }
+}
+
+.hidden-xs-inline {
+  display: inline;
+  @include breakpoint-xs {
+    display: none;
+  }
+}
+.visible-xs-inline {
+  display: none;
+  @include breakpoint-xs {
+    display: inline;
+  }
+}
+.toc-discussion-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap-reverse;
+  .discussion {
+    flex: 1;
+    min-width: 1px;
+  }
+  .cohorts {
+    width: 28%;
+    margin-left: 48px;
+    @include breakpoint-s {
+      margin-left: $size-l;
+      min-width: 250px;
+    }
+    @include breakpoint-xs {
+      margin-left: 0;
+      margin-bottom: $size-l;
+      width: 100%;
+    }
+  }
+}
+
+.detailBar{
+  display: flex;
+}
+.editDetails{
+  margin: auto;
+  display: flex
+}
+::ng-deep .mat-tab-header-pagination-before {
+  padding-left: 0 !important;
+  margin-left: -5px;
+}
+::ng-deep .mat-tab-header-pagination-after {
+  padding-right: 0 !important;
+  margin-right: -5px;
+}
+::ng-deep .mat-expansion-panel-header, ::ng-deep .theme-igot.day-mode .mat-expansion-panel-header {
+    margin-top: -5px;
+    border-bottom: solid 1px #d9d9d9;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 16px;
+}
+@media screen and (max-width: 768px) {
+  .toc-body .toc-links .mat-tab-link{
+    min-width: 100px !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .toc-body .toc-links .mat-tab-link{
+    min-width: 90px !important;
+  }
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+}

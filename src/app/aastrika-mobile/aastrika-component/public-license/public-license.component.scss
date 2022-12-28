@@ -1,0 +1,12 @@
+@media (max-width: 360px) {
+    .license-link {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 250px;
+    }
+}
+
+::ng-deep .theme-igot.day-mode .mat-card:not([class*=mat-elevation-z]) {
+    box-shadow: none !important;
+}

@@ -1,0 +1,24 @@
+@import 'ws-vars';
+@import 'ws-mixins';
+
+%background-image-center {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+%page-center {
+  max-width: 1160px;
+  //800px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+%height-mat-toolbar-sibling {
+  height: calc(100% - #{$mat-toolbar-xs});
+
+  // padding: $size-m;
+  @include breakpoint-gt-xs {
+    height: calc(100% - #{$mat-toolbar-gt-xs});
+  }
+}

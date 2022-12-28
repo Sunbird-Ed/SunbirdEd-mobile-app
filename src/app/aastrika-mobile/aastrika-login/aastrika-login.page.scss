@@ -1,0 +1,149 @@
+.header1 {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 29px;
+}
+
+.header2 {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-size: 14px;
+  line-height: 29px;
+}
+
+.home-content {
+  margin: 20px;
+}
+
+.rdo-login {
+  height: 15px;
+  width: 15px;
+}
+
+.col-padding .item-padding {
+  padding: unset;
+}
+
+.lbl-login {
+  font-size: 14px;
+  font-weight: normal !important;
+  font-family: 'Roboto';
+  padding-left: 3px;
+}
+
+/* .txt-input {
+  --font-family: 'Roboto';
+  --border-radius: 8px;
+  --border: 1px solid #70707069;
+  --margin-bottom: 10px
+} */
+
+.btn-create {
+  --margin: 10px 20px 10px 20px !important;
+}
+
+.ws-btn {
+  --background: none !important;
+  --color: rgb(63, 81, 181) !important;
+  --line-height: 19px !important;
+  --border-radius: 20px !important;
+  --width: 90px !important;
+  --border: 1px solid rgb(63, 81, 181) !important;
+  --font-family: Roboto;
+  --font-weight: 400;
+  --box-shadow: unset;
+  --margin: 10px 20px 10px 20px;
+}
+
+.field {
+  margin: 1em 0 1em;
+  display: block;
+  font-family: "Poppins Regular";
+  position: relative;
+  letter-spacing: 0.2px;
+  text-align: center;
+}
+
+.btn-otp {
+  margin-top: 20px;
+}
+
+.box {
+  border-color: #70707069;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 20px;
+}
+
+ion-input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid #ccc;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+}
+
+ion-input[type=text]:focus {
+  border: 3px solid rgb(63, 81, 181);
+}
+
+.greenButton {
+  --font-style: normal;
+  --font-weight: 400;
+  --font-size: 16px;
+  color: #4BCA59 !important;
+  background-color: #fff !important;
+  border: 1px solid #4BCA59 !important;
+  border-radius: 50px;
+  width: 100%;
+  transition: all .25s ease-in;
+}
+
+.whatsApp {
+  position: absolute;
+    z-index: 6;
+    left: 53px;
+    top: 3px;
+    cursor: pointer;
+}
+
+.ui.fluid.button {
+  display: block;
+  font-family: 'Poppins Regular', 'Noto Sans', sans-serif;
+}
+
+.ui.button {
+  font-size: 14px;
+  border-radius: 50px;
+    transition: all .25s ease-in;
+}
+
+.ui.fluid.button, .ui.fluid.buttons {
+  width: 100%;
+}
+
+
+/*  ion-radio {
+    --border-radius: 4px;
+    --inner-border-radius: 4px;
+  
+    --color: #ddd;
+    --color-checked: #6815ec;
+  }
+  
+  ion-radio.ios {
+    width: 20px;
+    height: 20px;
+  
+    border: 2px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .radio-checked.ios {
+    border-color: #6815ec;
+  } */

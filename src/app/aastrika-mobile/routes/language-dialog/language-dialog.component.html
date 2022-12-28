@@ -1,0 +1,69 @@
+<div class="lang-box" *ngIf="languageCheckbox">
+  <button class="align-self-end" mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+  <div class="language">
+    <strong>
+      <h1 class="mb-1">Select Preferred Language for learning</h1>
+    </strong>
+    <p>You can change this setting under "Profile"</p>
+  </div>
+
+  <div class="search-box pb-2 d-none">
+    <img src="/fusion-assets/icons/search.png" class="icon-rtl" alt="">
+    <input class="form-control" placeholder="Search Language">
+  </div>
+
+
+  <mat-selection-list #language [(ngModel)]="preferredLanguage" (ngModelChange)="onNgModelChange($event)">
+    <mat-list-option class="line-bottom" checkboxPosition="before" [value]="language.id"
+      *ngFor="let language of preferredLanguageList">
+      {{language.lang}}
+    </mat-list-option>
+  </mat-selection-list>
+
+  <div mat-dialog-actions align="end" class="lang-done">
+    <button class="btn-done" (click)="multiLanguage(preferredLanguage)">Done</button>
+  </div>
+</div>
+
+
+
+<!-- radio button list -->
+
+
+<div class="lang-box" *ngIf="!languageCheckbox">
+
+  <button class="align-self-end" mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="language">
+    <strong>
+      <h1 class="mb-1">Select Preferred Language for learning</h1>
+    </strong>
+    <p>You can change this setting under "Profile"</p>
+  </div>
+
+  <div class="search-box pb-2 d-none">
+    <img src="/fusion-assets/icons/search.png" class="icon-rtl" alt="">
+    <input class="form-control" placeholder="Search Language">
+  </div>
+
+
+
+
+  <mat-selection-list #language>
+    <mat-radio-button class="line-bottom" checkboxPosition="before" *ngFor="let language of preferredLanguageList"
+      [value]="language" [checked]="language.id == preferredLanguage" (change)="preferredLanguage = $event.value">
+      {{language.lang}}
+    </mat-radio-button>
+
+  </mat-selection-list>
+
+  <div mat-dialog-actions align="end" class="lang-done">
+    <button class="btn-done" (click)="chooseLanguage(preferredLanguage)">Done</button>
+  </div>
+
+
+</div>

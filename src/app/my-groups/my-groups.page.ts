@@ -177,7 +177,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
 
   login() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_CLICKED);
-    this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
+    this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.AASTRIKA_HOME}});
+    //this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
   }
 
   async fetchGroupList() {

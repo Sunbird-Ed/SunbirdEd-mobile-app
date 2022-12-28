@@ -78,9 +78,13 @@ import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-pre
 import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
 import { ContentShareHandlerService } from '@app/services';
 import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
+import { AastrikaHeaderComponent } from '../aastrika-mobile/aastrika-component/aastrika-header/aastrika-header.component';
+import { AastrikaFooterComponent } from '../aastrika-mobile/aastrika-component/aastrika-footer/aastrika-footer.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
+    AastrikaHeaderComponent,
+    AastrikaFooterComponent,
     ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
@@ -159,6 +163,8 @@ import { ShowCertificateComponent } from './show-certificate-component/show-cert
   ],
   entryComponents: [
     ApplicationHeaderComponent,
+    AastrikaHeaderComponent,
+    AastrikaFooterComponent,
     ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     SbGenericPopoverComponent,
@@ -208,6 +214,8 @@ import { ShowCertificateComponent } from './show-certificate-component/show-cert
   ],
   exports: [
     ApplicationHeaderComponent,
+    AastrikaHeaderComponent,
+    AastrikaFooterComponent,
     ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,

@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="home-header">
+      <a>
+        <img
+          src="../../../assets/eagle/app_logos/aastar-logo.svg"
+          width="100px"
+          height="40px"
+        />
+      </a>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="home-content">
+  <div class="home-content">
+    <h1 class="non-register" i18n>Welcome!</h1>
+    <div class="header1">Login with your {{appName}} account</div>
+    <div class="header2">
+      <ion-radio-group value="otp">
+        <ion-row radio-group>
+          <ion-col class="col-padding">
+            <ion-item class="item-padding" lines="none">
+              <ion-radio class="rdo-login" value="otp" checked></ion-radio>
+              <ion-label class="lbl-login">Login with OTP</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col-padding">
+            <ion-item class="item-padding" lines="none">
+              <ion-radio class="rdo-login" value="password"></ion-radio>
+              <ion-label class="lbl-login">Login with Password</ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-radio-group>
+    </div>
+    <ion-input
+      class="txt-input mt-8"
+      type="text"
+      placeholder="Phone Number/Email ID"
+      autofocus
+      autocomplete="off"
+      onfocusin="inputBoxFocusIn(this)"
+      onfocusout="inputBoxFocusOut(this)"
+    ></ion-input>
+    <div class="btn-create">
+      <ion-button class="btn-otp" expand="block">Get OTP</ion-button>
+    </div>
+    <div class="field">
+      <ion-label>OR</ion-label>
+    </div>
+    <div class="form-group">
+      <ion-button
+        class="ws-btn"
+        type="submit"
+        id="login-btn"
+        fill="outline"
+        expand="block"
+      >
+        Create an Account
+      </ion-button>
+    </div>
+    <div class="btn-create">
+      <span class="whatsApp">
+        <img alt="Logo" src="../../../assets/fusion-assets/icons/whatsapp.png" width="30">
+    </span>
+      <a
+        class="ui fluid button greenButton"
+        href="https://wa.me/919632013414?text=Hi%2C%20Need%20help%20on%20Aastrika%20Platform"
+        target="_blank"
+        id="WhatsApp-loginOTP"
+        >Get Help on WhatsApp?</a
+      >
+    </div>
+  </div>
+</ion-content>

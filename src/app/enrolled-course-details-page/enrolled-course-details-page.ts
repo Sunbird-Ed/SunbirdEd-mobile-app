@@ -2560,7 +2560,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   navigateToDashboard(){
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
+    /* this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
+    {
+      state: {
+        hierarchyData: this.courseHeirarchy,
+        activity: this.activityData && this.activityData.activity,
+        group: this.activityData && this.activityData.group,
+        loggedinUser: this.userId
+      }
+    }); */
+    this.router.navigate([`/${RouterLinks.AASTRIKA_HOME}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
     {
       state: {
         hierarchyData: this.courseHeirarchy,

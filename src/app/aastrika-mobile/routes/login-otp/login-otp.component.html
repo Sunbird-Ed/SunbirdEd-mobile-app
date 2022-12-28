@@ -1,0 +1,37 @@
+
+<div class="login-page-content">
+  <div class="login-card">
+    <div class="img-box">
+      <img width="250" height="240" src="../../../../assets/fusion-assets/images/email-code.png">
+    </div>
+    <div class="check-email-text mt-6"><span i18n>Check your </span> <span *ngIf="emailPhoneType === 'email'" i18n>email</span>
+      <span *ngIf="emailPhoneType === 'phone'" i18n>SMS</span>!
+    </div>
+    <div class="enter-code-text mt-2 mb-4"><span i18n>Enter the </span><span *ngIf="emailPhoneType === 'email'" i18n>Code</span>
+      <span *ngIf="emailPhoneType === 'phone'" i18n>OTP</span>
+    </div>
+    <div class="input-content">
+      <div class="input-content-wrapper">
+        <form [formGroup]="loginOtpForm" id="form-login" action="" method="post">
+          <div class="form-group">
+            <input tabindex="1" id="code" i18n class="form-control input-box" formControlName="code" type="text"
+              autocomplete="off" placeholder="{{emailPhoneType === 'email'? 'Code' : 'OTP'}}">
+          </div>
+          <div class="mt-4 mb-4 activeLink">
+            <span i18n>Did not receive a </span><span *ngIf="emailPhoneType === 'phone'" i18n>OTP?</span><span
+              *ngIf="emailPhoneType === 'email'" i18n>mail?</span>
+            <span class="resend-text cursor-pointer" (click)="resendOTP(emailPhoneType)" i18n> Click Here </span> <span i18n>to resend</span>
+          </div>
+          <span *ngIf="!loginVerification">
+          <button class="form-group login-button mt-4 cursor-pointer" name="login" type="submit"
+            (click)="verifyOtp()" i18n>Next</button>
+          </span>
+          <span *ngIf="loginVerification">
+          <button class="form-group login-button mt-4 cursor-pointer" name="login" type="submit"
+          (click)="loginVerifyOtp()" i18n>Next</button>
+        </span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

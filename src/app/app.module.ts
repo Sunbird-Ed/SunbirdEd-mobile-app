@@ -84,6 +84,7 @@ import {LoginNavigationHandlerService} from '@app/services/login-navigation-hand
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
 import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -466,7 +467,8 @@ declare const sbutility;
     TermsAndConditionsPageModule,
     IonicStorageModule.forRoot(),
     CoreModule,
-    SbSearchFilterModule.forRoot('mobile')
+    SbSearchFilterModule.forRoot('mobile'),
+    MatSnackBarModule
   ],
   providers: [
     StatusBar,
@@ -534,7 +536,8 @@ declare const sbutility;
     StreamingMedia,
     { provide: QuestionCursor, useClass: QumlPlayerService },
     { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
-    TranslateJsonPipe
+    TranslateJsonPipe,
+    MatSnackBarModule
   ],
   bootstrap: [AppComponent],
   schemas: [

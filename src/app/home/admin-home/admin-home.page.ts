@@ -84,6 +84,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   ) {}
 
   ngOnInit() {
+    console.log('Admin home @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22222222')
     this.getUserProfileDetails();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.getUserProfileDetails();

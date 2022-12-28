@@ -1,0 +1,115 @@
+@import 'src/assets/styles/ws-common';
+@import 'src/assets/styles/ws-mixins';
+
+.login-page-content {
+  box-sizing: border-box;
+  position: relative;
+  margin: 10px auto 50% !important;
+  clear: left;
+  height: auto;
+  z-index: 0;
+  text-align: center;
+  // padding: $size-m;
+  @extend %page-center;
+  @extend %height-mat-toolbar-sibling;
+  padding: 0;
+  box-sizing: border-box;
+
+  @include breakpoint-gt-s {
+    max-width: 30%;
+  }
+
+  @include breakpoint-s {
+    max-width: 50%;
+    padding: 12px;
+  }
+
+  @include breakpoint-xs {
+    max-width: 90%;
+    margin: auto;
+  }
+}
+
+.login-card {
+  margin: 0;
+  padding: 20px 20px 30px 20px;
+  color: #000;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.check-email-text {
+  font-size: 26px;
+  line-height: 38px;
+}
+
+.enter-code-text {
+  font-size: 24px;
+  line-height: 29px;
+}
+
+.img-box {
+  width: 90%;
+  margin: auto;
+}
+
+.input-content {
+  position: absolute;
+}
+
+.input-box {
+  width: 295px;
+  height: 35px;
+  font-size: 16px;
+  line-height: 19px;
+  border: unset;
+}
+
+.login-button {
+  width: 98px;
+  height: 38px;
+  background: #1C5D95;
+  border-radius: 50px;
+  color: #fff;
+  border: 0;
+  font-size: 16px;
+  line-height: 19px;
+  position: absolute;
+  right: 0;
+}
+
+.resend-text {
+  color: #2873b2;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+@media screen and (min-width:600px) {
+  .login-button {
+    width: 100%;
+  }
+
+  .img-box {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width:600px) {
+  .input-box {
+    width: 88%;
+  }
+
+  .input-content {
+    width: 85%;
+  }
+
+  .login-button {
+    right: 12px;
+  }
+}
+
+.form-group {
+  border: 1px solid #bbb;
+}

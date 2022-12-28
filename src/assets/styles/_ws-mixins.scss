@@ -1,0 +1,83 @@
+@import 'ws-vars';
+
+@mixin retina {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (-o-min-device-pixel-ratio: 2/1),
+    only screen and (min-device-pixel-ratio: 2),
+    only screen and (min-resolution: 192dpi),
+    only screen and (min-resolution: 2dppx) {
+    @content;
+  }
+}
+@mixin print {
+  @media only print {
+    @content;
+  }
+}
+
+@mixin breakpoint-xs {
+  @media only screen and (max-width: 599px) {
+    @content;
+  }
+}
+@mixin breakpoint-s {
+  @media only screen and (min-width: 600px) and (max-width: 959px) {
+    @content;
+  }
+}
+@mixin breakpoint-m {
+  @media only screen and (min-width: 960px) and (max-width: 1279px) {
+    @content;
+  }
+}
+@mixin breakpoint-l {
+  @media only screen and (min-width: 1280px) and (max-width: 1919px) {
+    @content;
+  }
+}
+@mixin breakpoint-xl {
+  @media only screen and (min-width: 1920px) and (max-width: 5000px) {
+    @content;
+  }
+}
+@mixin breakpoint-lt-s {
+  @media only screen and (max-width: 599px) {
+    @content;
+  }
+}
+@mixin breakpoint-lt-m {
+  @media only screen and (max-width: 959px) {
+    @content;
+  }
+}
+@mixin breakpoint-lt-l {
+  @media only screen and (max-width: 1279px) {
+    @content;
+  }
+}
+@mixin breakpoint-lt-xl {
+  @media only screen and (max-width: 1919px) {
+    @content;
+  }
+}
+@mixin breakpoint-gt-xs {
+  @media only screen and (min-width: 600px) {
+    @content;
+  }
+}
+@mixin breakpoint-gt-s {
+  @media only screen and (min-width: 960px) {
+    @content;
+  }
+}
+@mixin breakpoint-gt-m {
+  @media only screen and (min-width: 1280px) {
+    @content;
+  }
+}
+@mixin breakpoint-gt-l {
+  @media only screen and (min-width: 1920px) {
+    @content;
+  }
+}

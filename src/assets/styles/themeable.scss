@@ -7,10 +7,13 @@ html[data-theme="JOYFUL"]{
   --app-primary-medium:#007AFF;
   --app-primary-light-2:#94CCF5;
   --app-primary-light:#C6E7FF;
-  --app-primary-background:#E9E8D9;
-  --app-primary-header:#FFD954;
+  --app-primary-background:#FFFFFF;
+  //--app-primary-background:#E9E8D9;
+  --app-primary-header:#F5F5F5;
+  //--app-primary-header:#FFD954;
   --app-primary-header-light:#FFE487;
-  --app-secondary-background:#F2F2EA;
+  --app-secondary-background:#F5F5F5;
+  //--app-secondary-background:#F2F2EA;
   --app-tertiary:#6236FF;
   --app-tertiary-light:#E0E1FD;
   --app-tertiary-background:#F3F7FB;
@@ -36,14 +39,19 @@ html[data-theme="JOYFUL"]{
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
   --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
+  --dark-text: #424242;
+
+  .ws-mat-primary-text {
+    --color: var(--dark-text) !important;
+  }
 
   ion-toolbar {
     --background: var(--app-primary-header);
     border-bottom-left-radius: 20px;
     ion-buttons{
       ion-button{
-        --background: var(--app-primary-header) !important;
-        --color: var(--app-primary) !important;
+        --background: var(--app-primary-header) ;
+        --color: var(--app-primary);
         box-shadow: none !important;
       }
     }
@@ -54,12 +62,12 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-button{
-    --background: var(--app-primary) !important;
-    --color: var(--app-white) !important;
-    --border-radius: 20px !important;
-    --border-color: var(--app-primary) !important;
+    --background: var(--app-primary);
+    --color: var(--app-white);
+    --border-radius: 20px;
+    --border-color: var(--app-primary);
     button{
-      box-shadow: var(--button-style-shadow) !important;
+      box-shadow: var(--button-style-shadow);
     }
   }
 
@@ -1735,6 +1743,31 @@ html[data-theme="JOYFUL"]{
   
   .header-ios ion-toolbar:last-of-type {
     --border-width: 0px !important;
+  }
+
+  .width-1-1 {
+    width: 100% !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+
+  .mt-5 {
+    margin-top: 1.25rem;
+  }
+
+  .mr-0 {
+    margin-right: 0;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .theme-igot.day-mode .mat-raised-button.mat-primary {
+    background-color: #f5d58d !important;
+    line-height: 40px !important;
   }
 
   // ************ iOS start *************

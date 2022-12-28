@@ -1,0 +1,34 @@
+{
+    "licenses": [
+        {
+            "licenseName": "CC BY",
+            "desc": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use.",
+            "link": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+            "licenseName": "CC BY-SA",
+            "desc": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use. If you remix, adapt, or build upon the material, you must license the modified material under identical terms.",
+            "link": "https://creativecommons.org/licenses/by-sa/4.0/"
+        },
+        {
+            "licenseName": "CC BY-NC",
+            "desc": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.",
+            "link": "https://creativecommons.org/licenses/by-nc/4.0/"
+        },
+        {
+            "licenseName": "CC BY-NC-SA",
+            "desc": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. If you remix, adapt, or build upon the material, you must license the modified material under identical terms.",
+            "link": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        },
+        {
+            "licenseName": "CC BY-ND",
+            "desc": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. ",
+            "link": "https://creativecommons.org/licenses/by-nd/4.0/"
+        },
+        {
+            "licenseName": "CC BY-NC-ND",
+            "desc": "This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, for noncommercial purposes only, and only so long as attribution is given to the creator.",
+            "link": "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+        }
+    ]
+}

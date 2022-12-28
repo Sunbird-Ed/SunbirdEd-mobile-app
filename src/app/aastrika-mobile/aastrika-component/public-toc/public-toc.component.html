@@ -1,0 +1,25 @@
+<ws-public-toc-banner [content]="tocData"></ws-public-toc-banner>
+
+<ng-container>
+  <div role="main" class="toc-body">
+    <!-- <nav mat-tab-nav-bar id="mat-nav" class="toc-links mt-4 mat-app-background">
+      <a mat-tab-link [routerLink]="'./overview'" (click)="toggleComponent('overview')" id="overview-link"
+        [ngClass]="{'ws-mat-primary-text link-active':  routelinK === 'overview'}" wsAppRetainScroll i18n>Overview</a>
+
+
+
+      <a *ngIf="content?.children?.length" mat-tab-link (click)="toggleComponent('chapters')"
+        [routerLink]="'./chapters'" [queryParams]="{batchId: batchId ,contentId: content.identifier}"
+        [ngClass]="{'ws-mat-primary-text link-active': routelinK === 'chapters'}" id="content-link" wsAppRetainScroll
+        i18n>Chapters</a>
+    </nav> -->
+
+    <mat-tab-group mat-align-tabs="start">
+      <mat-tab label="Overview">
+        <ws-public-toc-overview [tocData]="tocData"></ws-public-toc-overview>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- <router-outlet></router-outlet> -->
+  </div>
+</ng-container>
