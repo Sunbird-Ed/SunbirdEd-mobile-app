@@ -271,18 +271,7 @@ export class UserTypeSelectionPage implements OnDestroy {
             }
             this.profile = success;
             this.gotoNextPage();
-            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
-            correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
-            this.telemetryGeneratorService.generateAuditTelemetry(
-              Environment.ONBOARDING,
-              AuditState.AUDIT_UPDATED,
-              [AuditProps.PROFILE_TYPE],
-              AuditType.SELECT_USERTYPE,
-              undefined,
-              undefined,
-              undefined,
-              correlationlist
-            );
+            this.generateAuditEvents();
           }).catch(() => {
             return 'null';
           });
@@ -366,7 +355,7 @@ export class UserTypeSelectionPage implements OnDestroy {
           if (this.selectedUserType === ProfileType.ADMIN) {
             this.router.navigate([RouterLinks.SIGN_IN]);
           } else {
-            this.navigateToProfileSettingsPage(params);
+            this.navigateToProfileSettingsPage(params, true);
           }
         }
       }).catch(error => {
@@ -420,7 +409,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  async navigateToProfileSettingsPage(params) {
+  async navigateToProfileSettingsPage(params, isUpdateProfile? ) {
     const navigationExtras: NavigationExtras = { state: params };
     const options: NativeTransitionOptions = {
       direction: 'left',
@@ -431,6 +420,9 @@ export class UserTypeSelectionPage implements OnDestroy {
       fixedPixelsBottom: 0
     };
     this.nativePageTransitions.slide(options);
+    if(isUpdateProfile) {
+      this.generateAuditEvents();
+    }
     this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
   }
 
@@ -467,5 +459,20 @@ export class UserTypeSelectionPage implements OnDestroy {
       });
     }
     this.isUserTypeSelected = this.selectedUserType !== 'none' ? true : false;
+  }
+
+  generateAuditEvents(){
+    const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
+    correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
+    this.telemetryGeneratorService.generateAuditTelemetry(
+      Environment.ONBOARDING,
+      AuditState.AUDIT_UPDATED,
+      [AuditProps.PROFILE_TYPE],
+      AuditType.SELECT_USERTYPE,
+      undefined,
+      undefined,
+      undefined,
+      correlationlist
+    );
   }
 }
