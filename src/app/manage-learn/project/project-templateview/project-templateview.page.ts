@@ -270,7 +270,8 @@ export class ProjectTemplateviewPage implements OnInit {
         hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         detailsPayload: this.stateData ? this.stateData : null,
         templateId: this.templateId,
-        replaceUrl: true
+        replaceUrl: true,
+        certificate:false
       }
       this.projectService.getProjectDetails(payload);
     }
@@ -291,7 +292,8 @@ export class ProjectTemplateviewPage implements OnInit {
             isProfileInfoRequired: true,
             hasAcceptedTAndC: this.project.hasAcceptedTAndC,
             templateId: this.templateId,
-            replaceUrl: false
+            replaceUrl: false,
+            certificate:false
           }
           this.projectService.getProjectDetails(payload);
         })
