@@ -1369,6 +1369,7 @@
   "FRMELEMNTS_LBL_CERTIFICATION_CRITERIA":"Certificate criteria",
   "FRMELEMNTS_MSG_CERTIFICATION_NAME_DISPLAY":"This name will be printed on your improvement cerificate. Check if this is correct",
   "FRMELEMNTS_LBL_IMP_CERTIFICATE":"Improvement certificate",
-  "SUCCESSFULLY_COMPLETING_PROJECT": "For successfully completing the project"
-
+  "SUCCESSFULLY_COMPLETING_PROJECT": "For successfully completing the project",
+  "FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON":"Your project is submitted. You will receive a certificate soon if you meet the eligibility criteria.",
+  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project."
 }

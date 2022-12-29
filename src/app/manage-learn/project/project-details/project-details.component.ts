@@ -248,10 +248,7 @@ export class ProjectDetailsComponent implements OnInit {
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
       case 'certificate':
-        const request = { type:'project',name:this.projectDetails.title, project: this.projectDetails._id, certificate: this.projectDetails.certificate, templateUrl : this.projectDetails.certificate.templateUrl };
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-          state: { request }
-        });
+       this.getProjectsApi(true);
         break
     }
   }
@@ -287,13 +284,14 @@ export class ProjectDetailsComponent implements OnInit {
     })
   }
 
-  getProjectsApi() {
+  getProjectsApi(certificate?) {
     const payload = {
       projectId: this.projectId,
       solutionId: this.solutionId,
       isProfileInfoRequired: false,
       programId: this.programId,
-      templateId: this.templateId
+      templateId: this.templateId,
+      certificate : certificate
     };
     this.projectServ.getProjectDetails(payload);
   }
