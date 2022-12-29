@@ -277,11 +277,7 @@
                             {{training.completedDate | date :'dd/MM/yyyy'}}
                         </div>
                         <div class="batch-detail" [ngClass]="{'project-submitted': training.status === projectStatus.submitted}">
-<<<<<<< HEAD
                             {{training?.status | titlecase}}
-=======
-                            {{training?.status | testcase}}
->>>>>>> 09cce40e1 (ISSUE ED-87 fix : QA issues - ED-96,ED-84,ED-85)
                         </div>
                         <div>
                             <span [ngClass]="[training.style]"> {{ training.label | translate }}</span>
