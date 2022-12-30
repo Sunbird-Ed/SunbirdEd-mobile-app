@@ -372,7 +372,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.appGlobalService.isGuestUser) {
       if ((this.source === PageId.PERMISSION || this.source === PageId.ONBOARDING_PROFILE_PREFERENCES)
         && this.appGlobalService.isOnBoardingCompleted) {
-        if (this.appGlobalService.isProfileSettingsCompleted || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+        if (this.appGlobalService.isProfileSettingsCompleted) {
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
             this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' }, replaceUrl: true });
           } else {
