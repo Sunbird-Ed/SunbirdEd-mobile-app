@@ -277,7 +277,7 @@
                             {{training.completedDate | date :'dd/MM/yyyy'}}
                         </div>
                         <div class="batch-detail" [ngClass]="{'project-submitted': training.status === projectStatus.submitted}">
-                            {{training?.status | titlecase}}
+                            {{training?.status | testcase}}
                         </div>
                         <div>
                             <span [ngClass]="[training.style]"> {{ training.label | translate }}</span>
