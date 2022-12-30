@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { QrScannerIOSComponent } from '@app/app/components/qr-scanner-ios/qr-scanner-ios.component';
-import { ManageLearnCertificateService } from '@app/app/manage-learn/core/services/manage-learn-certificate.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { AppGlobalService, CommonUtilService, QRScannerResultHandler, TelemetryGeneratorService } from '@app/services/';
 import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
@@ -54,8 +53,7 @@ export class SunbirdQRScanner {
     private appVersion: AppVersion,
     private toastController: ToastController,
     private router: Router,
-    private modalCtrl: ModalController,
-    private projectCert : ManageLearnCertificateService
+    private modalCtrl: ModalController
   ) {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
@@ -259,11 +257,10 @@ private getProfileSettingConfig() {
                 corRelationList);
               this.generateImpressionTelemetry(source, dialCode);
               this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
+
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
-            } else if(scannedData.includes('ProjectCertificate')) {
-              this.projectCert.getProjectCertificate(scannedData);
-            }else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
+            } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
               this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);
