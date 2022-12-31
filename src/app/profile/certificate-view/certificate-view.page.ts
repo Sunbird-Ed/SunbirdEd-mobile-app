@@ -76,7 +76,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.loadCertificate();
+    // this.loadCertificate();
   }
   getProjectCertificate(){
     const config ={
