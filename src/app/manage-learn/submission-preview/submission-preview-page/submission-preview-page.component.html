@@ -32,7 +32,7 @@
                 <h5 class="instacnce">{{ question?.instanceIdentifier }} {{ j + 1 }}</h5>
                 <div *ngFor="let answer of instance; let k = index" class="matrixQuestion">
                   <div *ngIf="answer?.value">
-                    <h3>Q{{ k + 1 }}. {{ answer?.question[0] }}</h3>
+                    <h3>{{ answer?.questionNumber}}. {{ answer?.question[0] }}</h3>
                     <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
                       Ans. {{ answer?.value }}
                     </p>
@@ -53,11 +53,11 @@
               <div *ngFor="let answer of question.pageQuestions; let k = index" class="matrixQuestion">
                 <div *ngIf="answer?.responseType === 'matrix'; else notMatrix">
                   <div *ngIf="answer.value">
-                    <h3>Q{{ i + 1 }}. {{ answer?.question[0] }}</h3>
+                    <h3>{{ answer?.questionNumber}}. {{ answer?.question[0] }}</h3>
                     <div *ngFor="let instance of answer.value; let j = index" class="instanceQuest">
                       <h5 class="instacnce">{{ answer?.instanceIdentifier }} {{ j + 1 }}</h5>
                       <div *ngFor="let ans of instance; let k = index" class="matrixQuestion">
-                        <h3>Q{{ k + 1 }}. {{ ans?.question[0] }}</h3>
+                        <h3>{{ ans?.questionNumber}}.  {{ ans?.question[0] }}</h3>
                         <p *ngIf="ans?.responseType !== 'radio' && ans?.responseType !== 'multiselect' && ans?.responseType !== 'date'">
                           Ans. {{ ans?.value }}
                         </p>
@@ -76,7 +76,7 @@
                 </div>
                 <ng-template #notMatrix>
                   <div class="instanceQuest" *ngIf="answer?.value">
-                    <h5>Q{{ k + 1 }}. {{ answer?.question[0] }}</h5>
+                    <h5>{{ answer?.questionNumber}}. {{ answer?.question[0] }}</h5>
                     <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
                       Ans. {{ answer?.value }}
                     </p>
