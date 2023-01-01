@@ -9,6 +9,7 @@ import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
 import { CertificateService, InteractType } from 'sunbird-sdk';
+import { Location } from '@angular/common';
 declare var cordova;
 
 @Component({
@@ -53,7 +54,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private toastController: ToastController,
     private popoverCtrl: PopoverController,
     public platform: Platform,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location
   ) {
   }
 
@@ -181,6 +183,10 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         ref.insertCSS({ code: "body{height: 100%;}" });
       };
       setTimeout(funcExecute, 1000);
+      let that = this;
+      ref.addEventListener('exit', function (event) {
+        that.location.back();
+      });
     } else {
       this.certificateContainer.nativeElement.innerHTML = template;
     }

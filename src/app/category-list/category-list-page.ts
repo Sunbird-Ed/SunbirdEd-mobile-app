@@ -1,4 +1,3 @@
-import { PreferenceKey } from './../app.constant';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
@@ -31,14 +30,12 @@ import { ContentUtil } from '@app/util/content-util';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ScrollToService } from '@app/services/scroll-to.service';
-import { FormConstants } from '@app/app/form.constants';
 import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '@app/util/object.util';
-
 
 @Component({
     selector: 'app-category-list-page',
@@ -94,6 +91,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     layoutConfiguration = {
         layout: 'v4'
     };
+    defaultImage = '';
     appName = '';
     categoryDescription = '';
     categoryTitle = '';
@@ -184,6 +182,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
         }, true);
+        (await this.commonUtilService.convertFileToBase64('assets/imgs/ic_launcher.png')).subscribe((img) => {
+            this.defaultImage = img;
+        });
     }
 
     async ionViewWillEnter() {

@@ -103,4 +103,25 @@
     border-radius: 50%;
     z-index: 100;
   }
+
+.sb-player-container-ios {
+  width: 100%; 
+  background-color: black;
+  .sb-arrow-back
+  {
+    @include padding($base-block-space * 0.5);
+    color: $white;
+  }
+  .sb-circle
+  {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    height:($base-block-space * 3);
+    width:1.5rem;
+  //  background-color: $white;
+    border-radius: 50%;
+    z-index: 100;
+  }
+}
   //

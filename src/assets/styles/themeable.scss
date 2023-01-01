@@ -38,6 +38,8 @@ html[data-theme="JOYFUL"]{
   --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
+  --sbt-theme-purple-selectbox-lbg: #F2EEFF;
+
   ion-toolbar {
     --background: var(--app-primary-header);
     border-bottom-left-radius: 20px;
@@ -1786,11 +1788,12 @@ html[data-theme="JOYFUL"]{
     &::after {
       content: '';
       width: 100%;
-      height: 3.125rem;
+      height: 10.75rem;
       display: block;
       position: absolute;
       z-index: 0;
       top: 0;
+      left: 0;
       border-bottom-left-radius: 20px;
       background-color: var(--app-primary-header) !important;
       background-image: url(/assets/imgs/header-background.svg);
