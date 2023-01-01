@@ -801,6 +801,42 @@ ion-toast.green-toast{
   --background: #{map-get($colors, office_green)};
 }
 
+html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
+  .loading-wrapper,
+  ion-toast {
+    --background: #{map-get($colors, granite_gray)};
+  }
+}
+
+html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+  sb-library-card sb-library-card-v4 .sb--card.sb--card--theme2 {
+    .sb--card__info{
+      .subject-info,
+      .sb--card__meta{
+        color: white !important;
+      }
+    }
+  }
+
+  sb-course-curiculum-card .sb--card.sb--card--course--curiculum .sb--card__main-area{
+    .sb--card__info .sb--card__title {
+      background: transparent !important;
+    }
+  }
+
+  lib-lib-entry {
+    &.main_discuss_lib {
+      .ng2-tag-input__text-input {
+        width: 100%;
+        color: white !important;
+      }
+      .discussion-start-modal .discussion-start-modal-content .discussion-start-form .start-form-content .start-form-label {
+        color: white !important;
+      }
+    }
+  }
+}
+
 .btn-block {
   margin: 0 !important;
   position: relative;
@@ -2095,7 +2131,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
-}
+  }
   .message,.projects-labels, .clr-primary {
     color: $white;
   }
@@ -2116,13 +2152,13 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
   .button-clr{
   color: map-get($colors, black) !important;
-}
-.clr-downloaded-btn{
-  color:green !important;
-}
-ion-icon.mg-popup-btn-icon.md.hydrated{
-  filter: invert(0) !important;
-}
+  }
+  .clr-downloaded-btn{
+    color:green !important;
+  }
+  ion-icon.mg-popup-btn-icon.md.hydrated{
+    filter: invert(0) !important;
+  }
   .loading-spinner.sc-ion-loading-md,
   .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md{
     filter: invert(0) !important;
@@ -2142,7 +2178,7 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
     .action-btn{
       color: #000 !important;
       --background: #FFD954  !important;
-  }
+    }
 
   }
   .attachments-list{
@@ -2150,8 +2186,11 @@ ion-icon.mg-popup-btn-icon.md.hydrated{
       color: #000 !important;
     }
   }
-  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked ion-label {
-    color: white !important;
+  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked {
+    ion-label {
+    color: balck !important;
+    }
+    --ion-background-color: transparent
   }
 }
 
