@@ -66,17 +66,7 @@ android {
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
-
-        buildConfigField "boolean", "DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE", "${display_framework_categories_in_profile}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER", "${display_signin_footer_card_in_course_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER", "${display_signin_footer_card_in_library_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER", "${display_signin_footer_card_in_profile_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT", "${display_signin_footer_card_in_library_tab_for_student}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT", "${display_signin_footer_card_in_profile_tab_for_student}"
-        buildConfigField "boolean", "TRACK_USER_TELEMETRY", "${track_user_telemetry}"
-        buildConfigField "boolean", "CONTENT_STREAMING_ENABLED", "${content_streaming_enabled}"
-        buildConfigField "boolean", "DISPLAY_ONBOARDING_CATEGORY_PAGE", "${display_onboarding_category_page}"
-        buildConfigField "boolean", "OPEN_RAPDISCOVERY_ENABLED", "${open_rapdiscovery_enabled}"
+        
         buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
     }
 
