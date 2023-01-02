@@ -1038,7 +1038,7 @@
   "FRMELEMNTS_LBL_THIS_WEEK": "This Week",
   "FRMELEMNTS_LBL_FILTER": "Filters",
   "FRMELEMNTS_LBL_VIEW_PROJECT": "View project",
-  "FRMELEMNTS_BTN_LOAD_MORE": "Load More",
+  "FRMELEMNTS_BTN_LOAD_MORE": "Load more",
   "FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS": "Your Project has been updated successfully",
   "FRMELEMNTS_LBL_PROJECT_CREATE": "Project Created",
   "FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS": "Your Project has been created successfully",
@@ -1360,9 +1360,16 @@
   "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile number for State or Org",
   "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email address of State or Org",
   "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit details from your Profile page",
-  "FRMELEMENTS_BTN_APPLY_FILTER":"Apply Filter",
+  "FRMELEMENTS_BTN_APPLY_FILTER":"Apply filter",
   "FRMELEMNTS_LBL_START_IMP_POPUP_MSG1":"You must click on the Start improvement button to access and edit the project details.",
   "FRMELEMNTS_LBL_START_IMP_POPUP_MSG2":"Click on the Start improvement to get complete access to the content",
   "FRMELEMNTS_LBL_TO_SUBMIT_PROJECT":"To finish submission, click on Submit button below",
-  "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED":"The file is too large and cannot be uploaded. The file you are tying to upload has exceeded the maximum file size (50 MB)"
+  "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED":"The file is too large and cannot be uploaded. The file you are tying to upload has exceeded the maximum file size (50 MB)",
+  "FRMELEMNTS_MSG_NO_DATA_FOR_LOCAL_SEARCH":"Click on the Add {{entity}} button to add your {{entity}} to observe.",
+  "FRMELEMNTS_LBL_CERTIFICATION_CRITERIA":"Certificate criteria",
+  "FRMELEMNTS_MSG_CERTIFICATION_NAME_DISPLAY":"This name will be printed on your improvement cerificate. Check if this is correct",
+  "FRMELEMNTS_LBL_IMP_CERTIFICATE":"Improvement certificate",
+  "SUCCESSFULLY_COMPLETING_PROJECT": "For successfully completing the project",
+  "FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON":"Your project is submitted. You will receive a certificate soon if you meet the eligibility criteria.",
+  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project."
 }

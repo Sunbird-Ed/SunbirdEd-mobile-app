@@ -80,7 +80,7 @@ export class NavigationService {
         });
     }
 
-    navigateToEditPersonalDetails(profile, pageId) {
+    navigateToEditPersonalDetails(profile, pageId,payload?) {
         if (this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
@@ -92,7 +92,8 @@ export class NavigationService {
                 state: {
                     profile,
                     isShowBackButton: true,
-                    source: pageId
+                    source: pageId,
+                    payload
                 }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
