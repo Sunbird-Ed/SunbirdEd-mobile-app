@@ -20,7 +20,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { ObservationService } from "../observation.service";
 import { storageKeys } from "../../storageKeys";
 import { Subscription } from "rxjs";
-import { EntitySearchLocalComponent } from "../../shared";
+
 @Component({
   selector: "app-observation-detail",
   templateUrl: "./observation-detail.component.html",
@@ -45,7 +45,6 @@ export class ObservationDetailComponent implements OnInit {
   generatedKey;
   private _networkSubscription?: Subscription;
   networkFlag;
-  searchQuery : string;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -183,8 +182,7 @@ export class ObservationDetailComponent implements OnInit {
         component: EntityfilterComponent,
         componentProps: {
           data: this.observationId,
-          solutionId: this.solutionId,
-          entity : this.entityType
+          solutionId: this.solutionId
         }
       });
       await entityListModal.present();
@@ -328,28 +326,5 @@ export class ObservationDetailComponent implements OnInit {
     if (this._networkSubscription) {
       this._networkSubscription.unsubscribe();
     }
-  }
-  async localSearch(){
-    let entityListModal;
-    entityListModal = await this.modalCtrl.create({
-      component: EntitySearchLocalComponent,
-      componentProps: {
-        data: { entities : this.entities, entityType : this.entityType}
-      }
-    });
-    await entityListModal.present();
-    await entityListModal.onDidDismiss().then(async entityList => {
-      switch (entityList.data && entityList.data.action) {
-        case "onClick":
-          this.entityClickAction(entityList.data.entity);
-          return;
-        case "addEntity":
-          this.addEntity();
-          return;
-        case "remove":
-          this.removeEntity(entityList.data.entity);
-          return;
-      }
-    });
   }
 }

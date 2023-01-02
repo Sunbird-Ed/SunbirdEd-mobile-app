@@ -8,7 +8,6 @@ import { CommonUtilService } from '@app/services';
 })
 export class ItemListCardComponent implements OnChanges {
   @Input() title: any;
-  @Input() code: any;
   @Input() subTitle: any;
   @Input() description:any;
   @Input() case:any ={subTitle:'titleCase', description:'titleCase'}

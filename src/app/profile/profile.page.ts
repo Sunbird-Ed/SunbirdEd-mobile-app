@@ -81,9 +81,6 @@ import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmen
 import { OrganizationSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { LocationHandler } from '@app/services/location-handler';
-import { urlConstants } from '../manage-learn/core/constants/urlConstants';
-import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-import { statusType } from '../manage-learn/core';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -118,11 +115,9 @@ export class ProfilePage implements OnInit {
 
   readonly DEFAULT_PAGINATION_LIMIT = 3;
   readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
-  readonly DEFAULT_PROJECTS_LIMIT = 1;
   rolesLimit = 2;
   badgesLimit = 2;
   myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
-  myImprovementsLimit = this.DEFAULT_PROJECTS_LIMIT;
   learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   startLimit = 0;
   custodianOrgId: string;
@@ -158,9 +153,6 @@ export class ProfilePage implements OnInit {
   learnerPassbookCount: any;
   enrolledCourseList = [];
   categories: any;
-  projects=[];
-  projectsCount =0;
-  projectStatus =statusType;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -190,8 +182,7 @@ export class ProfilePage implements OnInit {
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,
-    private locationHandler: LocationHandler,
-    private unnatiDataService : UnnatiDataService
+    private locationHandler: LocationHandler
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -278,7 +269,6 @@ export class ProfilePage implements OnInit {
           this.getEnrolledCourses(refresher);
           this.searchContent();
           this.getSelfDeclaredDetails();
-          this.getProjectsCertificate();
         });
       })
       .catch(async error => {
@@ -442,9 +432,6 @@ export class ProfilePage implements OnInit {
         await this.getLearnerPassbook();
         this.learnerPassbookLimit = this.learnerPassbook.length;
         break;
-        case 'myImprovements':
-          this.myImprovementsLimit = this.projects.length;
-          break;
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -587,33 +574,6 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  downloadCertificate(data,type?){
-    if(type && type == 'project'){
-    this.projectCertificateDownload(data);
-    }else{
-      this.downloadTrainingCertificate(data)
-    }
-  }
-  async projectCertificateDownload(project){
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-      return;
-    }
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-          const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
-          if (this.platform.is('ios')) {
-            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
-          } else {
-            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-              state: { request }
-            });
-          }
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
-  }
   async downloadTrainingCertificate(course: {
     courseName: string,
     dateTime: string,
@@ -1281,13 +1241,5 @@ export class ProfilePage implements OnInit {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.categories = categories.supportedFrameworkConfig;
     });
-  }
-  getProjectsCertificate(){
-    const config ={
-      url : urlConstants.API_URLS.PROJECT_CERTIFICATES
-    }
-    this.unnatiDataService.get(config).subscribe(resp =>{
-      this.projects =  resp.result.data;
-    })
   }
 }
