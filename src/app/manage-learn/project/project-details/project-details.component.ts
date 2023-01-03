@@ -4,12 +4,13 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
-import { ToastService, NetworkService, ProjectService, statusType, UtilsService } from '../../core';
+import { LoaderService, ToastService, NetworkService, ProjectService, statuses, statusType, UtilsService } from '../../core';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
+import { SyncService } from '../../core/services/sync.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
-import { AlertController, ModalController } from '@ionic/angular';
+import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
@@ -43,7 +44,7 @@ export class ProjectDetailsComponent implements OnInit {
   taskCount = 0;
   projectDetailsCopy;
   taskNoDataFound="FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS"
-  certificateCriteria:any =[];
+
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -126,16 +127,6 @@ export class ProjectDetailsComponent implements OnInit {
           if (success.docs.length) {
             this.categories = [];
             this.projectDetails = success.docs.length ? success.docs[0] : {};
-            if(this.projectDetails.certificate){
-              this.certificateCriteria =[];
-              let criteria = Object.keys(this.projectDetails?.certificate?.criteria?.conditions);
-              criteria.forEach(element => {
-                let config ={
-                  name:this.projectDetails?.certificate?.criteria?.conditions[element].validationText
-                }
-                this.certificateCriteria.push(config);
-              })
-            }
             this.setActionButtons();
             this.isNotSynced = this.projectDetails ? (this.projectDetails.isNew || this.projectDetails.isEdit) : false;
             this.projectDetails.categories.forEach((category: any) => {
@@ -198,11 +189,7 @@ export class ProjectDetailsComponent implements OnInit {
       defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
     if (this.projectDetails.status === statusType.submitted) {
-      if(this.projectDetails.certificate){
-        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS.concat(actions.CERTIFICATE_ACTION);
-      }else{
-        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
-      }
+      defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
     }
     this.projectActions = defaultOptions;
   }
@@ -247,9 +234,6 @@ export class ProjectDetailsComponent implements OnInit {
       case 'edit':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
-      case 'certificate':
-       this.getProjectsApi(true);
-        break
     }
   }
 
@@ -284,14 +268,13 @@ export class ProjectDetailsComponent implements OnInit {
     })
   }
 
-  getProjectsApi(certificate?) {
+  getProjectsApi() {
     const payload = {
       projectId: this.projectId,
       solutionId: this.solutionId,
       isProfileInfoRequired: false,
       programId: this.programId,
-      templateId: this.templateId,
-      certificate : certificate
+      templateId: this.templateId
     };
     this.projectServ.getProjectDetails(payload);
   }

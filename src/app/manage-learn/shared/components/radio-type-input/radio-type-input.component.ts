@@ -69,6 +69,8 @@ export class RadioTypeInputComponent implements OnInit {
         hint,
       },
     });
+    // await hintModal.onDidDismiss(data => {
+    // });
     hintModal.present();
   
   }
