@@ -81,14 +81,6 @@ export const actions = {
     }
   ],
 
-  CERTIFICATE_ACTION:{
-    title: "CERTIFICATE",
-    icon: "ribbon",
-    action: "certificate",
-    color: 'success',
-    id:'certificate'
-  },
-
   TASK_FILE_DESCRIPTION:{
     label:'FRMELEMNTS_LBL_TASK_ATTACHMENTS_DESCRIPTION'
   },

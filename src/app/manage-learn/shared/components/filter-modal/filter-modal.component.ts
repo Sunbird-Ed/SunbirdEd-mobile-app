@@ -36,7 +36,6 @@ export class FilterModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataList = [];
     this.search('');
   }
 
@@ -50,6 +49,7 @@ export class FilterModalComponent implements OnInit {
     if (searchText == null || searchText == undefined) {
       searchText = '';
     }
+    this.dataList = [];
     this.searchText = searchText;
 
     this.type == 'entity' ? this.serachEntity(searchText) : this.searchProgramByEntity(searchText);
@@ -57,6 +57,7 @@ export class FilterModalComponent implements OnInit {
   async searchProgramByEntity(searchText: any) {
     this.loader.startLoader();
     let payload = await this.utils.getProfileData();
+
     const config = {
       url:
         urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
@@ -67,7 +68,7 @@ export class FilterModalComponent implements OnInit {
     this.unnatiSrvc.post(config).subscribe(
       (data) => {
         this.loader.stopLoader();
-        this.dataList = this.dataList.concat(data.result.data);
+        this.dataList = data.result.data;
       },
       (error) => {
         this.loader.stopLoader();
@@ -79,6 +80,7 @@ export class FilterModalComponent implements OnInit {
   }
   getEntityTypes() {
     this.utils.getMandatoryEntitiesList().then((data) => {
+      console.log(data, 'data 109');
       this.entityTypes = data;
     });
   }
