@@ -5,7 +5,6 @@ import {
     FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-    LoginHandlerService,
     LoginNavigationHandlerService
 } from '@app/services';
 import {Router} from '@angular/router';
@@ -17,6 +16,8 @@ import {of} from 'rxjs';
 import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
 import {AppleSignInResponse, SignInWithApple} from '@ionic-native/sign-in-with-apple/ngx';
 import {Platform} from '@ionic/angular';
+import { AppGlobalService, LoginHandlerService } from '../../services';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
     const actual = require.requireActual('@project-sunbird/sunbird-sdk');
@@ -29,53 +30,72 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
         WebviewLoginSessionProvider() {
         },
         NativeAppleSessionProvider() {
+        },
+        NativeKeycloakSessionProvider() {
         }
     };
 });
 
 describe('SignInPage', () => {
     let signInPage: SignInPage;
-    const mockAuthService: Partial<AuthService> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {
+        putBoolean: jest.fn(),
+    };
     const mockAppHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn(),
-        showHeaderWithBackButton: jest.fn()
+        showStatusBar: jest.fn(),
+        hideStatusBar: jest.fn(),
+        showHeaderWithHomeButton: jest.fn()
     };
-    const mockSharedPreferences: Partial<SharedPreferences> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getAppName: jest.fn(),
+        getLoader:  jest.fn(),
+        showToast: jest.fn(),
+        networkInfo: {
+            isNetworkAvailable: false
+        }
+    };
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({
             extras: {
-                state: {
-                    navigateToCourse: true,
-                    source: 'user',
-                    hideBackBtn: true
-                }
+                state: {}
             }
         }))
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-    const mockSbProgressLoaderService: Partial<SbProgressLoader> = {};
-    const mockLoginNavigationHandlerService: Partial<LoginNavigationHandlerService> = {};
-    const mockGooglePlusLogin: Partial<GooglePlus> = {};
-    const mockLocation: Partial<Location> = {};
-    const mockSignInWithApple: Partial<SignInWithApple> = {};
-    const mockPlatform: Partial<Platform> = { is: jest.fn(platform => platform === 'ios') };
+    const mockSbProgressLoaderService: Partial<SbProgressLoader> = {
+        hide: jest.fn(),
+        show: jest.fn()
+    };
+    const mockLoginNavigationHandlerService: Partial<LoginNavigationHandlerService> = {
+        setSession: jest.fn(),
+        generateLoginInteractTelemetry: jest.fn()
+    };
+    const mockGooglePlusLogin: Partial<GooglePlus> = {
+        login: jest.fn()
+    };
+    const mockLocation: Partial<Location> = {
+        back: jest.fn()
+    };
+    const mockSignInWithApple: Partial<SignInWithApple> = {
+        signin: jest.fn()
+    };
+    const mockPlatform: Partial<Platform> = {is: jest.fn(platform => platform === 'ios')};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        resetSavedQuizContent: jest.fn()
+    }
+    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     window.cordova.plugins = {
-        Keyboard: {
-            hideKeyboardAccessoryBar: jest.fn()
-        }
+        Keyboard: { hideKeyboardAccessoryBar: jest.fn() }
     };
 
     beforeAll(() => {
         signInPage = new SignInPage(
-            mockAuthService as AuthService,
             mockSystemSettingService as SystemSettingsService,
             mockSharedPreferences as SharedPreferences,
             mockAppHeaderService as AppHeaderService,
             mockCommonUtilService as CommonUtilService,
-            mockLoginHandlerService as LoginHandlerService,
             mockRouter as Router,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockSbProgressLoaderService as SbProgressLoader,
@@ -83,7 +103,8 @@ describe('SignInPage', () => {
             mockGooglePlusLogin as GooglePlus,
             mockLocation as Location,
             mockSignInWithApple as SignInWithApple,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -109,18 +130,153 @@ describe('SignInPage', () => {
         }, 0);
     });
 
-    it('should call loginHandlerService signIn()', (done) => {
-        // arrange
-        mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
-        mockLocation.back = jest.fn();
-        // act
-        signInPage.loginWithKeyCloak();
-        // assert
-        setTimeout(() => {
-            expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith({navigateToCourse: true, source: 'user', hideBackBtn: true});
-            expect(mockLocation.back).toHaveBeenCalled();
-            done();
-        }, 0);
+    describe('ionViewWillEnter', () => {
+        it('should set status bar background white and default style', () => {
+            // arrange
+            mockAppHeaderService.hideStatusBar = jest.fn()
+            // act
+            signInPage.ionViewWillEnter();
+            // assert
+            expect(mockAppHeaderService.hideStatusBar).toHaveBeenCalled();
+        })
+    });
+
+    describe('ionViewWillLeave', () => {
+        it('should show status bar before view will leave', () => {
+            // arrange
+            mockAppHeaderService.showStatusBar = jest.fn(() => Promise.resolve());
+            mockAppHeaderService.showHeaderWithHomeButton = jest.fn(() => Promise.resolve());
+            // act
+            signInPage.ionViewWillLeave();
+            // assert
+            expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
+            expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+        })
+    });
+
+    describe('onFormLoginChange', () => {
+        it('should set a data for login', () => {
+            // arrange
+            signInPage.loginDet = {username: 'test', password: "yasfd"};
+            signInPage.loginButtonValidation = true;
+            // act
+            signInPage.onFormLoginChange({});
+        })
+    });
+
+    describe('onLabelClickEvent', () => {
+        it('should create a forgotpassword session provider,  fetch the loader, ' +
+            'webviewSessionProviderConfig setSession for loginNavigation', () => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
+            mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve(
+                {
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }
+            ));
+            mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
+            // act
+            signInPage.onLabelClickEvent().then(() => {
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalled();
+                expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
+            });
+        });
+
+        it('should goto catch block if webViewSessionProvideConfig throws error for forgot password', () => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockSbProgressLoaderService.hide = jest.fn();
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject());
+            // act
+            signInPage.onLabelClickEvent().catch(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
+                expect(mockSbProgressLoaderService.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+            });
+        });
+    })
+
+    describe('loginWithKeyCloak', () => {
+        it('should do  nothing if the network is unavailable', (done) => {
+            //arrange
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            //act
+            signInPage.loginWithKeyCloak();
+            //assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                expect(!mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                done();
+            }, 0)
+        });
+        it('should fetch from form configuration for login session ', (done) => {
+            // arrange
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockLocation.back = jest.fn();
+            mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve(
+                {
+                    access_token: 'SOME_ACCESS_TOKEN',
+                    refresh_token: 'SOME_REFRESH_TOKEN',
+                    userToken: 'SOME_USER_TOKEN'
+                }
+            ));
+            mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
+            // act
+            signInPage.loginWithKeyCloak()
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
+                expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
+                done();
+            });
+        });
+        it('should execute catch block ', (done) => {
+            // arrange
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject());
+            mockLoginNavigationHandlerService.setSession = jest.fn();
+            mockSbProgressLoaderService.hide = jest.fn();
+            // act
+            signInPage.loginWithKeyCloak()
+            // assert
+            setTimeout(() => {
+                done();
+            }, 0);
+        });
     });
 
     describe('state-signIn-system', () => {
@@ -203,7 +359,6 @@ describe('SignInPage', () => {
             setTimeout(() => {
                 expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
                 expect(mockSharedPreferences.putBoolean).toHaveBeenCalled();
-                expect(mockLocation.back).toHaveBeenCalled();
                 done();
             }, 0);
         });

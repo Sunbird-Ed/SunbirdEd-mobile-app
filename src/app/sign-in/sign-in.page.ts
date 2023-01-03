@@ -1,11 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {
+    AppGlobalService,
     AppHeaderService,
     CommonUtilService,
     FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-    LoginHandlerService
 } from '@app/services';
 import {
     WebviewStateSessionProviderConfig,
@@ -14,11 +14,11 @@ import {
     WebviewSessionProviderConfig,
     WebviewLoginSessionProvider,
     NativeGoogleSessionProvider,
-    AuthService,
     SystemSettingsService,
     SignInError,
     SharedPreferences,
-    NativeAppleSessionProvider
+    NativeAppleSessionProvider,
+    NativeKeycloakSessionProvider
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
@@ -33,6 +33,7 @@ import {
     ASAuthorizationAppleIDRequest
 } from '@ionic-native/sign-in-with-apple/ngx';
 import { Platform } from '@ionic/angular';
+import { FieldConfig } from 'common-form-elements';
 
 @Component({
     selector: 'app-sign-in',
@@ -43,14 +44,15 @@ import { Platform } from '@ionic/angular';
 export class SignInPage implements OnInit {
     appName = '';
     skipNavigation: any;
+    loginConfig: FieldConfig<any>[] = [];
+    loginButtonValidation: boolean = false;
+    loginDet: any;
 
     constructor(
-        @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private appHeaderService: AppHeaderService,
         private commonUtilService: CommonUtilService,
-        private loginHandlerService: LoginHandlerService,
         private router: Router,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private sbProgressLoader: SbProgressLoader,
@@ -58,29 +60,124 @@ export class SignInPage implements OnInit {
         private googlePlusLogin: GooglePlus,
         private location: Location,
         private signInWithApple: SignInWithApple,
-        public platform: Platform
+        public platform: Platform,
+        private appGlobalService: AppGlobalService,
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
-        if(extrasData && extrasData.hideBackBtn) {
-            this.appHeaderService.hideHeader();
-        } else {
-            this.appHeaderService.showHeaderWithBackButton();
-        }
+        this.appHeaderService.hideHeader();
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
             window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
         }
     }
+            
+    ionViewWillEnter() {
+        this.appHeaderService.hideStatusBar();
+    }
+
+    ionViewWillLeave() {
+        this.appHeaderService.showStatusBar();
+        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
+    }
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
+        this.login();
     }
 
-    loginWithKeyCloak() {
-        this.loginHandlerService.signIn(this.skipNavigation).then(() => {
+    async login() {
+        this.loginConfig = [
+            {
+                code: "Email",
+                type: "input",
+                templateOptions: {
+                    type: "text",
+                    label: "Enter Email address / mobile number",
+                    placeHolder: "user@example.com / 9XXXXXXXX9"
+                }
+            },
+            {
+                code: "Password",
+                type: "input",
+                templateOptions: {
+                    type: "password",
+                    label: "Password",
+                    placeHolder: "Enter your password",
+                    showIcon: {
+                        show: true,
+                        image: {
+                            active: 'assets/imgs/eye.svg',
+                            inactive: 'assets/imgs/eye-off.svg'
+                        },
+                        direction: 'right'
+                    },
+                    labelHtml: {
+                        contents: `<span class="fgt-pwsd-lbl">Forgot Password ?</span>`,
+                    }
+                }
+            }
+        ]
+    }
+
+    onFormLoginChange(event) {
+        this.loginDet = {username: event.Email, password: event.Password };
+        this.loginButtonValidation = Object.values(event).every(x => (x !== null && x !== ''));
+    }
+                
+    async onLabelClickEvent() {
+        const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
+        let webviewForgotPasswordSessionProviderConfig: WebviewSessionProviderConfig;
+        let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
+        await webviewSessionProviderConfigLoader.present();
+        try {
+            webviewForgotPasswordSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('login');
+            webviewForgotPasswordSessionProviderConfig.context = "password";
+            webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
+            await webviewSessionProviderConfigLoader.dismiss();
+        } catch (e) {
+            await this.sbProgressLoader.hide({id: 'login'});
+            await webviewSessionProviderConfigLoader.dismiss();
+            this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+            return;
+        }
+        const webViewForgotPasswordSession = new WebviewLoginSessionProvider(
+            webviewForgotPasswordSessionProviderConfig,
+            webviewMigrateSessionProviderConfig
+        );
+        await this.loginNavigationHandlerService.setSession(webViewForgotPasswordSession, this.skipNavigation, InteractSubtype.KEYCLOAK)
+        .then(() => {
             this.navigateBack(this.skipNavigation);
         });
+    }
+
+    async loginWithKeyCloak() {
+        this.appGlobalService.resetSavedQuizContent();
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        } else {
+            this.loginNavigationHandlerService.generateLoginInteractTelemetry(InteractType.LOGIN_INITIATE, InteractSubtype.KEYCLOAK, '');
+            const loginSessionProviderConfigloader = await this.commonUtilService.getLoader();
+            
+            let keycloakLoginSessionProviderConfig: WebviewSessionProviderConfig;
+            let keycloakMigrateSessionProviderConfig: WebviewSessionProviderConfig;
+            
+            await loginSessionProviderConfigloader.present();
+            try {
+                keycloakLoginSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('login');
+                keycloakMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
+                await loginSessionProviderConfigloader.dismiss();
+            } catch (e) {
+                this.sbProgressLoader.hide({id: 'login'});
+                await loginSessionProviderConfigloader.dismiss();
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+                return;
+            }
+            const nativeSessionKeycloakProvider = new NativeKeycloakSessionProvider(keycloakLoginSessionProviderConfig, this.loginDet)
+            await this.loginNavigationHandlerService.setSession(nativeSessionKeycloakProvider, this.skipNavigation, InteractSubtype.KEYCLOAK)
+            .then(() => {
+                this.navigateBack(this.skipNavigation);
+            })
+        }
     }
 
     async loginWithStateSystem() {
