@@ -13,12 +13,13 @@ import {Router} from '@angular/router';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {AppHeaderService, UtilityService} from '../../../services';
 import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
-import {of, Subscription, throwError} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 
 window['sbutility'] = {
     removeFile: jest.fn(),
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
 };
+window.console.error = jest.fn()
 
 describe('AboutUsComponent', () => {
     let aboutUsComponent: AboutUsComponent;
@@ -176,6 +177,7 @@ describe('AboutUsComponent', () => {
     describe('ionViewDidLeave', () => {
         it('should remove sub utility file ', (done) => {
             // arrange
+            window['sbutility'].removeFile = jest.fn((fn) => fn())
             // act
             aboutUsComponent.ionViewDidLeave();
             // asert
@@ -187,6 +189,9 @@ describe('AboutUsComponent', () => {
         })
         it('should catch error on remove sub utility file ', (done) => {
             // arrange
+            window['sbutility'].removeFile = jest.fn((success, error) => {
+                error({})
+            })
             // act
             aboutUsComponent.ionViewDidLeave();
             // asert
@@ -236,7 +241,7 @@ describe('AboutUsComponent', () => {
                 dismiss}
             ));
             mockSharedPreferences.putString = jest.fn(() => of())
-            mockSharedPreferences.getString = jest.fn(() => of('false'))
+            mockSharedPreferences.getString = jest.fn(() => of(false)) as any
             // act 
             aboutUsComponent.shareInformation()
             // assert
@@ -259,6 +264,31 @@ describe('AboutUsComponent', () => {
                 {present,
                 dismiss}
             ));
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
+                error({})
+            })
+            // act 
+            aboutUsComponent.shareInformation()
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
+                expect(mockContentService.getContents).toHaveBeenCalled()
+                expect(window['sbutility'].shareSunbirdConfigurations).toThrowError();
+                done()
+            }, 0);
+        })
+
+        it('should return without sharing information, if config file path is false, if no loader', (done) => {
+            // arrange
+            const present = jest.fn(() => Promise.resolve());
+            const dismiss = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            mockProfileService.getAllProfiles = jest.fn(()=> of([]))
+            mockContentService.getContents = jest.fn(() => of([]))
+            mockCommonUtilService.getLoader = jest.fn(() => undefined);
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
+                error({})
+            })
             // act 
             aboutUsComponent.shareInformation()
             // assert
@@ -284,6 +314,9 @@ describe('AboutUsComponent', () => {
             mockSharedPreferences.putString = jest.fn(() => of())
             mockSharedPreferences.getString = jest.fn(() => of('true'))
             mockSocialSharing.share = jest.fn(() => Promise.reject())
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
+                success({})
+            })
             // act 
             aboutUsComponent.shareInformation()
             // assert
