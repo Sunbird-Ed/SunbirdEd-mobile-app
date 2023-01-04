@@ -801,6 +801,10 @@ ion-toast.green-toast{
   --background: #{map-get($colors, office_green)};
 }
 
+ion-toast.red-toast{
+  --background: #{map-get($colors, vivid_red)};
+}
+
 html[data-theme="JOYFUL"][data-mode="DARKMODE"].ios {
   .loading-wrapper,
   ion-toast {
