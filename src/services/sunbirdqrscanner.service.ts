@@ -213,11 +213,7 @@ private getProfileSettingConfig() {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
           if (scannedData === 'skip') {
-            if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-              this.stopScanner();
-            } else {
-              this.getProfileSettingConfig();
-            }
+            this.stopScanner();
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
               InteractSubtype.NO_QR_CODE_CLICKED,

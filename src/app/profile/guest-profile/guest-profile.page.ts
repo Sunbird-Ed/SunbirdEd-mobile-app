@@ -162,13 +162,7 @@ export class GuestProfilePage implements OnInit {
 
   refreshSignInCard() {
     const profileType = this.appGlobalService.getGuestUserType();
-
-    if (this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
-      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT) {
-      this.showSignInCard = true;
-    } else {
-      this.showSignInCard = false;
-    }
+    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
   editGuestProfile(isChangeRoleRequest: boolean, attribute) {

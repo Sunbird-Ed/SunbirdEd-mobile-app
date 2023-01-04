@@ -182,7 +182,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      this.startOpenrapDiscovery();
+      //this.startOpenrapDiscovery();
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
@@ -747,7 +747,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
-    if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
       return new Observable((observer) => {
         (window).openrap.startDiscovery(
           (response: { ip: string, actionType: 'connected' | 'disconnected' }) => {
@@ -779,7 +778,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }),
         mapTo(undefined)
       ).toPromise();
-    }
   }
 
   private async checkAppUpdateAvailable() {

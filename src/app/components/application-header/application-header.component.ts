@@ -520,8 +520,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   private refreshLoginInButton() {
     const profileType = this.appGlobalService.getGuestUserType();
-    this.showLoginButton = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
-        this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT;
+    this.showLoginButton = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
   private async checkCurrentOrientation() {

@@ -381,11 +381,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.showSignInCard = false;
 
     if (this.guestUser) {
-      if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
-        this.showSignInCard = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;
+      this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
+      if (this.showSignInCard) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       } else if (profileType === ProfileType.STUDENT) {
-        this.showSignInCard = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT;
         this.audienceFilter = AudienceFilter.GUEST_STUDENT;
       }
     } else {
