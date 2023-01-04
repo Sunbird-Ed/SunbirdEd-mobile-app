@@ -212,7 +212,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
             });
             if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
                 this.formField.aggregate.groupSortBy.forEach((data) => {
-                    data.name.preference = selectedData;
+                    if (data.name && data.name.preference && data.name.preference.length) {
+                        data.name.preference.push(selectedData);
+                    } else {
+                        data.name.preference = selectedData;
+                    }
              });
             }
         }
