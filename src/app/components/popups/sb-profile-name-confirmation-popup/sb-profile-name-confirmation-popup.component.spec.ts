@@ -93,7 +93,8 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
             // assert
             expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
                 mockProfileData,
-                PageId.PROFILE_NAME_CONFIRMATION_POPUP
+                PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+                ''
             );
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
         });
