@@ -13,9 +13,7 @@
     </ion-list>
     <app-item-list-card [title]="data?.name"  [id]="data?._id"
       (cardSelect)="selectedProgram($event)" *ngFor="let data of programs">
-      <div class="certificate-tag" certificate *ngIf="data?.certificateTemplateId">
-        {{'CERTIFICATE' | translate}}
-      </div></app-item-list-card>
+   </app-item-list-card>
     <app-no-data *ngIf="!programs?.length"></app-no-data>
 
   </ion-content>

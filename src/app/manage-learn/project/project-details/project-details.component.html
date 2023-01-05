@@ -1,7 +1,7 @@
 <ion-content class="ion-padding">
 
   <app-metadata-details translucent="true" [data]="cardMetaData" id="projectMetaDataCard">
-    <div class="certificate-tag" certificate *ngIf="projectDetails?.certificateTemplateId">
+    <div class="certificate-tag" certificate *ngIf="projectDetails?.certificate">
       {{'CERTIFICATE' | translate}}
     </div>
     <div class="sb-dt-card-actions">
@@ -62,7 +62,7 @@
     <app-accordion-list [data]="projectDetails?.learningResources" (actionEvent)="openResource($event)"
       [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" *ngIf="projectDetails?.learningResources?.length">
     </app-accordion-list>
-    <app-accordion-list *ngIf="projectDetails?.criteria?.length" [data]="projectDetails?.criteria" [showCard]="false"
+    <app-accordion-list *ngIf="certificateCriteria.length" [data]="certificateCriteria" [showCard]="false"
     [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
 

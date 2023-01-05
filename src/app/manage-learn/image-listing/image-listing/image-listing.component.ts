@@ -10,7 +10,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 
-declare var cordova: any;
+declare let cordova: any;
 
 @Component({
   selector: 'app-image-listing',
@@ -179,7 +179,7 @@ export class ImageListingComponent implements OnInit {
   }
 
   cloudImageUpload() {
-    var options: FileUploadOptions = {
+    const options: FileUploadOptions = {
       fileKey: this.imageList[this.uploadIndex].file,
       fileName: this.imageList[this.uploadIndex].file,
       chunkedMode: false,
@@ -279,10 +279,6 @@ export class ImageListingComponent implements OnInit {
         }
         this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
         this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
-        const options = {
-          _id: this.submissionId,
-          name: this.schoolName,
-        };
         this.loader.stopLoader();
         history.go(-2);
       },
@@ -404,7 +400,6 @@ export class ImageListingComponent implements OnInit {
 
   constructMatrixObject(question) {
     const value = [];
-    const currentEvidence = this.currentEvidence;
 
     for (const instance of question.value) {
       let eachInstance = {};
