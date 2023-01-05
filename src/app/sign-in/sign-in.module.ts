@@ -8,6 +8,7 @@ import { SignInPageRoutingModule } from './sign-in-routing.module';
 
 import { SignInPage } from './sign-in.page';
 import {TranslateModule} from '@ngx-translate/core';
+import { CommonFormElementsModule } from 'common-form-elements';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {TranslateModule} from '@ngx-translate/core';
         FormsModule,
         IonicModule,
         SignInPageRoutingModule,
-        TranslateModule
+        TranslateModule,
+        CommonFormElementsModule
     ],
   declarations: [SignInPage]
 })

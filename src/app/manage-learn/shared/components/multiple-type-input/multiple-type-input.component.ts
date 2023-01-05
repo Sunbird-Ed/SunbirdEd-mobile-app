@@ -80,6 +80,8 @@ export class MultipleTypeInputComponent implements OnInit {
         hint,
       },
     });
+    // await hintModal.onDidDismiss(data => {
+    // });
     hintModal.present();
   }
 }

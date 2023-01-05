@@ -1078,10 +1078,45 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  .login-div {
+    sb-form {
+      sb-textbox {
+        input {
+          box-sizing: border-box;
+          width: 86vw;
+          height: 2.5rem;
+          border: 0.063rem solid #024F9D !important;
+          border-radius: 0.75rem !important;
+          background-color: #FFFFFF !important;
+          font-size: 0.75rem !important;
+          padding-left: 0.938rem !important;
+        }
+        input:focus {
+          border: 0.063rem solid #024F9D !important;
+        }
+         input::placeholder {
+          color: var(--app-lighter-gray);
+          margin-left: 0 !important;
+          font-size: 0.75rem !important;
+          font-weight: normal !important;
+        }
+        .sb-input {
+          label {
+            display: inline !important;
+          }
+          .fgt-pwsd-lbl {
+            color: #024F9D;
+            float: right;
+        }
+      }
+      }
+    }
+  }
+
   // permission page
   app-permission{
     .permission-container{
-      margin-right: 16px;
+      margin-right: 1rem;
     }
   }
 
