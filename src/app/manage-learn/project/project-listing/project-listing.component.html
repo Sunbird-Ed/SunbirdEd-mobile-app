@@ -20,7 +20,7 @@
   </div>
   <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title" id="projectsCard"
     [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">
-    <div class="certificate-tag" certificate *ngIf="project?.certificateTemplateId">
+    <div class="certificate-tag" certificate *ngIf="project?.certificate || project?.certificateTemplateId">
       {{'CERTIFICATE' | translate}}
     </div>
   </app-item-list-card>

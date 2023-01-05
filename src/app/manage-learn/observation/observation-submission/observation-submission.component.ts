@@ -332,12 +332,6 @@ export class ObservationSubmissionComponent implements OnInit {
       aseessmemtData.assessment.evidences[evidenceIndex].externalId,
       assessment._id
     );
-    const options = {
-      _id: assessment._id,
-      name: assessment.name,
-      selectedEvidence: evidenceIndex,
-      entityDetails: aseessmemtData
-    };
       this.router.navigate([RouterLinks.QUESTIONNAIRE], {
         queryParams: {
           submisssionId: assessment._id,

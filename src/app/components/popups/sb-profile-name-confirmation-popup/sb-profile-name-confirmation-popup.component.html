@@ -12,29 +12,28 @@
             <img src="assets/imgs/profile_name_confirmation.png" alt="Certificate of completion">
         </div>
 
+
         <div class="sb-popover-content-details">
             <div>{{'FRMELEMNTS_LBL_PROFTITLE' | translate}}:</div>
-            <div class="pnc-profile-name mt-8">
+            <div class="pnc-profile-name mt-8" [ngClass]="{'word-wrap-name' : projectContent}">
                 <span>{{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}</span>
                 <span (click)="onProfilePageClick()">
                     <img src="assets/imgs/edit-icon.svg" alt="edit-name" />
                 </span>
             </div>
-            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_NAMEONCERT' | categoryKeyTranslate: content }} </div>
+            <div class="pnc-padding-32" *ngIf="content"> {{'FRMELEMNTS_MSG_NAMEONCERT' | categoryKeyTranslate: content }} </div>
+            <div class="pnc-padding-32" *ngIf="projectContent"> {{'FRMELEMNTS_MSG_CERTIFICATION_NAME_DISPLAY' | translate }} </div>
             <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_EDITCERTNAME' | translate: {'%appName': appName} }} </div>
             <div>
-                <ion-checkbox class="pnc-checkbox" color="secondary" checked="false" [(ngModel)]="doNotShowAgain">
+                <ion-checkbox class="pnc-checkbox"  [style.color]="projectContent ? 'primary' : 'secondary'" checked="false" [(ngModel)]="doNotShowAgain">
                 </ion-checkbox>
                 <p class="pnc-checkbox-desc"> {{'FRMELEMNTS_CKBX_CERTMSG' | translate}} </p>
             </div>
-        </div>
-    </div>
-</ion-content>
 
 <ion-footer>
     <div class="sb-popover-footer">
-        <button class="sb-popover-action-btn popover-color" (click)="onSubmitClick()">
-            {{'START_LEARNING' | translate}}
+        <button class="sb-popover-action-btn popover-color" [ngClass]="{'custom-btn-txt-transform-none' : buttonLabel == 'FRMELEMNTS_LBL_START_IMPROVEMENT'}" (click)="onSubmitClick()">
+            {{buttonLabel | translate}}
         </button>
     </div>
 </ion-footer>
