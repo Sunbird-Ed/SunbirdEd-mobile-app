@@ -36,7 +36,7 @@ export const urlConstants = {
     OBSERVATION_REPORT_SOLUTION_LIST: '/api/observationSubmissions/mlsurvey/v1/solutionList?',
     GENERIC_REPORTS: '/api/reports/mlreports/v1/fetch',
     PROJECT_TEMPLATE_DETAILS: '/api/project/mlprojects/v1/templates/details/',
-    ALL_EVIDENCE: '/api/observations/mlsurvey/v1/listAllEvidences',
+    ALL_EVIDENCE: '/api/observations/mlreports/v1/listAllEvidences',
     TEMPLATE_DETAILS:'/api/solutions/mlcore/v1/details/',//+SOL ID
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
