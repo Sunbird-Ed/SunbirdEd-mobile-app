@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
@@ -12,6 +12,8 @@ import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
 import { AppGlobalService } from '@app/services';
 import { PreferenceKey } from '@app/app/app.constant';
+import { Subscription } from 'rxjs';
+
 import {
   SharedPreferences
 } from 'sunbird-sdk';
@@ -66,6 +68,9 @@ export class ProjectTemplateviewPage implements OnInit {
   hideNameConfirmPopup = false;
   certificateCriteria:any =[];
   userId;
+  clickedOnProfile :boolean = false;
+  public backButtonFunc: Subscription;
+
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public params: ActivatedRoute,
@@ -79,7 +84,7 @@ export class ProjectTemplateviewPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private alert: AlertController,
     private toast :ToastService,
-  
+    private platform : Platform
   ) {
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
@@ -138,18 +143,27 @@ export class ProjectTemplateviewPage implements OnInit {
  async ngOnInit() {
   this.userId = await this.appGlobalService.getActiveProfileUid();
   const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
- this.hideNameConfirmPopup = await this.preferences.getBoolean(key).toPromise();
+  this.hideNameConfirmPopup = await this.preferences.getBoolean(key).toPromise();
+  }
+  ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-  }
-
-  ionViewWillEnter() {
+    this.clickedOnProfile ? this.showProfileNameConfirmationPopup():'';
+    this.registerDeviceBackButton();
     this.templateDetailsInit();
   }
+  handleBackButton() {
+      this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
+  }
 
+  registerDeviceBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.handleBackButton();
+    });
+  }
   async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
@@ -347,6 +361,20 @@ export class ProjectTemplateviewPage implements OnInit {
     })
    }
    private async showProfileNameConfirmationPopup() {
+     let params ={
+       isTargeted :this.isTargeted,
+        programId: this.programId,
+        solutionId :this.solutionId,
+        isATargetedSolution :this.isATargetedSolution ,
+        type  :this.isAssignedProject 
+     }
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
+      queryParams: params,
+      skipLocationChange: false,
+      state: {
+        "referenceFrom": "link",
+    }})
+    this.clickedOnProfile = true;
     const popUp = await this.popoverController.create({
       component: ProfileNameConfirmationPopoverComponent,
       componentProps: {
@@ -359,6 +387,7 @@ export class ProjectTemplateviewPage implements OnInit {
     if (data !== undefined) {
       if (data.buttonClicked) {
         this.isStarted = true;
+        this.clickedOnProfile = false;
         this.doAction();
       }
     }
