@@ -275,13 +275,13 @@
                     <div class="bolder heading f16">
                         <span>{{'FRMELEMNTS_LBL_IMP_CERTIFICATE' | translate}} ({{projects?.length}})&lrm;</span>
                         <span role="button" aria-label="Refresh"><ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
-                            (click)="getEnrolledCourses(true, true)"></ion-icon></span>
+                            (click)="getProjectsCertificate()"></ion-icon></span>
                     </div>
                     <div class="content">
                         <div *ngFor="let training of (projects | slice : startLimit:myImprovementsLimit) |sortBy: 'status' : 'asc'; let i = index;"
                             [ngClass]="{'flex-nowrap': i !== projects.length-1, 'flex-nowrap-last': i == projects.length-1}">
                             <div class="training-1">
-                                <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(training)">
+                                <div class="fw sb__ellipsis sb__ellipsis--two">
                                     {{training.title}}
                                 </div>
                                 <div class="batch-detail">
