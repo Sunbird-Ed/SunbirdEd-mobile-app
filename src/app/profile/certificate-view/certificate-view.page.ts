@@ -45,6 +45,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   headerConfig: any;
   onPopupOpen = false;
   projectData:any;
+  message:string;
   constructor(
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
@@ -66,7 +67,17 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     let paramData = this.router.getCurrentNavigation().extras.state.request;
       if( paramData.type == 'project'){
         this.projectData =  paramData;
-        this.getProjectCertificate();
+        let keys = Object.keys(this.projectData.certificate);
+        if( this.projectData.certificate &&  this.projectData.certificate.eligible && this.projectData.certificate.osid){
+          this.getProjectCertificate();
+        }else{
+          if((this.projectData.certificate && (keys[this.projectData.certificate.eligible]  && !this.projectData.certificate.eligible) ) || (this.projectData.certificate && this.projectData.certificate.eligible && !this.projectData.certificate.osid)){
+            this.message = 'FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON'
+          }else
+          if((this.projectData.certificate && !keys[this.projectData.certificate.eligible] )){
+            this.message = 'FRMELEMNTS_MSG_NOT_MET_CERTIFCATE'
+          }
+        }
       }else{
         this.pageData =paramData;
         this.loadCertificate();

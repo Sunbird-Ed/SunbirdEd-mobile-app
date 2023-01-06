@@ -1,6 +1,6 @@
 <ion-content hide-header-footer
              class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-
+<div *ngIf="pageData || (projectData && projectData.certificate.eligible && projectData.certificate.osid)">
   <div class="cert-container">
     <strong class="label">{{'CERTIFICATE' | translate}}</strong>
     <div class="cert-details">
@@ -16,7 +16,10 @@
       </div>
     </div>
   </div>
-
+  </div>
+  <div class="text-msg" *ngIf="(projectData  && !projectData.certificate.eligible) || (projectData && !projectData.certificate.osid)">
+    {{message | translate}}
+    </div>
   <div #scrollWrap
        class="scroll-wrap"
        (pan)="onGestureEvent($event)"
