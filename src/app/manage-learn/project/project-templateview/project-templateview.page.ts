@@ -156,7 +156,8 @@ export class ProjectTemplateviewPage implements OnInit {
     this.templateDetailsInit();
   }
   handleBackButton() {
-      this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
+    this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
+    this.backButtonFunc.unsubscribe();
   }
 
   registerDeviceBackButton() {
