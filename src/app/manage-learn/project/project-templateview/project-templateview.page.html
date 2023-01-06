@@ -1,3 +1,9 @@
+<ion-toolbar class="ion-padding-start">
+  <ion-title></ion-title>
+  <ion-buttons (click)="handleBackButton() " slot="start" class="padding">
+    <ion-icon role="button" name="arrow-back"  aria-label="close" slot="icon-only"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
 <ion-content class="ion-padding">
   <app-metadata-details translucent="true" [data]="metaData">
     <div class="certificate-tag" certificate *ngIf="project?.certificateTemplateId">
