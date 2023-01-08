@@ -22,7 +22,8 @@ describe('ContentPlayerHandler', () => {
         readJSON: jest.fn(() => Promise.resolve({}))
     };
     const mockFile: Partial<File> = {
-        checkFile: jest.fn(() => Promise.resolve(true))
+        checkFile: jest.fn(() => Promise.resolve(true)),
+        readAsText: jest.fn(() => Promise.resolve(""))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
@@ -154,6 +155,7 @@ describe('ContentPlayerHandler', () => {
             mockFile.checkFile = jest.fn(() => Promise.reject());
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('5'));
             mockCanvasPlayerService.readJSON = jest.fn(() => Promise.reject());
+            mockFile.readAsText = jest.fn(() => Promise.reject());
             // act
             contentPlayerHandler.launchContentPlayer(mockContent, false, true, { course: mockCourse } as any, false);
             // assert
