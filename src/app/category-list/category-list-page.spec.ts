@@ -534,7 +534,7 @@ describe('CategoryListPage', () => {
                                 "groupSortBy": [{
                                     "name": {
                                       "order": "asc",
-                                      "preference": ["accountancy",["subject 1"]]
+                                      "preference": ['audience', ['subject 1'], ["accountancy"],["subject 1"]]
                                     },
                                   }]},
                             filterPillBy: null
