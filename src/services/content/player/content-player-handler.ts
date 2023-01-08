@@ -114,15 +114,15 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
-                            data['data'] = json;
+                        this.file.readAsText(`file://${data.metadata.basePath}/`, 'index.json').then((response)=> {
+                            data['data'] = response;
                             this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
                                         corRelation: contentInfo.correlationList, isCourse } });
-
                         }).catch((e) => {
-                            console.error('readJSON error', e);
-                        });
+                            console.error('readAsText error', e);
+                        })
+                    
                     });
                 } else {
                     this.router.navigate([RouterLinks.PLAYER],
