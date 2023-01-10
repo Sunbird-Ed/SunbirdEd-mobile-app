@@ -104,7 +104,7 @@ export class ContentPlayerHandler {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
+                        this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then((json) => {
                             data['data'] = JSON.stringify(json);
                             this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
