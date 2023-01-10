@@ -1219,7 +1219,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
     this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
     if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].basePath ?? this.config['metadata'].contentData.streamingUrl;
     }
     this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
     this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
