@@ -17,8 +17,13 @@
     </div>
   </div>
   </div>
-  <div class="text-msg" *ngIf="(projectData  && !projectData.certificate.eligible) || (projectData && !projectData.certificate.osid)">
-    {{message | translate}}
+  <div *ngIf="(projectData  && !projectData.certificate.eligible) || (projectData && !projectData.certificate.osid)">
+    <div class="cert-container">
+    <strong class="label">{{'CERTIFICATE' | translate}}</strong>
+    <div class="text-msg" >
+      {{message | translate}}
+      </div>
+  </div>
     </div>
   <div #scrollWrap
        class="scroll-wrap"
