@@ -18,6 +18,7 @@ import {
   SharedPreferences
 } from 'sunbird-sdk';
 import { ProfileNameConfirmationPopoverComponent } from '@app/app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-project-templateview',
   templateUrl: './project-templateview.page.html',
@@ -84,7 +85,8 @@ export class ProjectTemplateviewPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private alert: AlertController,
     private toast :ToastService,
-    private platform : Platform
+    private platform : Platform,
+    private location :Location
   ) {
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
@@ -152,18 +154,10 @@ export class ProjectTemplateviewPage implements OnInit {
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
     this.clickedOnProfile ? this.showProfileNameConfirmationPopup():'';
-    this.registerDeviceBackButton();
     this.templateDetailsInit();
   }
   handleBackButton() {
-    this.router.navigate([`/${RouterLinks.HOME}`], {replaceUrl: true});
-    this.backButtonFunc.unsubscribe();
-  }
-
-  registerDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.handleBackButton();
-    });
+   this.location.back();
   }
   async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
@@ -221,7 +215,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   doAction() {
-    if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted && this.isAssignedProject && this.project.hasAcceptedTAndC && this.isTargeted && this.isATargetedSolution){
+    if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
       this.showProfileNameConfirmationPopup();
     }else{
     if(this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId){
@@ -362,19 +356,6 @@ export class ProjectTemplateviewPage implements OnInit {
     })
    }
    private async showProfileNameConfirmationPopup() {
-     let params ={
-       isTargeted :this.isTargeted,
-        programId: this.programId,
-        solutionId :this.solutionId,
-        isATargetedSolution :this.isATargetedSolution ,
-        type  :this.isAssignedProject 
-     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
-      queryParams: params,
-      skipLocationChange: false,
-      state: {
-        "referenceFrom": "link",
-    }})
     this.clickedOnProfile = true;
     const popUp = await this.popoverController.create({
       component: ProfileNameConfirmationPopoverComponent,
@@ -387,6 +368,20 @@ export class ProjectTemplateviewPage implements OnInit {
     const { data } = await popUp.onDidDismiss();
     if (data !== undefined) {
       if (data.buttonClicked) {
+        let params ={
+          isTargeted :this.isTargeted,
+           programId: this.programId,
+           solutionId :this.solutionId,
+           isATargetedSolution :this.isATargetedSolution ,
+           type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe'
+         }
+       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
+         queryParams: params,
+         skipLocationChange: false,
+         replaceUrl: true,
+         state: {
+           "referenceFrom": "link",
+       }})
         this.isStarted = true;
         this.clickedOnProfile = false;
         this.doAction();
