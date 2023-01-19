@@ -68,6 +68,10 @@ export const mockProfileData = {
     }
 };
 
+export const paylod ={
+    code:'name',
+    children:[]
+}
 export const mockFormData =  [
                 {
                     code: 'tenant',
