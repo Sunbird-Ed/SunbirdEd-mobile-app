@@ -285,6 +285,7 @@ export class ProjectListingComponent {
                     solutionId: project.solutionId,
                     type: selectedFilter,
                 },
+                replaceUrl:true
             });
         } else {
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
