@@ -86,7 +86,7 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
     });
 
     describe('onProfilePageClick  test-suites', () => {
-        it('should generate telemetry and navigate to district mapping if network is available', () => {
+        it('should generate telemetry and navigate to district mapping if network is available,  if no project content', () => {
             // arrange
             // act
             profileNameConfirmationPopoverComponent.projectContent = "Project content";
@@ -96,6 +96,19 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
                 mockProfileData,
                 PageId.PROFILE_NAME_CONFIRMATION_POPUP,
                 paylod
+            );
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
+        });
+        it('should generate telemetry and navigate to district mapping if network is available, if no project content', () => {
+            // arrange
+            // act
+            profileNameConfirmationPopoverComponent.projectContent = "";
+            profileNameConfirmationPopoverComponent.onProfilePageClick();
+            // assert
+            expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
+                mockProfileData,
+                PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+                ''
             );
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
         });
