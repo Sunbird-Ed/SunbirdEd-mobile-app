@@ -2,7 +2,7 @@ import { PopoverController } from '@ionic/angular';
 import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { AppGlobalService, CommonUtilService, NavigationService, } from '@app/services';
-import { mockProfileData } from '../../../profile/profile.page.spec.data';
+import { mockProfileData, paylod } from '../../../profile/profile.page.spec.data';
 import { ProfileNameConfirmationPopoverComponent } from './sb-profile-name-confirmation-popup.component';
 import { PageId } from '../../../../services/telemetry-constants';
 import { PreferenceKey } from '../../../app.constant';
@@ -89,11 +89,13 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
         it('should generate telemetry and navigate to district mapping if network is available', () => {
             // arrange
             // act
+            profileNameConfirmationPopoverComponent.projectContent = "Project content";
             profileNameConfirmationPopoverComponent.onProfilePageClick();
             // assert
             expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
                 mockProfileData,
-                PageId.PROFILE_NAME_CONFIRMATION_POPUP
+                PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+                paylod
             );
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
         });
