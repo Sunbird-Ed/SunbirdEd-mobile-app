@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { AppGlobalService, AppHeaderService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -10,6 +11,7 @@ import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
 import { CertificateService, InteractType } from 'sunbird-sdk';
 import { Location } from '@angular/common';
+import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 declare var cordova;
 
 @Component({
@@ -28,7 +30,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     courseId: string;
     certificate: CourseCertificate;
   };
-
+  acceptType = 'image/svg+xml';
   private gestureState = {
     posX: 0,
     posY: 0,
@@ -42,7 +44,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   };
   headerConfig: any;
   onPopupOpen = false;
-
+  projectData:any;
+  message:string;
   constructor(
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
@@ -55,21 +58,47 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private popoverCtrl: PopoverController,
     public platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private location: Location
-  ) {
-  }
+    private location: Location,
+    private apiService : UnnatiDataService
+  ) {}
 
   ngOnInit() {
     this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
-    this.pageData = this.router.getCurrentNavigation().extras.state.request;
+    let paramData = this.router.getCurrentNavigation().extras.state.request;
+      if( paramData.type == 'project'){
+        this.projectData =  paramData;
+        let keys = Object.keys(this.projectData.certificate);
+        if( this.projectData.certificate &&  this.projectData.certificate.eligible && this.projectData.certificate.osid){
+          this.getProjectCertificate();
+        }else{
+          if((this.projectData.certificate && (keys[this.projectData.certificate.eligible]  && !this.projectData.certificate.eligible) ) || (this.projectData.certificate && this.projectData.certificate.eligible && !this.projectData.certificate.osid)){
+            this.message = 'FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON'
+          }else
+          if((this.projectData.certificate && !keys[this.projectData.certificate.eligible] )){
+            this.message = 'FRMELEMNTS_MSG_NOT_MET_CERTIFCATE'
+          }
+        }
+      }else{
+        this.pageData =paramData;
+        this.loadCertificate();
+      } 
 
     this.appHeaderService.showHeaderWithBackButton();
   }
 
-  ngAfterViewInit() {
-    this.loadCertificate();
+  ngAfterViewInit() {}
+  getProjectCertificate(){
+    const config ={
+      url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
+     headers:{
+      template :this.projectData.templateUrl,
+      accept:this.acceptType
+     }
+    }
+    this.apiService.get(config).pipe(
+      tap(this.initCertificateTemplate.bind(this)),
+    ).toPromise();
   }
-
   ngOnDestroy() {
 
   }
@@ -200,7 +229,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
       try {
         const downloadRequest = await (async () => {
-          const baseFileName = `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}`;
+        const baseFileName =  this.pageData ?
+          `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}` : `${this.projectData.name}_${this.projectData.project}_${this.activeUserId}`
           switch (option.label) {
             case 'PDF': {
               this.generateDownloadTypeTelemetry('pdf');

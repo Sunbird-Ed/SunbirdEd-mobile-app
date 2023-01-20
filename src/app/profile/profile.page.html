@@ -221,7 +221,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
+    <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || projects?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
@@ -269,6 +269,58 @@
                 </div>
             </div>
         </div>
+
+                <!-- Projects -->
+                <div class="trainings" *ngIf="projects?.length > 0">
+                    <div class="bolder heading f16">
+                        <span>{{'FRMELEMNTS_LBL_IMP_CERTIFICATE' | translate}} ({{projects?.length}})&lrm;</span>
+                        <span role="button" aria-label="Refresh"><ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
+                            (click)="getProjectsCertificate()"></ion-icon></span>
+                    </div>
+                    <div class="content">
+                        <div *ngFor="let training of (projects | slice : startLimit:myImprovementsLimit) |sortBy: 'status' : 'asc'; let i = index;"
+                            [ngClass]="{'flex-nowrap': i !== projects.length-1, 'flex-nowrap-last': i == projects.length-1}">
+                            <div class="training-1">
+                                <div class="fw sb__ellipsis sb__ellipsis--two">
+                                    {{training.title}}
+                                </div>
+                                <div class="batch-detail">
+                                    {{training.completedDate | date :'dd/MM/yyyy'}}
+                                </div>
+                                <div class="batch-detail" [ngClass]="{'project-submitted': training.status === projectStatus.submitted}">
+                                    {{training?.status | titlecase}}
+                                </div>
+                                <div>
+                                    <span [ngClass]="[training.style]"> {{ training.label | translate }}</span>
+                                    <span class="lighter"> {{training.dateTime | date:'dd/MM/yyyy'}} </span>
+                                </div>
+                            </div>
+                            <div class="training-2" *ngIf="training?.certificate || training?.issuedCertificate">
+                                <button class="sb-btn-tile ion-activatable ripple-parent"
+                                    (click)="downloadCertificate(training,'project')">
+                                    <ion-icon class="view-icon" name="eye"></ion-icon>
+                                    <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
+                                    <ion-ripple-effect type="unbounded"></ion-ripple-effect>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ion-text-center"
+                            *ngIf="projects.length > myImprovementsLimit">
+                            <ion-button shape="round" class="custom-btn-txt-transform-none  custom-round"
+                                *ngIf="myImprovementsLimit < projects?.length"
+                                (click)="showMoreTrainings('myImprovements')">
+                                {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}
+                                <ion-icon class="ML10" name="arrow-down" aria-label="show more trainings"></ion-icon>
+                            </ion-button>
+                            <ion-button shape="round" class="custom-btn-txt-transform-none custom-round"
+                                *ngIf="myImprovementsLimit >= projects?.length"
+                                (click)="showLessTrainings('myImprovements')">
+                                {{'SHOW_LESS' | translate }}
+                                <ion-icon role="button" class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
+                            </ion-button>
+                        </div>
+                    </div>
+                </div>
         <div class="trainings" *ngIf="learnerPassbook?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>

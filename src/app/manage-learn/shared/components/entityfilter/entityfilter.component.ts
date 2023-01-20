@@ -38,6 +38,7 @@ export class EntityfilterComponent implements OnInit {
   payload;
   entityType;
   selectedItems: any = [];
+  entity:any;
   constructor(
     private localStorage: LocalStorageService,
     private navParams: NavParams,
@@ -52,6 +53,7 @@ export class EntityfilterComponent implements OnInit {
     this.searchUrl = urlConstants.API_URLS.SEARCH_ENTITY;
     this.observationId = this.navParams.get('data');
     this.solutionId = this.navParams.get('solutionId');
+    this.entity = this.navParams.get('entity');
     // this.localStorage
     //   .getLocalStorage('profileRole')
   }
