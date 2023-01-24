@@ -12,13 +12,10 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "ngx-build-plus:browser",
           "options": {
             "outputPath": "www",
             "index": "src/index.html",
-            "customWebpackConfig": {
-              "path": "config/webpack.config.js"
-            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -95,7 +92,6 @@
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
               "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
             ],
-            "es5BrowserSupport": true,
             "preserveSymlinks": true
           },
           "configurations": {
@@ -145,7 +141,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-builders/dev-server:generic",
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "app:build"
           },
@@ -169,7 +165,7 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "ngx-build-plus:karma",
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
@@ -200,8 +196,13 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "tsConfig": [
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "ionic-cordova-build": {
@@ -257,13 +258,16 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
     }
   },
   "cli": {
+    "analytics": "59dc0c3a-113f-4dc4-aa8d-a710cbda80bc",
     "defaultCollection": "@ionic/angular-toolkit"
   },
   "schematics": {
