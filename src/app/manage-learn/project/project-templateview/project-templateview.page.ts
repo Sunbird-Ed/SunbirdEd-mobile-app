@@ -70,6 +70,7 @@ export class ProjectTemplateviewPage implements OnInit {
   certificateCriteria:any =[];
   userId;
   clickedOnProfile :boolean = false;
+  listing:boolean = false;
   public backButtonFunc: Subscription;
 
   constructor(
@@ -97,6 +98,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.solutionId = parameters.solutionId;
       this.isATargetedSolution = (parameters.isATargetedSolution === 'true');
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
+      this.listing = (parameters.listing == "true");
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
@@ -260,7 +262,16 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
+      await this.router.navigate([`/${RouterLinks.HOME}`]);
+    if(this.listing){
+    await this.router
+      .navigate([`/${RouterLinks.PROJECT}`], {
+        queryParams: {
+          selectedFilter:  this.isAssignedProject? 'assignedToMe' : 'discoveredByMe',
+        }
+      })
+    }
+    setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
     } else if (this.project.projectId) {
@@ -285,6 +296,7 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
+  },500)
   }
 
   startProjectsFromLink() {
@@ -362,7 +374,8 @@ export class ProjectTemplateviewPage implements OnInit {
        programId: this.programId,
        solutionId :this.solutionId,
        isATargetedSolution :this.isATargetedSolution ,
-       type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe'
+       type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe',
+       listing : this.listing
      }
    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
      queryParams: params,
