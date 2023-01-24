@@ -260,6 +260,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
+    await this.router.navigate([`/${RouterLinks.HOME}`]);
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
     } else if (this.project.projectId) {
@@ -356,6 +357,21 @@ export class ProjectTemplateviewPage implements OnInit {
     })
    }
    private async showProfileNameConfirmationPopup() {
+    let params ={
+      isTargeted :this.isTargeted,
+       programId: this.programId,
+       solutionId :this.solutionId,
+       isATargetedSolution :this.isATargetedSolution ,
+       type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe'
+     }
+   this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
+     queryParams: params,
+     skipLocationChange: false,
+     replaceUrl: true,
+     state: {
+       "referenceFrom": "link",
+   }})
+  
     this.clickedOnProfile = true;
     const popUp = await this.popoverController.create({
       component: ProfileNameConfirmationPopoverComponent,
@@ -368,20 +384,6 @@ export class ProjectTemplateviewPage implements OnInit {
     const { data } = await popUp.onDidDismiss();
     if (data !== undefined) {
       if (data.buttonClicked) {
-        let params ={
-          isTargeted :this.isTargeted,
-           programId: this.programId,
-           solutionId :this.solutionId,
-           isATargetedSolution :this.isATargetedSolution ,
-           type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe'
-         }
-       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
-         queryParams: params,
-         skipLocationChange: false,
-         replaceUrl: true,
-         state: {
-           "referenceFrom": "link",
-       }})
         this.isStarted = true;
         this.clickedOnProfile = false;
         this.doAction();
