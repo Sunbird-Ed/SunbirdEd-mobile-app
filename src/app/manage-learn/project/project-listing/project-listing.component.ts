@@ -284,7 +284,7 @@ export class ProjectListingComponent {
                     programId: project.programId,
                     solutionId: project.solutionId,
                     type: selectedFilter,
-                    listing: true
+                    listing: 'project'
                 },
                 skipLocationChange: true,
                 replaceUrl: true,

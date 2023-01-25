@@ -70,7 +70,9 @@ export class ProjectTemplateviewPage implements OnInit {
   certificateCriteria:any =[];
   userId;
   clickedOnProfile :boolean = false;
-  listing:boolean = false;
+  projectlisting:boolean = false;
+  programlisting:boolean = false;
+
   public backButtonFunc: Subscription;
 
   constructor(
@@ -98,7 +100,9 @@ export class ProjectTemplateviewPage implements OnInit {
       this.solutionId = parameters.solutionId;
       this.isATargetedSolution = (parameters.isATargetedSolution === 'true');
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
-      this.listing = (parameters.listing == "true");
+      this.programlisting = (parameters.listing == "program");
+      this.projectlisting = (parameters.listing == "project");
+
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
@@ -262,8 +266,8 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-      await this.router.navigate([`/${RouterLinks.HOME}`]);
-    if(this.listing){
+    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    if(this.projectlisting){
     await this.router
       .navigate([`/${RouterLinks.PROJECT}`], {
         queryParams: {
@@ -271,6 +275,10 @@ export class ProjectTemplateviewPage implements OnInit {
         }
       })
     }
+    if(this.programlisting){
+     await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
+     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
+      }
     setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
@@ -296,7 +304,7 @@ export class ProjectTemplateviewPage implements OnInit {
       }
       this.projectService.getProjectDetails(payload);
     }
-  },500)
+  },900)
   }
 
   startProjectsFromLink() {
@@ -369,13 +377,21 @@ export class ProjectTemplateviewPage implements OnInit {
     })
    }
    private async showProfileNameConfirmationPopup() {
+     let listing;
+     if(this.projectlisting){
+       listing = 'project'
+     }else if(this.programlisting){
+      listing = 'program'
+     }else{
+      listing = false
+     }
     let params ={
       isTargeted :this.isTargeted,
        programId: this.programId,
        solutionId :this.solutionId,
        isATargetedSolution :this.isATargetedSolution ,
        type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe',
-       listing : this.listing
+       listing : listing
      }
    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
      queryParams: params,
