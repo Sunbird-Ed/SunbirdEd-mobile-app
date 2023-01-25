@@ -284,8 +284,10 @@ export class ProjectListingComponent {
                     programId: project.programId,
                     solutionId: project.solutionId,
                     type: selectedFilter,
+                    listing: true
                 },
-                replaceUrl:true
+                skipLocationChange: true,
+                replaceUrl: true,
             });
         } else {
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
