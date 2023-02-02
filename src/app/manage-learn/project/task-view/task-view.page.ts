@@ -249,7 +249,7 @@ export class TaskViewPage {
   // task and project delete permission.
   async askPermissionToDelete(subtask, type) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "NO", "YES"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
@@ -257,13 +257,13 @@ export class TaskViewPage {
       cssClass: 'background-theme-color',
       buttons: [
         {
-          text: data["CANCEL"],
+          text: data["NO"],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => { },
         },
         {
-          text: data["BTN_SUBMIT"],
+          text: data["YES"],
           handler: () => {
             this.delete(subtask);
           },

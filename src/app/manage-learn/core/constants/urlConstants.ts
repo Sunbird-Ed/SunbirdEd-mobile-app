@@ -36,7 +36,7 @@ export const urlConstants = {
     OBSERVATION_REPORT_SOLUTION_LIST: '/api/observationSubmissions/mlsurvey/v1/solutionList?',
     GENERIC_REPORTS: '/api/reports/mlreports/v1/fetch',
     PROJECT_TEMPLATE_DETAILS: '/api/project/mlprojects/v1/templates/details/',
-    ALL_EVIDENCE: '/api/observations/mlsurvey/v1/listAllEvidences',
+    ALL_EVIDENCE: '/api/observations/mlreports/v1/listAllEvidences',
     TEMPLATE_DETAILS:'/api/solutions/mlcore/v1/details/',//+SOL ID
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_ID: '/api/surveys/mlsurvey/v1/details',
@@ -49,7 +49,10 @@ export const urlConstants = {
       VERIFY_LINK: '/api/solutions/mlcore/v1/verifyLink/', //LINK
     },
     PRESIGNED_URLS: '/api/cloud-services/mlcore/v1/files/preSignedUrls',
-    IMPORT_LIBRARY_PROJECT:'/api/userProjects/mlprojects/v1/importFromLibrary/' //tempID?isATargetedSolution=false
-
+    IMPORT_LIBRARY_PROJECT:'/api/userProjects/mlprojects/v1/importFromLibrary/', //tempID?isATargetedSolution=false
+    PROJECT_CERTIFICATES:'/api/userProjects/mlprojects/v1/certificates',
+    GET_PROJECT_CERTIFICATE:'/api/v1/ProjectCertificate/',
+    PROJECT_CERTIFICATE_DOWNLOAD:'/api/rc/projectCertificate/v1/download/',
+    CERTIFICATE_VERIFY:'/api/rc/certificate/v1/key/'
   },
 };

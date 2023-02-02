@@ -143,6 +143,7 @@ export class SolutionListingComponent {
               programId: this.programId,
               solutionId: data._id,
               type: 'assignedToMe',
+              listing: 'program'
           },
       });
   } else {

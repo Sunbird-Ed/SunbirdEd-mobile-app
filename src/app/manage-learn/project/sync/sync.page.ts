@@ -38,6 +38,8 @@ export class SyncPage implements  OnDestroy {
   isShare;
   syncCompletedProjects = [];
   isSubmission;
+  retryCount: number = 0;
+
   constructor(
     private routerparam: ActivatedRoute,
     private toast: ToastService,
@@ -248,6 +250,7 @@ export class SyncPage implements  OnDestroy {
 
   cloudUpload(imageDetails) {
     this.syncServ.cloudImageUpload(imageDetails).then(success => {
+      this.retryCount =0;
       delete this.attachments[this.imageUploadIndex].cloudStorage;
       delete this.attachments[this.imageUploadIndex].uploadUrl;
       delete this.attachments[this.imageUploadIndex].isUploaded;
@@ -258,11 +261,21 @@ export class SyncPage implements  OnDestroy {
         this.doSyncCall();
       }
     }).catch(error => {
-      console.log(error)
-      this.imageUploadIndex++;
-      this.cloudUpload(this.attachments[this.imageUploadIndex])
+      this.retryCount++;
+      if (this.retryCount > 3) {
+        this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
+          this.toast.openToast(translations);
+        });
+        history.go(-1);
+      } else {
+        this.cloudUpload(this.attachments[this.imageUploadIndex]);
+      }
     })
   }
+
+
+ 
+
 
   getPdfUrl(fileName=this.allProjects[this.syncIndex]?.title, taskId?) {
    let task_id = taskId ? taskId : '';
