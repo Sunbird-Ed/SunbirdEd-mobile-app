@@ -36,7 +36,8 @@ export class SyncPage implements  OnDestroy {
   taskId;
   fileName;
   isShare;
-  syncCompletedProjects = []
+  syncCompletedProjects = [];
+  isSubmission;
   constructor(
     private routerparam: ActivatedRoute,
     private toast: ToastService,
@@ -68,6 +69,7 @@ export class SyncPage implements  OnDestroy {
           this.isShare = params.share == 'true';
           this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
+          this.isSubmission = params.isSubmission || false;
         } else {
           //sync mutiple projects
           this.getAllUnSyncedProject();
@@ -192,6 +194,7 @@ export class SyncPage implements  OnDestroy {
 
   //Syn project API call
   doSyncCall() {
+    this.allProjects[this.syncIndex].status = (this.isSubmission ==='true') ?  statusType.submitted :this.allProjects[this.syncIndex].status;
     const paylod = this.createSyncPayload();
     this.syncServ.syncApiRequest(paylod).then(success => {
       this.allProjects[this.syncIndex] = this.syncServ.removeKeys(this.allProjects[this.syncIndex], ['isNew', 'isEdit']);
