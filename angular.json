@@ -37,7 +37,7 @@
               },
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption-v9/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v10/assets",
                 "output": "./assets/common-consumption"
               },
               {

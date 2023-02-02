@@ -64,7 +64,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "5.0.0",
-    "@project-sunbird/common-consumption-v9": "^5.1.0",
+    "@project-sunbird/common-consumption-v10": "^4.11.0",
     "@project-sunbird/common-form-elements-v9": "5.0.3",
     "@project-sunbird/content-player": "4.4.0",
     "@project-sunbird/discussions-ui-v8": "2.6.0-beta.2",
@@ -338,10 +338,10 @@
       "^sunbird-sdk": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk",
       "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1",
       "@project-sunbird/common-consumption": [
-        "<rootDir>/node_modules/@project-sunbird/common-consumption-v9"
+        "<rootDir>/node_modules/@project-sunbird/common-consumption-v10"
       ],
       "@project-sunbird/common-consumption/*": [
-        "<rootDir>/node_modules/@project-sunbird/common-consumption-v9/*"
+        "<rootDir>/node_modules/@project-sunbird/common-consumption-v10/*"
       ],
       "common-form-elements": [
         "<rootDir>/node_modules/@project-sunbird/common-form-elements-v9"
