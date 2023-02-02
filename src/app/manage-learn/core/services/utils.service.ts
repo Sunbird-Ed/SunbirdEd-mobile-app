@@ -638,7 +638,8 @@ export class UtilsService {
                 });
               })
               .catch(err => {
-                resolve({});
+                this.router.navigate([RouterLinks.HOME]);
+                reject("No profile found");
               });
           }
         });
