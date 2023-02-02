@@ -134,6 +134,12 @@ export class ContentActionsComponent {
         const { data } = await confirm.onDidDismiss();
 
         if (data && data.canDelete) {
+          if (data.btn) {
+            if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+              this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+              return false;
+            }
+          }
           this.deleteContent();
         }
         break;

@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { ProfileConstants, OTPTemplates } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services/';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { MenuController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 

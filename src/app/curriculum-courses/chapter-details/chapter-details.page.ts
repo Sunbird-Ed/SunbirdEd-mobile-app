@@ -2,10 +2,9 @@ import { share } from 'rxjs/operators';
 import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import {
-  AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService,
+  AppHeaderService, CommonUtilService, AppGlobalService, LocalCourseService,
   TelemetryGeneratorService
 } from '@app/services';
-import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
@@ -117,10 +116,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private headerService: AppHeaderService,
-    private translate: TranslateService,
     private commonUtilService: CommonUtilService,
     private router: Router,
-    private loginHandlerService: LoginHandlerService,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
     private localCourseService: LocalCourseService,
@@ -698,6 +695,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
       this.appGlobalService.resetSavedQuizContent();
@@ -758,6 +761,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     await confirm.present();
     confirm.onDidDismiss().then(({ data }) => {
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.navigateToBatchListPage();
       }
     });
@@ -1019,7 +1028,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.nextContent = courseHeirarchy;
       this.isFirstContent = true;
     }
-    if ((result && (result.status === 0 || result.status === 1))
+    if ((result && (result.status === 1))
       || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
       this.nextContent = courseHeirarchy;
       this.isNextContentFound = true;

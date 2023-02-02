@@ -11,7 +11,8 @@ import { ComponentsModule } from '../../components/components.module';
 import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { AddActivityToGroupPage } from '../add-activity-to-group/add-activity-to-group.page';
-import { ViewMoreActivityPage, ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
+import { ViewMoreActivityPage } from '../view-more-activity/view-more-activity.page';
+import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
 
 const routes: Routes = [
   {

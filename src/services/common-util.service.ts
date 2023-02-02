@@ -16,18 +16,18 @@ import {
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
     appLanguages, Location as loc, MaxAttempt, SwitchableTabsConfig
-} from '@app/app/app.constant';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../app/app.constant';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import {
     InteractType, InteractSubtype, PageId, Environment,
     CorReleationDataType, ImpressionType, ObjectType
-} from '@app/services/telemetry-constants';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+} from '../services/telemetry-constants';
+import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { QRAlertCallBack, QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SbPopoverComponent } from '@app/app/components/popups';
+import { SbPopoverComponent } from '../app/components/popups/sb-popover/sb-popover.component';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
@@ -279,9 +279,15 @@ export class CommonUtilService {
         );
         const { data } = await qrAlert.onDidDismiss();
         // generate interact telemetry for close popup
+        let subtype = '' 
+        if (!data) {
+            subtype = InteractSubtype.OUTSIDE
+        } else {
+            subtype = data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SELECT_CLOSE,
-            data ? (data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON) : InteractSubtype.OUTSIDE,
+            subtype,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
             undefined,
@@ -721,6 +727,11 @@ export class CommonUtilService {
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
         if (data && data.canDelete) {
+            if (data.btn) {
+                if (!this.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+                  this.showToast(data.btn.isInternetNeededMessage);
+                }
+              }
             return maxAttempt;
         } else {
             maxAttempt.isCloseButtonClicked = true;

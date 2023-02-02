@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { UtilityService } from '@app/services/utility-service';
 import { NavParams, PopoverController } from '@ionic/angular';
 import {
   Environment, ID,
@@ -8,7 +7,7 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
@@ -31,7 +30,6 @@ export class UpgradePopoverComponent {
 
   @Input() type;
   constructor(
-    private utilityService: UtilityService,
     private popCtrl: PopoverController,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,

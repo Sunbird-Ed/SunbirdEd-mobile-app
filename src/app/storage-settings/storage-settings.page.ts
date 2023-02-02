@@ -415,6 +415,12 @@ export class StorageSettingsPage implements OnInit {
 
       this.transferringContentsPopup = undefined;
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CANCEL_CLICKED,
@@ -521,6 +527,12 @@ export class StorageSettingsPage implements OnInit {
       this.duplicateContentPopup = undefined;
 
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CONTINUE_CLICKED,
@@ -586,6 +598,12 @@ export class StorageSettingsPage implements OnInit {
       this.successTransferPopup = undefined;
 
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.OK_CLICKED,

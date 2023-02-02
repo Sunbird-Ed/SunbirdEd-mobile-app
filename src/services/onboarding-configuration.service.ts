@@ -3,7 +3,9 @@ import { OnboardingScreenType, PreferenceKey, SwitchableTabsConfig, ProfileConst
 import { GUEST_TEACHER_TABS, initTabs } from "@app/app/module.service";
 import { Events } from '@app/util/events';
 import { DeviceRegisterService, Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences } from 'sunbird-sdk';
-import { AppGlobalService, CommonUtilService, ContainerService } from ".";
+import { AppGlobalService } from "./app-global-service.service";
+import { CommonUtilService } from "./common-util.service";
+import { ContainerService } from "./container.services";
 import onboarding from './../assets/configurations/config.json';
 import { SegmentationTagService } from "./segmentation-tag/segmentation-tag.service";
 
@@ -254,7 +256,7 @@ export class OnboardingConfigurationService {
             return this.onBoardingConfig.categories.find((element) => (element.code === category)).translation_key
       }
 
-    getOnboardingConfig(page: String): OnBoardingConfig {
+    getOnboardingConfig(page: string): OnBoardingConfig {
         return this.onBoardingConfig.onboarding.find((element) => (element.name === page))
     }  
 

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../services/common-util.service';
 import { ChildContentRequest, Content, ContentDetailRequest, ContentService } from 'sunbird-sdk';
 
 @Injectable()

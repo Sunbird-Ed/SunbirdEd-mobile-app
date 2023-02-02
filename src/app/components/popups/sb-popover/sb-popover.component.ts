@@ -1,5 +1,4 @@
 import { Component, NgZone, OnDestroy } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -44,7 +43,6 @@ export class SbPopoverComponent implements OnDestroy {
     private platform: Platform,
     private ngZone: NgZone,
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService
   ) {
     this.content = this.navParams.get('content');
     this.actionsButtons = this.navParams.get('actionsButtons');
@@ -145,11 +143,7 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   async deleteContent(canDelete: boolean = false, btn?) {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable && btn.isInternetNeededMessage) {
-      this.commonUtilService.showToast(btn.isInternetNeededMessage);
-      return false;
-    }
-    this.popoverCtrl.dismiss({ canDelete });
+    this.popoverCtrl.dismiss({ canDelete, btn });
     if (this.navParams.get('handler')) {
       this.navParams.get('handler')(btn.btntext);
     }
