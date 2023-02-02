@@ -32,19 +32,6 @@
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
             <meta-data android:name="io.fabric.ApiSecret" android:value="${fabricSecret}" />
         </config-file>
-        <config-file parent="/manifest/application/activity[@android:name='MainActivity']" target="AndroidManifest.xml">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="@string/deeplink_base_url" />
-                <data android:scheme="https" />
-                <data android:host="@string/deeplink_ncert_url" />
-                <data android:scheme="https" />
-                <data android:host="@string/deeplink_igot_url" />
-            </intent-filter>
-        </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
             <queries>
@@ -189,7 +176,7 @@
     </plugin>
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
-    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-4.10.1" />
+    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-5.1.1" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
