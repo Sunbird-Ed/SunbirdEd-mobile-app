@@ -1,9 +1,8 @@
 import { SbSubjectListPopupComponent } from './sb-subject-list-popup.component'
-import {
-    TelemetryGeneratorService
-} from '@app/services';
+import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 import {ModalController, Platform} from '@ionic/angular';
 import { of } from 'rxjs';
+import {CorrelationData} from 'sunbird-sdk';
 
 describe('SbSubjectListPopupComponent', () => {
     let sbSubjectListPopupComponent: SbSubjectListPopupComponent;
@@ -52,17 +51,36 @@ describe('SbSubjectListPopupComponent', () => {
         })
 
 
-            it('if no value  ', () =>{
-                //arrange
-                const event = {
-                    data : {
-                        length : ''
-                    }
+        it('if no value  ', () =>{
+            //arrange
+            const event = {
+                data : {
+                    length : ''
                 }
-                // act
-                const data = sbSubjectListPopupComponent.handlePillSelect(event);
-                // assert 
-                expect( data ).toBeUndefined();
-            })    
+            }
+            // act
+            const data = sbSubjectListPopupComponent.handlePillSelect(event);
+            // assert 
+            expect( data ).toBeUndefined();
+        })    
     });
-    });
+
+    describe('ngOnInit', () => {
+        it('should generate telemtry on ngOnInit', () => {
+            // arrange
+            const corRelationList: Array<CorrelationData> = [];
+            corRelationList.push({id: sbSubjectListPopupComponent.subjectList.toString(), type: CorReleationDataType.SUBJECT_LIST});
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn()
+            // act
+            sbSubjectListPopupComponent.ngOnInit()
+            // assert
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.POP_UP_CATEGORY,
+                '',
+                Environment.HOME,
+                PageId.HOME,
+                undefined, undefined, undefined, undefined,
+                corRelationList)
+        })
+
+    })
+});

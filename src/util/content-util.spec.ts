@@ -203,4 +203,14 @@ describe('ContentUtil', () => {
                 { apply: true, name: 'new_user_type' }]);
         });
     });
+
+    describe('isTrackable', () => {
+        it('should return 0 if mimetype is collection', () => {
+            // arrange
+            const content = {trackable: {enabled: true}, mimeType: 'application/vnd.ekstep.content-collection', contentData: {trackable: true}}
+            // act
+            ContentUtil.isTrackable(content);
+            // assert
+        })
+    })
 });
