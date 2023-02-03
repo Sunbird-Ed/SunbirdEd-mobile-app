@@ -9,7 +9,7 @@
     >
   </div>
   <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
-    <app-item-list-card [title]="entity?.name">
+    <app-item-list-card [title]="entity?.name" [code]=entity?.externalId>
       <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
       <ion-icon
         class="delete-icon clr-primary"
