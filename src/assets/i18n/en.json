@@ -1371,5 +1371,6 @@
   "FRMELEMNTS_LBL_IMP_CERTIFICATE":"Improvement certificate",
   "SUCCESSFULLY_COMPLETING_PROJECT": "For successfully completing the project",
   "FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON":"Your project is submitted. You will receive a certificate soon if you meet the eligibility criteria.",
-  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project."
+  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project.",
+  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again"
 }

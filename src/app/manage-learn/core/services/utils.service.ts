@@ -17,6 +17,9 @@ import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { storageKeys } from "../../storageKeys";
 import { Events } from '@app/util/events';
+import { Location } from "@angular/common";
+import { ToastService } from "./toast/toast.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: "root"
@@ -48,6 +51,9 @@ export class UtilsService {
     private router: Router,
     private storage: Storage,
     private events: Events,
+    private location : Location,
+    private toast : ToastService,
+    private translate: TranslateService,
 
   ) {
     this.events.subscribe("loggedInProfile:update", _ => {
@@ -638,7 +644,11 @@ export class UtilsService {
                 });
               })
               .catch(err => {
-                resolve({});
+                this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
+                  this.toast.openToast(translations);
+                });
+                this.location.back();
+                reject(null);
               });
           }
         });
