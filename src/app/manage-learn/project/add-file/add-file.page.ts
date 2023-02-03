@@ -239,15 +239,15 @@ export class AddFilePage implements OnInit {
         this.project._rev = success.rev;
         if (type == 'submit') {
           this.attachments = [];
-          this.project.status == statusType.submitted ? this.doSyncAction() : this.location.back();
+          this.doSyncAction(type === 'submit');
         }
       })
   }
-  doSyncAction() {
+  doSyncAction(isSubmission:boolean = false) {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
         ? this.projectServ.createNewProject(this.project)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -313,7 +313,7 @@ export class AddFilePage implements OnInit {
     setTimeout(() => {
       this.project.attachments = this.attachments;
       this.project.remarks = this.remarks;
-      this.project.status = statusType.submitted;
+      // this.project.status = statusType.submitted;
       this.update('submit');
     }, 0)
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
