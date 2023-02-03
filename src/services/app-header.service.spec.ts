@@ -3,7 +3,7 @@ import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {SharedPreferences} from 'sunbird-sdk';
 import {of} from 'rxjs';
-import { OnboardingConfigurationService } from '.';
+import onboarding from './../assets/configurations/config.json';
 import { mockOnboardingConfigData } from '../app/components/discover/discover.page.spec.data';
 
 describe('AppHeaderService', () => {
@@ -12,17 +12,12 @@ describe('AppHeaderService', () => {
     const mockMenuCtrl: Partial<MenuController> = {};
     const mockStatusBar: Partial<StatusBar> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
-    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
-        initialOnboardingScreenName: '',
-        getAppConfig: jest.fn(() => mockOnboardingConfigData)
-    }
 
     beforeAll(() => {
         appHeaderService = new AppHeaderService(
             mockMenuCtrl as MenuController,
             mockStatusBar as StatusBar,
             mockSharedPreferences as SharedPreferences,
-            mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
 
@@ -122,7 +117,7 @@ describe('AppHeaderService', () => {
     });
 
     it('should set background color of statusbar', (done) => {
-        mockOnboardingConfigurationService.getAppConfig = jest.fn(() => mockOnboardingConfigData);
+        const customTheme = onboarding.theme;
         mockStatusBar.backgroundColorByHexString = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
         const selectedTheme = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');

@@ -5,15 +5,15 @@ import {
     ProfileType, UnenrollCourseRequest, ContentDetailRequest,
     ServerProfileDetailsRequest, ServerProfile,
     NetworkError, DownloadService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
-    LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
+    CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
     LocalCourseService, PageId, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,10 +32,10 @@ import {PreferenceKey, ProfileConstants, EventTopics, BatchConstants, RouterLink
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '../../services/consent-service';
 import {
     TncUpdateHandlerService,
@@ -136,7 +136,7 @@ describe('EnrolledCourseDetailsPage', () => {
         getForumIds: jest.fn()
     };
 
-    global.window.segmentation = {
+    global.window['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -156,7 +156,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
-            mockDiscussionService as DiscussionService,
             mockZone as NgZone,
             mockEvents as Events,
             mockFileSizePipe as FileSizePipe,
@@ -184,7 +183,7 @@ describe('EnrolledCourseDetailsPage', () => {
         jest.clearAllMocks();
         jest.resetAllMocks();
 
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         enrolledCourseDetailsPage.accessDiscussionComponent = {
             fetchForumIds: jest.fn()
         };
@@ -714,7 +713,7 @@ describe('EnrolledCourseDetailsPage', () => {
             } as any)));
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
             mockCommonUtilService.translateMessage = jest.fn(() => '');
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
             spyOn(mockCourseService, 'getBatchDetails').and.stub();
             jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();

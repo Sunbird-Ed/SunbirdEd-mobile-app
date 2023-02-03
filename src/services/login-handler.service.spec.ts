@@ -1,15 +1,10 @@
 import { LoginHandlerService } from './login-handler.service';
-import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { CommonUtilService } from './../services/common-util.service';
 import { FormAndFrameworkUtilService } from './../services/formandframeworkutil.service';
-import {
-    SharedPreferences,
-} from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { LoginNavigationHandlerService } from '@app/services/login-navigation-handler.service';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { LoginNavigationHandlerService } from '../services/login-navigation-handler.service';
 import { of } from 'rxjs';
 
 jest.mock('sunbird-sdk', () => {
@@ -32,19 +27,15 @@ jest.mock('@app/app/module.service', () => {
 
 describe('LoginHandlerService', () => {
     let loginHandlerService: LoginHandlerService;
-    const mockSharedPreferences: Partial<SharedPreferences> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
-    const mockRouter: Partial<Router> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockLoginNavigationHandlerService: Partial<LoginNavigationHandlerService> = {};
 
     beforeAll(() => {
         loginHandlerService = new LoginHandlerService(
-            mockSharedPreferences as SharedPreferences,
             mockCommonUtilService as CommonUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -73,14 +64,13 @@ describe('LoginHandlerService', () => {
                 //assert
                 setTimeout(() => {
                     expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                    expect(!mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                    expect(!mockCommonUtilService.networkInfo?.isNetworkAvailable).toBeTruthy();
                     done();
                 }, 0)
             });
             it('should fetch from form configuration for login session ', (done) => {
                 // arrange
                 mockAppGlobalService.resetSavedQuizContent = jest.fn();
-                mockSharedPreferences.putString = jest.fn(() => of(undefined));
                 mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
                 const dismissFn = jest.fn(() => Promise.resolve());
@@ -110,7 +100,6 @@ describe('LoginHandlerService', () => {
             it('should execute catch block ', (done) => {
                 // arrange
                 mockAppGlobalService.resetSavedQuizContent = jest.fn();
-                mockSharedPreferences.putString = jest.fn(() => of(undefined));
                 mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
                 const dismissFn = jest.fn(() => Promise.resolve());

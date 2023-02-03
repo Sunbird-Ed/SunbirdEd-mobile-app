@@ -415,7 +415,7 @@ describe('ResourcesComponent', () => {
                     ]
                 }
             }]));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             mockNgZone.run = jest.fn((fn) => fn());
             mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
             // act
@@ -480,7 +480,7 @@ describe('ResourcesComponent', () => {
                     }
                 }
             }]));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             mockNgZone.run = jest.fn((fn) => fn());
             const fileSrcStack = [undefined, 'appIcon'];
             mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcStack.shift());
@@ -542,7 +542,7 @@ describe('ResourcesComponent', () => {
                     ]
                 }
             }] as ContentsGroupedByPageSection));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
             mockNgZone.run = jest.fn((fn) => fn());
             // act
             resourcesComponent.getPopularContent(false, request);
@@ -622,7 +622,7 @@ describe('ResourcesComponent', () => {
                 appIcon: 'http:appIcon'
             }]
         }];
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         mockChangeRef.detectChanges = jest.fn();
         // act
         resourcesComponent.ngOnInit();
@@ -665,7 +665,7 @@ describe('ResourcesComponent', () => {
                 name: 'sunbird',
             }]
         }];
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         mockChangeRef.detectChanges = jest.fn();
         mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
         // act
@@ -704,7 +704,7 @@ describe('ResourcesComponent', () => {
                 name: 'sunbird',
             }]
         }];
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         mockChangeRef.detectChanges = jest.fn();
         const fileSrcData = [undefined, 'sample'];
         mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcData.shift());
@@ -1338,7 +1338,7 @@ describe('ResourcesComponent', () => {
         ' set true then navigate to collection etb', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             mockRouter.navigate = jest.fn();
             // act
             resourcesComponent.navigateToDetailPage({
@@ -1359,7 +1359,7 @@ describe('ResourcesComponent', () => {
         ' which is set to false and call offline toast method', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
             mockRouter.navigate = jest.fn();
             // act
             resourcesComponent.navigateToDetailPage({
@@ -1378,7 +1378,7 @@ describe('ResourcesComponent', () => {
     it('should generate interact telemetry when textbook is clicked and also check for network available which is set to true ', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         mockRouter.navigate = jest.fn();
         // act
         resourcesComponent.navigateToTextbookPage({
@@ -1399,7 +1399,7 @@ describe('ResourcesComponent', () => {
     it('should generate interact event and check of network availabilty which is set to false', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
         mockRouter.navigate = jest.fn();
         // act
         resourcesComponent.navigateToTextbookPage({ identifier: 'do_id1234', contentType: 'textbook' },

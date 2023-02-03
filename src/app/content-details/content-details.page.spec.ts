@@ -4,18 +4,14 @@ import {
     EventsBusService,
     DownloadService,
     ProfileService,
-    ProfileServiceImpl,
     SharedPreferences,
     StorageService,
     TelemetryObject,
     Content,
     GetAllProfileRequest,
-} from 'sunbird-sdk';
-import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
-import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
+} from '@project-sunbird/sunbird-sdk';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { NgZone } from '@angular/core';
 import {
     AppGlobalService,
@@ -24,19 +20,19 @@ import {
     CourseUtilService, FormAndFrameworkUtilService,
     TelemetryGeneratorService,
     UtilityService,
-} from '@app/services';
+} from '../../services';
 import { Network } from '@ionic-native/network/ngx';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProfileSwitchHandler } from '@app/services/user-groups/profile-switch-handler';
-import { RatingHandler } from '@app/services/rating/rating-handler';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ChildContentHandler } from '@app/services/content/child-content-handler';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ProfileSwitchHandler } from '../../services/user-groups/profile-switch-handler';
+import { RatingHandler } from '../../services/rating/rating-handler';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
+import { ChildContentHandler } from '../../services/content/child-content-handler';
+import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { of, throwError, EMPTY, Subscription } from 'rxjs';
-import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
+import { mockContentData } from '../../app/content-details/content-details.page.spec.data';
 import {
     Environment,
     ImpressionType,
@@ -44,13 +40,13 @@ import {
     InteractType,
     Mode,
     PageId,
-} from '@app/services/telemetry-constants';
-import { ContentUtil } from '@app/util/content-util';
+} from '../../services/telemetry-constants';
+import { ContentUtil } from '../../util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
@@ -64,13 +60,13 @@ describe('ContentDetailsPage', () => {
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {
         getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }))
-    };
+    } as any;
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockStorageService: Partial<StorageService> = {};
     const mockDownloadService: Partial<DownloadService> = {
         getActiveDownloadRequests: jest.fn(() => of([{identifier: 'sample-id'}]))
-    };
+    } as any;
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn()
@@ -83,7 +79,7 @@ describe('ContentDetailsPage', () => {
         is: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getCurrentUser: jest.fn(() => ({uid: 'user_id'}))
+        getCurrentUser: jest.fn(() => ({uid: 'user_id'})),
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
@@ -94,7 +90,10 @@ describe('ContentDetailsPage', () => {
             present: jest.fn(() => Promise.resolve()),
             dismiss: jest.fn(() => Promise.resolve()),
         })),
-        showToast: jest.fn()
+        showToast: jest.fn(),
+        networkInfo: {
+            isNetworkAvailable: true
+        }
     };
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
@@ -129,7 +128,6 @@ describe('ContentDetailsPage', () => {
     };
     const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
-    const mockFileOpener: Partial<FileOpener> = {};
     const mockFileTransfer: Partial<FileTransfer> = {};
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
@@ -137,7 +135,7 @@ describe('ContentDetailsPage', () => {
     const mockCourseService: Partial<CourseService> = {};
     const mockFormFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
-    global.window.segmentation = {
+    global.window['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -152,10 +150,10 @@ describe('ContentDetailsPage', () => {
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
-            mockProfileService as ProfileServiceImpl,
-            mockContentService as ContentServiceImpl,
-            mockEventBusService as EventsBusServiceImpl,
-            mockStorageService as StorageServiceImpl,
+            mockProfileService as ProfileService,
+            mockContentService as ContentService,
+            mockEventBusService as EventsBusService,
+            mockStorageService as StorageService,
             mockDownloadService as DownloadService,
             mockPreferences as SharedPreferences,
             mockCourseService as CourseService,
@@ -181,7 +179,6 @@ describe('ContentDetailsPage', () => {
             mockContentPlayerHandler as ContentPlayerHandler,
             mockChildContentHandler as ChildContentHandler,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockFileOpener as FileOpener,
             mockFileTransfer as FileTransfer,
             mockSbProgressLoader as SbProgressLoader,
             mockLocalCourseService as LocalCourseService,
@@ -202,7 +199,7 @@ describe('ContentDetailsPage', () => {
     describe('showSwitchUserAlert', () => {
         it('should return tost for offline', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false } as any;
             mockCommonUtilService.showToast = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation();
             // act
@@ -690,7 +687,7 @@ describe('ContentDetailsPage', () => {
                     },
                     appIcon: 'sample-app-icon',
                     streamingUrl: 'streamingUrl',
-                    me_totalDownloads: true,
+                    me_totalDownloads: 'true',
                     attributions: ['sample-2', 'sample-1']
                 },
                 mimeType: 'application/vnd.ekstep.h5p',
@@ -1028,15 +1025,15 @@ describe('ContentDetailsPage', () => {
                 return {
                     download: mockDownload
                 };
-            });
-            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins.printer.print = jest.fn();
+            })as any;
+            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
+            window.cordova.plugins['printer'].print = jest.fn();
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).toHaveBeenCalled();
                 expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
-                expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith('SOME_TEMP_URL');
+                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
                 done();
             });
         });
@@ -1066,14 +1063,14 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             });
-            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins.printer.print = jest.fn();
+            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
+            window.cordova.plugins['printer'].print = jest.fn();
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).not.toHaveBeenCalled();
                 expect(mockDownload).not.toHaveBeenCalled();
-                expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith(
+                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 done();
@@ -1104,13 +1101,13 @@ describe('ContentDetailsPage', () => {
                 return {
                     download: mockDownload
                 };
-            });
-            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins.printer.print = jest.fn(() => { throw new Error('UNEXPECTED_ERROR'); });
+            })as any;
+            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
+            window.cordova.plugins['printer'].print = jest.fn(() => { throw new Error('UNEXPECTED_ERROR'); });
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith(
+                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -1143,12 +1140,12 @@ describe('ContentDetailsPage', () => {
                 return {
                     download: mockDownload
                 };
-            });
-            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(false); });
+            })as any;
+            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(false); });
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins.printer.print).not.toHaveBeenCalledWith(
+                expect(window.cordova.plugins['printer'].print).not.toHaveBeenCalledWith(
                     'file://some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -1208,7 +1205,7 @@ describe('ContentDetailsPage', () => {
         });
 
         it('should not return end event for else part', () => {
-            const pageId = undefined, qrData = 'QR1234';
+            const pageId = '', qrData = 'QR1234';
             mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
             contentDetailsPage.generateQRSessionEndEvent(pageId, qrData);
         });
@@ -1367,8 +1364,8 @@ describe('ContentDetailsPage', () => {
             mockEvents.unsubscribe = jest.fn();
             mockEventBusService.events = jest.fn(() => of({
                 unsubscribe: jest.fn()
-            }));
-            contentDetailsPage['contentProgressSubscription'] = { unsubscribe: jest.fn() } as Partial<Subscription>;
+            }))as any;
+            contentDetailsPage['contentProgressSubscription'] = { unsubscribe: jest.fn() } as any;
             // act
             contentDetailsPage.ngOnDestroy();
             // assert
@@ -1409,8 +1406,8 @@ describe('ContentDetailsPage', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(context);
                 }
-            });
-            mockAppGlobalService.identifier = 'do_id';
+            })as any;
+            // mockAppGlobalService.identifier = 'do_id';
             const contentStatusData = {
                 contentList: [
                     {
@@ -1443,8 +1440,8 @@ describe('ContentDetailsPage', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(context);
                 }
-            });
-            mockAppGlobalService.identifier = 'do_id';
+            })as any;
+            // mockAppGlobalService.identifier = 'do_id';
             const contentStatusData = {
                 contentList: [
                     {
@@ -1477,8 +1474,8 @@ describe('ContentDetailsPage', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(context);
                 }
-            });
-            mockAppGlobalService.identifier = 'do_id';
+            })as any;
+            // mockAppGlobalService.identifier = 'do_id';
             const contentStatusData = {
                 contentList: [
                     {
@@ -1787,7 +1784,7 @@ describe('ContentDetailsPage', () => {
                     }
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn())as any;
             contentDetailsPage.content = {
                 identifier: 'do-1234',
                 mimeType: 'application/vnd.ekstep.h5p-archive',
@@ -1818,7 +1815,7 @@ describe('ContentDetailsPage', () => {
                     }
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn())as any;
             contentDetailsPage.content = {
                 identifier: 'do-1234',
                 mimeType: 'application/vnd.ekstep.h5p-archive',
@@ -1847,7 +1844,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.shouldOpenPlayAsPopup = true;
             jest.spyOn(contentDetailsPage, 'isPlayedFromCourse').mockImplementation();
             jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation(() => {
-                return Promise.resolve({});
+                return Promise.resolve();
             });
             jest.spyOn(contentDetailsPage, 'setContentDetails').mockImplementation(() => {
                 return Promise.resolve();
@@ -1855,7 +1852,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'subscribeSdkEvent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockContentPlayerHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id') as any;
             mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
@@ -1883,7 +1880,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'subscribeSdkEvent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockContentPlayerHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
             mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
@@ -1911,7 +1908,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'subscribeSdkEvent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockContentPlayerHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -1927,7 +1924,7 @@ describe('ContentDetailsPage', () => {
         it('should unsubscribe', () => {
             // arrange
             const unsubscribe = jest.fn();
-            contentDetailsPage.eventSubscription = {
+            contentDetailsPage['eventSubscription'] = {
                 unsubscribe
             };
             contentDetailsPage.contentDeleteObservable = {
@@ -1944,9 +1941,9 @@ describe('ContentDetailsPage', () => {
 
         it('should unsubscribe for else part', () => {
             // arrange
-            contentDetailsPage.eventSubscription = undefined;
+            contentDetailsPage['eventSubscription'] = undefined as any;
             contentDetailsPage.contentDeleteObservable = undefined;
-            contentDetailsPage.backButtonFunc = undefined;
+            contentDetailsPage.backButtonFunc = undefined as any;
             // act
             contentDetailsPage.ionViewWillLeave();
             // assert
@@ -2240,7 +2237,7 @@ describe('ContentDetailsPage', () => {
                 identifier: 'sample_id1'
             };
             const resp = [{ identifier: 'sample_id1' }, { identifier: 'sample_id2' }];
-            mockDownloadService.getActiveDownloadRequests = jest.fn(() => of(resp));
+            mockDownloadService.getActiveDownloadRequests = jest.fn(() => of(resp)) as any;
             // act
             contentDetailsPage.getNavParams();
             // assert
@@ -2432,9 +2429,7 @@ describe('ContentDetailsPage', () => {
         it('should be logged in before play the content by invoked promptToLogin() if user loggedin', async (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation(() => {
-                return 0;
-            });
+            jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation()
             // act
             await contentDetailsPage.promptToLogin();
             // assert
@@ -2497,7 +2492,7 @@ describe('ContentDetailsPage', () => {
             };
             // contentDetailsPage.limitedShareContentFlag = true;
             jest.spyOn(contentDetailsPage, 'promptToLogin').mockImplementation(() => {
-                return Promise.resolve();
+                return Promise.resolve(false);
             });
             // act
             contentDetailsPage.checkLimitedContentSharingFlag(request);
@@ -2730,7 +2725,7 @@ describe('ContentDetailsPage', () => {
             return {};
         });
         jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation(() => {
-            return Promise.resolve({id: 'sample-id'});
+            return Promise.resolve();
         });
         jest.spyOn(contentDetailsPage, 'setContentDetails').mockImplementation(() => {
             return Promise.resolve();
@@ -2750,7 +2745,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
-            const called: { [topic: EventTopics]: boolean } = {};
+            const called:  { [topic: EventTopics]: boolean } = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
                 if (called[topic]) {
                     return;
@@ -3007,7 +3002,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id');
-            cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => of());
+            cordova.plugins['InAppUpdateManager'].checkForImmediateUpdate = jest.fn(() => of()) as any;
             // act
             contentDetailsPage.playerEvents(event);
             // assert
