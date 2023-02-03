@@ -260,10 +260,10 @@ export class SyncPage implements  OnDestroy {
     }).catch(error => {
       this.retryCount++;
       if (this.retryCount > 3) {
-        this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
+        this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
           this.toast.openToast(translations);
         });
-        history.go(-1);
+        this.location.back();
       } else {
         this.cloudUpload(this.attachments[this.imageUploadIndex]);
       }
@@ -271,7 +271,6 @@ export class SyncPage implements  OnDestroy {
   }
 
 
- 
 
 
   getPdfUrl(fileName=this.allProjects[this.syncIndex]?.title, taskId?) {
