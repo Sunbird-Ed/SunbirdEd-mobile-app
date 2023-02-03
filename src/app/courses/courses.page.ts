@@ -401,8 +401,7 @@ export class CoursesPage implements OnInit, OnDestroy {
    */
   private getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
-    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType) &&
-      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
+    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
   async search() {

@@ -49,10 +49,7 @@ export const urlConstants = {
       VERIFY_LINK: '/api/solutions/mlcore/v1/verifyLink/', //LINK
     },
     PRESIGNED_URLS: '/api/cloud-services/mlcore/v1/files/preSignedUrls',
-    IMPORT_LIBRARY_PROJECT:'/api/userProjects/mlprojects/v1/importFromLibrary/', //tempID?isATargetedSolution=false
-    PROJECT_CERTIFICATES:'/api/userProjects/mlprojects/v1/certificates',
-    GET_PROJECT_CERTIFICATE:'/api/v1/ProjectCertificate/',
-    PROJECT_CERTIFICATE_DOWNLOAD:'/api/rc/projetCertificate/v1/download/',
-    CERTIFICATE_VERIFY:'/api/rc/certificate/v1/key/'
+    IMPORT_LIBRARY_PROJECT:'/api/userProjects/mlprojects/v1/importFromLibrary/' //tempID?isATargetedSolution=false
+
   },
 };

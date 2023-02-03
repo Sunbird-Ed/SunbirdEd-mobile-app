@@ -946,10 +946,6 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.readConfig();
             // assert
-            expect(appGlobalService.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE).toBeFalsy();
-            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER).toBeFalsy();
-            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER).toBeFalsy();
-            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT).toBeFalsy();
             expect(appGlobalService.TRACK_USER_TELEMETRY).toBeFalsy();
             expect(appGlobalService.CONTENT_STREAMING_ENABLED).toBeFalsy();
             expect(appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeFalsy();

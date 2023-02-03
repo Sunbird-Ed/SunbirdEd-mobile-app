@@ -1,5 +1,4 @@
 export interface RequestParams {
     url: string,
-    payload?: any,
-    headers?:any
+    payload?: any
 }

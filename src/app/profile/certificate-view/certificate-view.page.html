@@ -5,8 +5,8 @@
     <strong class="label">{{'CERTIFICATE' | translate}}</strong>
     <div class="cert-details">
       <div class="cert-info">
-        <p class="title"> {{projectData?.name || pageData?.certificate?.name}}</p>
-        <p class="date">{{(pageData?.certificate?.lastIssuedOn | date)  || (projectData?.certificate?.issuedOn | date)}}</p>
+        <p class="title">{{pageData?.certificate?.name}}</p>
+        <p class="date">{{pageData?.certificate?.lastIssuedOn | date}}</p>
       </div>
       <div class="download-btn" *ngIf="!platform?.is('ios')">
         <button class="cert-btn" [ngClass]="{'highlight-cert-btn': onPopupOpen, '': !onPopupOpen }" (click)="showCertificateMenu($event)">

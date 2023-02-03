@@ -495,14 +495,17 @@ describe('CategoryListPage', () => {
                                     "name": {
                                       "order": "asc",
                                       "preference": [
-                                        "accountancy",
+                                        "audience",
+                                        ["subject 1", "subject 2"],
+                                        ['accountancy'],
                                         ["subject 1", "subject 2"],
                                       ],
                                     },
                                   }]},
                             filterPillBy: null
                           }, type: 'Content'}],
-                    supportedFacets: ["se_mediums", "subject", "primaryCategory", "audience"]
+                    supportedFacets: ["se_mediums", "subject", "primaryCategory", "audience"],
+                    totalCount: undefined
                 }
             });
         });
