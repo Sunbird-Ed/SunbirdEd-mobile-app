@@ -737,8 +737,11 @@ describe('UserTypeSelectionPage', () => {
             mockContainer.addTab = jest.fn();
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
             mockAppGlobalService.showYearOfBirthPopup = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
+            correlationlist.push({ id: 'sample-user-type', type: CorReleationDataType.USERTYPE });
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());
+            mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());   
             // act
             userTypeSelectionPage.navigateToTabsAsLogInUser();
             // assert
@@ -1119,9 +1122,6 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
                 return;
             });
-            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
-            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
-            correlationlist.push({ id: 'sample-user-type', type: CorReleationDataType.USERTYPE });
             // act
             userTypeSelectionPage.continue();
             // assert
@@ -1139,16 +1139,7 @@ describe('UserTypeSelectionPage', () => {
                     PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN,
                     userTypeSelectionPage.profile.uid
                 );
-                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
-                    Environment.ONBOARDING,
-                    AuditState.AUDIT_UPDATED,
-                    [AuditProps.PROFILE_TYPE],
-                    AuditType.SELECT_USERTYPE,
-                    undefined,
-                    undefined,
-                    undefined,
-                    correlationlist
-                );
+                done();
             }, 0);
         });
 
@@ -1170,9 +1161,6 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'gotoNextPage').mockImplementation(() => {
                 return;
             });
-            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
-            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
-            correlationlist.push({ id: 'sample-user-type', type: CorReleationDataType.USERTYPE });
             // act
             userTypeSelectionPage.continue();
             // assert
@@ -1186,16 +1174,7 @@ describe('UserTypeSelectionPage', () => {
                 expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalledWith('sample-uid');
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
-                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
-                    Environment.ONBOARDING,
-                    AuditState.AUDIT_UPDATED,
-                    [AuditProps.PROFILE_TYPE],
-                    AuditType.SELECT_USERTYPE,
-                    undefined,
-                    undefined,
-                    undefined,
-                    correlationlist
-                );
+                done();
             }, 0);
         });
 

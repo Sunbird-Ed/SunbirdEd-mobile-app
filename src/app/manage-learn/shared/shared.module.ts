@@ -35,6 +35,7 @@ import {
   AttachmentCardComponent,
   AttachmentListsComponent,
   ReportListComponent,
+  EntitySearchLocalComponent,
   StartImprovementComponent
   
 } from './components';
@@ -73,7 +74,7 @@ import { ExpansionPanelComponent } from './components/expansion-panel/expansion-
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
 import { HTTP } from '@ionic-native/http/ngx';
-
+import { EntitySearchPipe } from './pipe/entity-local-search';
 @NgModule({
   declarations: [
     CreateTaskComponent,
@@ -128,6 +129,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     AttachmentCardComponent,
     AttachmentListsComponent,
     ReportListComponent,
+    EntitySearchPipe,
+    EntitySearchLocalComponent,
     StartImprovementComponent
   ],
 
@@ -185,6 +188,8 @@ import { HTTP } from '@ionic-native/http/ngx';
     AddLinkModalComponent,
     AttachmentCardComponent,
     AttachmentListsComponent,
+    EntitySearchPipe,
+    EntitySearchLocalComponent,
     StartImprovementComponent
   ],
   providers: [
@@ -223,6 +228,7 @@ import { HTTP } from '@ionic-native/http/ngx';
     ProjectTaskListComponent,
     AddLinkModalComponent,
     ReportListComponent,
+    EntitySearchLocalComponent,
     StartImprovementComponent
   ],
   

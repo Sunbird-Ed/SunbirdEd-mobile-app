@@ -14,9 +14,10 @@ export class CertificateVerificationPopoverComponent implements OnInit, OnDestro
   @Input() actionsButtons: any;
   @Input() certificateData: any;
   @Input() showHeader = true;
+  @Input() isProject :boolean;
   backButtonFunc: Subscription;
   appName: string;
-
+  content ='SUCCESSFULLY_COMPLETING_COURSE';
   constructor(
     private commonUtilService: CommonUtilService,
     public popoverCtrl: PopoverController,
@@ -24,6 +25,7 @@ export class CertificateVerificationPopoverComponent implements OnInit, OnDestro
     private events: Events) { }
 
   ngOnInit() {
+    this.content = this.isProject ? 'SUCCESSFULLY_COMPLETING_PROJECT' :'SUCCESSFULLY_COMPLETING_COURSE';
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
       this.backButtonFunc.unsubscribe();

@@ -1,5 +1,14 @@
+<ion-toolbar class="ion-padding-start">
+  <ion-title></ion-title>
+  <ion-buttons (click)="handleBackButton() " slot="start" class="padding">
+    <ion-icon role="button" name="arrow-back"  aria-label="close" slot="icon-only"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
 <ion-content class="ion-padding">
   <app-metadata-details translucent="true" [data]="metaData">
+    <div class="certificate-tag" certificate *ngIf="project?.certificateTemplateId">
+      {{'CERTIFICATE' | translate}}
+    </div>
     <ion-button (click)="doAction()" expand="block" class="ion-text-none ion-margin-top">{{buttonLabel |
       translate}}</ion-button>
   </app-metadata-details>
@@ -22,7 +31,7 @@
       </app-project-details-card>
       <app-accordion-list *ngIf="project?.learningResources?.length" [data]="project?.learningResources"
       (actionEvent)="openResource($event)" [title]="'FRMELEMNTS_LBL_LEARNING_RESOURCES'" [showCard]="true"> </app-accordion-list>
-      <app-accordion-list *ngIf="project?.criteria?.length" [data]="project?.criteria" [showCard]="false"
+      <app-accordion-list *ngIf="certificateCriteria.length" [data]="certificateCriteria" [showCard]="false"
     [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
   <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">

@@ -43,7 +43,7 @@ export class ProjectDetailsComponent implements OnInit {
   taskCount = 0;
   projectDetailsCopy;
   taskNoDataFound="FRMELEMNTS_LBL_PLEASE_CREATE_AND_COMPLETE_TASKS"
-
+  certificateCriteria:any =[];
   constructor(
     public params: ActivatedRoute,
     private headerService: AppHeaderService,
@@ -126,6 +126,16 @@ export class ProjectDetailsComponent implements OnInit {
           if (success.docs.length) {
             this.categories = [];
             this.projectDetails = success.docs.length ? success.docs[0] : {};
+            if(this.projectDetails.certificate){
+              this.certificateCriteria =[];
+              let criteria = Object.keys(this.projectDetails?.certificate?.criteria?.conditions);
+              criteria.forEach(element => {
+                let config ={
+                  name:this.projectDetails?.certificate?.criteria?.conditions[element].validationText
+                }
+                this.certificateCriteria.push(config);
+              })
+            }
             this.setActionButtons();
             this.isNotSynced = this.projectDetails ? (this.projectDetails.isNew || this.projectDetails.isEdit) : false;
             this.projectDetails.categories.forEach((category: any) => {
@@ -188,7 +198,11 @@ export class ProjectDetailsComponent implements OnInit {
       defaultOptions[0] = actions.NOT_DOWNLOADED;
     }
     if (this.projectDetails.status === statusType.submitted) {
-      defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+      if(this.projectDetails.certificate){
+        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS.concat(actions.CERTIFICATE_ACTION);
+      }else{
+        defaultOptions = actions.SUBMITTED_PROJECT_ACTIONS
+      }
     }
     this.projectActions = defaultOptions;
   }
@@ -233,6 +247,9 @@ export class ProjectDetailsComponent implements OnInit {
       case 'edit':
         this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.projectDetails._id]);
         break;
+      case 'certificate':
+       this.getProjectsApi(true);
+        break
     }
   }
 
@@ -267,13 +284,14 @@ export class ProjectDetailsComponent implements OnInit {
     })
   }
 
-  getProjectsApi() {
+  getProjectsApi(certificate?) {
     const payload = {
       projectId: this.projectId,
       solutionId: this.solutionId,
       isProfileInfoRequired: false,
       programId: this.programId,
-      templateId: this.templateId
+      templateId: this.templateId,
+      certificate : certificate
     };
     this.projectServ.getProjectDetails(payload);
   }

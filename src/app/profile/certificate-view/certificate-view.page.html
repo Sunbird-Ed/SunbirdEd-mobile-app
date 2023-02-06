@@ -1,12 +1,12 @@
 <ion-content hide-header-footer
              class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-
+<div *ngIf="pageData || (projectData && projectData.certificate.eligible && projectData.certificate.osid)">
   <div class="cert-container">
     <strong class="label">{{'CERTIFICATE' | translate}}</strong>
     <div class="cert-details">
       <div class="cert-info">
-        <p class="title">{{pageData?.certificate?.name}}</p>
-        <p class="date">{{pageData?.certificate?.lastIssuedOn | date}}</p>
+        <p class="title"> {{projectData?.name || pageData?.certificate?.name}}</p>
+        <p class="date">{{(pageData?.certificate?.lastIssuedOn | date)  || (projectData?.certificate?.issuedOn | date)}}</p>
       </div>
       <div class="download-btn" *ngIf="!platform?.is('ios')">
         <button class="cert-btn" [ngClass]="{'highlight-cert-btn': onPopupOpen, '': !onPopupOpen }" (click)="showCertificateMenu($event)">
@@ -16,7 +16,15 @@
       </div>
     </div>
   </div>
-
+  </div>
+  <div *ngIf="(projectData  && !projectData.certificate.eligible) || (projectData && !projectData.certificate.osid)">
+    <div class="cert-container">
+    <strong class="label">{{'CERTIFICATE' | translate}}</strong>
+    <div class="text-msg" >
+      {{message | translate}}
+      </div>
+  </div>
+    </div>
   <div #scrollWrap
        class="scroll-wrap"
        (pan)="onGestureEvent($event)"
