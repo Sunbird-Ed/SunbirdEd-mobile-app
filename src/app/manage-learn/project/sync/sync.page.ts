@@ -264,7 +264,7 @@ export class SyncPage implements  OnDestroy {
       this.retryCount++;
       if (this.retryCount > 3) {
         this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
-          this.toast.openToast(translations);
+          this.toast.showMessage(translations,'danger');
         });
         this.location.back();
       } else {
