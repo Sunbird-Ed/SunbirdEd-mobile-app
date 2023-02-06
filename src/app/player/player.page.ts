@@ -162,9 +162,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         if (this.config['metadata'].isAvailableLocally) {
           this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
         }
-        const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
-        this.config['config']['whiteListUrl'] = utilityConfigFields.find((config) =>
-              config.code === 'config')['config']['v1']['whitelistUrl'];
+        if (!this.config['config'].whiteListUrl || !this.config['config'].whiteListUrl.length) {
+          const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+          if (utilityConfigFields && utilityConfigFields.length) {
+            const utilityPlayerConfig = utilityConfigFields.find((config) => config.code === 'config')['config'];
+            if (utilityPlayerConfig && utilityPlayerConfig.v1 && utilityPlayerConfig.v1.whitelistUrl
+              && utilityPlayerConfig.v1.whitelistUrl.length) {
+              this.config['config']['whiteListUrl'] = utilityPlayerConfig.v1.whitelistUrl;
+            }
+          }
+        }
         if (this.previewElement?.nativeElement) {
           clearInterval(playerInterval);
           // This is to reload a iframe as iframes reload method not working on cross-origin.
