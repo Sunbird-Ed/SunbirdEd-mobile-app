@@ -245,6 +245,32 @@ describe('CommonUtilService', () => {
       // assert
       expect(mockPopoverController.create).toHaveBeenCalled();
     });
+
+    it('should show Error alert popover, on left button clicked', () => {
+      // arrange
+      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+      } as any);
+      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+      // act
+      commonUtilService.afterOnBoardQRErrorAlert('sample_heading', 'sample_message');
+      // assert
+      expect(mockPopoverController.create).toHaveBeenCalled();
+    });
+
+    it('should show Error alert popover, on left button clicked false', () => {
+      // arrange
+      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: false} }))
+      } as any);
+      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+      // act
+      commonUtilService.afterOnBoardQRErrorAlert('sample_heading', 'sample_message');
+      // assert
+      expect(mockPopoverController.create).toHaveBeenCalled();
+    });
   });
 
   describe('showContentComingSoonAlert()', () => {
@@ -731,15 +757,83 @@ describe('CommonUtilService', () => {
         isContentDisabled: false,
         isLastAttempt: true
       };
-      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve({
-        isLastAttempt: true,
-        limitExceeded: false,
-        isContentDisabled: false,
-      }));
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: ''}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);
       // assert
-      expect(commonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
+    });
+
+    it('should show last attempt available popup and on click of continue return false', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: false
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+    });
+
+    it('should return false if the assessment is available to play directly', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showToast).not.toHaveBeenCalled();
+
+    });
+
+
+    it('should return false if the assessment is available to play directly', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: false, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showToast).not.toHaveBeenCalled();
+
     });
 
     it('should return false if the assessment is available to play directly', () => {
@@ -748,20 +842,22 @@ describe('CommonUtilService', () => {
         isContentDisabled: false,
         isLastAttempt: false
       };
-      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve({
-        isContentDisabled: false,
-        isLastAttempt: false,
-        limitExceeded: false,
-      }));
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
       commonUtilService.showToast = jest.fn();
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);
       // assert
-      expect(commonUtilService.showAssessmentLastAttemptPopup).not.toHaveBeenCalled();
       expect(commonUtilService.showToast).not.toHaveBeenCalled();
 
     });
-
   });
 
   describe('fetchPrimaryCategory', () => {

@@ -4,14 +4,14 @@ import { of, throwError } from "rxjs";
 import { CommonUtilService } from "../common-util.service";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 import { ModalController } from "@ionic/angular";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { ExternalIdVerificationService } from "../externalid-verification.service";
 import { AppGlobalService } from "../app-global-service.service";
 import { ConsentService } from "../consent-service";
 import { ProfileConstants, RouterLinks } from "../../app/app.constant";
 import { FormConstants } from '../../app/form.constants';
 import { FieldConfig } from "../../app/components/common-forms/field-config";
-import { InteractSubType, InteractType, SharedPreferences } from "@project-sunbird/sunbird-sdk";
+import { InteractType, SharedPreferences } from "@project-sunbird/sunbird-sdk";
 import { FrameworkDetailsService } from "../framework-details.service";
 import { Events } from '../../util/events';
 import onboarding from '../../assets/configurations/config.json';
@@ -1713,6 +1713,17 @@ describe('TncUpdateHandlerService', () => {
          // assert
         // expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
         // done();
+    });
+
+    it('should handle throw error on accept terms and condition', () => {
+      // arrange
+      mockProfileService.acceptTermsAndConditions = jest.fn(() => throwError({Error: ''}));
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
+      mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.reject({ status: false }));
+       // act
+       tncUpdateHandlerService.presentTncPage(ProfileData);
+       // assert
     });
   })
 })

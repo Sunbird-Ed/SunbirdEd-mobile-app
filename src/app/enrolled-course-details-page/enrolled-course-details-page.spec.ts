@@ -709,11 +709,86 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { canDelete: false }}))
             } as any)));
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
             mockCommonUtilService.translateMessage = jest.fn(() => '');
             mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
+            enrolledCourseDetailsPage.batches = [{}, {}];
+            // act
+            enrolledCourseDetailsPage.joinTraining();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should be joined training for logged in user on dismiss canDelete true', async (done) => {
+            // arrange
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data:{ canDelete: true, btn: '' }}))
+            } as any)));
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
+            enrolledCourseDetailsPage.batches = [{}, {}];
+            // act
+            enrolledCourseDetailsPage.joinTraining();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should be joined training for logged in user on dismiss canDelete true, and return if no network and has btn info', async (done) => {
+            // arrange
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} }}))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn();
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
+            enrolledCourseDetailsPage.batches = [{}, {}];
+            // act
+            enrolledCourseDetailsPage.joinTraining();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should be joined training for logged in user on dismiss canDelete true, and return if netwrok available', async (done) => {
+            // arrange
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} }}))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            mockCommonUtilService.showToast = jest.fn();
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
             spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
             spyOn(mockCourseService, 'getBatchDetails').and.stub();
             jest.spyOn(enrolledCourseDetailsPage, 'markContent').mockImplementation();
@@ -1431,8 +1506,152 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {} } }))
             } as any)));
+            enrolledCourseDetailsPage.telemetryObject = {
+                id: 'do_21281258639073280011490',
+                type: 'Course',
+                version: '2',
+            };
+            mockPreferences.putString = jest.fn(() => of(undefined));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            enrolledCourseDetailsPage.promptToLogin({});
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '', PageId.SIGNIN_POPUP,
+                    Environment.HOME,
+                    'do_21281258639073280011490',
+                    'Course',
+                    '2',
+                    {}, undefined
+                );
+                expect(mockPopoverCtrl.create).toHaveBeenCalledWith(
+                    {
+                        component: SbPopoverComponent,
+                        componentProps: {
+                            actionsButtons: [
+                                {
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
+                                    btntext: 'sample-message',
+
+                                },
+
+                            ],
+                            isNotShowCloseIcon: true,
+                            metaInfo: 'sample-message',
+                            sbPopoverHeading: 'sample-message',
+                            sbPopoverMainTitle: 'sample-message',
+
+                        },
+                        cssClass: 'sb-popover info',
+                    });
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'OVERLAY_SIGN_IN');
+                expect(mockPreferences.putString).toHaveBeenNthCalledWith(1,
+                    PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify({}));
+                expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
+                    PreferenceKey.COURSE_DATA_KEY, JSON.stringify({ name: 'sample-course-name' }));
+                expect(mockPreferences.putString).toHaveBeenNthCalledWith(3,
+                    PreferenceKey.CDATA_KEY, JSON.stringify(undefined));
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.LOGIN_CLICKED,
+                    Environment.HOME,
+                    PageId.SIGNIN_POPUP,
+                    {
+                        id: 'do_21281258639073280011490',
+                        type: 'Course',
+                        version: '2',
+                    },
+                    undefined,
+                    {},
+                    undefined
+                );
+                expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+                done();
+            }, 0);
+        });
+
+        it('should invoke LoginHandler signin method, if no network and has btn network msg', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network needed'} } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn(() => Promise.resolve())
+            enrolledCourseDetailsPage.telemetryObject = {
+                id: 'do_21281258639073280011490',
+                type: 'Course',
+                version: '2',
+            };
+            mockPreferences.putString = jest.fn(() => of(undefined));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            enrolledCourseDetailsPage.promptToLogin({});
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '', PageId.SIGNIN_POPUP,
+                    Environment.HOME,
+                    'do_21281258639073280011490',
+                    'Course',
+                    '2',
+                    {}, undefined
+                );
+                expect(mockPopoverCtrl.create).toHaveBeenCalledWith(
+                    {
+                        component: SbPopoverComponent,
+                        componentProps: {
+                            actionsButtons: [
+                                {
+                                    btnClass: 'popover-color label-uppercase label-bold-font',
+                                    btntext: 'sample-message',
+
+                                },
+
+                            ],
+                            isNotShowCloseIcon: true,
+                            metaInfo: 'sample-message',
+                            sbPopoverHeading: 'sample-message',
+                            sbPopoverMainTitle: 'sample-message',
+
+                        },
+                        cssClass: 'sb-popover info',
+                    });
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'OVERLAY_SIGN_IN');
+                done();
+            }, 0);
+        });
+
+        it('should invoke LoginHandler signin method, if no network and has btn network msg', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: '' } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn(() => Promise.resolve())
             enrolledCourseDetailsPage.telemetryObject = {
                 id: 'do_21281258639073280011490',
                 type: 'Course',

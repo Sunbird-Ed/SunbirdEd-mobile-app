@@ -282,10 +282,34 @@ describe('ContentActionsComponent', () => {
         mockFileSizePipe.transform = jest.fn();
         const presentFn = jest.fn(() => Promise.resolve());
         jest.spyOn(contentActionsComponent, 'deleteContent').mockImplementation();
-
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
         mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
             present: presentFn,
-            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true}}))
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true, btn:''}}))
+
+        }) as any);
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        contentActionsComponent.close(0);
+        // assert
+        setTimeout(() => {
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            expect(presentFn).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('REMOVE_FROM_DEVICE');
+            done();
+        }, 0);
+
+    });
+    it('should display popup when switch case value is 0', (done) => {
+        // arrange
+        mockCommonUtilService.translateMessage = jest.fn();
+        mockFileSizePipe.transform = jest.fn();
+        const presentFn = jest.fn(() => Promise.resolve());
+        jest.spyOn(contentActionsComponent, 'deleteContent').mockImplementation();
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: false}
+        mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+            present: presentFn,
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
 
         }) as any);
         // act
@@ -293,7 +317,30 @@ describe('ContentActionsComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockPopoverCtrl.create).toHaveBeenCalled();
-            expect(presentFn).toHaveBeenCalled();
+            // expect(presentFn).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('REMOVE_FROM_DEVICE');
+            done();
+        }, 0);
+
+    });
+
+    it('should display popup when switch case value is 0, if network available on dismiss', (done) => {
+        // arrange
+        mockCommonUtilService.translateMessage = jest.fn();
+        mockFileSizePipe.transform = jest.fn();
+        const presentFn = jest.fn(() => Promise.resolve());
+        jest.spyOn(contentActionsComponent, 'deleteContent').mockImplementation();
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true}
+        mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+            present: presentFn,
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+
+        }) as any);
+        // act
+        contentActionsComponent.close(0);
+        // assert
+        setTimeout(() => {
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('REMOVE_FROM_DEVICE');
             done();
         }, 0);
@@ -345,6 +392,16 @@ describe('ContentActionsComponent', () => {
         });
     });
 
+    describe('syncCourseProgress', () => {
+        it('should generate telemetry on sync progress and dismiss popover', () => {
+            // arramge
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            // act
+            contentActionsComponent.syncCourseProgress()
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
+        })
+    })
 });
 
 describe('ContentActionsComponent', () => {

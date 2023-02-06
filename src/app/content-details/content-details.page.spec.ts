@@ -44,7 +44,6 @@ import {
 import { ContentUtil } from '../../util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
@@ -110,7 +109,7 @@ describe('ContentDetailsPage', () => {
         back: jest.fn(() => true)
     };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockContentData)
+        getCurrentNavigation: jest.fn(() => mockContentData) as any
     };
     const mockRoute: Partial<ActivatedRoute> = {
         queryParams: of({})
@@ -206,7 +205,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.showSwitchUserAlert(true);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(mockCommonUtilService.networkInfo?.isNetworkAvailable).toBeFalsy();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
                 done();
             }, 0);
@@ -2439,14 +2438,55 @@ describe('ContentDetailsPage', () => {
             }, 1000);
         });
 
-        it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin', (done) => {
+        it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, and network available', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             contentDetailsPage.telemetryObject = { id: 'sample-id' };
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: 'can delete' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            mockCommonUtilService.showToast = jest.fn()
+            // act
+            contentDetailsPage.promptToLogin();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, on dismiss can delete is false or empty string', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false} }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'you must login');
+            // act
+            contentDetailsPage.promptToLogin();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, can delete true on dismiss', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: '' } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'you must login');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -2476,6 +2516,49 @@ describe('ContentDetailsPage', () => {
                     { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
                 );
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+                done();
+            }, 0);
+        });
+
+        it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn()
+            mockCommonUtilService.translateMessage = jest.fn(() => 'you must login');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            contentDetailsPage.promptToLogin();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '', PageId.SIGNIN_POPUP,
+                    Environment.HOME,
+                    'sample-id', undefined, undefined,
+                    { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
+                );
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'QUIZ_CONTENTS_ONLY_REGISTERED_USERS');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'OVERLAY_SIGN_IN');
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.LOGIN_CLICKED,
+                    Environment.HOME,
+                    PageId.SIGNIN_POPUP,
+                    { id: 'sample-id' }, undefined,
+                    { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
+                );
                 done();
             }, 0);
         });
