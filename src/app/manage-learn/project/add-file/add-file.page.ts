@@ -200,7 +200,7 @@ export class AddFilePage implements OnInit {
       if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
-        this.update('submit');
+        this.taskId ? this.update(): this.update('submit');
         this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
       } else {
         this.location.back();
@@ -231,7 +231,7 @@ export class AddFilePage implements OnInit {
     this.isLinkModalOpen = !this.isLinkModalOpen;
   }
 
-  update(type) {
+  update(type?) {
     this.project.isEdit = true;
     this.db
       .update(this.project)
@@ -240,6 +240,8 @@ export class AddFilePage implements OnInit {
         if (type == 'submit') {
           this.attachments = [];
           this.doSyncAction(type === 'submit');
+        }else{
+          this.location.back();
         }
       })
   }
