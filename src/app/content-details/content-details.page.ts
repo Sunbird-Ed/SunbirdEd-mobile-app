@@ -418,7 +418,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleNavBackButton() {
-    if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
+    if (this.platform.is('ios') && (this.screenOrientation.type === 'landscape-secondary' || this.screenOrientation.type === 'landscape-primary')) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       return false;
     }
@@ -637,8 +637,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') &&
     !(typeof this.content.contentData['interceptionPoints'] === 'object' && this.content.contentData['interceptionPoints'] != null &&
      Object.keys(this.content.contentData['interceptionPoints']).length !== 0) ) {
-      this.getNextContent(data.hierarchyInfo, data.identifier);
-      this.playContent(true, true);
+       if (data && data.hierarchyInfo) {
+        this.getNextContent(data.hierarchyInfo, data.identifier);
+       }
+       this.playContent(true, true);
     }
   }
 
@@ -1199,7 +1201,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async handlePlayer(playerData) {
     this.config = playerData.state.config;
     let playerConfig = await this.formFrameworkUtilService.getPdfPlayerConfiguration();
-    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" && !this.content.contentData["interceptionPoints"]) {
+    if (["video/mp4", "video/webm"].includes(playerData.state.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(playerConfig , 'videoPlayer').name === "videoPlayer" &&
+    (!this.content.contentData['interceptionPoints'] || Object.keys(this.content.contentData['interceptionPoints'].length === 0))) {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
@@ -1211,7 +1214,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
     this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
     if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].basePath ?? this.config['metadata'].contentData.streamingUrl;
     }
     this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
     this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
@@ -1292,10 +1295,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
       } else if (event.edata['type'] === 'FULLSCREEN') {
-        if (this.screenOrientation.type === 'portrait-primary') {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-        } else if (this.screenOrientation.type === 'landscape-primary') {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if(!this.platform.is('ios') || (this.platform.is('ios') && this.playerType !== "sunbird-video-player")) {
+          if (this.screenOrientation.type === 'portrait-primary') {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+          } else if (this.screenOrientation.type === 'landscape-primary') {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          }
         }
       }
     } else if (event.type === 'ended') {

@@ -291,7 +291,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             language: this.translate.currentLang,
             selectedTermsCodes: this.boardControl.value
           };
-
+          if(Object.keys(this.supportedProfileAttributes).length == 1  && this.supportedProfileAttributes['board']) {
+            this.disableSubmitButton = false;
+          }
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.mediumControl.value) {
@@ -327,7 +329,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             language: this.translate.currentLang,
             selectedTermsCodes: this.mediumControl.value
           };
-
+          if(Object.keys(this.supportedProfileAttributes).length == 2 && this.supportedProfileAttributes['medium']) {
+            this.disableSubmitButton = false;
+          }
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.gradeControl.value) {
@@ -418,6 +422,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
    */
   enableSubmitButton() {
     if (this.profileEditForm.value.grades.length) {
+      this.disableSubmitButton = false;
       this.btnColor = '#006DE5';
     } else {
       this.btnColor = '#8FC4FF';
@@ -586,6 +591,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private addAttributeSubscription() {
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+    if (Object.keys(this.supportedProfileAttributes).length > 0) {
+      console.log('disable button ', this.disableSubmitButton);
+      this.disableSubmitButton = true;
+    }
   }
 
   private getCategoriesAndUpdateAttributes(userType) {
