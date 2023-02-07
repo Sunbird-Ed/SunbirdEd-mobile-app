@@ -63,6 +63,7 @@ export class DistrictMappingPage implements OnDestroy {
   private formValueSubscription?: Subscription;
   private initialFormLoad = true;
   private isLocationUpdated = false;
+  params;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -88,6 +89,7 @@ export class DistrictMappingPage implements OnDestroy {
     this.navigateToCourse = extrasState.noOfStepsToCourseToc;
     this.isGoogleSignIn = extrasState.isGoogleSignIn;
     this.userData = this.isGoogleSignIn ? extrasState.userData : '';
+    this.params = extrasState.payload;
   }
   goBack(isNavClicked: boolean) {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -501,8 +503,11 @@ export class DistrictMappingPage implements OnDestroy {
     }
     this.initialFormLoad = false;
     this.locationFormConfig = locationMappingConfig;
+     if(this.params){
+    this.fieldConfig();
   }
-
+  }
+ 
   private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
     if (this.presetLocation[fieldConfig.code]) {
       return this.presetLocation[fieldConfig.code];
@@ -698,5 +703,22 @@ export class DistrictMappingPage implements OnDestroy {
 
   redirectToLogin() {
     this.router.navigate([RouterLinks.SIGN_IN]);
+  }
+  fieldConfig(){
+    this.locationFormConfig.forEach(element => {
+      if(element.code  != this.params.code){
+        element.templateOptions.hidden = true;
+        element.templateOptions.disabled = true;
+        if( this.params.children){
+          let keys = Object.keys(element.children);
+          keys.forEach(key => {
+            element.children[key].forEach(childEl => {
+              childEl.templateOptions.hidden =true;
+              childEl.templateOptions.disabled =true;
+             });
+          });
+        }
+      }
+    });
   }
 }

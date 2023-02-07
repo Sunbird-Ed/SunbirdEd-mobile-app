@@ -41,6 +41,7 @@ describe('SearchFilterPage', () => {
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFilterFormConfigMapper: Partial<FilterFormConfigMapper> = {};
+    window.console.error = jest.fn()
 
     JSON.parse = jest.fn().mockImplementationOnce(() => {
         return FilterCriteriaData;
@@ -138,6 +139,74 @@ describe('SearchFilterPage', () => {
                 done();
             }, 0);
         });
+
+        it('should handle else case if filterFormTemplateConfig is present', (done) => {
+            // arrange
+            searchFilterPage['isPageLoadedFirstTime'] = true;
+            searchFilterPage['initialFilterCriteria'] = {
+                facetFilters: [
+                    {
+                        name: 'se_mediums', values: [
+                            {
+                                name: 'english', count: 30408, apply: false, values: [{
+                                    name: 'english'
+                                }]
+                            },
+                            {
+                                name: 'hindi', count: 2107, apply: false, values: [{
+                                    name: 'hindi'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        name: 'se_gradeLevels', values: [
+                            {
+                                name: 'class 10', count: 6446, apply: false, values: [{
+                                    name: 'class 10'
+                                }]
+                            },
+                            {
+                                name: 'class 1', count: 23017, apply: false, values: [{
+                                    name: 'class 1'
+                                }]
+                            }
+                        ]
+                    }
+                ],
+                facets: ['se_mediums', 'se_gradeLevels']
+            };
+            mockFilterFormConfigMapper.map = jest.fn(() => Promise.resolve({
+                config: [{
+                    facet: 'board',
+                    type: 'dropdown',
+                }],
+                defaults: {
+                    values: ['english', 'hindi']
+                }
+            }))
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(searchFilterPage['initialFilterCriteria']));
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['initialFilterCriteria'];
+            });
+            mockSearchFilterService.getFacetFormAPIConfig = jest.fn(() => Promise.resolve('string' as any));
+            // act
+            searchFilterPage.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
+                expect(searchFilterPage.baseSearchFilter).toEqual({
+                    values: ['english', 'hindi']
+                });
+                expect(searchFilterPage.filterFormTemplateConfig).toEqual([
+                    {
+                        facet: 'board',
+                        type: 'dropdown',
+                    }
+                ]);
+                done();
+            }, 0);
+        });
     });
 
     describe('resetFilter', () => {
@@ -150,6 +219,14 @@ describe('SearchFilterPage', () => {
             searchFilterPage.resetFilter();
             // assert
             expect(searchFilterPage.searchFilterComponent.resetFilter).toHaveBeenCalled();
+        });
+
+        it('should delegate form reset to SbSearchFacetFilterComponent', () => {
+            // arrange
+            searchFilterPage.searchFilterComponent = undefined;
+            // act
+            searchFilterPage.resetFilter();
+            // assert
         });
     });
 
@@ -261,6 +338,71 @@ describe('SearchFilterPage', () => {
                 };
             });
             const sampleFilterCriteria = FilterCriteriaData;
+            searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
+            searchFilterPage['isPageLoadedFirstTime'] = false;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.reject('error message'));
+            mockSearchFilterService.reformFilterValues = jest.fn(() => Promise.resolve([
+                { name: 'board', values: [Array] },
+                { name: 'medium', values: [Array] }
+            ]))
+            //act
+            searchFilterPage.valueChanged(event);
+            //assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.changeChannelIdToName).toHaveBeenCalled();
+                expect(searchFilterPage['isPageLoadedFirstTime']).toBe(false);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done()
+            }, 0);
+        });
+        it('should call refresh form and selection might not be of type string, if no facet filters', (done) => {
+            //arrange
+            const event = {
+                name: 'se_mediums',
+                values: 'se_gradeLevels'
+            };
+            JSON.parse = jest.fn().mockImplementationOnce(() => {
+                return searchFilterPage['initialFilterCriteria'] = {
+                    facetFilters: [
+                        {
+                            name: 'se_mediums', values: [
+                                {
+                                    name: 'english', count: 30408, apply: false, values: [{
+                                        name: 'english'
+                                    }]
+                                },
+                                {
+                                    name: 'hindi', count: 2107, apply: false, values: [{
+                                        name: 'hindi'
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            name: 'se_gradeLevels', values: [
+                                {
+                                    name: 'class 10', count: 6446, apply: false, values: [{
+                                        name: 'class 10'
+                                    }]
+                                },
+                                {
+                                    name: 'class 1', count: 23017, apply: false, values: [{
+                                        name: 'class 1'
+                                    }]
+                                }
+                            ]
+                        }
+                    ],
+                    facets: ['se_mediums', 'se_gradeLevels']
+                };
+            });
+            const sampleFilterCriteria = {};
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             searchFilterPage['isPageLoadedFirstTime'] = false;
             mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));

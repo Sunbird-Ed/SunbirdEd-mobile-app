@@ -71,7 +71,7 @@ describe('ConfirmAlertComponent', () => {
     it('should select can download false and dimiss popover with passing data', () => {
         mockPopoverController.dismiss = jest.fn();
 
-        confirmAlertComponent.selectOption(false);
+        confirmAlertComponent.selectOption();
 
         expect(mockPopoverController.dismiss).toHaveBeenCalledWith(false);
     });
@@ -82,5 +82,22 @@ describe('ConfirmAlertComponent', () => {
         confirmAlertComponent.closePopover();
 
         expect(mockPopoverController.dismiss).toHaveBeenCalled();
+    });
+
+    it('should unsubscribe on ngOnDestroy', () => {
+        confirmAlertComponent.backButtonFunc = {
+            unsubscribe: jest.fn()
+        }
+
+        confirmAlertComponent.ngOnDestroy();
+
+        expect(confirmAlertComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should return if not subscribed', () => {
+        confirmAlertComponent.backButtonFunc = undefined;
+
+        confirmAlertComponent.ngOnDestroy();
+
     });
 });

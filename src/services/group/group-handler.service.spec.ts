@@ -13,7 +13,7 @@ describe('GroupHandlerService', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockLocation: Partial<Location> = {};
-
+    window.console.error = jest.fn();
     beforeAll(() => {
         groupHandlerService = new GroupHandlerService(
             mockGroupService as GroupService,
