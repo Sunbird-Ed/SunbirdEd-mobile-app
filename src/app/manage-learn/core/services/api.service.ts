@@ -119,7 +119,7 @@ export class ApiService {
       mergeMap(session => {
         const headers = this.setHeaders(session);
           return this.ionicHttp.delete(this.baseUrl + requestParam.url, '', headers).then(data => {
-            return data
+            return JSON.parse(data.data);
           }, error => {
             catchError(this.handleError(error))
           })
