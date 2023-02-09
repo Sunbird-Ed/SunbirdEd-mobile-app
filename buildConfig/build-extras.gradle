@@ -115,21 +115,29 @@ android {
             applicationId "${staging_app_id}"
             flavorDimensions "default"
             resValue("string", "deeplink_base_url", "${staging_deeplink_base_url}")
-            resValue("string", "deeplink_ncert_url", "${staging_deeplink_ncert_url}")
-            resValue("string", "deeplink_igot_url", "${staging_deeplink_igot_url}")
+             if (System.properties['deeplink_ncert_url']) {
+                resValue("string", "deeplink_ncert_url", "${staging_deeplink_ncert_url}")
+            }
+            if (System.properties['deeplink_igot_url']) {
+                resValue("string", "deeplink_igot_url", "${staging_deeplink_igot_url}")
+            }
+            if (System.properties['staging_custom_scheme']) {
             resValue("string", "custom_scheme_url", "${staging_custom_scheme}")
+            }
             buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
-            buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
+            if (System.properties['staging_producer_id']) {
             buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
+            }
+            if (System.properties['staging_channel_id']) {
             buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
+            }
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${staging_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
+            if (System.properties['staging_oauth_redirect_url']) {
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
-            buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
-            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
-            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
+            }
         }
 
         production {
