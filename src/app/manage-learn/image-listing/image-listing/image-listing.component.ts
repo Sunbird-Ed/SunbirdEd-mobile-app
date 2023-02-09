@@ -229,13 +229,10 @@ export class ImageListingComponent implements OnInit {
           });
       })
       .catch((error) => {
-        this.failedUploadImageNames.push(this.imageList[this.uploadIndex].file);
-        if (this.uploadIndex < this.imageList.length - 1) {
-          this.uploadIndex++;
-          this.cloudImageUpload();
-        } else {
-          this.submitEvidence();
-        }
+        this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
+          this.toast.openToast(translations);
+        });
+        history.go(-1);
       });
   }
 
