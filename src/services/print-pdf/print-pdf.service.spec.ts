@@ -43,7 +43,7 @@ describe('PrintPdfService', () => {
     });
     mockCommonUtilService.showToast = jest.fn(() => { });
     mockTransfer.create = jest.fn(() => ({ 
-        download: mockDownload
+      download: mockDownload
     })) as any;
     window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
     window.cordova.plugins.printer.print = jest.fn();
@@ -56,7 +56,7 @@ describe('PrintPdfService', () => {
     }, 0)
   })
 
-  it('cannott print pdf', (done) => {
+  it('should show toast for canprint false on print pdf', (done) => {
     // arrange
     const url = 'downloadUrl';
     const mockPresent = jest.fn(() => Promise.resolve());
@@ -72,24 +72,25 @@ describe('PrintPdfService', () => {
     });
     mockCommonUtilService.showToast = jest.fn(() => { });
     mockTransfer.create = jest.fn(() => ({ 
-        download: mockDownload
+      download: mockDownload
     })) as any;
     window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(false); });
+    window.cordova.plugins.printer.print = jest.fn();
     // act
     printPdfService.printPdf(url);
     setTimeout(() => {
       expect(mockTransfer.create).toHaveBeenCalled();
+      expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
       done()
     }, 0)
   })
 
-  it('should catch error on transfer create', (done) => {
+  it('should handle error on print pdf', (done) => {
     // arrange
     const url = 'downloadUrl';
     const mockPresent = jest.fn(() => Promise.resolve());
     const mockDismiss = jest.fn(() => Promise.resolve());
     const mockDownload = jest.fn(() => Promise.reject({
-      error: () => 'ERROR_COULD_NOT_OPEN_FILE'
     }));
     mockCommonUtilService.getLoader = jest.fn(() => {
       return Promise.resolve({
@@ -99,12 +100,13 @@ describe('PrintPdfService', () => {
     });
     mockCommonUtilService.showToast = jest.fn(() => { });
     mockTransfer.create = jest.fn(() => ({ 
-        download: mockDownload
+      download: mockDownload
     })) as any;
     // act
     printPdfService.printPdf(url);
     setTimeout(() => {
       expect(mockTransfer.create).toHaveBeenCalled();
+      expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
       done()
     }, 0)
   })

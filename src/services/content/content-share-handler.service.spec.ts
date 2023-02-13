@@ -34,6 +34,7 @@ describe('ContentShareHandlerService', () => {
     const mockPlatform: Partial<Platform> = {
         is: jest.fn(platform => platform === 'ios')
     };
+    window.console.error = jest.fn()
 
     beforeAll(() => {
         contentShareHandlerService = new ContentShareHandlerService(
@@ -661,6 +662,106 @@ describe('ContentShareHandlerService', () => {
                     { contentIds: ['do_id'], destinationFolder: '/pathDownload/', saveLocally: true, subContentIds: [] }
                 );
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FILE_SAVED', '', 'green-toast');
+                done();
+            }, 0);
+        });
+
+        it('should save content file on device for ios platform exportContent', (done) => {
+            // arrange
+            mockPlatform.is = jest.fn((platform) => platform === "ios");
+            let shareParams = {
+                byLink: false,
+                byFile: false,
+                saveFile: true
+            };
+            const content: Partial<Content> = {
+                identifier: 'do_id',
+                contentType: 'contentType',
+                contentData: {
+                    contentType: 'contentType',
+                }
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            const contentExportResponse = {
+                exportedFilePath: 'samplepath'
+            };
+            // shareParams.byFile = true;
+            mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
+            const values = new Map();
+            values['ContentType'] = content.contentData.contentType;
+            mockCommonUtilService.showToast = jest.fn();
+
+            // act
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.CONTENT_DETAIL);
+
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
+                    Environment.HOME, PageId.CONTENT_DETAIL,
+                    {
+                        id: 'do_id', type: 'contentType', version: ''
+                    },
+                    values, { l1: 'do_id' }, []);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
+                    Environment.HOME, PageId.CONTENT_DETAIL,
+                    {
+                        id: 'do_id', type: 'contentType', version: ''
+                    },
+                    values, { l1: 'do_id' }, []);
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockContentService.exportContent).toHaveBeenCalledWith(
+                    { contentIds: ['do_id'], destinationFolder: 'undefinedDownload/', saveLocally: true, subContentIds: [] }
+                );
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FILE_SAVED', '', 'green-toast');
+                done();
+            }, 0);
+        });
+
+        it('should save content file on device for ios platform exportContent', (done) => {
+            // arrange
+            mockPlatform.is = jest.fn((platform) => platform === "ios");
+            const shareParams = {
+                byLink: false,
+                byFile: false,
+                saveFile: false
+            };
+            const content: Partial<Content> = {
+                identifier: 'do_id',
+                contentType: 'contentType',
+                contentData: {
+                    contentType: 'contentType',
+                }
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            const contentExportResponse = {
+                exportedFilePath: 'samplepath'
+            };
+            mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
+            const values = new Map();
+            values['ContentType'] = content.contentData.contentType;
+            mockCommonUtilService.showToast = jest.fn();
+
+            // act
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.CONTENT_DETAIL);
+            // assert
+            setTimeout(() => {
                 done();
             }, 0);
         });

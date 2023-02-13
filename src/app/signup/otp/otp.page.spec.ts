@@ -46,6 +46,7 @@ describe('OtpPage', () => {
         })) as any
     }
     const mockSharedPreferences: Partial<SharedPreferences> = {}
+    window.console.error = jest.fn();
     beforeAll(() => {
         otpPage = new OtpPage(
             mockProfileService as ProfileService,
@@ -95,9 +96,74 @@ describe('OtpPage', () => {
                 isNetworkAvailable: true
             }
             const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn,
-                dismiss: jest.fn(() => Promise.resolve())
+                dismiss: dismissFn
+            }));
+            otpPage.userData = {
+                contactInfo: {
+                    type: 'phone',
+                    phone: '9876586432'
+                },
+                userId:'some_id',
+                location: [{
+                    type: '324',
+                    code: '234'
+                }],
+                profileUserTypes: [{
+                    type: 'admin'
+                }]
+            }
+            otpPage.otpInfoForm = {value: {otp: '23223'}} as FormGroup
+            const req = {
+                key: otpPage.userData.contactInfo.phone,
+                type: ProfileConstants.CONTACT_TYPE_PHONE,
+                otp: '23423',
+                ...(otpPage.userData.contactInfo.phone &&
+                  otpPage.userData.contactInfo.phone.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+                  { userId: otpPage.userData.userId })
+              };
+              const profileReq = {
+                userId: otpPage.userData.userId,
+                profileLocation: {
+                    type: '234',
+                    code: '213'
+                  },
+                firstName: otpPage.userData.name,
+                lastName: '',
+                dob: otpPage.userData.dob,
+                profileUserTypes: otpPage.userData.profileUserTypes
+              };
+            mockProfileService.verifyOTP = jest.fn(() => of())
+            mockProfileService.updateServerProfile = jest.fn(() => of({})) as any
+            const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+              };
+            mockRouter.navigate = jest.fn()
+            // act
+            otpPage.continue()
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.verifyOTP).toHaveBeenCalledWith(req);
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalledWith(profileReq);
+                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`],{
+                    state: categoriesProfileData
+                })
+            }, 0);
+        })
+
+        it('should verify otp through phone number and continue', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn
             }));
             otpPage.userData = {
                 contactInfo: {
@@ -108,7 +174,10 @@ describe('OtpPage', () => {
                 location: {
                     type: '324',
                     code: '234'
-                }
+                },
+                profileUserTypes: [{
+                    type: ''
+                }]
             }
             otpPage.otpInfoForm = {value: {otp: '23223'}} as FormGroup
             const req = {
@@ -256,6 +325,52 @@ describe('OtpPage', () => {
             }, 0);
         })
 
+        it('should catch error on update server profile, error else case', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            otpPage.otpInfoForm = {value: {otp: '23223'}} as FormGroup
+
+            otpPage.userData = {
+                contactInfo: {
+                    type: 'email',
+                    email: 'asda@add.dew'
+                },
+                userId:'some_id',
+                location: {
+                    type: '324',
+                    code: '234'
+                }
+            }
+            const req = {
+                key: otpPage.userData.contactInfo.email,
+                type: ProfileConstants.CONTACT_TYPE_EMAIL,
+                otp: '324',
+                ...(otpPage.userData.contactInfo &&
+                  otpPage.userData.contactInfo.email.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+                  { userId: otpPage.userData.userId })
+              };
+            mockProfileService.verifyOTP = jest.fn(() => of());
+            mockProfileService.updateServerProfile = jest.fn(() => throwError({response: {body: { params: {err:'UOS_USRUPD0063'}}}})) as any
+            mockCommonUtilService.showToast = jest.fn()
+            mockCommonUtilService.translateMessage  = jest.fn()
+            // act
+            otpPage.continue()
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.verifyOTP).toHaveBeenCalledWith(req);
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled()
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SOMETHING_WENT_WRONG')
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith()
+            }, 0);
+        })
+
         it('should catch error on verify otp profile', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
@@ -281,6 +396,84 @@ describe('OtpPage', () => {
             }
             let response = new Response();
                 response = {responseCode: 400, body: { params: {err:'UOS_OTPVERFY0063'}, result: {remainingAttempt: 1}}};
+            const error: HttpClientError = new HttpClientError('Error', response);
+            mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
+            mockCommonUtilService.showToast = jest.fn()
+            mockCommonUtilService.translateMessage  = jest.fn()
+            // act
+            otpPage.continue()
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.verifyOTP).toHaveBeenCalledWith();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SOMETHING_WENT_WRONG')
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith()
+            }, 0);
+        })
+
+        it('should catch error on verify otp profile, else if response code is not 400', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            otpPage.otpInfoForm = {value: {otp: '23223'}} as FormGroup
+            const locationCodes = [];
+            otpPage.userData = {
+                contactInfo: {
+                    type: 'email',
+                    email: 'asda@add.dew'
+                },
+                userId:'some_id',
+                location: [{
+                    type: '324',
+                    code: '234'
+                }]
+            }
+            let response = new Response();
+                response = {responseCode: 402, body: { params: {err:'UOS_OTPVERFY0063'}, result: {remainingAttempt: 1}}};
+            const error: HttpClientError = new HttpClientError('Error', response);
+            mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
+            mockCommonUtilService.showToast = jest.fn()
+            mockCommonUtilService.translateMessage  = jest.fn()
+            // act
+            otpPage.continue()
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.verifyOTP).toHaveBeenCalledWith();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SOMETHING_WENT_WRONG')
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith()
+            }, 0);
+        })
+
+        it('should catch error on verify otp profile, else if response body is not object', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            otpPage.otpInfoForm = {value: {otp: '23223'}} as FormGroup
+            const locationCodes = [];
+            otpPage.userData = {
+                contactInfo: {
+                    type: 'email',
+                    email: 'asda@add.dew'
+                },
+                userId:'some_id',
+                location: [{
+                    type: '324',
+                    code: '234'
+                }]
+            }
+            let response = new Response();
+                response = {responseCode: 400, body: "", result: {remainingAttempt: 1}};
             const error: HttpClientError = new HttpClientError('Error', response);
             mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
             mockCommonUtilService.showToast = jest.fn()
@@ -371,7 +564,7 @@ describe('OtpPage', () => {
                 type: ProfileConstants.CONTACT_TYPE_PHONE,
                 ...(otpPage.userData.contactInfo &&
                     otpPage.userData.contactInfo.phone.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
-                    { userId: otpPage.userData.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
+                    { userId: 'some_id', templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
            
             }
             const presentFn = jest.fn(() => Promise.resolve());
@@ -410,7 +603,7 @@ describe('OtpPage', () => {
                 type: ProfileConstants.CONTACT_TYPE_EMAIL,
                 ...(otpPage.userData.contactInfo.email &&
                   otpPage.userData.contactInfo.email.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
-                  { userId: otpPage.userData.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
+                  { userId: 'some_id', templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
               };
               const presentFn = jest.fn(() => Promise.resolve());
               mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -448,6 +641,35 @@ describe('OtpPage', () => {
                 present: presentFn,
                 dismiss: jest.fn(() => Promise.resolve())
             }));
+            mockProfileService.generateOTP = jest.fn(() => throwError({}))
+            // act
+            otpPage.resendOTP()
+            // assert
+            setTimeout(() => {
+                
+                expect(mockProfileService.generateOTP).toHaveBeenCalled();
+            }, 0);
+        })
+
+        it('should catch error on generateotp for contact type email, loader undefined', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            otpPage.userData = {
+                contactInfo: {
+                    type: 'email',
+                    email: 'asda@add.dew'
+                },
+                userId:'some_id',
+                templateId: '',
+                location: {
+                    type: '324',
+                    code: '234'
+                }
+            }
+            // const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve(undefined));
             mockProfileService.generateOTP = jest.fn(() => throwError({}))
             // act
             otpPage.resendOTP()

@@ -756,15 +756,16 @@ export class FormAndFrameworkUtilService {
     }
 
     getFrameworkCategoryList(userType?: string): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (!userType) {
-                this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
+                await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
                     userType = type;
                 });
             }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
             console.log('................', framework);
-            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 && framework.userType !== userType)) {
+            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
+             (framework.userType !== userType || !userType))) {
                   this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
                 resolve(res);
                 });

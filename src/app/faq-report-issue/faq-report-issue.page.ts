@@ -392,7 +392,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
     this.syncTelemetry();
   }
-
+  
   private generateLogTelemetry(){
      
   }
@@ -473,10 +473,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       } else if (this.formValues.children && this.formValues.children.category && this.formValues.children.category) {
         this.value.initiateEmailBody = this.formValues.children.category.details;
       }
-      window.parent.postMessage(this.value, window.parent.origin);
     }
+    this.ackknowledgeResponse();
     setTimeout(() => {
-      this.location.back();
       this.location.back();
     }, 3000);
   }

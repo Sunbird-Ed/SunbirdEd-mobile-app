@@ -18,12 +18,14 @@
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <platform name="android">
+        <preference name="android-targetSdkVersion" value="31" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_build" />
         <hook src="scripts/copyBundledData.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
         <hook src="scripts/copyBundledData.js" type="before_run" />
+        <hook src="scripts/android/android-10-migration-fix.js" type="before_build" />
         <hook src="scripts/application/add_application.js" type="before_run" />
         <hook src="scripts/android/android-10-migration-fix.js" type="before_build" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
@@ -176,7 +178,7 @@
     </plugin>
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
-    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-4.10.1" />
+    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-5.1.1" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />

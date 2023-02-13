@@ -83,7 +83,8 @@
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
                                         (viewMoreClick)="navigateToViewMorePage(section?.contents, section.name, section?.totalCount)"
-                                        (cardClick)="navigateToDetailPage($event, section.name)">
+                                        (cardClick)="navigateToDetailPage($event, section.name)"
+                                        [defaultImage]="defaultImage">
                 </sb-library-cards-stack>
             </div>
         </div>

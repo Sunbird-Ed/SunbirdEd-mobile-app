@@ -1588,7 +1588,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (await this.onboardingSkippedBackAction()) {
         return;
       }
-      this.goBack();
+      await this.goBack();
     });
   }
 
@@ -1825,9 +1825,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  goBack() {
+  async goBack() {
     this.appGlobalService.generateCourseCompleteTelemetry = false;
     this.events.publish('event:update_course_data');
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
+    if(!guestUser.syllabus[0]) {
+      this.events.publish('UPDATE_TABS', {navigateToCourse: {}});
+      this.router.navigate([RouterLinks.PROFILE_TAB]);
+    } else 
     if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
     } else {
@@ -2058,7 +2063,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (await this.onboardingSkippedBackAction()) {
           return;
         }
-        this.goBack();
+        await this.goBack();
         break;
     }
   }
