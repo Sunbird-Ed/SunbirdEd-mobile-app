@@ -1134,7 +1134,7 @@
   "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG": "Due to a technical problem, we are unable to process the request",
   "FRMELEMNTS_MSG_PLEASE_NETWORK": "Please check your network connection and try again",
   "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL": "New Task has been successfully created.",
-  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No schools found",
+  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No {{entity}} found",
   "FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM": "Please select the entity to select your program",
   "FRMELEMNTS_MSG_NO_DATA_AVAILABLE": "No Data available",
   "FRMELEMNTS_MSG_TASK_ADDED_SUCCESSFULLY": "Task Added Successfully",
