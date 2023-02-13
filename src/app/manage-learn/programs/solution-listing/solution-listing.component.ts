@@ -127,6 +127,7 @@ export class SolutionListingComponent {
         submisssionId: submissionId,
         evidenceIndex: 0,
         sectionIndex: 0,
+        isSurvey:true
         // schoolName: 'sample',
       },
     });

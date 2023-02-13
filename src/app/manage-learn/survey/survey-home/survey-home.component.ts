@@ -160,6 +160,7 @@ export class SurveyHomeComponent {
         submisssionId: submissionId,
         evidenceIndex: 0,
         sectionIndex: 0,
+        isSurvey:true
       },
     });
   }
