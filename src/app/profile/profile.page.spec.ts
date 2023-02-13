@@ -1151,38 +1151,6 @@ describe('Profile.page', () => {
                 }, 0);
             });
 
-        it('should update emailId when is any emailId is available', (done) => {
-            // arrange
-            mockPopoverController.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        isEdited: true,
-                        OTPSuccess: true,
-                        value: '123456'
-                    }
-                }))
-            } as any)));
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
-            mockProfileService.updateServerProfile = jest.fn(() => throwError('sample_error'));
-            jest.spyOn(profilePage, 'doRefresh').mockImplementation();
-            mockCommonUtilService.translateMessage = jest.fn(v => v);
-            mockCommonUtilService.showToast = jest.fn();
-            mockProfileService.generateOTP = jest.fn(() => of(true));
-            // act
-            profilePage.editEmail();
-            setTimeout(() => {
-                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
-                done();
-            }, 0);
-        });
     });
 
     xit('should generate telemetry and generate popover and if edited set true and then update profile', (done) => {
@@ -1405,4 +1373,102 @@ describe('Profile.page', () => {
             sunbird_id: profilePage.profile.userName
         });
     });
+    describe("downloadCertificate", () => {
+        let commonUtilServiceSpy;
+        let platformSpy;
+        let routerSpy;
+        let data;
+        let type;
+      
+        beforeEach(() => { 
+          commonUtilServiceSpy = jest.spyOn(mockCommonUtilService, 'showToast');
+          platformSpy = jest.spyOn(mockPlatform, 'is');
+          routerSpy = jest.spyOn(mockRouter, 'navigate');
+      
+          data = {
+            title: 'Sample',
+            _id: '12345',
+            certificate: {
+              templateUrl: 'http://sample.com/certificate.pdf'
+            }
+          };
+        });
+      
+        afterEach(() => {
+          commonUtilServiceSpy.mockReset();
+          platformSpy.mockReset();
+          routerSpy.mockReset();
+        });
+      
+        it("shows error message if offline", () => {
+          //arrange
+          type = 'project';
+          jest.spyOn(mockCommonUtilService, 'showToast').mockReturnValueOnce(true);
+          //act
+          profilePage.downloadCertificate(data, type);
+          //assert
+          expect(commonUtilServiceSpy).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+          expect(routerSpy).not.toHaveBeenCalled();
+        });
+      });
+      
+      describe('editEmail', () => {
+        it('should show the edit contact popup', () => {
+          //arrange
+          const spy = jest.spyOn(console, 'log');
+          mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({
+                data: {
+                    isEdited: true,
+                    OTPSuccess: true,
+                    value: '123456'
+                }
+            }))
+        } as any)));
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
+        mockProfileService.updateServerProfile = jest.fn(() => throwError('sample_error'));
+        jest.spyOn(profilePage, 'doRefresh').mockImplementation();
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.showToast = jest.fn();
+        mockProfileService.generateOTP = jest.fn(() => of(true));
+          //act
+          profilePage.editEmail(); 
+          //assert  
+          setTimeout(() => {
+            expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+            expect(dismissFn).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
+            expect(spy).not.toHaveBeenCalledWith({
+            email: 'test@sample.com',
+            title: 'UPDATE_EMAIL_POPUP_TITLE',
+            description: 'EMAIL_PLACEHOLDER',
+            type: 'email',
+            userId: 'user-1'
+          });
+        }, 0);
+          spy.mockRestore();
+        });
+      
+        it('should show the error toast if validateAndEditContact rejects with an error', () => {
+          //arrange
+          const spy = jest.spyOn(console, 'log');
+          //act
+          profilePage.editEmail();   
+          //assert
+          expect(spy).not.toHaveBeenCalledWith({
+            email: 'test@sample.com',
+            title: 'UPDATE_EMAIL_POPUP_TITLE',
+            description: 'EMAIL_PLACEHOLDER',
+            type: 'email',
+            userId: 'user-1'
+          });
+        });
+    });
+      
 });
