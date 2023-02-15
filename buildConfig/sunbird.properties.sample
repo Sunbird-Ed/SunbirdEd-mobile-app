@@ -54,9 +54,5 @@ production_tou_base_url = PRODUCTION_TOU_BASE_URL
 production_survey_base_url= PRODUCTION_SURVEY_BASE_URL
 production_projects_base_url= PRODUCTION_PROJECTS_BASE_URL
 
-// Fabric Keys
-release_fabric_api_key = RELEASE_FABRIC_API_KEY
-release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
-
 // Configurable Properties
 support_email = SUPPORT_EMAIL

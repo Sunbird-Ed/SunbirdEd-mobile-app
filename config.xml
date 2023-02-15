@@ -30,10 +30,6 @@
         <hook src="scripts/android/android-10-migration-fix.js" type="before_build" />
         <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <resource-file src="whitelabel.xml" target="app/src/main/res/values/whitelabel.xml" />
-        <config-file parent="/manifest/application" target="AndroidManifest.xml">
-            <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
-            <meta-data android:name="io.fabric.ApiSecret" android:value="${fabricSecret}" />
-        </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
             <queries>
@@ -155,8 +151,7 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
     <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-5.0.2">
-        <variable name="FCM_CORE_VERSION" value="16.0.9" />
-        <variable name="FCM_VERSION" value="18.0.0" />
+        <variable name="ANDROID_FIREBASE_BOM_VERSION" value="26.5.0" />
         <variable name="GRADLE_TOOLS_VERSION" value="3.5.0" />
         <variable name="GOOGLE_SERVICES_VERSION" value="4.3.8" />
         <variable name="ANDROID_DEFAULT_NOTIFICATION_ICON" value="@mipmap/ic_launcher" />
