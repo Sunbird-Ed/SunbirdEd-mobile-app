@@ -433,7 +433,6 @@ export class UtilsService {
           imageArray = newArray;
         }
       }
-      imageArray =  question.fileName.length ? imageArray.concat(question.fileName)  : imageArray;
     } else {
       // imageArray = [...imageArray, question.fileName]
       const newArray = question.fileName.length
