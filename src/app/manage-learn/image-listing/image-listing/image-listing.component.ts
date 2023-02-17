@@ -217,8 +217,8 @@ export class ImageListingComponent implements OnInit {
             const errorObject = { ...this.errorObj };
             this.retryCount++;
             if (this.retryCount > 3) {
-              this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
-                this.toast.openToast(translations);
+              this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
+                this.toast.showMessage(translations,'danger');
               });
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
             Details: ${JSON.stringify(err)}`;
@@ -229,8 +229,8 @@ export class ImageListingComponent implements OnInit {
           });
       })
       .catch((error) => {
-        this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
-          this.toast.openToast(translations);
+        this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
+          this.toast.showMessage(translations,'danger');
         });
         history.go(-1);
       });
