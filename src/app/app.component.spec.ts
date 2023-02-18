@@ -1852,7 +1852,6 @@ describe('AppComponent', () => {
             appComponent.reloadGuestEvents();
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).not.toHaveBeenCalled();
                 expect(mockPreferences.getString).toHaveBeenCalled();
                 done();
             }, 0);

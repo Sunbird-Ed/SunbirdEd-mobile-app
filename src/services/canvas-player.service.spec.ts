@@ -8,6 +8,7 @@ import { CourseService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '../app/app.constant';
 import { LocalCourseService } from './local-course.service';
 import { CommonUtilService } from './common-util.service';
+import { File } from '@ionic-native/file/ngx';
 
 
 describe('CanvasPlayerService', () => {
@@ -34,13 +35,15 @@ describe('CanvasPlayerService', () => {
 
     const mockHttp: Partial<HttpClient> = {};
     const mockEvents: Partial<Events> = {};
+    const mockFile: Partial<File> = {};
     beforeAll(() => {
         canvasPlayerService = new CanvasPlayerService(
             mockHttp as HttpClient,
             mockEvents as Events,
             mockPreferences as SharedPreferences,
             mockLocalCourseService as LocalCourseService,
-            mockCommonUtilService as CommonUtilService
+            mockCommonUtilService as CommonUtilService,
+            mockFile as File
         );
     });
 
@@ -88,29 +91,29 @@ describe('CanvasPlayerService', () => {
                 'Child</textNode></child><child><textNode>Second Child</textNode>' +
                 '</child><testAttrs attr1=\'attr1Value\'/></root>';
             // arrange
-            mockHttp.get = jest.fn(() => of(mockXMLContent));
+            mockFile.readAsText = jest.fn(() => Promise.resolve(mockXMLContent));
             // act
             canvasPlayerService.xmlToJSon(mockXMLContent);
             // assert
-            expect(mockHttp.get).toHaveBeenCalled();
+            expect(mockFile.readAsText).toHaveBeenCalled();
         });
 
         it('should readJSON if path is available and goes to catch part', () => {
             // arrange
-            mockHttp.get = jest.fn(() => Promise.reject('Unable to convert'));
+            mockFile.readAsText = jest.fn(() => Promise.reject('Unable to convert'));
             // act
             canvasPlayerService.xmlToJSon('sampleRandomPath');
             // assert
-            expect(mockHttp.get).toHaveBeenCalled();
+            expect(mockFile.readAsText).toHaveBeenCalled();
         });
 
         it('should not get inside if call, if path is undefined', () => {
             // arrange
-            mockHttp.get = jest.fn(() => of({}));
+            mockFile.readAsText = jest.fn(() => Promise.resolve(''));
             // act
             canvasPlayerService.xmlToJSon('');
             // arrange
-            expect(mockHttp.get).not.toHaveBeenCalled();
+            expect(mockFile.readAsText).not.toHaveBeenCalled();
         });
     });
 

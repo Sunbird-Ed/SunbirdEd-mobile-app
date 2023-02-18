@@ -6,6 +6,7 @@ import {MaxAttempt, PreferenceKey, ProfileConstants} from '@app/app/app.constant
 import { Events } from '@app/util/events';
 import { LocalCourseService } from './local-course.service';
 import { CommonUtilService } from './common-util.service';
+import { File } from '@ionic-native/file/ngx';
 
 declare global {
     interface Window {
@@ -21,6 +22,7 @@ export class CanvasPlayerService {
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private localCourseService: LocalCourseService,
         private commonUtilService: CommonUtilService,
+        private file: File,
     ) { }
 
     /**
@@ -109,15 +111,15 @@ export class CanvasPlayerService {
      * This will convert xml to JSON
      * @param {string} path Path to the xml file
      */
-    xmlToJSon(path: string): Promise<any> {
+    xmlToJSon(path: string, file): Promise<any> {
         if (path.length) {
             const _headers = new HttpHeaders();
             const headers = _headers.set('Content-Type', 'text/xml');
             return new Promise((resolve, reject) => {
                 try {
-                    this._http.get(path, { headers: _headers, responseType: 'text' }).subscribe((data) => {
+                    this.file.readAsText(path, file).then((response) => {
                         const x2js = new X2JS();
-                        const json = x2js.xml2js(data);
+                        const json = x2js.xml2js(response);
                         resolve(json);
                     });
                 } catch (error) {
