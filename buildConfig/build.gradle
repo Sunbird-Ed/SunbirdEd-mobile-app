@@ -27,7 +27,7 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:7.0.0'
     }
 }
 
@@ -38,10 +38,10 @@ allprojects {
     }
     //This replaces project.properties w.r.t. build settings
     project.ext {
-      defaultBuildToolsVersion="29.0.3" //String
+      defaultBuildToolsVersion="30.0.3" //String
       defaultMinSdkVersion=22 //Integer - Minimum requirement is Android 4.4
-      defaultTargetSdkVersion=30 //Integer - We ALWAYS target the latest by default
-      defaultCompileSdkVersion=30 //Integer - We ALWAYS compile with the latest by default
+      defaultTargetSdkVersion=31 //Integer - We ALWAYS target the latest by default
+      defaultCompileSdkVersion=31 //Integer - We ALWAYS compile with the latest by default
     }
 }
 
