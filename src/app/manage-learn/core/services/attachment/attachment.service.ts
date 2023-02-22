@@ -17,6 +17,7 @@ export class AttachmentService {
   texts: any;
   payload: any;
   actionSheetOpen: boolean = false;
+  storagePath;
   constructor(
     private camera: Camera,
     private file: File,
@@ -46,8 +47,9 @@ export class AttachmentService {
       });
   }
 
-  async selectImage() {
-    this.actionSheetOpen = true
+  async selectImage(path?) {
+    this.actionSheetOpen = true;
+    this.storagePath = path;
     const actionSheet = await this.actionSheetController.create({
       header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
       cssClass: 'sb-popover',
@@ -120,7 +122,6 @@ export class AttachmentService {
         }
       })
       .catch((err) => {
-        console.log(err);
         if (err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
@@ -130,20 +131,20 @@ export class AttachmentService {
   writeFileToPrivateFolder(filePath) {
     this.checkForFileSizeRestriction(filePath).then(isValidFile => {
       if (isValidFile) {
+        this.loader.startLoader();
         let path = filePath.substr(0, filePath.lastIndexOf("/") + 1);
         let currentName = filePath.split("/").pop();
-        this.loader.startLoader();
         this.file.readAsArrayBuffer(path, currentName).then(success => {
           const pathToWrite = this.directoryPath();
           const newFileName = this.createFileName(currentName)
-          this.file.writeFile(pathToWrite, newFileName, success).then(fileWrite => {
+          this.file.writeFile(pathToWrite, newFileName, success).then(async fileWrite => {
             const data = {
               name: newFileName,
               type: this.mimeType(newFileName),
               isUploaded: false,
               url: "",
             };
-            this.loader.stopLoader();
+            await this.loader.stopLoader();
             this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
             this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
           }).catch(error => {
@@ -184,7 +185,6 @@ export class AttachmentService {
           isUploaded: false,
           url: "",
         };
-
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
         this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
@@ -205,7 +205,7 @@ export class AttachmentService {
     toast.present();
   }
 
-  async openFile() {
+  async openFile(path?) {
     try {
       const file = await this.chooser.getFile('application/pdf');
       let sizeOftheFile: number = file.data.length
@@ -213,7 +213,7 @@ export class AttachmentService {
         this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
       } else {
-        const pathToWrite = this.directoryPath();
+        const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
         const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
         if (writtenFile.isFile) {
@@ -231,22 +231,6 @@ export class AttachmentService {
     } catch (error) {
       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
-
-    // non working code for sdk30-android 11
-    // new Promise((resolve) => {
-    //   if (this.platform.is('ios')) {
-    //     // resolve(this.filePickerIOS.pickFile());
-    //   } else {
-    //     resolve(this.chooser.getFileMetadata());
-    //   }
-    // })
-    //   .then((res: any) => {
-    //     return this.filePath.resolveNativePath(res.uri);
-    //   })
-    //   .then((filePath) => {
-    //     this.copyFile(filePath);
-    //   })
-    //   .catch((err) => {});
   }
 
   copyFile(filePath) {
@@ -265,6 +249,9 @@ export class AttachmentService {
   }
 
   directoryPath(): string {
+    if(this.actionSheetOpen && this.storagePath){
+      return this.storagePath;
+    }else
     if (this.platform.is("ios")) {
       return this.file.documentsDirectory;
     } else {
