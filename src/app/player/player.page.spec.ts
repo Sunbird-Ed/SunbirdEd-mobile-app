@@ -268,9 +268,23 @@ describe('PlayerPage', () => {
                     contentData:{
                         streamingUrl: ''
                     }
-                    }
+                    },
+                    config: {}
             };
-            mockStatusBar.hide = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: [
+                                'https://obj.stage.sunbirded.org/**'
+                            ]
+                        }
+                    }
+                }
+            ]));
+            mockStatusBar.hide = jest.fn();
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((_, fn) => fn()),
             } as any;
@@ -304,7 +318,8 @@ describe('PlayerPage', () => {
                 contentData:{
                     streamingUrl: ''
                 }
-                }
+                },
+                config: {}
             };
             const config = playerPage.config;
             playerPage.previewElement = {
@@ -321,6 +336,19 @@ describe('PlayerPage', () => {
             } as ElementRef;
             window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
             mockStatusBar.hide = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: [
+                                'https://obj.stage.sunbirded.org/**'
+                            ]
+                        }
+                    }
+                }
+            ]));
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((_, fn) => fn()),
             } as any;
@@ -357,9 +385,21 @@ describe('PlayerPage', () => {
                     isAvailableLocally: true,
                     basePath: 'basePath',
                     mimeType: 'application/vnd.sunbird.questionset'
+                },
+                config: {}
+            };
+            playerPage.playerType = 'sunbird-quml-player';
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: []
+                        }
+                    }
                 }
-            }
-            playerPage.playerType = 'sunbird-quml-player'
+            ]));
             mockStatusBar.hide = jest.fn();
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((_, fn) => fn()),
