@@ -266,8 +266,8 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-    if(this.projectlisting){
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
+    if(this.projectlisting || this.stateData?.referenceFrom === 'link'){
+    this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
     await this.router
       .navigate([`/${RouterLinks.PROJECT}`], {
         queryParams: {
