@@ -8,6 +8,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 import { localStorageConstants } from "../../constants/localStorageConstants";
 import { LoaderService } from "../loader/loader.service";
+import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,9 @@ export class AttachmentService {
     private chooser: Chooser,
     // private filePickerIOS: IOSFilePicker,
     private translate: TranslateService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private imgPicker: ImagePicker,
+
   ) {
     this.translate
       .get([
@@ -71,7 +74,8 @@ export class AttachmentService {
         {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           handler: () => {
-            this.openFile();
+            console.log(path,"oath");
+            path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
         },
@@ -283,5 +287,19 @@ export class AttachmentService {
         this.openFile();
         break;
     }
+  }
+  openLocalLibrary(): void {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 50,
+      quality: 10,
+    };
+    this.imgPicker.getPictures(options).then((imageData) => {
+      for (const image of imageData) {
+        // this.checkForLocalFolder(image);
+        this.actionSheetController.dismiss({imageData, multiple:true});
+      }
+    }).catch(err => {
+      console.log(err)
+    });
   }
 }
