@@ -127,11 +127,10 @@ export class ImageUploadComponent implements OnInit {
     })
   }
   async openActionSheet() {
-  this.attachmentService.selectImage(this.appFolderPath).then(data =>{
-    console.log(data,"data 131");
+  this.attachmentService.evidenceUpload(this.appFolderPath).then(data =>{
     if(data.data){
-      if(data.data.multiple){
-        for (const image of data.data) {
+      if(data.data.multiple &&data.data.imageData ){
+        for (const image of data.data.imageData) {
           this.checkForLocalFolder(image);
         }
       }else {

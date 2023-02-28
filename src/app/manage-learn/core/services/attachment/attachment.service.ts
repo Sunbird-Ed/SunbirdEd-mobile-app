@@ -43,7 +43,10 @@ export class AttachmentService {
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
         "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT",
-        "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"
+        "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED",
+        "FRMELEMENTS_LBL_CAMERA",
+        "FRMELEMENTS_LBL_UPLOAD_IMAGE",
+        "FRMELEMENTS_LBL_UPLOAD_FILE"
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -89,6 +92,46 @@ export class AttachmentService {
     return actionSheet.onDidDismiss();
   }
 
+
+// Evidence upload for survey and observation
+  async evidenceUpload(path?) {
+    this.actionSheetOpen = true;
+    this.storagePath = path;
+    const actionSheet = await this.actionSheetController.create({
+      header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
+      cssClass: 'sb-popover',
+      buttons: [
+        {
+          text: this.texts["FRMELEMENTS_LBL_CAMERA"],
+          handler: () => {
+            this.takePicture(this.camera.PictureSourceType.CAMERA);
+            return false;
+          },
+        },
+        {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
+          handler: () => {
+            this.openLocalLibrary()
+            return false;
+          },
+        },
+        {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          handler: () => {
+            // this.openAllFile()
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            return false;
+          },
+        },
+        {
+          text: this.texts["CANCEL"],
+          role: "cancel",
+        },
+      ],
+    });
+    await actionSheet.present();
+    return actionSheet.onDidDismiss();
+  }
   takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
       quality: 20,
@@ -295,11 +338,37 @@ export class AttachmentService {
     };
     this.imgPicker.getPictures(options).then((imageData) => {
       for (const image of imageData) {
-        // this.checkForLocalFolder(image);
         this.actionSheetController.dismiss({imageData, multiple:true});
       }
     }).catch(err => {
       console.log(err)
     });
+  }
+  async openAllFile(path?) {
+    try {
+      const file = await this.chooser.getFile();
+      let sizeOftheFile: number = file.data.length
+      if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
+        this.actionSheetController.dismiss();
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+      } else {
+        const pathToWrite = path ? path :this.directoryPath();
+        const newFileName = this.createFileName(file.name)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+        if (writtenFile.isFile) {
+          const data = {
+            name: newFileName,
+            type: this.mimeType(newFileName),
+            isUploaded: false,
+            url: "",
+          };
+          this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+          this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
+        }
+      }
+
+    } catch (error) {
+      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+    }
   }
 }
