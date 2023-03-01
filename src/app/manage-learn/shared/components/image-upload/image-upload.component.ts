@@ -127,9 +127,15 @@ export class ImageUploadComponent implements OnInit {
     })
   }
   async openActionSheet() {
-  this.attachmentService.selectImage(this.appFolderPath).then(data =>{
+  this.attachmentService.evidenceUpload(this.appFolderPath).then(data =>{
     if(data.data){
+      if(data.data.multiple &&data.data.imageData ){
+        for (const image of data.data.imageData) {
+          this.checkForLocalFolder(image);
+        }
+      }else {
       this.pushToFileList(data.data.name);
+      }
     }
   })
   }
@@ -485,6 +491,7 @@ export class ImageUploadComponent implements OnInit {
       this.pushToFileList(this.fileName);
     }
   }
+
 
 
 }
