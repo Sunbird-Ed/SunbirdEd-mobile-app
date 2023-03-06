@@ -53,6 +53,7 @@ export class LoginNavigationHandlerService {
 
             await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
             const value = await this.setProfileDetailsAndRefresh(skipNavigation, subType);
+            console.log('value ', value);
 
             await this.refreshTenantData(value.slug, value.title);
 
@@ -67,7 +68,10 @@ export class LoginNavigationHandlerService {
             await this.logoutOnImpropperLoginProcess();
 
             this.sbProgressLoader.hide({ id: 'login' });
-            if (err instanceof SignInError) {
+            if (err && err.error_msg) {
+                this.commonUtilService.showToast(err.error_msg, false, 'red-toast');
+                throw err;
+            } else if (err instanceof SignInError) {
                 this.commonUtilService.showToast(err.message);
             } else {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
