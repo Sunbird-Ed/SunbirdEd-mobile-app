@@ -19,6 +19,7 @@
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <platform name="android">
         <preference name="android-targetSdkVersion" value="31" />
+        <preference name="AndroidInsecureFileModeEnabled" value="true" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_build" />

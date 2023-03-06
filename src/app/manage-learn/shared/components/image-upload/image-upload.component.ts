@@ -10,7 +10,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-import { AttachmentService, FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 import { Chooser } from '@ionic-native/chooser/ngx';
@@ -35,7 +35,7 @@ export class ImageUploadComponent implements OnInit {
   text: string;
   datas;
   appFolderPath: string;
-  videoFormats = ["mp4", "WMV", "WEBM", "flv", "avi", "3GP", "OGG","mov"];
+  videoFormats = ["mp4", "WMV", "WEBM", "flv", "avi", "3GP", "OGG"];
   audioFormats = ["AIF", "cda", "mpa", "ogg", "wav", "wma", "mp3"];
   pptFormats = ["ppt", "pptx", "pps", "ppsx"];
   wordFormats = ["docx", "doc", "docm", "dotx"];
@@ -81,8 +81,7 @@ export class ImageUploadComponent implements OnInit {
     private media: Media,
     private alertCtrl: AlertController,
     private toast: ToastService,
-    private popupService: GenericPopUpService,
-    private attachmentService :AttachmentService
+    private popupService: GenericPopUpService
   ) {
     this.text = "Hello World";
     this.isIos = this.platform.is("ios") ? true : false;
@@ -127,20 +126,106 @@ export class ImageUploadComponent implements OnInit {
     })
   }
   async openActionSheet() {
-  this.attachmentService.evidenceUpload(this.appFolderPath).then(data =>{
-    if(data.data){
-      if(data.data.multiple &&data.data.imageData ){
-        for (const image of data.data.imageData) {
-          this.checkForLocalFolder(image);
-        }
-      }else {
-      this.pushToFileList(data.data.name);
-      }
-    }
-  })
+    let translateObject;
+    this.translate
+      .get([
+        "FRMELEMENTS_LBL_ADD_IMAGE",
+        "FRMELEMENTS_LBL_CAMERA",
+        "FRMELEMENTS_LBL_UPLOAD_FILE",
+        "FRMELEMENTS_LBL_UPLOAD_IMAGE",
+        // "actionSheet.upload",
+        "CANCEL",
+      ])
+      .subscribe((translations) => {
+        translateObject = translations;
+      });
+    const actionSheet = await this.actionSheet.create({
+      header: translateObject["FRMELEMENTS_LBL_ADD_IMAGE"],
+      buttons: [
+        {
+          text: translateObject["FRMELEMENTS_LBL_CAMERA"],
+          role: "destructive",
+          icon: "camera",
+          handler: () => {
+            this.openCamera();
+          },
+        },
+        {
+          text: translateObject["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
+          icon: "cloud-upload",
+          handler: () => {
+            this.openLocalLibrary();
+          },
+        },
+        {
+          text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          icon: "document",
+          handler: () => {
+            this.openFilePicker();
+          },
+        },
+        {
+          text: translateObject["CANCEL"],
+          role: "cancel",
+          handler: () => { },
+        },
+      ],
+    });
+    await actionSheet.present();
   }
 
 
+  // For android
+  async openFilePicker() {
+    
+    try {
+      const file = await this.chooser.getFile();
+      const pathToWrite = this.appFolderPath;
+      const newFileName = this.createFileName(file.name)
+      const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+      if (writtenFile.isFile) {
+        this.pushToFileList(newFileName);
+
+        
+      }
+    } catch (error) {
+       
+    }
+
+	  //non working in sdk30 -adnroid 11
+    // this.fileChooser
+    //   .open()
+    //   .then((filePath) => {
+    //     this.filePath
+    //       .resolveNativePath(filePath)
+    //       .then((data) => {
+    //         this.checkForLocalFolder(data);
+    //       })
+    //       .catch((err) => { });
+    //   })
+    //   .catch((e) => console.log(e));
+  }
+
+  openCamera(): void {
+    const options: CameraOptions = {
+      quality: 10,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+    };
+    this.camera
+      .getPicture(options)
+      .then((imagePath) => {
+        this.checkForLocalFolder(imagePath);
+      })
+  }
+
+  saveToLibrary(url): void {
+    this.photoLibrary
+      .saveImage(url, "samiksha")
+      .then((data) => { })
+  }
 
   checkForLocalFolder(imagePath) {
     let currentName = imagePath.substr(imagePath.lastIndexOf("/") + 1);
@@ -189,7 +274,11 @@ export class ImageUploadComponent implements OnInit {
   }
 
   copyFileToLocalDir(namePath, currentName) {
+    // this.file.resolveLocalFilesystemUrl(namePath).then(succes => {
+    //   console.log("Resolved  path " + JSON.stringify(succes.nativeURL))
+    // }).catch(error => {
 
+    // })
     let newName = this.createFileName(currentName);
     this.file
       .copyFile(namePath, currentName, this.appFolderPath, newName)
@@ -247,6 +336,19 @@ export class ImageUploadComponent implements OnInit {
     }
   }
 
+  openLocalLibrary(): void {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 50,
+      quality: 10,
+    };
+    this.imgPicker.getPictures(options).then((imageData) => {
+      for (const image of imageData) {
+        this.checkForLocalFolder(image);
+      }
+    }).catch(err => {
+      console.log(err)
+    });
+  }
 
   removeImgFromList(index): void {
     let indexInLocalList;
@@ -491,7 +593,6 @@ export class ImageUploadComponent implements OnInit {
       this.pushToFileList(this.fileName);
     }
   }
-
 
 
 }
