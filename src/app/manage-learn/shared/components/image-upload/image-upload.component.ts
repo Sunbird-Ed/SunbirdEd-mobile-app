@@ -14,6 +14,7 @@ import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 import { Chooser } from '@ionic-native/chooser/ngx';
+import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 
 @Component({
   selector: 'app-image-upload',
@@ -177,17 +178,19 @@ export class ImageUploadComponent implements OnInit {
 
   // For android
   async openFilePicker() {
-    
     try {
       const file = await this.chooser.getFile();
+      let sizeOftheFile: number = file.data.length
+      if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
+        this.toast.showMessage("FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT","danger");
+      } else {
       const pathToWrite = this.appFolderPath;
       const newFileName = this.createFileName(file.name)
       const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
       if (writtenFile.isFile) {
         this.pushToFileList(newFileName);
-
-        
       }
+    }
     } catch (error) {
        
     }
