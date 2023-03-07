@@ -1134,7 +1134,7 @@
   "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG": "Due to a technical problem, we are unable to process the request",
   "FRMELEMNTS_MSG_PLEASE_NETWORK": "Please check your network connection and try again",
   "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL": "New Task has been successfully created.",
-  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No schools found",
+  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No {{entity}} found",
   "FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM": "Please select the entity to select your program",
   "FRMELEMNTS_MSG_NO_DATA_AVAILABLE": "No Data available",
   "FRMELEMNTS_MSG_TASK_ADDED_SUCCESSFULLY": "Task Added Successfully",
@@ -1371,5 +1371,6 @@
   "FRMELEMNTS_LBL_CERTIFICATION_CRITERIA":"Certificate criteria",
   "FRMELEMNTS_LBL_IMP_CERTIFICATE":"Improvement certificate",
   "FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON":"Your project is submitted. You will receive a certificate soon if you meet the eligibility criteria.",
-  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project."
+  "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project.",
+  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again"
 }

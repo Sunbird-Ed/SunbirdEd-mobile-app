@@ -167,8 +167,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async verifyLink(link) {
-    let payload = await this.utils.getProfileData();
-
+    let payload = await this.utils.getProfileData('SERVER');
     const config = {
       url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
       payload: payload,

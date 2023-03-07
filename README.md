@@ -1,6 +1,14 @@
+Recommended Branch - release-4.9.0
+
+Kindly mail back to sunbird to get the starter kit Which consists of two files:
+a) google-services.json - To be Copied at the root of the project
+b) sunbird.properties.  - To be Copied into buildConfig/ folder
+
+
 **Dependencies:**    
 NPM Version - above 6    
-Node JS Version - above 8    
+Node Version - 14 (Recommended)
+Cordova Version - 9 (Recommended)
 
 **1. Ionic-Android build Setup**    
     - [Install java](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)    
