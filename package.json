@@ -214,7 +214,7 @@
     "tiny-glob": "^0.2.9",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
-    "typescript": "^3.8.3"
+    "typescript": "~3.8.3"
   },
   "description": "An Ionic project",
   "cordova": {
