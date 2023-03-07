@@ -266,8 +266,8 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
-    if(this.projectlisting){
+    if(this.projectlisting || this.stateData?.referenceFrom === 'link'){
+    this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
     await this.router
       .navigate([`/${RouterLinks.PROJECT}`], {
         queryParams: {
@@ -276,9 +276,10 @@ export class ProjectTemplateviewPage implements OnInit {
       })
     }
     if(this.programlisting){
+     await this.router.navigate([`/${RouterLinks.HOME}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
-      }
+    }
     setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();

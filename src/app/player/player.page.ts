@@ -34,6 +34,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@ionic-native/file/ngx';
+import { FormConstants } from '../form.constants';
 
 declare const cordova;
 
