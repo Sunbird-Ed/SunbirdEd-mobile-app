@@ -600,6 +600,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     // Check locally available
     if (Boolean(data.isAvailableLocally)) {
       this.isUpdateAvail = data.isUpdateAvailable && !this.isUpdateAvail;
+    } else {
+      this.content.contentData.size = this.content.contentData.size;
     }
 
     if (this.content.contentData.me_totalDownloads) {
