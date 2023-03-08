@@ -70,6 +70,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMNTS_MSG_USE_CAMERA"],
+          icon: "camera",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
@@ -104,6 +105,7 @@ export class AttachmentService {
       buttons: [
         {
           text: this.texts["FRMELEMENTS_LBL_CAMERA"],
+          icon: "camera",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
@@ -111,6 +113,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
+          icon: "cloud-upload",
           handler: () => {
             this.openLocalLibrary()
             return false;
@@ -118,6 +121,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_VIDEO"],
+          icon: "videocam",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
             return false;
@@ -125,6 +129,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          icon: "document",
           handler: () => {
             // this.openAllFile()
             this.openFile();
