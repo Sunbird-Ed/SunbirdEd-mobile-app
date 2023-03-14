@@ -95,9 +95,9 @@
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-document-viewer": "^0.9.13",
-    "cordova-plugin-file-transfer": "git+https://github.com/apache/cordova-plugin-file-transfer.git",
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-opener2": "^2.2.1",
+    "cordova-plugin-file-transfer": "git+https://github.com/apache/cordova-plugin-file-transfer.git",
     "cordova-plugin-filechooser": "^1.2.0",
     "cordova-plugin-filepath": "^1.5.8",
     "cordova-plugin-filepicker": "^1.1.6",
@@ -215,7 +215,7 @@
     "tiny-glob": "^0.2.9",
     "ts-node": "^10.9.1",
     "tslint": "~5.16.0",
-    "typescript": "^4.0.8"
+    "typescript": "4.0.8"
   },
   "description": "An Ionic project",
   "cordova": {
