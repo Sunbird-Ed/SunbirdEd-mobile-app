@@ -1,12 +1,12 @@
-import { PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { YearOfBirthPopupComponent } from './year-of-birth-popup.component';
 import { ProfileService } from 'sunbird-sdk';
-import {AppGlobalService, CommonUtilService} from '../../../../services';
+import { CommonUtilService} from '../../../../services';
 import { of, throwError } from 'rxjs';
 
 describe('YearOfBirthPopupComponent', () => {
     let yearOfBirthPopupComponent: YearOfBirthPopupComponent;
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockNavParams: Partial<NavParams> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockPopOverCtrl: Partial<PopoverController> = {};
     const mockProfileService: Partial<ProfileService> = {};
@@ -15,7 +15,7 @@ describe('YearOfBirthPopupComponent', () => {
         yearOfBirthPopupComponent = new YearOfBirthPopupComponent(
             mockProfileService as ProfileService,
             mockPopOverCtrl as PopoverController,
-            mockAppGlobalService as AppGlobalService,
+            mockNavParams as NavParams,
             mockCommonUtilService as CommonUtilService
         );
     });
@@ -44,9 +44,7 @@ describe('YearOfBirthPopupComponent', () => {
                 present: presentFn,
                 dismiss: dismissFn
             }));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
-                uid: 'sample-uid'
-            }));
+            mockNavParams.get = jest.fn(() => ({ uid: 'sample-uid'})) as any
             yearOfBirthPopupComponent.selectedYearOfBirth = 2021;
             mockProfileService.updateServerProfile = jest.fn(() => of({
                 body: {
@@ -63,7 +61,7 @@ describe('YearOfBirthPopupComponent', () => {
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(presentFn).toHaveBeenCalled();
-                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockNavParams.get).toHaveBeenCalled();
                 expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
@@ -79,9 +77,7 @@ describe('YearOfBirthPopupComponent', () => {
                 present: presentFn,
                 dismiss: dismissFn
             }));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
-                uid: 'sample-uid'
-            }));
+            mockNavParams.get = jest.fn(() => ({ uid: 'sample-uid'})) as any
             yearOfBirthPopupComponent.selectedYearOfBirth = 2021;
             mockProfileService.updateServerProfile = jest.fn(() => throwError({
                error: {err: 'FAILED'}
@@ -93,7 +89,7 @@ describe('YearOfBirthPopupComponent', () => {
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(presentFn).toHaveBeenCalled();
-                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockNavParams.get).toHaveBeenCalled();
                 expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();

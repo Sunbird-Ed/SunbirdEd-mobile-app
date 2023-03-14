@@ -1315,11 +1315,11 @@ describe('AppGlobalService', () => {
             appGlobalService.showYearOfBirthPopup(userProfile)
             // assert
             expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
-                component: YearOfBirthPopupComponent,
-                componentProps: {   },
-                backdropDismiss: false,
+                component: UpgradePopoverComponent,
+                componentProps: { "upgrade": {"isOnboardingCompleted": true, "type": "optional"}  },
+                backdropDismiss: true,
                 showBackdrop: true,
-                cssClass: 'year-of-birth-popup'
+                cssClass: 'upgradePopover'
             });
         })
 

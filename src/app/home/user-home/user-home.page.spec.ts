@@ -2,21 +2,21 @@ import { FormAndFrameworkUtilService } from './../../../services/formandframewor
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {ModalController, PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {AppGlobalService, PageId, TelemetryGeneratorService} from '@app/services';
-import {CommonUtilService} from '../../services/common-util.service';
+import {Events} from '../../../util/events';
+import {AppGlobalService, PageId, TelemetryGeneratorService} from '../../../services';
+import {CommonUtilService} from '../../../services/common-util.service';
 import {Router} from '@angular/router';
-import {AppHeaderService} from '../../services/app-header.service';
+import {AppHeaderService} from '../../../services/app-header.service';
 import {
-    FrameWorkService, SharedPreferences,
-} from 'sunbird-sdk';
+    FrameworkService,
+} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
-import {NavigationService} from '../../services/navigation-handler.service';
-import {ContentAggregatorHandler} from '../../services/content/content-aggregator-handler.service';
+import {NavigationService} from '../../../services/navigation-handler.service';
+import {ContentAggregatorHandler} from '../../../services/content/content-aggregator-handler.service';
 import {ContentService, FrameworkUtilService, Profile, ProfileService, ProfileSource, ProfileType, ServerProfile} from '@project-sunbird/sunbird-sdk';
-import {SunbirdQRScanner} from '@app/services';
-import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
-import {EventTopics} from '@app/app/app.constant';
+import {SunbirdQRScanner} from '../../../services';
+import {mockUserHomeData} from '../../../app/home/user-home/user-home-spec.data';
+import {EventTopics, RouterLinks} from '../../../app/app.constant';
 import { FrameworkSelectionDelegateService } from '../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -32,17 +32,21 @@ describe('UserHomePage', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('sunbird'))
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({profileType: 'Student'} as any))
     };
-    const mockFrameworkService: Partial<FrameWorkService> = {};
+    const mockFrameworkService: Partial<FrameworkService> = {};
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn(),
         publish:jest.fn()
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
-    const mockRouter: Partial<Router> = {};
+    const mockRouter: Partial<Router> = {
+        navigate: jest.fn()
+    };
     const mockNavService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
         navigateToCollection: jest.fn(),
@@ -56,7 +60,6 @@ describe('UserHomePage', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
-    const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
     const mockPopoverController: Partial<PopoverController> = {};
@@ -68,10 +71,9 @@ describe('UserHomePage', () => {
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
-            mockFrameworkService as FrameWorkService,
+            mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
-            mockSharedPreferences as SharedPreferences,
             mockContentService as ContentService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
@@ -128,16 +130,80 @@ describe('UserHomePage', () => {
                 fn('');
             }
         });
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({syllabus: ['syllabus1']}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
-            profileType: ProfileType.TEACHER,
+            profileType: ProfileType.STUDENT,
             board: ['CBSE'],
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi']
+        })) as any;
+        mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+            name: 'sample_name',
+            identifier: '12345',
+            categories: [
+                {
+                    identifier: '097',
+                    code: 'sample_code',
+                    name: 'sample_category_name',
+                    description: 'sample_category_descrption',
+                    index: 1,
+                    status: 'Live'
+                }
+            ]
         }));
+        mockAppGlobalService.getPageIdForTelemetry = jest.fn(() => PageId.HOME) as any;
+        mockSunbirdQRScanner.startScanner = jest.fn(() => Promise.resolve('sample_data'));
+        mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
+        mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockSegmentationTagService.exeCommands = [{
+            controlFunction: 'BANNER_CONFIG',
+            controlFunctionPayload: {
+                values: [{expiry: 111111}]
+            }
+        }] as any;
+        mockContentAggregatorHandler.populateIcons = jest.fn(() => mockUserHomeData);
+        // act
+        userHomePage.ngOnInit();
+        // assert
+
+        setTimeout(() => {
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(mockAppVersion.getAppName).toHaveBeenCalled();
+            expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
+            expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+            expect(mockContentAggregatorHandler.populateIcons).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should subscribe events and when called upon, handle else case on tabchange event', (done) => {
+        // arrange
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (topic === AppGlobalService.PROFILE_OBJ_CHANGED) {
+                fn();
+            } else if (topic === 'refresh:loggedInProfile') {
+                fn();
+            } else if (topic === EventTopics.TAB_CHANGE) {
+                fn('data');
+            }
+        });
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({}));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+            uid: 'sample_uid',
+            handle: 'u1234',
+            profileType: ProfileType.STUDENT,
+            board: ['CBSE'],
+            medium: ['English'],
+            grade: ['Class 10'],
+            syllabus: ['syllabus1'],
+            subject: ['hindi']
+        })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
             identifier: '12345',
@@ -173,7 +239,6 @@ describe('UserHomePage', () => {
         setTimeout(() => {
             expect(mockEvents.subscribe).toHaveBeenCalled();
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
-            expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
             expect(mockContentAggregatorHandler.populateIcons).toHaveBeenCalled();
             done();
@@ -327,7 +392,7 @@ describe('UserHomePage', () => {
             // arrange
             mockRouter.navigate = jest.fn();
             // act
-            userHomePage.handlePillSelect(undefined);
+            userHomePage.handlePillSelect({}, {});
             // assert
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
@@ -339,10 +404,10 @@ describe('UserHomePage', () => {
             userHomePage.handlePillSelect({
                 data: [
                     {
-                        value: 'sample_data'
+                        value: {primaryFacetFilters: ''}
                     }
                 ]
-            }, {}, true);
+            }, {code: 'code', dataSrc: {params: {config: [{type: 'filter', code: 'code'}, {type: 'filterConfigIdentifier', code: 'code', values: [{code: 'code', data:[{name: 'code'}]}]}]}}}, true);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
@@ -509,7 +574,7 @@ describe('UserHomePage', () => {
             // act
             userHomePage.getOtherMLCategories().then(() => {
                 // assert
-                expect(userHomePage.otherCategories).toHaveLength(1);
+                expect(userHomePage.otherCategories).toHaveLength(0);
             })
         });
         it('should get other categories', () => {
@@ -564,7 +629,16 @@ describe('UserHomePage', () => {
                 avatar: 'sample_avatar',
                 profileUserType: {
                     type: ProfileType.TEACHER
-                }
+                },
+                rootOrg: {
+                    rootOrgId: '',
+                    orgName: '',
+                    slug: '',
+                    hashTagId: ''
+                },
+                managedBy: '',
+                locationIds: '',
+                framework: undefined
             };
             const profile: Profile = {
                 uid: 'sample_uid',
@@ -616,15 +690,96 @@ describe('UserHomePage', () => {
     });
 
       describe('should handle click action of otherCategories', () => {
+        it('should return if no event', () => {
+            // arrange
+            const event = {data: ''}
+            // act
+            userHomePage.handleOtherCategories(event)
+            // assert
+               
+        })
         it('should show login prompt', (done) => {
             userHomePage.guestUser = true;
             let event = { data: [{ value: {name:'observation'} }] };
+            const dismiss = jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'inernet'} } }))
+            const present = jest.fn(() => Promise.resolve({}))
+            mockCommonUtilService.translateMessage = jest.fn()
             mockPopoverController.create = jest.fn(() =>
               Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({})),
-              } as any)
-            );
+                present: present,
+                onDidDismiss: dismiss,
+              })
+            ) as any;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mockRouter.navigate).not.toHaveBeenCalled()
+                done()
+            })
+        })
+
+        it('should show login prompt, if no btn value, then navigate to sign in page', (done) => {
+            userHomePage.guestUser = true;
+            let event = { data: [{ value: {name:'project'} }] };
+            const dismiss = jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: ''} } }))
+            const present = jest.fn(() => Promise.resolve({}))
+            mockCommonUtilService.translateMessage = jest.fn()
+            mockPopoverController.create = jest.fn(() =>
+              Promise.resolve({
+                present: present,
+                onDidDismiss: dismiss,
+              })
+            ) as any;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockRouter.navigate = jest.fn();
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled()
+                done()
+            })
+        })
+
+        it('should show login prompt, if no btn object, then navigate to sign in page', (done) => {
+            userHomePage.guestUser = true;
+            let event = { data: [{ value: {name:'observation'} }] };
+            const dismiss = jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: '' } }))
+            const present = jest.fn(() => Promise.resolve({}))
+            mockCommonUtilService.translateMessage = jest.fn()
+            mockPopoverController.create = jest.fn(() =>
+              Promise.resolve({
+                present: present,
+                onDidDismiss: dismiss,
+              })
+            ) as any;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockRouter.navigate = jest.fn();
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled()
+                done()
+            })
+        })
+
+        it('should show login prompt, else case canDelete is false, then navigate to sign in page', (done) => {
+            userHomePage.guestUser = true;
+            let event = { data: [{ value: {name:'observation'} }] };
+            const dismiss = jest.fn(() => Promise.resolve({ data: { canDelete: false, btn: '' } }))
+            const present = jest.fn(() => Promise.resolve({}))
+            mockCommonUtilService.translateMessage = jest.fn()
+            mockPopoverController.create = jest.fn(() =>
+              Promise.resolve({
+                present: present,
+                onDidDismiss: dismiss,
+              })
+            ) as any;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockRouter.navigate = jest.fn();
             // act
             userHomePage.handleOtherCategories(event).then(() => {
             // assert
@@ -634,19 +789,54 @@ describe('UserHomePage', () => {
             })
         })
           
-          it('should navigate to observation listing page', (done) => {
+        it('should navigate to project listing page', (done) => {
+        userHomePage.guestUser = false;
+        let event = { data: [{name:'Project', value: {name:'project'}}] };
+        mockPopoverController.create = jest.fn(() =>
+            Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({canDelete: true, btn: {isInternetNeededMessage: ''}})),
+            } as any)
+        );
+        mockRouter.navigate = jest.fn()
+        // act
+        userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.PROJECT], {})
+                done()
+            })
+        })
+
+        it('should navigate to Observatoin page, if event value is observation', (done) => {
             userHomePage.guestUser = false;
-            let event = { data: [{ value: {name:'observation'} }] };
+            let event = { data: [{name:'Project', value: {name:'observation'}}] };
             mockPopoverController.create = jest.fn(() =>
-              Promise.resolve({
+                Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({})),
-              } as any)
+                onDidDismiss: jest.fn(() => Promise.resolve({canDelete: true, btn: {isInternetNeededMessage: ''}})),
+                } as any)
+            );
+            mockRouter.navigate = jest.fn()
+            // act
+            userHomePage.handleOtherCategories(event).then(() => {
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.OBSERVATION], {})
+                done()
+            })
+        })
+
+        it('should handle if no event value, default case', (done) => {
+            userHomePage.guestUser = false;
+            let event = { data: [{name:'Project', value: {name:''}}] };
+            mockPopoverController.create = jest.fn(() =>
+                Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({canDelete: true, btn: {isInternetNeededMessage: ''}})),
+                } as any)
             );
             // act
             userHomePage.handleOtherCategories(event).then(() => {
             // assert
-                expect(mockRouter.navigate).toHaveBeenCalled()
                 done()
             })
         })

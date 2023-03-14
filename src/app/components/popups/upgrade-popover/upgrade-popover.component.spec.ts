@@ -1,8 +1,7 @@
 import { UpgradePopoverComponent } from './upgrade-popover.component';
-import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { UtilityService } from '../../../../services/utility-service';
-import { Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
-import { InteractType } from 'sunbird-sdk';
+import { PopoverController, NavParams } from '@ionic/angular';
+import { Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService } from '../../../../services';
+import { InteractType } from '@project-sunbird/sunbird-sdk';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
 describe('UpgradePopoverComponent', () => {
@@ -10,12 +9,8 @@ describe('UpgradePopoverComponent', () => {
 
     window.cordova.plugins = {
         InAppUpdateManager: {
-            checkForImmediateUpdate: jest.fn((fn, fn1) => {fn(); fn1()})
+            checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
         }
-    };
-
-    const mockUtilityService: Partial<UtilityService> = {
-        openPlayStore: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('some_string'))
@@ -67,7 +62,6 @@ describe('UpgradePopoverComponent', () => {
 
     beforeAll(() => {
         upgradePopoverComponent = new UpgradePopoverComponent(
-            mockUtilityService as UtilityService,
             mockPopOverController as PopoverController,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -144,9 +138,6 @@ describe('UpgradePopoverComponent', () => {
 
 describe('UpgradeComponent in deeplink ', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
-    const mockUtilityService: Partial<UtilityService> = {
-        openPlayStore: jest.fn()
-    };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('some_string'))
     };
@@ -180,7 +171,6 @@ describe('UpgradeComponent in deeplink ', () => {
 
     beforeAll(() => {
         upgradePopoverComponent = new UpgradePopoverComponent(
-            mockUtilityService as UtilityService,
             mockPopOverController as PopoverController,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -246,9 +236,6 @@ describe('UpgradeComponent in deeplink ', () => {
 
 describe('UpgradeComponent in deeplink for deeplink upgrade scenario ', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
-    const mockUtilityService: Partial<UtilityService> = {
-        openPlayStore: jest.fn()
-    };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('some_string'))
     };
@@ -283,7 +270,6 @@ describe('UpgradeComponent in deeplink for deeplink upgrade scenario ', () => {
 
     beforeAll(() => {
         upgradePopoverComponent = new UpgradePopoverComponent(
-            mockUtilityService as UtilityService,
             mockPopOverController as PopoverController,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,

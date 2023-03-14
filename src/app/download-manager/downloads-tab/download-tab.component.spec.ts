@@ -127,7 +127,7 @@ describe('DownloadManagerPage', () => {
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } })),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: '' } })),
             } as any)));
             downloadsTabComponent.deleteContents = { emit: jest.fn() } as any;
             // act
@@ -200,6 +200,73 @@ describe('DownloadManagerPage', () => {
                 dismiss: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } })),
             } as any)));
+            downloadsTabComponent.deleteContents = { emit: jest.fn() } as any;
+            // act
+            downloadsTabComponent.showDeletePopup().then(() => {
+                // assert
+                expect(downloadsTabComponent.deleteContents.emit).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH,
+                    InteractSubtype.ACTION_BUTTON_CLICKED,
+                    Environment.DOWNLOADS,
+                    PageId.BULK_DELETE_CONFIRMATION_POPUP,
+                    undefined,
+                    { type: 'positive' }
+                );
+                done();
+            });
+        });
+
+        it('should  invoke delete content API on click of confirmation button for bulk delete, return if no network', (done) => {
+            // arrange
+            downloadsTabComponent.downloadedContents = [{
+                identifier: 'do_id1',
+                primaryCategory: 'Course',
+                pkgVersion: '1'
+            },
+            {
+                identifier: 'do_id2',
+                primaryCategory: 'Course',
+                pkgVersion: '1'
+            }];
+            mockPopOverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                dismiss: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} } })),
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn()
+            downloadsTabComponent.deleteContents = { emit: jest.fn() } as any;
+            // act
+            downloadsTabComponent.showDeletePopup().then(() => {
+                // assert
+                done();
+            });
+        });
+
+        it('should  invoke delete content API on click of confirmation button for bulk delete, handle else if network available', (done) => {
+            // arrange
+            downloadsTabComponent.downloadedContents = [{
+                identifier: 'do_id1',
+                primaryCategory: 'Course',
+                pkgVersion: '1'
+            },
+            {
+                identifier: 'do_id2',
+                primaryCategory: 'Course',
+                pkgVersion: '1'
+            }];
+            mockPopOverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                dismiss: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} } })),
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
+            mockCommonUtilService.showToast = jest.fn()
             downloadsTabComponent.deleteContents = { emit: jest.fn() } as any;
             // act
             downloadsTabComponent.showDeletePopup().then(() => {
