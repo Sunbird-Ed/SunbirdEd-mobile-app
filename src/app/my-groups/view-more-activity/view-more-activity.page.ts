@@ -1,9 +1,9 @@
-import { GroupDetailsPageModule } from './../group-details/group-details.module';
 import { Location } from '@angular/common';
 import { AppHeaderService } from '../../../services/app-header.service';
-import { Component, ViewEncapsulation, OnDestroy, Injectable } from '@angular/core';
+import { Component, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { Platform} from '@ionic/angular';
-import { TelemetryGeneratorService, CommonUtilService } from '@app/services';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import {
     Environment,
     ImpressionType,
@@ -13,16 +13,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupActivity } from '@project-sunbird/sunbird-sdk';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
-
-@Injectable({ providedIn: GroupDetailsPageModule })
-export class ViewMoreActivityDelegateService {
-    delegate?: ViewMoreActivityActionsDelegate;
-}
-
-export interface ViewMoreActivityActionsDelegate {
-    onViewMoreCardClick(event: Event, activity: GroupActivity);
-    onViewMoreCardMenuClick(event: Event, activity: GroupActivity): Promise<boolean>;
-}
+import { ViewMoreActivityDelegateService } from './view-more-activity-delegate.page';
 
 @Component({
     selector: 'view-more-activity',
@@ -81,6 +72,7 @@ export class ViewMoreActivityPage implements  OnDestroy {
     }
 
     ngOnDestroy() {
+        console.log('on destory');
     }
 
     handleBackButton(isNavBack: boolean) {

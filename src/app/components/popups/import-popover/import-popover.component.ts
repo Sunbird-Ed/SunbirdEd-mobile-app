@@ -7,14 +7,15 @@ import {
     EventsBusEvent,
     EventsBusService
 } from 'sunbird-sdk';
-import {TelemetryGeneratorService, AppGlobalService} from '@app/services';
+import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
+import { AppGlobalService} from '../../../../services/app-global-service.service';
 import {
     Environment,
     ImpressionType,
     PageId,
     ID,
     InteractType
-  } from '@app/services/telemetry-constants';
+  } from '../../../../services/telemetry-constants';
 
 @Component({
     selector: 'app-import-popover',

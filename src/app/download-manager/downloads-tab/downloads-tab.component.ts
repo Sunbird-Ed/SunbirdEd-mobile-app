@@ -108,6 +108,12 @@ export class DownloadsTabComponent implements OnInit {
         Environment.DOWNLOADS,
         PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
     } else if (data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       const valuesMap = {};
       valuesMap['type'] = ActionButtonType.POSITIVE;
       let telemetryObject: TelemetryObject;

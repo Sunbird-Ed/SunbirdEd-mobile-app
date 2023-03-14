@@ -2,7 +2,6 @@ import { Subscription } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import {
   GroupService, GroupCreateRequest, GroupMembershipType,
   UpdateByIdRequest, CorrelationData
@@ -10,9 +9,9 @@ import {
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
-import { UtilityService, Environment, ID, ImpressionSubtype,
-  ImpressionType, InteractType, PageId,
-  TelemetryGeneratorService, InteractSubtype } from '@app/services';
+import { Environment, ID, ImpressionSubtype,
+  ImpressionType, InteractType, PageId, InteractSubtype } from '../../../services/telemetry-constants';
+import { UtilityService, TelemetryGeneratorService } from '../../../services';
 import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 
@@ -45,7 +44,6 @@ export class CreateEditGroupPage {
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
-    private translate: TranslateService,
     private headerService: AppHeaderService,
     private location: Location,
     private platform: Platform,
@@ -118,7 +116,7 @@ export class CreateEditGroupPage {
     this.createGroupForm = this.fb.group({
       groupName: [(this.groupDetails && this.groupDetails.name) || '', Validators.required],
       groupDesc: (this.groupDetails && this.groupDetails.description) || '',
-      groupTerms: [(this.groupDetails && true || ''), Validators.required]
+      groupTerms: [(this.groupDetails && true || 'false'), Validators.required]
     });
   }
 

@@ -31,7 +31,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest, DiscussionService, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
+  UnenrollCourseRequest, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -257,7 +257,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
-    @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     private zone: NgZone,
     private events: Events,
     private fileSizePipe: FileSizePipe,
@@ -512,6 +511,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await confirm.present();
     confirm.onDidDismiss().then(({ data }) => {
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.navigateToBatchListPage();
       }
     });
@@ -2153,6 +2158,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
       this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();

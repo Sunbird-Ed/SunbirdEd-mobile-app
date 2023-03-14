@@ -4,7 +4,7 @@ import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {SharedPreferences} from 'sunbird-sdk';
 import {AppThemes, StatusBarTheme,AppMode} from '@app/app/app.constant';
-import { OnboardingConfigurationService } from '.';
+import onboarding from './../assets/configurations/config.json';
 
 @Injectable()
 export class AppHeaderService {
@@ -12,7 +12,6 @@ export class AppHeaderService {
     constructor(private menuCtrl: MenuController,
                 private statusBar: StatusBar,
                 @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-                private onboardingConfigurationService: OnboardingConfigurationService
     ) {
     }
 
@@ -82,7 +81,7 @@ export class AppHeaderService {
         const theme = await this.preferences.getString('current_selected_theme').toPromise();
         if (theme === 'JOYFUL') {
             document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
-            const customTheme = this.onboardingConfigurationService.getAppConfig().theme
+            const customTheme = onboarding.theme
             if(customTheme.name){
                 document.querySelector('html').setAttribute('data-color', customTheme.name);
             }

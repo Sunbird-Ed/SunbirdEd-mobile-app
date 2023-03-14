@@ -41,8 +41,7 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SearchType,
-  SharedPreferences
+  SearchType
 } from '@project-sunbird/sunbird-sdk';
 import {
   AudienceFilter,
@@ -124,7 +123,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public commonUtilService: CommonUtilService,
     private router: Router,
@@ -876,6 +874,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       await confirm.present();
       const { data } = await confirm.onDidDismiss();
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.router.navigate([RouterLinks.SIGN_IN], { state: { navigateToCourse: true } });
       }
       return;
