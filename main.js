@@ -141,7 +141,7 @@ var formRequestArray = [{
         "component": "app"
     },
     {
-        'type': 'user',
+        'type': 'config',
         'subType': 'frameworkCategory',
         'action': 'get',
         'component': 'app'
