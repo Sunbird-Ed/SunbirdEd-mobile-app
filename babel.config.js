@@ -4,6 +4,12 @@ module.exports = function (api) {
   const presets = [
     "@babel/env",
     "@babel/typescript",
+    "@babel/preset-env",
+      {
+          "loose": true,
+          "modules": false,
+          "debug": true
+      }
   ];
   const plugins = [
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
