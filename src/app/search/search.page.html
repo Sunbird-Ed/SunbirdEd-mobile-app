@@ -182,7 +182,7 @@
     </ion-list>
 
     <div *ngIf="searchContentResult && searchContentResult.length">
-      <div class="pills-filter" [ngClass]="{'mt-32': hideSearchOption, '': !hideSearchOption}">
+      <div class="pills-filter" [ngClass]="{'mt-32': hideSearchOption, '': !hideSearchOption, 'scc-container': searchInfolVisibility === 'show', '':searchInfolVisibility === 'hide'}">
         <sb-pills-grid *ngIf="primaryCategoryFilters && primaryCategoryFilters.length" (select)="handleFilterSelect($event)"
           [pillsViewType]="PillsViewType.SCROLL"
           [pillBorder]="PillBorder.ROUND">
@@ -193,7 +193,7 @@
           </sb-pill-item>
         </sb-pills-grid>
       </div>
-      <div class="sb-search-history-entry fixed-counter row">
+      <div class="sb-search-history-entry fixed-counter row" [ngClass]="{'scc-container': searchInfolVisibility === 'show', '':searchInfolVisibility === 'hide'}">
         <div class="col" *ngIf="searchKeywords">
           {{'SHOWING_RESULT_OUTOF_TOTAL' | translate: {'%count': searchContentResult.length, '%query': totalCount} }}
         </div>
