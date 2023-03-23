@@ -455,6 +455,10 @@
   }
 }
 
-.fixed-counter + .sc-container, .scc-container {  
+.fixed-counter + .sc-container {  
   margin-top: 7rem;
 }
+
+.fixed-counter + .scc-container {
+  margin-top: 0rem;
+ }
