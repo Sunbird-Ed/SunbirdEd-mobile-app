@@ -123,6 +123,7 @@ export class ProjectService {
         replaceUrl: replaceUrl
       }
       this.db.create(success.result).then(successData => {
+        this.createNewProject(success.result, false)
         this.navigateToProjectDetails(navObj);
       }).catch(error => {
         if (error.status === 409) {
