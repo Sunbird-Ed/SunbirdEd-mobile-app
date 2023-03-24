@@ -600,9 +600,6 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   clearUserLocationSelections() {
-    if(this.hideClearButton){
-      return;
-    }
     const stateFormControl = this.formGroup.get('children.persona.state');
     /* istanbul ignore else */
     if (stateFormControl) {
