@@ -289,6 +289,7 @@ export class ProjectTemplateviewPage implements OnInit {
           projectId: this.project.projectId,
           programId: this.programId,
           solutionId: this.solutionId,
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         },
       });
     } else {
