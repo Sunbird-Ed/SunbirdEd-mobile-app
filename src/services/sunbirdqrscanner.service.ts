@@ -20,6 +20,7 @@ import {
   Mode,
   PageId
 } from './telemetry-constants';
+import { ManageLearnCertificateService } from '@app/app/manage-learn/core/services/manage-learn-certificate.service';
 
 declare const cordova;
 
@@ -53,7 +54,8 @@ export class SunbirdQRScanner {
     private appVersion: AppVersion,
     private toastController: ToastController,
     private router: Router,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private projectCert : ManageLearnCertificateService
   ) {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
@@ -260,6 +262,8 @@ private getProfileSettingConfig() {
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
+            } else if(scannedData.includes('ProjectCertificate')) {
+              this.projectCert.getProjectCertificate(scannedData);
             } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
               this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {

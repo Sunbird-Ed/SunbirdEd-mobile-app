@@ -10,7 +10,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { statusType, taskStatus, UtilsService } from '../../core';
+import { statusType, ToastService, UtilsService } from '../../core';
 import * as _ from "underscore";
 
 @Component({
@@ -50,7 +50,8 @@ export class AttachmentListingPage implements OnInit {
     private photoViewer: PhotoViewer,
     private routeParam: ActivatedRoute,
     private util: UtilsService,
-    private alert: AlertController
+    private alert: AlertController,
+    private toast: ToastService
   ) {
     this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
     routeParam.params.subscribe(parameters => {
@@ -182,7 +183,9 @@ export class AttachmentListingPage implements OnInit {
   openFile(attachment) {
     this.fileOpener.open(this.path + '/' + attachment.name, attachment.type)
       .then(() => { console.log('File is opened'); })
-      .catch(e => console.log('Error opening file', e));
+      .catch(e => {
+        this.toast.showMessage(e.message,'danger');
+      });
   }
   async deleteConfirmation(attachment) {
     let data;
@@ -191,7 +194,7 @@ export class AttachmentListingPage implements OnInit {
     });
     const alert = await this.alert.create({
       cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab,
+      message: data['FRMELEMNTS_LBL_ATTACHMENT_DELETE_CONFIRMATION'] + ' ' + this.selectedTab + '?',
       buttons: [
         {
           text: data['YES'],

@@ -1406,10 +1406,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (this.nextContent && !this.nextContent) {
-        this.initNextContent();
+      if (!this.nextContent) {
+        await this.getContentState(true).then(() => {
+          this.navigateToContentDetails(this.nextContent, 1);
+        });
+      } else {
+        this.navigateToContentDetails(this.nextContent, 1);
       }
-      this.navigateToContentDetails(this.nextContent, 1);
+     // this.navigateToContentDetails(this.nextContent, 1);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
@@ -1420,7 +1424,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Function gets executed when user click on resume course button.
    */
   async resumeContent(): Promise<void> {
-    this.navigateToContentDetails(this.nextContent, 1);
+    if (!this.nextContent) {
+      await this.getContentState(true).then(() => {
+        this.navigateToContentDetails(this.nextContent, 1);
+      });
+    } else {
+      this.navigateToContentDetails(this.nextContent, 1);
+    }
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
@@ -1907,7 +1917,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.courseUtilService.showCredits(this.course, this.pageId, undefined, this.corRelationList);
   }
 
-  getContentState(returnRefresh: boolean) {
+  async getContentState(returnRefresh: boolean) {
     if (this.courseCardData.batchId) {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
@@ -1917,7 +1927,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         batchId: this.courseCardData.batchId,
         fields: ['progress', 'score']
       };
-      this.courseService.getContentState(request).toPromise()
+      await this.courseService.getContentState(request).toPromise()
         .then((contentStateResponse: ContentStateResponse) => {
           this.contentStatusData = contentStateResponse;
 

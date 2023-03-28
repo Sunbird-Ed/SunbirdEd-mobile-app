@@ -10,7 +10,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 
-declare var cordova: any;
+declare let cordova: any;
 
 @Component({
   selector: 'app-image-listing',
@@ -179,7 +179,7 @@ export class ImageListingComponent implements OnInit {
   }
 
   cloudImageUpload() {
-    var options: FileUploadOptions = {
+    const options: FileUploadOptions = {
       fileKey: this.imageList[this.uploadIndex].file,
       fileName: this.imageList[this.uploadIndex].file,
       chunkedMode: false,
@@ -217,8 +217,8 @@ export class ImageListingComponent implements OnInit {
             const errorObject = { ...this.errorObj };
             this.retryCount++;
             if (this.retryCount > 3) {
-              this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
-                this.toast.openToast(translations);
+              this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
+                this.toast.showMessage(translations,'danger');
               });
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
             Details: ${JSON.stringify(err)}`;
@@ -229,13 +229,10 @@ export class ImageListingComponent implements OnInit {
           });
       })
       .catch((error) => {
-        this.failedUploadImageNames.push(this.imageList[this.uploadIndex].file);
-        if (this.uploadIndex < this.imageList.length - 1) {
-          this.uploadIndex++;
-          this.cloudImageUpload();
-        } else {
-          this.submitEvidence();
-        }
+        this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
+          this.toast.showMessage(translations,'danger');
+        });
+        history.go(-1);
       });
   }
 
@@ -279,10 +276,6 @@ export class ImageListingComponent implements OnInit {
         }
         this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
         this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
-        const options = {
-          _id: this.submissionId,
-          name: this.schoolName,
-        };
         this.loader.stopLoader();
         history.go(-2);
       },
@@ -404,7 +397,6 @@ export class ImageListingComponent implements OnInit {
 
   constructMatrixObject(question) {
     const value = [];
-    const currentEvidence = this.currentEvidence;
 
     for (const instance of question.value) {
       let eachInstance = {};

@@ -47,6 +47,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   enableQuestionReadOut: boolean;
   networkAvailable;
   isTargeted :boolean;
+  isSurvey : boolean = false;
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -75,6 +76,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex ? parseInt(params.evidenceIndex): 0;
       this.selectedSectionIndex = params.sectionIndex ? parseInt(params.sectionIndex): 0;
       this.schoolName = params.schoolName;
+      this.isSurvey = params.isSurvey == 'true';
     });
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
@@ -125,7 +127,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
 
     this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
     this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
-    this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
+    this.isViewOnly = !this.isSurvey && !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
     this.questions =
       currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
     this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
@@ -138,7 +140,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       currentViewIndex: this.start,
     };
     this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
-    if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+    if (!this.isSurvey && this.isCurrentEvidenceSubmitted || this.isViewOnly) {
       document.getElementById('stop').style.pointerEvents = 'none';
     }
   }

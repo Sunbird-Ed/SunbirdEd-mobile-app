@@ -1,4 +1,3 @@
-import { PreferenceKey } from './../app.constant';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
@@ -31,14 +30,12 @@ import { ContentUtil } from '@app/util/content-util';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ScrollToService } from '@app/services/scroll-to.service';
-import { FormConstants } from '@app/app/form.constants';
 import { ModalController } from '@ionic/angular';
 import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '@app/util/object.util';
-
 
 @Component({
     selector: 'app-category-list-page',
@@ -84,6 +81,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     fromLibrary = false;
     sectionCode = '';
     primaryFacetFiltersFormGroup: FormGroup;
+    filterFields: {[k: string]: any} = {};
 
     private readonly searchCriteria: ContentSearchCriteria;
     private readonly filterCriteria: ContentSearchCriteria;
@@ -94,6 +92,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     layoutConfiguration = {
         layout: 'v4'
     };
+    defaultImage = '';
     appName = '';
     categoryDescription = '';
     categoryTitle = '';
@@ -184,6 +183,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
         }, true);
+        (await this.commonUtilService.convertFileToBase64('assets/imgs/ic_launcher.png')).subscribe((img) => {
+            this.defaultImage = img;
+        });
     }
 
     async ionViewWillEnter() {
@@ -201,7 +203,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true, onSelectedFilter?: any) {
+    private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true, onSelectedFilter?: any, filterKey?) {
         this.showSheenAnimation = true;
         this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (onSelectedFilter) {
@@ -209,10 +211,20 @@ export class CategoryListPage implements OnInit, OnDestroy {
             onSelectedFilter.forEach((selectedFilter) => {
                 selectedData.push(selectedFilter.name);
             });
+            if (filterKey) {
+                this.filterFields = this.filterFields ? this.filterFields : {};
+                this.filterFields[filterKey] = selectedData;
+            }
             if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
                 this.formField.aggregate.groupSortBy.forEach((data) => {
-                    data.name.preference = selectedData;
-             });
+                    let applyFilters = [];
+                    Object.keys(this.filterFields).forEach((e) => {
+                        if (this.filterFields[e].length) {
+                            applyFilters = applyFilters.concat(this.filterFields[e]);
+                        }
+                    });
+                    data.name.preference = applyFilters;
+                });
             }
         }
 
@@ -498,11 +510,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 onSelectedFilter.push(selectedValue.name);
             });
 
-            await this.applyFilter(appliedFilterCriteria, true, toApply);
+            await this.applyFilter(appliedFilterCriteria, true, toApply, primaryFacetFilter.code);
         }
     }
 
-    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true, onSelectedFilter?) {
+    private async applyFilter(appliedFilterCriteria: ContentSearchCriteria, refreshPillFilter = true, onSelectedFilter?, filterKey?) {
         const tempSearchCriteria: ContentSearchCriteria = {
             ...appliedFilterCriteria,
             mode: 'hard',
@@ -516,7 +528,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             }
         });
-        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter, onSelectedFilter);
+        await this.fetchAndSortData(tempSearchCriteria, false, refreshPillFilter, onSelectedFilter, filterKey);
     }
 
     async pillFilterHandler(pill){

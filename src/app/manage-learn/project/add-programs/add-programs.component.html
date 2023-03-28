@@ -13,7 +13,7 @@
   <ion-list>
     <ion-radio-group>
       <ion-item *ngFor="let data of dataList">
-        <ion-label>{{data.name}}</ion-label>
+        <ion-label class="text-wrap">{{data.name}}</ion-label>
         <ion-radio slot="start" value="{{data._id}}" (click)="selectProgram(data)"></ion-radio>
       </ion-item>
     </ion-radio-group>

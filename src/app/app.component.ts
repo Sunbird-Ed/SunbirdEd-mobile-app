@@ -787,7 +787,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       .then(result => {
         if (result) {
           setTimeout(() => {
-            this.events.publish('force_optional_upgrade', result);
+            if(!this.platform.is('ios')) {
+              this.events.publish('force_optional_upgrade', result);
+            }
           }, 5000);
         }
       })
