@@ -163,6 +163,31 @@ describe('LoginNavigationHandlerService', () => {
 
         it('should catch error on set session and handle logout process ', (done) => {
             // arrange
+            const signInError = {err: {error_msg:'ERROR_WHILE_LOGIN'}};
+            mockAuthService.setSession = jest.fn(() => throwError(signInError));
+            mockSbProgressLoader.hide = jest.fn()
+            mockSharedPreferences.getString = jest.fn(() => of(''));
+            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of());
+            mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
+                webClientId: clientId.value
+            }));
+            mockGooglePlus.disconnect = jest.fn();
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockAuthService.resignSession = jest.fn(() => Promise.resolve())
+
+            // act
+            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true, componentData: ''}, 'sub');
+            // assert
+            setTimeout(() => {
+                expect(mockAuthService.setSession).toHaveBeenCalled();
+                expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalled();
+                expect(mockAuthService.resignSession).toHaveBeenCalled()
+                done()
+            }, 0);
+        })
+
+        it('should catch error on set session and handle logout process ', (done) => {
+            // arrange
             const signInError = new SignInError('ERROR_WHILE_LOGIN');
             mockAuthService.setSession = jest.fn(() => throwError(signInError));
             mockSbProgressLoader.hide = jest.fn()

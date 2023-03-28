@@ -26,3 +26,9 @@ ion-footer {
         padding: 16px;
     }
 }
+.word-wrap-name{
+    word-break: break-all;
+    overflow-x: auto;
+    max-height: 8rem;
+    scroll-behavior: auto;
+}

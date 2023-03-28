@@ -1,5 +1,5 @@
 <ion-content>
-  <div class="warning-block" *ngIf="project?.certificateTemplateId">
+  <div class="warning-block" *ngIf="project?.certificate && !taskId">
     <div class="icon-box"> <ion-icon name="information-circle-outline"></ion-icon>  </div>
     <div class="message">{{"FRMELEMNTS_MSG_CERTIFICATE_CRITERIA_BFR_SUBMITTING" | translate}} </div>
      </div>

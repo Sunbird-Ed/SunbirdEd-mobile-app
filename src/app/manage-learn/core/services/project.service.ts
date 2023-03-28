@@ -52,7 +52,7 @@ export class ProjectService {
     })
   }
   async getTemplateBySoluntionId(id) {
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     const config = {
       url: urlConstants.API_URLS.TEMPLATE_DETAILS + id,
       payload: payload,
@@ -75,7 +75,7 @@ export class ProjectService {
   }
 
   async getProjectDetails({ projectId = '', solutionId, isProfileInfoRequired = false,
-    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true }) {
+    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true ,certificate}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
@@ -87,6 +87,13 @@ export class ProjectService {
       this.loader.stopLoader();
       success.result.hasAcceptedTAndC = hasAcceptedTAndC;
       let projectDetails = success.result;
+      if(certificate){
+        const request = { type:'project',name:projectDetails.title, project: projectDetails._id, certificate: projectDetails.certificate, templateUrl : projectDetails.certificate.templateUrl };
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+            state: { request }
+          });
+        return;
+      }
       let newCategories = [];
       for (const category of projectDetails.categories) {
         if (category._id || category.name) {
@@ -277,7 +284,7 @@ export class ProjectService {
   }
 
   async mapProjectToUser({ programId, solutionId, templateId, isATargetedSolution, hasAcceptedTAndC }) {
-    let payload = { programId: programId, solutionId: solutionId };
+    let payload = { programId: programId, solutionId: solutionId, hasAcceptedTAndC: hasAcceptedTAndC };
     const config = {
       url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + templateId + '?isATargetedSolution=false',
       payload: payload,
@@ -301,7 +308,8 @@ export class ProjectService {
             programId: programId,
             solutionId: solutionId,
             replaceUrl: false,
-            hasAcceptedTAndC: hasAcceptedTAndC
+            hasAcceptedTAndC: hasAcceptedTAndC,
+            certificate:false
           }
           this.getProjectDetails(params)
         })
@@ -344,6 +352,9 @@ export class ProjectService {
       });
       await alert.present();
     }else{
+      if(project.status == statusType['submitted']){
+        type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(project.title);
+      }else
       if (project.isEdit || project.isNew) {
         project.isNew
           ? this.createNewProject(project, true)

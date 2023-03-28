@@ -12,7 +12,7 @@
     display: flex;
     margin: 1rem 0;
     .cert-info {
-      flex-grow: 1;
+      width: 100%;
       .title,
       .date {
         font-size: 1rem;
@@ -24,7 +24,7 @@
       }
     }
     .download-btn{
-      width: 50%;
+      width: 60%;
       .cert-btn{
         padding: 0.5rem;
         background-color: var(--app-primary-medium);
@@ -47,4 +47,9 @@
 
 .highlight-cert-btn{
   background-color: var(--app-primary);
+}
+.text-msg{
+  margin: 4rem 1rem;
+  font-size: 1rem;
+  font-weight: 900;
 }

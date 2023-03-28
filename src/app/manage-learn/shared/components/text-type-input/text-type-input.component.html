@@ -1,6 +1,6 @@
 <ion-card class="_cardBg ion-padding">
   <ion-col class="_flex-box _justify-content-center _flex-direction-column">
-    <h4 [ngClass]="{'_validQuestion': data?.value}" class="flexbox">
+    <h4 [ngClass]="{'_validQuestion': (data?.value || !data?.validation?.required)}" class="flexbox">
       <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
       </app-question-heading>
     </h4>

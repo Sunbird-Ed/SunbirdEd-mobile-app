@@ -21,19 +21,26 @@ export class ShowCertificateComponent implements OnInit {
     showCompletionCertificate = false;
     showMeritCertificate = false;
     meritCertPercent : any ;
+    criteria : any;
     constructor(
         private telemetryGeneratorService: TelemetryGeneratorService,
         private commonUtilService: CommonUtilService
     ) {
     }
     ngOnInit() {
-
+        
         this.objId = this.content.identifier;
         this.objType = this.content.contentType;
         this.objVer = this.content.pkgVersion; 
         for(var key in this.certificateDetails) {
             const certCriteria = this.certificateDetails[key]['criteria'];
-            if (certCriteria) { 
+            if(typeof(certCriteria)== 'string') {
+               this.criteria = JSON.parse(certCriteria);  
+               this.showCompletionCertificate = this.criteria.enrollment && this.criteria.enrollment.status === 2 ? true : false;     
+               this.showMeritCertificate = this.criteria.assessment && this.criteria.assessment.score ? true : false;
+               this.meritCertPercent = this.criteria.assessment && this.criteria.assessment.score['>='];
+            }
+            else if (certCriteria) { 
             this.showCompletionCertificate = certCriteria.enrollment && certCriteria.enrollment.status === 2 ? true : false;     
             this.showMeritCertificate = certCriteria.assessment && certCriteria.assessment.score ? true : false;
             this.meritCertPercent = certCriteria.assessment && certCriteria.assessment.score['>='];

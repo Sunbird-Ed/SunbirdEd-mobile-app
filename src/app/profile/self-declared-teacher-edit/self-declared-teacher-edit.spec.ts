@@ -496,7 +496,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
             selfDeclaredTeacherEditPage.submit().then(() => {
                 // assert
                 expect(mockProfileService.updateServerProfileDeclarations).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('sample_translation');
             });
         });
 

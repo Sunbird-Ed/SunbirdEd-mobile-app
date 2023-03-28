@@ -17,6 +17,9 @@ import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { storageKeys } from "../../storageKeys";
 import { Events } from '@app/util/events';
+import { Location } from "@angular/common";
+import { ToastService } from "./toast/toast.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: "root"
@@ -48,6 +51,9 @@ export class UtilsService {
     private router: Router,
     private storage: Storage,
     private events: Events,
+    private location : Location,
+    private toast : ToastService,
+    private translate: TranslateService,
 
   ) {
     this.events.subscribe("loggedInProfile:update", _ => {
@@ -427,6 +433,7 @@ export class UtilsService {
           imageArray = newArray;
         }
       }
+      imageArray = question.fileName.length ? imageArray.concat(question.fileName) : imageArray;
     } else {
       // imageArray = [...imageArray, question.fileName]
       const newArray = question.fileName.length
@@ -528,9 +535,10 @@ export class UtilsService {
           ? this.requiredFields + " in"
           : ""
         }   your profile to access the feature.`,
+        cssClass:'central-alert',
       buttons: [
         {
-          text: "Update Profile",
+          text: "Update profile",
           role: "cancel",
           handler: blah => {
             this.router.navigate([`${RouterLinks.HOME}`], {replaceUrl:true});
@@ -637,7 +645,11 @@ export class UtilsService {
                 });
               })
               .catch(err => {
-                resolve({});
+                this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
+                  this.toast.openToast(translations);
+                });
+                this.location.back();
+                reject(null);
               });
           }
         });

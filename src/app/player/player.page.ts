@@ -32,6 +32,8 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
+import { File } from '@ionic-native/file/ngx';
+import { FormConstants } from '../form.constants';
 
 declare const cordova;
 
@@ -84,7 +86,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private printPdfService: PrintPdfService
+    private printPdfService: PrintPdfService,
+    private file: File,
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -126,7 +129,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      if(!this.platform.is('ios')){
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      }
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
@@ -151,7 +156,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.isExitPopupShown = false;
   }
   async ionViewWillEnter() {
-    const playerInterval = setInterval(() => {
+    const playerInterval = setInterval(async () => {
       if (this.playerType === 'sunbird-old-player') {
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
         this.statusBar.hide();
@@ -161,7 +166,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         if (this.config['metadata'].isAvailableLocally) {
           this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
         }
-
+        if (!this.config['config'].whiteListUrl || !this.config['config'].whiteListUrl.length) {
+          const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+          if (utilityConfigFields && utilityConfigFields.length) {
+            const utilityPlayerConfig = utilityConfigFields.find((config) => config.code === 'config')['config'];
+            if (utilityPlayerConfig && utilityPlayerConfig.v1 && utilityPlayerConfig.v1.whitelistUrl
+              && utilityPlayerConfig.v1.whitelistUrl.length) {
+              this.config['config']['whiteListUrl'] = utilityPlayerConfig.v1.whitelistUrl;
+            }
+          }
+        }
         if (this.previewElement?.nativeElement) {
           clearInterval(playerInterval);
           // This is to reload a iframe as iframes reload method not working on cross-origin.
@@ -273,6 +287,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
+  handleNavBackButton() {
+    this.showConfirm();
+  }
+
   async playerEvents(event) {
     if (event.edata) {
       const userId: string = this.appGlobalService.getCurrentUser().uid;
@@ -307,21 +325,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         });
         await popover.present();
       } else if (event.edata['type'] === 'DOWNLOAD') {
-        if (this.content.contentData.downloadUrl) {
-          this.downloadPdfService.downloadPdf(this.content).then((res) => {
-            this.commonUtilService.showToast('CONTENT_DOWNLOADED');
-          }).catch((error) => {
-            if (error.reason === 'device-permission-denied') {
-              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-            } else if (error.reason === 'user-permission-denied') {
-              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-            } else if (error.reason === 'download-failed') {
-              this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-            }
-          });
-        } else {
-          this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        }
+        this.handleDownload();
       } else if (event.edata['type'] === 'PRINT') {
         this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
@@ -343,6 +347,58 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.toggleDeviceOrientation();
       }
     }
+  }
+
+  handleDownload() {
+    if (this.content.contentData.downloadUrl) {
+      if (this.platform.is('ios')) {
+        this.file.checkDir(this.file.documentsDirectory, 'downloads')
+        .then(() => {
+          this.file.checkFile(this.file.documentsDirectory, 'downloads/' + this.content.name + '.pdf')
+          .then(_ => {this.commonUtilService.showToast("A file with the same name already exists!")})
+          .catch(() => {
+            this.downloadFileIos(this.content);
+          })
+        }) 
+        .catch(() => {
+          this.file.createDir(this.file.documentsDirectory, 'downloads', false)
+          .then(response => {
+            this.downloadFileIos(this.content);
+          })
+          .catch((err) => {
+            this.commonUtilService.showToast('Error saving file:  ' + err.message, false, 'redErrorToast');
+          })
+        })
+      } else { // android
+        this.downloadPdfService.downloadPdf(this.content).then((res) => {
+          this.commonUtilService.showToast('CONTENT_DOWNLOADED');
+        }).catch((error) => {
+          if (error.reason === 'device-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'user-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'download-failed') {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          }
+        });
+      }
+    } else {
+      this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+    }
+  }
+
+  downloadFileIos(content) {
+    const path = this.file.documentsDirectory;
+    const fileUri = content.contentData.downloadUrl;
+    const fileName = content.name;
+    setTimeout(() => {
+      const transfer = this.transfer.create();
+      transfer.download(fileUri, path + 'downloads/' + fileName + '.pdf').then(entry => {
+        this.commonUtilService.showToast('CONTENT_DOWNLOADED');
+      }).catch(err => {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      });
+    },500)
   }
 
   async getNewPlayerConfiguration() {

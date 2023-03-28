@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
@@ -11,7 +11,14 @@ import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
 import { AppGlobalService } from '@app/services';
+import { PreferenceKey } from '@app/app/app.constant';
+import { Subscription } from 'rxjs';
 
+import {
+  SharedPreferences
+} from 'sunbird-sdk';
+import { ProfileNameConfirmationPopoverComponent } from '@app/app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-project-templateview',
   templateUrl: './project-templateview.page.html',
@@ -58,7 +65,18 @@ export class ProjectTemplateviewPage implements OnInit {
   stateData;
   isATargetedSolution;
   isAssignedProject : boolean = false;
+  isStarted : boolean = false;
+  hideNameConfirmPopup = false;
+  certificateCriteria:any =[];
+  userId;
+  clickedOnProfile :boolean = false;
+  projectlisting:boolean = false;
+  programlisting:boolean = false;
+
+  public backButtonFunc: Subscription;
+
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public params: ActivatedRoute,
     public popoverController: PopoverController,
     private router: Router,
@@ -69,9 +87,10 @@ export class ProjectTemplateviewPage implements OnInit {
     private popupService: GenericPopUpService,
     private appGlobalService: AppGlobalService,
     private alert: AlertController,
-    private toast :ToastService
+    private toast :ToastService,
+    private platform : Platform,
+    private location :Location
   ) {
-
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
     });
@@ -81,6 +100,9 @@ export class ProjectTemplateviewPage implements OnInit {
       this.solutionId = parameters.solutionId;
       this.isATargetedSolution = (parameters.isATargetedSolution === 'true');
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
+      this.programlisting = (parameters.listing == "program");
+      this.projectlisting = (parameters.listing == "project");
+
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
     this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
@@ -126,22 +148,36 @@ export class ProjectTemplateviewPage implements OnInit {
     }
   }
 
-  ngOnInit() {
+ async ngOnInit() {
+  this.userId = await this.appGlobalService.getActiveProfileUid();
+  const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
+  this.hideNameConfirmPopup = await this.preferences.getBoolean(key).toPromise();
+  }
+  ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-  }
-
-  ionViewWillEnter() {
+    this.clickedOnProfile ? this.showProfileNameConfirmationPopup():'';
     this.templateDetailsInit();
   }
-
+  handleBackButton() {
+   this.location.back();
+  }
   async getProjectApi() {
     this.actionItems = await actions.PROJECT_ACTIONS;
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
+    if(this.project.criteria){
+      let criteria = Object.keys(this.project?.criteria?.conditions);
+      criteria.forEach(element => {
+        let config ={
+          name:this.project?.criteria?.conditions[element].validationText
+        }
+        this.certificateCriteria.push(config);
+      })
+    }
     this.metaData = {
       title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -154,6 +190,15 @@ export class ProjectTemplateviewPage implements OnInit {
     let resp = await this.projectService.getTemplateByExternalId(this.id);
     this.programId = resp?.result?.programInformation?.programId || null;
     this.project = resp?.result;
+    if(this.project.certificate){
+      let criteria = Object.keys(this.project?.criteria?.conditions);
+      criteria.forEach(element => {
+        let config ={
+          name:this.project?.certificate?.conditions[element].validationText
+        }
+        this.certificateCriteria.push(config);
+      })
+    }
     if (this.project?.projectId) {
       this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
     }
@@ -176,6 +221,9 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   doAction() {
+    if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
+      this.showProfileNameConfirmationPopup();
+    }else{
     if(this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId){
       this.startProjectConfirmation();
       return;
@@ -184,17 +232,26 @@ export class ProjectTemplateviewPage implements OnInit {
       this.triggerLogin();
       return
     }
-    if ( !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution) {
+    if ( !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
-        if (data && data.isClicked) {
+      if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
+          if(this.project.criteria && !this.isStarted && !this.hideNameConfirmPopup){
+            this.showProfileNameConfirmationPopup();
+          }else{
           this.start();
           this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
+          }
         }
       })
     } else {
+      if(this.project.criteria && !this.isStarted && !this.hideNameConfirmPopup){
+        this.showProfileNameConfirmationPopup();
+      }else{
       this.start();
     }
+    }
+  }
   }
 
   gotoDetails() {
@@ -209,6 +266,21 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
+    if(this.projectlisting || this.stateData?.referenceFrom === 'link'){
+    this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
+    await this.router
+      .navigate([`/${RouterLinks.PROJECT}`], {
+        queryParams: {
+          selectedFilter:  this.isAssignedProject? 'assignedToMe' : 'discoveredByMe',
+        }
+      })
+    }
+    if(this.programlisting){
+     await this.router.navigate([`/${RouterLinks.HOME}`]);
+     await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
+     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
+    }
+    setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
     } else if (this.project.projectId) {
@@ -228,10 +300,12 @@ export class ProjectTemplateviewPage implements OnInit {
         hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         detailsPayload: this.stateData ? this.stateData : null,
         templateId: this.templateId,
-        replaceUrl: true
+        replaceUrl: true,
+        certificate:false
       }
       this.projectService.getProjectDetails(payload);
     }
+  },900)
   }
 
   startProjectsFromLink() {
@@ -249,7 +323,8 @@ export class ProjectTemplateviewPage implements OnInit {
             isProfileInfoRequired: true,
             hasAcceptedTAndC: this.project.hasAcceptedTAndC,
             templateId: this.templateId,
-            replaceUrl: false
+            replaceUrl: false,
+            certificate:false
           }
           this.projectService.getProjectDetails(payload);
         })
@@ -302,4 +377,47 @@ export class ProjectTemplateviewPage implements OnInit {
       }
     })
    }
+   private async showProfileNameConfirmationPopup() {
+     let listing;
+     if(this.projectlisting){
+       listing = 'project'
+     }else if(this.programlisting){
+      listing = 'program'
+     }else{
+      listing = false
+     }
+    let params ={
+      isTargeted :this.isTargeted,
+       programId: this.programId,
+       solutionId :this.solutionId,
+       isATargetedSolution :this.isATargetedSolution ,
+       type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe',
+       listing : listing
+     }
+   this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
+     queryParams: params,
+     skipLocationChange: false,
+     replaceUrl: true,
+     state: {
+       "referenceFrom": "link",
+   }})
+  
+    this.clickedOnProfile = true;
+    const popUp = await this.popoverController.create({
+      component: ProfileNameConfirmationPopoverComponent,
+      componentProps: {
+        projectContent: this.project
+      },
+      cssClass: 'sb-popover sb-profile-name-confirmation-popover',
+    });
+    await popUp.present();
+    const { data } = await popUp.onDidDismiss();
+    if (data !== undefined) {
+      if (data.buttonClicked) {
+        this.isStarted = true;
+        this.clickedOnProfile = false;
+        this.doAction();
+      }
+    }
+  }
 }

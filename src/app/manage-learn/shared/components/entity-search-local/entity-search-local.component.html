@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons (click)="close()" slot="start" class="backbtn padding">
+      <ion-icon role="button" aria-label="close" name="arrow-back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <div class="_flex-box searchCard">
+      <ion-searchbar
+        debounce="500"
+        [(ngModel)]="searchQuery"
+        placeholder="Search {{data.entityType}}"
+        (ionClear)="searchQuery = ''; onSearch()"
+      ></ion-searchbar>
+      <ion-button ion-button icon-only (click)="onSearch()" class="serachBtn">
+        <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <div>
+    <ng-container *ngIf="( data.entities | entitySearch : searchText) as result">
+    <div *ngFor="let entity of result" (click)="entityClickAction(entity,'onClick')">
+      <app-item-list-card [title]="entity?.name"[code]=entity?.externalId>
+        <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
+        <ion-icon
+          class="delete-icon clr-primary"
+          name="trash"
+          arrow
+          *ngIf="!entity?.submissionsCount"
+          (click)="$event.stopPropagation(); entityClickAction(entity,'remove')"
+        ></ion-icon>
+      </app-item-list-card>
+    </div>
+    <ion-list *ngIf="result.length === 0">
+      <div class="text-center noDataMsg">
+     <div class="m-10-15"> <b>  {{ 'EMPTY_SEARCH_RESULTS' | translate }}</b></div>
+      <div class="m-10-15">
+        {{'FRMELEMNTS_MSG_NO_DATA_FOR_LOCAL_SEARCH' | translate:{'entity': data.entityType} }}
+        </div>
+        <div class="m-10-15 d-flex _justify-content-center grade_ellipsis info">
+          <ion-button
+            size="small"
+            class="button custom-btn-txt-transform-none button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr ion-text-capitalize"
+            (click)="addEntity()"
+            >{{ 'ADD' | translate }} {{data.entityType}}</ion-button
+          >
+        </div>
+      </div>
+    </ion-list>
+  </ng-container>
+  </div>
+</ion-content>

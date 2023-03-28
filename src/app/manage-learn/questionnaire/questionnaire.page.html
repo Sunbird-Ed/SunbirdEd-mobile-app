@@ -39,7 +39,7 @@
   </div>
   </div>
 </ion-content>
-<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState" [viewOnly]="isViewOnly"
+<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState && !isSurvey" [viewOnly]="isViewOnly"
   [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
   [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
   [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (startAction)="startAction()" (allowStart)="allowStart()" (openSheetAction)="openActionSheet()" >
