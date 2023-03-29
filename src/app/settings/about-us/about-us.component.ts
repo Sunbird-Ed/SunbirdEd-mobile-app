@@ -4,16 +4,16 @@ import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
 } from 'sunbird-sdk';
 import {
-  TelemetryGeneratorService,
-  CommonUtilService,
-  UtilityService,
-  AppHeaderService,
   InteractType,
   InteractSubtype,
   PageId,
   Environment,
   ImpressionType
-} from '../../../services';
+} from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { UtilityService } from '@app/services/utility-service';
 import { AudienceFilter, RouterLinks, GenericAppConfig, PrimaryCategory } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';

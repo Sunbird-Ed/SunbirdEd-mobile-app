@@ -27,20 +27,28 @@ import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { SunbirdSdk } from 'sunbird-sdk';
 import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { DirectivesModule } from '../directives/directives.module';
-import {
-  ActivePageService, AndroidPermissionsService, AppGlobalService,
-  AppHeaderService,
-  AppRatingService,
-  CanvasPlayerService,
-  CollectionService, ComingSoonMessageService, CommonUtilService,
-  ContainerService,
-  ContentAggregatorHandler, CourseUtilService,
-  FormAndFrameworkUtilService,
-  GroupHandlerService, LoginHandlerService, LogoutHandlerService,
-  NotificationService, QRScannerResultHandler,
-  SplashScreenService, SunbirdQRScanner, TelemetryGeneratorService,
-  UtilityService
-} from '../services/index';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { QRScannerResultHandler } from '@app/services/qrscanresulthandler.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import { ContainerService } from '@app/services/container.services';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { AppRatingService } from '@app/services/app-rating.service';
+import { CollectionService } from '@app/services/collection.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
+import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { CanvasPlayerService } from '@app/services/canvas-player.service';
+import { SplashScreenService } from '@app/services/splash-screen.service';
+import { GroupHandlerService } from '@app/services/group/group-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { NotificationService } from '@app/services/notification.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ComponentsModule } from './components/components.module';

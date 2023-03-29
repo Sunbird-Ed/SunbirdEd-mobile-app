@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '@app/app/app.constant';
+import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '../../../../app/app.constant';
 import { SharedPreferences } from 'sunbird-sdk';
-import { Events } from '@app/util/events';
-import { TelemetryGeneratorService, PageId, InteractSubtype, CommonUtilService } from '@app/services';
-
+import { Events } from '../../../../util/events';
+import { PageId, InteractSubtype } from '../../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
     selector: 'app-new-experience-popup',

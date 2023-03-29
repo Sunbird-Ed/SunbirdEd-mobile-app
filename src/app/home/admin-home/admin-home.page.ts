@@ -1,17 +1,17 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  AppGlobalService,
-  AppHeaderService,
-  CommonUtilService,
-  ContentAggregatorHandler,
   Environment,
-  FormAndFrameworkUtilService,
   ImpressionType,
   InteractSubtype,
-  PageId,
-  SunbirdQRScanner,
-  TelemetryGeneratorService,
-} from '@app/services';
+  PageId
+} from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';

@@ -5,12 +5,12 @@ import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import {  ProjectService, ToastService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { PreferenceKey } from '@app/app/app.constant';
 import { Subscription } from 'rxjs';
 

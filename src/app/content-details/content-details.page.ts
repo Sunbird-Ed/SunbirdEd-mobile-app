@@ -51,13 +51,12 @@ import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
   ShareItemType, PreferenceKey, MaxAttempt, ProfileConstants
 } from '@app/app/app.constant';
-import {
-  CourseUtilService,
-  LocalCourseService,
-  UtilityService,
-  TelemetryGeneratorService,
-  CommonUtilService, FormAndFrameworkUtilService,
-} from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { UtilityService } from '@app/services/utility-service';
+import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentInfo } from '@app/services/content/content-info';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -81,7 +80,6 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { map, filter, take, tap } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
@@ -227,7 +225,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
-    private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
@@ -1509,6 +1506,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
     this.isLoginPromptOpen = false;
@@ -1558,7 +1561,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         url = 'file://' + pdf.url;
       }
 
-      await new Promise<boolean>((resolve, reject) => {
+      await new Promise<boolean | void>((resolve, reject) => {
         window.cordova.plugins.printer.canPrintItem(url, (canPrint: boolean) => {
           if (canPrint) {
             window.cordova.plugins.printer.print(url);
@@ -1577,7 +1580,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   // pass coursecontext to ratinghandler if course is completed
   async getContentState() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
       if (this.courseContext) {
         this.courseContext = JSON.parse(this.courseContext);

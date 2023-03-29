@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuditState, CorrelationData, SharedPreferences } from 'sunbird-sdk';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OnboardingConfigurationService } from '@app/services';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 export interface ILanguages {
   label: string;

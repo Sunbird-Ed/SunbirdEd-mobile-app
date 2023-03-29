@@ -2,22 +2,22 @@ import { Injectable, Inject } from '@angular/core';
 import { urlConstants } from '../constants/urlConstants';
 import { KendraApiService } from './kendra-api.service';
 import { UnnatiDataService } from './unnati-data.service';
-import { LoaderService } from '../../core';
+import { LoaderService } from '../../core/services/loader/loader.service';
 import { UtilsService } from './utils.service';
 import { DbService } from './db.service';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { ToastService } from '../../core';
+import { ToastService } from '../../core/services/toast/toast.service';
 import { statusType } from '../constants';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SharingFeatureService } from './sharing-feature.service';
 import { SyncService } from './sync.service';
-import { GenericPopUpService } from '../../shared';
+import { GenericPopUpService } from '../../shared/generic.popup';
 
 @Injectable({
   providedIn: 'root',

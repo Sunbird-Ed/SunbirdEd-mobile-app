@@ -14,7 +14,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
 import { ContentUtil } from '@app/util/content-util';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 
 @Component({
   selector: 'app-filters',

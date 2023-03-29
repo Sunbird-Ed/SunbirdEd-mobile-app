@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonUtilService, TelemetryGeneratorService, UtilityService} from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
 import {NavParams, PopoverController} from '@ionic/angular';
 
 @Component({

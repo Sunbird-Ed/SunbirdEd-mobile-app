@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuOverflow, RouterLinks } from '@app/app/app.constant';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -108,6 +108,12 @@ export class DownloadsTabComponent implements OnInit {
         Environment.DOWNLOADS,
         PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
     } else if (data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       const valuesMap = {};
       valuesMap['type'] = ActionButtonType.POSITIVE;
       let telemetryObject: TelemetryObject;

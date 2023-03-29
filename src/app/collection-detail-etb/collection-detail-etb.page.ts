@@ -53,13 +53,14 @@ import {
   TelemetryObject
 } from 'sunbird-sdk';
 import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
-import {
-  AppGlobalService, AppHeaderService, CommonUtilService,
-  TelemetryGeneratorService
-} from '../../services';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CorReleationDataType, Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from '../../services/telemetry-constants';
-import { CollectionChildComponent, ConfirmAlertComponent } from '../components';
+import { CollectionChildComponent } from '../components/collection-child/collection-child.component';
+import { ConfirmAlertComponent } from '../components/confirm-alert/confirm-alert.component';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { TextbookTocService } from './textbook-toc-service';
 import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
@@ -384,7 +385,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.subscribeSdkEvent();
     });
     this.ionContent.ionScroll.subscribe((event) => {
-      this.scrollPosition = event.scrollTop;
+      this.scrollPosition = event['scrollTop'];
     });
 
     this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, (data) => {

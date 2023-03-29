@@ -1,19 +1,19 @@
 import { CorReleationDataType, ImpressionType, PageId } from './../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from './../../../services/telemetry-generator.service';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  AppGlobalService,
-  AppHeaderService,
-  CommonUtilService,
-  ContentAggregatorHandler,
   Environment,
-  FormAndFrameworkUtilService,
   ImpressionSubtype,
   InteractSubtype,
-  InteractType,
-  OnboardingConfigurationService,
-  SunbirdQRScanner
-} from '@app/services';
+  InteractType
+} from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import {
   ButtonPosition,
   CourseCardGridTypes,
@@ -42,7 +42,6 @@ import {
   ProfileService,
   ProfileType,
   SearchType,
-  SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import {
   AudienceFilter,
@@ -69,7 +68,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { FormConstants } from '@app/app/form.constants';
-import { SbPopoverComponent } from '../../components/popups';
+import { SbPopoverComponent } from '../../components/popups/sb-popover/sb-popover.component';
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
@@ -124,7 +123,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public commonUtilService: CommonUtilService,
     private router: Router,

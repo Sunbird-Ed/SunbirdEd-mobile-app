@@ -1,6 +1,8 @@
 import {Component, Inject, Input} from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { AppGlobalService, CommonUtilService, PageId } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { PageId } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import {
   CachedItemRequestSourceFrom, ProfileService,

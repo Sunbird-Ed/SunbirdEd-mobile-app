@@ -1,20 +1,21 @@
 import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {NavParams, Platform, PopoverController} from '@ionic/angular';
 import {Subscription} from 'rxjs';
-import {FileSizePipe} from '@app/pipes/file-size/file-size';
+import {FileSizePipe} from '../../../../pipes/file-size/file-size';
 import {
     ContentEventType,
     EventsBusEvent,
     EventsBusService
 } from 'sunbird-sdk';
-import {TelemetryGeneratorService, AppGlobalService} from '@app/services';
+import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
 import {
     Environment,
     ImpressionType,
     PageId,
     ID,
     InteractType
-  } from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 
 @Component({
     selector: 'app-import-popover',

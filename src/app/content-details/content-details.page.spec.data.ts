@@ -1,5 +1,5 @@
 import {Navigation} from '@angular/router';
-import { PageId } from '../../services';
+import { PageId } from '../../services/telemetry-constants';
 
 export const mockContentData: Partial<Navigation> = {
     id: 7,

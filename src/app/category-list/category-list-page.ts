@@ -1,16 +1,16 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { SearchFilterService } from '@app/services/search-filter/search-filter.service';
 import {
-    AppHeaderService,
-    CommonUtilService,
     CorReleationDataType,
     Environment,
-    SearchFilterService,
     ImpressionType,
     InteractSubtype,
     InteractType,
     PageId,
-    TelemetryGeneratorService
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import {
     ContentService,

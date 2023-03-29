@@ -1,11 +1,11 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { animationGrowInTopRight } from '@app/app/animations/animation-grow-in-top-right';
-import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink-out-top-right';
-import { UpgradePopoverComponent } from '@app/app/components/popups';
-import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import { NewExperiencePopupComponent } from '@app/app/components/popups/new-experience-popup/new-experience-popup.component';
-import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import { animationGrowInTopRight } from '../app/animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '../app/animations/animation-shrink-out-top-right';
+import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
+import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import { SbTutorialPopupComponent } from '../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
+import { EventParams } from '../app/components/sign-in-card/event-params.interface';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
@@ -19,7 +19,7 @@ import { PermissionAsked } from './android-permissions/android-permission';
 import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
-import { YearOfBirthPopupComponent } from '@app/app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
+import { YearOfBirthPopupComponent } from '../app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
 
 @Injectable({
     providedIn: 'root'

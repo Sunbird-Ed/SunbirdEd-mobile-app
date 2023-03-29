@@ -8,7 +8,7 @@ import {
     InteractType, PageId
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { Subscription } from 'rxjs';
 import { ContentUtil } from '@app/util/content-util';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';

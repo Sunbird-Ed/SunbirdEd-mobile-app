@@ -2,7 +2,10 @@ import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewCh
 import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
-import { AppGlobalService, AppHeaderService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';

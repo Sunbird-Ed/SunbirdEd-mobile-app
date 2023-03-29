@@ -17,14 +17,12 @@ import {
   ServerProfileDetailsRequest,
   AcceptTermsConditionRequest
 } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import {
-  CommonUtilService,
-  AppGlobalService,
-  TelemetryGeneratorService,
   ImpressionType,
   PageId,
   Environment, InteractType, InteractSubtype, ID, CorReleationDataType
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
@@ -34,6 +32,8 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { GroupGuideLinesPopoverComponent } from '../components/popups/group-guidelines-popup/group-guidelines-popup.component';
 import { CsGroupUpdateGroupGuidelinesRequest } from '@project-sunbird/client-services/services/group/interface';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 
 interface GroupData extends Group {
   initial: string;

@@ -32,20 +32,23 @@ import {
   SunbirdSdk, DebuggingService,
   SystemSettings, SystemSettingsService, TelemetryAutoSyncService, TelemetryService
 } from 'sunbird-sdk';
-import {
-  AppGlobalService,
-  AppHeaderService, AppRatingService, CommonUtilService,
-  FormAndFrameworkUtilService,
-  LocalCourseService,
-  LoginHandlerService, OnboardingConfigurationService, SplashScreenService, TelemetryGeneratorService,
-  UtilityService
-} from '../services';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { AppRatingService } from '@app/services/app-rating.service';
+import { SplashScreenService } from '@app/services/splash-screen.service';
+import { LocalCourseService } from '@app/services/local-course.service';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import {
   AppThemes, EventTopics, GenericAppConfig,
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation, OnboardingScreenType
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
-import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
+import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -121,7 +124,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private utils: ApiUtilsService,
     private networkServ: NetworkService,
-    private localStorage: LocalStorageService,
     private db: DbService,
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,

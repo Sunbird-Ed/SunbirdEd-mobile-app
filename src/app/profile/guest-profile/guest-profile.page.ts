@@ -23,7 +23,8 @@ import { PageId, Environment, InteractType, InteractSubtype } from '@app/service
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 @Component({
   selector: 'app-guest-profile',

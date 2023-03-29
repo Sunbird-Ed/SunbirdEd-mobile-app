@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {CommonUtilService} from '@app/services';
+import {CommonUtilService} from '@app/services/common-util.service';
 
 enum Interval {
     YEAR = 'year',

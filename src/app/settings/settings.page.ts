@@ -1,26 +1,29 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { SbAppSharePopupComponent, SbPopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
-import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
+import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import {
-  ApiService, AuthService,
+  AuthService,
   DebuggingService,
   MergeServerProfilesRequest, ProfileService,
-  SdkConfig, SharedPreferences,
+  SharedPreferences,
   TelemetryImpressionRequest,
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Events } from '@app/util/events';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { SbAppSharePopupComponent } from '../components/popups/sb-app-share-popup/sb-app-share-popup.component';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 
 @Component({
   selector: 'app-settings',
@@ -44,14 +47,10 @@ export class SettingsPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
-    @Inject('API_SERVICE') private apiService: ApiService,
     @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
     private appVersion: AppVersion,
-    private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private router: Router,
     private toastCtrl: ToastController,

@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { CommonUtilService, UtilityService } from '@app/services';
+import { UtilityService } from '@app/services/utility-service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { RouterLinks } from '@app/app/app.constant';
 import { Location } from '@angular/common';
 

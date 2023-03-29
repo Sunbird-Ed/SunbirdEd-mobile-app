@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
@@ -14,6 +13,8 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
 import { CreateTaskFormComponent } from '../../shared';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-project-details',

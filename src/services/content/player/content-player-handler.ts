@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import {ContentFilterConfig, GenericAppConfig, RouterLinks} from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CanvasPlayerService } from '@app/services/canvas-player.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { Environment, InteractSubtype } from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
+import {ContentFilterConfig, GenericAppConfig, RouterLinks} from '../../../app/app.constant';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CanvasPlayerService } from '../../../services/canvas-player.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { Environment, InteractSubtype } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ContentUtil } from '../../../util/content-util';
 import { File } from '@ionic-native/file/ngx';
 import { Content, CorrelationData, CourseService, InteractType, PlayerService } from 'sunbird-sdk';
 import { ContentInfo } from '../content-info';
-import {UtilityService} from '@app/services';
+import {UtilityService} from '../../../services/utility-service';
 
 declare const cordova;
 

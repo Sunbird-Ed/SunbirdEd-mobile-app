@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import {
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype, ImpressionType
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Router } from '@angular/router';
 import {
   CourseService,

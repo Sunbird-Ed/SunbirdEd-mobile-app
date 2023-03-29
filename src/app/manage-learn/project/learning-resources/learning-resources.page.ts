@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { LoaderService, ToastService } from '../../core';
 import { DbService } from '../../core/services/db.service';
@@ -10,6 +9,8 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 var environment = {
   db: {

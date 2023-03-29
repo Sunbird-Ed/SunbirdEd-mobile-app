@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import {ContentData} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services';
-
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-relevant-content-card',

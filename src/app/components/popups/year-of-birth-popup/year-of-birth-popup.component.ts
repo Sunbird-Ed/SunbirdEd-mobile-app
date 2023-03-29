@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AppGlobalService, CommonUtilService } from '@app/services';
-import { PopoverController } from '@ionic/angular';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { ProfileService } from 'sunbird-sdk';
 
 @Component({
@@ -14,7 +14,7 @@ export class YearOfBirthPopupComponent implements OnInit {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private popOverCtrl: PopoverController,
-    private appGlobalService: AppGlobalService,
+    private navParams: NavParams,
     private commonUtilService: CommonUtilService
   ) { }
   ngOnInit(): void {
@@ -23,8 +23,9 @@ export class YearOfBirthPopupComponent implements OnInit {
   async submit() { 
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    const uid = this.navParams.get('uid');
     const req = {
-      userId: this.appGlobalService.getCurrentUser().uid,
+      userId: uid,
       dob: this.selectedYearOfBirth.toString()
     };
     this.profileService.updateServerProfile(req).toPromise()

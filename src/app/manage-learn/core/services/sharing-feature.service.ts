@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { File } from "@ionic-native/file/ngx";
 import { SocialSharing } from "@ionic-native/social-sharing/ngx";
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { LoaderService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -11,6 +10,9 @@ import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { NetworkService } from './network.service';
+import { ToastService } from './toast/toast.service';
+import { UtilsService } from './utils.service';
+import { LoaderService } from './loader/loader.service';
 
 @Injectable({
   providedIn: 'root',

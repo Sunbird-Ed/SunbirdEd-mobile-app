@@ -30,21 +30,18 @@ import {
   ProfileType,
   CorrelationData,
   AuditState} from 'sunbird-sdk';
-import {
-  AppGlobalService,
-  AppHeaderService,
-  CommonUtilService,
-  ContainerService,
-  OnboardingConfigurationService,
-  SunbirdQRScanner,
-  TelemetryGeneratorService
-} from 'services';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import { AlertController, Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
-import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
@@ -131,7 +128,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private location: Location,
     private splashScreenService: SplashScreenService,
     private activatedRoute: ActivatedRoute,
-    private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {

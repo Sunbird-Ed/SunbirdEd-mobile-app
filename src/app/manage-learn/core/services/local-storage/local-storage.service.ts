@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { Storage } from '@ionic/storage';
 
 @Injectable({

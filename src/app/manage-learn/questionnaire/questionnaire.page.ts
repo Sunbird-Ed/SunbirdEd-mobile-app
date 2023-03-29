@@ -3,12 +3,13 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Network } from '@ionic-native/network/ngx';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-questionnaire',

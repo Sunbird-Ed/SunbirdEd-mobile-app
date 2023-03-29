@@ -27,8 +27,10 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Environment, ActivePageService, TelemetryGeneratorService,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { Environment, InteractSubtype, PageId, } from '@app/services/telemetry-constants';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';

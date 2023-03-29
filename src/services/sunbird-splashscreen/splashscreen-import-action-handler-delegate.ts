@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { ImportPopoverComponent } from '@app/app/components/popups/import-popover/import-popover.component';
-import { UtilityService } from '@app/services';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ImportPopoverComponent } from '../../app/components/popups/import-popover/import-popover.component';
+import { UtilityService } from '../../services/utility-service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { defer, from, Observable, of } from 'rxjs';

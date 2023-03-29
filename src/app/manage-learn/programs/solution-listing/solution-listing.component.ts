@@ -7,7 +7,7 @@ import { ToastService, UtilsService, LoaderService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { Subscription } from 'rxjs';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Platform } from '@ionic/angular';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';

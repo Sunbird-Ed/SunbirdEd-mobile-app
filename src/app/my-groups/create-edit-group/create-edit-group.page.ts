@@ -2,7 +2,8 @@ import { Subscription } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { UtilityService } from '@app/services/utility-service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   GroupService, GroupCreateRequest, GroupMembershipType,
   UpdateByIdRequest, CorrelationData
@@ -10,9 +11,8 @@ import {
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
-import { UtilityService, Environment, ID, ImpressionSubtype,
-  ImpressionType, InteractType, PageId,
-  TelemetryGeneratorService, InteractSubtype } from '@app/services';
+import { Environment, ID, ImpressionSubtype,
+  ImpressionType, InteractType, PageId, InteractSubtype } from '@app/services/telemetry-constants';
 import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 
@@ -45,7 +45,6 @@ export class CreateEditGroupPage {
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
-    private translate: TranslateService,
     private headerService: AppHeaderService,
     private location: Location,
     private platform: Platform,

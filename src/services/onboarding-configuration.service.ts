@@ -3,7 +3,9 @@ import { OnboardingScreenType, PreferenceKey, SwitchableTabsConfig, ProfileConst
 import { GUEST_TEACHER_TABS, initTabs } from "@app/app/module.service";
 import { Events } from '@app/util/events';
 import { DeviceRegisterService, Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences } from 'sunbird-sdk';
-import { AppGlobalService, CommonUtilService, ContainerService } from ".";
+import { AppGlobalService } from "./app-global-service.service";
+import { CommonUtilService } from "./common-util.service";
+import { ContainerService } from "./container.services";
 import onboarding from './../assets/configurations/config.json';
 import { SegmentationTagService } from "./segmentation-tag/segmentation-tag.service";
 
@@ -12,8 +14,8 @@ interface OnBoardingConfig {
     name: string;
     skip: boolean;
     default: any;
-    data: Array<any>
-    params: { [key: string]: string }
+    data?: Array<any>
+    params?: { [key: string]: boolean }
 }
 
 interface Category {
@@ -35,12 +37,12 @@ interface TabConfig {
     index: number;
     isSelected?: boolean;
     status: string;
-    disabled: boolean;
+    disabled?: boolean;
     theme: string;
-    userTypeAdmin?: string;
+    userTypeAdmin?: boolean;
   }
   interface Theme {
-    name: string;
+    name?: string;
   }
 
 @Injectable({
@@ -55,7 +57,7 @@ export class OnboardingConfigurationService {
         categories: Array<Category>
     };
     initialOnboardingScreenName;
-    tabList: { tab: Array<TabConfig> };
+    tabList: Array<TabConfig>;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,

@@ -20,7 +20,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { ProfileConstants } from '@app/app/app.constant';
 import {LocationHandler} from '@app/services/location-handler';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 
 @Component({

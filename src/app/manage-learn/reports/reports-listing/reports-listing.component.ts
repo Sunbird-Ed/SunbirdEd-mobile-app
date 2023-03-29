@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';

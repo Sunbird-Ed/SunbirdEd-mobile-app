@@ -4,11 +4,13 @@ import {
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
-import {
-  CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService, InteractSubtype, InteractType, ID, AndroidPermissionsService
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { PageId, Environment, ImpressionType, InteractSubtype, InteractType, ID } from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CollectionService } from '@app/services/collection.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import {
   GroupService, GroupMember, Content,
   Group, MimeType, CorrelationData, TrackingEnabled

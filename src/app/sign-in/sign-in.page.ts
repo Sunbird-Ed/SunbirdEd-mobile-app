@@ -1,12 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-    AppGlobalService,
-    AppHeaderService,
-    CommonUtilService,
-    FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-} from '@app/services';
+} from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
     WebviewStateSessionProviderConfig,
     WebviewRegisterSessionProviderConfig,

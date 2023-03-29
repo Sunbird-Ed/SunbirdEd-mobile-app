@@ -14,9 +14,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
     InteractSubtype, Environment, PageId
 } from '@app/services/telemetry-constants';
-import {
-    LocalCourseService, AppGlobalService
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { LocalCourseService } from '@app/services/local-course.service';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentUtil } from '@app/util/content-util';

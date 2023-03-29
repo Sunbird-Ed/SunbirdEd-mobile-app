@@ -23,12 +23,14 @@ import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
   ProfileConstants, RouterLinks, SwitchableTabsConfig,AppMode
 } from '../../../app/app.constant';
-import {
-  ActivePageService, AppGlobalService,
-  AppHeaderService, CommonUtilService,
-  CorReleationDataType, Environment,
-  ID, InteractSubtype, InteractType, NotificationService, PageId, TelemetryGeneratorService, UtilityService
-} from '../../../services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CorReleationDataType, Environment, ID, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { UtilityService } from '@app/services/utility-service';
+import { NotificationService } from '@app/services/notification.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 
 declare const cordova;
@@ -491,7 +493,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   private async checkForAppUpdate() {
-    return new Promise((resolve => {
+    return new Promise<void>((resolve => {
       cordova.plugins.InAppUpdateManager.isUpdateAvailable((result: string) => {
         if (result) {
           this.isUpdateAvailable = true;

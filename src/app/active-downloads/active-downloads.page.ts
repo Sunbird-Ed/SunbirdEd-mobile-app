@@ -15,7 +15,9 @@ import {
   StorageDestination
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { featureIdMap } from '@app/feature-id-map';

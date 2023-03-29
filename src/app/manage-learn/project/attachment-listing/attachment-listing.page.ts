@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { DbService } from '../../core/services/db.service';
 import { AlertController, Platform } from "@ionic/angular";
 import { File } from "@ionic-native/file/ngx";

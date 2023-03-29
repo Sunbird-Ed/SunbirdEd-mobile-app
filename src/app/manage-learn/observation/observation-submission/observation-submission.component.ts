@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AppHeaderService, CommonUtilService } from "@app/services";
 import {
   AlertController,
   ModalController,
@@ -24,6 +23,8 @@ import { ViewDetailComponent } from "../../shared/components/view-detail/view-de
 import { Subscription } from "rxjs";
 import { Storage } from "@ionic/storage";
 import { GenericPopUpService } from "../../shared";
+import { AppHeaderService } from "@app/services/app-header.service";
+import { CommonUtilService } from "@app/services/common-util.service";
 
 @Component({
   selector: "app-observation-submission",
