@@ -84,7 +84,7 @@ export class AppHeaderService {
             document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
             const customTheme = onboarding.theme;
             if((customTheme as any).name) {
-                document.querySelector('html').setAttribute('data-color', customTheme.name);
+                document.querySelector('html').setAttribute('data-color', (customTheme as any).name);
             }
             document.querySelector('html').setAttribute('device-accessable-theme','accessible' );
             const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-header');
