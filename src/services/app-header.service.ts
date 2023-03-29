@@ -82,8 +82,9 @@ export class AppHeaderService {
         const theme = await this.preferences.getString('current_selected_theme').toPromise();
         if (theme === 'JOYFUL') {
             document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
-            if(onboarding.theme && onboarding.theme.name) {
-                document.querySelector('html').setAttribute('data-color', onboarding.theme.name);
+            const customTheme = onboarding.theme;
+            if((customTheme as any).name) {
+                document.querySelector('html').setAttribute('data-color', customTheme.name);
             }
             document.querySelector('html').setAttribute('device-accessable-theme','accessible' );
             const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-header');
