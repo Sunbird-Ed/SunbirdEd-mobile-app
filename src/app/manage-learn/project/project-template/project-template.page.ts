@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { statusType, statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from 'moment';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { menuConstants } from '../../core/constants/menuConstants';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { Subscription } from 'rxjs';
@@ -20,6 +19,8 @@ import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-project-template',

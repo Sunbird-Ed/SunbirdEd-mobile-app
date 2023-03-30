@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-certificate-verification-popover',
@@ -21,8 +20,7 @@ export class CertificateVerificationPopoverComponent implements OnInit, OnDestro
   constructor(
     private commonUtilService: CommonUtilService,
     public popoverCtrl: PopoverController,
-    private platform: Platform,
-    private events: Events) { }
+    private platform: Platform) { }
 
   ngOnInit() {
     this.content = this.isProject ? 'SUCCESSFULLY_COMPLETING_PROJECT' :'SUCCESSFULLY_COMPLETING_COURSE';

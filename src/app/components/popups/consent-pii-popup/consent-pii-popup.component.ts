@@ -1,8 +1,10 @@
 import {Component, Input} from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService, AppGlobalService, UtilityService } from '@app/services';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { UtilityService } from '../../../../services/utility-service';
 import {FormAndFrameworkUtilService} from '../../../../services/formandframeworkutil.service';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 
 @Component({
     selector: 'app-consent-pii-popup',

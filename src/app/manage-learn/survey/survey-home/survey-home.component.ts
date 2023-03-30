@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Subscription } from 'rxjs';
 import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';

@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {FormAndFrameworkUtilService} from '@app/services';
+import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
 
 @Pipe({
     name: 'aliased',

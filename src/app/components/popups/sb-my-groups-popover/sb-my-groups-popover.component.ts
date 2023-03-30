@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import {
-  CommonUtilService,
   Environment,
   ImpressionSubtype,
   ImpressionType, InteractSubtype,
   InteractType,
-  PageId,
-  TelemetryGeneratorService
-} from '@app/services';
+  PageId
+} from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Subscription } from 'rxjs';
 
 @Component({

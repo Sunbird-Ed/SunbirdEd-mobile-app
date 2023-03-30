@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService,AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';

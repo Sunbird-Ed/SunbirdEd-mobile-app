@@ -76,7 +76,7 @@ import {RelevantContentCardComponent} from './relevant-content-card/relevant-con
 import { SbPreferencePopupComponent } from './popups/sb-preferences-popup/sb-preferences-popup.component';
 
 import { QrScannerIOSComponent } from './qr-scanner-ios/qr-scanner-ios.component';
-import { ContentShareHandlerService } from '@app/services';
+import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
 import { ShowCertificateComponent } from './show-certificate-component/show-certificate-component.component';
 import { CertificateVerificationPopoverComponent } from './popups/certificate-verification/certificate-verification-popup.component';
 import { DownloadTranscriptPopupComponent } from './popups/download-transcript-popup/download-transcript-popup.component';

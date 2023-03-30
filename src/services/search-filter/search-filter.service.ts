@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 import { OnboardingConfigurationService } from '../onboarding-configuration.service';
 

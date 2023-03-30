@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';

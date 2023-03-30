@@ -1,6 +1,7 @@
 {
     "overriddenDefaultChannelId": "",
     "theme": {
+        "name": ""
     },
     "skipOnboardingForLoginUser": true,
     "onboarding": [

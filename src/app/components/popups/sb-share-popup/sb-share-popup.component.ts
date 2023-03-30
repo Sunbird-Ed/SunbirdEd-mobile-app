@@ -2,10 +2,11 @@ import { UtilityService } from '@app/services/utility-service';
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import {
-  AndroidPermissionsService, AppGlobalService, CommonUtilService,
-  ContentShareHandlerService, TelemetryGeneratorService
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import {
   Environment,
   ImpressionType,

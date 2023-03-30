@@ -3,7 +3,7 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {PreferenceKey, RouterLinks} from '@app/app/app.constant';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
 import {
   Platform, PopoverController
@@ -22,7 +22,7 @@ import {
   Environment, ImpressionType, InteractSubtype, InteractType,
   PageId
 } from '../../services/telemetry-constants';
-import { SbPopoverComponent } from '../components/popups';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 
@@ -188,6 +188,12 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
       this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();

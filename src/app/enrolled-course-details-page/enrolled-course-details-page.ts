@@ -31,7 +31,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest, DiscussionService, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
+  UnenrollCourseRequest, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -50,10 +50,10 @@ import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popov
 import { ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { SbPopoverComponent } from '../components/popups';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { LocalCourseService } from '@app/services';
+import { LocalCourseService } from '@app/services/local-course.service';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
@@ -257,7 +257,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
-    @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     private zone: NgZone,
     private events: Events,
     private fileSizePipe: FileSizePipe,
@@ -512,6 +511,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await confirm.present();
     confirm.onDidDismiss().then(({ data }) => {
       if (data && data.canDelete) {
+        if (data.btn) {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+            this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+            return false;
+          }
+        }
         this.navigateToBatchListPage();
       }
     });
@@ -1205,7 +1210,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               if (contentStatusData.contentList.length) {
                 const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
                 if (statusData) {
-                  return !(statusData.status === 0 || statusData.status === 1);
+                  return !(statusData.status === 1);
                 }
                 return false;
               }
@@ -2153,6 +2158,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
       this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
@@ -2314,7 +2325,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.nextContent = courseHeirarchy;
       this.isFirstContent = true;
     }
-    if ((result && (result.status === 0 || result.status === 1))
+    if ((result && (result.status === 1))
       || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
       this.nextContent = courseHeirarchy;
       this.isNextContentFound = true;

@@ -14,10 +14,9 @@ import {
   Rollup
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
-import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
-import { PageId } from './../../../services/telemetry-constants';
 
 @Component({
   selector: 'app-content-actions',
@@ -134,6 +133,12 @@ export class ContentActionsComponent {
         const { data } = await confirm.onDidDismiss();
 
         if (data && data.canDelete) {
+          if (data.btn) {
+            if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+              this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+              return false;
+            }
+          }
           this.deleteContent();
         }
         break;

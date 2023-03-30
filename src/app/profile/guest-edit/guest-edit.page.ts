@@ -36,7 +36,8 @@ import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({

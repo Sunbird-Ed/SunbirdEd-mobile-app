@@ -61,7 +61,7 @@ import {
   AccountRecoveryInfoComponent
 } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AndroidPermissionsService } from '@app/services';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import {
   AndroidPermissionsStatus,
   AndroidPermission
@@ -265,7 +265,7 @@ export class ProfilePage implements OnInit {
     }
     return this.refreshProfileData(refresher)
       .then(() => {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
           setTimeout(async () => {
             this.events.publish('refresh:profile');
             this.refresh = false;
@@ -300,7 +300,7 @@ export class ProfilePage implements OnInit {
    */
   refreshProfileData(refresher?) {
     const that = this;
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       that.authService.getSession().toPromise().then((session: OAuthSession) => {
         if (session === null || session === undefined) {
           reject('session is null');

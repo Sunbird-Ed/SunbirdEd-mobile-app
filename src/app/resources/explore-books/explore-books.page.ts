@@ -25,7 +25,10 @@ import {
   SearchType
 } from 'sunbird-sdk';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
-import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';

@@ -8,7 +8,7 @@ import { ProjectReportService } from '../../core/services/project-report.service
 import { FilterModalComponent } from '../../shared/components/filter-modal/filter-modal.component';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-project-report',

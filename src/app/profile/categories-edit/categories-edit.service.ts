@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { ProfileConstants, RouterLinks } from "@app/app/app.constant";
-import { AppGlobalService, CommonUtilService, ContainerService, FormAndFrameworkUtilService } from "@app/services";
+import { AppGlobalService } from "@app/services/app-global-service.service";
+import { FormAndFrameworkUtilService } from "@app/services/formandframeworkutil.service";
 import { TncUpdateHandlerService } from "@app/services/handlers/tnc-update-handler.service";
 import { SegmentationTagService, TagPrefixConstants } from "@app/services/segmentation-tag/segmentation-tag.service";
 import { Events } from "@app/util/events";
@@ -9,6 +10,8 @@ import { Location } from '@angular/common';
 import { initTabs, LOGIN_TEACHER_TABS } from "@app/app/module.service";
 import { NavigationExtras, Router } from "@angular/router";
 import { ExternalIdVerificationService } from "@app/services/externalid-verification.service";
+import { CommonUtilService } from "@app/services/common-util.service";
+import { ContainerService } from "@app/services/container.services";
 
 @Injectable({
   providedIn: 'root'

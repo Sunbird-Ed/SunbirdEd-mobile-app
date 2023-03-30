@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-imp-suggestions',

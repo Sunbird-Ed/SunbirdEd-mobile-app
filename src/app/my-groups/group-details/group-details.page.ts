@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import {
-  AppHeaderService,
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService
-} from '../../../services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Router } from '@angular/router';
 import { RouterLinks, MenuOverflow, ProfileConstants } from '@app/app/app.constant';
 import {
@@ -33,13 +33,10 @@ import {
 import GraphemeSplitter from 'grapheme-splitter';
 import {
   SbGenericPopoverComponent
-} from '@app/app/components/popups';
+} from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
-import {
-  ViewMoreActivityDelegateService,
-  ViewMoreActivityActionsDelegate
-} from '../view-more-activity/view-more-activity.page';
+import { ViewMoreActivityActionsDelegate, ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 

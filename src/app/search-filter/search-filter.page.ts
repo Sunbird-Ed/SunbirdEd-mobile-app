@@ -4,7 +4,11 @@ import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService, Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, SearchFilterService, TelemetryGeneratorService} from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { SearchFilterService } from '@app/services/search-filter/search-filter.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({

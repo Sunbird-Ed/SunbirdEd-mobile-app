@@ -1,7 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ContentUtil} from '@app/util/content-util';
 import {ContentData, CorrelationData, LicenseDetails, Rollup, TelemetryObject} from 'sunbird-sdk';
-import {CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService} from '@app/services';
+import { ID, InteractType, PageId} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
     selector: 'app-license-card-component',

@@ -7,7 +7,7 @@ import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { ModalController } from '@ionic/angular';
 import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { ReportListComponent } from '../../shared';
 
 @Component({

@@ -2,14 +2,17 @@ import { Location } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormConstants } from '@app/app/form.constants';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  AppHeaderService,
-  AuditType, CommonUtilService,
+  AuditType,
   CorReleationDataType, Environment,
-  FormAndFrameworkUtilService, ID,
+  ID,
   ImpressionType, InteractSubtype, InteractType,
-  PageId, TelemetryGeneratorService
-} from '@app/services';
+  PageId
+} from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ConsentService } from '@app/services/consent-service';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
 import { Platform, PopoverController } from '@ionic/angular';

@@ -7,13 +7,14 @@ import { Location } from "@angular/common";
 import { statuses,statusType } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
-import { AppHeaderService, CommonUtilService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { RouterLinks } from "@app/app/app.constant";
+import { AppHeaderService } from "@app/services/app-header.service";
+import { CommonUtilService } from "@app/services/common-util.service";
 
 
 var environment = {

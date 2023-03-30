@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  AppHeaderService,
-  CommonUtilService,
   CorReleationDataType,
   PageId,
-  TelemetryGeneratorService,
   ImpressionType, Environment
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 import { FieldConfigOptionsBuilder } from '@app/app/components/common-forms/field-config';
 

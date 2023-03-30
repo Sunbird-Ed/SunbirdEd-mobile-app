@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { KendraApiService } from '../../core/services/kendra-api.service';

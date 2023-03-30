@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-my-groups-popover',

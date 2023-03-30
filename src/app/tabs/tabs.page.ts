@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks, SwitchableTabsConfig } from '@app/app/app.constant';
 import { initTabs } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
-import { PageId } from '@app/services';
+import { PageId } from '@app/services/telemetry-constants';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ContainerService } from '@app/services/container.services';

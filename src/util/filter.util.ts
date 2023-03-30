@@ -1,5 +1,5 @@
 import { SearchType } from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 
 export const updateFilterInSearchQuery = (queryParams, appliedFilter, isFilterApplied) => {
 

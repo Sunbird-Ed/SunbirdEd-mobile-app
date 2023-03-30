@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Content, DownloadTracking } from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Observable } from 'rxjs';
 
 @Component({

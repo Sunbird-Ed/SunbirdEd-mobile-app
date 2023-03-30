@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, Inject, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ContentAggregatorHandler } from '@app/services';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';

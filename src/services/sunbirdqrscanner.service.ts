@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { QrScannerIOSComponent } from '@app/app/components/qr-scanner-ios/qr-scanner-ios.component';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { AppGlobalService, CommonUtilService, QRScannerResultHandler, TelemetryGeneratorService } from '@app/services/';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import { ContainerService } from '@app/services/container.services';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { ModalController, Platform, ToastController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { CorrelationData, Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
@@ -21,6 +21,9 @@ import {
   PageId
 } from './telemetry-constants';
 import { ManageLearnCertificateService } from '@app/app/manage-learn/core/services/manage-learn-certificate.service';
+import { QRScannerResultHandler } from './qrscanresulthandler.service';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { CommonUtilService } from './common-util.service';
 
 declare const cordova;
 
@@ -52,7 +55,6 @@ export class SunbirdQRScanner {
     private permission: AndroidPermissionsService,
     private commonUtilService: CommonUtilService,
     private appVersion: AppVersion,
-    private toastController: ToastController,
     private router: Router,
     private modalCtrl: ModalController,
     private projectCert : ManageLearnCertificateService

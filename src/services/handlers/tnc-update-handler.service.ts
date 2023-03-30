@@ -19,6 +19,10 @@ import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import onboarding from '../../assets/configurations/config.json';
 import { FrameworkDetailsService } from '../framework-details.service';
 import { Events } from '@app/util/events';
+import { TelemetryGeneratorService } from '../telemetry-generator.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '../telemetry-constants';
+import { SplashScreenService } from '../splash-screen.service';
+import { LogoutHandlerService } from './logout-handler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +43,11 @@ export class TncUpdateHandlerService {
     private appGlobalService: AppGlobalService,
     private consentService: ConsentService,
     private frameworkDetailsService: FrameworkDetailsService,
-    private events: Events
+    private events: Events,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private splashScreenService: SplashScreenService,
+    private logoutHandlerService: LogoutHandlerService,
+
   ) { }
 
   public async checkForTncUpdate() {
@@ -55,7 +63,7 @@ export class TncUpdateHandlerService {
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then(async (profile) => {
         if (this.hasProfileTncUpdated(profile)) {
-          this.presentTncPage({ profile });
+          this.presentTncPage({ profile, tncService: this });
         } else {
           const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
           if (!profile.managedBy && !await this.isSSOUser(userDetails) && !profile.dob) {
@@ -75,6 +83,141 @@ export class TncUpdateHandlerService {
       componentProps: navParams
     });
     await this.modal.present();
+
+    let result = await this.modal.onDidDismiss();
+    if (result && result.data) {
+      let loader = await this.commonUtilService.getLoader();
+      try {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.CONTINUE_CLICKED,
+          Environment.HOME,
+          PageId.TERMS_N_CONDITIONS
+        );
+        await loader.present();
+        let request = result.data.profileDetails.managedBy ?  {
+          userId: result.data.profileDetails.userId,
+          version: result.data.profileDetails.tncLatestVersion
+        } : {
+          version: result.data.profileDetails.tncLatestVersion
+        };
+        const isTCAccepted = await this.profileService.acceptTermsAndConditions(request)
+          .toPromise();
+
+        if (isTCAccepted) {
+          await this.getProfileDetailsAndUpdateLoggedInUser(result.data, loader);
+        } else {
+          this.dismissLoader(loader);
+          await this.logoutOnSecondBackNavigation();
+        }
+        await this.dismissTncPage();
+      } catch (e) {
+        this.dismissLoader(loader);
+        await this.logoutOnSecondBackNavigation();
+      }
+    } else {
+      await this.dismissTncPage();
+    }
+  }
+
+  async getProfileDetailsAndUpdateLoggedInUser(data, loader) {
+    const serverProfile = await this.profileService.getServerProfilesDetails({
+      userId: data.profileDetails.userId,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER
+    }).toPromise();
+
+    const profile = await this.profileService.getActiveSessionProfile({
+      requiredFields: ProfileConstants.REQUIRED_FIELDS
+    }).toPromise();
+    this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
+      .then(async (value) => {
+        this.dismissLoader(loader);
+        if (!this.appGlobalService.signinOnboardingLoader) {
+          this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+          await this.appGlobalService.signinOnboardingLoader.present();
+        }
+        const locationMappingConfig: FieldConfig<any>[] =
+        await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
+        data.disableSubmitButton = false;
+        const categoriesProfileData = {
+          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig),
+          showOnlyMandatoryFields: true,
+          profile: value['profile'],
+          isRootPage: true,
+          noOfStepsToCourseToc: 1
+        };
+        let userLocationAvailable = this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig);
+        let isSSoUser = await this.isSSOUser(profile)
+        if (!profile.serverProfile.managedBy && !await this.isSSOUser(profile) && !profile.serverProfile.dob) {
+          this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+        } else if (value['status']) {
+          if (userLocationAvailable || isSSoUser) {
+            await this.dismissTncPage();
+            this.appGlobalService.closeSigninOnboardingLoader();
+            categoriesProfileData['status'] = value['status']
+            categoriesProfileData['isUserLocationAvalable'] = true;
+            await this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
+            this.splashScreenService.handleSunbirdSplashScreenActions();
+          } else {
+            if (onboarding.skipOnboardingForLoginUser && profile.profileType !== ProfileType.ADMIN) {
+              await this.updateUserAsGuest();
+            } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                categoriesProfileData['status'] = value['status']
+                categoriesProfileData['isUserLocationAvalable'] = false;
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: { categoriesProfileData }
+            });
+            } else {
+              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: categoriesProfileData
+              });
+            }
+          }
+        } else {
+          // closeSigninOnboardingLoader() is called in CategoryEdit page
+          await this.dismissTncPage();
+          this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
+        }
+      }).catch(async e => {
+        this.dismissLoader(loader);
+      });
+  }
+
+  async handleNavigation(isSSoUser, profile, categoriesProfileData, value) {
+    if (isSSoUser) {
+      await this.consentService.getConsent(profile, true);
+    }
+    if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+      if (onboarding.skipOnboardingForLoginUser) {
+        await this.updateUserAsGuest();
+      } else {
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+          state: {categoriesProfileData}
+        });
+      }
+    } else {
+      if (value['status'] && !this.appGlobalService.isJoinTraningOnboardingFlow) {
+        this.router.navigate(['/', RouterLinks.TABS]);
+      } else {
+        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+          state: categoriesProfileData
+        });
+      }
+    }
+  }
+
+  private async logoutOnSecondBackNavigation() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
+    this.logoutHandlerService.onLogout();
+    await this.dismissTncPage();
+  }
+
+  private async dismissLoader(loader: any) {
+    if (loader) {
+      await loader.dismiss();
+    }
   }
 
   private hasProfileTncUpdated(user: ServerProfile): boolean {

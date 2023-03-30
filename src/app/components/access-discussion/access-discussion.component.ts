@@ -1,7 +1,11 @@
 import {  Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppGlobalService, AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { DiscussionService, InteractType } from '@project-sunbird/sunbird-sdk';
 

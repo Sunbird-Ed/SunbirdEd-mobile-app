@@ -26,7 +26,7 @@ import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './
 import { RouterLinks, ContentFilterConfig, EventTopics } from '@app/app/app.constant';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { featureIdMap } from '../feature-id-map';
 import { BehaviorSubject } from 'rxjs';
 import {

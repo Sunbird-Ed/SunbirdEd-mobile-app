@@ -9,7 +9,8 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
-import { AppGlobalService, CommonUtilService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { SharedPreferences } from 'sunbird-sdk';
 
 @Component({

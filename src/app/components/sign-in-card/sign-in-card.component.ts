@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import {RouterLinks} from '@app/app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import {Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
+import {Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 
 @Component({
   selector: 'app-sign-in-card',

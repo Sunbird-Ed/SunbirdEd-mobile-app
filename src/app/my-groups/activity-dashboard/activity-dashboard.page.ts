@@ -7,7 +7,7 @@ import { Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService } from '@project-sunbird/sunbird-sdk';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { CsGroupActivityAggregationMetric, CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
 
 @Component({

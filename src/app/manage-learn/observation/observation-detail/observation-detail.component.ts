@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { AppHeaderService, CommonUtilService } from "@app/services";
 import {
   AlertController,
   ModalController
@@ -21,6 +20,8 @@ import { ObservationService } from "../observation.service";
 import { storageKeys } from "../../storageKeys";
 import { Subscription } from "rxjs";
 import { EntitySearchLocalComponent } from "../../shared";
+import { AppHeaderService } from "@app/services/app-header.service";
+import { CommonUtilService } from "@app/services/common-util.service";
 @Component({
   selector: "app-observation-detail",
   templateUrl: "./observation-detail.component.html",

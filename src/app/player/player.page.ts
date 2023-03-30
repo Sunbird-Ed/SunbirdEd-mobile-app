@@ -25,7 +25,9 @@ import {
   PlayerService,
   SharedPreferences
 } from 'sunbird-sdk';
-import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';

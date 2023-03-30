@@ -3,14 +3,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {ContentFilterConfig, PreferenceKey, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
-import {
-  AppGlobalService,
-  AppHeaderService,
-  CommonUtilService,
-  ContentAggregatorHandler,
-  CorReleationDataType,
-  Environment, ImpressionType, InteractType, OnboardingConfigurationService, PageId, TelemetryGeneratorService
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CorReleationDataType, Environment, ImpressionType, InteractType, PageId } from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import {

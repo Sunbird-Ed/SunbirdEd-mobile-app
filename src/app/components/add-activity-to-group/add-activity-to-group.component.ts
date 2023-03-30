@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { CommonUtilService, GroupHandlerService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { GroupHandlerService } from '@app/services/group/group-handler.service';
 import { CsGroupAddableBloc, CsGroupAddableState } from '@project-sunbird/client-services/blocs';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
