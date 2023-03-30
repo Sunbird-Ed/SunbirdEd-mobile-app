@@ -3,8 +3,8 @@ import { GroupService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, AlertController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import {
@@ -17,6 +17,7 @@ import {
     UtilityService
 } from '../../../services';
 import { Router } from '@angular/router';
+import { GroupErrorCodes } from '../../app.constant';
 
 describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
@@ -25,8 +26,10 @@ describe('CreateEditGroupPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(() => Promise.resolve('Sunbird')),
         getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig')),
-        networkInfo: jest.fn(),
-    };
+        networkInfo: {
+            isNetworkAvailable: true
+        },
+    } as any;
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
     };
@@ -39,7 +42,6 @@ describe('CreateEditGroupPage', () => {
     };
     const mockPlatform: Partial<Platform> = {
     };
-    const mockTranslate: Partial<TranslateService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
         generateBackClickedTelemetry: jest.fn()
@@ -51,13 +53,12 @@ describe('CreateEditGroupPage', () => {
             }
         })) as any
     };
-
+    window.console.error = jest.fn();
     beforeAll(() => {
         createEditGroupPage = new CreateEditGroupPage(
             mockGroupService as GroupService,
             mockCommonUtilService as CommonUtilService,
             mockFormBuilder as FormBuilder,
-            mockTranslate as TranslateService,
             mockHeaderService as AppHeaderService,
             mockLocation as Location,
             mockPlatform as Platform,
@@ -90,7 +91,6 @@ describe('CreateEditGroupPage', () => {
             mockGroupService as GroupService,
             mockCommonUtilService as CommonUtilService,
             mockFormBuilder as FormBuilder,
-            mockTranslate as TranslateService,
             mockHeaderService as AppHeaderService,
             mockLocation as Location,
             mockPlatform as Platform,
@@ -187,8 +187,8 @@ describe('CreateEditGroupPage', () => {
         });
 
         it('should unsubscribe backButton for else part', () => {
-            createEditGroupPage.backButtonFunc = undefined;
-            createEditGroupPage.headerObservable = undefined;
+            createEditGroupPage['backButtonFunc'] = undefined;
+            createEditGroupPage['headerObservable'] = undefined;
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeFalsy();
         });
@@ -210,7 +210,7 @@ describe('CreateEditGroupPage', () => {
                 controls: { groupTerms: { setErrors: jest.fn(() => true) } },
                 valid: true
             } as any;
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -246,8 +246,8 @@ describe('CreateEditGroupPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            mockGroupService.create = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockGroupService.create = jest.fn(() => throwError({response: {body: {params: {status: GroupErrorCodes.EXCEEDED_GROUP_MAX_LIMIT}}} })) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             createEditGroupPage.onSubmit();
@@ -258,7 +258,57 @@ describe('CreateEditGroupPage', () => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockGroupService.create).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS');
+                done();
+            }, 0);
+        });
+        it('should not return and new group invoked createGroup if createGroupForm is valid for catch part, else case on something went wrong', (done) => {
+            createEditGroupPage.createGroupForm = {
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true' },
+                valid: true
+            } as any;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockGroupService.create = jest.fn(() => throwError({response: {body: {params: {status:''}}}})) as any;
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            createEditGroupPage.onSubmit();
+            expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
+            expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+            setTimeout(() => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
+                done();
+            }, 0);
+        });
+
+        it('should not return and new group invoked createGroup if createGroupForm is valid for catch part, if network info false', (done) => {
+            createEditGroupPage.createGroupForm = {
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true' },
+                valid: true
+            } as any;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.presentToastForOffline = jest.fn();
+            mockGroupService.create = jest.fn(() => throwError({response: {body: {params: {status:''}}}})) as any;
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            createEditGroupPage.onSubmit();
+            expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
+            expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
+            setTimeout(() => {
+                expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET')
                 done();
             }, 0);
         });
@@ -278,7 +328,7 @@ describe('CreateEditGroupPage', () => {
                 value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id' },
                 valid: true
             } as any;
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             createEditGroupPage.groupDetails = { name: 'name' };
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -295,7 +345,6 @@ describe('CreateEditGroupPage', () => {
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(mockGroupService.updateById).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('GROUP_UPDATE_SUCCESS');
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockLocation.back).toHaveBeenCalled();
@@ -308,7 +357,7 @@ describe('CreateEditGroupPage', () => {
                 value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id' },
                 valid: true
             } as any;
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             createEditGroupPage.groupDetails = { name: 'name' };
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());

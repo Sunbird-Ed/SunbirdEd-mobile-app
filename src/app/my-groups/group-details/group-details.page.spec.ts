@@ -2406,7 +2406,7 @@ describe('GroupDetailsPage', () => {
 
     describe('navigateToAddActivityPage', () => {
         it('should return activity popup', (done) => {
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
                     fields: [
@@ -2466,7 +2466,7 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should not return activity popup if type is not content', (done) => {
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
                     fields: [
@@ -2504,7 +2504,7 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should not return activity popup if type is not content and dismissData is undefined', (done) => {
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
@@ -2571,7 +2571,7 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should not go to activity page if throws error should go to catch part', (done) => {
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => throwError({ error: 'error' })) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             groupDetailsPage.corRelationList = [{ id: 'sample-group-id', type: 'GroupId' }];
@@ -2592,7 +2592,7 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should not go to activity page if network is not available', (done) => {
-            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable:false};
             mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
 
             // act

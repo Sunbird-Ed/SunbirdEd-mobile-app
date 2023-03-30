@@ -32,7 +32,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
-import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
+import { ApiUtilsService, NetworkService, DbService, LoaderService } from './manage-learn/core';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const plugins;
@@ -185,7 +185,6 @@ describe('AppComponent', () => {
         netWorkCheck: jest.fn()
     };
     const mockDbService: Partial<DbService> = {};
-    const mockLocalStorageService: Partial<LocalStorageService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         getPersistedSegmentaion: jest.fn(),
@@ -250,7 +249,6 @@ describe('AppComponent', () => {
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockApiUtilService as ApiUtilsService,
             mockNetworkService as NetworkService,
-            mockLocalStorageService as LocalStorageService,
             mockDbService as DbService,
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,

@@ -1,6 +1,6 @@
 import {SunbirdQRScanner} from './sunbirdqrscanner.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Platform, ToastController} from '@ionic/angular';
+import {ModalController, Platform, ToastController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {CommonUtilService} from './common-util.service';
@@ -48,7 +48,7 @@ describe('SunbirdQRScanner', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('sunbird'))
     };
-    const mockToastController: Partial<ToastController> = {};
+    const mockModalCtrl: Partial<ModalController> = {};
     const mockRouter: Partial<Router> = {};
 
     const instantiateSunbirdQrScannerService = () => {
@@ -70,8 +70,8 @@ describe('SunbirdQRScanner', () => {
             mockAndroidPermissionsService as AndroidPermissionsService,
             mockCommonUtilService as CommonUtilService,
             mockAppVersion as AppVersion,
-            mockToastController as ToastController,
             mockRouter as Router,
+            mockModalCtrl as ModalController
         );
     };
     beforeAll(() => {
