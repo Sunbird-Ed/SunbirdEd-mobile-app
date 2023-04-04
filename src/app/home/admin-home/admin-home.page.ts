@@ -308,7 +308,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
-    const identifier = item.contentId || item.identifier;
     const values = {};
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;

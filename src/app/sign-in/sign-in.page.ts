@@ -113,7 +113,7 @@ export class SignInPage implements OnInit {
                         direction: 'right'
                     },
                     labelHtml: {
-                        contents: `<span class="fgt-pwsd-lbl">Forgot Password ?</span>`,
+                        contents: `<span aria-label="Forgot Password link,  Double tap to activate"  class="fgt-pwsd-lbl">Forgot Password ?</span>`,
                     }
                 }
             }
@@ -266,7 +266,6 @@ export class SignInPage implements OnInit {
     async appleSignIn() {
         this.loginNavigationHandlerService.generateLoginInteractTelemetry
         (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
-        // const sd = 'https://sandrino.auth0.com/.well-known/jwks.json';
         this.signInWithApple.signin({
             requestedScopes: [
               ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail

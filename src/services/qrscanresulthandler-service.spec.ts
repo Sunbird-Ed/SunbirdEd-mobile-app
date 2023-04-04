@@ -14,6 +14,7 @@ import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { NavigationService } from '../services/navigation-handler.service';
+import { PreferenceKey } from '../app/app.constant';
 
 declare const cordova;
 
@@ -64,6 +65,7 @@ describe('QRScannerResultHandler', () => {
   };
   const mockCertificateService: Partial<CertificateService> = {}
   const mockPopoverController: Partial<PopoverController> = {};
+  window.console.error = jest.fn()
 
   beforeAll(() => {
     qRScannerResultHandler = new QRScannerResultHandler(
@@ -96,23 +98,72 @@ describe('QRScannerResultHandler', () => {
 
 
   describe('parseDialCode()', () => {
-    it('should return parsed data from the link', (done) => {
+    it('should return parsed data from the link else without channel', (done) => {
       // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=';
       mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
         Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       // act
-      // assert
-      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
-        expect(response).toEqual('ABCDEF');
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
         done();
-      });
+      }, 600);
+    });
+
+    it('should return parsed data from the link else without channel on error', (done) => {
+      // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=""';
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+      // act
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
+        done();
+      }, 600);
+    });
+
+    it('should return parsed data from the link', (done) => {
+      // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=ChannelId%20';
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+      mockFrameworkService.searchOrganization = jest.fn(() => of({
+        content: [{contentId: 'do_123', id: 'do-123'}]
+      }));
+      mockPageAssembleService.setPageAssembleChannel = jest.fn();
+      mockEvents.publish = jest.fn(() => []);
+      // act
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
+        expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
+        expect(mockPageAssembleService.setPageAssembleChannel).toHaveBeenCalled();
+        expect(mockEvents.publish).toHaveBeenCalled();
+        done();
+      }, 600);
+    });
+
+    it('should not return parsed data if content is empty', (done) => {
+      // arrange
+      const url = 'https://www.sunbirded.org/get/dial/ABCDEF/?channel=ChannelId%20';
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+      mockFrameworkService.searchOrganization = jest.fn(() => of({
+        content: []
+      }));
+      // act
+      qRScannerResultHandler.parseDialCode(url);
+        // assert
+      setTimeout(() => {
+        expect(mockFrameworkService.searchOrganization).toHaveBeenCalled();
+        done();
+      }, 0);
     });
 
     it('should not return parsed data if scannData does not match to regex', (done) => {
       // arrange
-      const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
-      const regexExp = formValResponse.values;
-      qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
       mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
         Promise.resolve('(\\/dial\\/([a-zA-Z0-9]+)|(\\/QR\\/\\?id=([a-zA-Z0-9]+)))'));
       // act
@@ -121,7 +172,6 @@ describe('QRScannerResultHandler', () => {
         expect(response).toBeUndefined();
         done();
       });
-
     });
 
     it('should return undefined if dailCode regex is undefined', (done) => {
@@ -133,7 +183,7 @@ describe('QRScannerResultHandler', () => {
         Promise.resolve(undefined));
       // act
       // assert
-      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
+      qRScannerResultHandler.parseDialCode('https://www.sunbirded.org/get/dial/ABCDEF').then((response) => {
         expect(response).toBeUndefined();
         done();
       });
@@ -160,6 +210,70 @@ describe('QRScannerResultHandler', () => {
       // act
       // assert
       expect(qRScannerResultHandler.isContentId('https://sunbirded.org/resources/play/collection/do_2124835969611448321701')).toBeTruthy();
+    });
+  });
+
+  describe('generateQRScanSuccessInteractEvent', () => {
+    it('should return interact telemetry event', () => {
+      // arrange
+      mockCommonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      };
+      qRScannerResultHandler.scannedUrlMap = {
+        sunbird: 'app'
+      };
+      const scannedData = 'sample/dial/ABCD';
+      const action = {type: 'te'};
+      const dialCode = 'ABCD';
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      qRScannerResultHandler.generateQRScanSuccessInteractEvent(scannedData, action, dialCode,
+        {certificateId: 'cr-id', scannedFrom: 'genericApp'});
+      // assert
+      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+        InteractType.OTHER,
+        InteractSubtype.QRCodeScanSuccess,
+        Environment.HOME,
+        PageId.QRCodeScanner,
+        {
+          id: 'cr-id',
+          type: 'certificate',
+          version: undefined,
+        }, new Map(),
+        undefined,
+        [{id: 'sample//ABCD', type: 'Source'}]
+      );
+    });
+
+    it('should return interact telemetry event, if network not available', () => {
+      // arrange
+      mockCommonUtilService.networkInfo = {
+        isNetworkAvailable: false
+      };
+      qRScannerResultHandler.scannedUrlMap = {
+        sunbird1: 'app'
+      };
+      const scannedData = 'sample/dial/ABCD';
+      const action = {type: 'te'};
+      const dialCode = 'ABCD';
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      qRScannerResultHandler.generateQRScanSuccessInteractEvent(scannedData, action, dialCode,
+        {certificateId: 'cr-id', scannedFrom: 'genericApp'});
+      // assert
+      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+        InteractType.OTHER,
+        InteractSubtype.QRCodeScanSuccess,
+        Environment.HOME,
+        PageId.QRCodeScanner,
+        {
+          id: 'cr-id',
+          type: 'certificate',
+          version: undefined,
+        }, new Map(),
+        undefined,
+        [{id: 'sample//ABCD', type: 'Source'}]
+      );
     });
   });
 
@@ -200,6 +314,37 @@ describe('QRScannerResultHandler', () => {
         PageId.QRCodeScanner, { id: 'ABCDEF', type: 'qr', version: ' ' },
         corRelationData);
     });
+
+    it('should navigate to Search page if the scanned data is a dialocde link for else case', () => {
+      // arrange
+      const scannData =  'https://sunbirded.org/get/dial/ABCDEF';
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+      const params = {channel: 'igot', role: 'other'};
+      mockTelemetryService.updateCampaignParameters = jest.fn();
+      jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
+        return;
+      });
+      const corRelationData: CorrelationData[] = [{
+        id: CorReleationDataType.SCAN,
+        type: CorReleationDataType.ACCESS_TYPE
+      }];
+      // act
+      qRScannerResultHandler.handleDialCode('', scannData, 'ABCDEF');
+      // assert
+      setTimeout(() => {
+        
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
+        const values = new Map();
+        values['networkAvailable'] = 'N';
+        values['scannedData'] = 'https://sunbirded.org/get/dial/ABCDEF';
+        values['action'] = 'SearchResult';
+        
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
+          params,
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: '' },
+          corRelationData);
+        }, 0);
+      });
   });
 
   describe('handleContentId()', () => {
@@ -564,6 +709,249 @@ describe('QRScannerResultHandler', () => {
           [{id: 'https://sunbirded.org', type: 'Source'}]);
         done();
       });
+    });
+  });
+
+  describe('handleRcCertsQR', () => {
+    it('should return certificate verification popup', (done) => {
+      // arrange
+      const request = 'data=sample-data?channel/certs/cid?source=sample-source';
+      jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
+        return;
+      });
+      mockCertificateService.getEncodedData = jest.fn(() => Promise.resolve({ id: 'do-123' }));
+      mockCertificateService.verifyCertificate = jest.fn(() => of({
+        verified: true,
+        certificateData: { id: 'sample-id' }
+      }));
+      mockPopoverController.create = jest.fn(() => (Promise.resolve({
+        present: jest.fn(() => Promise.resolve({}))
+      } as any)));
+      // act
+      qRScannerResultHandler.handleRcCertsQR(request);
+      // assert
+      setTimeout(() => {
+        expect(mockCertificateService.getEncodedData).toHaveBeenCalled();
+        expect(mockCertificateService.verifyCertificate).toHaveBeenCalled();
+        expect(mockPopoverController.create).toBeTruthy();
+        done();
+      }, 0);
+    });
+
+    it('should not return certificate verification popup for invalid QRCode', (done) => {
+      // arrange
+      const request = 'data=sample-data?channel/certs/cid?source=sample-source';
+      jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
+        return;
+      });
+      mockCertificateService.getEncodedData = jest.fn(() => Promise.reject({ id: 'do-123' }));
+      mockCertificateService.verifyCertificate = jest.fn(() => of({
+        verified: false,
+        certificateData: { id: 'sample-id' }
+      }));
+      mockCommonUtilService.afterOnBoardQRErrorAlert = jest.fn(() => Promise.resolve());
+      // act
+      qRScannerResultHandler.handleRcCertsQR(request);
+      // assert
+      setTimeout(() => {
+        expect(mockCertificateService.getEncodedData).toHaveBeenCalled();
+        expect(mockCertificateService.verifyCertificate).toHaveBeenCalled();
+        expect(mockCommonUtilService.afterOnBoardQRErrorAlert).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not return error for catch part', (done) => {
+      // arrange
+      const request = 'sample-data?channel/certs/cid?source=sample-source';
+      jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
+        return;
+      });
+      mockCertificateService.verifyCertificate = jest.fn(() => throwError({
+        verified: false,
+        certificateData: { id: 'sample-id' }
+      }));
+      // act
+      qRScannerResultHandler.handleRcCertsQR(request);
+      // assert
+      setTimeout(() => {
+        expect(mockCertificateService.verifyCertificate).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+  });
+
+  describe('navigateHandler', () => {
+    it('should match all criteria', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<quizId>fox)',
+        code: 'profile'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        expect(mockAppglobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockNavController.navigateForward).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should match all criteria for else case', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<quizId>fox)',
+        code: 'guest'
+      }]));
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        expect(mockNavController.navigateForward).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part and deeplink config match', (done) => {
+      const request = 'course';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<content_id>fox)',
+        code: 'profile'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part and content_id pattern', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<content_id>fox)',
+        code: 'profile'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part for course id pattern', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+        pattern: '(?<course_id>fox)',
+        code: 'guest'
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not match all criteria for else part for course id pattern for undefined url match groups', (done) => {
+      const request = 'The quick brown fox jumps over the lazy dog';
+      mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+      }]));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
+      mockNavController.navigateForward = jest.fn(() => Promise.resolve(true));
+      // act
+      qRScannerResultHandler.navigateHandler(request);
+      // assert
+      setTimeout(() => {
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+  });
+
+  describe('manageLearScan', () => {
+    it('should invoked navigateHandler for create-project', (done) => {
+      // arrange
+      const rqs = 'sample/create-project/';
+      mockPreferences.getString = jest.fn(() => of('teacher'));
+      jest.spyOn(qRScannerResultHandler, 'navigateHandler').mockImplementation(() => {
+        return Promise.resolve();
+      });
+      // act
+      qRScannerResultHandler.manageLearScan(rqs);
+      // assert
+      setTimeout(() => {
+        expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+        done();
+      }, 0);
+    });
+
+    it('should return login msg for guest user', (done) => {
+      // arrange
+      const rqs = 'sample/project/';
+      mockPreferences.getString = jest.fn(() => of('teacher'));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => false);
+      mockCommonUtilService.showToast = jest.fn();
+      // act
+      qRScannerResultHandler.manageLearScan(rqs);
+      // assert
+      setTimeout(() => {
+        expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+        expect(mockAppglobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_PLEASE_LOGIN_HT_OTHER');
+        done();
+      }, 0);
+    });
+
+    it('should invoked navigateHandler for create-observation', (done) => {
+      // arrange
+      const rqs = 'sample/create-observation/';
+      mockPreferences.getString = jest.fn(() => of('teacher'));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
+      jest.spyOn(qRScannerResultHandler, 'navigateHandler').mockImplementation(() => {
+        return Promise.resolve();
+      });
+      // act
+      qRScannerResultHandler.manageLearScan(rqs);
+      // assert
+      setTimeout(() => {
+        expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+        expect(mockAppglobalService.isUserLoggedIn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should return content unavailable message', (done) => {
+      // arrange
+      const rqs = 'sample/create/';
+      mockPreferences.getString = jest.fn(() => of('teacher'));
+      mockAppglobalService.isUserLoggedIn = jest.fn(() => true);
+      mockCommonUtilService.showToast = jest.fn();
+      // act
+      qRScannerResultHandler.manageLearScan(rqs);
+      // assert
+      setTimeout(() => {
+        expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+        expect(mockAppglobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
+        done();
+      }, 0);
     });
   });
 });

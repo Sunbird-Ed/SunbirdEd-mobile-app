@@ -30,6 +30,7 @@ import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
+import { mockforceUpgradeFormAPIResponse } from '../../services/formandframeworkutil.service.spec.data';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -159,6 +160,7 @@ describe('ProfileSettingsPage', () => {
 
     it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
         mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
@@ -187,10 +189,37 @@ describe('ProfileSettingsPage', () => {
         // arrange
         mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
-            {board: 'board',
-            medium: 'medium',
-            gradeLevel: 'gradeLevel'}));
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            supportedFrameworkConfig: [
+                {
+                  "code": "category1",
+                  "label": "{\"en\":\"Board\"}",
+                  "placeHolder": "{\"en\":\"Selected Board\"}",
+                  "frameworkCode": "board",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "administrator",
+                      "parent",
+                      "other"
+                  ]
+              },
+              {
+                  "code": "category2",
+                  "label": "{\"en\":\"Medium\"}",
+                  "placeHolder": "{\"en\":\"Selected Medium\"}",
+                  "frameworkCode": "medium",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "parent",
+                      "other"
+                  ]
+              }
+              ],
+              supportedAttributes: {board: 'board'},
+              userType: 'teacher'
+        }));
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
             return;
         });
@@ -208,10 +237,9 @@ describe('ProfileSettingsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(profileSettingsPage.supportedProfileAttributes).toEqual(
-                    { board: 'board',
-                    medium: 'medium',
-                    gradeLevel: 'gradeLevel'});
+                    { board: 'board'});
                 done();
             }, 500);
         });

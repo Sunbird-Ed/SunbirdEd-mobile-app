@@ -4,7 +4,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@app/util/events';
 import {
-    CachedItemRequestSourceFrom,
     CategoryTerm,
     FormRequest,
     FormService,
@@ -24,7 +23,7 @@ import {
     FrameworkCategoryCode,
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
@@ -218,7 +217,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
-            courseFilterConfig = fields;
+            fields.forEach(config => {
+                courseFilterConfig.push(config);
+            });
             this.appGlobalService.setCourseFilterConfig(courseFilterConfig);
             resolve(courseFilterConfig);
         }).catch((error: any) => {
@@ -236,7 +237,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.PAGEASSEMBLE_FILTER_COURSE).then((fields: any) => {
-            libraryFilterConfig = fields;
+            fields.forEach(config => {
+                libraryFilterConfig.push(config);
+            });
             this.appGlobalService.setLibraryFilterConfig(libraryFilterConfig);
             resolve(libraryFilterConfig);
         }).catch((error: any) => {
@@ -272,7 +275,9 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
 
         this.getFormFields(FormConstants.LOCATION_CONFIG).then((res) => {
-            locationConfig = res;
+            res.forEach(config => {
+                locationConfig.push(config);
+            });
             this.appGlobalService.setLocationConfig(locationConfig);
             resolve(locationConfig);
         }).catch((error: any) => {
@@ -720,6 +725,54 @@ export class FormAndFrameworkUtilService {
         });
 
         return filterCriteria;
+    }
+
+    private async setSupportedAttributes(framework, userType?: string) {
+        if (!userType) {
+            userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        }
+        const frameworkDetails = {};
+        frameworkDetails['userType'] = userType;
+        const supportedFrameworkConfig = framework.filter((item) => {
+            return (item.supportedUserTypes.find((type) => type === userType));
+        });
+        frameworkDetails['supportedFrameworkConfig'] = supportedFrameworkConfig;
+        const  supportedAttributes = supportedFrameworkConfig.reduce((map, item) => {
+            map[item.frameworkCode] = item.frameworkCode;
+            return map;
+        }, {});
+        frameworkDetails['supportedAttributes'] = supportedAttributes;
+        return frameworkDetails;
+    }
+
+    private invokeFrameworkCategoriesFormApi(userType?: string): Promise<any> {
+        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then(async (res) => {
+            const categoryConfig = await this.setSupportedAttributes(res, userType);
+            this.appGlobalService.setFramewokCategory(categoryConfig);
+            return categoryConfig;
+        }).catch((error) => {
+            return error;
+        });
+    }
+
+    getFrameworkCategoryList(userType?: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (!userType) {
+                await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
+                    userType = type;
+                });
+            }
+            const framework = this.appGlobalService.getCachedFrameworkCategory();
+            console.log('................', framework);
+            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
+             (framework.userType !== userType || !userType))) {
+                  this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
+                resolve(res);
+                });
+            } else {
+                resolve(framework);
+            }
+        });
     }
 
 }

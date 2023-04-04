@@ -51,6 +51,7 @@ export class DistrictMappingPage implements OnDestroy {
   formGroup?: FormGroup;
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
+  hideClearButton : boolean = false;
   profile?: Profile;
   navigateToCourse = 0;
   isGoogleSignIn = false;
@@ -113,12 +114,12 @@ export class DistrictMappingPage implements OnDestroy {
         return acc;
       }, {});
     try {
-        this.initialiseFormData({
+        await this.initialiseFormData({
           ...FormConstants.LOCATION_MAPPING,
           subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
         });
       } catch (e) {
-        this.initialiseFormData(FormConstants.LOCATION_MAPPING);
+        await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
       }
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
@@ -134,7 +135,6 @@ export class DistrictMappingPage implements OnDestroy {
       this.getEnvironment(), '', '', '', undefined,
       featureIdMap.location.LOCATION_CAPTURE);
     this.headerService.hideHeader();
-    // await this.checkLocationAvailability();
     const correlationList: Array<CorrelationData> = [];
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
@@ -170,7 +170,7 @@ export class DistrictMappingPage implements OnDestroy {
   async submit() {
     this.saveDeviceLocation();
     const locationCodes = [];
-    (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
+    for(const acc in this.formGroup.value.children['persona']) {
       if (this.formGroup.value.children['persona'][acc]) {
         const location: SbLocation = this.formGroup.value.children['persona'][acc] as SbLocation;
         if (location.type) {
@@ -180,7 +180,8 @@ export class DistrictMappingPage implements OnDestroy {
           });
         }
       }
-    }, {}));
+    }
+
     const corRelationList: CorrelationData[] =  locationCodes.map(r => ({ type: r.type, id: r.code || '' }));
     this.generateSubmitInteractEvent(corRelationList);
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -227,7 +228,7 @@ export class DistrictMappingPage implements OnDestroy {
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         profileLocation: locationCodes,
-        ...((name ? { firstName: name } : {})),
+        ...(name ? { firstName: name } : {}),
         lastName: '',
         profileUserTypes: userTypes
       };
@@ -503,6 +504,7 @@ export class DistrictMappingPage implements OnDestroy {
     }
     this.initialFormLoad = false;
     this.locationFormConfig = locationMappingConfig;
+    this.hideClearButton = false;
      if(this.params){
     this.fieldConfig();
   }
@@ -715,6 +717,7 @@ export class DistrictMappingPage implements OnDestroy {
             element.children[key].forEach(childEl => {
               childEl.templateOptions.hidden =true;
               childEl.templateOptions.disabled =true;
+              this.hideClearButton = true;
              });
           });
         }

@@ -78,7 +78,7 @@ export class OtpPage implements OnInit {
       this.profileService.verifyOTP(req).toPromise()
         .then(() => {
           const locationCodes = [];
-          (Object.keys(this.userData.location).map((acc, key) => {
+          for(const acc in this.userData.location) {
             if (this.userData.location[acc]) {
               const location: SbLocation = this.userData.location[acc] as SbLocation;
               if (location.type) {
@@ -88,7 +88,7 @@ export class OtpPage implements OnInit {
                 });
               }
             }
-          }, {}));
+          };
           const profileReq = {
             userId: this.userData.userId,
             profileLocation: locationCodes,
@@ -148,7 +148,7 @@ export class OtpPage implements OnInit {
           key: this.userData.contactInfo.phone,
           type: ProfileConstants.CONTACT_TYPE_PHONE,
           ...(this.userData.contactInfo &&
-            this.userData.contactInfo.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
+            this.userData.contactInfo.phone.match(/(([a-z]|[A-Z])+[*]+([a-z]*[A-Z]*[0-9]*)*@)|([0-9]+[*]+[0-9]*)+/g) &&
             { userId: this.userData.userId, templateId: OTPTemplates.EDIT_CONTACT_OTP_TEMPLATE })
         };
       } else {

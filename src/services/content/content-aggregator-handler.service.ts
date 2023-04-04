@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormConstants } from '@app/app/form.constants';
 import {
-    ContentAggregatorResponse, ContentService, CourseService, FormRequest,
+    ContentAggregatorResponse, ContentService, CourseService,
     FormService, ProfileService
 } from '@project-sunbird/sunbird-sdk';
 import { DataSourceType } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';

@@ -560,6 +560,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async showOverflowMenu(event) {
+    this.telemetryGeneratorService.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.COURSE_KEBAB_MENU_CLICKED,
+          Environment.COURSE,
+          PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList);
     this.leaveTrainigPopover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       event,
@@ -905,7 +912,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchRemaningTimingIntervalRef = undefined;
           }
           if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
-            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate || this.batchDetails.enrollmentEndDate;
+            this.batchEndDate = this.batchEndDate ? this.batchEndDate : this.batchDetails.endDate;
             this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.saveContentContext(this.appGlobalService.getUserId(),
@@ -1598,7 +1605,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (await this.onboardingSkippedBackAction()) {
         return;
       }
-      this.goBack();
+      await this.goBack();
     });
   }
 
@@ -1835,9 +1842,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  goBack() {
+  async goBack() {
     this.appGlobalService.generateCourseCompleteTelemetry = false;
     this.events.publish('event:update_course_data');
+    const guestUser = await this.commonUtilService.getGuestUserConfig();
+    if(!guestUser.syllabus[0]) {
+      this.events.publish('UPDATE_TABS', {navigateToCourse: {}});
+      this.router.navigate([RouterLinks.PROFILE_TAB]);
+    } else 
     if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
     } else {
@@ -2068,7 +2080,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (await this.onboardingSkippedBackAction()) {
           return;
         }
-        this.goBack();
+        await this.goBack();
         break;
     }
   }

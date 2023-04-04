@@ -23,7 +23,7 @@ import { PageId, Environment, InteractType, InteractSubtype } from '@app/service
 import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OnboardingConfigurationService } from '@app/services';
+import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
 
 @Component({
   selector: 'app-guest-profile',
@@ -49,6 +49,7 @@ export class GuestProfilePage implements OnInit {
   deviceLocation: any;
   public supportedProfileAttributes: { [key: string]: string } = {};
   public currentUserTypeConfig: any = {};
+  frameworkData = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -66,12 +67,13 @@ export class GuestProfilePage implements OnInit {
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     public platform: Platform,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) { }
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-
+    this.getCategoriesAndUpdateAttributes();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -92,8 +94,6 @@ export class GuestProfilePage implements OnInit {
 
     this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, rootOrgId);
   }
 
   ionViewWillEnter() {
@@ -149,7 +149,6 @@ export class GuestProfilePage implements OnInit {
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-        this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType,rootOrgId);
         const supportedUserTypes = await this.profileHandler.getSupportedUserTypes(rootOrgId);
         this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
@@ -163,13 +162,7 @@ export class GuestProfilePage implements OnInit {
 
   refreshSignInCard() {
     const profileType = this.appGlobalService.getGuestUserType();
-
-    if (this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
-      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT) {
-      this.showSignInCard = true;
-    } else {
-      this.showSignInCard = false;
-    }
+    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
   editGuestProfile(isChangeRoleRequest: boolean, attribute) {
@@ -290,4 +283,13 @@ export class GuestProfilePage implements OnInit {
   }
 
   signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
+
+  private getCategoriesAndUpdateAttributes() {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.frameworkData = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+      }
+    });
+  }
 }

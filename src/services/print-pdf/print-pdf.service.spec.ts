@@ -29,11 +29,6 @@ describe('PrintPdfService', () => {
 
   it('should print pdf', (done) => {
     // arrange
-    //    const content: Partial<Content> = {
-    //     contentData: {
-    //         itemSetPreviewUrl: 'http://some_domain.com/som_path.some_extension'
-    //     }
-    // };
     const url = 'downloadUrl';
     const mockPresent = jest.fn(() => Promise.resolve());
     const mockDismiss = jest.fn(() => Promise.resolve());
@@ -48,9 +43,7 @@ describe('PrintPdfService', () => {
     });
     mockCommonUtilService.showToast = jest.fn(() => { });
     mockTransfer.create = jest.fn(() => ({ 
-      // // return {
-        download: mockDownload
-      // };
+      download: mockDownload
     })) as any;
     window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
     window.cordova.plugins.printer.print = jest.fn();
@@ -58,8 +51,62 @@ describe('PrintPdfService', () => {
     printPdfService.printPdf(url);
     setTimeout(() => {
       expect(mockTransfer.create).toHaveBeenCalled();
-      // expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
       expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith('SOME_TEMP_URL');
+      done()
+    }, 0)
+  })
+
+  it('should show toast for canprint false on print pdf', (done) => {
+    // arrange
+    const url = 'downloadUrl';
+    const mockPresent = jest.fn(() => Promise.resolve());
+    const mockDismiss = jest.fn(() => Promise.resolve());
+    const mockDownload = jest.fn(() => Promise.resolve({
+      toURL: () => 'SOME_TEMP_URL'
+    }));
+    mockCommonUtilService.getLoader = jest.fn(() => {
+      return Promise.resolve({
+        present: mockPresent,
+        dismiss: mockDismiss
+      });
+    });
+    mockCommonUtilService.showToast = jest.fn(() => { });
+    mockTransfer.create = jest.fn(() => ({ 
+      download: mockDownload
+    })) as any;
+    window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(false); });
+    window.cordova.plugins.printer.print = jest.fn();
+    // act
+    printPdfService.printPdf(url);
+    setTimeout(() => {
+      expect(mockTransfer.create).toHaveBeenCalled();
+      expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
+      done()
+    }, 0)
+  })
+
+  it('should handle error on print pdf', (done) => {
+    // arrange
+    const url = 'downloadUrl';
+    const mockPresent = jest.fn(() => Promise.resolve());
+    const mockDismiss = jest.fn(() => Promise.resolve());
+    const mockDownload = jest.fn(() => Promise.reject({
+    }));
+    mockCommonUtilService.getLoader = jest.fn(() => {
+      return Promise.resolve({
+        present: mockPresent,
+        dismiss: mockDismiss
+      });
+    });
+    mockCommonUtilService.showToast = jest.fn(() => { });
+    mockTransfer.create = jest.fn(() => ({ 
+      download: mockDownload
+    })) as any;
+    // act
+    printPdfService.printPdf(url);
+    setTimeout(() => {
+      expect(mockTransfer.create).toHaveBeenCalled();
+      expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
       done()
     }, 0)
   })

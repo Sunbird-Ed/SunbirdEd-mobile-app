@@ -159,7 +159,7 @@ export class PermissionComponent implements OnInit {
 
   skipAccess() {
     this.generateInteractEvent(false);
-    if (this.showProfileSettingPage || this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+    if (this.showProfileSettingPage) {
       const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {

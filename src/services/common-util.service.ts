@@ -543,6 +543,7 @@ export class CommonUtilService {
 
     isAccessibleForNonStudentRole(profileType) {
         return profileType === ProfileType.TEACHER ||
+            profileType === ProfileType.STUDENT ||
             profileType === ProfileType.OTHER ||
             profileType === ProfileType.ADMIN ||
             profileType === ProfileType.PARENT;
@@ -570,7 +571,6 @@ export class CommonUtilService {
         });
 
         toast = this.addPopupAccessibility(toast, this.translateMessage(description, appName));
-        toast.setAttribute
         toast.present();
 
         toast.onWillDismiss().then((res) => {
