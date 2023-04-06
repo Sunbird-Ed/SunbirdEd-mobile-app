@@ -46,7 +46,8 @@ export class AttachmentService {
         "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED",
         "FRMELEMENTS_LBL_CAMERA",
         "FRMELEMENTS_LBL_UPLOAD_IMAGE",
-        "FRMELEMENTS_LBL_UPLOAD_FILE"
+        "FRMELEMENTS_LBL_UPLOAD_FILE",
+        "FRMELEMENTS_LBL_UPLOAD_VIDEO"
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -69,6 +70,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMNTS_MSG_USE_CAMERA"],
+          icon: "camera",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
@@ -103,6 +105,7 @@ export class AttachmentService {
       buttons: [
         {
           text: this.texts["FRMELEMENTS_LBL_CAMERA"],
+          icon: "camera",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
@@ -110,16 +113,26 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
+          icon: "cloud-upload",
           handler: () => {
             this.openLocalLibrary()
             return false;
           },
         },
         {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_VIDEO"],
+          icon: "videocam",
+          handler: () => {
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
+            return false;
+          },
+        },
+        {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          icon: "document",
           handler: () => {
             // this.openAllFile()
-            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            this.openFile();
             return false;
           },
         },
@@ -139,7 +152,7 @@ export class AttachmentService {
       saveToPhotoAlbum: false,
       correctOrientation: true,
       mediaType: mediaType,
-      destinationType: this.camera.DestinationType.FILE_URI,
+      destinationType: this.camera.DestinationType.FILE_URI
     };
 
     this.camera

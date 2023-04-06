@@ -560,6 +560,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async showOverflowMenu(event) {
+    this.telemetryGeneratorService.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.COURSE_KEBAB_MENU_CLICKED,
+          Environment.COURSE,
+          PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList);
     this.leaveTrainigPopover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       event,

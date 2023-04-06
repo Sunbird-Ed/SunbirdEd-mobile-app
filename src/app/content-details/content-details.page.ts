@@ -601,7 +601,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (Boolean(data.isAvailableLocally)) {
       this.isUpdateAvail = data.isUpdateAvailable && !this.isUpdateAvail;
     } else {
-      this.content.contentData.size = this.content.contentData.size;
+      console.log("Data is not available locally.");
     }
 
     if (this.content.contentData.me_totalDownloads) {
