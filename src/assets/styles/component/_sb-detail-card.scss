@@ -1,3 +1,4 @@
+@use "sass:math";
 @import 'src/assets/styles/_variables';
 @import 'src/assets/styles/_custom-mixins';
 /* Sb-Detail-card Component Styling */
@@ -71,7 +72,7 @@
         .sb-dt-source {
           .sb-by {
             font-size: ($font-size-base - 0.25);
-            @include margin(0, ($base-block-space/2), 0, 0);
+            @include margin(0, math.div($base-block-space,2), 0, 0);
           }
           .sb-user {
             font-size: ($font-size-base - 0.125);

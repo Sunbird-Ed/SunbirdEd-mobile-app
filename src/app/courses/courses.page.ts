@@ -361,7 +361,7 @@ export class CoursesPage implements OnInit, OnDestroy {
    * Used to get enrolled course(s) of logged-in user
    */
   getUserId() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.guestUser = !this.appGlobalService.isUserLoggedIn();
 
       if (this.guestUser) {

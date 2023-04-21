@@ -7,19 +7,19 @@ const routes: Routes = [
     { path: '', component: MyGroupsPage },
     {
         path: RouterLinks.CREATE_EDIT_GROUP,
-        loadChildren: './create-edit-group/create-edit-group.module#CreateEditGroupPageModule'
+        loadChildren: () => import('./create-edit-group/create-edit-group.module').then(m => m.CreateEditGroupPageModule)
     },
     {
         path: RouterLinks.MY_GROUP_DETAILS,
-        loadChildren: './group-details/group-details.module#GroupDetailsPageModule'
+        loadChildren: () => import('./group-details/group-details.module').then(m => m.GroupDetailsPageModule)
     },
     {
         path: RouterLinks.ADD_MEMBER_TO_GROUP,
-        loadChildren: './add-member-to-group/add-member-to-group.module#AddMemberToGroupPageModule'
+        loadChildren: () => import('./add-member-to-group/add-member-to-group.module').then(m => m.AddMemberToGroupPageModule)
     },
     {
         path: RouterLinks.ACTIVITY_DETAILS,
-        loadChildren: './activity-details/activity-details.module#ActivityDetailsPageModule'
+        loadChildren: () => import('./activity-details/activity-details.module').then(m => m.ActivityDetailsPageModule)
     },
 ];
 

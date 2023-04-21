@@ -155,7 +155,7 @@ export class UtilityService {
             try {
                 sbutility.clearUtmInfo(() => {
                     console.log('utm paramter clear');
-                    resolve();
+                    resolve(true);
                 }, err => {
                     reject(err);
                 });

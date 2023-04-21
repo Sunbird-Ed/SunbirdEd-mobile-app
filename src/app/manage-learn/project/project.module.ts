@@ -63,7 +63,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.ATTACHMENTS}/:id`,
-    loadChildren: './attachment-listing/attachment-listing.module#AttachmentListingPageModule'
+    loadChildren: () => import('./attachment-listing/attachment-listing.module').then(m => m.AttachmentListingPageModule)
   },
   {
     path: `${RouterLinks.TEMPLATE}/:id`,
@@ -71,7 +71,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.PROJECT_TEMPLATE}/:id`,
-    loadChildren: './project-templateview/project-templateview.module#ProjectTemplateviewPageModule'
+    loadChildren: () => import('./project-templateview/project-templateview.module').then(m => m.ProjectTemplateviewPageModule)
   },
   {
     path: `${RouterLinks.ADD_FILE}/:id`,
