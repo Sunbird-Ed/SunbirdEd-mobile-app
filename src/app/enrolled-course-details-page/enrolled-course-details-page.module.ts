@@ -21,21 +21,19 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    IonicRatingModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    PipesModule,
-    DirectivesModule,
-    ComponentsModule,
-    CommonConsumptionModule,
-  ],
-  declarations: [EnrolledCourseDetailsPage],
-  entryComponents: [ContentActionsComponent],
-  providers: [DatePipe , TextbookTocService]
-
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        IonicRatingModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        PipesModule,
+        DirectivesModule,
+        ComponentsModule,
+        CommonConsumptionModule,
+    ],
+    declarations: [EnrolledCourseDetailsPage],
+    providers: [DatePipe, TextbookTocService]
 })
 export class EnrolledCourseDetailsPagePageModule { }

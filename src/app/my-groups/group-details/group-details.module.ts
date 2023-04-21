@@ -30,20 +30,19 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [GroupDetailsPage, AddActivityToGroupPage, ViewMoreActivityPage],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    CommonConsumptionModule,
-    ComponentsModule,
-    PipesModule
-  ],
-  exports: [GroupDetailsPage],
-  providers: [ViewMoreActivityDelegateService],
-  entryComponents: [OverflowMenuComponent]
+    declarations: [GroupDetailsPage, AddActivityToGroupPage, ViewMoreActivityPage],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        CommonConsumptionModule,
+        ComponentsModule,
+        PipesModule
+    ],
+    exports: [GroupDetailsPage],
+    providers: [ViewMoreActivityDelegateService]
 })
 export class GroupDetailsPageModule {}

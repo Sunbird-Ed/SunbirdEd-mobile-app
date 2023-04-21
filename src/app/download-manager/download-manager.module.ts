@@ -39,18 +39,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    PipesModule,
-    DirectivesModule,
-    ComponentsModule
-  ],
-  declarations: [DownloadManagerPage,
-    NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],
-  entryComponents: [OverflowMenuComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        PipesModule,
+        DirectivesModule,
+        ComponentsModule
+    ],
+    declarations: [DownloadManagerPage,
+        NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent]
 })
 export class DownloadManagerPageModule { }

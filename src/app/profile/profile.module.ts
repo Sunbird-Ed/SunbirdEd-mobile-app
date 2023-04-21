@@ -20,18 +20,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ProfileRoutingModule,
-    TranslateModule,
-    ComponentsModule,
-    DirectivesModule,
-    PipesModule,
-    CertificateDirectivesModule
-  ],
-  declarations: [ProfilePage],
-  entryComponents: []
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        ProfileRoutingModule,
+        TranslateModule,
+        ComponentsModule,
+        DirectivesModule,
+        PipesModule,
+        CertificateDirectivesModule
+    ],
+    declarations: [ProfilePage]
 })
 export class ProfilePageModule { }

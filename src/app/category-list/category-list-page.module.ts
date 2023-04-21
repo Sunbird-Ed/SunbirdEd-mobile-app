@@ -21,9 +21,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    entryComponents: [
-        SearchFilterPage
-    ],
     imports: [
         CommonModule,
         FormsModule,

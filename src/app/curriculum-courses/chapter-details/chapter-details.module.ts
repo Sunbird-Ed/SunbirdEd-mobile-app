@@ -20,18 +20,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    CommonConsumptionModule,
-    ComponentsModule,
-    PipesModule,
-    TranslateModule.forChild(),
-    RouterModule.forChild(routes),
-  ],
-  declarations: [ChapterDetailsPage],
-  entryComponents: [ContentActionsComponent],
-  providers: [DatePipe]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        CommonConsumptionModule,
+        ComponentsModule,
+        PipesModule,
+        TranslateModule.forChild(),
+        RouterModule.forChild(routes),
+    ],
+    declarations: [ChapterDetailsPage],
+    providers: [DatePipe]
 })
 export class ChapterDetailsPageModule {}

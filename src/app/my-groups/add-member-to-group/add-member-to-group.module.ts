@@ -19,19 +19,18 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    PipesModule,
-    DirectivesModule,
-    ComponentsModule,
-    RecaptchaModule,
-    RecaptchaFormsModule
-  ],
-  declarations: [AddMemberToGroupPage],
-  entryComponents: [OverflowMenuComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        PipesModule,
+        DirectivesModule,
+        ComponentsModule,
+        RecaptchaModule,
+        RecaptchaFormsModule
+    ],
+    declarations: [AddMemberToGroupPage]
 })
 export class AddMemberToGroupPageModule {}

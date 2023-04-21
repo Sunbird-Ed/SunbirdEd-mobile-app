@@ -20,19 +20,18 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    CoreModule,
-    SharedModule,
-    TranslateModule
-  ],
-  declarations: [QuestionnairePage, MatrixModalComponent, QuestionMapModalComponent],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
-  entryComponents: [MatrixModalComponent, QuestionMapModalComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        CoreModule,
+        SharedModule,
+        TranslateModule
+    ],
+    declarations: [QuestionnairePage, MatrixModalComponent, QuestionMapModalComponent],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+    ]
 })
 export class QuestionnairePageModule { }
