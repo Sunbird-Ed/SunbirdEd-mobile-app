@@ -190,7 +190,7 @@ export class PageFilterPage {
                 this.filters[index].values[i] = {};
                 this.filters[index].values[i][name] = responseArray[i].children;
               }
-              resolve();
+              resolve('');
             } else {
               resolve(this.filters[index].values = map(responseArray, 'name'));
             }

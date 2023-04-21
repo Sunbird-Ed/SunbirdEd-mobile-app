@@ -20,7 +20,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../home/home.module#HomePageModule'
+            loadChildren: () => import('../home/home.module').then(m => m.HomePageModule)
           }
         ]
       },
@@ -29,7 +29,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../search/search.module#SearchPageModule'
+            loadChildren: () => import('../search/search.module').then(m => m.SearchPageModule)
           }
         ]
       },
@@ -39,7 +39,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../resources/resources.module#ResourcesModule'
+            loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule)
           }
         ]
       },
@@ -48,7 +48,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../courses/courses.module#CoursesPageModule'
+            loadChildren: () => import('../courses/courses.module').then(m => m.CoursesPageModule)
           }
         ]
       },
@@ -57,7 +57,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../profile/guest-profile/guest-profile.module#GuestProfilePageModule'
+            loadChildren: () => import('../profile/guest-profile/guest-profile.module').then(m => m.GuestProfilePageModule)
           }
         ]
       },
@@ -66,7 +66,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../profile/profile.module#ProfilePageModule'
+            loadChildren: () => import('../profile/profile.module').then(m => m.ProfilePageModule)
           }
         ]
       },
@@ -75,7 +75,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../download-manager/download-manager.module#DownloadManagerPageModule'
+            loadChildren: () => import('../download-manager/download-manager.module').then(m => m.DownloadManagerPageModule)
           }
         ]
       }

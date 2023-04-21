@@ -35,7 +35,7 @@ const routes: Routes = [
     path: RouterLinks.DOWNLOADS_HEADER,
     component: DownloadsHeaderComponent
   },
-  { path: RouterLinks.STORAGE_SETTINGS, loadChildren: '../storage-settings/storage-settings.module#StorageSettingsPageModule' }
+  { path: RouterLinks.STORAGE_SETTINGS, loadChildren: () => import('../storage-settings/storage-settings.module').then(m => m.StorageSettingsPageModule) }
 ];
 
 @NgModule({
