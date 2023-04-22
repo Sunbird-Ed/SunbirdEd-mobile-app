@@ -4,11 +4,11 @@ import {
   Inject, Input, NgZone, OnDestroy, OnInit, Output, Renderer2, ViewChild
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ApplicationHeaderKebabMenuComponent } from '../../../app/components/application-header/application-header-kebab-menu.component';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { MenuController, Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, EMPTY, Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -18,19 +18,19 @@ import {
   EventNamespace, EventsBusService, NotificationService as PushNotificationService,
   Profile, ProfileService, ProfileType,
   ServerProfile, SharedPreferences, UserFeedStatus
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
   ProfileConstants, RouterLinks, SwitchableTabsConfig,AppMode
 } from '../../../app/app.constant';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { CorReleationDataType, Environment, ID, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { UtilityService } from '@app/services/utility-service';
-import { NotificationService } from '@app/services/notification.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ActivePageService } from '@app/services/active-page/active-page-service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { UtilityService } from '../../../services/utility-service';
+import { NotificationService } from '../../../services/notification.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ActivePageService } from '../../../services/active-page/active-page-service';
+import { AppHeaderService } from '../../../services/app-header.service';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 
 declare const cordova;

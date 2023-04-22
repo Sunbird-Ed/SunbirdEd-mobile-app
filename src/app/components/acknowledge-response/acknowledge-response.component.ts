@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 
 @Component({
     selector: 'acknowledge-response',

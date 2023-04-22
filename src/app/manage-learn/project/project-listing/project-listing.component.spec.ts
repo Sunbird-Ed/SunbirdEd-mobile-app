@@ -1,5 +1,5 @@
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';

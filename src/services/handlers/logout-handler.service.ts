@@ -9,14 +9,14 @@ import { Platform } from '@ionic/angular';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences, SystemSettingsService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { ContainerService } from '../container.services';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 
 @Injectable({
   providedIn: 'root'

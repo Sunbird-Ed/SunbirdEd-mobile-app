@@ -3,10 +3,10 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
@@ -19,10 +19,10 @@ import {
 } from '../../../services';
 import { Location } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../services/profile-handler';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { of, throwError } from 'rxjs';
 import { CachedItemRequestSourceFrom, Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app.constant';

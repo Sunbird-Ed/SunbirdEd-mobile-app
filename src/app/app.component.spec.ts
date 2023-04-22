@@ -12,19 +12,19 @@ import {
     TelemetryService, NotificationService, DebuggingService,
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
     TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Platform, MenuController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Events } from '../../../util/events';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { NgZone, EventEmitter } from '@angular/core';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Router } from '@angular/router';
 import {
     NetworkAvailabilityToastService
-} from '@app/services/network-availability-toast/network-availability-toast.service';
-import { NotificationService as LocalNotification } from '@app/services/notification.service';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+} from '../../../services/network-availability-toast/network-availability-toast.service';
+import { NotificationService as LocalNotification } from '../../../services/notification.service';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY, Observable } from 'rxjs';
 import {PreferenceKey, EventTopics, RouterLinks, SystemSettingsIds, AppOrientation} from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
@@ -33,7 +33,7 @@ import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, NetworkService, DbService, LoaderService } from './manage-learn/core';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 
 declare const plugins;
 

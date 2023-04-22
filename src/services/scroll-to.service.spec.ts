@@ -1,4 +1,4 @@
-import {ScrollToService} from '@app/services/scroll-to.service';
+import {ScrollToService} from '../services/scroll-to.service';
 
 describe('Scroll-to-service', () => {
     let scrollToService: ScrollToService;

@@ -5,9 +5,9 @@ import {
     CommonUtilService,
     NavigationService,
     TelemetryGeneratorService
-} from '@app/services';
+} from '../../../services';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { of } from 'rxjs';
 import { Environment, InteractSubtype, PageId, InteractType, ActionButtonType } from '../../../services/telemetry-constants';
 

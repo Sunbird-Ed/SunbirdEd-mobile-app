@@ -7,7 +7,7 @@ import {
     Environment, PageId, ImpressionType
 } from '../../services';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -15,10 +15,10 @@ import {
     SharedPreferences,
     Batch,
     EnrollCourseRequest
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {PreferenceKey, EventTopics, RouterLinks} from '../app.constant';
 import { of, throwError } from 'rxjs';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
 
 describe('CourseBatchesPage', () => {
     let courseBatchesPage: CourseBatchesPage;

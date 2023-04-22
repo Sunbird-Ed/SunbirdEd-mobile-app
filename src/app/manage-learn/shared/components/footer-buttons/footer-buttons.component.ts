@@ -5,7 +5,7 @@ import {
   EventEmitter,
   OnChanges,
 } from "@angular/core";
-import { UtilsService,ToastService } from '@app/app/manage-learn/core';
+import { UtilsService,ToastService } from '../../../../../app/manage-learn/core';
 import { TranslateService } from "@ngx-translate/core";
 
 @Component({

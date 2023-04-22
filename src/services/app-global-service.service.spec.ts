@@ -1,18 +1,18 @@
 import { AppGlobalService } from './app-global-service.service';
-import { ProfileService, AuthService, FrameworkService, SharedPreferences, ProfileType } from 'sunbird-sdk';
+import { ProfileService, AuthService, FrameworkService, SharedPreferences, ProfileType } from '@project-sunbird/sunbird-sdk';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { InteractSubtype, Environment, PageId, InteractType, ID } from './telemetry-constants';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { mockFrameworkData } from './app-global-service.service.spec.data';
-import { UpgradePopoverComponent } from '@app/app/components/popups';
-import { YearOfBirthPopupComponent } from '@app/app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
-import { NewExperiencePopupComponent } from '@app/app/components/popups/new-experience-popup/new-experience-popup.component';
-import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import { UpgradePopoverComponent } from '../app/components/popups';
+import { YearOfBirthPopupComponent } from '../app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
+import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
+import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
 
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;

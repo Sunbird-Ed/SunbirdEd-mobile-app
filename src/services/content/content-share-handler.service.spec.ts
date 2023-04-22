@@ -1,13 +1,13 @@
 import { of, throwError } from 'rxjs';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     ContentService, StorageService, Content
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
     ContentShareHandlerService, CommonUtilService,
     TelemetryGeneratorService
 } from '../../services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     InteractType, InteractSubtype,
     Environment, PageId

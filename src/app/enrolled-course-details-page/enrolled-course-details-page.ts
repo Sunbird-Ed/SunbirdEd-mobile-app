@@ -1,15 +1,15 @@
 import { Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { UtilityService } from '@app/services/utility-service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { FileSizePipe } from '../../pipes/file-size/file-size';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { CourseUtilService } from '../../services/course-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { UtilityService } from '../../services/utility-service';
+import { AppHeaderService } from '../../services/app-header.service';
 import { DatePipe, Location } from '@angular/common';
 import {
   AuditState, AuthService,
@@ -32,7 +32,7 @@ import {
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
   UnenrollCourseRequest, LogLevel, ContentAccess, ContentAccessStatus, ContentMarkerRequest, MarkerType
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
   AuditType,
@@ -49,11 +49,11 @@ import {
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../util/content-util';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentInfo } from '../../services/content/content-info';
+import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
+import { LocalCourseService } from '../../services/local-course.service';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
@@ -61,16 +61,16 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
-import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
-import { ConsentService } from '@app/services/consent-service';
+import { ConsentPopoverActionsDelegate } from '../../services/local-course.service';
+import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
+import { ConsentService } from '../../services/consent-service';
 import {
   ProfileNameConfirmationPopoverComponent
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
-import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
+import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import { AccessDiscussionComponent } from '../../app/components/access-discussion/access-discussion.component';
 import { ActivityData } from '../my-groups/group.interface';
 
 declare const cordova;

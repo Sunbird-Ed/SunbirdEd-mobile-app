@@ -40,15 +40,15 @@ import {
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
-import { Camera } from '@ionic-native/camera/ngx';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-import { Media } from '@ionic-native/media/ngx';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+import { PhotoLibrary } from '@awesome-cordova-plugins/photo-library/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
+import { Media } from '@awesome-cordova-plugins/media/ngx';
 import { CreateTaskComponent } from './components/create-task/create-task.component';
 import { GetLabelsPipe } from './pipe/get-labels.pipe';
 import { ReportsTextComponent } from './components/reports-text/reports-text.component';
@@ -73,7 +73,7 @@ import { PercentageColumnChartsComponent } from './components/percentage-column-
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { EntitySearchPipe } from './pipe/entity-local-search';
 @NgModule({
     declarations: [

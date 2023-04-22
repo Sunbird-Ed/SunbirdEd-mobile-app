@@ -12,14 +12,14 @@ import { ProjectEditPage } from './project-edit/project-edit.page';
 import { ProjectOperationPage } from './project-operation/project-operation.page';
 import { SyncPage } from './sync/sync.page';
 import { TaskViewPage } from './task-view/task-view.page';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { LinkLearningResourcesComponent } from './link-learning-resources/link-learning-resources.component';
 import { AddEntityComponent } from './add-entity/add-entity.component';
 import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 import { ProjectTemplatePage } from './project-template/project-template.page';
 import { ItemListHeaderComponent } from './item-list-header/item-list-header.component'
 import { ProjectDetailsComponent } from './project-details/project-details.component';

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { DownloadPdfService } from './download-pdf.service';
 import { Injectable } from '@angular/core';
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
-import { AndroidPermission } from '@app/services/android-permissions/android-permission';
+import { AndroidPermission } from '../../services/android-permissions/android-permission';
 import { of } from 'rxjs';
 import { content, checkedStatusFalse, requestedStatusTrue, downloadrequested } from './download-pdf.data';
 import { Content } from '@project-sunbird/sunbird-sdk';

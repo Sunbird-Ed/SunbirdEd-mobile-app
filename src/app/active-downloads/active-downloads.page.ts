@@ -13,14 +13,14 @@ import {
   EventsBusService,
   StorageService,
   StorageDestination
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { featureIdMap } from '@app/feature-id-map';
+import { featureIdMap } from '../../feature-id-map';
 import { tap, filter, take } from 'rxjs/operators';
 
 @Component({

@@ -2,9 +2,9 @@ import { UserTypeSelectionPage } from './user-type-selection';
 import {
     ProfileService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
@@ -18,8 +18,8 @@ import {
 } from '../../services';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
+import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
+import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import {
     CorReleationDataType, Environment, InteractSubtype, InteractType, LoginHandlerService, PageId,
     SplashScreenService

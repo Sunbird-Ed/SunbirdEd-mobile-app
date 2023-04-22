@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { ProfileService } from 'sunbird-sdk';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { RouterLinks } from '../../app.constant';
 import { Location } from '@angular/common';
 

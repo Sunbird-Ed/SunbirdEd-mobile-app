@@ -5,7 +5,7 @@ import { ContentFeedbackService,
     ContentFeedback,
     FormService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { Observable, of, throwError } from 'rxjs';
@@ -15,7 +15,7 @@ import {
     InteractSubtype,
     InteractType,
     ImpressionSubtype
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
 
 describe('ContentRatingAlertComponent', () => {

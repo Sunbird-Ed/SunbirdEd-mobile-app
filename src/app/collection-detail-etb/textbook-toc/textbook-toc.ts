@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventTopics } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { EventTopics } from '../../../app/app.constant';
+import { CommonUtilService } from '../../../services/common-util.service';
 import {
     Environment,
     ImpressionSubtype,
@@ -10,10 +10,10 @@ import {
     InteractSubtype,
     InteractType,
     PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { TextbookTocService } from './../textbook-toc-service';

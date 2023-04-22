@@ -6,21 +6,21 @@ import {
     InteractSubtype,
     InteractType,
     LoginNavigationHandlerService
-} from '@app/services';
+} from '../../services';
 import {Router} from '@angular/router';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {SbProgressLoader} from '../../services/sb-progress-loader.service';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 import {SystemSettingsService, AuthService, SharedPreferences, SignInError} from '@project-sunbird/sunbird-sdk';
 import {Location} from '@angular/common';
 import {of} from 'rxjs';
-import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
-import {AppleSignInResponse, SignInWithApple} from '@ionic-native/sign-in-with-apple/ngx';
+import {PreferenceKey, SystemSettingsIds} from '../../app/app.constant';
+import {AppleSignInResponse, SignInWithApple} from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 import {Platform} from '@ionic/angular';
 import { AppGlobalService, LoginHandlerService } from '../../services';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 
-jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
+jest.mock('@project-sunbird/sunbird-sdk'', () => {
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk'');
     return {
         ...actual,
         WebviewStateSessionProvider() {

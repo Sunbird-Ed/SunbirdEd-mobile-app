@@ -7,7 +7,7 @@ import {
     TelemetryEndRequest,
     TelemetryImpressionRequest,
     Rollup
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Environment, Mode } from '../services/telemetry-constants';
 
 describe('generateImpressionTelemetry', () => {

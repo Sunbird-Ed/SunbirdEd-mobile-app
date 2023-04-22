@@ -14,14 +14,14 @@ import {
 } from '../../../services';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { FilterPipe } from '../../../pipes/filter/filter.pipe';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
-import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { DiscussionTelemetryService } from '../../../services/discussion/discussion-telemetry.service';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;

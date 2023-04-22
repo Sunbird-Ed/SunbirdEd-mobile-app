@@ -14,7 +14,6 @@ import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { DownloadsHeaderComponent } from './downloads-tab/downloads-header/downloads-header.component';
 import { RouterLinks } from '../app.constant';
 import { ComponentsModule } from '../components/components.module';
-import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 
 
 

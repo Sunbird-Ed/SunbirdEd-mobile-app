@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '../../../services/telemetry-constants';
 import {
   ContentSearchCriteria,
   ContentSearchResult,
@@ -12,12 +12,12 @@ import {
   FrameworkCategoryCodesGroup,
   FrameworkUtilService,
   CorrelationData
-} from 'sunbird-sdk';
-import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
+} from '@project-sunbird/sunbird-sdk';
+import { ExploreConstants, RouterLinks, Search } from '../../../app/app.constant';
 import { Router } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../../util/content-util';
 import { TranslateService } from '@ngx-translate/core';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 
 enum ContentOrder {
   RELEVANT = 'RELEVANT',

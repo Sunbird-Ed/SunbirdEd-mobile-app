@@ -1,8 +1,8 @@
-import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {SbTutorialPopupComponent} from '../../../../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import {NavParams, PopoverController} from '@ionic/angular';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {CommonUtilService} from '../../../../services/common-util.service';
+import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
+import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '../../../../services/telemetry-constants';
 
 describe('SbTutorialComponentPopup', () => {
     let sbTutorialPopupComponent: SbTutorialPopupComponent;

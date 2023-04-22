@@ -11,7 +11,7 @@ import {
     PageId,
     TelemetryGeneratorService,
     UtilityService
-} from '@app/services';
+} from '../../../services';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { RecaptchaComponent } from 'ng-recaptcha';

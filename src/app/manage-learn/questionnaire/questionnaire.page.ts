@@ -6,10 +6,10 @@ import { LocalStorageService, LoaderService, UtilsService, ToastService } from '
 import { Subscription } from 'rxjs';
 import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 import { TranslateService } from '@ngx-translate/core';
-import { RouterLinks } from '@app/app/app.constant';
-import { Network } from '@ionic-native/network/ngx';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { RouterLinks } from '../../../app/app.constant';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 
 @Component({
   selector: 'app-questionnaire',

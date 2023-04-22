@@ -1,7 +1,7 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Platform, PopoverController, IonContent, NavController, IonRefresher } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
@@ -22,41 +22,41 @@ import {
   GetSuggestedFrameworksRequest, SearchEntry,
   SearchHistoryService, SortOrder,
   GroupActivity
-} from 'sunbird-sdk';
-import { Map } from '@app/app/telemetryutil';
+} from '@project-sunbird/sunbird-sdk';
+import { Map } from '../../app/telemetryutil';
 import {
   BatchConstants,
   RouterLinks, Search, ContentCard,
   ContentFilterConfig,
   PreferenceKey,
   SwitchableTabsConfig
-} from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../../app/app.constant';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import {
   Environment, ImpressionType, InteractSubtype,
   InteractType, LogLevel, Mode, PageId, CorReleationDataType,
   AuditType, ImpressionSubtype, ObjectType
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
-import { featureIdMap } from '@app/app/feature-id-map';
+} from '../../services/telemetry-constants';
+import { AppHeaderService } from '../../services/app-header.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SearchHistoryNamespaces } from '../../config/search-history-namespaces';
+import { featureIdMap } from '../../app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../util/content-util';
 import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
-import { GroupHandlerService } from '@app/services/group/group-handler.service';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { applyProfileFilter, updateFilterInSearchQuery } from '../../util/filter.util';
+import { GroupHandlerService } from '../../services/group/group-handler.service';
+import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
+import { NavigationService } from '../../services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../services/profile-handler';
 import { FormConstants } from '../form.constants';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DiscoverComponent } from '../components/discover/discover.page';

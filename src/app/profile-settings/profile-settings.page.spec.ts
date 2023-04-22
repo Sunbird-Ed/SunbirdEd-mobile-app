@@ -6,12 +6,12 @@ import {
     Framework,
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, AlertController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,

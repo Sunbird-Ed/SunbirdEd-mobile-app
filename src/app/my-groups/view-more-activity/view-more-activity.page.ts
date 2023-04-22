@@ -6,13 +6,13 @@ import {
     Environment,
     ImpressionType,
     PageId
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupActivity } from '@project-sunbird/sunbird-sdk';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { ViewMoreActivityDelegateService } from './view-more-activity-delegate.page';
 
 @Component({

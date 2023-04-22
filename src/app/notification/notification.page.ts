@@ -2,21 +2,21 @@ import { ImpressionSubtype } from './../../services/telemetry-constants';
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, UserFeedStatus } from 'sunbird-sdk';
+import { Notification, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
 import {  Subscription } from 'rxjs';
 
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import {
   InteractType,
   Environment,
   PageId,
   InteractSubtype,
   ImpressionType
-} from '@app/services/telemetry-constants';
+} from '../../services/telemetry-constants';
 import { NotificationService } from '../../services/notification.service';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { EventTopics } from '../app.constant';
 
 @Component({

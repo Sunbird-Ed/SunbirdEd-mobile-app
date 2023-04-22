@@ -6,7 +6,7 @@ import {
     ContentEventType,
     EventsBusEvent,
     EventsBusService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
 import { AppGlobalService } from '../../../../services/app-global-service.service';
 import {

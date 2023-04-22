@@ -8,9 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { ChapterDetailsPage } from './chapter-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '@app/app/components/components.module';
-import { ContentActionsComponent } from '../../components';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { ComponentsModule } from '../../../app/components/components.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 const routes: Routes = [
   {

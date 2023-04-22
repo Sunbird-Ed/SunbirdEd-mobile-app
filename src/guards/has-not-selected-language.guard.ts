@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationExtras, Resolve, Router } from '@angular/router';
-import { OnboardingScreenType, PreferenceKey } from '@app/app/app.constant';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { SharedPreferences } from 'sunbird-sdk';
+import { OnboardingScreenType, PreferenceKey } from '../app/app.constant';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
+import { SplashScreenService } from '../services/splash-screen.service';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 @Injectable()
 export class HasNotSelectedLanguageGuard implements Resolve<any> {

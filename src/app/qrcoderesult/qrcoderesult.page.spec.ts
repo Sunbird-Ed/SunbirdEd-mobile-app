@@ -1,4 +1,4 @@
-import {MimeType, RouterLinks, EventTopics} from '@app/app/app.constant';
+import {MimeType, RouterLinks, EventTopics} from '../../app/app.constant';
 import {ContentPlayerHandler} from './../../services/content/player/content-player-handler';
 import {RatingHandler} from './../../services/rating/rating-handler';
 import {QrcoderesultPage} from './qrcoderesult.page';
@@ -11,10 +11,10 @@ import {
     PlayerService,
     DownloadEventType,
     ContentEventType
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {TranslateService} from '@ngx-translate/core';
 import {Platform, NavController} from '@ionic/angular';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {Router} from '@angular/router';
 import {
     AppGlobalService,
@@ -23,11 +23,11 @@ import {
     AppHeaderService
 } from 'services';
 import {Location} from '@angular/common';
-import {ImpressionType, PageId, Environment, InteractSubtype, InteractType} from '@app/services/telemetry-constants';
+import {ImpressionType, PageId, Environment, InteractSubtype, InteractType} from '../../services/telemetry-constants';
 import {of, throwError} from 'rxjs';
 import {NgZone} from '@angular/core';
 import {CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType} from '../../services';
-import {File} from '@ionic-native/file/ngx';
+import {File} from '@awesome-cordova-plugins/file/ngx';
 import {TextbookTocService} from '../collection-detail-etb/textbook-toc-service';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {CsContentType} from '@project-sunbird/client-services/services/content';

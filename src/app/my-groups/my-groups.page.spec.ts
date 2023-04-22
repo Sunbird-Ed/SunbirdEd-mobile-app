@@ -4,15 +4,15 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { LoginHandlerService } from '@app/services/login-handler.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { LoginHandlerService } from '../../services/login-handler.service';
 import {
     CommonUtilService, AppGlobalService, TelemetryGeneratorService,
     InteractType, InteractSubtype, Environment, PageId, ImpressionType
-} from '@app/services';
+} from '../../services';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { Location } from '@angular/common';
 
 describe('MyGroupsPage', () => {

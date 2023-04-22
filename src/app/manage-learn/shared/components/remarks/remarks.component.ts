@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { RemarksModalComponent } from '@app/app/manage-learn/questionnaire/remarks-modal/remarks-modal.component';
+import { RemarksModalComponent } from '../../../../../app/manage-learn/questionnaire/remarks-modal/remarks-modal.component';
 import { ModalController } from '@ionic/angular';
 
 @Component({

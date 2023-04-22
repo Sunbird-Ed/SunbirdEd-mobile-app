@@ -11,19 +11,19 @@ import {
   PrimaryCategory, ProfileConstants,
   RouterLinks,
   Search, ViewMore
-} from '@app/app/app.constant';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
-import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { NotificationService } from '@app/services/notification.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+} from '../../app/app.constant';
+import { SbTutorialPopupComponent } from '../../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '../../services/content/content-aggregator-namespaces';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { NotificationService } from '../../services/notification.service';
+import { ProfileHandler } from '../../services/profile-handler';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import {
   CorReleationDataType,
   Environment,
@@ -32,14 +32,14 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
-import { applyProfileFilter } from '@app/util/filter.util';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Network } from '@ionic-native/network/ngx';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { ContentUtil } from '../../util/content-util';
+import { applyProfileFilter } from '../../util/filter.util';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { CourseCardGridTypes, LibraryFiltersLayout } from '@project-sunbird/common-consumption';
@@ -67,7 +67,7 @@ import {
   SearchType,
   SharedPreferences,
   SortOrder
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 import {

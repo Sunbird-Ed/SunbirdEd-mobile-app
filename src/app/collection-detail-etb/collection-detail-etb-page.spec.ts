@@ -9,9 +9,9 @@ import {
     StorageService,
     TelemetryErrorCode,
     TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {IonContent, Platform, PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -35,12 +35,12 @@ import {
     mockContentData
 } from './collection-detail-etb-page.spec.data';
 import { of, Subscription, throwError } from 'rxjs';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { EventTopics } from '@app/app/app.constant';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
+import { EventTopics } from '../../app/app.constant';
 import { ShareItemType} from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { isObject } from 'util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';

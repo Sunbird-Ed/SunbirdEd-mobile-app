@@ -3,19 +3,19 @@ import {
     AppGlobalService, AppHeaderService, CommonUtilService,
     FormAndFrameworkUtilService, TelemetryGeneratorService, AuditType, InteractType, CorReleationDataType, InteractSubtype
 } from '../../services';
-import { featureIdMap } from '@app/feature-id-map';
-import { PageId, Environment, ImpressionType } from '@app/services/telemetry-constants';
+import { featureIdMap } from '../../feature-id-map';
+import { PageId, Environment, ImpressionType } from '../../services/telemetry-constants';
 import { DeviceInfo } from '../../../../sunbird-mobile-sdk/src/util/device';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { of, throwError } from 'rxjs';
 import {
     ProfileService, Profile, SharedPreferences, ProfileType, ProfileSource, DeviceRegisterResponse,
     DeviceRegisterService
-} from 'sunbird-sdk';
-import { PreferenceKey } from '@app/app/app.constant';
+} from '@project-sunbird/sunbird-sdk';
+import { PreferenceKey } from '../../app/app.constant';
 import { FormLocationFactory } from '../../services/form-location-factory/form-location-factory';
 import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';

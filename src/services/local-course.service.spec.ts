@@ -7,19 +7,19 @@ import {
   NetworkError,
   HttpClientError,
   HttpServerError
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
 import { Location, DatePipe } from '@angular/common';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';

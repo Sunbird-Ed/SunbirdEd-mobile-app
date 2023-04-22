@@ -1,6 +1,6 @@
 import { NavParams, PopoverController } from '@ionic/angular';
 import { YearOfBirthPopupComponent } from './year-of-birth-popup.component';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService} from '../../../../services';
 import { of, throwError } from 'rxjs';
 

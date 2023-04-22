@@ -7,22 +7,22 @@ import {
     SignInError,
     SystemSettingsService
 } from '@project-sunbird/sunbird-sdk';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { Events } from '@app/util/events';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContainerService } from '@app/services/container.services';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { Events } from '../util/events';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { ContainerService } from '../services/container.services';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { CommonUtilService } from '../services/common-util.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { of, throwError } from 'rxjs';
 import { Platform } from '@ionic/angular';
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 import { PreferenceKey } from '../app/app.constant';
 
-jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = require.requireActual('@project-sunbird/sunbird-sdk');
+jest.mock('@project-sunbird/sunbird-sdk'', () => {
+    const actual = require.requireActual('@project-sunbird/sunbird-sdk'');
     return {
         ...actual,
         WebviewStateSessionProvider() {
@@ -34,8 +34,8 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
     };
 });
 
-jest.mock('@app/app/module.service', () => {
-    const actual = require.requireActual('@app/app/module.service');
+jest.mock('../app/module.service', () => {
+    const actual = require.requireActual('../app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {

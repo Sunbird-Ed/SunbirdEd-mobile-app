@@ -1,19 +1,19 @@
 import { CorReleationDataType, ImpressionType, PageId } from './../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from './../../../services/telemetry-generator.service';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {
   Environment,
   ImpressionSubtype,
   InteractSubtype,
   InteractType
-} from '@app/services/telemetry-constants';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+} from '../../../services/telemetry-constants';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { SunbirdQRScanner } from '../../../services/sunbirdqrscanner.service';
+import { OnboardingConfigurationService } from '../../../services/onboarding-configuration.service';
 import {
   ButtonPosition,
   CourseCardGridTypes,
@@ -54,20 +54,20 @@ import {
   SubjectMapping,
   ViewMore
 } from '../../app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
+import { AggregatorPageType } from '../../../services/content/content-aggregator-namespaces';
+import { NavigationService } from '../../../services/navigation-handler.service';
 import { IonContent as ContentView, IonRefresher, ModalController, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Subscription } from 'rxjs';
-import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { SbSubjectListPopupComponent } from '../../../app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { CategoryTerm, FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { FrameworkSelectionDelegateService } from './../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { FormConstants } from '@app/app/form.constants';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { FormConstants } from '../../../app/form.constants';
 import { SbPopoverComponent } from '../../components/popups/sb-popover/sb-popover.component';
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 

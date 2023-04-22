@@ -7,12 +7,12 @@ import {
 } from '@ionic/angular';
 import { Events } from '../util/events';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
     CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
     appLanguages, Location as loc, MaxAttempt, SwitchableTabsConfig
@@ -26,7 +26,7 @@ import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-p
 import { QRAlertCallBack, QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { SbPopoverComponent } from '../app/components/popups/sb-popover/sb-popover.component';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';

@@ -1,9 +1,9 @@
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '../../../services';
 
 import { FiltersPage } from './filters.page';
 import { ContentService, InteractType } from '@project-sunbird/sunbird-sdk';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import {
   CommonUtilService,
   TelemetryGeneratorService,

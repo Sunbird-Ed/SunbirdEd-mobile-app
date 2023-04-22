@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DirectivesModule } from '@app/directives/directives.module';
+import { DirectivesModule } from '../../directives/directives.module';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';

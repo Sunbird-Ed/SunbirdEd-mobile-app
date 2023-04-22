@@ -21,9 +21,9 @@ import {
     TelemetryGeneratorService,
     UtilityService,
 } from '../../services';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileSwitchHandler } from '../../services/user-groups/profile-switch-handler';
@@ -44,14 +44,14 @@ import {
 import { ContentUtil } from '../../util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;

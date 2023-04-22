@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { NetworkInfoService, NetworkStatus } from 'sunbird-sdk';
+import { NetworkInfoService, NetworkStatus } from '@project-sunbird/sunbird-sdk';
 import { ToastController } from '@ionic/angular';
 import { CommonUtilService } from '../common-util.service';
 import { skip, distinctUntilChanged, filter} from 'rxjs/operators';

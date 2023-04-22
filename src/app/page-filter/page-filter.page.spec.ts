@@ -1,7 +1,7 @@
 import { PageFilterPage } from '../page-filter/page-filter.page';
-import { FrameworkUtilService } from 'sunbird-sdk';
+import { FrameworkUtilService } from '@project-sunbird/sunbird-sdk';
 import { PopoverController, NavParams, MenuController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
     AppGlobalService,

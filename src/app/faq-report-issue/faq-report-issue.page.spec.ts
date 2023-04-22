@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     SharedPreferences,
     ProfileService,
@@ -14,10 +14,10 @@ import {
     FrameworkUtilService,
     TelemetryService,
     TelemetryGeneratorService
- } from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+ } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { AppHeaderService, FormAndFrameworkUtilService } from '../../services';
 import { Location } from '@angular/common';
 import {
     mockNavigationResp,
@@ -29,8 +29,8 @@ import {
     mockFrameworkList
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
+import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())

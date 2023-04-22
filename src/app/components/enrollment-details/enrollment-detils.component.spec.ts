@@ -7,11 +7,11 @@ import {
     TelemetryGeneratorService, CommonUtilService, LocalCourseService,
     InteractSubtype, InteractType, PageId, AppGlobalService, Environment
 } from '../../../services';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
 import { of } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '../../../pipes/category-key-translator/category-key-translator-pipe';
 import { NavigationService } from '../../../services/navigation-handler.service';
 describe('enrollmentdetailcomponent', () => {
 
