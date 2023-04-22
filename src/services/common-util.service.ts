@@ -73,7 +73,7 @@ export class CommonUtilService {
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
-                map((v) => v.type === 'online'),
+                map((v: any) => v.type === 'online'),
             )
         ).pipe(
             distinctUntilChanged(),

@@ -207,7 +207,7 @@ export class AttachmentService {
 
   async openFile() {
     try {
-      const file = await this.chooser.getFile('application/pdf');
+      const file: any = await this.chooser.getFile({mimeTypes:'application/pdf'});
       let sizeOftheFile: number = file.data.length
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
         this.actionSheetController.dismiss();

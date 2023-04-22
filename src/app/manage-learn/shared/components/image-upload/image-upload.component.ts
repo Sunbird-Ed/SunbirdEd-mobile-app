@@ -179,7 +179,7 @@ export class ImageUploadComponent implements OnInit {
   async openFilePicker() {
     
     try {
-      const file = await this.chooser.getFile();
+      const file: any = await this.chooser.getFile();
       const pathToWrite = this.appFolderPath;
       const newFileName = this.createFileName(file.name)
       const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
