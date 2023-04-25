@@ -197,6 +197,7 @@
     "cordova-plugin-code-push": "git+https://github.com/swayangjit/cordova-plugin-code-push.git",
     "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-5.1.2",
+    "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-transfer": "git+https://github.com/apache/cordova-plugin-file-transfer.git",
     "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0",
     "cordova-plugin-local-notification": "git+https://github.com/fquirin/cordova-plugin-local-notifications.git",
