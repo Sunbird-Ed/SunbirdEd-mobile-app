@@ -52,12 +52,12 @@ rm -rf platforms
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@10.1.2
 
-npm run ionic-build:apk
+npm run ionic-build
 
 if [ -n "$angularConfiguration" ]; then
   echo "$angularConfiguration"
-  npm run ionic-build --angular-configuration=$angularConfiguration
+  npm run ionic-build:prod --angular-configuration=$angularConfiguration
 else
-  npm run ionic-build --angular-configuration=production
+  npm run ionic-build:prod --angular-configuration=production
 fi
 
