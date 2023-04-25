@@ -1,4 +1,4 @@
-import { RouterLinks } from 'app/app.constant';
+import { RouterLinks } from '../../app/app.constant';
 import { PageId } from '../telemetry-constants';
 
 export class ActivePageService {

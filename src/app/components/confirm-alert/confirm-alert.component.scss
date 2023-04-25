@@ -27,7 +27,7 @@
     }
 }
 
-.confirm-alert-box .popover-content {
+.confirm-alert-box::part(content) {
     margin: 0;
     width: 100vw !important;
     height: auto !important;
