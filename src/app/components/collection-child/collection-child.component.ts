@@ -72,7 +72,7 @@ export class CollectionChildComponent implements OnInit {
 
   constructor(
     private zone: NgZone,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private comingSoonMessageService: ComingSoonMessageService,
     private router: Router,

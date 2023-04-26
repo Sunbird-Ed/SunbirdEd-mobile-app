@@ -115,6 +115,7 @@ export class ViewMoreActivityComponent implements OnInit {
   objVer;
   loader: any;
   isLoading = false;
+  defaultAppIcon: '';
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -124,7 +125,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private events: Events,
     private ngZone: NgZone,
     private courseUtilService: CourseUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,

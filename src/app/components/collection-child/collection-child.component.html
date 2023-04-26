@@ -14,11 +14,10 @@
       </div>
     </div>
   </ng-container>
-  <div [id]="childData.identifier" [ngClass]="{'etb-topic-item': !isTextbookTocPage && !fromCourseToc, 'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
-   'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}" class="sticky-header-title-box"
+  <div [id]="childData.identifier" [ngClass]="{'etb-topic-item': !isTextbookTocPage && !fromCourseToc, 'row sb-topic-item': (!stckyUnitTitle && (stckyUnitTitle !== childData?.contentData?.name)), 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name)}" class="sticky-header-title-box"
     [attr.data-text]="childData.contentData.name" [attr.data-render-level]="renderLevel"
     *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
-    (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
+    (click)="navigateToDetailsPage(childData, depth + '.' + (index + 1))">
 
     <div class="sb-ftue-design etb-card-item" *ngIf="!fromCourseToc  && !isTextbookTocPage">
       <ng-container *ngIf="!isTextbookTocPage">

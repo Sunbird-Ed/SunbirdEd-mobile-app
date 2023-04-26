@@ -19,8 +19,7 @@ SUNBIRD_CORDOVA_COUNTER=0
 
 # Pass build branch as input
 buildBranch="$1"
-rm package-lock.json 
-npm install
+rm package-lock.json && npm install
 export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-7.0.2-all.zip"
 
 file="./build_config"

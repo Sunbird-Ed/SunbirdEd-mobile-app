@@ -35,4 +35,6 @@ export class DetailCardComponent {
   share() {
     this.shareEvent.emit();
   }
+
+  rateContent() {}
 }

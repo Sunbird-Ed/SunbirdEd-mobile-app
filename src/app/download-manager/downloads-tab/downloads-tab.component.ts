@@ -40,7 +40,7 @@ export class DownloadsTabComponent implements OnInit {
 
   constructor(
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,

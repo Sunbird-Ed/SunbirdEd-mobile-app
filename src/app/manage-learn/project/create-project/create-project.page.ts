@@ -333,7 +333,7 @@ export class CreateProjectPage implements OnInit {
       this.toast.showMessage(data['FRMELEMNTS_MSG_TASK_ADDED_SUCCESSFULLY'], 'success');
     });
   }
-  private async openCreateTaskAction(componentProps) {
+  async openCreateTaskAction(componentProps?) {
     const popover = await this.popoverCtrl.create({
       component: CreateTaskComponent,
       componentProps,

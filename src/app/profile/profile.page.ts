@@ -107,7 +107,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {};
+  userLocation: any = {};
   appName = '';
   boardList = [];
   mediumList = [];
@@ -176,7 +176,7 @@ export class ProfilePage implements OnInit {
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,

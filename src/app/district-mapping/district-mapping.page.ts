@@ -376,7 +376,7 @@ export class DistrictMappingPage implements OnDestroy {
     }
   }
 
-  private skipLocation() {
+  skipLocation() {
     this.router.navigate([`/${RouterLinks.TABS}`]);
     this.events.publish('update_header');
   }

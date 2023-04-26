@@ -421,7 +421,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
-  loadData() {
+  loadData(event: any) {
     setTimeout(() => {
       let offset = this.searchContentResult == undefined ? 0 : this.searchContentResult.length;
       if(this.isFilterApplied) {

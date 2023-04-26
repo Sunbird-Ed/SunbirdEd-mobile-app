@@ -233,6 +233,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   };
 
   private tutorialPopover;
+  defaultAppIcon:string = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1222,4 +1223,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   tabViewWillEnter() {
     this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
   }
+
+  onScroll(event: any) {}
 }

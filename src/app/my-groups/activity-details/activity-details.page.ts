@@ -58,7 +58,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private router: Router,
     private filterPipe: FilterPipe,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
@@ -324,5 +324,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       ID.SELECT_ACTIVITY_DASHBOARD
     );
   }
-
+  onActivityCardClick($event, activity) {  }
+  activityMenuClick($event, activity, i) {}
 }

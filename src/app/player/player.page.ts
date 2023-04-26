@@ -72,7 +72,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
-    private platform: Platform,
+    public platform: Platform,
     private screenOrientation: ScreenOrientation,
     private appGlobalService: AppGlobalService,
     private statusBar: StatusBar,

@@ -50,7 +50,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private popoverCtrl: PopoverController,
     private changeDetectionRef: ChangeDetectorRef,
     private headerService: AppHeaderService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,

@@ -41,12 +41,17 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     stckyindex: any;
     latestParentNodes: any;
     latestParentName: any;
+    depth: any;
+    corRelationList: any;
+    isDepthChild: any;
+    breadCrumb: any;
+    downloadProgress: any;
 
     constructor(
         private router: Router,
         public headerService: AppHeaderService,
         private platform: Platform,
-        private commonUtilService: CommonUtilService,
+        public commonUtilService: CommonUtilService,
         private popoverCtrl: PopoverController,
         private textbookTocService: TextbookTocService,
         private telemetryService: TelemetryGeneratorService,
@@ -166,4 +171,5 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         this.events.unsubscribe(EventTopics.TOC_COLLECTION_CHILD_ID);
     }
 
+    cancelDownload() {}
 }

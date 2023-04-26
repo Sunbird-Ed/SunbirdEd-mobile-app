@@ -68,7 +68,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public popoverCtrl: PopoverController,
-    private platform: Platform,
+    public platform: Platform,
     private contentShareHandler: ContentShareHandlerService,
     private utilityService: UtilityService,
     private navParams: NavParams,

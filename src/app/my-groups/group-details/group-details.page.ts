@@ -74,6 +74,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     username: '',
     identifier: ''
   };
+  searchMember: any;
+  searchActivity: any;
   @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
@@ -88,7 +90,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     public platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
@@ -408,7 +410,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  private async showReactivateGroupPopup() {
+  async showReactivateGroupPopup() {
     this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,

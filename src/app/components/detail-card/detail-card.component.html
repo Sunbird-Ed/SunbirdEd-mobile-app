@@ -28,7 +28,7 @@
             </span>
           </span>
         </button>
-        <button class="sb-btn-tile" *ngIf="contentDetail?.isAvailableLocally" [disabled]="downloads.queued.length" (click)="showOverflowMenu($event)">
+        <button class="sb-btn-tile" *ngIf="contentDetail?.isAvailableLocally" [disabled]="downloads.queued.length" (click)="showOverflowMenu()">
           <img src="assets/imgs/outline_delete.svg" alt="delete content" class="mb-4">
           <span class="sb-btn-footer-text">{{ 'REMOVE' | translate }}</span>
         </button>

@@ -39,6 +39,8 @@ export class DomainEcmLsitingComponent {
     showBurgerMenu: false,
     actionButtons: [],
 };
+  isIos: boolean = this.platform.is("ios");
+
   constructor(
     private updateTracker: UpdateTrackerService,
     private utils: UtilsService,

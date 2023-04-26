@@ -1086,4 +1086,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
+  cancelDownload() {}
+
 }

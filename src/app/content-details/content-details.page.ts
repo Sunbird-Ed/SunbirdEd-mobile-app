@@ -194,6 +194,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   config: any;
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
+  showMoreFlag: any = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -207,10 +208,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
-    private platform: Platform,
+    public platform: Platform,
     public appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private network: Network,
@@ -230,7 +231,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
     private sanitizer: DomSanitizer,
-    private screenOrientation: ScreenOrientation
+    public screenOrientation: ScreenOrientation
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -1402,7 +1403,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * @param objRollup object roll up
    * @param corRelationList correlation List
    */
-  readLessorReadMore(param, objRollup, corRelationList) {
+  readLessorReadMore(param, objRollup?, corRelationList?) {
     if(param === 'read-more-clicked'){
       this.appGlobalService.setAccessibilityFocus('read-more-content')
     } else {

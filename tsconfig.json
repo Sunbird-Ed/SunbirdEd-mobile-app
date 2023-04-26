@@ -2,7 +2,10 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "enableIvy": false
+    "enableIvy": true,
+    "compilationMode": "partial",
+    "fullTemplateTypeCheck": true, 
+    "strictInjectionParameters": true
   },
   "compilerOptions": {
     "baseUrl": "./src",

@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { CsGroupActivityAggregationMetric, CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
-
+import { Interval } from '../../../pipes/date-ago/date-ago.pipe';
 @Component({
     selector: 'activity-dashboard',
     templateUrl: './activity-dashboard.page.html',
@@ -34,6 +34,7 @@ export class ActivityDashboardPage {
     loggedinUser;
     group
     corRelationList
+    month = Interval.MONTH
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,

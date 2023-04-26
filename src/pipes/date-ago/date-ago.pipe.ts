@@ -2,7 +2,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {CommonUtilService} from '../../services/common-util.service';
 
-enum Interval {
+export enum Interval {
     YEAR = 'year',
     MONTH = 'month',
     WEEK = 'week',

@@ -2614,4 +2614,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
+  assignForumData($event: any) { }
+
 }

@@ -193,4 +193,6 @@ export class EntityfilterComponent implements OnInit {
   ngOnInit() {
     this.getTargettedEntityType();
   }
+
+  detectBottom() {}
 }

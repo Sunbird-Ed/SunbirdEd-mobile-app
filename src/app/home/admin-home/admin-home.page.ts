@@ -12,7 +12,7 @@ import { ContentAggregatorHandler } from '../../../services/content/content-aggr
 import { AppHeaderService } from '../../../services/app-header.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { SunbirdQRScanner } from '../../../services/sunbirdqrscanner.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { ButtonPosition, CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
@@ -59,7 +59,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   guestUser: boolean;
   appLabel: string;
   newThemeTimeout: any;
-
+  ButtonPosition = ButtonPosition;
   displaySections: any[] = [];
   headerObservable: Subscription;
   @ViewChild('contentView', { static: false }) contentView: ContentView;

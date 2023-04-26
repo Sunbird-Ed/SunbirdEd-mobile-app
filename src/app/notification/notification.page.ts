@@ -147,5 +147,7 @@ export class NotificationPage implements OnInit {
     }
   }
 
+  handleShowLess(event: any) {}
+  handleShowMore(event: any) {}
 
 }

@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class ExpansionTableComponent {
   @Input() datas;
-
+  isOpenIndex: any;
   constructor() {}
 
 }
