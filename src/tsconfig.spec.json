@@ -2,14 +2,18 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
+    "baseUrl": "./src",
     "types": [
-      "jasmine",
-      "node"
-    ]
+      "node",
+      "reflect-metadata",
+      "jest"
+    ],
+    "resolveJsonModule": true
   },
   "files": [
     "test.ts",
     "zone-flags.ts",
+    "setup-jest.ts",
     "polyfills.ts"
   ],
   "include": [
