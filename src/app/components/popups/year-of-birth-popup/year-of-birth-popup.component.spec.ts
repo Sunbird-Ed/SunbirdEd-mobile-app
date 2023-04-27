@@ -53,7 +53,7 @@ describe('YearOfBirthPopupComponent', () => {
                         error: {}
                     }
                 }
-            }));
+            })) as any;
             mockPopOverCtrl.dismiss = jest.fn();
             // act
             yearOfBirthPopupComponent.submit();

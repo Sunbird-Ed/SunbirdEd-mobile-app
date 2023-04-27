@@ -120,13 +120,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -179,13 +179,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -237,13 +237,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -299,13 +299,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -358,13 +358,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();

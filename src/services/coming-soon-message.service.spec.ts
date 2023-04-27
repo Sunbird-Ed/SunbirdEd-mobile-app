@@ -10,9 +10,18 @@ import { of } from 'rxjs';
 
 describe('ComingSoonMessageService', () => {
     let comingSoonMessageService: ComingSoonMessageService;
-    const mockSharedPreferences: SharedPreferences = {};
-    const mockSystemSettingsService: SystemSettingsService = {};
-    const mockContentService: ContentService = {};
+    const mockSharedPreferences: SharedPreferences = {
+        getString: jest.fn(() => of()),
+        putString: jest.fn(() => of()),
+        putBoolean: jest.fn(() => of()),
+        getBoolean: jest.fn(() => of()),
+        addListener: jest.fn(),
+        removeListener: jest.fn()
+    };
+    const mockSystemSettingsService: SystemSettingsService = {
+        getSystemSettings: jest.fn(() => of()),
+    };
+    const mockContentService: ContentService = {} as any;
 
     beforeAll(() => {
         comingSoonMessageService = new ComingSoonMessageService(
@@ -42,7 +51,7 @@ describe('ComingSoonMessageService', () => {
                         translations: JSON.stringify({ en: 'some_translated_message' })
                     }]
                 }
-            };
+            } as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             // act
             comingSoonMessageService.getComingSoonMessage(content)
@@ -63,7 +72,7 @@ describe('ComingSoonMessageService', () => {
                         translations: JSON.stringify({ mr: 'some_translated_message' })
                     }]
                 }
-            };
+            } as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             // act
             comingSoonMessageService.getComingSoonMessage(content)
@@ -85,13 +94,13 @@ describe('ComingSoonMessageService', () => {
                         identifier: 'some_do_id'
                     }
                 ]
-            };
+            } as any;
             const childContent = {
                 contentData: {
                     identifier: 'some_do_id'
                 }
             };
-            mockContentService.getChildContents = jest.fn(() => of(childContent));
+            mockContentService.getChildContents = jest.fn(() => of(childContent)) as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             // act
             comingSoonMessageService.getComingSoonMessage(content)
@@ -113,7 +122,7 @@ describe('ComingSoonMessageService', () => {
                         identifier: 'some_do_id'
                     }
                 ]
-            };
+            } as any;
             const childContent = {
                 contentData: {
                     identifier: 'some_do_id',
@@ -124,7 +133,7 @@ describe('ComingSoonMessageService', () => {
                     }]
                 }
             };
-            mockContentService.getChildContents = jest.fn(() => of(childContent));
+            mockContentService.getChildContents = jest.fn(() => of(childContent)) as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             // act
             comingSoonMessageService.getComingSoonMessage(content)
@@ -146,18 +155,18 @@ describe('ComingSoonMessageService', () => {
                         identifier: 'some_do_id'
                     }
                 ]
-            };
+            } as any;
             const childContent = {
                 contentData: {
                     identifier: 'some_do_id',
                     channel: 'some_channel'
                 }
             };
-            mockContentService.getChildContents = jest.fn(() => of(childContent));
+            mockContentService.getChildContents = jest.fn(() => of(childContent)) as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
                 value: JSON.stringify([{ rootOrgId: 'some_another_channel' }])
-            }));
+            })) as any;
             // act
             comingSoonMessageService.getComingSoonMessage(content)
                 .then((comingSoonMessage) => {
@@ -178,21 +187,21 @@ describe('ComingSoonMessageService', () => {
                         identifier: 'some_do_id'
                     }
                 ]
-            };
+            } as any;
             const childContent = {
                 contentData: {
                     identifier: 'some_do_id',
                     channel: 'some_channel'
                 }
             };
-            mockContentService.getChildContents = jest.fn(() => of(childContent));
+            mockContentService.getChildContents = jest.fn(() => of(childContent)) as any;
             mockSharedPreferences.getString = jest.fn(() => of('en'));
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
                 value: JSON.stringify([{
                     rootOrgId: 'some_channel',
                     translations: JSON.stringify({ en: 'some_translated_message' })
                 }])
-            }));
+            })) as any;
             // act
             comingSoonMessageService.getComingSoonMessage(content)
                 .then((comingSoonMessage) => {
@@ -214,14 +223,14 @@ describe('ComingSoonMessageService', () => {
                             identifier: 'some_do_id'
                         }
                     ]
-                };
+                } as any;
                 const childContent = {
                     contentData: {
                         identifier: 'some_do_id',
                         channel: 'some_channel'
                     }
                 };
-                mockContentService.getChildContents = jest.fn(() => of(childContent));
+                mockContentService.getChildContents = jest.fn(() => of(childContent)) as any;
                 mockSharedPreferences.getString = jest.fn(() => of('en'));
                 mockSystemSettingsService.getSystemSettings = jest.fn(() => of({
                     value: JSON.stringify([{
@@ -229,7 +238,7 @@ describe('ComingSoonMessageService', () => {
                         value: 'some_message',
                         translations: JSON.stringify({ hi: 'some_translated_message' })
                     }])
-                }));
+                })) as any;
                 // act
                 comingSoonMessageService.getComingSoonMessage(content)
                     .then((comingSoonMessage) => {

@@ -25,7 +25,7 @@ describe('CanvasPlayerService', () => {
         contentFeedbackService: mockContentFeedbackService,
         telemetryService: mockTelemetryService,
         courseService: mockCourseService
-    };
+    } as any;
     const mockPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('en' as any))
     };
@@ -59,7 +59,7 @@ describe('CanvasPlayerService', () => {
     describe('it should handle readJSON test suites', () => {
         it('should readJSON if path is available', () => {
             // arrange
-            mockHttp.get = jest.fn(() => of({ sampleObject: 'sampleObject' }));
+            mockHttp.get = jest.fn(() => of({ sampleObject: 'sampleObject' })) as any;
             // act
             canvasPlayerService.readJSON('sampleRandomPath');
             // assert
@@ -68,7 +68,7 @@ describe('CanvasPlayerService', () => {
 
         it('should readJSON if path is available and goes to catch part', () => {
             // arrange
-            mockHttp.get = jest.fn(() => Promise.reject('Unable to read JSON'));
+            mockHttp.get = jest.fn(() => Promise.reject('Unable to read JSON')) as any;
             // act
             canvasPlayerService.readJSON('sampleRandomPath');
             // assert
@@ -77,7 +77,7 @@ describe('CanvasPlayerService', () => {
 
         it('should not get inside if call, if path is undefined', () => {
             // arrange
-            mockHttp.get = jest.fn(() => of({ sampleObject: 'sample' }));
+            mockHttp.get = jest.fn(() => of({ sampleObject: 'sample' })) as any;
             // act
             canvasPlayerService.readJSON('');
             // arrange
@@ -93,7 +93,7 @@ describe('CanvasPlayerService', () => {
             // arrange
             mockFile.readAsText = jest.fn(() => Promise.resolve(mockXMLContent));
             // act
-            canvasPlayerService.xmlToJSon(mockXMLContent);
+            canvasPlayerService.xmlToJSon(mockXMLContent, '');
             // assert
             expect(mockFile.readAsText).toHaveBeenCalled();
         });
@@ -102,7 +102,7 @@ describe('CanvasPlayerService', () => {
             // arrange
             mockFile.readAsText = jest.fn(() => Promise.reject('Unable to convert'));
             // act
-            canvasPlayerService.xmlToJSon('sampleRandomPath');
+            canvasPlayerService.xmlToJSon('sampleRandomPath', '');
             // assert
             expect(mockFile.readAsText).toHaveBeenCalled();
         });
@@ -111,7 +111,7 @@ describe('CanvasPlayerService', () => {
             // arrange
             mockFile.readAsText = jest.fn(() => Promise.resolve(''));
             // act
-            canvasPlayerService.xmlToJSon('');
+            canvasPlayerService.xmlToJSon('', '');
             // arrange
             expect(mockFile.readAsText).not.toHaveBeenCalled();
         });
@@ -120,7 +120,7 @@ describe('CanvasPlayerService', () => {
     describe('it should handleAction based on the switchCases', () => {
         it('should handle action if method name equals getCurrentUser', () => {
             // arrange
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('getCurrentUser', []);
@@ -130,7 +130,7 @@ describe('CanvasPlayerService', () => {
 
         it('should handle action if method name equals getAllUserProfile', () => {
             // arrange
-            mockProfileService.getAllProfiles = jest.fn(() => of({}));
+            mockProfileService.getAllProfiles = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('getAllUserProfile', []);
@@ -140,7 +140,7 @@ describe('CanvasPlayerService', () => {
 
         it('should handle action if method name equals setUser', () => {
             // arrange
-            mockProfileService.setActiveSessionForProfile = jest.fn(() => of({}));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('setUser', []);
@@ -150,7 +150,7 @@ describe('CanvasPlayerService', () => {
 
         it('should handle action if method name equals getContent', () => {
             // arrange
-            mockContentService.getContents = jest.fn(() => of({}));
+            mockContentService.getContents = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('getContent', []);
@@ -160,7 +160,7 @@ describe('CanvasPlayerService', () => {
 
         it('should handle action if method name equals getContentList', () => {
             // arrange
-            mockContentService.getContents = jest.fn(() => of({}));
+            mockContentService.getContents = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('getContentList', []);
@@ -170,7 +170,7 @@ describe('CanvasPlayerService', () => {
 
         it('should handle action if method name equals sendFeedback', () => {
             // arrange
-            mockContentFeedbackService.sendFeedback = jest.fn(() => of({}));
+            mockContentFeedbackService.sendFeedback = jest.fn(() => of({})) as any;
             // act
             canvasPlayerService.handleAction();
             window.handleAction('sendFeedback', []);
@@ -227,7 +227,7 @@ describe('CanvasPlayerService', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(context);
                 }
-            });
+            }) as any;
             mockCommonUtilService.handleAssessmentStatus =
                 jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
 
@@ -245,10 +245,10 @@ describe('CanvasPlayerService', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(context);
                 }
-            });
+            }) as any;
             mockCourseService.getContentState = jest.fn(() => of({
                 "userId": "userid", "courseId": "courseid", "batchId": "batchid", "isCertified": false, "leafNodeIds": ["id1"], "batchStatus": 2
-            }));
+            })) as any;
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({
                 isLastAttempt: true,
                 isContentDisabled: true,
@@ -308,7 +308,7 @@ describe('CanvasPlayerService', () => {
             jest.spyOn(console, 'log').mockImplementation();
             // act
             canvasPlayerService.handleAction();
-            window.handleAction('anything');
+            window.handleAction('anything', '');
             // assert
             expect(console.log).toHaveBeenCalledWith('Please use valid method');
         });

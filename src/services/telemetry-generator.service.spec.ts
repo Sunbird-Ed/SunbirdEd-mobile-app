@@ -460,7 +460,7 @@ describe('TelemetryGeneratorService', () => {
         id: 'sample-id',
         type: 'sample-type',
         version: 'sample-version'
-      };
+      } as any;
       // act
       telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', object);
       // assert

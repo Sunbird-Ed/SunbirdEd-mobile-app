@@ -61,7 +61,9 @@ describe('SbSharePopupComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(),
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        translateMessage: jest.fn()
+    };
     const mockPermissionService: Partial<AndroidPermissionsService> = {
         checkPermissions: jest.fn()
     };
@@ -106,7 +108,7 @@ describe('SbSharePopupComponent', () => {
         mockContentService.getContentDetails = jest.fn(() => of({
             identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: CsContentType.TEXTBOOK,
             primaryCategory: CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase()
-        }));
+        })) as any;
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, cb) => {
                 setTimeout(() => {
@@ -280,7 +282,7 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        }));
+        })) as any;
         // act
         sbSharePopupComponent.shareFile();
         // assert
@@ -296,14 +298,14 @@ describe('SbSharePopupComponent', () => {
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
             { hasPermission: false }));
         mockPopoverCtrl.dismiss = jest.fn();
-
+        const translate = mockCommonUtilService.translateMessage = jest.fn(('NOT_NOW') as any);
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+            await callback(translate);
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -337,11 +339,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -375,11 +377,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -406,11 +408,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act

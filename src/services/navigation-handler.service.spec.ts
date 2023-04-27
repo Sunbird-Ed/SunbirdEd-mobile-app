@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonUtilService, TelemetryGeneratorService } from '../services';
 import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { mockProfileData } from '../app/profile/profile.page.spec.data';
+import { Events } from '../util/events';
 
 describe('NavigationService', () => {
   let navigationService: NavigationService;
@@ -14,12 +15,14 @@ describe('NavigationService', () => {
 
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
   const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockEvents: Partial<Events> = {};
 
   beforeAll(() => {
     navigationService = new NavigationService(
       mockRouter as Router,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockCommonUtilService as CommonUtilService,
+      mockEvents as Events
     );
   });
 

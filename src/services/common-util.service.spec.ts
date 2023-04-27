@@ -2,11 +2,10 @@ import { CommonUtilService } from './common-util.service';
 import {
   ToastController,
   LoadingController,
-  Events,
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
 import { PreferenceKey } from '../app/app.constant';
@@ -21,6 +20,7 @@ import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
 import { TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { Events } from '../util/events';
 
 declare const FCMPlugin;
 
@@ -63,10 +63,10 @@ describe('CommonUtilService', () => {
   };
   const mockNetwork: Partial<Network> = {
     onChange: jest.fn(() => of([{ type: 'online' }]))
-  };
+  } as any;
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
-  };
+  } as any;
   const mockPlatform: Partial<Platform> = {};
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
     generateInteractTelemetry: jest.fn(),
@@ -365,9 +365,10 @@ describe('CommonUtilService', () => {
   describe('deDupe()', () => {
     it('should return empty array if input is undefined', () => {
       // arrange
+      let val;
       // act
       // assert
-      expect(commonUtilService.deDupe(undefined, 'name')).toEqual([]);
+      expect(commonUtilService.deDupe(val, 'name')).toEqual([]);
     });
 
     it('should returndeduped Array if input contain any duplicate value', () => {
@@ -601,7 +602,7 @@ describe('CommonUtilService', () => {
             fn();
           })
         });
-      });
+      }) as any;
       jest.spyOn(commonUtilService, 'translateMessage').mockImplementation(() => {
         return message;
       });
@@ -682,7 +683,7 @@ describe('CommonUtilService', () => {
         dismiss: jest.fn(() => Promise.resolve({}))
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
+      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]))as any;
       // act
       commonUtilService.showExitPopUp('permission', 'home', false);
       // assert
@@ -721,7 +722,7 @@ describe('CommonUtilService', () => {
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
+      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }])) as any;
       // act
       commonUtilService.showExitPopUp('library', 'home', false);
       // assert
@@ -891,7 +892,7 @@ describe('CommonUtilService', () => {
         }, {
           uid: 'login-user-uid'
         }
-      ]));
+      ])) as any;
       // act
       commonUtilService.getGuestUserConfig();
       // assert

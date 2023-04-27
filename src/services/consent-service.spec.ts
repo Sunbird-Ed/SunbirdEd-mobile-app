@@ -51,7 +51,7 @@ describe('ConsentService', () => {
       }));
       mockProfileService.updateConsent = jest.fn(() => of({
         message: 'success'
-      }));
+      })) as any;
       mockCommonUtilService.showToast = jest.fn();
       // act
       consentService.showConsentPopup(course);

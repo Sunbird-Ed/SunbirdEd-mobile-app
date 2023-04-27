@@ -1,5 +1,5 @@
-import {CertificateService, CourseService} from '@project-sunbird/sunbird-sdk';
-import {CertificateDownloadService} from 'sb-svg2pdf';
+import {CertificateService} from '@project-sunbird/sunbird-sdk';
+import {CertificateDownloadService} from '@project-sunbird/sb-svg2pdf';
 import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '../../../services';
 import {Router} from '@angular/router';
 import {FileOpener} from '@awesome-cordova-plugins/file-opener/ngx';
@@ -7,6 +7,8 @@ import {Platform, PopoverController, ToastController} from '@ionic/angular';
 import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';
 import {EMPTY, of} from 'rxjs';
+import { UnnatiDataService } from '../../manage-learn/core/services/unnati-data.service';
+import { Location } from '@angular/common';
 
 describe('CertificateViewPage', () => {
     const mockCertificateService: Partial<CertificateService> = {
@@ -22,7 +24,7 @@ describe('CertificateViewPage', () => {
     const mockAppHeaderService: Partial<AppHeaderService> = {
         getDefaultPageConfig: jest.fn(() => ({})),
         updatePageConfig: jest.fn()
-    };
+    } as any;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
         translateMessage: jest.fn(() => 'MESSAGE'),
@@ -49,7 +51,7 @@ describe('CertificateViewPage', () => {
                 }
             }
         }))
-    };
+    } as any;
     const mockFileOpener: Partial<FileOpener> = {
         open: jest.fn(() => Promise.resolve())
     };
@@ -58,12 +60,15 @@ describe('CertificateViewPage', () => {
             present: jest.fn(),
             dismiss: jest.fn()
         }))
-    };
+    } as any;
     const mockPopoverController: Partial<PopoverController> = {};
     const mockPlatform: Partial<Platform> = { is: jest.fn(platform => platform === 'ios') };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
     };
+
+    const mockLocation: Partial<Location> = {};
+    const mockApiService: Partial<UnnatiDataService> = {}
   
     let certificateViewPage: CertificateViewPage;
 
@@ -79,7 +84,9 @@ describe('CertificateViewPage', () => {
             mockToastController as ToastController,
             mockPopoverController as PopoverController,
             mockPlatform as Platform,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockLocation as Location,
+            mockApiService as UnnatiDataService
         );
     });
 

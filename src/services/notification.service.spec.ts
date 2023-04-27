@@ -7,7 +7,7 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService, ContentService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '../util/events';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { Event, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NotificationServiceV2 } from '@project-sunbird/sunbird-sdk/notification-v2/def/notification-service-v2';
 import { NavigationService } from './navigation-handler.service';
 import { of, throwError } from 'rxjs';
@@ -83,8 +83,8 @@ describe('LocalCourseService', () => {
   describe('fetchNotificationList', () => {
     it('should fetchNotificationList', (done) => {
       // arrange
-      mockProfileService.getActiveSessionProfile = jest.fn(() => of({}))
-      mockNotificationServiceV2.notificationRead = jest.fn(() => of({}))
+      mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
+      mockNotificationServiceV2.notificationRead = jest.fn(() => of({})) as any;
       // act
       notificationService.fetchNotificationList()
       // assert
@@ -158,7 +158,7 @@ describe('LocalCourseService', () => {
         }
       }
       mockNotificationServiceV2.notificationDelete = jest.fn(() => of());
-      mockEvents.publish = jest.fn(() => of())
+      mockEvents.publish = jest.fn(() => of()) as any;
       // act
       notificationService.deleteNotification(notif)
       // assert
@@ -481,7 +481,7 @@ describe('LocalCourseService', () => {
     it('should navigate playstore when Appid is set', () => {
       // arrange
       const data = {action: { type: 'updateApp' } };
-      mockUtilityService.openPlayStore = jest.fn(() => Promise.resolve(undefined));
+      mockUtilityService.openPlayStore = jest.fn(() => Promise.resolve(undefined)) as any;
       // act
       notificationService.setNotificationParams(data);
       notificationService.handleNotification();
