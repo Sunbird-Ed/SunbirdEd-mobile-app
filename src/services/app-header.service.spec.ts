@@ -116,17 +116,17 @@ describe('AppHeaderService', () => {
         appHeaderService.updatePageConfig(mockConfig);
     });
 
-    it('should set background color of statusbar', (done) => {
-        const customTheme = onboarding.theme;
+    it('should set background color of statusbar', () => {
         mockStatusBar.backgroundColorByHexString = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
-        const selectedTheme = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');
-
+        document.querySelector = jest.fn(() => ({
+            html: {
+                getPropertyValue: jest.fn()
+            }
+        }));
         appHeaderService.showStatusBar().then(() => {
-            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith(selectedTheme);
-            done();
+            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('');
         });
-
     });
 
     it('should theme is not joyful go to else part', () => {

@@ -95,7 +95,7 @@ describe('PageFilterPage', () => {
         getCurrentUser: jest.fn(() => ({
             syllabus: ''
         }))
-    };
+    } as any;
 
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn((_, fn) => fn({
@@ -212,7 +212,7 @@ describe('PageFilterPage', () => {
         it('should generate interact telemetry and dismiss the popup', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
@@ -238,7 +238,7 @@ describe('PageFilterPage', () => {
         it('should not invoke applyFilter() of callback', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
@@ -255,7 +255,7 @@ describe('PageFilterPage', () => {
 
         it('should invoke applyFilter() of callback', (done) => {
             // arrange
-            pageFilterPage.callback = undefined;
+            pageFilterPage.callback = undefined as any;
             // act
             pageFilterPage.initFilterValues();
             pageFilterPage.apply();
@@ -270,7 +270,7 @@ describe('PageFilterPage', () => {
     describe('onLanguageChange()', () => {
         it('should not update the selected values', () => {
             // arrange
-            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
+            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
             // act
             pageFilterPage.onLanguageChange();
             // assert
@@ -281,14 +281,14 @@ describe('PageFilterPage', () => {
         });
         it('should update the selected values', () => {
             // arrange
-            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
+            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
             pageFilterPage.filters[7] = pageFilterPage.filters[6];
             delete  pageFilterPage.filters[7].resourceTypeValues;
             // act
             pageFilterPage.initFilterValues();
             pageFilterPage.onLanguageChange();
             // assert
-            expect(pageFilterPage.filters[6].selected).toEqual([
+            expect(pageFilterPage.filters[6]).toEqual([
                 undefined,
                 undefined
               ]);
@@ -331,11 +331,11 @@ describe('PageFilterPage', () => {
     describe('ionViewWillLeave()', () => {
         it('should open the popup window', () => {
             // arrange
-            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
+            let unsubscribe = pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
             // act
             pageFilterPage.ionViewWillLeave();
             // assert
-            expect( pageFilterPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
+            expect(unsubscribe).toHaveBeenCalled();
             expect(mockMenuController.enable).toHaveBeenCalledWith(true);
         });
     });

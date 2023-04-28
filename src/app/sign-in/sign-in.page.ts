@@ -33,7 +33,7 @@ import {
     ASAuthorizationAppleIDRequest
 } from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 import { Platform } from '@ionic/angular';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from '@project-sunbird/common-form-elements';
 
 @Component({
     selector: 'app-sign-in',

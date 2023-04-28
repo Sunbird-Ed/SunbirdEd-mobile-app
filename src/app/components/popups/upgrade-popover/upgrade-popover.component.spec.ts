@@ -7,11 +7,11 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
 
-    window.cordova.plugins = {
+    window['cordova'].plugins = {
         InAppUpdateManager: {
             checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
         }
-    };
+    } as any;
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('some_string'))
     };

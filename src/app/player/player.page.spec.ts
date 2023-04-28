@@ -24,17 +24,18 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { User, HierarchyInfo } from './player-action-handler-delegate';
 import { UpdateContentStateRequest, UpdateContentStateTarget } from '@project-sunbird/sunbird-sdk';
 import { ElementRef } from '@angular/core';
+import { ContentUtil } from '../../util/content-util';
 
 
 declare const cordova;
 
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
-    window.cordova.plugins = {
+    window['cordova'].plugins = {
         InAppUpdateManager: {
             checkForImmediateUpdate: jest.fn((fn, fn1) => {fn({}), fn1()})
         }
-    };
+    } as any;
     const mockAlertCtrl: Partial<AlertController> = {
         
     };
@@ -250,8 +251,8 @@ describe('PlayerPage', () => {
     })
 
     describe('ionviewWillEnter', () => {
-        it('should initialize the backbutton handle else case', async (done) => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
+        it('should initialize the backbutton handle else case', (done) => {
+            window.setInterval = jest.fn((fn) => fn({})) as any;
             playerPage.playerType ='sunbird-old-player';
             playerPage.previewElement = {
                 nativeElement: ''
@@ -303,8 +304,8 @@ describe('PlayerPage', () => {
                 done();
             }, 0);
         });
-        it('should initialize the backbutton', async (done) => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
+        it('should initialize the backbutton', (done) => {
+            window.setInterval = jest.fn((fn) => fn({})) as any;
             playerPage.playerType ='sunbird-old-player';
             playerPage.config = {
                 context: {
@@ -334,7 +335,7 @@ describe('PlayerPage', () => {
                     }
                 }
             } as ElementRef;
-            window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
+            window.setTimeout = jest.fn((fn) => fn({})) as any;
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
                 {
                     name: 'Player',
@@ -369,7 +370,7 @@ describe('PlayerPage', () => {
         });
 
         it('should initialize back button when mimetype is questionset', () => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
+            window.setInterval = jest.fn((fn) => fn({})) as any;
             playerPage.previewElement = {
                 nativeElement: {
                     src: '12346'
@@ -421,7 +422,7 @@ describe('PlayerPage', () => {
         });
 
         it('should initialize back button when mimetype is not questionset', () => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
+            window.setInterval = jest.fn((fn) => fn({})) as any;
             playerPage.previewElement = {
                 nativeElement: {
                     src: '12346',
@@ -452,7 +453,7 @@ describe('PlayerPage', () => {
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((_, fn) => fn()),
             } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve({}));
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve({})) as any;
             mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: false }));
             mockEvents.publish = jest.fn()
             mockAppGlobalService.getSelectedUser = jest.fn();
@@ -647,8 +648,8 @@ describe('PlayerPage', () => {
                 basePath: 'basePath',
                 streamingUrl: 'streamingurl'
             } 
-        }
-        mockEvents.publish = jest.fn(()=> Promise.resolve());
+        } as any
+        mockEvents.publish = jest.fn(()=> Promise.resolve()) as any;
         mockLocation.back = jest.fn();
         playerPage.playNextContent();
         expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT , {
@@ -767,7 +768,7 @@ describe('PlayerPage', () => {
             setTimeout(() => {
                 expect(mockPlatform.pause?.subscribe).toHaveBeenCalled();
                 // expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
-                expect(playerPage.loadPdfPlayer).toBeFalsy();
+                expect(playerPage['loadPdfPlayer']).toBeFalsy();
                 done();
             }, 0);
         });
@@ -1135,7 +1136,7 @@ describe('PlayerPage', () => {
 
     describe('pdfPlayerEvents', () => {
         it('should sync assessment events', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             mockPlayerService.savePlayerState = jest.fn();
             mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
             const event = {
@@ -1153,7 +1154,7 @@ describe('PlayerPage', () => {
             expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
         });
         it('should exit the player', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             mockPlayerService.deletePlayerSaveState = jest.fn();
             const event = {
                 edata: {
@@ -1172,7 +1173,7 @@ describe('PlayerPage', () => {
             }, 50);
         });
         it('should exit the player and confirm if has metadata', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             mockPlayerService.deletePlayerSaveState = jest.fn();
             const event = {
                 edata: {
@@ -1192,7 +1193,7 @@ describe('PlayerPage', () => {
         });
 
         it('should exit the player and confirm if has metadata on else case if isExit popup is shown', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             mockPlayerService.deletePlayerSaveState = jest.fn();
             const event = {
                 edata: {
@@ -1211,12 +1212,12 @@ describe('PlayerPage', () => {
             }, 50);
         });
         it('should call the download service to download the pdf', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
                 }
-            };
+            } as any;
             const event = {
                 edata: {
                     type: 'DOWNLOAD'
@@ -1233,12 +1234,12 @@ describe('PlayerPage', () => {
 
         });
         it('should call the print service to print the pdf for catch part', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
                 }
-            };
+            } as any;
             const event = {
                 edata: {
                     type: 'PRINT'
@@ -1251,12 +1252,12 @@ describe('PlayerPage', () => {
             }, 0);
         });
         it('should call the print service to print the pdf for catch part', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
                 }
-            };
+            } as any;
             const event = {
                 edata: {
                     type: 'NEXT_CONTENT_PLAY'
@@ -1268,12 +1269,12 @@ describe('PlayerPage', () => {
             }, 0);
         });
         it('should call the download service to download the pdf for catch part(user-permission-denied)', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
                 }
-            };
+            } as any;
             const event = {
                 edata: {
                     type: 'DOWNLOAD'
@@ -1291,12 +1292,12 @@ describe('PlayerPage', () => {
 
         });
         it('should call the download service to download the pdf for catch part(download-failed)', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             playerPage['content'] = {
                 contentData: {
                     downloadUrl: 'https://'
                 }
-            };
+            } as any;
             const event = {
                 edata: {
                     type: 'DOWNLOAD'
@@ -1314,7 +1315,7 @@ describe('PlayerPage', () => {
 
         });
         it('should handle the share event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: 'SHARE'
@@ -1330,20 +1331,20 @@ describe('PlayerPage', () => {
 
         });
         it('should handle the content compatibility error', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: 'compatibility-error'
                 }
             };
-            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn((fn, fn1) => {fn({ }), fn1({})});
+            global['window']['cordova'].plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn((fn, fn1) => {fn({ }), fn1({})});
             playerPage.playerEvents(event);
             setTimeout(() => {
-                expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+                expect(global['window']['cordova'].plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
             }, 50);
         });
         it('should handle the exdata event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: 'exdata',
@@ -1357,7 +1358,7 @@ describe('PlayerPage', () => {
         });
 
         it('should handle the exdata event if no curent attemopts', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: 'exdata',
@@ -1370,7 +1371,7 @@ describe('PlayerPage', () => {
         });
 
         it('should handle the DEVICE_ROTATION_CLICKED event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: 'DEVICE_ROTATION_CLICKED'
@@ -1384,7 +1385,7 @@ describe('PlayerPage', () => {
         });
 
         it('should handle if no event edata type', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: {
                     type: ''
@@ -1395,7 +1396,7 @@ describe('PlayerPage', () => {
 
         });
         it('should handle if no event edata', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
             const event = {
                 edata: ''
             };
@@ -1455,7 +1456,7 @@ describe('PlayerPage', () => {
             mockScreenOrientation.unlock = jest.fn();
             playerPage['events'] = undefined as any;
             playerPage['backButtonSubscription'] = undefined as any;
-            window.removeEventListener = jest.fn((_,fn) => fn({}))
+            window.removeEventListener = jest.fn((_,fn) => fn({})) as any
             // act
             playerPage.ionViewWillLeave();
             // assert
@@ -1509,10 +1510,10 @@ describe('PlayerPage', () => {
                 progress: 100,
                 target: [UpdateContentStateTarget.LOCAL, UpdateContentStateTarget.SERVER]
               };
-            mockCourseService.updateContentState = jest.fn(() => of({}))
+            mockCourseService.updateContentState = jest.fn(() => of({})) as any
             window.setTimeout = jest.fn((fn) => {
                 fn()
-            }, 1000) as any;
+            }) as any;
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())   
@@ -1638,15 +1639,14 @@ describe('PlayerPage', () => {
                     Environment.PLAYER,
                     TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
                     ErrorType.SYSTEM,
-                    PageId.PLAYER,
-                    JSON.stringify(e)
+                    PageId.PLAYER
                 );
                 expect(mockLocation.back).toHaveBeenCalled();
             }, 0);
         })
         it('should create a loader and dismiss and handle error on exit telemetry service' , () =>{
             //arrange
-            playerPage.course = '';
+            playerPage.course = '' as any;
             playerPage.previewElement= {
                 nativeElement: {
                     contentWindow: {
@@ -1704,9 +1704,9 @@ describe('PlayerPage', () => {
             const content = {identifier:'', info};
             window.setTimeout = jest.fn((fn) => {
                 fn();
-            }, 1000) as any;
+            }) as any;
             jest.spyOn(playerPage, 'closeIframe').mockImplementation();
-            mockEvents.publish = jest.fn(() => Promise.resolve())
+            mockEvents.publish = jest.fn(() => Promise.resolve()) as any
             // act
             playerPage.onContentNotFound('', info);
             // asert
@@ -1953,7 +1953,7 @@ describe('PlayerPage', () => {
                 contentData: {
                     downloadUrl: ''
                 }
-            }
+            } as any
             mockCommonUtilService.showToast = jest.fn();
             // act
             playerPage.handleDownload();
@@ -1972,7 +1972,7 @@ describe('PlayerPage', () => {
             }));
             window.setTimeout = jest.fn((fn) => {
                 fn()
-            }, 500) as any;
+            }) as any;
             mockTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload
@@ -1994,7 +1994,7 @@ describe('PlayerPage', () => {
             const mockDownload = jest.fn(() => Promise.reject({}));
             window.setTimeout = jest.fn((fn) => {
                 fn()
-            }, 500) as any;
+            }) as any;
             mockTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload

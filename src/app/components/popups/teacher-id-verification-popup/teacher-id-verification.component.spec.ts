@@ -188,7 +188,7 @@ describe('TeacherIdVerificationComponent', () => {
         it('should not close the popup in value is expected', (done) => {
             // arrange
             jest.spyOn(teacherIdVerificationComponent, 'closePopup');
-            mockProfileService.userMigrate = jest.fn(() => of({ responseCode: 'ok1' }));
+            mockProfileService.userMigrate = jest.fn(() => of({ responseCode: 'ok1' })) as any;
             // act
             teacherIdVerificationComponent.teacherConfirmation(false);
             // assert

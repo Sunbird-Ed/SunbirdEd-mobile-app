@@ -9,7 +9,7 @@ import {CategoryListPage} from './category-list-page';
 import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '../../app/components/components.module';
-import {CommonFormElementsModule, SbSearchFilterModule} from 'common-form-elements';
+import {CommonFormElementsModule, SbSearchFilterModule} from '@project-sunbird/common-form-elements';
 import {PipesModule} from '../../pipes/pipes.module';
 import {SearchFilterPage} from '../../app/search-filter/search-filter.page';
 

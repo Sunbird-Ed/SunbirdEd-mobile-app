@@ -186,7 +186,7 @@ describe('CurriculumCoursesPage', () => {
             id: 'do_123',
             type: 'course'
         }as any];
-        mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList);
+        mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         const telemetryObject = new TelemetryObject(undefined, undefined, '');

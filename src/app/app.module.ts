@@ -85,7 +85,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { CrashAnalyticsErrorLogger } from '../services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '../services/print-pdf/print-pdf.service';
 import {UpdateProfileService} from '../services/update-profile-service';
-import { SbSearchFilterModule } from 'common-form-elements';
+import { SbSearchFilterModule } from '@project-sunbird/common-form-elements';
 import {LoginNavigationHandlerService} from '../services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '../services/storage-permission/storage-permission-handler.service';
 import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';

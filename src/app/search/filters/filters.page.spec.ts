@@ -1,22 +1,21 @@
 import { FormAndFrameworkUtilService } from '../../../services';
 
 import { FiltersPage } from './filters.page';
-import { ContentService, InteractType } from '@project-sunbird/sunbird-sdk';
+import { ContentService } from '@project-sunbird/sunbird-sdk';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import {
   CommonUtilService,
   TelemetryGeneratorService,
   AppHeaderService,
-  InteractSubtype,
-  Environment,
-  PageId
 } from '../../../services';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { mockSupportedUserTypeConfig } from '../../../services/profile-handler.spec.data';
 import { mockFilterCriteria } from './filters.page.spec.data';
+import find from 'lodash/find';
+
 describe('FiltersPage', () => {
   let filtersPage: FiltersPage;
 
@@ -40,7 +39,7 @@ describe('FiltersPage', () => {
         return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
       });
     })
-  };
+  } as any;
   const mockPlatform: Partial<Platform> = {
   };
   mockPlatform.backButton = {
@@ -133,7 +132,7 @@ describe('FiltersPage', () => {
 
   it('should execute getFilterValues if facet is undefined', () => {
     //arrange
-    const facet = null;
+    let facet;
     //act
     filtersPage.getFilterValues(facet);
     //assert
@@ -268,7 +267,7 @@ describe('FiltersPage', () => {
   });
   it('reset', () => {
     //arrange
-    JSON.parse = jest.fn().mockImplementationOnce(() => {
+    let facetfilter = JSON.parse = jest.fn().mockImplementationOnce(() => {
       return {
         facetFilters: [{
           name: 'se_mediums', values: [

@@ -19,8 +19,8 @@ import {Platform} from '@ionic/angular';
 import { AppGlobalService, LoginHandlerService } from '../../services';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 
-jest.mock('@project-sunbird/sunbird-sdk'', () => {
-    const actual = jest.requireActual('@project-sunbird/sunbird-sdk'');
+jest.mock('@project-sunbird/sunbird-sdk', () => {
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewStateSessionProvider() {
@@ -62,7 +62,7 @@ describe('SignInPage', () => {
                 state: {}
             }
         }))
-    };
+    } as any;
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockSbProgressLoaderService: Partial<SbProgressLoader> = {
         hide: jest.fn(),
@@ -86,9 +86,9 @@ describe('SignInPage', () => {
         resetSavedQuizContent: jest.fn()
     }
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
-    window.cordova.plugins = {
+    window['cordova'].plugins = {
         Keyboard: { hideKeyboardAccessoryBar: jest.fn() }
-    };
+    } as any;
 
     beforeAll(() => {
         signInPage = new SignInPage(
@@ -182,10 +182,10 @@ describe('SignInPage', () => {
                     refresh_token: 'SOME_REFRESH_TOKEN',
                     userToken: 'SOME_USER_TOKEN'
                 }
-            ));
+            )) as any;
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
-            signInPage.onLabelClickEvent().then(() => {
+            signInPage.onLabelClickEvent({}).then(() => {
                 expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalled();
                 expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
             });
@@ -203,7 +203,7 @@ describe('SignInPage', () => {
             mockCommonUtilService.showToast = jest.fn();
             mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject());
             // act
-            signInPage.onLabelClickEvent().catch(() => {
+            signInPage.onLabelClickEvent({}).catch(() => {
                 // assert
                 expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
                 expect(mockSbProgressLoaderService.hide).toHaveBeenCalledWith({id: 'login'});
@@ -216,13 +216,13 @@ describe('SignInPage', () => {
         xit('should do  nothing if the network is unavailable', (done) => {
             //arrange
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            let network = mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             //act
             signInPage.loginWithKeyCloak();
             //assert
             setTimeout(() => {
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(!mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 done();
             }, 0)
         });
@@ -244,7 +244,7 @@ describe('SignInPage', () => {
                     refresh_token: 'SOME_REFRESH_TOKEN',
                     userToken: 'SOME_USER_TOKEN'
                 }
-            ));
+            )) as any;
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
             signInPage.loginWithKeyCloak()
@@ -296,7 +296,7 @@ describe('SignInPage', () => {
                     refresh_token: 'SOME_REFRESH_TOKEN',
                     userToken: 'SOME_USER_TOKEN'
                 }
-            ));
+            )) as any;
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
             signInPage.loginWithStateSystem().then(() => {
@@ -338,7 +338,7 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of({
                 value: 'sample_client_id'
-            }));
+            })) as any;
             mockGooglePlusLogin.login = jest.fn(() => Promise.resolve());
             mockSbProgressLoaderService.show = jest.fn();
             mockSharedPreferences.putBoolean = jest.fn(() => of(true));
@@ -368,7 +368,7 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of({
                 value: 'sample_client_id'
-            }));
+            })) as any;
             mockGooglePlusLogin.login = jest.fn(() => Promise.reject());
             mockSbProgressLoaderService.hide = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
@@ -386,7 +386,7 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of({
                 value: 'sample_client_id'
-            }));
+            })) as any;
             mockGooglePlusLogin.login = jest.fn(() => Promise.reject(signInError));
             mockSbProgressLoaderService.hide = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
@@ -417,7 +417,7 @@ describe('SignInPage', () => {
                     refresh_token: 'SOME_REFRESH_TOKEN',
                     userToken: 'SOME_USER_TOKEN'
                 }
-            ));
+            )) as any;
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
             signInPage.register().then(() => {

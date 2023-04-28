@@ -128,7 +128,7 @@ describe('CollectionChildComponent', () => {
         name: 'content_name',
         appIcon: 'sample_icon'
       }
-    };
+    } as any;
     mockEvents.publish = jest.fn();
     // act
     collectionChildComponent.playContent(mockContentData);
@@ -438,7 +438,7 @@ describe('CollectionChildComponent', () => {
       mockLocation.back = jest.fn();
       const content = {
         identifier: 'some_identifier'
-      };
+      } as any;
       // act
       collectionChildComponent.navigateToDetailsPage(content, '');
       // assert
@@ -464,7 +464,7 @@ describe('CollectionChildComponent', () => {
       collectionChildComponent.isEnrolled = false;
       const content = {
         identifier: 'some_identifier'
-      };
+      } as any;
       // act
       collectionChildComponent.navigateToDetailsPage(content, '');
       // assert
@@ -484,7 +484,7 @@ describe('CollectionChildComponent', () => {
         collectionChildComponent.isBatchNotStarted = true;
         const content = {
           identifier: 'some_identifier'
-        };
+        } as any;
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
@@ -512,8 +512,8 @@ describe('CollectionChildComponent', () => {
         const content = {
           identifier: 'some_identifier',
           contentType: CsContentType.COURSE
-        };
-        mockZone.run = jest.fn((fn) => fn());
+        } as any;
+        mockZone.run = jest.fn((fn) => fn()) as any;
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
@@ -524,8 +524,8 @@ describe('CollectionChildComponent', () => {
           identifier: 'some_identifier',
           mimeType: MimeType.COLLECTION,
           contentType: CsContentType.TEXTBOOK
-        };
-        mockZone.run = jest.fn((fn) => fn());
+        } as any;
+        mockZone.run = jest.fn((fn) => fn()) as any;
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
@@ -541,8 +541,8 @@ describe('CollectionChildComponent', () => {
               contentType: CsContentType.RESOURCE,
               primaryCategory: CsPrimaryCategory.TEACHER_RESOURCE
             }
-          };
-          mockZone.run = jest.fn((fn) => fn());
+          } as any;
+          mockZone.run = jest.fn((fn) => fn()) as any;
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
@@ -561,7 +561,7 @@ describe('CollectionChildComponent', () => {
               case 'REDO':
                 return 'REDO';
             }
-          });
+          }) as any;
           const content = {
             identifier: 'some_identifier',
             contentType: CsContentType.SELF_ASSESS,
@@ -571,11 +571,11 @@ describe('CollectionChildComponent', () => {
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             },
             status: '2'
-          };
+          } as any;
           collectionChildComponent.batch = {
             status: 2
           };
-          mockZone.run = jest.fn((fn) => fn());
+          mockZone.run = jest.fn((fn) => fn()) as any;
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
@@ -597,7 +597,7 @@ describe('CollectionChildComponent', () => {
               case 'START':
                 return 'START';
             }
-          });
+          }) as any;
           const content = {
             identifier: 'some_identifier',
             contentType: CsContentType.SELF_ASSESS,
@@ -606,11 +606,11 @@ describe('CollectionChildComponent', () => {
               contentType: CsContentType.SELF_ASSESS,
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             }
-          };
+          } as any;
           collectionChildComponent.batch = {
             status: 2
           };
-          mockZone.run = jest.fn((fn) => fn());
+          mockZone.run = jest.fn((fn) => fn()) as any;
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert
@@ -632,7 +632,7 @@ describe('CollectionChildComponent', () => {
               case 'START':
                 return 'START';
             }
-          });
+          }) as any;
           const content = {
             identifier: 'some_identifier',
             contentType: CsContentType.SELF_ASSESS,
@@ -641,11 +641,11 @@ describe('CollectionChildComponent', () => {
               contentType: CsContentType.SELF_ASSESS,
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             }
-          };
+          } as any;
           collectionChildComponent.batch = {
             status: 2
           };
-          mockZone.run = jest.fn((fn) => fn());
+          mockZone.run = jest.fn((fn) => fn()) as any;
           // act
           collectionChildComponent.navigateToDetailsPage(content, '');
           // assert

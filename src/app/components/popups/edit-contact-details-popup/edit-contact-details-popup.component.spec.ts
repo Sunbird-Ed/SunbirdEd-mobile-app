@@ -101,7 +101,7 @@ describe('EditContactDetailsPopupComponent', () => {
     it('should dismiss the popup when cancel is invoked', () => {
         // arrange
         // act
-        editContactDetailsPopupComponent.cancel({ sourceCapabilities: true });
+        editContactDetailsPopupComponent.cancel();
         // assert
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ isEdited: false });
     });

@@ -14,33 +14,34 @@ import {
     TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from '@project-sunbird/sunbird-sdk';
 import { Platform, MenuController } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '../util/events';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { NgZone, EventEmitter } from '@angular/core';
+import { EventEmitter, NgZone } from '@angular/core';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Router } from '@angular/router';
 import {
     NetworkAvailabilityToastService
-} from '../../../services/network-availability-toast/network-availability-toast.service';
-import { NotificationService as LocalNotification } from '../../../services/notification.service';
-import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
-import { of, Subject, EMPTY, Observable } from 'rxjs';
-import {PreferenceKey, EventTopics, RouterLinks, SystemSettingsIds, AppOrientation} from './app.constant';
-import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
+} from '../services/network-availability-toast/network-availability-toast.service';
+import { NotificationService as LocalNotification } from '../services/notification.service';
+import { TncUpdateHandlerService } from '../services/handlers/tnc-update-handler.service';
+import { of, Subject, EMPTY } from 'rxjs';
+import {PreferenceKey, EventTopics, RouterLinks, AppOrientation} from './app.constant';
+
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 import { ApiUtilsService, NetworkService, DbService, LoaderService } from './manage-learn/core';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { BackButtonEmitter } from '@ionic/angular/providers/platform';
 
 declare const plugins;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
     window['sbutility'] = {
-        getBuildConfigValue: jest.fn(() => { }),
+        getBuildConfigValue: jest.fn((packageName: string, property: string, success: (callbackUrl: string) => void) => { }),
         openPlayStore: jest.fn(() => { }),
         getDeviceAPILevel: jest.fn(() => { }),
         checkAppAvailability: jest.fn(() => { }),
@@ -54,20 +55,22 @@ describe('AppComponent', () => {
         getApkSize: jest.fn(() => { }),
         getMetaData: jest.fn(() => { }),
         makeEntryInSunbirdSupportFile: jest.fn(() => { })
-    };
-    window.cordova.plugins = {
-        notification: {
-            local: {
-                launchDetails: {
-                    action: 'click'
-                },
-                on: jest.fn()
+    } as any;
+    window['cordova'] = {
+        plugins: {
+            notification: {
+                local: {
+                    launchDetails: {
+                        action: 'click'
+                    },
+                    on: jest.fn()
+                }
+            },
+            InAppUpdateManager: {
+                checkForImmediateUpdate: jest.fn()
             }
-        },
-        InAppUpdateManager: {
-            checkForImmediateUpdate: jest.fn()
         }
-    };
+    } as any;
     const mockActivePageService: Partial<ActivePageService> = {
         computePageId: jest.fn(() => 'sample-page-id')
     };
@@ -93,7 +96,7 @@ describe('AppComponent', () => {
     };
     const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
-        events: jest.fn(() => of({}))
+        events: jest.fn(() => of({})) as any
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         init: jest.fn(),
@@ -127,7 +130,8 @@ describe('AppComponent', () => {
     };
     const mockRouter: Partial<Router> = {
         events: EMPTY,
-        navigate: jest.fn()
+        navigate: jest.fn(),
+        url: ''
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
@@ -135,7 +139,7 @@ describe('AppComponent', () => {
         styleDefault: jest.fn()
     };
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
-        getSystemSettings: jest.fn(() => of({}))
+        getSystemSettings: jest.fn(() => of({})) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         genererateAppStartTelemetry: jest.fn(),
@@ -146,7 +150,7 @@ describe('AppComponent', () => {
         // start: jest.fn(() => of({}))
     };
     const mockTelemetryService: Partial<TelemetryService> = {
-        autoSync: mockTelemetryAutoSyncService
+        autoSync: mockTelemetryAutoSyncService as any
     };
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
         checkForTncUpdate: jest.fn()
@@ -194,7 +198,7 @@ describe('AppComponent', () => {
        stopLoader: jest.fn(),
        startLoader: jest.fn()
     };
-    global.window.segmentation = {
+    global['window']['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -260,7 +264,7 @@ describe('AppComponent', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        global.window.segmentation = null;
+        global['window']['segmentation'] = null;
     });
 
     it('should be create a instance of appComponent', () => {
@@ -307,7 +311,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(false);
                 }
-            });
+            }) as any;
             mockPreferences.putBoolean = jest.fn(() => of(false));
             mockHeaderService.showStatusBar = jest.fn(() => Promise.resolve());
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -320,7 +324,7 @@ describe('AppComponent', () => {
             mockNetworkService.netWorkCheck = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -346,7 +350,7 @@ describe('AppComponent', () => {
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             mockPreferences.getString = jest.fn(() => of('{"val":"landscape"}'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockTranslate.use = jest.fn(() => of({}));
             mockHeaderService.hideStatusBar = jest.fn();
@@ -370,7 +374,7 @@ describe('AppComponent', () => {
             mockCommonUtilService.networkAvailability$ = of(true);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockTranslate.use = jest.fn(() => of({}));
             mockHeaderService.hideStatusBar = jest.fn();
@@ -398,7 +402,7 @@ describe('AppComponent', () => {
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockHeaderService.hideStatusBar = jest.fn();
             // act
@@ -426,7 +430,7 @@ describe('AppComponent', () => {
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.addListener = jest.fn(() => 'some_trace_id');
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockTranslate.use = jest.fn(() => of({}));
             mockHeaderService.hideStatusBar = jest.fn();
@@ -498,7 +502,7 @@ describe('AppComponent', () => {
             mockDbService.createDb = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -665,7 +669,7 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -729,7 +733,7 @@ describe('AppComponent', () => {
             const result = undefined;
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(result));
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
 
             // act
@@ -826,7 +830,7 @@ describe('AppComponent', () => {
             const hotCodePushKey = {
                 deploymentKey: ''
             };
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: hotCodePushKey }));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: hotCodePushKey })) as any;
 
             // act
             appComponent.ngOnInit();
@@ -844,7 +848,7 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"\"}' }));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"\"}' })) as any;
             mockPreferences.getString = jest.fn(() => of("landscape"));
 
 
@@ -864,7 +868,7 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockPreferences.getString = jest.fn(() => of('lanscape'));
 
@@ -880,7 +884,7 @@ describe('AppComponent', () => {
         });
         it('should check current orientation and handle for landscape', (done) => {
             // arrange
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' })) as any;
             mockPreferences.getString = jest.fn(() => of(AppOrientation.LANDSCAPE));
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockPreferences.putString = jest.fn(() => of());
@@ -972,7 +976,7 @@ describe('AppComponent', () => {
                 status(SyncStatus.ERROR);
             });
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockTranslate.use = jest.fn()
             // act
@@ -1052,7 +1056,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.hideStatusBar = jest.fn();
             FCMPlugin.getToken = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
@@ -1060,7 +1064,7 @@ describe('AppComponent', () => {
             mockActivePageService.computePageId = jest.fn(() => 'sample-page');
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('landscape'));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockTranslate.use = jest.fn();
             // act
@@ -1110,7 +1114,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.hideStatusBar = jest.fn();
             FCMPlugin.onTokenRefresh = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
@@ -1310,14 +1314,14 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
-            mockRouter.events = of({
-                subscribe: jest.fn()
-            }) as any;
+            // mockRouter.events = of({
+            //     subscribe: jest.fn()
+            // }) as any;
             const subscribeWithPriorityData = jest.fn((_, fn) => fn());
             mockPlatform.backButton = {
                 subscribeWithPriority: subscribeWithPriorityData
             } as any;
-            mockRouter.url = RouterLinks.LIBRARY_TAB;
+            // mockRouter.url =RouterLinks.LIBRARY_TAB;
             const mockUpdateData = {
                 deploymentKey: 'some_key',
                 appVersion: 'some_app_name'
@@ -1360,14 +1364,14 @@ describe('AppComponent', () => {
             codePush.getCurrentPackage = jest.fn((callback) => {
                 callback(mockUpdateData);
             });
-            mockRouter.events = of({
-                subscribe: jest.fn()
-            }) as any;
+            // mockRouter.events = of({
+            //     subscribe: jest.fn()
+            // }) as any;
             const subscribeWithPriorityData = jest.fn((_, fn) => fn());
             mockPlatform.backButton = {
                 subscribeWithPriority: subscribeWithPriorityData
             } as any;
-            mockRouter.url = RouterLinks.LIBRARY_TAB;
+            // mockRouter.url =RouterLinks.LIBRARY_TAB;
             // TODO:
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
             appComponent.appVersion = 'some_app_name';
@@ -1401,17 +1405,17 @@ describe('AppComponent', () => {
                     deploymentKey: 'some_key',
                     appVersion: 'some_app_name'
                 };
-                codePush.getCurrentPackage = jest.fn((callback) => {
+                global['codePush'].getCurrentPackage = jest.fn((callback) => {
                     callback(mockUpdateData);
                 });
-                mockRouter.events = of({
-                    subscribe: jest.fn()
-                }) as any;
+                // mockRouter.events = of({
+                //     subscribe: jest.fn()
+                // }) as any;
                 const subscribeWithPriorityData = jest.fn((_, fn) => fn());
                 mockPlatform.backButton = {
                     subscribeWithPriority: subscribeWithPriorityData
                 } as any;
-                mockRouter.url = 'sample-page';
+                // mockRouter.url ='sample-page';
                 appComponent.rootPageDisplayed = false;
                 // TODO:
                 mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_current_app_name'));
@@ -1546,7 +1550,7 @@ describe('AppComponent', () => {
             mockApiUtilService.initilizeML = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -1825,7 +1829,7 @@ describe('AppComponent', () => {
             jest.useFakeTimers();
             mockPreferences.getString = jest.fn(() => of('lanscape'));
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve({}));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'}
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any
             appComponent.ngOnInit();
             // assert
             jest.advanceTimersByTime(2100);
@@ -1996,7 +2000,7 @@ describe('AppComponent', () => {
             // act
             appComponent.menuItemAction(menuName);
             // assert
-            expect(cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+            expect(window['cordova'].plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
         });
         it('should handle orientation for landscape', () => {
             // arrange
@@ -2006,7 +2010,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of(AppOrientation.LANDSCAPE));
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockPreferences.putString = jest.fn(() => of());
-            mockEvents.publish = jest.fn(() => of())
+            mockEvents.publish = jest.fn(() => of()) as any;
             // act
             appComponent.menuItemAction(menuName);
             // assert
@@ -2020,7 +2024,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of(AppOrientation.PORTRAIT));
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockPreferences.putString = jest.fn(() => of());
-            mockEvents.publish = jest.fn(() => of())
+            mockEvents.publish = jest.fn(() => of()) as any;
             // act
             appComponent.menuItemAction(menuName);
             // assert
@@ -2191,7 +2195,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -2298,7 +2302,7 @@ describe('AppComponent', () => {
             const request = {
                 name: 'back'
             };
-            mockRouter.url = RouterLinks.USER_TYPE_SELECTION;
+            // mockRouter.url =RouterLinks.USER_TYPE_SELECTION;
             mockHeaderService.sidebarEvent = jest.fn();
             // act
             appComponent.handleHeaderEvents(request);
@@ -2311,7 +2315,7 @@ describe('AppComponent', () => {
             const request = {
                 name: 'back'
             };
-            mockRouter.url = RouterLinks.LIBRARY_TAB;
+            // mockRouter.url =RouterLinks.LIBRARY_TAB;
             mockActivePageService.computePageId = jest.fn(() => 'sample-page-id');
             mockCommonUtilService.showExitPopUp = jest.fn(() => Promise.resolve());
             // act
@@ -2326,7 +2330,7 @@ describe('AppComponent', () => {
             const request = {
                 name: 'back'
             };
-            mockRouter.url = 'sampl-url';
+            // mockRouter.url ='sampl-url';
             mockLocation.back = jest.fn();
             // act
             appComponent.handleHeaderEvents(request);
@@ -2339,7 +2343,7 @@ describe('AppComponent', () => {
             const request = {
                 name: 'go'
             };
-            mockRouter.url = 'sampl-url';
+            // mockRouter.url ='sampl-url';
             mockHeaderService.sidebarEvent = jest.fn();
             // act
             appComponent.handleHeaderEvents(request);
@@ -2397,7 +2401,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -2438,7 +2442,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_SUCCESS' }));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_SUCCESS' })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2516,7 +2520,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_FAIL' }));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_FAIL' })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2591,7 +2595,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTH_TOKEN_REFRESH_ERROR' }));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTH_TOKEN_REFRESH_ERROR' })) as any;
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2723,7 +2727,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockDebuggingService.deviceId = 'someId';
             mockDebuggingService.enableDebugging = jest.fn(() => of(true));
-            global.window.segmentation = {
+            global['window']['segmentation'] = {
                 init: jest.fn(),
                 SBTagService: {
                     pushTag: jest.fn(),
@@ -2771,9 +2775,9 @@ describe('AppComponent', () => {
                     state: 'karnataka',
                     district: 'bangalore'
                 }
-            }));
+            })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
             // act
             appComponent.ngOnInit();
             // assert
@@ -2868,11 +2872,11 @@ describe('AppComponent', () => {
                     state: 'karnataka',
                     district: 'bangalore'
                 }
-            }));
+            })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
             
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockHeaderService.hideStatusBar = jest.fn();
@@ -2970,10 +2974,10 @@ describe('AppComponent', () => {
                 ipLocation: {
                     state: 'karnataka'
                 }
-            }));
+            })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
@@ -3065,10 +3069,10 @@ describe('AppComponent', () => {
                 ipLocation: {
                     state: undefined
                 }
-            }));
+            })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
@@ -3159,10 +3163,10 @@ describe('AppComponent', () => {
             mockDeviceRegisterService.getDeviceProfile = jest.fn(() => of({
                 userDeclaredLocation: undefined,
                 ipLocation: undefined
-            }));
+            })) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'};
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
+            mockScreenOrientation.ORIENTATIONS = {PORTRAIT: 'PORTRAIT'} as any;
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();

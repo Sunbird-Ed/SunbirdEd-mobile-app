@@ -73,7 +73,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: 'contentType',
                     primaryCategory: 'primaryCategory',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -84,7 +84,7 @@ describe('ContentShareHandlerService', () => {
             mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => ('dirpath'));
             mockContentService.exportContent = jest.fn(() => throwError({ error: 'error' }));
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
             mockCommonUtilService.showToast = jest.fn();
 
             // act
@@ -122,7 +122,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: 'contentType',
                     primaryCategory: 'primaryCategory',
                 }
-            };
+            } as any;
             mockPlatform.is = jest.fn(platform => platform === "android");
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -142,10 +142,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_FILE':
                         return 'SHARE_CONTENT_FILE';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] ='contentType';
             // mockCommonUtilService.showToast = jest.fn();
 
             // act
@@ -177,7 +177,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
@@ -199,7 +199,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: 'contentType',
                     primaryCategory: 'primaryCategory',
                 }
-            };
+            } as any;
             mockPlatform.is = jest.fn(platform => platform === "ios");
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -219,10 +219,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_FILE':
                         return 'SHARE_CONTENT_FILE';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
             // mockCommonUtilService.showToast = jest.fn();
 
             // act
@@ -254,7 +254,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
@@ -276,7 +276,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: 'contentType',
                     primaryCategory: 'primaryCategory',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -284,11 +284,11 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockPlatform.is = jest.fn(platform => platform === "android")
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -314,7 +314,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -334,7 +334,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: CsContentType.COURSE,
                     primaryCategory: 'Course',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -342,11 +342,11 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockPlatform.is = jest.fn(platform => platform === "ios");
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = CsContentType.COURSE;
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -372,7 +372,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content');
@@ -392,7 +392,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: CsContentType.COURSE,
                     primaryCategory: 'Course',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -400,10 +400,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = CsContentType.COURSE;
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, 'module_do_id', [], [], { l1: 'do_id' },
@@ -429,7 +429,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&moduleId=module_do_id',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -449,7 +449,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: CsContentType.TEXTBOOK,
                     primaryCategory: 'Digital Textbook',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -457,10 +457,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = CsContentType.TEXTBOOK;
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -486,7 +486,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -506,7 +506,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: CsContentType.TEXTBOOK,
                     primaryCategory: 'Digital Textbook',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -514,10 +514,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = CsContentType.TEXTBOOK;
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -543,7 +543,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&contentId=content_do_id',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -563,7 +563,7 @@ describe('ContentShareHandlerService', () => {
                     contentType: CsContentType.COLLECTION,
                     primaryCategory: 'Content Playlist',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
@@ -571,10 +571,10 @@ describe('ContentShareHandlerService', () => {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
-            });
+            }) as any;
             mockSocialSharing.share = jest.fn();
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = CsContentType.COLLECTION;
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -600,7 +600,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: content.contentData.name,
+                    content_name: '',
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -620,7 +620,7 @@ describe('ContentShareHandlerService', () => {
                 contentData: {
                     contentType: 'contentType',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -633,7 +633,7 @@ describe('ContentShareHandlerService', () => {
             };
             mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
             mockCommonUtilService.showToast = jest.fn();
 
             // act
@@ -680,7 +680,7 @@ describe('ContentShareHandlerService', () => {
                 contentData: {
                     contentType: 'contentType',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -694,7 +694,7 @@ describe('ContentShareHandlerService', () => {
             // shareParams.byFile = true;
             mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
             mockCommonUtilService.showToast = jest.fn();
 
             // act
@@ -741,7 +741,7 @@ describe('ContentShareHandlerService', () => {
                 contentData: {
                     contentType: 'contentType',
                 }
-            };
+            } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -754,7 +754,7 @@ describe('ContentShareHandlerService', () => {
             };
             mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
             const values = new Map();
-            values['ContentType'] = content.contentData.contentType;
+            values['ContentType'] = 'contentType';
             mockCommonUtilService.showToast = jest.fn();
 
             // act

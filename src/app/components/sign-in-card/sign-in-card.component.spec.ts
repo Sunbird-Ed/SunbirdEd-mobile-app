@@ -1,21 +1,11 @@
 import {SignInCardComponent} from './sign-in-card.component';
-import {ProfileService, AuthService, SharedPreferences, Profile, ProfileType, ProfileSource, SignInError} from '@project-sunbird/sunbird-sdk';
-import {
-    CommonUtilService, AppGlobalService, TelemetryGeneratorService,
-    ContainerService, FormAndFrameworkUtilService
-} from '../../../services';
-import {NavController} from '@ionic/angular';
-import {Events} from '../../../util/events';
-import {NgZone} from '@angular/core';
+import {TelemetryGeneratorService} from '../../../services';
 import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
-import {of, throwError} from 'rxjs';
-import {SbProgressLoader} from '../../../services/sb-progress-loader.service';
 import {Router} from '@angular/router';
-import {SegmentationTagService} from '../../../services/segmentation-tag/segmentation-tag.service';
 import {RouterLinks} from '../../../app/app.constant';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = require.requireActual('@project-sunbird/sunbird-sdk');
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewLoginSessionProvider() {
@@ -24,7 +14,7 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
 });
 
 jest.mock('../../../app/module.service', () => {
-    const actual = require.requireActual('../../../app/module.service');
+    const actual = jest.requireActual('../../../app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {

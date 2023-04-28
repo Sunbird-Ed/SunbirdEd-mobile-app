@@ -17,7 +17,7 @@ describe('ManageUserProfilesPage', () => {
 
   let manageUserProfilesPage: ManageUserProfilesPage;
 
-  const mockProfileService: Partial<ProfileService> = {
+  let mockProfileService: Partial<ProfileService> = {
     getActiveSessionProfile: jest.fn(() => of({
       uid: 'sample_uid'
     })),
@@ -31,7 +31,7 @@ describe('ManageUserProfilesPage', () => {
         },
       ])),
     }
-  };
+  } as any;
   const mockSharedPreferences: Partial<SharedPreferences> = {};
   const mockAppHeaderService: Partial<AppHeaderService> = {};
   const mockRouter: Partial<Router> = {};
@@ -186,9 +186,10 @@ describe('ManageUserProfilesPage', () => {
       // arrange
       manageUserProfilesPage['selectedUser'] = { id: 'uid' };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      mockProfileService.managedProfileManager = {
+      mockProfileService = {
+        managedProfileManager: {
         switchSessionToManagedProfile: jest.fn(() => of())
-      };
+      }} as any;
       mockEvents.publish = jest.fn(() => []);
       mockTncUpdateHandlerService.checkForTncUpdate = jest.fn();
       mockRouter.navigate = jest.fn();

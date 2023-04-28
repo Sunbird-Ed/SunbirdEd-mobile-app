@@ -19,7 +19,7 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(paths, { prefix: '<rootDir>/src' }),
   rootDir: "./",
   setupFiles: [
-    "<rootDir>/src/__tests__/setup.ts"
+    "<rootDir>/src/__tests__/setup.js"
   ],
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   globals: {

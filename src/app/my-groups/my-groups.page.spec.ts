@@ -39,7 +39,7 @@ describe('MyGroupsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
     };
-    const mockPlatform: Platform<Platform> = {};
+    const mockPlatform: Partial<Platform> = {};
     const mockLocation: Partial<Location> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
     const mockProfileService: Partial<ProfileService> = {};

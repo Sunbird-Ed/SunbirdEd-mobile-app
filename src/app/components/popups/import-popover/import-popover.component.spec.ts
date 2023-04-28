@@ -21,7 +21,7 @@ describe('ImportPopoverComponent', () => {
     let importPopoverComponent: ImportPopoverComponent;
     const mockEventBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
-    };
+    } as any;
 
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
@@ -29,7 +29,7 @@ describe('ImportPopoverComponent', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         isOnBoardingCompleted: jest.fn(() => true)
-    };
+    } as any;
     const mockPopoverController: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
@@ -62,7 +62,7 @@ describe('ImportPopoverComponent', () => {
     };
     const mockNgZone: Partial<NgZone> = {
         run : jest.fn((fn) => fn())
-    };
+    } as any;
     beforeAll(() => {
         importPopoverComponent = new ImportPopoverComponent(
             mockEventBusService as EventsBusService,

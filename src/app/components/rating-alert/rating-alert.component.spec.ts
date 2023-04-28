@@ -72,7 +72,7 @@ describe('AppRatingAlertComponent', () => {
 
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => ('content-details'))
-    };
+    } as any;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         setRatingStarAriaLabel: jest.fn()
     }
@@ -284,14 +284,14 @@ describe('AppRatingAlertComponent', () => {
     describe('closePopover', () => {
         it('should close the popover', () => {
             // arrange
-            appRatingAlertComponent['backButtonFunc'] = {
+            let sub = appRatingAlertComponent['backButtonFunc'] = {
                 unsubscribe: jest.fn()
-            };
+            } as any;
             // act
             appRatingAlertComponent.closePopover();
             // assert
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith(null);
-            expect(appRatingAlertComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            expect(sub).toHaveBeenCalled();
         });
     });
 

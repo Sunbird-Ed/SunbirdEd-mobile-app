@@ -560,6 +560,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = {
                 contentData: {
                     size: '64kb'
@@ -580,7 +581,7 @@ describe('ContentDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.DOWNLOAD_INITIATE,
@@ -599,10 +600,11 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.downloadContent();
             setTimeout(() => {
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 done();
             }, 0);
         });
@@ -2062,6 +2064,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: 'sample-url'} };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
@@ -2075,7 +2078,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
                 expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
                 done();
@@ -2088,6 +2091,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: 'sample-url' } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
@@ -2101,7 +2105,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
                 expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
                 expect(presentFN).toHaveBeenCalled();
@@ -2116,12 +2120,13 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
             // act
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 done();
             }, 0);
         });
@@ -2425,12 +2430,12 @@ describe('ContentDetailsPage', () => {
 
 
     describe('promptToLogin', () => {
-        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', async (done) => {
+        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation()
             // act
-            await contentDetailsPage.promptToLogin();
+            contentDetailsPage.promptToLogin();
             // assert
             setTimeout(() => {
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
@@ -2938,7 +2943,8 @@ describe('ContentDetailsPage', () => {
         jest.spyOn(contentDetailsPage, 'subscribeEvents').mockImplementation(() => {
             return;
         });
-        jest.spyOn(mockContentService, 'getContentDetails').mockResolvedValue(of({ contentData: { size: '12KB', status: 'Retired' } }));
+        let content = { contentData: { size: '12KB', status: 'Retired' } } as any;
+        jest.spyOn(mockContentService, 'getContentDetails').mockReturnValue(of(content));
 
         const dismissFn = jest.fn(() => Promise.resolve());
         const presentFn = jest.fn(() => Promise.resolve());

@@ -33,7 +33,7 @@ describe('SbTutorialComponentPopup', () => {
     it('should get appLabel from navParams and setData in appName and set isPopover Present to true', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        mockNavParams.get = jest.fn(() => 'Sunbird');
+        mockNavParams.get = jest.fn(() => 'Sunbird') as any;
         // act
         sbTutorialPopupComponent.ngOnInit();
         // assert

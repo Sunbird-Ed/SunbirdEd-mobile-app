@@ -5,10 +5,10 @@ import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 describe('AddActivityToGroupComponent', () => {
     let addActivityToGroupComponent: AddActivityToGroupComponent;
-    const mockGroupHandlerService: GroupHandlerService = {};
+    const mockGroupHandlerService: GroupHandlerService = {} as any;
     const mockCommonUtilService: CommonUtilService = {
         showToast: jest.fn()
-    };
+    } as any;
 
     beforeAll(() => {
         addActivityToGroupComponent = new AddActivityToGroupComponent(
@@ -52,7 +52,7 @@ describe('AddActivityToGroupComponent', () => {
             it('should initialise the state with CsGroupAddableBloc', (done) => {
                 // arrange
                 jest.spyOn(CsGroupAddableBloc.instance, 'initialised', 'get').mockReturnValue(true);
-                jest.spyOn(CsGroupAddableBloc.instance, 'state$', 'get').mockReturnValue(of({ pageIds: ['page1'] }));
+                jest.spyOn(CsGroupAddableBloc.instance, 'state$', 'get').mockReturnValue(of({ pageIds: ['page1'] }) as any);
                 addActivityToGroupComponent.pageId = 'page1';
                 // act
                 addActivityToGroupComponent.ngOnInit();

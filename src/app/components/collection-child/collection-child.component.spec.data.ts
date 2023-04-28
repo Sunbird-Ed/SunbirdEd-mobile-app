@@ -16,7 +16,7 @@ export const mockChildContentData: Content = {
         contentType: 'resources'
     }],
 
-};
+} as any;
 
 export const mockCompletedContentStatusData: ContentStateResponse = {
    contentList: [{

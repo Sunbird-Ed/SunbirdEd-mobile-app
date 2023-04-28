@@ -70,7 +70,7 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from '@project-sunbird/common-form-elements';
 import { CertificateDownloadAsPdfService } from "@project-sunbird/sb-svg2pdf";
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentUtil } from '../../util/content-util';
@@ -166,7 +166,6 @@ export class ProfilePage implements OnInit {
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private zone: NgZone,
@@ -186,7 +185,6 @@ export class ProfilePage implements OnInit {
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
-    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,

@@ -1,5 +1,5 @@
 import {
-    NavParams, Events,
+    NavParams,
     PopoverController, NavController
 } from '@ionic/angular';
 import { NgZone } from '@angular/core';
@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
 import { CategoryKeyTranslator } from '../../../pipes/category-key-translator/category-key-translator-pipe';
 import { NavigationService } from '../../../services/navigation-handler.service';
+import { Events } from '../../../util/events';
 describe('enrollmentdetailcomponent', () => {
 
     let enrollmentDetails: EnrollmentDetailsComponent;
@@ -24,7 +25,7 @@ describe('enrollmentdetailcomponent', () => {
     const mockNavController: Partial<NavController> = {};
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => 'Dummy')
-    };
+    } as any;
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
     };
@@ -178,7 +179,7 @@ describe('enrollmentdetailcomponent', () => {
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
             jest.spyOn(loader, 'dismiss');
-            mockNgZone.run = jest.fn((callback) => callback());
+            mockNgZone.run = jest.fn((callback) => callback()) as any;
             // act
             enrollmentDetails.enrollIntoBatch(content);
             // assert
@@ -215,7 +216,7 @@ describe('enrollmentdetailcomponent', () => {
             mockTelemetryGeneratorService.isCollection = jest.fn(() => false);
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
-            mockNgZone.run = jest.fn((callback) => callback());
+            mockNgZone.run = jest.fn((callback) => callback()) as any;
             // act
             enrollmentDetails.enrollIntoBatch(batch);
             // assert
@@ -247,7 +248,7 @@ describe('enrollmentdetailcomponent', () => {
             };
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
-            mockNgZone.run = jest.fn((callback) => callback());
+            mockNgZone.run = jest.fn((callback) => callback()) as any;
             // act
             enrollmentDetails.enrollIntoBatch(content);
             // assert

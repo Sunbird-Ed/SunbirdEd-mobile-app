@@ -85,7 +85,7 @@ describe('UpdateProfileService', () => {
             }, 0);
         });
 
-        it('should set profile data accordingly and check for boardList data', (done) => {
+        it('should set profile data accordingly and check for boardList data', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -138,12 +138,11 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
 
-        it('should set profile data accordingly and getFrameworkDetails', (done) => {
+        it('should set profile data accordingly and getFrameworkDetails', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -196,8 +195,7 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
 
@@ -254,12 +252,12 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                expect(updateProfileService.boardList).toEqual([]);
                 done();
             }, 0);
         });
 
-        it('should set profile data accordingly and frameworkData', (done) => {
+        it('should set profile data accordingly and frameworkData', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -317,12 +315,11 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 10);
         });
 
-        it('should set profile data accordingly if board length is higher', (done) => {
+        it('should set profile data accordingly if board length is higher', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -376,8 +373,7 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
     });

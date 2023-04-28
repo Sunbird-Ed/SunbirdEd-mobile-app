@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { SignupEmailPasswordPage } from './signup-email-password.page';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonFormElementsModule } from 'common-form-elements';
+import { CommonFormElementsModule } from '@project-sunbird/common-form-elements';
 
 const routes: Routes = [
   {

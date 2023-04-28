@@ -18,25 +18,24 @@ import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-tran
 import { appLanguages, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { of } from 'rxjs';
 import { CorReleationDataType, OnboardingConfigurationService } from '../../services';
-import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
-
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 describe('LanguageSettingsPage', () => {
     let languageSettingsPage: LanguageSettingsPage;
 
-    global.window.segmentation = {
+    global['window'].segmentation = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
             removeAllTags: jest.fn(),
             restoreTags: jest.fn()
         }
-    };
+    } as any;
 
     const mockPreferences: Partial<SharedPreferences> = {
         putBoolean: jest.fn(() => of(undefined))
-    };
+    } as any as any;
 
     const mockTranslateService: Partial<TranslateService> = {};
 
@@ -178,7 +177,7 @@ describe('LanguageSettingsPage', () => {
 
     it('should change the button color to default if language is not present', () => {
         // arrange
-        languageSettingsPage.language = undefined;
+        languageSettingsPage.language = undefined as any;
         // act
         languageSettingsPage.onLanguageSelected();
         // assert
@@ -188,7 +187,7 @@ describe('LanguageSettingsPage', () => {
     it('should change the button color to default if language is present', (done) => {
         // arrange
         languageSettingsPage.language = 'en';
-        mockNgZone.run = jest.fn((fn) => fn());
+        mockNgZone.run = jest.fn((fn) => fn()) as any;
         mockTranslateService.use = jest.fn();
         // act
         languageSettingsPage.onLanguageSelected();
@@ -205,7 +204,7 @@ describe('LanguageSettingsPage', () => {
         'sharedPreferences to check if language available or not', (done) => {
             // arrange
             languageSettingsPage.languages = appLanguages;
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockPreferences.getString = jest.fn(() => of('en'));
             // act
             languageSettingsPage.init();
@@ -221,7 +220,7 @@ describe('LanguageSettingsPage', () => {
         'sharedPreferences to check if language is undefined', (done) => {
             // arrange
             languageSettingsPage.languages = appLanguages;
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockPreferences.getString = jest.fn(() => of(undefined));
             // act
             languageSettingsPage.init();
@@ -240,7 +239,7 @@ describe('LanguageSettingsPage', () => {
         languageSettingsPage.previousLanguage = 'hi';
         jest.spyOn(languageSettingsPage, 'generateClickInteractEvent').mockImplementation();
         jest.spyOn(languageSettingsPage, 'generateLanguageSuccessInteractEvent').mockImplementation();
-        languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
+        languageSettingsPage.languages = [{ code: 'en', label: 'English' }] as any;
         languageSettingsPage.language = 'en';
         languageSettingsPage.selectedLanguage = { code: 'en' };
         mockPreferences.putString = jest.fn(() => of(undefined));
@@ -274,7 +273,7 @@ describe('LanguageSettingsPage', () => {
         languageSettingsPage.previousLanguage = 'hi';
         jest.spyOn(languageSettingsPage, 'generateClickInteractEvent').mockImplementation();
         jest.spyOn(languageSettingsPage, 'generateLanguageSuccessInteractEvent').mockImplementation();
-        languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
+        languageSettingsPage.languages = [{ code: 'en', label: 'English' }] as any;
         languageSettingsPage.language = 'en';
         languageSettingsPage.selectedLanguage = { code: 'en' };
         mockPreferences.putString = jest.fn(() => of(undefined));
@@ -325,7 +324,7 @@ describe('LanguageSettingsPage', () => {
     it('should cover else part if this.language is false or undefined', (done) => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
-        languageSettingsPage.language = undefined;
+        languageSettingsPage.language = undefined as any;
         jest.spyOn(languageSettingsPage, 'generateClickInteractEvent').mockImplementation();
         jest.spyOn(languageSettingsPage, 'generateLanguageSuccessInteractEvent').mockImplementation();
         mockEvents.publish = jest.fn();
@@ -517,7 +516,7 @@ describe('LanguageSettingsPage', () => {
     it('should handle if conditions in ionViewWillLeave()', () => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
-        languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
+        languageSettingsPage.languages = [{ code: 'en', label: 'English' }] as any;
         languageSettingsPage.selectedLanguage = { code: undefined };
         languageSettingsPage.previousLanguage = 'hi';
         mockTranslateService.use = jest.fn();
@@ -530,7 +529,7 @@ describe('LanguageSettingsPage', () => {
     it('should handle if inside if previous language is undefined set to english', () => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
-        languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
+        languageSettingsPage.languages = [{ code: 'en', label: 'English' }] as any;
         languageSettingsPage.selectedLanguage = { code: undefined };
         languageSettingsPage.previousLanguage = undefined;
         mockTranslateService.use = jest.fn();
@@ -543,7 +542,7 @@ describe('LanguageSettingsPage', () => {
     it('should cover else part if selectedLanguage.code is already set', () => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
-        languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
+        languageSettingsPage.languages = [{ code: 'en', label: 'English' }] as any;
         languageSettingsPage.selectedLanguage = { code: 'en' };
         languageSettingsPage.previousLanguage = undefined;
         mockTranslateService.use = jest.fn();
@@ -561,7 +560,7 @@ describe('LanguageSettingsPage', () => {
         };
         languageSettingsPage.unregisterBackButton = {
             unsubscribe
-        };
+        } as any;
         mockTranslateService.use = jest.fn();
         // act
         languageSettingsPage.ionViewWillLeave();
@@ -575,7 +574,7 @@ describe('LanguageSettingsPage', () => {
         it('should hide the header if isFromSettings is false', (done) => {
             // arrange
             mockActivatedRoute.params = of({ isFromSettings: false });
-            mockPreferences.putString = jest.fn(() => of('JOYFUL'));
+            mockPreferences.putString = jest.fn(() => of('JOYFUL')) as any;
             mockAppHeaderService.showStatusBar = jest.fn();
 
             // act
@@ -681,7 +680,7 @@ describe('LanguageSettingsPage', () => {
         mockAppHeaderService.headerEventEmitted$ = {
             subscribe: data
         } as any;
-        mockRouter.url = '/' + RouterLinks.RESOURCES;
+        // mockRouter.url = '/' + RouterLinks.RESOURCES;
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(languageSettingsPage, 'handleHeaderEvents').mockImplementation();
         jest.spyOn(languageSettingsPage, 'handleBackButton').mockImplementation();

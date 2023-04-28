@@ -6,11 +6,12 @@ import {FileOpener} from '@awesome-cordova-plugins/file-opener/ngx';
 import {Platform, PopoverController, ToastController} from '@ionic/angular';
 import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';
-import {EMPTY, of} from 'rxjs';
+import {of} from 'rxjs';
 import { UnnatiDataService } from '../../manage-learn/core/services/unnati-data.service';
 import { Location } from '@angular/common';
 
 describe('CertificateViewPage', () => {
+    window.console = {error: jest.fn()} as any;
     const mockCertificateService: Partial<CertificateService> = {
         getCertificate: jest.fn(() => of('data:image/svg+xml,<svg height="100" width="100">\n' +
         '  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />\n' +

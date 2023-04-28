@@ -121,7 +121,7 @@ describe('ProjectListingComponent', () => {
       showBurgerMenu: true,
       pageTitle: 'string',
       actionButtons: ['true'],
-    }));
+    })) as any;
     mockHeaderService.updatePageConfig = jest.fn();
     mockPlatform.backButton = {
       subscribeWithPriority: jest.fn((_, cb) => {
@@ -641,7 +641,7 @@ describe('ProjectListingComponent', () => {
       showBurgerMenu: true,
       pageTitle: 'string',
       actionButtons: ['true'],
-    }));
+    })) as any;
     //act
     projectListingComponent.ionViewWillLeave();
     //assert

@@ -38,7 +38,7 @@ describe('ContentRatingAlertComponent', () => {
             primaryCategory: 'Learning Resource'
         },
         versionKey: '1234'
-    };
+    } as any;
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn((arg) => {
             let value;

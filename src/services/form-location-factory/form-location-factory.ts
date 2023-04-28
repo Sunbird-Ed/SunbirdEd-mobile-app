@@ -5,7 +5,7 @@ import { CommonUtilService } from '../common-util.service';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { Location } from '@project-sunbird/client-services/models/location';
 import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
-import { FieldConfig, FieldConfigOptionsBuilder } from 'common-form-elements';
+import { FieldConfig, FieldConfigOptionsBuilder } from '@project-sunbird/common-form-elements';
 import { concat, defer, iif, of } from 'rxjs';
 import { distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { LocationHandler } from '../location-handler';

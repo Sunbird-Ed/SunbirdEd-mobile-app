@@ -42,7 +42,7 @@ describe('ConsentPiiPopupComponent', () => {
                 id: 'sample-user-id'
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             templateOptions: {
                 placeHolder: JSON.stringify({ en: 'User name' }),
@@ -76,7 +76,7 @@ describe('ConsentPiiPopupComponent', () => {
                 id: 'sample-user-id'
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             templateOptions: {
                 placeHolder: JSON.stringify({ en: 'Mobile' }),
@@ -111,7 +111,7 @@ describe('ConsentPiiPopupComponent', () => {
                 userLocations: [{ type: 'state', name: 'sample-state' }]
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             code: 'state',
             templateOptions: {
@@ -147,7 +147,7 @@ describe('ConsentPiiPopupComponent', () => {
                 userLocations: [{ type: 'state', name: 'sample-state' }]
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             code: 'dist',
             templateOptions: {
@@ -183,7 +183,7 @@ describe('ConsentPiiPopupComponent', () => {
                 userLocations: []
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             code: 'state',
             templateOptions: {
@@ -219,7 +219,7 @@ describe('ConsentPiiPopupComponent', () => {
                 userLocations: []
             }
         };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile) as any;
         mockFormAndFrameworkUtilService.getConsentFormConfig = jest.fn(() => Promise.resolve([{
             code: 'class',
             templateOptions: {

@@ -273,7 +273,7 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        }));
+        })) as any;
         // act
         sbAppSharePopupComponent.shareFile();
         // assert
@@ -299,7 +299,7 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        }));
+        })) as any;
         // act
         sbAppSharePopupComponent.shareFile();
         // assert
@@ -348,7 +348,7 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        }));
+        })) as any;
         // act
         sbAppSharePopupComponent.saveFile();
         // assert
@@ -423,11 +423,11 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'NOT_NOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -461,11 +461,11 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -498,11 +498,11 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW1'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW1'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -524,11 +524,11 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v =>'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -555,11 +555,11 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        });
+        }) as any;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act

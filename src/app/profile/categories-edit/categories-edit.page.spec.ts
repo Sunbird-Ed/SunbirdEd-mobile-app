@@ -19,13 +19,11 @@ import {
 } from '../../../services';
 import { Location } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
-import { ProfileHandler } from '../../services/profile-handler';
+import { ProfileHandler } from '../../../services/profile-handler';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
-import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
-import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { CachedItemRequestSourceFrom, Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app.constant';
+import { PreferenceKey, ProfileConstants } from '../../app.constant';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
 
@@ -35,15 +33,13 @@ describe('CategoryEditPage', () => {
         generateSaveClickedTelemetry: jest.fn(),
         closeSigninOnboardingLoader: jest.fn(),
         getCurrentUser: jest.fn(() => ({ board: ['AP'] }))
-    };
+    } as any;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(() => ({
             toLocaleUpperCase: jest.fn()
         })) as any,
         showToast: jest.fn()
     };
-    const mockContainer: Partial<ContainerService> = {};
-    const mockEvents: Partial<Events> = {};
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
         getFrameworkCategoryTerms: jest.fn()
@@ -90,8 +86,6 @@ describe('CategoryEditPage', () => {
     } as any;
 
     const mockProgressLoader: Partial<SbProgressLoader> = {};
-    const mockTncUpdateHandler: Partial<TncUpdateHandlerService> = {};
-    const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockActivePageService: Partial<ActivePageService> = {};
     const mockFb: Partial<FormBuilder> = {
@@ -105,7 +99,7 @@ describe('CategoryEditPage', () => {
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
 
-    global.window.segmentation = {
+    global['window'].segmentation = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -232,14 +226,14 @@ describe('CategoryEditPage', () => {
         })
     })
     describe('ngOnInit', () => {
-        it('should populate the supported attributes, return if value is not array', async(done) => {
+        it('should populate the supported attributes, return if value is not array', (done) => {
             // arrange
             mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -252,7 +246,7 @@ describe('CategoryEditPage', () => {
                     }
                 ))
             } as any;
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'})) as any;
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
@@ -301,13 +295,13 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, return if value has no length', async(done) => {
+        it('should populate the supported attributes, return if value has no length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -319,7 +313,7 @@ describe('CategoryEditPage', () => {
                     }
                 ))
             } as any;
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'})) as any;
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
@@ -370,13 +364,13 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, for board length', async(done) => {
+        it('should populate the supported attributes, for board length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -390,8 +384,8 @@ describe('CategoryEditPage', () => {
                 ))
             } as any;
             categoryEditPage.syllabusList = [{name: 'cbse', code:'board'}];
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' }))
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' })) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'})) as any;
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
@@ -442,13 +436,13 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, if has value', async(done) => {
+        it('should populate the supported attributes, if has value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     board: ['sample-board']
@@ -462,8 +456,8 @@ describe('CategoryEditPage', () => {
                 ))
             } as any;
             categoryEditPage.syllabusList = [{name: 'cbse', code:'board'}];
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' }))
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' })) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'})) as any;
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
@@ -520,7 +514,7 @@ describe('CategoryEditPage', () => {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     medium: ['sample-medium']
@@ -589,7 +583,7 @@ describe('CategoryEditPage', () => {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     medium: ['sample-medium']
@@ -652,13 +646,13 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel', async(done) => {
+        it('should populate the supported attributes gradeLevel', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     gradeLevel: ['sample-grade']
@@ -718,13 +712,13 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel, has some value', async(done) => {
+        it('should populate the supported attributes gradeLevel, has some value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}]
                 }
-            };
+            } as any;
             mockTranslate.currentLang = 'en'
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
@@ -738,7 +732,7 @@ describe('CategoryEditPage', () => {
                     }
                 ))
             } as any;
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'})) as any;
 
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
@@ -794,7 +788,7 @@ describe('CategoryEditPage', () => {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}, {type: 'parent'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     gradleLevel: ['sample-grade']
@@ -858,7 +852,7 @@ describe('CategoryEditPage', () => {
                 serverProfile: {
                     profileUserTypes: [{type: 'teacher'}, {type: 'parent'}]
                 }
-            };
+            } as any;
             categoryEditPage.profileEditForm = {
                 valueChanges: of({
                     gradleLevel: ['sample-grade']
@@ -964,7 +958,7 @@ describe('CategoryEditPage', () => {
             }));
             categoryEditPage.profile = {
                 syllabus: ['']
-            }
+            } as any
             categoryEditPage.guestUserProfile = {
                 syllabus: ['']
             }
@@ -976,7 +970,7 @@ describe('CategoryEditPage', () => {
                         patchValue: jest.fn()
                     }
                 ))
-            }
+            } as any
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{name: 'sunbird', identifier: 'do-123' }]));
             // act
             categoryEditPage.getSyllabusDetails();
@@ -997,12 +991,12 @@ describe('CategoryEditPage', () => {
             mockFrameworkService.getChannelDetails = jest.fn(() => of({
                 identifier: 'sample-id',
                 code: 'sample-code'
-            }));
+            })) as any;
             mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
                 name: 'sample-name',
                 identifier: 'sample-id',
                 categories: [{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]
-            }));
+            })) as any;
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
                 name: 'sample-name',
                 identifier: 'sample-id'
@@ -1012,6 +1006,9 @@ describe('CategoryEditPage', () => {
             };
             mockCommonUtilService.translateMessage = jest.fn(() => 'Turn on WiFi or mobile data and try again');
             mockCommonUtilService.showToast = jest.fn();
+            let network = mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
             // act
             categoryEditPage.getLoggedInFrameworkCategory();
             // assert
@@ -1019,7 +1016,7 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
                 done();
@@ -1031,12 +1028,12 @@ describe('CategoryEditPage', () => {
             mockFrameworkService.getChannelDetails = jest.fn(() => of({
                 identifier: 'sample-id',
                 code: 'sample-code'
-            }));
+            })) as any;
             mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
                 name: 'sample-name',
                 identifier: 'sample-id',
                 categories: [{code: 'medium', identifier: 'sample-id1'}]
-            }));
+            })) as any;
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
                 name: 'sample-name',
                 identifier: 'sample-id'
@@ -1044,6 +1041,7 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true
             // act
             categoryEditPage.getLoggedInFrameworkCategory();
             // assert
@@ -1051,7 +1049,7 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 done();
             }, 0);
         });
@@ -1071,7 +1069,7 @@ describe('CategoryEditPage', () => {
                 from: 'server',
                 language: 'en',
                 requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-            };
+            } as any;
             mockCommonUtilService.showToast = jest.fn();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
             // act
@@ -1223,7 +1221,7 @@ describe('CategoryEditPage', () => {
             // arrange
             categoryEditPage.profile = {
                 board: ['cbsc', 'ncrt']
-            };
+            } as any;
             // act
             categoryEditPage.initializeForm();
             // assert
@@ -1535,7 +1533,7 @@ describe('CategoryEditPage', () => {
                     'externalIds'
                 ],
                 from: 'server'
-                }));       
+                })) as any;       
 
             //act
             categoryEditPage.refreshSegmentTags();
@@ -1565,7 +1563,7 @@ describe('CategoryEditPage', () => {
                     'externalIds'
                 ],
                 from: 'server'
-                }));       
+                })) as any;       
             //act
             categoryEditPage.refreshSegmentTags();
             //assert

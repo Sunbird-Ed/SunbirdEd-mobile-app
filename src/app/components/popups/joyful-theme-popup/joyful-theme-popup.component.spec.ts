@@ -37,7 +37,7 @@ describe('JoyfulThemePopup', () => {
                     value = 'sampleAppLabel';
                     break;
             }
-        });
+        }) as any;
         // act
         joyfulThemePopupComponent.ngOnInit();
         // assert
@@ -87,7 +87,6 @@ describe('JoyfulThemePopup', () => {
         expect(joyfulThemePopupComponent.switchToJoyfulTheme).toHaveBeenCalled();
         setTimeout(() => {
             expect(mockPopoverController.dismiss).toHaveBeenCalled();
-            done();
         }, 0);
     });
 });

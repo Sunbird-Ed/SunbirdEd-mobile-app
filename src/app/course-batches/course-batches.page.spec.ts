@@ -22,7 +22,7 @@ import { CategoryKeyTranslator } from '../../pipes/category-key-translator/categ
 
 describe('CourseBatchesPage', () => {
     let courseBatchesPage: CourseBatchesPage;
-    const mockSharedPreferences: SharedPreferences = {};
+    const mockSharedPreferences: SharedPreferences = {} as any;
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockZone: Partial<NgZone> = {};
@@ -95,7 +95,7 @@ describe('CourseBatchesPage', () => {
             showBurgerMenu: true,
             pageTitle: 'string',
             actionButtons: ['true'],
-        }));
+        })) as any;
         mockHeaderService.updatePageConfig = jest.fn();
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, cb) => {
@@ -163,7 +163,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -183,13 +183,13 @@ describe('CourseBatchesPage', () => {
                 dismiss: dismissFn,
             }));
             mockLocalCourseService.enrollIntoBatch = jest.fn(() => of({}));
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any;
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'COURSE_ENROLLED':
                         return 'COURSE_ENROLLED';
                 }
-            });
+            }) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockEvents.publish = jest.fn(() => []);
             mockLocalCourseService.isEnrollable = jest.fn(() => true);
@@ -231,7 +231,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -299,7 +299,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -322,7 +322,7 @@ describe('CourseBatchesPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: '' } }))
@@ -389,7 +389,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -412,7 +412,7 @@ describe('CourseBatchesPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: ''} } }))
@@ -478,7 +478,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -501,7 +501,7 @@ describe('CourseBatchesPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true, btn: {isInternetNeededMessage: 'network'} } }))
@@ -570,7 +570,7 @@ describe('CourseBatchesPage', () => {
                 id: 'some_batch_id',
                 courseId: 'some_course_id',
                 status: 0
-            };
+            } as any;
             const enrollCourseRequest: EnrollCourseRequest = {
                 batchId: batch.id,
                 courseId: batch.courseId,
@@ -593,7 +593,7 @@ describe('CourseBatchesPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({}))

@@ -28,7 +28,7 @@ describe('LicenseCardComponentComponent', () => {
             identifier: 'do_123',
             contentType: 'course',
             pkgVersion: 1
-        };
+        } as any;
 
         // act
         licenseCardComponent.ngOnInit();

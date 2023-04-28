@@ -44,16 +44,13 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appVersion: AppVersion,
-    private headerService: AppHeaderService,
     private router: Router,
-    private events: Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private contentAggregatorHandler: ContentAggregatorHandler,
     private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService,
     private platform: Platform,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) { }

@@ -15,10 +15,10 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
-import { AppGlobalService } from 'services/app-global-service.service';
-import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
-import { CommonUtilService } from 'services/common-util.service';
-import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 
 @Component({

@@ -8,7 +8,7 @@ import { SignupBasicInfoPage } from './signup-basic-info.page';
 import { RouterModule, Routes } from '@angular/router';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonFormElementsModule } from 'common-form-elements';
+import { CommonFormElementsModule } from '@project-sunbird/common-form-elements';
 
 const routes: Routes = [
   {

@@ -30,7 +30,7 @@ describe('SegmentationTagService ', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getSegmentationCommands: jest.fn(() => Promise.resolve(cmdList)),
         getFormFields: jest.fn(() => Promise.resolve())
-    };
+    } as any;
     const mockSharedPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('key_value'))
     };
@@ -41,7 +41,7 @@ describe('SegmentationTagService ', () => {
     const mockEvent: Partial<Events> = {};
     const mockDebuggingService: Partial<DebuggingService> = {};
 
-    global.window.segmentation = {
+    global['window'].segmentation = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -51,7 +51,7 @@ describe('SegmentationTagService ', () => {
         SBActionCriteriaService: {
             evaluateCriteria: jest.fn(() => validCmdList)
         }
-    };
+    } as any;
 
     beforeAll(() => {
         segmentationTagService = new SegmentationTagService(
@@ -250,7 +250,7 @@ describe('SegmentationTagService ', () => {
                         id: 14
                     }]
                 }]
-            }];
+            }] as any;
             // act
             segmentationTagService.handleLocalNotificationTap();
             // assert

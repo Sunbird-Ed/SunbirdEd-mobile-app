@@ -12,6 +12,7 @@ import {
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
+    AppHeaderService,
     CommonUtilService,
     Environment,
     ImpressionType,
@@ -42,6 +43,7 @@ describe('DataSyncComponent', () => {
     const mockPlatform: Partial<Platform> = {
         is: jest.fn()
     };
+    const mockAppHeaderService: Partial<AppHeaderService> = {};
 
     beforeAll(() => {
         dataSyncComponent = new DataSyncComponent(
@@ -54,6 +56,7 @@ describe('DataSyncComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
             mockPlatform as Platform,
+            mockAppHeaderService as AppHeaderService
         );
     });
 
@@ -157,7 +160,7 @@ describe('DataSyncComponent', () => {
         dataSyncComponent.dataSyncType = TelemetryAutoSyncModes.ALWAYS_ON;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         const data = jest.fn(() => of());
-        mockTelemetryService.autoSync = {setSyncMode: data};
+        mockTelemetryService.autoSync = {setSyncMode: data} as any;
         const value = new Map();
         value['dataSyncType'] = dataSyncComponent.dataSyncType;
         // act
@@ -182,7 +185,7 @@ describe('DataSyncComponent', () => {
         dataSyncComponent.dataSyncType = undefined;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         const data = jest.fn(() => of());
-        mockTelemetryService.autoSync = {setSyncMode: data};
+        mockTelemetryService.autoSync = {setSyncMode: data} as any;
         // act
         dataSyncComponent.onSelected();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
@@ -192,7 +195,7 @@ describe('DataSyncComponent', () => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         const data = jest.fn(() => of(undefined));
-        mockTelemetryService.autoSync = {getSyncMode: data};
+        mockTelemetryService.autoSync = {getSyncMode: data} as any;
         mockZone.run = jest.fn();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -237,14 +240,14 @@ describe('DataSyncComponent', () => {
                 syncedFileSize: 3000
 
             }));
-            jest.spyOn(global.sbsync, 'onSyncSucces').mockImplementation((cb) => cb({telemetry_error: 'error'}));
+            jest.spyOn(global['sbsync'], 'onSyncSucces').mockImplementation((cb: any) => cb({telemetry_error: 'error'}));
             mockCommonUtilService.showToast = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             dataSyncComponent.onSyncClick();
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(global.sbsync.onSyncSucces).toHaveBeenCalled();
+                expect(global['sbsync'].onSyncSucces).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DATA_SYNC_FAILURE');
                 done();
@@ -265,14 +268,14 @@ describe('DataSyncComponent', () => {
                 syncedFileSize: 3000
 
             }));
-            jest.spyOn(global.sbsync, 'onSyncSucces').mockImplementation((cb) => cb({syncedEventCount: 3}));
+            jest.spyOn(global['sbsync'], 'onSyncSucces').mockImplementation((cb: any) => cb({syncedEventCount: 3}));
             mockCommonUtilService.showToast = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             dataSyncComponent.onSyncClick();
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(global.sbsync.onSyncSucces).toHaveBeenCalled();
+                expect(global['sbsync'].onSyncSucces).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.TOUCH,
@@ -307,14 +310,14 @@ describe('DataSyncComponent', () => {
                 syncedFileSize: 3000
 
             }));
-            jest.spyOn(global.sbsync, 'onSyncSucces').mockImplementation((cb) => cb({syncedEventCount: undefined}));
+            jest.spyOn(global['sbsync'], 'onSyncSucces').mockImplementation((cb: any) => cb({syncedEventCount: undefined}));
             mockCommonUtilService.showToast = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             dataSyncComponent.onSyncClick();
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(global.sbsync.onSyncSucces).toHaveBeenCalled();
+                expect(global['sbsync'].onSyncSucces).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DATA_SYNC_NOTHING_TO_SYNC');
                 done();
@@ -336,13 +339,13 @@ describe('DataSyncComponent', () => {
 
             }));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            jest.spyOn(global.sbsync, 'onSyncSucces').mockImplementation((_, error) => error('error'));
+            jest.spyOn(global['sbsync'], 'onSyncSucces').mockImplementation((_, error: any) => error('error'));
             mockCommonUtilService.showToast = jest.fn();
 
             dataSyncComponent.onSyncClick();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(global.sbsync.onSyncSucces).toHaveBeenCalled();
+                expect(global['sbsync'].onSyncSucces).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DATA_SYNC_FAILURE');
                 done();

@@ -21,7 +21,6 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { Platform } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
-import { FieldConfig } from 'common-form-elements';
 import { concat, defer, of, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
 import {
@@ -35,6 +34,7 @@ import { FormConstants } from '../form.constants';
 import {ProfileType} from '@project-sunbird/sunbird-sdk';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
+import { FieldConfig } from '@project-sunbird/common-form-elements';
 
 @Component({
   selector: 'app-district-mapping',

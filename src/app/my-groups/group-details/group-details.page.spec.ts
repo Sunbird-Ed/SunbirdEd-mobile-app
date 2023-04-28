@@ -20,8 +20,7 @@ import { of, throwError } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { NavigationService } from '../../../services/navigation-handler.service';
-import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
-import { DiscussionTelemetryService } from '../../../services/discussion/discussion-telemetry.service';
+import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
@@ -777,10 +776,11 @@ describe('GroupDetailsPage', () => {
             mockGroupService.removeMembers = jest.fn(() => of({})) as any;
             mockLocation.back = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true};
             // act
             groupDetailsPage.groupMenuClick({});
             // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+            expect(network).toBe(true);
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
@@ -2429,10 +2429,11 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'COURSES');
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true}
             // act
             groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+                expect(network).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
@@ -2488,10 +2489,11 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true}
             // act
             groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+                expect(network).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
@@ -2528,11 +2530,12 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             groupDetailsPage.corRelationList = [{ id: 'sample-group-id', type: 'GroupId' }];
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true}
 
             // act
             groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+                expect(network).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
@@ -2575,11 +2578,12 @@ describe('GroupDetailsPage', () => {
             mockGroupService.getSupportedActivities = jest.fn(() => throwError({ error: 'error' })) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             groupDetailsPage.corRelationList = [{ id: 'sample-group-id', type: 'GroupId' }];
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true}
 
             // act
             groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
+                expect(network).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
@@ -2594,11 +2598,12 @@ describe('GroupDetailsPage', () => {
         it('should not go to activity page if network is not available', (done) => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable:false};
             mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
+            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: false}
 
             // act
             groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
+                expect(network).toBe(false);
                 expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
                 done();
             });

@@ -22,11 +22,11 @@ import { error } from "console";
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
 
-    window.cordova.plugins = {
+    window['cordova'].plugins = {
         InAppUpdateManager: {
             isUpdateAvailable: jest.fn((fn) => fn(Promise.resolve('22')))
         }
-    };
+    } as any;
 
     const param = {selectedLanguage: 'en'};
     const mockSharedPreference: Partial<SharedPreferences> = {
@@ -37,7 +37,7 @@ describe('ApplicationHeaderComponent', () => {
     };
     const mockPushNotificationService: Partial<PushNotificationService> = {
         notifications: jest.fn(() => of())
-    };
+    } as any;
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of()),
@@ -45,7 +45,7 @@ describe('ApplicationHeaderComponent', () => {
             getManagedServerProfiles: jest.fn(()=> Promise.resolve({})),
             switchSessionToManagedProfile: jest.fn(() => of())
         }
-    };
+    } as any;
     const mockMenuController: Partial<MenuController> = {
         toggle: jest.fn(() => Promise.resolve(true)),
         isOpen: jest.fn(() => Promise.resolve(true)),
@@ -246,11 +246,11 @@ describe('ApplicationHeaderComponent', () => {
                 }
             });
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('app_name'));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any as any;
             jest.spyOn(mockTranslate, 'onLangChange', 'get')
                 .mockImplementation(() => of({ lang: 'ur' }) as any);
             jest.spyOn(applicationHeaderComponent, 'listenDownloads').mockImplementation();
-            mockPushNotificationService.notifications$ = of([{isRead: true}]);
+            mockPushNotificationService.notifications$ = of([{isRead: true}]) as any;
             mockCommonUtilService.networkAvailability$ = of(true);
             mockSharedPreference.getString = jest.fn(() => of('en'));
             mockNotification.setupLocalNotification = jest.fn();
@@ -277,11 +277,11 @@ describe('ApplicationHeaderComponent', () => {
                     fn(jest.spyOn(applicationHeaderComponent, 'getUnreadNotifications').mockImplementation());
                 }
             });
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             jest.spyOn(mockTranslate, 'onLangChange', 'get')
                 .mockImplementation(() => of({ lang: 'en' }) as any);
             jest.spyOn(applicationHeaderComponent, 'listenDownloads').mockImplementation();
-            mockPushNotificationService.notifications$ = of([{isRead: true}]);
+            mockPushNotificationService.notifications$ = of([{isRead: true}]) as any;
             mockCommonUtilService.networkAvailability$ = of(true);
             mockSharedPreference.getString = jest.fn(() => of('en'));
             mockNotification.setupLocalNotification = jest.fn();
@@ -360,7 +360,7 @@ describe('ApplicationHeaderComponent', () => {
                 status: 8,
                 bytesDownloaded: 3242,
                 totalSizeInBytes: 234
-            }}))
+            }})) as any
             var combined = combineLatest(mockDownloadService.getActiveDownloadRequests = jest.fn(),
             mockEventsBusService.events = jest.fn(() => Promise.resolve({type: 'PROGRESS', payload: {
                 downloadId: 'sample_id',
@@ -369,7 +369,7 @@ describe('ApplicationHeaderComponent', () => {
                 status: 8,
                 bytesDownloaded: 3242,
                 totalSizeInBytes: 234
-            }})), () => of());
+            }})) as any, () => of());
             mockChangeDetectionRef.detectChanges = jest.fn();
             // act
             applicationHeaderComponent.listenDownloads();
@@ -557,7 +557,7 @@ describe('ApplicationHeaderComponent', () => {
                   subType: null,
                   type: "OTHER"
                 },
-              };
+              } as any;
             const ProfileData: Profile = {
                 uid: 'sample_uid',
                 handle: 'sample_handle',
@@ -582,7 +582,7 @@ describe('ApplicationHeaderComponent', () => {
                     },
                     ]
                 ))
-            };
+            } as any;
             // act
             applicationHeaderComponent.fetchManagedProfileDetails();
             // assert
@@ -602,7 +602,7 @@ describe('ApplicationHeaderComponent', () => {
         })
         it('should get session profile and return empty if no profile data', () => {
             // arrange
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
             applicationHeaderComponent.managedProfileList$ = EMPTY
             // act
             applicationHeaderComponent.fetchManagedProfileDetails();

@@ -4,7 +4,7 @@ import { ProfileConstants, RouterLinks } from '../../../app/app.constant';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { Platform, } from '@ionic/angular';
 import { IsProfileAlreadyInUseRequest, GenerateOtpRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
-import { FieldConfig, FieldConfigValidationType } from 'common-form-elements';
+import { FieldConfig, FieldConfigValidationType } from '@project-sunbird/common-form-elements';
 import { Location } from '@angular/common';
 @Component({
   selector: 'app-signup-email-password',

@@ -116,8 +116,8 @@ describe('ActivityDetailsPage', () => {
                     type: 'activity-type',
                     agg: {}
                 }
-            })) as any
-        };
+            }))
+        } as any;
     });
 
     it('should be create a instance of activityDetailsPage', () => {
@@ -192,8 +192,8 @@ describe('ActivityDetailsPage', () => {
                         type: 'activity-type',
                         agg: {}
                     }
-                })) as any
-            };
+                }))
+            } as any;
             activityDetailsPage.activity = {
                 type: 'Course'
             };
@@ -238,7 +238,7 @@ describe('ActivityDetailsPage', () => {
                     leafNodes: ['node1']
                 }
             };
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData)) as any;
             mockAppGlobalService.selectedActivityCourseId = 'id2';
             activityDetailsPage.group = { id: 'group-id' } as any;
             activityDetailsPage.loggedinUser = {
@@ -283,7 +283,7 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -323,7 +323,7 @@ describe('ActivityDetailsPage', () => {
                     leafNodes: ['node1']
                 }
             };
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData)) as any;
             mockAppGlobalService.selectedActivityCourseId = '';
             activityDetailsPage.group = { id: 'group-id' } as any;
             activityDetailsPage.loggedinUser = {
@@ -368,7 +368,7 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -420,7 +420,7 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -470,7 +470,7 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -537,7 +537,7 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -558,7 +558,7 @@ describe('ActivityDetailsPage', () => {
                     leafNodes: ['node1']
                 }
             };
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData)) as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -567,7 +567,7 @@ describe('ActivityDetailsPage', () => {
             jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of(undefined))
-            };
+            } as any;
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -625,7 +625,7 @@ describe('ActivityDetailsPage', () => {
         });
 
         it('should not unsubscribe all header service', () => {
-            activityDetailsPage.unregisterBackButton = undefined;
+            activityDetailsPage.unregisterBackButton;
             // act
             activityDetailsPage.ionViewWillLeave();
             // assert
@@ -740,11 +740,11 @@ describe('ActivityDetailsPage', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+                await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'NOT_NOW'));
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             // act
             activityDetailsPage.checkForPermissions()
             setTimeout(() => {
@@ -761,11 +761,11 @@ describe('ActivityDetailsPage', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}))
             // act
             activityDetailsPage.checkForPermissions()
@@ -780,11 +780,11 @@ describe('ActivityDetailsPage', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             mockPermissionService.requestPermission = jest.fn(() => of({isPermissionAlwaysDenied: true}))
             // act
             activityDetailsPage.checkForPermissions()

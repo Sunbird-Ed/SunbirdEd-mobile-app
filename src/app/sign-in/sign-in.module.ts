@@ -8,7 +8,7 @@ import { SignInPageRoutingModule } from './sign-in-routing.module';
 
 import { SignInPage } from './sign-in.page';
 import {TranslateModule} from '@ngx-translate/core';
-import { CommonFormElementsModule } from 'common-form-elements';
+import { CommonFormElementsModule } from '@project-sunbird/common-form-elements';
 
 @NgModule({
     imports: [

@@ -58,18 +58,15 @@ describe('DiscoverComponent', () => {
         discoverComponent = new DiscoverComponent(
             mockSharedPrefernces as SharedPreferences,
             mockAppVersion as AppVersion,
-            mockHeaderService as AppHeaderService,
             mockRouter as Router,
-            mockEvents as Events,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockContentAggregatorHandler as ContentAggregatorHandler,
             mockNavService as NavigationService,
             mockCommonUtilService as CommonUtilService,
             mockPopoverController as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService,
             mockPlatform as Platform,
-            mockOnBoardingConfigService
+            mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
 
@@ -105,8 +102,9 @@ describe('DiscoverComponent', () => {
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             PrimaryCaregoryMapping['primarycategory'] = { icon: 'icon path' }
             mockPlatform.is = jest.fn(platform => platform === 'android');
-            mockDiscoverPageData[1].code = 'other_boards';
-            mockDiscoverPageData[3].data[0].icon = undefined;
+            let mockDiscoverPageData = [{
+                code: 'other_boards'
+            },  {}, {data: [{icon: undefined}]}];
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
             const data = jest.fn((fn => fn({ name: 'notification' })));
             mockHeaderService.headerEventEmitted$ = {

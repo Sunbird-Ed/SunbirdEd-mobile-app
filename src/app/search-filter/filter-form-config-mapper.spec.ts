@@ -33,12 +33,12 @@ describe('FilterFormConfigMapper', () => {
                 se_mediums: [{ name: 'tamil', count: 47, apply: true }, { name: 'english', count: 122, apply: false }],
                 se_gradeLevels: [{ name: 'class 9', count: 33, apply: false }, { name: 'class 8', count: 34, apply: false }]
             };
-            filterFormConfigMapper['searchFilterFormConfig'] = undefined;
+            filterFormConfigMapper['searchFilterFormConfig'] = undefined as any;
             mockSearchFilterService.getFacetFormAPIConfig = jest.fn(() => Promise.resolve([
                 { code: 'se_mediums', index: 1, type: 'dropdown', name: 'en', multiple: true },
                 { code: 'se_gradeLevels', index: 2, type: 'dropdown', name: 'es', multiple: true }
             ]))
-            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en'))
+            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en')) as any
             //act
             filterFormConfigMapper.map(facetFilters);
             //assert
@@ -58,7 +58,7 @@ describe('FilterFormConfigMapper', () => {
                 { code: 'se_mediums', index: 1, type: 'dropdown', name: 'en' },
                 { code: 'se_gradeLevels', index: 2, type: 'dropdown', name: 'es' }
             ];
-            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en'))
+            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en')) as any
             //act
             filterFormConfigMapper.map(facetFilters, existingFilters);
             //assert
@@ -78,7 +78,7 @@ describe('FilterFormConfigMapper', () => {
                 { code: 'se_mediums', type: 'dropdown', name: 'en' },
                 { code: 'se_gradeLevels', type: 'dropdown', name: 'es' }
             ];
-            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en'))
+            mockTranslateJsonPipe.transform = jest.fn(() => Promise.resolve('en')) as any
             //act
             filterFormConfigMapper.map(facetFilters, existingFilters);
             //assert

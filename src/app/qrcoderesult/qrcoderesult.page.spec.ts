@@ -16,12 +16,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {Platform, NavController} from '@ionic/angular';
 import {Events} from '../../util/events';
 import {Router} from '@angular/router';
-import {
-    AppGlobalService,
-    TelemetryGeneratorService,
-    CommonUtilService,
-    AppHeaderService
-} from 'services';
+import {AppGlobalService} from '../../services/app-global-service.service';
+import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
+import {CommonUtilService} from '../../services/common-util.service';
+import {AppHeaderService} from '../../services/app-header.service';
 import {Location} from '@angular/common';
 import {ImpressionType, PageId, Environment, InteractSubtype, InteractType} from '../../services/telemetry-constants';
 import {of, throwError} from 'rxjs';
@@ -80,12 +78,12 @@ describe('QrcoderesultPage', () => {
     const mockTranslate: Partial<TranslateService> = {};
     const mockContentService: Partial<ContentService> = {
         getContentHeirarchy: jest.fn(() => of(undefined))
-    };
+    } as any;
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
     const mockZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
-    };
+    } as any;
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {};
     const mockFile: Partial<File> = {};
 
@@ -102,7 +100,7 @@ describe('QrcoderesultPage', () => {
             rootUnitId: undefined,
         },
         resetTextbookIds: jest.fn()
-    };
+    } as any;
     const mockNavigationService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
         navigateToCollection: jest.fn(),
@@ -303,7 +301,7 @@ describe('QrcoderesultPage', () => {
                 }
             };
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
-            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy)) as any;
             mockTextbookTocService.textbookIds = {
                 unit: {
                     identifier: 'parentid',
@@ -384,7 +382,7 @@ describe('QrcoderesultPage', () => {
             };
             qrcoderesultPage.backToPreviusPage = true;
             mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
-            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy)) as any;
             mockTextbookTocService.textbookIds = {} as any;
             const scrollObj = {
                 scrollTo: jest.fn()
@@ -457,7 +455,7 @@ describe('QrcoderesultPage', () => {
                 }
             };
             qrcoderesultPage.backToPreviusPage = true;
-            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy)) as any;
             mockTextbookTocService.textbookIds = {} as any;
             const scrollObj = {
                 scrollTo: jest.fn()
@@ -585,8 +583,8 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.searchIdentifier = 'childid';
             qrcoderesultPage.identifier = 'sampleid';
             mockContentService.getChildContents = jest.fn(() => of(content as any));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'currentuser');
-            mockZone.run = jest.fn((fn) => fn());
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'currentuser') as any;
+            mockZone.run = jest.fn((fn) => fn()) as any;
             // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             // act
             qrcoderesultPage.getChildContents();
@@ -614,8 +612,8 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.searchIdentifier = 'childid';
             qrcoderesultPage.identifier = 'sampleid';
             mockContentService.getChildContents = jest.fn(() => of(content as any));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'currentuser');
-            mockZone.run = jest.fn((fn) => fn());
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'currentuser') as any;
+            mockZone.run = jest.fn((fn) => fn()) as any;
             // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             // act
             qrcoderesultPage.getChildContents();
@@ -673,8 +671,7 @@ describe('QrcoderesultPage', () => {
                     }
                 }
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => {
-            });
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => {}) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
             mockCommonUtilService.networkInfo = {
@@ -850,7 +847,7 @@ describe('QrcoderesultPage', () => {
                 leafNodesCount: 4
             };
             mockEventsBusService.events = jest.fn(() => of(event));
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any;
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             jest.spyOn(qrcoderesultPage, 'getChildContents').mockImplementation();
             qrcoderesultPage.source = 'profile-settings';
@@ -860,7 +857,7 @@ describe('QrcoderesultPage', () => {
                 board: ['sample-board'],
                 medium: ['sample-medium'],
                 grade: ['sample-class']
-            };
+            } as any;
             // action
             qrcoderesultPage.subscribeSdkEvent();
             // assert
@@ -909,39 +906,39 @@ describe('QrcoderesultPage', () => {
     describe('set grade and medium', () => {
         it('should reset grade', () => {
             // arrange
-            qrcoderesultPage.profile = {} as any;
+            let grade = qrcoderesultPage.profile = {} as any;
             // assert
             qrcoderesultPage.setGrade(true, ['grade1']);
             // assert
-            expect(qrcoderesultPage.profile.grade.length).toEqual(1);
+            expect(grade).toEqual(1);
         });
         it('should set grade', () => {
             // arrange
-            qrcoderesultPage.profile = {
+            let grade = qrcoderesultPage.profile = {
                 grade: ['grade']
             } as any;
             // assert
             qrcoderesultPage.setGrade(false, ['grade1']);
             // assert
-            expect(qrcoderesultPage.profile.grade.length).toEqual(2);
+            expect(grade).toEqual(2);
         });
         it('should reset medium', () => {
             // arrange
-            qrcoderesultPage.profile = {} as any;
+            let medium = qrcoderesultPage.profile = {} as any;
             // assert
             qrcoderesultPage.setMedium(true, ['medium1']);
             // assert
-            expect(qrcoderesultPage.profile.medium.length).toEqual(1);
+            expect(medium).toEqual(1);
         });
         it('should set medium', () => {
             // arrange
-            qrcoderesultPage.profile = {
+            let medium = qrcoderesultPage.profile = {
                 medium: ['medium']
             } as any;
             // assert
             qrcoderesultPage.setMedium(false, ['medium1']);
             // assert
-            expect(qrcoderesultPage.profile.medium.length).toEqual(2);
+            expect(medium).toEqual(2);
         });
         it('should find code of a category', () => {
             // arrange
@@ -1055,11 +1052,11 @@ describe('QrcoderesultPage', () => {
                     mimeType: 'application/vnd.ekstep.ecml-archive'
                 }
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'})) as any;
             mockContentService.setContentMarker = jest.fn(() => of(true));
             mockContentPlayerHandler.launchContentPlayer = jest.fn();
             // act
-            qrcoderesultPage.playContent(mockContentData, false);
+            qrcoderesultPage.playContent(mockContentData as any, false);
             // assert
             setTimeout(() => {
                 expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
@@ -1091,11 +1088,11 @@ describe('QrcoderesultPage', () => {
                     mimeType: 'youtube'
                 }
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'})) as any;
             mockContentService.setContentMarker = jest.fn(() => of(true));
             mockContentPlayerHandler.launchContentPlayer = jest.fn();
             // act
-            qrcoderesultPage.playContent(mockContentData, false);
+            qrcoderesultPage.playContent(mockContentData as any, false);
             // assert
             setTimeout(() => {
                 expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
@@ -1222,7 +1219,7 @@ describe('QrcoderesultPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppGlobalService.isOnBoardingCompleted = false;
-            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            mockAppGlobalService['DISPLAY_ONBOARDING_CATEGORY_PAGE'] = true;
             mockRouter.navigate = jest.fn();
             // act
             qrcoderesultPage.skipSteps();

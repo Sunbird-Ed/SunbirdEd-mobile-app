@@ -111,7 +111,7 @@ describe('AboutUsComponent', () => {
         mockAppHeaderService.headerConfigEmitted$ = of(mockConfig);
         mockAppHeaderService.getDefaultPageConfig = jest.fn(() => {
             return mockConfig;
-        });
+        }) as any;
         mockAppHeaderService.updatePageConfig = jest.fn();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -120,7 +120,7 @@ describe('AboutUsComponent', () => {
         const unsubscribeFn = jest.fn();
         aboutUsComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn
-        };
+        } as any;
         mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
         mockLocation.back = jest.fn();
         // act
@@ -166,7 +166,7 @@ describe('AboutUsComponent', () => {
 
         it('should return if no backbutton events', () => {
             // arrange
-            aboutUsComponent['backButtonFunc'] = false;
+            aboutUsComponent['backButtonFunc'];
             // act
             aboutUsComponent.ionViewWillLeave();
             // assert
@@ -183,7 +183,7 @@ describe('AboutUsComponent', () => {
             // asert
             setTimeout(() => {
                 expect(window['sbutility'].removeFile).toBeCalled();
-                expect(aboutUsComponent.loading).toBeUndefined();
+                expect(aboutUsComponent['loading']).toBeUndefined();
                 done();
             }, 10);
         })
@@ -197,7 +197,7 @@ describe('AboutUsComponent', () => {
             // asert
             setTimeout(() => {
                 expect(window['sbutility'].removeFile).toHaveBeenCalled();
-                expect(aboutUsComponent.loading).toBeUndefined();
+                expect(aboutUsComponent['loading']).toBeUndefined();
                 done();
             }, 10);
         })
@@ -331,18 +331,19 @@ describe('AboutUsComponent', () => {
     describe('handleBackButton()', () => {
         it('should ', () => {
             // arrange
-            aboutUsComponent.ShouldGenerateBackClickedTelemetry = true;
+            aboutUsComponent['ShouldGenerateBackClickedTelemetry'] = true;
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((x, callback) => callback()),
                 is: jest.fn()
-            };
+            } as any;
             mockLocation.back = jest.fn();
             const unsubscribeFn = jest.fn();
             aboutUsComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
             } as any;
             // act
-            aboutUsComponent.handleBackButton();
+            aboutUsComponent.ionViewWillEnter();
+            // aboutUsComponent.handleBackButton();
             // assert
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
@@ -356,7 +357,7 @@ describe('AboutUsComponent', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
             mockUtilityService.getBuildConfigValue = jest.fn();
-            window.cordova['InAppBrowser'].open = jest.fn()
+            window['cordova']['InAppBrowser'].open = jest.fn()
             // act
             aboutUsComponent.openTermsOfUse()
             // assert

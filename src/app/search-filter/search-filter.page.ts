@@ -9,7 +9,7 @@ import { Environment, InteractSubtype, InteractType, PageId } from '../../servic
 import { CommonUtilService } from '../../services/common-util.service';
 import { SearchFilterService } from '../../services/search-filter/search-filter.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
+import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from '@project-sunbird/common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',
