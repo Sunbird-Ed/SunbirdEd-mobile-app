@@ -69,7 +69,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'user-type-selection';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[1].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -82,7 +82,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'user-type-selection';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[1].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{skip: true}]}}}
             mockPreferences.getString = jest.fn(() => of(undefined));
             const profile = (mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any);
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
@@ -99,7 +99,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'profile-settings';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[2].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{skip: true}]}}}
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
             mockSegmentationTagService.refreshSegmentTags = jest.fn();
             mockContainer.removeAllTabs = jest.fn();
@@ -118,7 +118,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'profile-settings';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[2].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{skip: true}]}}}
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({ profileType: 'profile type' } as any));
             mockSegmentationTagService.refreshSegmentTags = jest.fn();
             mockContainer.removeAllTabs = jest.fn();
@@ -137,7 +137,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'profile-settings';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[2].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{skip: true}]}}}
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({ profileType: 'profile type', syllabus: 'syllabus', board: 'board', grade: 'A', medium: 'English' } as any));
             mockSegmentationTagService.refreshSegmentTags = jest.fn();
             mockContainer.removeAllTabs = jest.fn();
@@ -156,7 +156,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'district-mapping';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[3].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{},{skip: true}]}}}
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockDeviceRegisterService.registerDevice = jest.fn(() => of({} as any));
             mockPreferences.putString = jest.fn(() => of(undefined));
@@ -175,7 +175,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'language-setting';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[0].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -188,7 +188,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'language-setting';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[0].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{skip: true}]}}}
             mockPreferences.getString = jest.fn(() => of(undefined));
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
@@ -202,7 +202,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'default value';
             let isUserLoggedIn = false;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[1].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -215,7 +215,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'user-type-selection';
             let isUserLoggedIn = true;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[1].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -228,7 +228,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'profile-settings';
             let isUserLoggedIn = true;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[2].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -241,7 +241,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'district-mapping';
             let isUserLoggedIn = true;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[3].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{},{},{},{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -254,7 +254,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'language-setting';
             let isUserLoggedIn = true;
-            const config = onboardingConfigurationService.onBoardingConfig.onboarding[0].skip = true;
+            const config = {onboardingConfigurationService: {onBoardingConfig: {onboarding: [{skip: true}]}}}
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
             //assert
@@ -267,6 +267,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const currentPage = 'a string';
             let isUserLoggedIn;
+            onboardingConfigurationService.onBoardingConfig.onboarding = []
             onboardingConfigurationService.onBoardingConfig.onboarding.push({ name: 'a string', skip: true, default: 'default value' as any })
             //act
             onboardingConfigurationService.skipOnboardingStep(currentPage, isUserLoggedIn);
@@ -295,6 +296,7 @@ describe('OnboardingConfigurationService', () => {
             //arrange
             const theme = 'RESOURCE_COURSE_TABS_CONFIG';
             const userType = 'administrator';
+            onboarding.tabs = [];
             //mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             //act
             onboardingConfigurationService.initializedTabs(theme, userType);

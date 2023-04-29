@@ -177,7 +177,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
@@ -254,7 +254,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
@@ -314,7 +314,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -372,7 +372,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content');
@@ -429,7 +429,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&moduleId=module_do_id',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -486,7 +486,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -543,7 +543,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&contentId=content_do_id',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
@@ -600,7 +600,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
-                    content_name: '',
+                    content_name: undefined,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');

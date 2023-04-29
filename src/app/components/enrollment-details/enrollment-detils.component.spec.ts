@@ -148,7 +148,7 @@ describe('enrollmentdetailcomponent', () => {
                     identifier: 'do_id'
                 }
             };
-            spyOn(enrollmentDetails, 'saveContentContext').and.stub();
+            jest.spyOn(enrollmentDetails, 'saveContentContext').mockImplementation();
             // act
             enrollmentDetails.resumeCourse(content);
             // assert
@@ -173,7 +173,7 @@ describe('enrollmentdetailcomponent', () => {
                 present: jest.fn(),
                 dismiss: jest.fn()
             };
-            spyOn(enrollmentDetails, 'navigateToDetailPage').and.stub();
+            jest.spyOn(enrollmentDetails, 'navigateToDetailPage').mockImplementation();
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');

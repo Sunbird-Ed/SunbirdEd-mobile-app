@@ -244,6 +244,7 @@ describe('ProfileSettingsPage', () => {
     it('should subscribe formControl to call ngOnDestroy()', () => {
         // arrange
         const formControlSubscriptions: Partial<Subscription> = { unsubscribe: jest.fn() };
+        profileSettingsPage['formControlSubscriptions'] = formControlSubscriptions as any;
         // act
         profileSettingsPage.ngOnDestroy();
         // assert

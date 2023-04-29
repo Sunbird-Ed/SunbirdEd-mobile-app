@@ -492,7 +492,7 @@ describe('LocalCourseService', () => {
     it('should open browser page when External url is set', () => {
       // arrange
       const data = { action: { type: 'extURL', additionalInfo:{ deepLink: 'someLink' } } };
-      spyOn(window, 'open').and.stub();
+      jest.spyOn(window, 'open').mockImplementation();
       // act
       notificationService.setNotificationParams(data);
       notificationService.handleNotification();

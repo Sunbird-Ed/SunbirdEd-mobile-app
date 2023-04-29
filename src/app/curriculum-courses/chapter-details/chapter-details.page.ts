@@ -885,7 +885,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+    const folderPath = this.platform.is('ios') ? window['cordova'].file.documentsDirectory : window['cordova'].file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,

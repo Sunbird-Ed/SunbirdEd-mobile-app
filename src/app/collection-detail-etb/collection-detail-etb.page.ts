@@ -673,7 +673,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams: ContentImport[] = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
+    const folderPath = this.platform.is('ios') ? window['cordova'].file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
    
     identifiers.forEach((value) => {
       requestParams.push({

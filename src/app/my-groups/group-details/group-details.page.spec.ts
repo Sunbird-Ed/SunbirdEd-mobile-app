@@ -21,6 +21,7 @@ import { RouterLinks } from '../../app.constant';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
+import GraphemeSplitter from "grapheme-splitter";
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
@@ -30,6 +31,7 @@ describe('GroupDetailsPage', () => {
             isNetworkAvailable: true
         },
     };
+    let splitter: GraphemeSplitter;
     const mockFilterPipe: Partial<FilterPipe> = {
         transform: jest.fn()
     };
@@ -84,6 +86,10 @@ describe('GroupDetailsPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         jest.resetAllMocks();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it('should be create a instance of groupDetailsPage', () => {
@@ -776,7 +782,7 @@ describe('GroupDetailsPage', () => {
             mockGroupService.removeMembers = jest.fn(() => of({})) as any;
             mockLocation.back = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
-            let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: true};
+            let network = mockCommonUtilService['networkInfo'].isNetworkAvailable = true;
             // act
             groupDetailsPage.groupMenuClick({});
             // assert
@@ -2405,7 +2411,8 @@ describe('GroupDetailsPage', () => {
     });
 
     describe('navigateToAddActivityPage', () => {
-        it('should return activity popup', (done) => {
+        it('should return activity popup', () => {
+            jest.useRealTimers();
             mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
@@ -2462,11 +2469,10 @@ describe('GroupDetailsPage', () => {
                             groupId: 'sample-group-id',
                             corRelation: groupDetailsPage.corRelationList
                         });
-                done();
             });
         });
 
-        it('should not return activity popup if type is not content', (done) => {
+        it('should not return activity popup if type is not content', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
@@ -2501,11 +2507,10 @@ describe('GroupDetailsPage', () => {
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
-                done();
             });
         });
 
-        it('should not return activity popup if type is not content and dismissData is undefined', (done) => {
+        it('should not return activity popup if type is not content and dismissData is undefined', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockGroupService.getSupportedActivities = jest.fn(() => of({
@@ -2569,11 +2574,10 @@ describe('GroupDetailsPage', () => {
                             },
                         ],
                     });
-                done();
             });
         });
 
-        it('should not go to activity page if throws error should go to catch part', (done) => {
+        it('should not go to activity page if throws error should go to catch part', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable:true};
             mockGroupService.getSupportedActivities = jest.fn(() => throwError({ error: 'error' })) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -2591,11 +2595,10 @@ describe('GroupDetailsPage', () => {
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
-                done();
             });
         });
 
-        it('should not go to activity page if network is not available', (done) => {
+        it('should not go to activity page if network is not available', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable:false};
             mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
             let network = mockCommonUtilService['networkInfo'] = {isNetworkAvailable: false}
@@ -2605,7 +2608,6 @@ describe('GroupDetailsPage', () => {
                 // assert
                 expect(network).toBe(false);
                 expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
-                done();
             });
         });
     });

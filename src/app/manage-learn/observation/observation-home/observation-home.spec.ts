@@ -108,7 +108,7 @@ describe('ObservationHomeComponent', () => {
         };
       });
       mockHeaderService.updatePageConfig = jest.fn(() => {});
-      spyOn(observationHomeComponent, 'getProfileInfo');
+     jest.spyOn(observationHomeComponent, 'getProfileInfo');
       observationHomeComponent.ionViewWillEnter();
       expect(observationHomeComponent.getProfileInfo).toHaveBeenCalled();
     });
@@ -116,8 +116,8 @@ describe('ObservationHomeComponent', () => {
 
   describe('getProileInfo', () => {
     it('should call getPrograms if network is available', (done) => {
-      spyOn(observationHomeComponent, 'getPrograms');
-      spyOn(observationHomeComponent, 'getLocalData');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getLocalData');
       observationHomeComponent.getProfileInfo();
       setTimeout(() => {
         expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
@@ -127,8 +127,8 @@ describe('ObservationHomeComponent', () => {
     });
     it('should call getLocalData if network is not available', (done) => {
       observationHomeComponent.networkFlag = false;
-      spyOn(observationHomeComponent, 'getPrograms');
-      spyOn(observationHomeComponent, 'getLocalData');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getLocalData');
       observationHomeComponent.getProfileInfo().then(() => {
         expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
         expect(observationHomeComponent.getLocalData).toHaveBeenCalled();
@@ -163,14 +163,14 @@ describe('ObservationHomeComponent', () => {
 
   describe('load more', () => {
     it('should load more if network available', () => {
-      spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
       observationHomeComponent.networkFlag = true;
       observationHomeComponent.loadMore();
       expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
     });
 
     it('should not load more if network not available, toast msg should come', () => {
-      spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
       observationHomeComponent.networkFlag = false;
       observationHomeComponent.loadMore();
       expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
@@ -180,14 +180,14 @@ describe('ObservationHomeComponent', () => {
 
   describe('on search', () => {
     it('should call getProgram if network available', () => {
-      spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
       observationHomeComponent.networkFlag = true;
       observationHomeComponent.onSearch('seacrh');
       expect(observationHomeComponent.getPrograms).toHaveBeenCalled();
     });
 
     it('should open toast msg if network not available', () => {
-      spyOn(observationHomeComponent, 'getPrograms');
+     jest.spyOn(observationHomeComponent, 'getPrograms');
       observationHomeComponent.networkFlag = false;
       observationHomeComponent.onSearch('text');
       expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
@@ -197,7 +197,7 @@ describe('ObservationHomeComponent', () => {
 
   describe('ionViewWillLeave', () => {
     it('should call close profile alert and unsubscribe network subscription', () => {
-      spyOn(observationHomeComponent['_networkSubscription'], 'unsubscribe');
+     jest.spyOn(observationHomeComponent['_networkSubscription'], 'unsubscribe');
       observationHomeComponent.ionViewWillLeave();
       expect(mockUtils.closeProfileAlert).toHaveBeenCalled();
       expect(observationHomeComponent['_networkSubscription'].unsubscribe).toHaveBeenCalled();

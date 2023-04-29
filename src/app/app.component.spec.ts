@@ -305,7 +305,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
@@ -485,13 +485,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.hideStatusBar = jest.fn();
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
@@ -654,13 +654,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -796,13 +796,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -936,13 +936,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
@@ -1050,7 +1050,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
@@ -1108,7 +1108,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
@@ -1169,13 +1169,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.showStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
@@ -1276,13 +1276,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.hideStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
@@ -1526,13 +1526,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockHeaderService.hideStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
@@ -1576,7 +1576,7 @@ describe('AppComponent', () => {
                         return fn('some_page_id');
                 }
             });
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const corRelationList: Array<CorrelationData> = [];
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -1619,7 +1619,7 @@ describe('AppComponent', () => {
                         return fn('');
                 }
             });
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const corRelationList: Array<CorrelationData> = [];
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -1663,7 +1663,7 @@ describe('AppComponent', () => {
                             return fn('library');
                     }
                 });
-                mockZone.run = jest.fn((fn) => fn());
+                mockZone.run = jest.fn((fn) => fn()) as any;
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
                 const mockCurrentProfile = {
                     profileType: 'some_type'
@@ -1717,7 +1717,7 @@ describe('AppComponent', () => {
                             return fn('courses');
                     }
                 });
-                mockZone.run = jest.fn((fn) => fn());
+                mockZone.run = jest.fn((fn) => fn()) as any;
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
                 const mockCurrentProfile = {
                     profileType: 'some_type',
@@ -2000,7 +2000,7 @@ describe('AppComponent', () => {
             // act
             appComponent.menuItemAction(menuName);
             // assert
-            expect(window['cordova'].plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+            expect(window['cordova']['plugins'].InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
         });
         it('should handle orientation for landscape', () => {
             // arrange
@@ -2181,13 +2181,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -2387,13 +2387,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -2713,13 +2713,13 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.getBoolean = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.COACH_MARK_SEEN:
                     return of(true);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -3270,7 +3270,7 @@ describe('AppComponent', () => {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         return of(ProfileType.ADMIN);
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();

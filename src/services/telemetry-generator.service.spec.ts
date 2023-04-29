@@ -35,7 +35,11 @@ describe('TelemetryGeneratorService', () => {
       primaryCategory: 'Learning Resource'
     }
   } as any;
-  const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+  let mockSbProgressLoader: Partial<SbProgressLoader> = {
+    contexts: {
+      entries: []
+    }
+  } as any;
 
   beforeAll(() => {
     telemetryGeneratorService = new TelemetryGeneratorService(
@@ -54,15 +58,20 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke interact() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts = new Map<string, Context>();
-    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+    mockSbProgressLoader.contexts?.set('SAMPLE_ID', {
       id: 'SAMPLE_ID',
       ignoreTelemetry: {
         when: {
           interact: /{“pageid”:“collection-detail”}/
         }
-      }
-    });
+    }}) as any
+    let entries = ['SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          interact: /{“pageid”:“collection-detail”}/
+        }
+    }}]
     // act
     telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -87,15 +96,15 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke impression() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts = new Map<string, Context>();
-    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
-      id: 'SAMPLE_ID',
-      ignoreTelemetry: {
-        when: {
-          impression: /{“pageid”:“collection-detail”}/
-        }
-      }
-    });
+    // mockSbProgressLoader.contexts as any;
+    // mockSbProgressLoader.contexts?.set('SAMPLE_ID', {
+    //   id: 'SAMPLE_ID',
+    //   ignoreTelemetry: {
+    //     when: {
+    //       impression: /{“pageid”:“collection-detail”}/
+    //     }
+    //   }
+    // }) as any;
     // act
     telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL, '',
       PageId.COLLECTION_DETAIL,

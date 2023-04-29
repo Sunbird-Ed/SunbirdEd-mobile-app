@@ -1,4 +1,4 @@
-import { CategoryListPage } from './category-list-page';
+import { CategoryListPage } from '../category-list/category-list-page';
 import { CommonUtilService } from '../../services/common-util.service';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -268,7 +268,7 @@ describe('CategoryListPage', () => {
             ] as any;
             const onSelectedFilter = [{ name: "accountancy", count: 124, apply: false }];
             const isInitialCall = false;
-            jest.fn(categoryListPage, 'fetchAndSortData').mockImplementation();
+            // jest.spyOn(categoryListPage, 'fetchAndSortData').mockImplementation();
             //act
             categoryListPage.ngOnInit();
             //assert
@@ -408,13 +408,13 @@ describe('CategoryListPage', () => {
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: null
             } as any;
-            categoryListPage['filterCriteria'] =  {
-                facets: ["se_mediums", "subject", "primaryCategory", "audience"],
-                primaryCategories: ["Course"],
-                limit: 100,
-                mode: "soft",
-                offset: 0
-            } as any
+            // categoryListPage['filterCriteria'] =  {
+            //     facets: ["se_mediums", "subject", "primaryCategory", "audience"],
+            //     primaryCategories: ["Course"],
+            //     limit: 100,
+            //     mode: "soft",
+            //     offset: 0
+            // } as any
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({
                 profileType: 'Student', subject: ['subject 1']
             } as any))

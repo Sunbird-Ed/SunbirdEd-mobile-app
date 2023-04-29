@@ -222,7 +222,7 @@ describe('AddMemberToGroupPage', () => {
         });
         it('should return errorMessage if userId is undefined', (done) => {
             addMemberToGroupPage['isCaptchaEnabled'] = true;
-            addMemberToGroupPage.username;
+            addMemberToGroupPage.username = undefined as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
                 return Promise.resolve({

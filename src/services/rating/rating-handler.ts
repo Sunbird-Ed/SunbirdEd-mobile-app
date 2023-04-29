@@ -168,7 +168,7 @@ export class RatingHandler {
     }
 
     readRatingFile(): Promise<boolean> {
-        return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
+        return this.fileCtrl.readAsText(window['cordova'].file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {
                 return true;
             })

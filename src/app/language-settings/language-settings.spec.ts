@@ -688,7 +688,7 @@ describe('LanguageSettingsPage', () => {
         languageSettingsPage.ionViewWillEnter();
         // assert
         setTimeout(() => {
-            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).not.toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith("language", "onboarding");
             done();
         }, 450);
     });

@@ -155,7 +155,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit() {
-    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    window['cordova']['plugins']['webViewChecker'].getCurrentWebViewPackageInfo()
       .then((packageInfo) => {
         this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
           let ver = webviewVersion as any;

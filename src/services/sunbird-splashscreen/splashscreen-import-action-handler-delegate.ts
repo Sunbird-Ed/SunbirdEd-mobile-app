@@ -6,7 +6,7 @@ import { PopoverController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { defer, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, map, mapTo, reduce, takeUntil, tap } from 'rxjs/operators';
-import { CommonUtilService } from 'services/common-util.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import {
   ArchiveObjectType, ArchiveService, ContentEvent,
   ContentEventType,

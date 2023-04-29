@@ -262,7 +262,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   checkAndroidWebViewVersion() {
     let that = this;
-    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    cordova.plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
           let ver = webviewVersion as number;
@@ -285,7 +285,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   openPlaystore() {
-    plugins['webViewChecker'].openGooglePlayPage()
+    cordova.plugins['webViewChecker'].openGooglePlayPage()
       .then(function () { })
       .catch(function (error) { 
         console.error(error);

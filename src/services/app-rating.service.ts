@@ -29,14 +29,14 @@ export class AppRatingService {
   }
 
   private createFolder(rate) {
-    this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
+    this.fileCtrl.createDir(window['cordova'].file.dataDirectory, StoreRating.FOLDER_NAME, true)
       .then(() => {
         this.writeFile(rate);
       });
   }
 
   private writeFile(rate) {
-    this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
+    this.fileCtrl.writeFile(window['cordova'].file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true }).then(() => { });
   }
 

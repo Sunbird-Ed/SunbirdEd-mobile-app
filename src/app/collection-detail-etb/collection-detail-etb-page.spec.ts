@@ -210,7 +210,7 @@ describe('collectionDetailEtbPage', () => {
         }));
         mockHeaderService.updatePageConfig = jest.fn();
         mockevents.publish = jest.fn();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
@@ -236,8 +236,8 @@ describe('collectionDetailEtbPage', () => {
             actionButtons: ['download']
         } as any);
         mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
-        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockImplementation();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.ionViewWillEnter();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
@@ -258,7 +258,7 @@ describe('collectionDetailEtbPage', () => {
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
         mockContentService.importContent = jest.fn(() => of());
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         setTimeout(() => {
             expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();

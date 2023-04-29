@@ -5,7 +5,7 @@ import { FormAndFrameworkUtilService } from "../../../services/formandframeworku
 import { TncUpdateHandlerService } from "../../../services/handlers/tnc-update-handler.service";
 import { SegmentationTagService, TagPrefixConstants } from "../../../services/segmentation-tag/segmentation-tag.service";
 import { Events } from "../../../util/events";
-import { CachedItemRequestSourceFrom, ProfileService, ServerProfileDetailsRequest } from "sunbird-sdk";
+import { CachedItemRequestSourceFrom, ProfileService, ServerProfileDetailsRequest } from "@project-sunbird/sunbird-sdk";
 import { Location } from '@angular/common';
 import { initTabs, LOGIN_TEACHER_TABS } from "../../../app/module.service";
 import { NavigationExtras, Router } from "@angular/router";

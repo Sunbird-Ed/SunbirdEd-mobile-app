@@ -2,6 +2,20 @@ import { jest } from '@jest/globals';
 
 Object.defineProperty(window, 'CSS', { value: null });
 
+Object.defineProperty(window, 'dayjs', { value: () => {} });
+
+Object.defineProperty(window, 'splashscreen', { value: () => {} });
+
+Object.defineProperty(window, 'codePush', { value: () => {} });
+
+Object.defineProperty(window, 'SyncStatus', { value: () => {} });
+
+Object.defineProperty(window, 'FCMPlugin', { value: () => {} });
+
+Object.defineProperty(window, 'plugins', { value: () => {} });
+
+Object.defineProperty(window, 'downloadManager', { value: () => {} });
+
 Object.defineProperty(window, 'EkTelemetry', { value: {} });
 
 Object.defineProperty(document, 'doctype', {

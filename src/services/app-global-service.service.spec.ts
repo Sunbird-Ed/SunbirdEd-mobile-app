@@ -803,7 +803,7 @@ describe('AppGlobalService', () => {
     describe('getUserId()', () => {
         it('should return user id undefined if cached session id is empty', () => {
             // arrange
-            appGlobalService.session;
+            appGlobalService.session = undefined as any;
             mockAuthService.getSession = jest.fn(() => of({ userToken: '0123456789' } as any));
             // act
             // assert

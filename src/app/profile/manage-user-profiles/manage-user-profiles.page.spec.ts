@@ -30,6 +30,7 @@ describe('ManageUserProfilesPage', () => {
           id: 'sample_uid_2'
         },
       ])),
+      switchSessionToManagedProfile: jest.fn(() => of())
     }
   } as any;
   const mockSharedPreferences: Partial<SharedPreferences> = {};

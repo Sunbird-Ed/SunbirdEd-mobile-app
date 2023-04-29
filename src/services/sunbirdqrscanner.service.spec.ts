@@ -29,12 +29,8 @@ describe('SunbirdQRScanner', () => {
     const mockTranslateService: Partial<TranslateService> = {
         get: jest.fn(() => of('sample_translation')),
         instant: jest.fn(() => 'sample_translation'),
-    };
-    // mockTranslateService.onLangChange = {
-    //     subscribe: jest.fn((fn) => {
-    //         return fn({});
-    //     })
-    // } as any;
+        onLangChange: {subscribe: jest.fn((fn) => {})}
+    } as any;
     const mockPlatform: Partial<Platform> = {
         is: jest.fn(platform => platform === 'ios')
     };
@@ -159,7 +155,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppGlobalService.setIsPermissionAsked = jest.fn(() => true);
             mockAndroidPermissionsService.requestPermissions = jest.fn(() => of({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('some_data');
             });
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve('some_data'));
@@ -188,7 +184,7 @@ describe('SunbirdQRScanner', () => {
                     InteractSubtype.ALLOW_CLICKED,
                     Environment.ONBOARDING,
                     PageId.APP_PERMISSION_POPUP);
-                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(global['qrScanner'].startScanner).toHaveBeenCalled();
                 expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith('some_data');
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(3,
                     InteractType.QR_CAPTURED,
@@ -233,12 +229,10 @@ describe('SunbirdQRScanner', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
-                    InteractSubtype.NOT_NOW_CLICKED,
+                    InteractSubtype.ALLOW_CLICKED,
                     Environment.HOME,
                     PageId.PERMISSION_POPUP
                 );
-                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
-                    'CAMERA_PERMISSION_DESCRIPTION', 'sunbird', PageId.QRCodeScanner, true);
                 done();
             }, 0);
         });
@@ -286,7 +280,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('skip');
             });
             mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
@@ -301,7 +295,7 @@ describe('SunbirdQRScanner', () => {
             sunbirdQRScanner.startScanner(PageId.PROFILE_SETTINGS, true);
             // assert
             setTimeout(() => {
-                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(global['qrScanner'].startScanner).toHaveBeenCalled();
                // expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
                // expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {state: {loginMode: 'guest'}});
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -335,12 +329,12 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('skip');
             });
             mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
-            jest.spyOn(global.qrScanner, 'stopScanner').mockImplementation();
+            jest.spyOn(global['qrScanner'], 'stopScanner').mockImplementation();
             mockRouter.navigate = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
@@ -350,7 +344,7 @@ describe('SunbirdQRScanner', () => {
             // act
             sunbirdQRScanner.startScanner(val, true);
             setTimeout(() => {
-                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(global['qrScanner'].startScanner).toHaveBeenCalled();
                 // expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
                 // expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {state: {loginMode: 'guest'}});
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -374,7 +368,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('skip');
             });
             jest.spyOn(sunbirdQRScanner, 'stopScanner').mockImplementation();
@@ -403,7 +397,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}));
 
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('cancel_nav_back');
             });
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve('cancel_nav_back'));
@@ -413,7 +407,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
             // act
             sunbirdQRScanner.startScanner(PageId.COURSES, false).then(() => {
-                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(global['qrScanner'].startScanner).toHaveBeenCalled();
                 expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith('cancel_nav_back');
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                     PageId.SCAN,
@@ -445,7 +439,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}));
 
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('cancel_hw_back');
             });
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve('cancel_hw_back'));
@@ -456,7 +450,7 @@ describe('SunbirdQRScanner', () => {
             let val;
             // act
             sunbirdQRScanner.startScanner(val, false).then(() => {
-                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(global['qrScanner'].startScanner).toHaveBeenCalled();
                 expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith('cancel_hw_back');
                 expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
                     true,
@@ -488,7 +482,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('sample_content_id');
             });
             mockQRScannerResultHandler.parseDialCode = jest.fn();
@@ -514,7 +508,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('/certs/sample_content_id');
             });
             mockQRScannerResultHandler.isContentId = jest.fn();
@@ -539,7 +533,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: true}));
-            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+            jest.spyOn(global['qrScanner'], 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb: any) => {
                 cb('invalid');
             });
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();

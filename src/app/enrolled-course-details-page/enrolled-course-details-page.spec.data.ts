@@ -108,7 +108,7 @@ const data: Partial<ContentData> = {
     'Class 2', 'Class 3'
   ],
   attributions: ['gd_1', 'gd_2'],
-  me_averageRating: 4,
+  me_averageRating: '4',
   contentEncoding: 'gzip',
   contentType: 'Course',
   primaryCategory: 'Course',
@@ -162,7 +162,7 @@ const data: Partial<ContentData> = {
 
 export const contentDetailsResponse: Content = {
   identifier: 'do_21281258639073280011490',
-  contentData: data,
+  contentData: data as any,
   isUpdateAvailable: false,
   mimeType: 'application / vnd.ekstep.content - collection',
   basePath: '',
@@ -186,6 +186,7 @@ export const contentDetailsResponse: Content = {
       contentVersion: 'SAMPLE_VERSION_6'
     }
   ],
+  name: ''
 };
 
 export const mockCourseCardData = {

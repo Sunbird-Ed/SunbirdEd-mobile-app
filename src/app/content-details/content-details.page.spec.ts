@@ -1003,7 +1003,7 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openPDFPreview()', () => {
-        it('should download pdf if not available locally', (done) => {
+        it('should download pdf if not available locally', () => {
             // arrange
             const content = {
                 contentData: {
@@ -1027,15 +1027,20 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn();
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn()
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).toHaveBeenCalled();
                 expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
-                done();
+                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
             });
         });
 
@@ -1064,14 +1069,20 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             }) as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn();
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn()
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).not.toHaveBeenCalled();
                 expect(mockDownload).not.toHaveBeenCalled();
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 done();
@@ -1103,12 +1114,18 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn(() => { throw new Error('UNEXPECTED_ERROR'); });
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn(() => {throw new Error('UNEXPECTED_ERROR');})
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -1117,7 +1134,7 @@ describe('ContentDetailsPage', () => {
             });
         });
 
-        it('should show error toast on fileCanPrint() returns false', (done) => {
+        it('should show error toast on fileCanPrint() returns false', () => {
             // arrange
             const content = {
                 basePath: 'file://some_local_path/some_local_path',
@@ -1142,16 +1159,21 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(false); });
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(false)}),
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins['printer'].print).not.toHaveBeenCalledWith(
+                expect(window['cordova'].plugins['printer'].print).not.toHaveBeenCalledWith(
                     'file://some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
-                done();
             });
         });
     });
@@ -2808,7 +2830,7 @@ describe('ContentDetailsPage', () => {
         // arrange
         // contentDetailsPage.content = mockContentData.extras.state;
         mockRouter.getCurrentNavigation = jest.fn(() => mockContentData) as any;
-      //  spyOn(contentDetailsPage, 'getNavParams');
+      // jest.spyOn(contentDetailsPage, 'getNavParams');
         jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
             return {};
         });
@@ -2909,7 +2931,7 @@ describe('ContentDetailsPage', () => {
                 // }
             });
             mockProfileSwitchHandler.switchUser = jest.fn();
-            spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
+            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;
@@ -3091,7 +3113,11 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id') as any;
-            cordova.plugins['InAppUpdateManager'].checkForImmediateUpdate = jest.fn(() => of()) as any;
+            window['cordova'].plugins = {
+                InAppUpdateManager: {
+                    checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
+                }
+            } as any;
             // act
             contentDetailsPage.playerEvents(event);
             // assert

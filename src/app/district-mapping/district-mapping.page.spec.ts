@@ -168,12 +168,14 @@ describe('DistrictMappingPage', () => {
         });
     });
 
-    it('should unsubscribe backButton', () => {
+    describe('ion view will enter', () => {
         beforeEach(() => {
             window.history.pushState({ isShowBackButton: true }, '', '');
         });
-        districtMappingPage.ionViewWillLeave();
-    });
+        it('should unsubscribe backButton', () => {
+            districtMappingPage.ionViewWillLeave();
+        });
+    })
 
     it('should generate location capture telemetry', () => {
         // arrange

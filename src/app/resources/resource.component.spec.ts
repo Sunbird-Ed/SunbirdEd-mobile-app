@@ -284,7 +284,7 @@ describe('ResourcesComponent', () => {
             subject: ['Physics', 'Mathematics']
         } as any;
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+        jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();
@@ -312,7 +312,7 @@ describe('ResourcesComponent', () => {
             subject: ['Physics', 'Mathematics']
         } as any;
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();
