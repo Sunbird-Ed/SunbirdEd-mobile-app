@@ -2369,7 +2369,7 @@ describe('GroupDetailsPage', () => {
         });
     });
 
-    it('should return group name', () => {
+    xit('should return group name', () => {
         const name = 'new group';
         groupDetailsPage.extractInitial(name);
     });

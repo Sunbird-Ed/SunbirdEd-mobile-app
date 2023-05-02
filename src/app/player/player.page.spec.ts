@@ -31,11 +31,11 @@ declare const cordova;
 
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
-    window['cordova'].plugins = {
+    window['cordova'] = {plugins: {
         InAppUpdateManager: {
             checkForImmediateUpdate: jest.fn((fn, fn1) => {fn({}), fn1()})
         }
-    } as any;
+    }} as any;
     const mockAlertCtrl: Partial<AlertController> = {
         
     };

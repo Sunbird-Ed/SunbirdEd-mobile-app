@@ -30,7 +30,7 @@ module.exports = {
     }
   },
   transform: { '^.+.(ts|mjs|js|html)$': 'jest-preset-angular' },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|@project-sunbird)'],
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|@project-sunbird|pouchdb|uuid)'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

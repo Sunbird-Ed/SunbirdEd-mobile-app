@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
-import { ProjectListingComponent } from './project-listing.component'
+import { ProjectListingComponent } from '../project-listing/project-listing.component'
 
 describe('ProjectListingComponent', () => {
   let projectListingComponent: ProjectListingComponent;

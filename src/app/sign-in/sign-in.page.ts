@@ -68,7 +68,7 @@ export class SignInPage implements OnInit {
         this.appHeaderService.hideHeader();
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
-            window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
+            window['cordova']['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
         }
     }
             

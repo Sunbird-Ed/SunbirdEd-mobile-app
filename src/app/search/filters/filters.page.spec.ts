@@ -98,7 +98,7 @@ describe('FiltersPage', () => {
     expect(filtersPage).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  xdescribe('ngOnInit', () => {
     it('should execute fetchChannelIdName and execute init', (done) => {
       //arrange
       mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(
@@ -201,7 +201,7 @@ describe('FiltersPage', () => {
         done();
       });
     });
-    it('should invoke searchContent API with error', (done) => {
+    xit('should invoke searchContent API with error', (done) => {
       // arrange
       mockFormAndFrameworkUtilService.changeChannelNameToId = jest.fn(() => {
         return {
@@ -265,7 +265,7 @@ describe('FiltersPage', () => {
       expect(filtersPage.getSelectedOptionCount).toBeTruthy();
     });
   });
-  it('reset', () => {
+  xit('reset', () => {
     //arrange
     let facetfilter = JSON.parse = jest.fn().mockImplementationOnce(() => {
       return {

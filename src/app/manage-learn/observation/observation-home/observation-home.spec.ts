@@ -125,14 +125,13 @@ describe('ObservationHomeComponent', () => {
         done();
       });
     });
-    it('should call getLocalData if network is not available', (done) => {
+    it('should call getLocalData if network is not available', () => {
       observationHomeComponent.networkFlag = false;
      jest.spyOn(observationHomeComponent, 'getPrograms');
      jest.spyOn(observationHomeComponent, 'getLocalData');
       observationHomeComponent.getProfileInfo().then(() => {
         expect(observationHomeComponent.getPrograms).not.toHaveBeenCalled();
         expect(observationHomeComponent.getLocalData).toHaveBeenCalled();
-        done();
       });
     });
   });

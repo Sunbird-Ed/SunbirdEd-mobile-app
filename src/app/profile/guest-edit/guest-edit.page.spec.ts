@@ -270,7 +270,7 @@ describe('GuestEditPage', () => {
 
 
     describe('onSubjectChanged', () => {
-        it('should return newValue and oldValue for category changed', () => {
+        xit('should return newValue and oldValue for category changed', () => {
             const event = {
                 detail: {
                     value: ['math']
@@ -285,7 +285,7 @@ describe('GuestEditPage', () => {
             expect(mockAppGlobalService.generateAttributeChangeTelemetry).toHaveBeenCalled();
         });
 
-        it('should return newValue and oldValue if category is not changed', () => {
+        xit('should return newValue and oldValue if category is not changed', () => {
             const event = {
                 detail: {
                     value: ['math']

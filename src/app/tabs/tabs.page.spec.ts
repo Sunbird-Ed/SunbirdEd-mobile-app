@@ -253,7 +253,7 @@ describe('TabsPage', () => {
     describe('checkAndroidWebViewVersion', () => {
         it('should getCurrentWebViewPackageInfo', () => {
             // arrange
-            window['cordova'].plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName:''}))}} as any
+            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName:''}))}}} as any
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert
@@ -261,7 +261,7 @@ describe('TabsPage', () => {
 
         it('should getCurrentWebViewPackageInfo else case on version name', () => {
             // arrange
-            window['cordova'].plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({}))}} as any
+            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({}))}}} as any
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert
@@ -269,7 +269,7 @@ describe('TabsPage', () => {
 
         it('should catch error getCurrentWebViewPackageInfo', () => {
             // arrange
-            window['cordova'].plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.reject({error:''}))}} as any
+            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.reject({error:''}))}}} as any
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert

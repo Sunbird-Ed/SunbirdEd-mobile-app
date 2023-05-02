@@ -86,9 +86,9 @@ describe('SignInPage', () => {
         resetSavedQuizContent: jest.fn()
     }
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
-    window['cordova'].plugins = {
+    window['cordova'] = {plugins: {
         Keyboard: { hideKeyboardAccessoryBar: jest.fn() }
-    } as any;
+    }} as any;
 
     beforeAll(() => {
         signInPage = new SignInPage(

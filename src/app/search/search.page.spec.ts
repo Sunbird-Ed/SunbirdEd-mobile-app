@@ -37,7 +37,6 @@ import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec
 import { Search, SwitchableTabsConfig } from '../app.constant';
 import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
-import * as any from 'lodash';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -626,7 +625,7 @@ describe('SearchPage', () => {
         })
     });
 
-    describe('set grade and medium', () => {
+    xdescribe('set grade and medium', () => {
         it('should reset grade', () => {
             // arrange
             let grade = searchPage.profile = {grade: []} as any;

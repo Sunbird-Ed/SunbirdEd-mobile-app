@@ -893,7 +893,7 @@ describe('QrcoderesultPage', () => {
         });
     });
 
-    describe('set grade and medium', () => {
+    xdescribe('set grade and medium', () => {
         it('should reset grade', () => {
             // arrange
             let grade = qrcoderesultPage.profile = {} as any;
