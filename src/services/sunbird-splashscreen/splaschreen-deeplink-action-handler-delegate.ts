@@ -62,6 +62,7 @@ import {UpdateProfileService} from '../../services/update-profile-service';
 import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
 import { Platform } from '@ionic/angular';
 
+declare const cordova;
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;

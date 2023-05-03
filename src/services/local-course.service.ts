@@ -373,8 +373,8 @@ export class LocalCourseService {
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
     const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
         .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
-    const today = window.dayjs();
-    const enrollmentEndDate = (window.dayjs(endDate)).add(1, 'days');
+    const today = (window as any).dayjs();
+    const enrollmentEndDate = ((window as any).dayjs(endDate)).add(1, 'days');
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
@@ -383,7 +383,7 @@ export class LocalCourseService {
     if (today.diff(countTimeOfEOD) > 0) {
       return undefined;
     }
-    const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
+    const duration = (window as any).dayjs.duration(enrollmentEndDate.diff(today));
     return duration.format('D [day(s)] H [h] m [m]');
   }
 

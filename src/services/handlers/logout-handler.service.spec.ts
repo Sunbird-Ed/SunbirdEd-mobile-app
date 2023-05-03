@@ -223,7 +223,7 @@ describe('LogoutHandlerService', () => {
             };
             mockPlatform.is = jest.fn(platform => platform === 'android');
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
-            window.splashscreen = {} as any;
+            // window.splashscreen = {} as any;
             mockProfileService.getAllProfiles = jest.fn(() => of([{
                 uid: '1234567890',
                 handle: 'SAMPLE_HANDLE',

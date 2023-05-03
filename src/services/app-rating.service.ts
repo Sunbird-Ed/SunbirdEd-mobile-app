@@ -20,7 +20,7 @@ export class AppRatingService {
   }
 
   private setInitialDate() {
-    const presentDate = window.dayjs().format();
+    const presentDate = (window as any).dayjs().format();
     this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise().then();
   }
 

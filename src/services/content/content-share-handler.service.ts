@@ -13,6 +13,7 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { AppGlobalService } from '../app-global-service.service';
 import { Platform } from '@ionic/angular';
 
+declare const cordova;
 @Injectable({
   providedIn: 'root'
 })

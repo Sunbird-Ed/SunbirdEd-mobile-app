@@ -1040,7 +1040,7 @@ describe('ContentDetailsPage', () => {
                 // assert
                 expect(mockFileTransfer.create).toHaveBeenCalled();
                 expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
-                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
             });
         });
 
@@ -1082,7 +1082,7 @@ describe('ContentDetailsPage', () => {
                 // assert
                 expect(mockFileTransfer.create).not.toHaveBeenCalled();
                 expect(mockDownload).not.toHaveBeenCalled();
-                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 done();
@@ -1125,7 +1125,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -1169,7 +1169,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window['cordova'].plugins['printer'].print).not.toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).not.toHaveBeenCalledWith(
                     'file://some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -3113,7 +3113,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id') as any;
-            window['cordova'].plugins = {
+            window['cordova']['plugins'] = {
                 InAppUpdateManager: {
                     checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
                 }

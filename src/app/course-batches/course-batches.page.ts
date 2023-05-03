@@ -82,7 +82,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
   }
 
   async ngOnInit() {
-    this.todayDate = window.dayjs().format('YYYY-MM-DD');
+    this.todayDate = (window as any).dayjs().format('YYYY-MM-DD');
     this.userId = await this.appGlobalService.getActiveProfileUid();
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }

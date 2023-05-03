@@ -1486,7 +1486,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.userId = uid;
       });
     this.checkCurrentUserType();
-    this.todayDate = window.dayjs().format('YYYY-MM-DD');
+    this.todayDate = (window as any).dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);

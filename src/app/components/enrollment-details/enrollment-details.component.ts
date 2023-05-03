@@ -60,7 +60,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
-        this.todayDate = window.dayjs().format('YYYY-MM-DD');
+        this.todayDate = (window as any).dayjs().format('YYYY-MM-DD');
         this.content = this.navParams.get('content');
         this.courseId = this.content.identifier;
     }

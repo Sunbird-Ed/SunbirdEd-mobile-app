@@ -49,7 +49,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
       map((ts) => {
         if (ts) {
-          return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
+          return (window as any).dayjs(ts).format('DD/MM/YYYY, hh:mm a');
         }
 
         return undefined;
@@ -160,7 +160,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       ignoreSyncThreshold: true
     }).subscribe();
 
-    sbsync.onSyncSucces(async (syncStat) => {
+    window['sbsync'].onSyncSucces(async (syncStat) => {
       if (syncStat.telemetry_error) {
         if (this.loader) {
           await this.loader.dismiss();

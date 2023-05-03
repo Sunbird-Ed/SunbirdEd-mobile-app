@@ -33,7 +33,7 @@ import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
-};
+} as any;
 
 describe('FaqReportIssuePage', () => {
     let faqReportIssuePage: FaqReportIssuePage;

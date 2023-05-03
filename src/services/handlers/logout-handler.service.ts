@@ -72,8 +72,8 @@ export class LogoutHandlerService {
           const availableLocationData = await this.preferences.getString(PreferenceKey.GUEST_USER_LOCATION).toPromise();
           await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, availableLocationData).toPromise();
         }
-        if(window.splashscreen && splashscreen){
-          splashscreen.clearPrefs();
+        if(window['splashscreen']){
+          window['splashscreen'].clearPrefs();
         }
       }),
       mergeMap((guestUserId: string) => {
