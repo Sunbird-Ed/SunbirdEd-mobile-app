@@ -1,5 +1,5 @@
 import { ActivePageService } from '../active-page/active-page-service';
-import { RouterLinks } from '../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { PageId } from '../telemetry-constants';
 
 describe('ContentPlayerHandler', () => {

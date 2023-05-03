@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { RouterLinks } from '../../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'sb-insufficient-storage-popup',

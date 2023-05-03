@@ -1,5 +1,4 @@
 @use "sass:math";
-@use "sass:meta";
 /*sb-offline-toast default taost of ionic */
 .offline {
   --background: #e55a28 !important;
@@ -42,11 +41,7 @@
         z-index: 999;
         position: absolute;
         font-size: 2.5rem;
-        @if (meta.function-exists('div', 'math')) {
-          padding: math.div($base-block-space,4), 0, 0, 0;
-        } @else {
-          padding: ($base-block-space/4), 0, 0, 0;
-        }
+        padding: math.div($base-block-space,4), 0, 0, 0;
         content: "\f406";
         font-weight: bolder;
       }
@@ -65,12 +60,9 @@
     text-align: center;
     font-size: ($font-size-base - 0.125);
     width: 100%;
-    .sb-online {
-      @if (meta.function-exists('div', 'math')) {
-        margin: (math.div($base-block-space,2), 0, 0, 0);
-      } @else {
-        margin: (($base-block-space/2), 0, 0, 0);
-      }
+    .sb-online
+    {
+         margin: (math.div($base-block-space,2), 0, 0, 0);
     }
   }
 

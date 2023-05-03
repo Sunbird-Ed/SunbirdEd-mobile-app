@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   AddActivitiesRequest, GroupService
-} from '@project-sunbird/sunbird-sdk';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
+} from 'sunbird-sdk';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
   Environment, InteractSubtype, InteractType, ID
 } from '../telemetry-constants';
-import { GroupErrorCodes } from '../../app/app.constant';
+import { GroupErrorCodes } from '@app/app/app.constant';
 
 @Injectable({
   providedIn: 'root'

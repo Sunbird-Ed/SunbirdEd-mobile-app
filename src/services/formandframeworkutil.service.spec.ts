@@ -8,11 +8,11 @@ import {
   SharedPreferences,
   ProfileType,
   ProfileSource
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { of, throwError } from 'rxjs';
 import {
   mockWebviewFormResponse,
@@ -24,6 +24,7 @@ import {
   mockWebsessionConfigResponse,
   mockLibraryFilterConfigResponse,
   mockCourseFilterConfigResponse,
+  mockDialCodeConfigResponse,
   mockLocationConfigResponse,
   mockContentConfigResponse,
   mockforceUpgradeFormAPIResponse,
@@ -32,11 +33,11 @@ import {
   mockSelfDeclarationForm
 } from './formandframeworkutil.service.spec.data';
 import { FormConstants } from '../app/form.constants';
+import { doesNotReject } from 'assert';
 import { PreferenceKey } from '../app/app.constant';
 
 
 describe('FormAndFrameworkUtilService', () => {
-  window.console = {error: jest.fn()} as any;
   let formAndFrameworkUtilService: FormAndFrameworkUtilService;
 
   const mockProfileService: Partial<ProfileService> = {
@@ -184,13 +185,14 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('getContentComingSoonMsg()', () => {
 
-    it('should return the Coming Soon Message', () => {
+    it('should return the Coming Soon Message', (done) => {
       // arrange
       mockSystemSettingsService.getSystemSettings = jest.fn(() => of(mockComingSoonMessageSystemSettingsResponse));
       // act
       // assert
       formAndFrameworkUtilService.getContentComingSoonMsg().then((response: string) => {
         expect(JSON.parse(response)[0].value).toBe('Org specific coming soon message');
+        done();
       });
     });
 
@@ -321,7 +323,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('invokeLibraryFilterConfigFormApi()', () => {
 
-    it('should return library config', () => {
+    it('should return library config', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockLibraryFilterConfigResponse));
       const resolve = jest.fn(() => Promise.resolve());
@@ -330,11 +332,12 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 0);
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       const resolve = jest.fn(() => Promise.resolve());
@@ -343,7 +346,8 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 10);
     });
   });
@@ -377,7 +381,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('invokeLibraryFilterConfigFormApi()', () => {
 
-    it('should return library config', () => {
+    it('should return library config', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockLibraryFilterConfigResponse));
       const resolve = jest.fn(() => Promise.resolve());
@@ -386,11 +390,12 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 0);
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       const resolve = jest.fn(() => Promise.resolve());
@@ -399,7 +404,8 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 10);
     });
   });
@@ -473,7 +479,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('invokeCourseFilterConfigFormApi()', () => {
 
-    it('should return course config', () => {
+    it('should return course config', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockCourseFilterConfigResponse));
       const resolve = jest.fn(() => Promise.resolve());
@@ -482,11 +488,12 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeCourseFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 0);
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       const resolve = jest.fn(() => Promise.resolve());
@@ -495,7 +502,8 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeCourseFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 10);
     });
   });
@@ -533,7 +541,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('invokeLocationConfigFormApi()', () => {
 
-    it('should return location config', () => {
+    it('should return location config', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockLocationConfigResponse));
       const resolve = jest.fn(() => Promise.resolve());
@@ -542,11 +550,12 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLocationConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 0);
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       const resolve = jest.fn(() => Promise.resolve());
@@ -555,7 +564,8 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLocationConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        // expect(resolve).toHaveBeenCalledWith({});
+        expect(resolve).toHaveBeenCalledWith({});
+        done();
       }, 10);
     });
   });
@@ -588,13 +598,14 @@ describe('FormAndFrameworkUtilService', () => {
       });
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       // act
       // assert
       formAndFrameworkUtilService.invokeContentFilterConfigFormApi().then((error) => {
         expect(error).toEqual({ error: 'API_ERROR' });
+        done();
       });
     });
   });
@@ -715,7 +726,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('checkNewAppVersion()', () => {
 
-    it('should return forceupgrade types', () => {
+    it('should return forceupgrade types', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockforceUpgradeFormAPIResponse));
       // act
@@ -733,16 +744,18 @@ describe('FormAndFrameworkUtilService', () => {
             minVersionCode: 13
           }
         );
+        done();
       });
     });
 
-    it('should reject the error if API throws some error', () => {
+    it('should reject the error if API throws some error', (done) => {
       // arrange
       mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
       // act
       // assert
       formAndFrameworkUtilService.checkNewAppVersion().catch((error) => {
         expect(error).toEqual({ error: 'API_ERROR' });
+        done();
       });
     });
   });
@@ -1161,7 +1174,7 @@ describe('FormAndFrameworkUtilService', () => {
   })
 
   describe('getFrameworkCategories', () => {
-    it('should invoked formApi and store in local storage for empty framework', () => {
+    it('should invoked formApi and store in local storage for empty framework', (done) => {
       // arrange
       mockSharedPreferences.getString = jest.fn(() => of('teacher'));
       mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({}));
@@ -1201,10 +1214,11 @@ describe('FormAndFrameworkUtilService', () => {
         expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
         expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
+        done();
       });
     });
 
-    it('should resolved framework category if already store', () => {
+    it('should resolved framework category if already store', (done) => {
       // arrange
       mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({
         supportedFrameworkConfig: [
@@ -1241,6 +1255,7 @@ describe('FormAndFrameworkUtilService', () => {
       formAndFrameworkUtilService.getFrameworkCategoryList('teacher').then(() => {
         // assert
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
+        done();
       });
     })
   });

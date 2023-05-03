@@ -2,10 +2,7 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "enableIvy": true,
-    "compilationMode": "partial",
-    "fullTemplateTypeCheck": true, 
-    "strictInjectionParameters": true
+    "enableIvy": false
   },
   "compilerOptions": {
     "baseUrl": "./src",
@@ -27,7 +24,7 @@
       "jest"
     ],
     "typeRoots": [
-      "./node_modules/@types", "./typings"
+      "./node_modules/@types"
     ],
     "lib": [
       "es2018",
@@ -37,10 +34,10 @@
       "@app/*": ["*"],
       "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
-      "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption/project-sunbird-common-consumption.d.ts"],
+      "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption"],
       "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption/*"],
-      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements"],
-      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements/*"]
+      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements-v9"],
+      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements-v9/*"]
     }
   },
   "include": [

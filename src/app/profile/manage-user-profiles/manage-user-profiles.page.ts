@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { AppHeaderService } from '../../../services/app-header.service';
-import { RouterLinks, ProfileConstants, PreferenceKey } from '../../../app/app.constant';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { RouterLinks, ProfileConstants, PreferenceKey } from '@app/app/app.constant';
 import { Router } from '@angular/router';
-import { CommonUtilService } from '../../../services/common-util.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
   ProfileService,
   CachedItemRequestSourceFrom,
@@ -10,16 +10,16 @@ import {
   ServerProfile,
   CorrelationData
 } from '@project-sunbird/sunbird-sdk';
-import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { Observable, EMPTY, combineLatest, Subscription } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { InteractType, Environment, PageId, ID, CorReleationDataType, ImpressionType } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { InteractType, Environment, PageId, ID, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { Location } from '@angular/common';
-import { ToastNavigationComponent } from '../../../app/components/popups/toast-navigation/toast-navigation.component';
-import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
+import { ToastNavigationComponent } from '@app/app/components/popups/toast-navigation/toast-navigation.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-manage-user-profiles',

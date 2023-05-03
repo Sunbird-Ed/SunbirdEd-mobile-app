@@ -1,24 +1,24 @@
 import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { MimeType, RouterLinks, EventTopics } from '../../../app/app.constant';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { ComingSoonMessageService } from '../../../services/coming-soon-message.service';
+import { MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
-import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content, TelemetryObject, Rollup, ContentStateResponse } from '@project-sunbird/sunbird-sdk';
+import { Events } from '@app/util/events';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { Content, TelemetryObject, Rollup, ContentStateResponse } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
-import { TextbookTocService } from '../../../app/collection-detail-etb/textbook-toc-service';
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
   Environment,
   InteractSubtype,
   InteractType,
   PageId
-} from '../../../services/telemetry-constants';
-import { ContentUtil } from '../../../util/content-util';
+} from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 import { AddActivityToGroup } from '../../my-groups/group.interface';
-import { NavigationService } from '../../../services/navigation-handler.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -72,7 +72,7 @@ export class CollectionChildComponent implements OnInit {
 
   constructor(
     private zone: NgZone,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private comingSoonMessageService: ComingSoonMessageService,
     private router: Router,

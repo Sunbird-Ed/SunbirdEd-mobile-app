@@ -102,7 +102,7 @@
 
 <ng-container *ngIf="trackDownloads$ | async; let downloads">
   <app-sb-download-popup *ngIf="downloads.queued.length"
-    (cancelDownloadEmit)="cancelDownload()" 
+    (cancelDownloadEmit)="cancelDownload($event)" 
     [currentCount]="downloads.completed.length"
     [queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" 
     [downloadSize]="downloadSize"

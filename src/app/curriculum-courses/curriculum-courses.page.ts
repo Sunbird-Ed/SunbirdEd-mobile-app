@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from '../../services/telemetry-constants';
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Router } from '@angular/router';
 import {
   CourseService,
@@ -15,9 +15,9 @@ import {
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { AppHeaderService } from '../../services/app-header.service';
-import { ContentUtil } from '../../util/content-util';
-import { NavigationService } from '../../services/navigation-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-curriculum-courses',

@@ -27,7 +27,7 @@ describe('PrintPdfService', () => {
 
     it('should get questions', () => {
         const questionIds = ['1', '2', '3', '4', '5', '6'];
-        const questions = qumlPlayerService.getQuestions(questionIds, '');
+        const questions = qumlPlayerService.getQuestions(questionIds);
         expect(questions).toBe(undefined);
     });
 

@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@angular/core';
 import * as  dayjs from 'dayjs';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from '@project-sunbird/sunbird-sdk';
+import { File } from '@ionic-native/file/ngx';
+import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
 
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
-import { StoreRating, PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { ContentRatingAlertComponent, AppRatingAlertComponent } from '../../app/components';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { InteractType, InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
+import { StoreRating, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { ContentRatingAlertComponent, AppRatingAlertComponent } from '@app/app/components';
 import { PopoverController } from '@ionic/angular';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { ContentUtil } from '../../util/content-util';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ContentUtil } from '@app/util/content-util';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -168,7 +168,7 @@ export class RatingHandler {
     }
 
     readRatingFile(): Promise<boolean> {
-        return this.fileCtrl.readAsText(window['cordova'].file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
+        return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {
                 return true;
             })

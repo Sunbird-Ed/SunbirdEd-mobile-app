@@ -3,7 +3,7 @@ import {
 } from '../../../services/telemetry-constants';
 import { AddActivityToGroupPage } from './add-activity-to-group.page';
 import { Router } from '@angular/router';
-import { TelemetryGeneratorService } from '../../../services';
+import { TelemetryGeneratorService } from '@app/services';
 import { AppHeaderService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';

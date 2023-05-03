@@ -1,14 +1,14 @@
 import { AppOrientation } from './../app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CanvasPlayerService } from '../../services/canvas-player.service';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { CommonUtilService } from '../../services/common-util.service';
+import { CanvasPlayerService } from '@app/services/canvas-player.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
-import { Events } from '../../util/events';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { Events } from '@app/util/events';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, ProfileConstants, RouterLinks, ShareItemType, PreferenceKey } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -24,18 +24,18 @@ import {
   ErrorType, SunbirdSdk, ProfileService, ContentService,
   PlayerService,
   SharedPreferences
-} from '@project-sunbird/sunbird-sdk';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';
+} from 'sunbird-sdk';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { ContentUtil } from '../../util/content-util';
-import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
+import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { ContentUtil } from '@app/util/content-util';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
-import { File } from '@awesome-cordova-plugins/file/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 declare const cordova;
 
@@ -72,7 +72,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
-    public platform: Platform,
+    private platform: Platform,
     private screenOrientation: ScreenOrientation,
     private appGlobalService: AppGlobalService,
     private statusBar: StatusBar,

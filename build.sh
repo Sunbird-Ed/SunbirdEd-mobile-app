@@ -19,7 +19,8 @@ SUNBIRD_CORDOVA_COUNTER=0
 
 # Pass build branch as input
 buildBranch="$1"
-rm package-lock.json && npm install
+rm package-lock.json 
+npm install
 export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-7.0.2-all.zip"
 
 file="./build_config"
@@ -52,13 +53,13 @@ rm -rf platforms
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@10.1.2
 
-npm run ionic-build
 
 if [ -n "$angularConfiguration" ]; then
   echo "$angularConfiguration"
-  npm run ionic-build:prod --angular-configuration=$angularConfiguration
+  npm run ionic-build --angular-configuration=$angularConfiguration
 else
-  npm run ionic-build:prod --angular-configuration=production
+  npm run ionic-build --angular-configuration=production
 fi
 
+npm run ionic-build:apk
 

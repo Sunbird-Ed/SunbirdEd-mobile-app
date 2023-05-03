@@ -1,4 +1,4 @@
-import { Content } from '@project-sunbird/sunbird-sdk';
+import { Content } from 'sunbird-sdk';
 import { Navigation } from '@angular/router';
 import { PageId } from '../../services/telemetry-constants';
 

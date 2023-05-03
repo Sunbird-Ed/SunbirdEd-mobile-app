@@ -3,7 +3,7 @@ import {
   AlertController,
   ModalController
 } from "@ionic/angular";
-import { RouterLinks } from "../../../../app/app.constant";
+import { RouterLinks } from "@app/app/app.constant";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityfilterComponent } from "../../shared/components/entityfilter/entityfilter.component";
 import {
@@ -20,8 +20,8 @@ import { ObservationService } from "../observation.service";
 import { storageKeys } from "../../storageKeys";
 import { Subscription } from "rxjs";
 import { EntitySearchLocalComponent } from "../../shared";
-import { AppHeaderService } from "../../../../services/app-header.service";
-import { CommonUtilService } from "../../../../services/common-util.service";
+import { AppHeaderService } from "@app/services/app-header.service";
+import { CommonUtilService } from "@app/services/common-util.service";
 @Component({
   selector: "app-observation-detail",
   templateUrl: "./observation-detail.component.html",

@@ -7,7 +7,7 @@
   </ion-refresher>
 
   <div *ngIf="showSignInCard" class="enrolled-course-bg">
-    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning()"></app-sign-in-card>
+    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
   <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
     <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">

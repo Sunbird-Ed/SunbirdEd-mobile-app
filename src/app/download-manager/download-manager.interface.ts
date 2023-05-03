@@ -1,5 +1,5 @@
 import { OnInit } from '@angular/core';
-import { Content, ContentDelete } from '@project-sunbird/sunbird-sdk';
+import { Content, ContentDelete } from 'sunbird-sdk';
 
 export interface AppStorageInfo {
     usedSpace: number;

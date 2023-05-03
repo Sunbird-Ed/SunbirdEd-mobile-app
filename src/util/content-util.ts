@@ -1,7 +1,7 @@
-import { Rollup, Content, ContentData, TelemetryObject, CorrelationData, FilterValue, ContentSearchFilter } from '@project-sunbird/sunbird-sdk';
-import { CorReleationDataType } from '../services/telemetry-constants';
+import { Rollup, Content, ContentData, TelemetryObject, CorrelationData, FilterValue, ContentSearchFilter } from 'sunbird-sdk';
+import { CorReleationDataType } from '@app/services/telemetry-constants';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
-import { MimeType } from '../app/app.constant';
+import { MimeType } from '@app/app/app.constant';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 export class ContentUtil {
 

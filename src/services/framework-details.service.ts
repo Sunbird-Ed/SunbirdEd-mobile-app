@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FrameworkCategoryCode, GetFrameworkCategoryTermsRequest,
      FrameworkUtilService, LocationSearchResult, CachedItemRequestSourceFrom, LocationSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from './location-handler';
-import { Location as LocationType } from '../app/app.constant';
+import { Location as LocationType } from '@app/app/app.constant';
 
 @Injectable({
     providedIn: 'root'

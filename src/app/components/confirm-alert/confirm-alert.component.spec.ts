@@ -1,4 +1,4 @@
-import {ConfirmAlertComponent} from '../../../app/components';
+import {ConfirmAlertComponent} from '@app/app/components';
 import {NavParams, Platform, PopoverController} from '@ionic/angular';
 import {of} from 'rxjs';
 

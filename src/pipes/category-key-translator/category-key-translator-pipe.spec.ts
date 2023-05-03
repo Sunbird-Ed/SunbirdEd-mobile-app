@@ -1,7 +1,7 @@
 import { CategoryKeyTranslator } from './category-key-translator-pipe';
 import {
     CommonUtilService,
-} from '../../services';
+} from '@app/services';
 
 describe('CategoryKeyTranslator', () => {
     let categoryKeyTranslator: CategoryKeyTranslator;

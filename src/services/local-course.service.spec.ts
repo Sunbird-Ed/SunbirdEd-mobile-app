@@ -1,23 +1,25 @@
 import { LocalCourseService } from './local-course.service';
 import {
+  ContentService,
   SharedPreferences,
   CourseService,
+  Batch,
   NetworkError,
   HttpClientError,
   HttpServerError
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
 import { Location, DatePipe } from '@angular/common';
-import { SbProgressLoader } from '../services/sb-progress-loader.service';
-import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
@@ -26,7 +28,7 @@ describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
 
   const mockCourseService: Partial<CourseService> = {};
-  const mockPreferences: Partial<SharedPreferences> = {};
+  const mockPreferences: Partial<ContentService> = {};
   const mockAppGlobalService: Partial<AppGlobalService> = {};
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
   const mockCommonUtilService: Partial<CommonUtilService> = {};
@@ -91,7 +93,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('enrollIntoBatch', () => {
-    it('should Enrol into batch, and when the return is true', (done) => {
+    it('should Enrol into batch, and when the return is true', async (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -107,7 +109,7 @@ describe('LocalCourseService', () => {
         corRelationList: [],
         channel: 'sample-channel',
         userConsent: 'Yes'
-      } as any;
+      };
       mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
@@ -118,7 +120,7 @@ describe('LocalCourseService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}})) as any;
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
@@ -129,7 +131,7 @@ describe('LocalCourseService', () => {
       });
     });
 
-    it('should Enrol into batch, and when the return is true for updateConsent catchPart', (done) => {
+    it('should Enrol into batch, and when the return is true for updateConsent catchPart', async (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -145,7 +147,7 @@ describe('LocalCourseService', () => {
         corRelationList: [],
         channel: 'sample-channel',
         userConsent: 'Yes'
-      } as any;
+      };
       mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
@@ -156,10 +158,10 @@ describe('LocalCourseService', () => {
         dismiss: dismissFn,
       }));
       mockCommonUtilService.showToast = jest.fn();
-      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}})) as any;
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
-      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockCourseService.enrollCourse).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -181,7 +183,7 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(false));
 
@@ -206,7 +208,7 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       const map = new Map();
       map.set('data', 'sample-data');
@@ -237,9 +239,9 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      const networkError = new NetworkError({ code: 'samp' } as any);
+      const networkError = new NetworkError({ code: 'samp' });
       mockCourseService.enrollCourse = jest.fn(() => throwError(networkError));
       mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
@@ -268,9 +270,9 @@ describe('LocalCourseService', () => {
         objRollup: {},
         corRelationList: [],
         userConsent: UserConsent.YES
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } } as any);
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
       mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
@@ -305,9 +307,9 @@ describe('LocalCourseService', () => {
         objRollup: {},
         corRelationList: [],
         userConsent: UserConsent.YES
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } } as any);
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
       mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
@@ -340,9 +342,9 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
-      } as any;
+      };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      const httpClientError = new HttpClientError('http_clicnt_error', { body: {} } as any);
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: {} });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
       mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
@@ -360,7 +362,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('checkCourseRedirect', () => {
-    const courseAndBatchData = `{
+    const courseAndBatchData: Batch = `{
       "identifier":"string",
       "id":"string",
       "createdFor":["string","string"],
@@ -464,11 +466,11 @@ describe('LocalCourseService', () => {
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
-      mockNgZone.run = jest.fn((fn) => fn()) as any;
+      mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
-      mockCourseService.getEnrolledCourses = jest.fn(() => of([{ courseId: 1 }, { courseId: 2 }])) as any;
+      mockCourseService.getEnrolledCourses = jest.fn(() => of([{ courseId: 1 }, { courseId: 2 }]));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       mockSbProgressLoader.hide = jest.fn();
@@ -499,11 +501,11 @@ describe('LocalCourseService', () => {
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
-      mockNgZone.run = jest.fn((fn) => fn()) as any;
+      mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
-      mockCourseService.getEnrolledCourses = jest.fn(() => of(undefined)) as any;
+      mockCourseService.getEnrolledCourses = jest.fn(() => of(undefined));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       mockSbProgressLoader.hide = jest.fn();
@@ -533,7 +535,7 @@ describe('LocalCourseService', () => {
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
-      mockNgZone.run = jest.fn((fn) => fn()) as any;
+      mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
@@ -570,7 +572,7 @@ describe('LocalCourseService', () => {
           case PreferenceKey.CDATA_KEY:
             return of(undefined);
         }
-      }) as any;
+      });
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -611,7 +613,7 @@ describe('LocalCourseService', () => {
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
-      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } } as any);
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(httpClientError));
       mockNgZone.run = jest.fn((cb) => {
         cb();
@@ -648,7 +650,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.showToast = jest.fn();
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
-      const httpClientError = new HttpClientError('http_clicnt_error', { body: {} } as any);
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: {} });
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(httpClientError));
       mockNgZone.run = jest.fn((cb) => {
         cb();
@@ -684,7 +686,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.showToast = jest.fn();
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
-      const httpClientError = new HttpServerError('http_server_error', { body: {} } as any);
+      const httpClientError = new HttpServerError('http_server_error', { body: {} });
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(httpClientError));
       mockNgZone.run = jest.fn((cb) => {
         cb();
@@ -714,11 +716,11 @@ describe('LocalCourseService', () => {
 
     it('should invoke location back', () => {
       // arrange
-      // mockRouter.url = 'localhost://course-batches';
+      mockRouter.url = 'localhost://course-batches';
       // act
       localCourseService.navigateTocourseDetails();
       // assert
-      // expect(mockLocation.back).toHaveBeenCalled();
+      expect(mockLocation.back).toHaveBeenCalled();
     });
   });
 
@@ -790,7 +792,7 @@ describe('LocalCourseService', () => {
         startDate: '01/01/01'
       }];
       mockCommonUtilService.showToast = jest.fn();
-      mockDatePipe.transform = jest.fn(() => '01-01-01') as any;
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
       mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
       // act
       const data = localCourseService.isEnrollable(batches, {});
@@ -817,7 +819,7 @@ describe('LocalCourseService', () => {
         startDate: '01/01/01'
       }];
       mockCommonUtilService.showToast = jest.fn();
-      mockDatePipe.transform = jest.fn(() => '01-01-01') as any;
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
       mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
       // act
       const data = localCourseService.isEnrollable(batches, {});
@@ -836,7 +838,7 @@ describe('LocalCourseService', () => {
         startDate: 1800863614000
       }];
       mockCommonUtilService.showToast = jest.fn();
-      mockDatePipe.transform = jest.fn(() => '01-01-01') as any;
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
       mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
       // act
       const data = localCourseService.isEnrollable(batches, {});

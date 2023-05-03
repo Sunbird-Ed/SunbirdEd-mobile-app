@@ -1,5 +1,5 @@
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '../../../../util/events';
+import { Events } from '@app/util/events';
 import { SbGenericPopoverComponent } from '../sb-generic-popover/sb-generic-popover.component';
 
 describe('SbGenericPopoverComponent', () => {

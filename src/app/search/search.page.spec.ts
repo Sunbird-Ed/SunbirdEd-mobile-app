@@ -1,5 +1,5 @@
 import { SearchPage } from './search.page';
-import { MimeType, RouterLinks } from '../../app/app.constant';
+import { MimeType, RouterLinks } from '@app/app/app.constant';
 import {
     FrameworkService,
     FrameworkUtilService,
@@ -12,32 +12,31 @@ import {
     PageAssembleService,
     FrameworkCategoryCodesGroup,
     ContentImportStatus
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, NavController, PopoverController } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
     AppHeaderService
-} from '../../services';
+} from 'services';
 import { Location } from '@angular/common';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '../../services/telemetry-constants';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService, OnboardingConfigurationService, CorReleationDataType } from '../../services';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
-import { ProfileHandler } from '../../services/profile-handler';
+import { ProfileHandler } from '@app/services/profile-handler';
 import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
 import { Search, SwitchableTabsConfig } from '../app.constant';
 import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
-
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     window.console.warn = jest.fn()
@@ -47,7 +46,7 @@ describe('SearchPage', () => {
         getCurrentUser: jest.fn(() => { }),
         getProfileSettingsStatus: jest.fn(),
         setOnBoardingCompleted: jest.fn()
-    } as any;
+    };
     const dismissFn = jest.fn(() => Promise.resolve());
     const presentFn = jest.fn(() => Promise.resolve());
     const mockCommonUtilService: Partial<CommonUtilService> = {
@@ -80,7 +79,7 @@ describe('SearchPage', () => {
         getFormFields: jest.fn(),
         getActiveChannelSuggestedFrameworkList: jest.fn(),
         getSupportedContentFilterConfig: jest.fn()
-    } as any;
+    };
     const mockHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn(),
         showHeaderWithBackButton: jest.fn(),
@@ -135,7 +134,7 @@ describe('SearchPage', () => {
     };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
-    } as any;
+    };
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -183,7 +182,7 @@ describe('SearchPage', () => {
 
     const mockProfileHandler: Partial<ProfileHandler> = {
         getSupportedUserTypes: jest.fn(() => Promise.resolve(mockSupportedUserTypeConfig))
-    } as any;
+    };
 
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
         initialOnboardingScreenName: '',
@@ -356,7 +355,7 @@ describe('SearchPage', () => {
             jest.spyOn(searchPage, 'handleSearch').mockImplementation();
             const searchEntry = {
                 query: 'query'
-            } as any;
+            };
             // act
             searchPage.onSearchHistoryTap(searchEntry);
             // assert
@@ -392,7 +391,7 @@ describe('SearchPage', () => {
         it('should navigateToPreviousPage', () => {
             // arrange
             searchPage.shouldGenerateEndTelemetry = false;
-            mockAppGlobalService.isGuestUser = jest.fn(() => true) as any;
+            mockAppGlobalService.isGuestUser = jest.fn(() => true);
             // act
             searchPage.navigateToPreviousPage();
             // assert
@@ -402,7 +401,7 @@ describe('SearchPage', () => {
             // arrange
             searchPage.shouldGenerateEndTelemetry = false;
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockAppGlobalService.isGuestUser = jest.fn(() => true) as any;
+            mockAppGlobalService.isGuestUser = jest.fn(() => true);
             // act
             searchPage.navigateToPreviousPage();
             // assert
@@ -415,9 +414,9 @@ describe('SearchPage', () => {
             // arrange
             searchPage.shouldGenerateEndTelemetry = false;
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockAppGlobalService.isGuestUser = jest.fn(() => true) as any;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
-            mockAppGlobalService['DISPLAY_ONBOARDING_CATEGORY_PAGE'] = jest.fn(() => true) as any;
+            mockAppGlobalService.isGuestUser = jest.fn(() => true);
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = jest.fn(() => true);
             // act
             searchPage.navigateToPreviousPage();
             // assert
@@ -430,9 +429,9 @@ describe('SearchPage', () => {
             // arrange
             searchPage.shouldGenerateEndTelemetry = false;
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockAppGlobalService.isGuestUser = jest.fn(() => true) as any;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
-            mockAppGlobalService.isProfileSettingsCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isGuestUser = jest.fn(() => true);
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
+            mockAppGlobalService.isProfileSettingsCompleted = jest.fn(() => true);
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             // act
             searchPage.navigateToPreviousPage();
@@ -449,9 +448,9 @@ describe('SearchPage', () => {
             // arrange
             searchPage.shouldGenerateEndTelemetry = false;
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockAppGlobalService.isGuestUser = jest.fn(() => true) as any;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
-            mockAppGlobalService.isProfileSettingsCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isGuestUser = jest.fn(() => true);
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
+            mockAppGlobalService.isProfileSettingsCompleted = jest.fn(() => true);
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             // act
             searchPage.navigateToPreviousPage();
@@ -483,7 +482,7 @@ describe('SearchPage', () => {
                 contentType: 'collection'
             };
             mockAppGlobalService.isOnBoardingCompleted = false;
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             // act
             searchPage.openCollection(collection);
             // assert
@@ -504,9 +503,9 @@ describe('SearchPage', () => {
                 identifier: 'identifier',
                 contentType: 'Course'
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = true;
             // act
@@ -523,9 +522,9 @@ describe('SearchPage', () => {
                 identifier: 'identifier',
                 contentType: 'Course'
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = false;
             searchPage.isSingleContent = true;
@@ -547,9 +546,9 @@ describe('SearchPage', () => {
                 identifier: 'identifier',
                 contentType: 'Course'
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = false;
             mockAppGlobalService.setEnrolledCourseList = jest.fn();
@@ -570,9 +569,9 @@ describe('SearchPage', () => {
                 mimeType: MimeType.COLLECTION,
                 contentType: 'collection'
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = false;
             // act
@@ -590,9 +589,9 @@ describe('SearchPage', () => {
                 mimeType: 'MimeType.COLLECTION',
                 contentType: 'collection'
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => true) as any;
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = false;
             // act
@@ -613,7 +612,7 @@ describe('SearchPage', () => {
             };
             searchPage.shouldGenerateEndTelemetry = true;
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             mockAppGlobalService.setOnBoardingCompleted = jest.fn()
             // act
@@ -625,58 +624,58 @@ describe('SearchPage', () => {
         })
     });
 
-    xdescribe('set grade and medium', () => {
+    describe('set grade and medium', () => {
         it('should reset grade', () => {
             // arrange
-            let grade = searchPage.profile = {grade: []} as any;
+            searchPage.profile = {} as any;
             // act
             searchPage.setGrade(true, ['grade1']);
             // assert
-            expect(grade).toEqual(1);
+            expect(searchPage.profile.grade.length).toEqual(1);
         });
         it('should reset grade, if no grade', () => {
             // arrange
-            let grade = searchPage.profile = {} as any;
+            searchPage.profile = {} as any;
             // act
             searchPage.setGrade(true, ['']);
             // assert
-            expect(grade).toEqual(0);
+            expect(searchPage.profile.grade.length).toEqual(0);
         });
         it('should set grade', () => {
             // arrange
-            let grade1 = searchPage.profile = {
+            searchPage.profile = {
                 grade: ['grade']
             } as any;
             // act
             searchPage.setGrade(false, ['grade1']);
             // assert
-            expect(grade1).toEqual(2);
+            expect(searchPage.profile.grade.length).toEqual(2);
         });
         it('should reset medium', () => {
             // arrange
-            let medium = searchPage.profile = {} as any;
+            searchPage.profile = {} as any;
             // act
             searchPage.setMedium(true, ['medium1']);
             // assert
-            expect(medium).toEqual(1);
+            expect(searchPage.profile.medium.length).toEqual(1);
         });
         it('should reset medium, if no medium', () => {
             // arrange
-            let medium = searchPage.profile = {} as any;
+            searchPage.profile = {} as any;
             // act
             searchPage.setMedium(true, ['']);
             // assert
-            expect(medium).toEqual(0);
+            expect(searchPage.profile.medium.length).toEqual(0);
         });
         it('should set medium', () => {
             // arrange
-            let medium = searchPage.profile = {
+            searchPage.profile = {
                 medium: ['medium']
             } as any;
             // act
             searchPage.setMedium(false, ['medium1']);
             // assert
-            expect(medium).toEqual(2);
+            expect(searchPage.profile.medium.length).toEqual(2);
         });
         it('should find code of a category', () => {
             // arrange
@@ -691,7 +690,6 @@ describe('SearchPage', () => {
             const categoryType = 'grade';
             const categoryList = [{ name: 'sampleName', code: 'sampleCode' }];
             const data = { grade: 'Name' };
-            //(categoryList, (category) => category.name === data[categoryType])
             // assert
             expect(searchPage.findCode(categoryList, data, categoryType)).toBeUndefined();
         });
@@ -699,7 +697,7 @@ describe('SearchPage', () => {
     describe('setCurrentProfile', () => {
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {medium: []} as any;
+            searchPage.profile = {medium: []};
             const data = {
                 framework: 'framework',
                 board: 'board',
@@ -720,7 +718,7 @@ describe('SearchPage', () => {
         });
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {medium: ['medium1']} as any;
+            searchPage.profile = {medium: ['medium1']};
             const data = {
                 framework: 'framework',
                 board: 'board',
@@ -741,7 +739,7 @@ describe('SearchPage', () => {
         });
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {} as any;
+            searchPage.profile = {};
             const data = {
                 medium: ['medium1']
             };
@@ -758,7 +756,7 @@ describe('SearchPage', () => {
         });
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {} as any;
+            searchPage.profile = {};
             const data = {
                 gradeLevel: ['grade1']
             };
@@ -840,7 +838,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -858,7 +858,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -887,7 +887,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -905,7 +907,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -934,7 +936,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -952,7 +956,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -960,10 +964,10 @@ describe('SearchPage', () => {
                 expect(searchPage.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                // expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
-                //     3,
-                //     data
-                // );
+                expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
+                    3,
+                    data
+                );
                 done();
             }, 0);
         });
@@ -988,7 +992,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -1006,7 +1012,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -1037,7 +1043,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -1055,7 +1063,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -1086,7 +1094,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -1104,7 +1114,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -1136,7 +1146,9 @@ describe('SearchPage', () => {
                 categories: [
                     {
                         code: 'board',
-                        terms: []
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
                     },
                     {
                         code: 'medium',
@@ -1154,7 +1166,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -1230,8 +1242,8 @@ describe('SearchPage', () => {
                 gradeValue: {
                     grade1: 'grade1'
                 }
-            } as any;
-            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' })) as any;
+            };
+            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' }));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             // act
             searchPage.editProfile();
@@ -1249,8 +1261,8 @@ describe('SearchPage', () => {
                 gradeValue: {
                     grade1: 'grade1'
                 }
-            } as any;
-            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' })) as any;
+            };
+            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' }));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             // act
             searchPage.editProfile();
@@ -1268,8 +1280,8 @@ describe('SearchPage', () => {
                 gradeValue: {
                     grade1: 'grade1'
                 }
-            } as any;
-            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: ['sylabus1', 'sylabus2'], board: ['board1', 'board2'], grade:['grade1', 'grade2'], medium: ['english', 'hindi']})) as any;
+            };
+            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: ['sylabus1', 'sylabus2'], board: ['board1', 'board2'], grade:['grade1', 'grade2'], medium: ['english', 'hindi']}));
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn()
             // act
@@ -1357,7 +1369,7 @@ describe('SearchPage', () => {
                 contentType: 'type1',
                 pkgVersion: '1'
             };
-            // jest.spyOn(searchPage, 'showContentDetails').mockImplementation();
+            jest.spyOn(searchPage, 'showContentDetails').mockImplementation();
             // act
             searchPage.openContent(undefined, contentMock, 0, undefined);
             // assert
@@ -1455,7 +1467,7 @@ describe('SearchPage', () => {
             // arrange
             mockContentService.searchContent = jest.fn(() => throwError({}));
             searchPage.showLoader = false;
-            mockZone.run = jest.fn((fn) => fn()) as any;
+            mockZone.run = jest.fn((fn) => fn());
             // act
             searchPage.applyFilter();
             // assert
@@ -1482,7 +1494,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             jest.spyOn(searchPage, 'fetchPrimaryCategoryFilters').mockImplementation();
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             searchPage.isDialCodeSearch = false;
             // act
             searchPage.applyFilter(offset);
@@ -1510,7 +1522,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             jest.spyOn(searchPage, 'fetchPrimaryCategoryFilters').mockImplementation();
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             searchPage.isDialCodeSearch = false;
             // act
             searchPage.applyFilter(offset);
@@ -1538,7 +1550,7 @@ describe('SearchPage', () => {
             };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             jest.spyOn(searchPage, 'fetchPrimaryCategoryFilters').mockImplementation();
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             searchPage.isDialCodeSearch = false;
             // act
             searchPage.applyFilter();
@@ -1561,7 +1573,7 @@ describe('SearchPage', () => {
                 }
             };
             jest.spyOn(searchPage, 'processDialCodeResult').mockImplementation();
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn()
             searchPage.isDialCodeSearch = true;
             // act
@@ -1589,9 +1601,9 @@ describe('SearchPage', () => {
             searchPage.searchKeywords = 'ab';
             searchPage.preAppliedFilter = false;
             (window as any)['Keyboard']={hide:()=>{}}
-            window['cordova']['plugins'] = {
+            window.cordova.plugins = {
                 Keyboard: { close: jest.fn() }
-            } as any;
+            };
             mockContentService.searchContent = jest.fn(() => throwError({}));
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
@@ -1603,10 +1615,10 @@ describe('SearchPage', () => {
             // arrange
             searchPage.searchKeywords = '';
             (window as any)['Keyboard']={hide:()=>{}}
-            window['cordova']['plugins'] = {
+            window.cordova.plugins = {
                 Keyboard: { close: jest.fn() }
-            } as any;
-            mockContentService.searchContent = jest.fn(() => of(undefined)) as any;
+            };
+            mockContentService.searchContent = jest.fn(() => of(undefined));
             searchPage.isEmptyResult = true;
             // act
             searchPage.handleSearch(true, 100);
@@ -1643,15 +1655,15 @@ describe('SearchPage', () => {
                 limit: 10,
                 offset: 100
               };
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mocksearchHistoryService.addEntry = jest.fn(() => of());
-            window['cordova']['plugins'] = {
+            window.cordova.plugins = {
                 Keyboard: { close: jest.fn() }
-            } as any;
+            };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             searchPage.profile = {
                 grade: ['grade1']
-            } as any;
+            };
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
@@ -1697,15 +1709,15 @@ describe('SearchPage', () => {
                 filterCriteria: {}
             };
             searchPage.initialFilterCriteria = undefined
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp)) as any;
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mocksearchHistoryService.addEntry = jest.fn(() => of());
-            window['cordova']['plugins'] = {
+            window.cordova.plugins = {
                 Keyboard: { close: jest.fn() }
-            } as any;
+            };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             searchPage.profile = {
                 grade: ['grade1']
-            } as any;
+            };
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
@@ -1766,7 +1778,7 @@ describe('SearchPage', () => {
             const getCourseBatchesResp = [
                 { identifier: 'id1', status: 1 }
             ];
-            mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp)) as any;
+            mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp));
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: jest.fn() } }))
@@ -1802,7 +1814,7 @@ describe('SearchPage', () => {
             const getCourseBatchesResp = [
                 { identifier: 'id1' }
             ];
-            mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp)) as any;
+            mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp));
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
@@ -1885,7 +1897,7 @@ describe('SearchPage', () => {
         });
         it('should return without any action', () => {
             // arrange
-            searchPage.dialCode = undefined as any;
+            searchPage.dialCode = undefined;
             // act
             searchPage.getContentForDialCode();
         });
@@ -1899,10 +1911,10 @@ describe('SearchPage', () => {
             const dialAssembleResp = {
                 sections: [{ identifier: 'id1' }]
             };
-            mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp)) as any;
+            mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp));
             searchPage.profile = {
                 board: ['baord1']
-            } as any;
+            };
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1925,10 +1937,10 @@ describe('SearchPage', () => {
             const dialAssembleResp = {
                 sections: []
             };
-            mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp)) as any;
+            mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp));
             searchPage.profile = {
                 board: []
-            } as any;
+            };
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -2033,7 +2045,7 @@ describe('SearchPage', () => {
         it('should generate interact event', () => {
             // arrange
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
             // act
             searchPage.generateInteractEvent('identifier', 'collection', 'ver', 1);
             // assert
@@ -2051,7 +2063,7 @@ describe('SearchPage', () => {
         it('should generate interact event', () => {
             // arrange
             searchPage.isDialCodeSearch = false;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
             searchPage['corRelationList'] = []
             mockAppGlobalService.isOnBoardingCompleted = false;
             // act
@@ -2072,7 +2084,7 @@ describe('SearchPage', () => {
             // arrange
             searchPage.isDialCodeSearch = false;
             searchPage.source = "";
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true) as any;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
             searchPage['corRelationList'] = [{id: 'id1', type: 'section'}]
             mockAppGlobalService.isOnBoardingCompleted = false;
             // act
@@ -2219,9 +2231,9 @@ describe('SearchPage', () => {
             searchPage.isDialCodeSearch = true;
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve({}));
             mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
-            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp)) as any;
-            mockZone.run = jest.fn((fn) => fn()) as any;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => { }) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockZone.run = jest.fn((fn) => fn());
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
             // act
@@ -2238,8 +2250,8 @@ describe('SearchPage', () => {
         it('should call show content details', (done) => {
             // arrange
             const getContentDetailsResp = undefined;
-            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp)) as any;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => { }) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             const content = {
                 isAvailableLocally: true,
                 contentType: 'resource',
@@ -2266,8 +2278,8 @@ describe('SearchPage', () => {
                     identifier: 'id1'
                 }
             };
-            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp)) as any;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => { }) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             jest.spyOn(searchPage, 'subscribeSdkEvent').mockImplementation();
             jest.spyOn(searchPage, 'downloadParentContent').mockImplementation();
             jest.spyOn(searchPage, 'checkProfileData').mockImplementation();
@@ -2311,7 +2323,7 @@ describe('SearchPage', () => {
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.displayDialCodeResult = [];
             searchPage.isSingleContent = false;
-            // jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             // act
             searchPage.processDialCodeResult(dialResult);
 
@@ -2323,7 +2335,7 @@ describe('SearchPage', () => {
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.displayDialCodeResult = [];
             searchPage.isSingleContent = false;
-            // jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             // act
             searchPage.processDialCodeResult(dialResult);
 
@@ -2335,7 +2347,7 @@ describe('SearchPage', () => {
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.displayDialCodeResult = [];
             searchPage.isSingleContent = false;
-            // jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             // act
             searchPage.processDialCodeResult(dialResult);
 
@@ -2347,7 +2359,7 @@ describe('SearchPage', () => {
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.displayDialCodeResult = [];
             searchPage.isSingleContent = false;
-            // jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             // act
             searchPage.processDialCodeResult(dialResult);
 
@@ -2358,7 +2370,7 @@ describe('SearchPage', () => {
             const dialResult = [{collections:  [], contents: '', display: false}];
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.isSingleContent = false
-            // jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             mockLocation.back = jest.fn()
             searchPage.shouldGenerateEndTelemetry = true
             searchPage.displayDialCodeResult = []
@@ -2464,7 +2476,7 @@ describe('SearchPage', () => {
             expect(searchPage.downloadProgress).toEqual(0);
             expect(searchPage.isDownloadStarted).toEqual(true);
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast = jest.fn(v => 'ERROR_CONTENT_NOT_AVAILABLE'));
+                expect(mockCommonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE'));
                 done();
             }, 0);
         });
@@ -2485,7 +2497,7 @@ describe('SearchPage', () => {
             expect(searchPage.downloadProgress).toEqual(0);
             expect(searchPage.isDownloadStarted).toEqual(true);
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast = jest.fn(v => 'ERROR_OFFLINE_MODE'));
+                expect(mockCommonUtilService.showToast('ERROR_OFFLINE_MODE'));
                 done();
             }, 0);
         });
@@ -2693,7 +2705,7 @@ describe('SearchPage', () => {
             searchPage.parentContent = {identifier: "result"}
             mockContentService.cancelDownload = jest.fn(() => of())
             mockLocation.back = jest.fn();
-            mockZone.run = jest.fn((fn) => fn()) as any
+            mockZone.run = jest.fn((fn) => fn())
                 searchPage.showLoading = false
                 searchPage.isSingleContent = true
             // act
@@ -2712,7 +2724,7 @@ describe('SearchPage', () => {
             searchPage.parentContent = {identifier: "result"}
             mockContentService.cancelDownload = jest.fn(() => of())
             mockLocation.back = jest.fn();
-            mockZone.run = jest.fn((fn) => fn()) as any
+            mockZone.run = jest.fn((fn) => fn())
                 searchPage.showLoading = false
                 searchPage.isSingleContent = false
             // act
@@ -2729,7 +2741,8 @@ describe('SearchPage', () => {
             searchPage.parentContent = {identifier: ""}
             mockContentService.cancelDownload = jest.fn(() => throwError({}))
             mockLocation.back = jest.fn();
-            mockZone.run = jest.fn((fn) => fn()) as any
+            mockZone.run = jest.fn((fn) => fn(
+                ))
                 searchPage.showLoading = false
                 searchPage.isSingleContent = true
             // act
@@ -2746,7 +2759,8 @@ describe('SearchPage', () => {
             searchPage.parentContent = {identifier: ""}
             mockContentService.cancelDownload = jest.fn(() => throwError({}))
             mockLocation.back = jest.fn();
-            mockZone.run = jest.fn((fn) => fn()) as any
+            mockZone.run = jest.fn((fn) => fn(
+                ))
                 searchPage.showLoading = false
                 searchPage.isSingleContent = false
             // act
@@ -2789,7 +2803,7 @@ describe('SearchPage', () => {
             ];
             searchPage.activityList = [{
                 id: 'id1'
-            }] as any;
+            }];
             // act
             searchPage.addActivityToGroup();
             // assert
@@ -2804,7 +2818,7 @@ describe('SearchPage', () => {
             searchPage.activityTypeData = {};
             searchPage.activityList = [{
                 id: 'id2'
-            }] as any;
+            }];
             // act
             searchPage.addActivityToGroup();
             // assert
@@ -2885,7 +2899,7 @@ describe('SearchPage', () => {
             searchPage.isFromGroupFlow = false;
             searchPage.enableSearch = false;
             searchPage['selectedSwitchableTab'] = SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG;
-            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("HOME_DISCOVER_TABS_CONFIG")) as any
+            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("HOME_DISCOVER_TABS_CONFIG"))
             // act
             searchPage.handleHeaderEvents({ name: 'back' });
             // assert
@@ -2896,7 +2910,7 @@ describe('SearchPage', () => {
             searchPage.isFromGroupFlow = false;
             searchPage.enableSearch = false;
             searchPage['selectedSwitchableTab'] = SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG;
-            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("somedata")) as any
+            mockSharedPreferences.getString = jest.fn(() => Promise.resolve("somedata"))
             // act
             searchPage.handleHeaderEvents({ name: 'back' });
             // assert
@@ -3242,9 +3256,9 @@ describe('SearchPage', () => {
             // arrange
             searchPage.isFromGroupFlow = false;
             searchPage.searchWithBackButton = false;
-            // jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
+            jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn((fn => fn({ name: 'notification' })))} as any
+                subscribe: jest.fn((fn => fn({ name: 'notification' })))}
             mockHeaderService.showHeaderWithHomeButton = jest.fn()
             mockFormAndFrameworkUtilService.getFormFields = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of())
@@ -3263,9 +3277,9 @@ describe('SearchPage', () => {
                 query: ''
             }
             searchPage.dialCode = '';
-            // jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
+            jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn((fn => fn({ name: '' })))} as any
+                subscribe: jest.fn((fn => fn({ name: '' })))}
             mockHeaderService.showHeaderWithBackButton = jest.fn()
             mockFormAndFrameworkUtilService.getFormFields = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of())
@@ -3274,7 +3288,7 @@ describe('SearchPage', () => {
             searchPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
-                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, 'select-box');
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, mockCommonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': searchPage.appName}));
                 done();
             }, 0);
         })
@@ -3284,16 +3298,16 @@ describe('SearchPage', () => {
             // arrange
             searchPage.backButtonFunc = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             searchPage.eventSubscription = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             searchPage.headerObservable = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             searchPage.refresher = {
                 disabled: true
-            } as any
+            }
             // act
             searchPage.ionViewWillLeave();
             // assert
@@ -3303,14 +3317,14 @@ describe('SearchPage', () => {
 
         it('should unsubscribe event ', () => {
             // arrange
-            searchPage.backButtonFunc = undefined as any
+            searchPage.backButtonFunc = undefined
             searchPage.eventSubscription = undefined
             searchPage.headerObservable = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             searchPage.refresher = {
                 disabled: true
-            } as any
+            }
             // act
             searchPage.ionViewWillLeave();
             // assert
@@ -3347,10 +3361,10 @@ describe('SearchPage', () => {
             // arrange
             searchPage.eventSubscription = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             searchPage.headerObservable = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             // act
             searchPage.ngOnDestroy();
             // assert
@@ -3363,7 +3377,7 @@ describe('SearchPage', () => {
             searchPage.eventSubscription = undefined;
             searchPage.headerObservable = {
                 unsubscribe: jest.fn()
-            } as any
+            }
             // act
             searchPage.ngOnDestroy();
             // assert
@@ -3389,7 +3403,7 @@ describe('SearchPage', () => {
             searchPage.isFromGroupFlow = false;
             searchPage.searchWithBackButton = false;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn((fn => fn({ name: 'notification' })))} as any
+                subscribe: jest.fn((fn => fn({ name: 'notification' })))}
             mockHeaderService.showHeaderWithHomeButton = jest.fn()
             // act
             searchPage.tabViewWillEnter();
@@ -3401,7 +3415,7 @@ describe('SearchPage', () => {
             searchPage.isFromGroupFlow = true;
             searchPage.searchWithBackButton = false;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn((fn => fn({ name: '' })))} as any
+                subscribe: jest.fn((fn => fn({ name: '' })))}
             mockHeaderService.showHeaderWithBackButton = jest.fn()
             searchPage.headerObservable = {
                 unsubscribe: jest.fn()
@@ -3409,17 +3423,17 @@ describe('SearchPage', () => {
             // act
             searchPage.tabViewWillEnter();
             // assert
-            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, 'select-box');
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalledWith(null, mockCommonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': searchPage.appName}));
         })
     })
     describe('loadData', () => {
         it('should load data if no filter applied', (done) => {
             // arrange
             searchPage.isFilterApplied = false;
-            searchPage.searchContentResult = undefined as any;
+            searchPage.searchContentResult = undefined;
             jest.spyOn(searchPage, 'handleSearch').mockImplementation();
             // act
-            searchPage.loadData({});
+            searchPage.loadData();
             // assert
             setTimeout(() => {
                 expect(searchPage.handleSearch).toHaveBeenCalledWith(true, 0);
@@ -3431,7 +3445,7 @@ describe('SearchPage', () => {
             searchPage.isFilterApplied = true;
             searchPage.searchContentResult = [{data: {}, count: 0}, {data: {}, count: 0}, {data: {}, count: 0}];
             // act
-            searchPage.loadData({});
+            searchPage.loadData();
             // assert
             setTimeout(() => {
                 expect(searchPage.applyFilter).toHaveBeenCalledWith(searchPage.searchContentResult.length);
@@ -3521,7 +3535,7 @@ describe('SearchPage', () => {
             window.setInterval = jest.fn((fn) => fn({
                 searchPage:{['loadingDisplayText'] : `Getting things ready in ${timer--}  seconds`}
 
-            })) as any
+            }), 1000) as any
             window.clearInterval = jest.fn();
             // act
             searchPage.subscribeSdkEvent()
@@ -3548,7 +3562,7 @@ describe('SearchPage', () => {
             mockCommonUtilService.translateMessage = jest.fn();
             window.setInterval = jest.fn((fn) => fn({
 
-            })) as any
+            }), 1000) as any
             window.clearInterval = jest.fn();
             // act
             searchPage.subscribeSdkEvent()
@@ -3682,7 +3696,7 @@ describe('SearchPage', () => {
     describe('ngAfterViewInit', () => {
         it('should handle searchbar and search history on ngAfterViewInit ', () => {
             // arrange
-            const event: CustomEvent<any> = {target:['value']} as any
+            const event: CustomEvent<any> = {target:['value']}
             searchPage.searchBar = {
                 ionChange: {
                     pipe: jest.fn(() => ({
@@ -3698,7 +3712,7 @@ describe('SearchPage', () => {
             window.setTimeout = jest.fn((fn) => fn({}), ) as any;
             searchPage['searchHistoryService'] = {
                 getEntries: jest.fn()
-            } as any
+            }
             // act
             searchPage.ngAfterViewInit();
             // assert

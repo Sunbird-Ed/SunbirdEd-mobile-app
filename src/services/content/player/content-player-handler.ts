@@ -8,8 +8,8 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype } from '../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { ContentUtil } from '../../../util/content-util';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Content, CorrelationData, CourseService, InteractType, PlayerService } from '@project-sunbird/sunbird-sdk';
+import { File } from '@ionic-native/file/ngx';
+import { Content, CorrelationData, CourseService, InteractType, PlayerService } from 'sunbird-sdk';
 import { ContentInfo } from '../content-info';
 import {UtilityService} from '../../../services/utility-service';
 

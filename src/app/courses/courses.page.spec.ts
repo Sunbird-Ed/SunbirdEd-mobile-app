@@ -1,15 +1,15 @@
 import { CoursesPage } from './courses.page';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { NgZone } from '@angular/core';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { CourseUtilService } from '../../services/course-util.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { Network } from '@ionic-native/network/ngx';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
@@ -21,11 +21,12 @@ import {
     CourseEnrollmentType,
     CourseService,
     EventsBusService,
-    FrameworkService,
+    FrameWorkService,
+    PageAssembleCriteria,
     PageAssembleService,
     ProfileType,
     SharedPreferences
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { BatchConstants, ContentCard, PageName } from '../app.constant';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -33,8 +34,9 @@ import { CsNetworkError } from '@project-sunbird/client-services/core/http-servi
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
-import { FrameworkUtilService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ContentAggregatorRequest, ContentSearchCriteria, FrameworkCategoryCodesGroup, FrameworkUtilService, GetFrameworkCategoryTermsRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
+import { mockCategoryTermsResponse } from '../../services/formandframeworkutil.service.spec.data';
 import { mockFrameworkList } from '../faq-report-issue/faq-report-issue.page.spec.data';
 
 describe('CoursesPage', () => {
@@ -52,7 +54,7 @@ describe('CoursesPage', () => {
             { profileType: 'Student', grade: ['g1', 'g2'], medium: ['m1', 'm2'], subject: 'Sunbject' } as any
         ))
     };
-    const mockFrameworkService: Partial<FrameworkService> = {};
+    const mockFrameworkService: Partial<FrameWorkService> = {};
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockEvents: Partial<Events> = {
@@ -65,7 +67,7 @@ describe('CoursesPage', () => {
     const mockNetwork: Partial<Network> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
-    } as any;
+    };
     const mockPageService: Partial<PageAssembleService> = {};
     const mockPopCtrl: Partial<PopoverController> = {
         create: jest.fn(() => Promise.resolve({
@@ -111,7 +113,7 @@ describe('CoursesPage', () => {
             mockPreferences as SharedPreferences,
             mockCourseService as CourseService,
             mockContentService as ContentService,
-            mockFrameworkService as FrameworkService,
+            mockFrameworkService as FrameWorkService,
             mockProfileService as ProfileService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
@@ -394,7 +396,7 @@ describe('CoursesPage', () => {
     describe('ionViewWillLeave', () => {
         it('should unsubscribe eventservice and headerObservable by invoked ionViewWillLeave', () => {
             // arrange
-            coursesPage.refresher = { disabled: true } as any;
+            coursesPage.refresher = { disabled: true };
             coursesPage.headerObservable = true;
             coursesPage.headerObservable = {
                 unsubscribe: jest.fn(() => true)
@@ -403,7 +405,7 @@ describe('CoursesPage', () => {
                 unsubscribe: jest.fn(() => true)
             } as any;
             mockEvents.unsubscribe = jest.fn((_) => true);
-            mockNgZone.run = jest.fn((fn) => fn()) as any;
+            mockNgZone.run = jest.fn((fn) => fn());
             // act
             coursesPage.ionViewWillLeave();
             // assert
@@ -417,7 +419,7 @@ describe('CoursesPage', () => {
             // arrange
             coursesPage.headerObservable = false;
             mockEvents.unsubscribe = jest.fn((_) => true);
-            mockNgZone.run = jest.fn((fn) => fn('data')) as any;
+            mockNgZone.run = jest.fn((fn) => fn('data'));
             // act
             coursesPage.ionViewWillLeave();
             // assert
@@ -474,14 +476,14 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 2
                 }
-            } as any;
+            };
             const mockContent: Content = {
                 isAvailableLocally: true,
                 contentData: {
                     pkgVersion: 1
                 },
 
-            } as any;
+            };
             mockContentService.getContentDetails = jest.fn(() => of(mockContent));
             mockEventBusService.events = jest.fn(() => of({
                 type: 'PROGRESS',
@@ -490,7 +492,7 @@ describe('CoursesPage', () => {
                     progress: 100
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn()) as any;
+            mockNgZone.run = jest.fn((fn) => fn());
             mockCourseUtilService.getImportContentRequestBody = jest.fn(() => [{
                 isChildContent: true,
                 destinationFolder: './///',
@@ -520,14 +522,14 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 2
                 }
-            } as any;
+            };
             const mockContent: Content = {
                 isAvailableLocally: true,
                 contentData: {
                     pkgVersion: 1
                 },
 
-            } as any;
+            };
             mockEventBusService.events = jest.fn(() => of({
                 type: 'IMPORT_COMPLETED',
                 payload: {
@@ -538,7 +540,7 @@ describe('CoursesPage', () => {
             coursesPage.resumeContentData = mockCourse;
             coursesPage.downloadPercentage = 100;
             mockRouter.navigate = jest.fn();
-            mockNgZone.run = jest.fn((fn) => fn()) as any;
+            mockNgZone.run = jest.fn((fn) => fn());
             mockContentService.getContentDetails = jest.fn(() => of(mockContent));
             mockCourseUtilService.getImportContentRequestBody = jest.fn(() => [{
                 isChildContent: true,
@@ -568,14 +570,14 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 1
                 }
-            } as any;
+            };
             const mockContent: Content = {
                 isAvailableLocally: true,
                 contentData: {
                     pkgVersion: 2
                 },
 
-            } as any;
+            };
             mockContentService.getContentDetails = jest.fn(() => of(mockContent));
             mockRouter.navigate = jest.fn();
             // act
@@ -595,14 +597,14 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 2
                 }
-            } as any;
+            };
             const mockContent: Content = {
                 isAvailableLocally: false,
                 contentData: {
                     pkgVersion: 1
                 },
 
-            } as any;
+            };
             mockContentService.getContentDetails = jest.fn(() => of(mockContent));
             mockEventBusService.events = jest.fn(() => of({
                 type: 'IMPORT_COMPLETED',
@@ -642,7 +644,7 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 2
                 }
-            } as any;
+            };
             const error = new CsNetworkError('no internet');
             mockContentService.getContentDetails = jest.fn(() => throwError(error));
             mockCommonUtilService.showToast = jest.fn();
@@ -662,7 +664,7 @@ describe('CoursesPage', () => {
                 content: {
                     pkgVersion: 2
                 }
-            } as any;
+            };
             mockContentService.getContentDetails = jest.fn(() => throwError('error'));
             mockCommonUtilService.showToast = jest.fn();
             // act
@@ -908,7 +910,7 @@ describe('CoursesPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
-            mockCourseService.getCourseBatches = jest.fn(() => of(data)) as any;
+            mockCourseService.getCourseBatches = jest.fn(() => of(data));
             coursesPage.loader = {
                 dismiss: jest.fn()
             };
@@ -1133,7 +1135,7 @@ describe('CoursesPage', () => {
             mockAppGlobalService.setEnrolledCourseList = jest.fn(() => []);
             mockAppGlobalService.getGuestUserType = jest.fn(() => ProfileType.TEACHER);
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
-            mockAppGlobalService['DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER'] = true;
+            mockAppGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = true;
             // act
             coursesPage.getUserId().catch(() => {
                 expect(coursesPage.guestUser).toBeTruthy();
@@ -1210,7 +1212,7 @@ describe('CoursesPage', () => {
             coursesPage.resumeContentData = {
                 contentId: 'do123'
             };
-            mockNgZone.run = jest.fn((fn) => fn()) as any;
+            mockNgZone.run = jest.fn((fn) => fn());
             coursesPage.tabBarElement = { style: { display: 'flex' } };
             mockContentService.cancelDownload = jest.fn(() => of(undefined));
             // act
@@ -1226,7 +1228,7 @@ describe('CoursesPage', () => {
             coursesPage.resumeContentData = {
                 identifier: 'do123'
             };
-            mockNgZone.run = jest.fn((fn) => fn()) as any;
+            mockNgZone.run = jest.fn((fn) => fn());
             coursesPage.tabBarElement = { style: { display: 'flex' } };
             mockContentService.cancelDownload = jest.fn(() => throwError('error'));
             // act

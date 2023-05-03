@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { CategoriesEditPage } from './categories-edit.page';
 import { TranslateModule } from '@ngx-translate/core';
-import {PipesModule} from '../../../pipes/pipes.module';
+import {PipesModule} from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {

@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router } from '@angular/router';
-import { SharedPreferences, AuthService } from '@project-sunbird/sunbird-sdk';
-import { PreferenceKey } from '../app/app.constant';
-import { AppGlobalService } from '../services/app-global-service.service';
-import { SplashScreenService} from '../services/splash-screen.service';
+import { SharedPreferences, AuthService } from 'sunbird-sdk';
+import { PreferenceKey } from '@app/app/app.constant';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SplashScreenService} from '@app/services/splash-screen.service';
 
 @Injectable()
 export class HasNotBeenOnboardedGuard implements CanLoad {

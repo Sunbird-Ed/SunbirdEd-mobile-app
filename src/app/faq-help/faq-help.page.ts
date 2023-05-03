@@ -1,12 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, Inject, ViewChild, ElementRef, OnInit, NgZone } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { AppGlobalService, } from '../../services/app-global-service.service';
-import { AppHeaderService, } from '../../services/app-header.service';
-import { FormAndFrameworkUtilService, } from '../../services/formandframeworkutil.service';
-import { Environment, InteractType, PageId, InteractSubtype, ImpressionType, CorReleationDataType } from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService, } from '@app/services/app-global-service.service';
+import { AppHeaderService, } from '@app/services/app-header.service';
+import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
+import { Environment, InteractType, PageId, InteractSubtype, ImpressionType, CorReleationDataType } from '@app/services/telemetry-constants';
 import {
   SharedPreferences,
   TelemetryObject,
@@ -16,10 +16,10 @@ import {
   FaqService,
   GetFaqRequest,
   CorrelationData,
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';

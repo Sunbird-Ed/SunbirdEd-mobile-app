@@ -7,8 +7,8 @@ import { SbProgressLoader } from '../services/sb-progress-loader.service';
 import { LoginNavigationHandlerService } from '../services/login-navigation-handler.service';
 import { of } from 'rxjs';
 
-jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
+jest.mock('sunbird-sdk', () => {
+    const actual = require.requireActual('sunbird-sdk');
     return {
         ...actual,
         WebviewLoginSessionProvider() {
@@ -16,8 +16,8 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
     };
 });
 
-jest.mock('../app/module.service', () => {
-    const actual = jest.requireActual('../app/module.service');
+jest.mock('@app/app/module.service', () => {
+    const actual = require.requireActual('@app/app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {

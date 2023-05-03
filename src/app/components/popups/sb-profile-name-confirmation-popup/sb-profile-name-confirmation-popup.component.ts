@@ -1,15 +1,15 @@
 import {Component, Inject, Input} from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { AppGlobalService } from '../../../../services/app-global-service.service';
-import { PageId } from '../../../../services/telemetry-constants';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { PreferenceKey, ProfileConstants } from '../../../../app/app.constant';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { PageId } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import {
   CachedItemRequestSourceFrom, ProfileService,
   ServerProfileDetailsRequest,
   SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
-import { NavigationService } from '../../../../services/navigation-handler.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-profile-name-confirmation-popover',

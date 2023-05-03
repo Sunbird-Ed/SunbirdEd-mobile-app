@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
@@ -18,10 +18,10 @@ import {
   SharedPreferences,
   FrameworkCategoryCode,
   CachedItemRequestSourceFrom
-} from '@project-sunbird/sunbird-sdk';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { AppGlobalService } from '../../../services/app-global-service.service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+} from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment,
   ImpressionType,
@@ -29,16 +29,16 @@ import {
   InteractType,
   ObjectType,
   PageId,
-} from '../../../services/telemetry-constants';
-import { AppHeaderService } from '../../../services/app-header.service';
-import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '../../../app/app.constant';
+} from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import {PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks} from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { ProfileHandler } from '../../../services/profile-handler';
-import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
-import { OnboardingConfigurationService } from '../../../services/onboarding-configuration.service';
-import { SegmentationTagService, TagPrefixConstants } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-guest-edit',

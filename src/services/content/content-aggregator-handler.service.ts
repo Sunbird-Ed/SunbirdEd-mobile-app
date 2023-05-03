@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { FormConstants } from '../../app/form.constants';
+import { FormConstants } from '@app/app/form.constants';
 import {
     ContentAggregatorResponse, ContentService, CourseService,
     FormService, ProfileService

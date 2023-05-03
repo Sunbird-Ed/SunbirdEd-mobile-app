@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CommonUtilService } from '../../services/common-util.service';
-import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 
 @Pipe({
     name: 'category',

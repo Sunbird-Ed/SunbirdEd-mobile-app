@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PreferenceKey, RouterLinks } from '../../../../app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService, UtilsService } from '../../core';
@@ -9,9 +9,9 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
-import { AppGlobalService } from '../../../../services/app-global-service.service';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-deeplink-redirect',

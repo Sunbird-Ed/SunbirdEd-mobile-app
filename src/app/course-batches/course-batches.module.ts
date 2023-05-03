@@ -5,8 +5,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CourseBatchesPage } from './course-batches.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { PipesModule } from '../../pipes/pipes.module';
-import { DirectivesModule } from '../../directives/directives.module';
+import { PipesModule } from '@app/pipes/pipes.module';
+import { DirectivesModule } from '@app/directives/directives.module';
 import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [

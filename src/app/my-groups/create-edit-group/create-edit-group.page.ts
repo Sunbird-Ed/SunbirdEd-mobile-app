@@ -2,18 +2,18 @@ import { Subscription } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UtilityService } from '../../../services/utility-service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   GroupService, GroupCreateRequest, GroupMembershipType,
   UpdateByIdRequest, CorrelationData
-} from '@project-sunbird/sunbird-sdk';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { AppHeaderService } from '../../../services/app-header.service';
+} from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { Environment, ID, ImpressionSubtype,
-  ImpressionType, InteractType, PageId, InteractSubtype } from '../../../services/telemetry-constants';
-import { RouterLinks, GroupErrorCodes } from '../../../app/app.constant';
+  ImpressionType, InteractType, PageId, InteractSubtype } from '@app/services/telemetry-constants';
+import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 
 @Component({

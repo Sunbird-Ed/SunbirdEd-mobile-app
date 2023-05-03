@@ -15,14 +15,14 @@ import {
     DeviceSpecification,
     Actor,
     TelemetrySummaryRequest
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import {Map} from '../app/telemetryutil';
 import {
     Environment, ImpressionType, InteractSubtype, InteractType,
     Mode, PageId, CorReleationDataType, ID, ImpressionSubtype
 } from './telemetry-constants';
 import {MimeType} from '../app/app.constant';
-import {ContentUtil} from '../util/content-util';
+import {ContentUtil} from '@app/util/content-util';
 import {SbProgressLoader} from '../services/sb-progress-loader.service';
 
 @Injectable()

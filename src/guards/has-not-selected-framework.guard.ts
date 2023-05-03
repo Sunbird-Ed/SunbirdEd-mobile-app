@@ -2,13 +2,13 @@ import { Injectable, Inject } from '@angular/core';
 import { Router, Resolve, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 
-import { ProfileService } from '@project-sunbird/sunbird-sdk';
-import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../app/app.constant';
-import { AppGlobalService } from '../services/app-global-service.service';
-import { SplashScreenService } from '../services/splash-screen.service';
-import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
-import { CommonUtilService } from '../services/common-util.service';
-import { Events } from '../util/events';
+import { ProfileService } from 'sunbird-sdk';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SplashScreenService } from '@app/services/splash-screen.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { Events } from '@app/util/events';
 
 @Injectable()
 export class HasNotSelectedFrameworkGuard implements Resolve<any> {

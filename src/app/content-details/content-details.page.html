@@ -349,7 +349,7 @@
 </ion-content>
 
 <!-- Page footer -->
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload()" tabindex="1" role="dialog"
+<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" tabindex="1" role="dialog"
   [downloadProgress]="downloadProgress" [contentName]="content?.contentData?.name" [isUpdateAvail]="isUpdateAvail"
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">

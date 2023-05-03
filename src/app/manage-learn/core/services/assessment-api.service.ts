@@ -4,10 +4,10 @@ import { ModalController } from '@ionic/angular';
 import { ToastService } from '.';
 import { urlConstants } from '../constants/urlConstants';
 import { ApiService } from './api.service';
-import { AuthService, DeviceInfo,SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { AuthService, DeviceInfo,SharedPreferences } from 'sunbird-sdk';
 import { ApiUtilsService } from './api-utils.service';
-import { HTTP } from '@awesome-cordova-plugins/http/ngx';
-import { UtilityService } from '../../../../services/utility-service';
+import { HTTP } from '@ionic-native/http/ngx';
+import { UtilityService } from '@app/services/utility-service';
 
 @Injectable({
   providedIn: 'root',

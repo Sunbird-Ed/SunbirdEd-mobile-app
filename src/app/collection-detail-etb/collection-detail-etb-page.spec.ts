@@ -9,9 +9,9 @@ import {
     StorageService,
     TelemetryErrorCode,
     TelemetryObject
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import {IonContent, Platform, PopoverController} from '@ionic/angular';
-import {Events} from '../../util/events';
+import {Events} from '@app/util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -35,12 +35,12 @@ import {
     mockContentData
 } from './collection-detail-etb-page.spec.data';
 import { of, Subscription, throwError } from 'rxjs';
-import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
-import { EventTopics } from '../../app/app.constant';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType} from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { isObject } from 'util';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
@@ -108,8 +108,8 @@ describe('collectionDetailEtbPage', () => {
     };
 
     const mockIonContent: Partial<IonContent> = {
-        ionScroll: {}
-    } as any;
+        ionScroll: {} as any
+    };
 
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {
         showContentDeletePopup: jest.fn()
@@ -123,7 +123,7 @@ describe('collectionDetailEtbPage', () => {
         navigateToCollection: jest.fn()
     };
 
-    global['window'].segmentation = {
+    global.window.segmentation = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -210,7 +210,7 @@ describe('collectionDetailEtbPage', () => {
         }));
         mockHeaderService.updatePageConfig = jest.fn();
         mockevents.publish = jest.fn();
-       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
@@ -228,7 +228,7 @@ describe('collectionDetailEtbPage', () => {
         jest.spyOn(mockzone, 'run').mockImplementation();
         mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
             fn({});
-        }) as any;
+        });
         mockHeaderService.showStatusBar = jest.fn();
         jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
             showHeader: false,
@@ -236,8 +236,8 @@ describe('collectionDetailEtbPage', () => {
             actionButtons: ['download']
         } as any);
         mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
-       jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockImplementation();
-       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
+        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.ionViewWillEnter();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
@@ -258,7 +258,7 @@ describe('collectionDetailEtbPage', () => {
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
         mockContentService.importContent = jest.fn(() => of());
-       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
         setTimeout(() => {
             expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();
@@ -271,7 +271,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             mockappGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            })) as any;
+            }));
             mockProfileService.addContentAccess = jest.fn(() => of(true));
             mockevents.publish = jest.fn();
             mockContentService.setContentMarker = jest.fn(() => of(true));
@@ -304,7 +304,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             mockappGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            })) as any;
+            }));
             mockProfileService.addContentAccess = jest.fn(() => of(false));
             mockContentService.setContentMarker = jest.fn(() => of(true));
             // act
@@ -355,7 +355,7 @@ describe('collectionDetailEtbPage', () => {
             jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
             mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
                 fn({});
-            }) as any;
+            });
 
             mockevents.subscribe = jest.fn((topic, fn) => {
                 if (topic === EventTopics.CONTENT_TO_PLAY) {
@@ -400,7 +400,7 @@ describe('collectionDetailEtbPage', () => {
             jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
             mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
                 fn({});
-            }) as any;
+            });
 
             mockevents.subscribe = jest.fn((topic, fn) => {
                 if (topic === EventTopics.CONTENT_TO_PLAY) {
@@ -565,7 +565,7 @@ describe('collectionDetailEtbPage', () => {
 
     it('should return content marker', () => {
         // arrange
-        mockappGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
+        mockappGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
         mockProfileService.addContentAccess = jest.fn(() => of(true));
         mockContentService.setContentMarker = jest.fn(() => of(true));
         // act
@@ -637,9 +637,9 @@ describe('collectionDetailEtbPage', () => {
 
     it('should return true or false for isGroupShown()', () => {
         const group = { gid: 'gid-123' };
-        collectionDetailEtbPage['shownGroup'] = group;
+        collectionDetailEtbPage.shownGroup = group;
         collectionDetailEtbPage.isGroupShown(group);
-        expect(collectionDetailEtbPage['shownGroup']).toBeTruthy();
+        expect(collectionDetailEtbPage.shownGroup).toBeTruthy();
     });
 
     describe('changeValue', () => {
@@ -777,16 +777,15 @@ describe('collectionDetailEtbPage', () => {
                 isAvailableLocally: false,
                 children: { identifier: 'do_212911645382959104166' }
             };
-            mockContentService.getContentDetails = jest.fn(() => of(content)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(content));
             mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
-            mockContentService.getContentHeirarchy = jest.fn(() => of(content)) as any;
+            mockContentService.getContentHeirarchy = jest.fn(() => of(content));
             jest.spyOn(collectionDetailEtbPage, 'importContentInBackground').mockReturnValue();
-            let val;
-            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Digital Textbook', val);
+            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Digital Textbook', undefined);
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
-                expect(content.contentData.attributions).toBe('sample-1, sample-3');
+                expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('sample-1, sample-3');
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
                 done();
@@ -801,7 +800,7 @@ describe('collectionDetailEtbPage', () => {
                 isAvailableLocally: true,
                 children: { identifier: 'do_212911645382959104166' }
             };
-            mockContentService.getContentDetails = jest.fn(() => of(content)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(content));
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
@@ -812,7 +811,7 @@ describe('collectionDetailEtbPage', () => {
 
         it('should not return content details if data is undefined', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => of(undefined)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(undefined));
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
@@ -829,7 +828,7 @@ describe('collectionDetailEtbPage', () => {
                 isAvailableLocally: false,
                 children: { identifier: 'do_212911645382959104166' }
             };
-            mockContentService.getContentDetails = jest.fn(() => of(content)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(content));
             mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             mockContentService.getContentHeirarchy = jest.fn(() => throwError({ erroe: 'sample-error' }));
             // act
@@ -857,28 +856,28 @@ describe('collectionDetailEtbPage', () => {
     describe('setCollectionStructure', () => {
         it('should return contentTypesCount if isObject', () => {
             // arrange
-            const content = collectionDetailEtbPage.contentDetail = {
+            collectionDetailEtbPage.contentDetail = {
                 contentData: {
                     contentTypesCount: { id: 'do-123' }
                 }
-            } as any;
+            };
             // act
             collectionDetailEtbPage.setCollectionStructure();
             // assert
-            expect(isObject(content.contentData.contentTypesCount)).toBeTruthy();
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeTruthy();
         });
 
         it('should return contentTypesCount if is not object', () => {
             // arrange
-            let content = collectionDetailEtbPage.contentDetail = {
+            collectionDetailEtbPage.contentDetail = {
                 contentData: {
                     contentTypesCount: '{"identifier": "do-123"}'
                 }
-            } as any;
+            };
             // act
             collectionDetailEtbPage.setCollectionStructure();
             // assert
-            expect(isObject(content.contentData.contentTypesCount)).toBeFalsy();
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
         });
 
         it('should return contentTypesCount if is not object for card data', () => {
@@ -890,7 +889,7 @@ describe('collectionDetailEtbPage', () => {
                 contentData: {
                     contentTypesCount: undefined
                 }
-            } as any;
+            };
             // act
             collectionDetailEtbPage.setCollectionStructure();
             // assert
@@ -906,7 +905,7 @@ describe('collectionDetailEtbPage', () => {
                 contentData: {
                     contentTypesCount: undefined
                 }
-            } as any;
+            };
             // act
             collectionDetailEtbPage.setCollectionStructure();
             // assert
@@ -922,7 +921,7 @@ describe('collectionDetailEtbPage', () => {
                 contentData: {
                     contentTypesCount: undefined
                 }
-            } as any;
+            };
             // act
             collectionDetailEtbPage.setCollectionStructure();
             // assert
@@ -1097,8 +1096,8 @@ describe('collectionDetailEtbPage', () => {
                 rootUnitId: 'sample-id',
                 unit: undefined,
                 content: undefined
-            } as any;
-            mockContentService.getChildContents = jest.fn(() => of(content)) as any;
+            };
+            mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['some'];
             jest.spyOn(collectionDetailEtbPage, 'onFilterMimeTypeChange').mockImplementation(() => {
                 return Promise.resolve();
@@ -1147,7 +1146,7 @@ describe('collectionDetailEtbPage', () => {
                 unit: undefined,
                 content: undefined
             };
-            mockContentService.getChildContents = jest.fn(() => of(content)) as any;
+            mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['all'];
             mockchangeDetectionRef.detectChanges = jest.fn();
             collectionDetailEtbPage.isDepthChild = true;
@@ -1176,7 +1175,7 @@ describe('collectionDetailEtbPage', () => {
                 unit: undefined,
                 content: undefined
             };
-            mockContentService.getChildContents = jest.fn(() => of(content)) as any;
+            mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['all'];
             mockchangeDetectionRef.detectChanges = jest.fn();
             collectionDetailEtbPage.isDepthChild = false;
@@ -1298,10 +1297,10 @@ describe('collectionDetailEtbPage', () => {
                     progress: 100
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-123'
-            } as any;
+            };
             jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1320,10 +1319,10 @@ describe('collectionDetailEtbPage', () => {
                     progress: -1
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-123'
-            } as any;
+            };
 
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1341,10 +1340,10 @@ describe('collectionDetailEtbPage', () => {
                     progress: 80
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
 
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1362,10 +1361,10 @@ describe('collectionDetailEtbPage', () => {
                     progress: 80
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
 
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1384,10 +1383,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
             collectionDetailEtbPage.isDownloadStarted = true;
             collectionDetailEtbPage.queuedIdentifiers = ['do-123456'];
             jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
@@ -1417,10 +1416,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
             collectionDetailEtbPage.isDownloadStarted = true;
             collectionDetailEtbPage.queuedIdentifiers = ['do-123456', 'sample', 'test'];
             // act
@@ -1442,10 +1441,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
             collectionDetailEtbPage.isDownloadStarted = true;
             collectionDetailEtbPage.queuedIdentifiers = ['sample', 'test'];
             // act
@@ -1465,10 +1464,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-223'
-            } as any;
+            };
             collectionDetailEtbPage.isDownloadStarted = true;
             collectionDetailEtbPage.queuedIdentifiers = ['sample', 'test'];
             // act
@@ -1488,10 +1487,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-123456'
-            } as any;
+            };
             collectionDetailEtbPage.parentContent = true;
             jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
             jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation(() => {
@@ -1515,10 +1514,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-123456'
-            } as any;
+            };
             collectionDetailEtbPage.parentContent = false;
             collectionDetailEtbPage.isUpdateAvailable = true;
             jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
@@ -1543,10 +1542,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-123456'
-            } as any;
+            };
             collectionDetailEtbPage.parentContent = false;
             collectionDetailEtbPage.isUpdateAvailable = false;
             jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
@@ -1570,10 +1569,10 @@ describe('collectionDetailEtbPage', () => {
                     contentId: 'do-123456'
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-12'
-            } as any;
+            };
             collectionDetailEtbPage.parentContent = false;
             collectionDetailEtbPage.isUpdateAvailable = false;
             // act
@@ -1595,10 +1594,10 @@ describe('collectionDetailEtbPage', () => {
                     totalCount: 10
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-12'
-            } as any;
+            };
             mockCommonUtilService.translateMessage = jest.fn();
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1619,10 +1618,10 @@ describe('collectionDetailEtbPage', () => {
                     totalCount: 10
                 }
             }));
-            mockzone.run = jest.fn((fn) => fn()) as any;
+            mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.contentDetail = {
                 identifier: 'do-12'
-            } as any;
+            };
             mockCommonUtilService.translateMessage = jest.fn();
             // act
             collectionDetailEtbPage.subscribeSdkEvent();

@@ -3,7 +3,7 @@ import {
   OnChanges, OnDestroy, Output, QueryList, SimpleChanges, ViewChildren
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CommonUtilService } from '../../../services/common-util.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, scan, tap } from 'rxjs/operators';
 import {

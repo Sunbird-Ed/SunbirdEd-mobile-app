@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonUtilService } from '../../../../../services/common-util.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-item-list-card',

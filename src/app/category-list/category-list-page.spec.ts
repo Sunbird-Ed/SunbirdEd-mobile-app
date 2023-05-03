@@ -1,4 +1,4 @@
-import { CategoryListPage } from '../category-list/category-list-page';
+import { CategoryListPage } from './category-list-page';
 import { CommonUtilService } from '../../services/common-util.service';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -10,7 +10,8 @@ import {
     Environment, InteractSubtype, InteractType, PageId, SearchFilterService,
     TelemetryGeneratorService
 } from '../../services';
-import { ContentUtil } from '../../util/content-util';
+import { ContentUtil } from '@app/util/content-util';
+import { RouterLinks } from '@app/app/app.constant';
 import { ModalController } from '@ionic/angular';
 
 describe('CategoryListPage', () => {
@@ -255,7 +256,7 @@ describe('CategoryListPage', () => {
             categoryListPage.primaryFacetFilters = [
                 { "code": "name1", "translations": "{\"en\":\"Subject\"}", "values": [], "name": "Subject", "index": 2, "sort": true },
                 { "code": "name2", "translations": "{\"en\":\"Role\"}", "values": [], "name": "Role", "index": 4 }
-            ] as any
+            ]
             categoryListPage.displayFacetFilters = [
                 {
                     name: 'name1', code: 'code1',
@@ -265,10 +266,10 @@ describe('CategoryListPage', () => {
                     name: 'name2', code: 'code2',
                     values: [{ name: 'na 1', apply: false }, { name: 'na 2', apply: false }]
                 }
-            ] as any;
+            ];
             const onSelectedFilter = [{ name: "accountancy", count: 124, apply: false }];
             const isInitialCall = false;
-            // jest.spyOn(categoryListPage, 'fetchAndSortData').mockImplementation();
+            jest.fn(categoryListPage, 'fetchAndSortData').mockImplementation({}, true)
             //act
             categoryListPage.ngOnInit();
             //assert
@@ -381,13 +382,13 @@ describe('CategoryListPage', () => {
         })
         it('should return filterCriteriaData when filterPillList, filterPillBy and preFetchedFilterCriteria return true', () => {
             //arrange
-            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }] as any;
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
             categoryListPage['formField'] = {
                 searchCriteria: { subjects: ['maths'] },
                 facet: 'Course',
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: "primaryCategory"
-            } as any
+            }
             categoryListPage['preFetchedFilterCriteria'] = {
                 facets: ["se_mediums", "subject", "primaryCategory", "audience"],
                 primaryCategories: ["Course"],
@@ -401,24 +402,24 @@ describe('CategoryListPage', () => {
         })
         it('should return filterCriteriaData when all criteria become false', () => {
             //arrange
-            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }] as any;
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
             categoryListPage['formField'] = {
                 searchCriteria: { subjects: ['maths'] },
                 facet: 'Course',
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: null
-            } as any;
-            // categoryListPage['filterCriteria'] =  {
-            //     facets: ["se_mediums", "subject", "primaryCategory", "audience"],
-            //     primaryCategories: ["Course"],
-            //     limit: 100,
-            //     mode: "soft",
-            //     offset: 0
-            // } as any
+            };
+            categoryListPage['filterCriteria'] =  {
+                facets: ["se_mediums", "subject", "primaryCategory", "audience"],
+                primaryCategories: ["Course"],
+                limit: 100,
+                mode: "soft",
+                offset: 0
+            }
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({
                 profileType: 'Student', subject: ['subject 1']
             } as any))
-            categoryListPage['preFetchedFilterCriteria'] = null as any;
+            categoryListPage['preFetchedFilterCriteria'] = null;
             //act
             categoryListPage.deduceFilterCriteria();
             //assert
@@ -437,7 +438,7 @@ describe('CategoryListPage', () => {
                         { name: 'course', code: 'code2', values: [{ name: 'maths' }] }
                     ]
                 }
-            }) as any;
+            });
             const refreshPillFilter = true;
             const onSelectedFilter = [];
             //act
@@ -459,7 +460,7 @@ describe('CategoryListPage', () => {
                         { name: 'course', code: 'code2', values: [{ name: 'maths' }] }
                     ]
                 }
-            }) as any;
+            });
             const refreshPillFilter = true;
             const onSelectedFilter = [];
             //act
@@ -481,7 +482,7 @@ describe('CategoryListPage', () => {
                         { name: 'course', code: 'code2', values: [{ name: 'maths' }] }
                     ]
                 }
-            }) as any;
+            });
             const onSelectedFilter = [];
             //act
             categoryListPage.onPrimaryFacetFilterSelect(primaryFacetFilter, toApply);
@@ -705,7 +706,7 @@ describe('CategoryListPage', () => {
         // act
         categoryListPage.ngOnDestroy();
         // assert
-        expect(formControlSubscriptions.forEach((s: any) => s.unsubscribe()));
+        expect(formControlSubscriptions.forEach(s => s.unsubscribe()));
     });
     describe('pillFilterHandler', () => {
         it('should return nothing if pill is not defined', (done) => {
@@ -722,14 +723,14 @@ describe('CategoryListPage', () => {
         it('should check facetFilter if it return true', (done) => {
             //arrange
             const pill = { name: "course", count: 3034, apply: true };
-            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }] as any;
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
             categoryListPage['formField'] = {
                 searchCriteria: { subjects: ['maths'] },
                 facet: 'Course',
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: "subject"
-            } as any;
-            categoryListPage['preFetchedFilterCriteria'] = null as any;
+            };
+            categoryListPage['preFetchedFilterCriteria'] = null;
             categoryListPage['supportedUserTypesConfig'] = [{code: 'audience'}];
             categoryListPage['primaryFacetFiltersFormGroup'] = {
                 value: {
@@ -769,14 +770,14 @@ describe('CategoryListPage', () => {
         it('should check facetFilter if it return true, if no filter values', (done) => {
             //arrange
             const pill = { name: "course", count: 3034, apply: true };
-            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }] as any;
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
             categoryListPage['formField'] = {
                 searchCriteria: { subjects: ['maths'] },
                 facet: 'Course',
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: "subject"
-            } as any;
-            categoryListPage['preFetchedFilterCriteria'] = null as any;
+            };
+            categoryListPage['preFetchedFilterCriteria'] = null;
             categoryListPage['supportedUserTypesConfig'] = [{code: 'audience'}];
             categoryListPage['primaryFacetFiltersFormGroup'] = {
                 value: {
@@ -816,14 +817,14 @@ describe('CategoryListPage', () => {
         it('should check facetFilter if it return true on else case', (done) => {
             //arrange
             const pill = { name: "course", count: 3034, apply: true };
-            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }] as any;
+            categoryListPage['filterPillList'] = [{ name: "course", count: 3016, apply: true }];
             categoryListPage['formField'] = {
                 searchCriteria: { subjects: ['maths'] },
                 facet: 'Course',
                 aggregate: { groupBy: "subject", groupSortBy: [{ name: { order: "asc" } }] },
                 filterPillBy: "subject1"
-            } as any;
-            categoryListPage['preFetchedFilterCriteria'] = null as any;
+            };
+            categoryListPage['preFetchedFilterCriteria'] = null;
             categoryListPage['supportedUserTypesConfig'] = [{code: 'audience'}];
             categoryListPage['primaryFacetFiltersFormGroup'] = {
                 value: {

@@ -21,19 +21,21 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        RouterModule.forChild(routes),
-        TranslateModule.forChild(),
-        PipesModule,
-        DirectivesModule,
-        ComponentsModule,
-        CommonConsumptionModule
-    ],
-    declarations: [
-        SearchPage
-    ]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
+    TranslateModule.forChild(),
+    PipesModule,
+    DirectivesModule,
+    ComponentsModule,
+    CommonConsumptionModule
+  ],
+  entryComponents: [],
+  declarations: [
+    SearchPage
+  ],
+
 })
 export class SearchPageModule {}

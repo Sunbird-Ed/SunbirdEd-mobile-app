@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {FieldConfigOption, FieldConfigOptionsBuilder} from '@project-sunbird/common-form-elements';
+import {FieldConfigOption, FieldConfigOptionsBuilder} from 'common-form-elements';
 import {defer, EMPTY, of} from 'rxjs';
 import {catchError, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import {
   GetSuggestedFrameworksRequest,
   Profile
 } from '@project-sunbird/sunbird-sdk';
-import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
+import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
 @Injectable({
   providedIn: 'root'

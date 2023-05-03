@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ShareItemType, ShareMode } from '../../../../app/app.constant';
-import { Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId } from '../../../../services/telemetry-constants';
-import { AndroidPermission, AndroidPermissionsStatus } from '../../../../services/android-permissions/android-permission';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { ShareItemType, ShareMode } from '@app/app/app.constant';
+import { Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
@@ -165,7 +165,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      const folderPath = this.platform.is('ios') ? window['cordova'].file.documentsDirectory : window['cordova'].file.externalRootDirectory 
+      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
       destination = folderPath + 'Download/';
     }
     const loader = await this.commonUtilService.getLoader();

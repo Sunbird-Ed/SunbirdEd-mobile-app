@@ -1,15 +1,15 @@
 import { Injectable, Inject } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Subject } from 'rxjs';
-import { ContentService, InteractType, Content, ContentDeleteStatus } from '@project-sunbird/sunbird-sdk';
+import { ContentService, InteractType, Content, ContentDeleteStatus } from 'sunbird-sdk';
 
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { InteractSubtype, Environment, PageId, ImpressionType } from '../../services/telemetry-constants';
-import { CommonUtilService } from '../../services/common-util.service';
-import { FileSizePipe } from '../../pipes/file-size/file-size';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { InteractSubtype, Environment, PageId, ImpressionType } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentInfo } from './content-info';
-import { SbPopoverComponent } from '../../app/components/popups/sb-popover/sb-popover.component';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 
 @Injectable({
     providedIn: 'root'

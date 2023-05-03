@@ -1,6 +1,6 @@
 import {LicenseCardComponentComponent} from './license-card-component.component';
-import {CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService} from '../../../services';
-import {ContentUtil} from '../../../util/content-util';
+import {CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService} from '@app/services';
+import {ContentUtil} from '@app/util/content-util';
 
 describe('LicenseCardComponentComponent', () => {
     let licenseCardComponent: LicenseCardComponentComponent;
@@ -28,7 +28,7 @@ describe('LicenseCardComponentComponent', () => {
             identifier: 'do_123',
             contentType: 'course',
             pkgVersion: 1
-        } as any;
+        };
 
         // act
         licenseCardComponent.ngOnInit();

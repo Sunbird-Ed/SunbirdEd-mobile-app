@@ -31,7 +31,7 @@ describe('SplashScreenService', () => {
     });
 
     describe('handleSunbirdSplashScreenActions', () => {
-        it('should handle splash screen actions', () => {
+        it('should handle splash screen actions', (done) => {
             // arrange
             mockPlatform.is = jest.fn((os) => {
                 let isAndroid = false;
@@ -50,9 +50,10 @@ describe('SplashScreenService', () => {
             // assert
             setTimeout(() => {
                 expect(mockPlatform.is).toHaveBeenCalledWith('android');
-                // expect(mockSplashScreenTelemetryActionHandlerDelegate.onAction).toHaveBeenCalled();
-                // expect(mockSplashScreenImportActionHandlerDelegate.onAction).toHaveBeenCalled();
-                // expect(mockSplashScreenDeeplinkActionHandlerDelegate.onAction).toHaveBeenCalled();
+                expect(mockSplashScreenTelemetryActionHandlerDelegate.onAction).toHaveBeenCalled();
+                expect(mockSplashScreenImportActionHandlerDelegate.onAction).toHaveBeenCalled();
+                expect(mockSplashScreenDeeplinkActionHandlerDelegate.onAction).toHaveBeenCalled();
+                done();
             }, 0);
         });
 

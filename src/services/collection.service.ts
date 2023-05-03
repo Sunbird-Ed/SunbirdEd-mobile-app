@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { CommonUtilService } from '../services/common-util.service';
-import { ChildContentRequest, Content, ContentDetailRequest, ContentService } from '@project-sunbird/sunbird-sdk';
+import { ChildContentRequest, Content, ContentDetailRequest, ContentService } from 'sunbird-sdk';
 
 @Injectable()
 export class CollectionService {

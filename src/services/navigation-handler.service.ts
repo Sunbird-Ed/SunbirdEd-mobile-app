@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { RouterLinks, MimeType, EventTopics } from '../app/app.constant';
+import { RouterLinks, MimeType, EventTopics } from '@app/app/app.constant';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { CommonUtilService } from './common-util.service';
 import { Environment, InteractSubtype, InteractType } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 @Injectable()
 export class NavigationService {
 

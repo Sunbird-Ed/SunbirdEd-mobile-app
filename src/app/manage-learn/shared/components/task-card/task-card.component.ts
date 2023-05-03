@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterLinks } from '../../../../../app/app.constant';
-import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '../../../../../app/manage-learn/core';
-import { menuConstants } from '../../../../../app/manage-learn/core/constants/menuConstants';
+import { RouterLinks } from '@app/app/app.constant';
+import { DbService, ProjectService, statusType, taskStatus, UtilsService } from '@app/app/manage-learn/core';
+import { menuConstants } from '@app/app/manage-learn/core/constants/menuConstants';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { PopoverComponent } from '../popover/popover.component';

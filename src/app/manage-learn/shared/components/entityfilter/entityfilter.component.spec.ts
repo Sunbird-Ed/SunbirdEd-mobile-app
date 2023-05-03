@@ -1,6 +1,6 @@
 import { ModalController, NavParams } from '@ionic/angular';
-import { LoaderService, LocalStorageService, UtilsService } from '../../../core/services';
-import { AssessmentApiService } from '../../../core/services/assessment-api.service';
+import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { EntityfilterComponent } from './entityfilter.component';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';

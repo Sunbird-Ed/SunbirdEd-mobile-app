@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouterLinks } from '../../../app/app.constant';
-import { LocalStorageService, ToastService, UtilsService } from '../../../app/manage-learn/core';
-import { UpdateTrackerService } from '../../../app/manage-learn/core/services/update-tracker.service';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { AlertController, Platform } from '@ionic/angular';
+import { RouterLinks } from '@app/app/app.constant';
+import { LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { UpdateTrackerService } from '@app/app/manage-learn/core/services/update-tracker.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { Network } from '@ionic-native/network/ngx';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -25,8 +25,6 @@ export class SectionListingPage {
   recentlyUpdatedEntity: any;
   allAnsweredForEvidence: boolean;
   networkAvailable: boolean;
-  isIos: boolean = this.platform.is("ios");
-
   constructor(
     private localStorage: LocalStorageService,
     private utils: UtilsService,
@@ -37,8 +35,7 @@ export class SectionListingPage {
     private translate: TranslateService,
     private alertCtrl: AlertController,
     private commonUtils: CommonUtilService,
-    private toast: ToastService,
-    private platform: Platform
+    private toast: ToastService
   ) {
     this.networkAvailable = this.commonUtils.networkInfo.isNetworkAvailable;
 

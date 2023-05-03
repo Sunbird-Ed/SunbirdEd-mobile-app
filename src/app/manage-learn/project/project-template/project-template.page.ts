@@ -4,7 +4,7 @@ import { PopoverController, AlertController, Platform, ModalController } from '@
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statusType, statuses } from '../../core/constants/statuses.constant';
-import { UtilsService } from '../../../../app/manage-learn/core/services/utils.service';
+import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from 'moment';
 import { menuConstants } from '../../core/constants/menuConstants';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
@@ -14,13 +14,13 @@ import { LoaderService, ToastService, NetworkService } from '../../core';
 import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { RouterLinks } from '../../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { Location } from '@angular/common';
 import { KendraApiService } from '../../core/services/kendra-api.service';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { AppHeaderService } from '../../../../services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-project-template',
@@ -208,6 +208,4 @@ export class ProjectTemplatePage {
         });
     }
   }
-
-  openStartIMPPopup() {}
 }

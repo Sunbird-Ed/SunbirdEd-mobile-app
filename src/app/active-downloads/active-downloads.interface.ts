@@ -1,4 +1,4 @@
-import { ContentDownloadRequest, DownloadRequest } from '@project-sunbird/sunbird-sdk';
+import { ContentDownloadRequest, DownloadRequest } from 'sunbird-sdk';
 import { OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 

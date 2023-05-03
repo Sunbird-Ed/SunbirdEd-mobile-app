@@ -38,7 +38,7 @@
     }
   }
   
-  .resource-filter::part(content) {
+  .resource-filter .popover-content {
     margin: 0;
     width: 100% !important;
     max-height: 70% !important;

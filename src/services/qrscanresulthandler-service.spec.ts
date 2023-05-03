@@ -1,16 +1,16 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryService, Mode, ContentService,
-   FrameworkService, PageAssembleService, SharedPreferences, CertificateService, CorrelationData } from '@project-sunbird/sunbird-sdk';
+   FrameworkService, PageAssembleService, SharedPreferences, CertificateService } from 'sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
-  CorReleationDataType
-} from '../services/telemetry-constants';
+  CorReleationDataType, CorrelationData
+} from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Router } from '@angular/router';
 import { NavController, PopoverController } from '@ionic/angular';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { NavigationService } from '../services/navigation-handler.service';
@@ -24,7 +24,8 @@ describe('QRScannerResultHandler', () => {
     getContentDetails: jest.fn()
   };
   const mockTelemetryService: Partial<TelemetryService> = {
-    buildContext: jest.fn()
+    buildContext: jest.fn(),
+    updateUtmParameters: jest.fn()
   };
   const mockCommonUtilService: Partial<CommonUtilService> = {
     showToast: jest.fn()
@@ -47,9 +48,12 @@ describe('QRScannerResultHandler', () => {
 
   const mockEvents: Partial<Events> = {
   };
-  const mockAppglobalService: Partial<AppGlobalService> = {};
+  const mockAppglobalService: Partial<AppGlobalService> = {
+    getCachedDialCodeConfig: jest.fn()
+  };
 
-  const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+  const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+  };
 
   const mockPageAssembleService: Partial<PageAssembleService> = {};
   const mockFrameworkService: Partial<FrameworkService> = {};
@@ -57,7 +61,7 @@ describe('QRScannerResultHandler', () => {
     navigateToDetailPage: jest.fn()
   };
   const mockPreferences: Partial<SharedPreferences> = {
-    getString: jest.fn(() => of())
+    getString: jest.fn(() => { })
   };
   const mockCertificateService: Partial<CertificateService> = {}
   const mockPopoverController: Partial<PopoverController> = {};
@@ -127,7 +131,7 @@ describe('QRScannerResultHandler', () => {
         Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       mockFrameworkService.searchOrganization = jest.fn(() => of({
         content: [{contentId: 'do_123', id: 'do-123'}]
-      })) as any;
+      }));
       mockPageAssembleService.setPageAssembleChannel = jest.fn();
       mockEvents.publish = jest.fn(() => []);
       // act
@@ -148,7 +152,7 @@ describe('QRScannerResultHandler', () => {
         Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       mockFrameworkService.searchOrganization = jest.fn(() => of({
         content: []
-      })) as any;
+      }));
       // act
       qRScannerResultHandler.parseDialCode(url);
         // assert
@@ -175,7 +179,8 @@ describe('QRScannerResultHandler', () => {
       const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
       const regexExp = formValResponse.values;
       qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
-      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() => Promise.resolve(undefined)) as any;
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve(undefined));
       // act
       // assert
       qRScannerResultHandler.parseDialCode('https://www.sunbirded.org/get/dial/ABCDEF').then((response) => {
@@ -579,10 +584,10 @@ describe('QRScannerResultHandler', () => {
 
     it('should generate INTERACT and END event in case of invalid dialcode for pageId unavailable', (done) => {
       // arrange
-      qRScannerResultHandler.scannedUrlMap;
-      let val;
+      qRScannerResultHandler.scannedUrlMap = undefined;
       // act
-      qRScannerResultHandler.handleInvalidQRCode(val, 'ABCDEF');
+      qRScannerResultHandler.handleInvalidQRCode(
+        undefined, 'ABCDEF');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -605,7 +610,7 @@ describe('QRScannerResultHandler', () => {
     it('should open inappbrowser in context info', (done) => {
       // arrange
       const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
-      mockTelemetryService.buildContext = jest.fn(() => of(context)) as any;
+      mockTelemetryService.buildContext = jest.fn(() => of(context));
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {
@@ -640,7 +645,7 @@ describe('QRScannerResultHandler', () => {
     it('should not open inappbrowser if link does not match', (done) => {
       // arrange
       const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
-      mockTelemetryService.buildContext = jest.fn(() => of(context)) as any;
+      mockTelemetryService.buildContext = jest.fn(() => of(context));
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {
@@ -675,7 +680,7 @@ describe('QRScannerResultHandler', () => {
     it('should not open inappbrowser if url unavailable', (done) => {
       // arrange
       const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
-      mockTelemetryService.buildContext = jest.fn(() => of(context)) as any;
+      mockTelemetryService.buildContext = jest.fn(() => of(context));
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {

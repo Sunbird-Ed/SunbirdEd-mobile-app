@@ -1,4 +1,4 @@
-import { TelemetryObject, Rollup, CorrelationData, HierarchyInfo , Course} from '@project-sunbird/sunbird-sdk';
+import { TelemetryObject, Rollup, CorrelationData, HierarchyInfo , Course} from 'sunbird-sdk';
 
 export interface ContentInfo {
     telemetryObject: TelemetryObject;

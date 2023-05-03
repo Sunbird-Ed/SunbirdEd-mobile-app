@@ -13,14 +13,14 @@ import {
   EventsBusService,
   StorageService,
   StorageDestination
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService } from '../../services/app-header.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { featureIdMap } from '../../feature-id-map';
+import { featureIdMap } from '@app/feature-id-map';
 import { tap, filter, take } from 'rxjs/operators';
 
 @Component({
@@ -50,7 +50,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private popoverCtrl: PopoverController,
     private changeDetectionRef: ChangeDetectorRef,
     private headerService: AppHeaderService,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,

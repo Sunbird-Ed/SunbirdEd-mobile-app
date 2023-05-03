@@ -1,4 +1,4 @@
-import { ContainerService } from '../services/container.services';
+import { ContainerService } from 'services';
 import { TabOptions } from '../services/container.services';
 
 const LIBRARY_TAB = {

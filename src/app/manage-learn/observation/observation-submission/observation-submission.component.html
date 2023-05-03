@@ -24,7 +24,7 @@
   </ion-card>
 
   <div
-    *ngFor="let submission of submissions; let i = index;"
+    *ngFor="let submission of submissions"
     (click)="goToEcm(submission)"
   >
     <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}" [ellipsis]="true">

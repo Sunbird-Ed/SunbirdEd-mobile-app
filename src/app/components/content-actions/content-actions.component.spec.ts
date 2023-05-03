@@ -1,10 +1,10 @@
-import {ContentActionsComponent} from '../../../app/components';
-import {AuthService, ContentDeleteStatus, ContentService} from '@project-sunbird/sunbird-sdk';
+import {ContentActionsComponent} from '@app/app/components';
+import {AuthService, ContentDeleteStatus, ContentService} from 'sunbird-sdk';
 import {NavParams, Platform, PopoverController, ToastController} from '@ionic/angular';
-import {Events} from '../../../util/events';
+import {Events} from '@app/util/events';
 import {TranslateService} from '@ngx-translate/core';
-import {CommonUtilService, Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '../../../services';
-import {FileSizePipe} from '../../../pipes/file-size/file-size';
+import {CommonUtilService, Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
+import {FileSizePipe} from '@app/pipes/file-size/file-size';
 import {of, throwError} from 'rxjs';
 import { PageId } from '../../../services';
 
@@ -48,7 +48,7 @@ describe('ContentActionsComponent', () => {
             access_token: 'sample_access_token',
             refresh_token: 'sample_refresh_token',
         }))
-    } as any;
+    };
     const mockEvents: Partial<Events> = {};
     const mockTranslateService: Partial<TranslateService> = {};
     const mockPlatform: Partial<Platform> = {};
@@ -109,7 +109,7 @@ describe('ContentActionsComponent', () => {
             // arrange
             mockAuthService.getSession = jest.fn(() => of({
                 userToken: 'sample_userToken'
-            })) as any;
+            }));
             contentActionsComponent.pageName = 'course';
             // act
             contentActionsComponent.getUserId();
@@ -131,7 +131,7 @@ describe('ContentActionsComponent', () => {
     it('should handle telemetry Object and generate Interact telemetry', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockPopoverCtrl.dismiss = jest.fn(() => Promise.resolve({unenroll: true})) as any;
+        mockPopoverCtrl.dismiss = jest.fn(() => Promise.resolve({unenroll: true}));
         // act
         contentActionsComponent.unenroll();
         setTimeout(() => {
@@ -147,7 +147,7 @@ describe('ContentActionsComponent', () => {
                 },
                 undefined,
                 contentActionsComponent.objRollup,
-                contentActionsComponent['corRelationList']);
+                contentActionsComponent.corRelationList);
             done();
         }, 0);
     });
@@ -217,7 +217,7 @@ describe('ContentActionsComponent', () => {
                 },
                 undefined,
                 contentActionsComponent.objRollup,
-                contentActionsComponent['corRelationList']);
+                contentActionsComponent.corRelationList);
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             setTimeout(() => {
                 expect(mockContentService.deleteContent).toHaveBeenCalledWith(contentActionsComponent.getDeleteRequestBody());
@@ -440,7 +440,7 @@ describe('ContentActionsComponent', () => {
             access_token: 'sample_access_token',
             refresh_token: 'sample_refresh_token',
         }))
-    } as any;
+    };
     const mockEvents: Partial<Events> = {};
     const mockTranslateService: Partial<TranslateService> = {};
     const mockPlatform: Partial<Platform> = {};

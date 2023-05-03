@@ -1,8 +1,8 @@
 
 import { AppRatingAlertComponent } from './rating-alert.component';
-import { TelemetryService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, SharedPreferences } from 'sunbird-sdk';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     UtilityService,
     AppRatingService,
@@ -72,7 +72,7 @@ describe('AppRatingAlertComponent', () => {
 
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => ('content-details'))
-    } as any;
+    };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         setRatingStarAriaLabel: jest.fn()
     }
@@ -284,14 +284,14 @@ describe('AppRatingAlertComponent', () => {
     describe('closePopover', () => {
         it('should close the popover', () => {
             // arrange
-            let sub = appRatingAlertComponent['backButtonFunc'] = {
+            appRatingAlertComponent['backButtonFunc'] = {
                 unsubscribe: jest.fn()
-            } as any;
+            };
             // act
             appRatingAlertComponent.closePopover();
             // assert
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith(null);
-            // expect(appRatingAlertComponent['backButtonFunc'].unsubscribe =jest.fn()).toHaveBeenCalled();
+            expect(appRatingAlertComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
         });
     });
 

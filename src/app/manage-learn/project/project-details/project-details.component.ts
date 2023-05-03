@@ -5,7 +5,7 @@ import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
 import { ToastService, NetworkService, ProjectService, statusType, UtilsService } from '../../core';
 import { Subscription } from 'rxjs';
-import { RouterLinks } from '../../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { AlertController, ModalController } from '@ionic/angular';
@@ -13,8 +13,8 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
 import { CreateTaskFormComponent } from '../../shared';
-import { AppHeaderService } from '../../../../services/app-header.service';
-import { CommonUtilService } from '../../../../services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-project-details',

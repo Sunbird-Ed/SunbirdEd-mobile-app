@@ -1,9 +1,9 @@
 import { PopoverController, NavParams } from '@ionic/angular';
-import { Events } from '../../../../util/events';
+import { Events } from '@app/util/events';
 import { CopyTraceIdPopoverComponent } from './copy-trace-id-popup.component';
-import { CommonUtilService } from '../../../../services/common-util.service';
+import { CommonUtilService, UtilityService } from '@app/services';
 import { Location } from '@angular/common';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 describe('CopyTraceIdPopoverComponent', () => {
     let copyTraceIdPopoverComponent: CopyTraceIdPopoverComponent;

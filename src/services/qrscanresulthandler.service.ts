@@ -11,7 +11,7 @@ import {
   TelemetryService,
   SharedPreferences,
   CertificateService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { EventTopics, RouterLinks, PreferenceKey } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
@@ -28,14 +28,14 @@ import {
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, PopoverController } from '@ionic/angular';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { ContentUtil } from '../util/content-util';
+import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
-import { FormConstants } from '../app/form.constants';
-import { CertificateVerificationPopoverComponent } from '../app/components/popups/certificate-verification/certificate-verification-popup.component';
+import { FormConstants } from '@app/app/form.constants';
+import { CertificateVerificationPopoverComponent } from '@app/app/components/popups/certificate-verification/certificate-verification-popup.component';
 
 declare var cordova;
 
@@ -124,7 +124,7 @@ export class QRScannerResultHandler {
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
-    const params: any = qs.parse(utmUrl);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
     const cData: Array<CorrelationData> = [];
 
     if (utmUrl !== scannedData) {
@@ -158,7 +158,7 @@ export class QRScannerResultHandler {
     const contentId = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'ContentDetail', contentId);
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
-    const params: any = qs.parse(utmUrl);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
     const cData: CorrelationData[] = [];
 
     if (utmUrl !== scannedData) {

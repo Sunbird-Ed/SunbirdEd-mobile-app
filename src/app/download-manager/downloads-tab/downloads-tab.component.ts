@@ -1,20 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MenuOverflow, RouterLinks } from '../../../app/app.constant';
-import { SbPopoverComponent } from '../../../app/components/popups/sb-popover/sb-popover.component';
-import { OverflowMenuComponent } from '../../../app/profile/overflow-menu/overflow-menu.component';
-import { AppHeaderService } from '../../../services/app-header.service';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { NavigationService } from '../../../services/navigation-handler.service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { ContentUtil } from '../../../util/content-util';
+import { MenuOverflow, RouterLinks } from '@app/app/app.constant';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
+import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
-import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from '@project-sunbird/sunbird-sdk';
+import { Events } from '@app/util/events';
+import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from 'sunbird-sdk';
 import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
+import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
@@ -40,7 +40,7 @@ export class DownloadsTabComponent implements OnInit {
 
   constructor(
     private popoverCtrl: PopoverController,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,

@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {
     WebviewLoginSessionProvider,
     WebviewSessionProviderConfig
-} from '@project-sunbird/sunbird-sdk';
-import { AppGlobalService } from '../services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
+} from 'sunbird-sdk';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from './common-util.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { SbProgressLoader } from './sb-progress-loader.service';
@@ -14,7 +14,7 @@ import {
     InteractSubtype,
     InteractType,
     PageId
-} from '../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 
 @Injectable()
 export class LoginHandlerService {

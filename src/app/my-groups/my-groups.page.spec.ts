@@ -4,15 +4,15 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
-import { AppHeaderService } from '../../services/app-header.service';
-import { LoginHandlerService } from '../../services/login-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
     CommonUtilService, AppGlobalService, TelemetryGeneratorService,
     InteractType, InteractSubtype, Environment, PageId, ImpressionType
-} from '../../services';
+} from '@app/services';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { Location } from '@angular/common';
 
 describe('MyGroupsPage', () => {
@@ -39,7 +39,7 @@ describe('MyGroupsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {};
+    const mockPlatform: Platform<Platform> = {};
     const mockLocation: Partial<Location> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
     const mockProfileService: Partial<ProfileService> = {};

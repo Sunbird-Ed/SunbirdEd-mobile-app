@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import {
   Content,
@@ -17,24 +17,24 @@ import {
   SortOrder,
   StorageService,
   StorageDestination
-} from '@project-sunbird/sunbird-sdk';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { AppHeaderService, } from '../../services/app-header.service';
-import { CommonUtilService, } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+} from 'sunbird-sdk';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService, } from '@app/services/app-header.service';
+import { CommonUtilService, } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
-import { RouterLinks, ContentFilterConfig, EventTopics } from '../../app/app.constant';
-import { SbPopoverComponent } from '../../app/components/popups/sb-popover/sb-popover.component';
-import { PageId, InteractType, Environment, InteractSubtype } from '../../services/telemetry-constants';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { RouterLinks, ContentFilterConfig, EventTopics } from '@app/app/app.constant';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
+import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { featureIdMap } from '../feature-id-map';
 import { BehaviorSubject } from 'rxjs';
 import {
   SbInsufficientStoragePopupComponent
-} from '../../app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
+} from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
-import { ContentUtil } from '../../util/content-util';
+import { ContentUtil } from '@app/util/content-util';
 import { DbService } from '../manage-learn/core/services/db.service';
 import { UtilsService, LocalStorageService } from '../manage-learn/core';
 import { storageKeys } from '../manage-learn/storageKeys';

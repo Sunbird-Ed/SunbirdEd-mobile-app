@@ -16,14 +16,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        TranslateModule,
-        RouterModule.forChild(routes)
-    ],
-    declarations: [TermsAndConditionsPage],
-    exports: [TermsAndConditionsPage]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    TranslateModule,
+    RouterModule.forChild(routes)
+  ],
+  declarations: [TermsAndConditionsPage],
+  entryComponents: [TermsAndConditionsPage],
+  exports: [TermsAndConditionsPage]
 })
 export class TermsAndConditionsPageModule {}

@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { HTTP } from '@awesome-cordova-plugins/http/ngx';
+import { HTTP } from '@ionic-native/http/ngx';
 import { ModalController } from '@ionic/angular';
 import { AuthService, DeviceInfo,SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { ToastService } from '.';
 import { urlConstants } from '../constants/urlConstants';
 import { ApiUtilsService } from './api-utils.service';
 import { ApiService } from './api.service';
-import { UtilityService } from '../../../../services/utility-service';
+import { UtilityService } from '@app/services/utility-service';
 
 @Injectable({
   providedIn: 'root',

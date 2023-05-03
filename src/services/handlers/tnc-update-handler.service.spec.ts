@@ -1,5 +1,5 @@
 import { TncUpdateHandlerService } from "./tnc-update-handler.service";
-import { ProfileService, AuthService, CachedItemRequestSourceFrom,OAuthSession, ServerProfileDetailsRequest, ServerProfile, RootOrg, Profile, ProfileType, ProfileSource } from "@project-sunbird/sunbird-sdk";
+import { ProfileService, AuthService, CachedItemRequestSourceFrom,OAuthSession, ServerProfileDetailsRequest, ServerProfile, RootOrg, Profile, ProfileType, ProfileSource } from "sunbird-sdk";
 import { of, throwError } from "rxjs";
 import { CommonUtilService } from "../common-util.service";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
@@ -14,7 +14,7 @@ import { FieldConfig } from "../../app/components/common-forms/field-config";
 import { InteractType, SharedPreferences } from "@project-sunbird/sunbird-sdk";
 import { FrameworkDetailsService } from "../framework-details.service";
 import { Events } from '../../util/events';
-import { skipOnboardingForLoginUser} from '../../assets/configurations/config.json';
+import onboarding from '../../assets/configurations/config.json';
 import { SplashScreenService } from "../splash-screen.service";
 import { TelemetryGeneratorService } from "../telemetry-generator.service";
 import { LogoutHandlerService } from "./logout-handler.service";
@@ -122,7 +122,7 @@ describe('TncUpdateHandlerService', () => {
       subType: null,
       type: "OTHER"
     },
-  } as any;
+  };
 
   const ProfileData: Profile = {
     uid: 'sample_uid',
@@ -136,7 +136,7 @@ describe('TncUpdateHandlerService', () => {
     syllabus: ['sample_syllabus'],
     source: ProfileSource.LOCAL,
     serverProfile: serverProfileData
-  } as any;
+  };
 
   const locationMappingConfig: FieldConfig<any> = [
     {
@@ -586,7 +586,7 @@ describe('TncUpdateHandlerService', () => {
         ]
       }
     }
-  ]as any
+  ]
   
   const custodianOrgId = 'sample_rootOrgId';
 
@@ -631,13 +631,13 @@ describe('TncUpdateHandlerService', () => {
     it('should close signing in onboardng if no profile details', () => {
       // arrange
       mockAuthService.getSession = jest.fn(() => of(sessionData));
-      mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined)) as any;
+      mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined));
       mockAppGlobalService.closeSigninOnboardingLoader = jest.fn();
       // act
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
+        expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
       }, 0);
     });
 
@@ -649,7 +649,7 @@ describe('TncUpdateHandlerService', () => {
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
+        expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
       }, 0)
     });
 
@@ -672,14 +672,14 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'OTHER'
         }    
-      } as any;
+      };
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       // act
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq)
+        expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq)
       }, 0)
     });
 
@@ -728,8 +728,8 @@ describe('TncUpdateHandlerService', () => {
           type: 'sample_type'
         }]
       })) as any;
-      mockAppGlobalService.getCurrentUser = jest.fn(() => Promise.resolve({uid: "some_id"})) as any
-      mockProfileService.updateServerProfile = jest.fn(() => of({})) as any
+      mockAppGlobalService.getCurrentUser = jest.fn(() => Promise.resolve({uid: "some_id"}))
+      mockProfileService.updateServerProfile = jest.fn(() => of({}))
       mockCommonUtilService.showToast = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn();
       mockEvents.publish = jest.fn();
@@ -737,9 +737,9 @@ describe('TncUpdateHandlerService', () => {
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
-        // expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(FormConstants.LOCATION_MAPPING)
-        // expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalledWith({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+        expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(FormConstants.LOCATION_MAPPING)
+        expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalledWith({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       }, 0)
     });
     // error on update guest user
@@ -773,15 +773,15 @@ describe('TncUpdateHandlerService', () => {
           type: 'sample_type'
         }]
       })) as any;
-      mockAppGlobalService.getCurrentUser = jest.fn(() => Promise.resolve({uid: "some_id"})) as any
+      mockAppGlobalService.getCurrentUser = jest.fn(() => Promise.resolve({uid: "some_id"}))
       mockProfileService.updateServerProfile = jest.fn(() => throwError({}))
       // act
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
-        // expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(FormConstants.LOCATION_MAPPING)
-        // expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalledWith({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+        expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
+        expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(FormConstants.LOCATION_MAPPING)
+        expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalledWith({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       }, 0)
     });
 
@@ -806,8 +806,8 @@ describe('TncUpdateHandlerService', () => {
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(locationMappingConfig))
-      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile)) as any
-      !skipOnboardingForLoginUser
+      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile))
+      onboarding.skipOnboardingForLoginUser = false
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve('sample_rootOrgId'));
       mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false)
       mockRouter.navigate = jest.fn()
@@ -828,7 +828,7 @@ describe('TncUpdateHandlerService', () => {
       mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(locationMappingConfig))
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData))
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve('sample_rootOrgId_other'));
-      !skipOnboardingForLoginUser
+      onboarding.skipOnboardingForLoginUser = false;
       mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
       mockRouter.navigate = jest.fn()
       // act
@@ -884,11 +884,11 @@ describe('TncUpdateHandlerService', () => {
         },
       }
       mockAuthService.getSession = jest.fn(() => of(sessionData));
-      mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfile)) as any;
+      mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfile));
       mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(locationMappingConfig))
-      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile)) as any
+      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile))
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve('sample_rootOrgId_other'));
-      !skipOnboardingForLoginUser;
+      onboarding.skipOnboardingForLoginUser = false;
       // act
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
@@ -924,8 +924,8 @@ describe('TncUpdateHandlerService', () => {
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(locationMappingConfig))
-      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile)) as any
-      !skipOnboardingForLoginUser;
+      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile))
+      onboarding.skipOnboardingForLoginUser = false
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve())
       // act
       tncUpdateHandlerService.checkForTncUpdate();
@@ -958,7 +958,7 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'OTHER'
         }    
-      } as any;
+      };
       const ProfileData: Profile = {
         uid: 'sample_uid',
         handle: 'sample_handle',
@@ -973,8 +973,8 @@ describe('TncUpdateHandlerService', () => {
         serverProfile: {
           profileUserType: {type: "OTHER"}
         }
-      } as any;
-      !skipOnboardingForLoginUser;
+      };
+      onboarding.skipOnboardingForLoginUser = false;
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData));
@@ -1021,7 +1021,7 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'NONE'
         }    
-      } as any;
+      };
       const ProfileData: Profile = {
         uid: 'sample_uid',
         handle: 'sample_handle',
@@ -1036,8 +1036,8 @@ describe('TncUpdateHandlerService', () => {
         serverProfile: {
           profileUserType: {type: "OTHER"}
         }
-      } as any;
-      !skipOnboardingForLoginUser;
+      };
+      onboarding.skipOnboardingForLoginUser = false;
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData));
@@ -1080,7 +1080,7 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'NONE'
         }    
-      } as any;
+      };
       const ProfileData: Profile = {
         uid: 'sample_uid',
         handle: 'sample_handle',
@@ -1095,8 +1095,8 @@ describe('TncUpdateHandlerService', () => {
         serverProfile: {
           profileUserType: {type: "OTHER"}
         }
-      } as any;
-      !skipOnboardingForLoginUser;
+      };
+      onboarding.skipOnboardingForLoginUser = false;
       mockAuthService.getSession = jest.fn(() => of(sessionData));
       mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData));
@@ -1139,7 +1139,7 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'NONE'
         }    
-      } as any;
+      };
       const ProfileData: Profile = {
         uid: 'sample_uid',
         handle: 'sample_handle',
@@ -1153,10 +1153,9 @@ describe('TncUpdateHandlerService', () => {
         source: ProfileSource.LOCAL,
         serverProfile: serverProfileData
       };
-      let onboard = skipOnboardingForLoginUser;
-      onboard = false;
+      onboarding.skipOnboardingForLoginUser = false;
       mockAuthService.getSession = jest.fn(() => of(sessionData));
-      mockProfileService.getServerProfilesDetails = jest.fn(() => of(ProfileData)) as any;
+      mockProfileService.getServerProfilesDetails = jest.fn(() => of(ProfileData));
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData));
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve(undefined));
       mockCommonUtilService.isUserLocationAvalable = jest.fn(() => (false));
@@ -1166,7 +1165,7 @@ describe('TncUpdateHandlerService', () => {
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+        expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
       }, 0);
     });
 
@@ -1191,7 +1190,7 @@ describe('TncUpdateHandlerService', () => {
           subType: null,
           type: 'NONE'
         }    
-      } as any;
+      };
       const ProfileData: Profile = {
         uid: 'sample_uid',
         handle: 'sample_handle',
@@ -1205,9 +1204,9 @@ describe('TncUpdateHandlerService', () => {
         source: ProfileSource.LOCAL,
         serverProfile: serverProfileData
       };
-      !skipOnboardingForLoginUser;
+      onboarding.skipOnboardingForLoginUser = true;
       mockAuthService.getSession = jest.fn(() => of(sessionData));
-      mockProfileService.getServerProfilesDetails = jest.fn(() => of(ProfileData)) as any;
+      mockProfileService.getServerProfilesDetails = jest.fn(() => of(ProfileData));
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(ProfileData));
       mockFormAndFrameworkUtilService.getCustodianOrgId = jest.fn(() => Promise.resolve(undefined));
       mockCommonUtilService.isUserLocationAvalable = jest.fn(() => (false));
@@ -1217,7 +1216,7 @@ describe('TncUpdateHandlerService', () => {
       tncUpdateHandlerService.checkForTncUpdate();
       // assert
       setTimeout(() => {
-        // expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+        expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
       }, 0);
     });
 
@@ -1301,7 +1300,7 @@ describe('TncUpdateHandlerService', () => {
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersion: 'sample_tnc_url',
@@ -1309,8 +1308,9 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
-        skipOnboardingForLoginUser;
+        }));
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = true;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
@@ -1345,7 +1345,7 @@ describe('TncUpdateHandlerService', () => {
           done();
         }, 0)
     });
-    it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN if logged in user', () => {
+    it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN if logged in user', (done) => {
         // arrange
         mockProfileService.getServerProfilesDetails = jest.fn(() => of(serverProfileData));
         mockModalController.create = jest.fn(() => Promise.resolve({
@@ -1358,7 +1358,7 @@ describe('TncUpdateHandlerService', () => {
         })) as any;
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1366,9 +1366,10 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
+        }));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = false;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
@@ -1379,24 +1380,25 @@ describe('TncUpdateHandlerService', () => {
         tncUpdateHandlerService.presentTncPage(ProfileData);
         // assert
         setTimeout(() => {
-            // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-            //     state: {categoriesProfileData: {
-            //         hasFilledLocation: true,
-            //         showOnlyMandatoryFields: true,
-            //         profile: 'teacher',
-            //         isRootPage: true,
-            //         noOfStepsToCourseToc: 1,
-            //         status: true,
-            //         isUserLocationAvalable: true
-            //       }}
-            // })
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: {categoriesProfileData: {
+                    hasFilledLocation: true,
+                    showOnlyMandatoryFields: true,
+                    profile: 'teacher',
+                    isRootPage: true,
+                    noOfStepsToCourseToc: 1,
+                    status: true,
+                    isUserLocationAvalable: true
+                  }}
+            })
+            done();
         }, 0);
     });
     it('should dismiss tnc and navigate to tabs if profile type is not none or other if logged in user', (done) => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersion: 'sample_tnc_url',
@@ -1406,9 +1408,10 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'teacher'
-        })) as any;
+        }));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = true;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
@@ -1427,7 +1430,7 @@ describe('TncUpdateHandlerService', () => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1436,9 +1439,10 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
+        }));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = true;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false)
@@ -1451,11 +1455,11 @@ describe('TncUpdateHandlerService', () => {
             done();
         }, 0);
     });
-    it('should navigate to profile or category edit if no issouser and location', () => {
+    it('should navigate to profile or category edit if no issouser and location', (done) => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1464,9 +1468,10 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'Student'
-        })) as any;
+        }));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        !skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = false;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false)
@@ -1477,22 +1482,23 @@ describe('TncUpdateHandlerService', () => {
         tncUpdateHandlerService.presentTncPage(ProfileData);
         // assert
         setTimeout(() => {
-            // expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-            //     state: {
-            //       hasFilledLocation: false,
-            //       isRootPage: true,
-            //       noOfStepsToCourseToc: 1,
-            //       profile: 'teacher',
-            //       showOnlyMandatoryFields: true
-            //     }
-            // })
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: {
+                  hasFilledLocation: false,
+                  isRootPage: true,
+                  noOfStepsToCourseToc: 1,
+                  profile: 'teacher',
+                  showOnlyMandatoryFields: true
+                }
+            })
+            done();
         }, 0);
     });
-    it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN if no issouser and location', () => {
+    it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN if no issouser and location', (done) => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1500,9 +1506,10 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
+        }));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        !skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = false;
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false)
@@ -1513,27 +1520,28 @@ describe('TncUpdateHandlerService', () => {
          tncUpdateHandlerService.presentTncPage(ProfileData);
          // assert
         setTimeout(() => {
-            // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-            //     state: { 
-            //       categoriesProfileData: {
-            //         hasFilledLocation: false,
-            //         showOnlyMandatoryFields: true,
-            //         profile: 'teacher',
-            //         isRootPage: true,
-            //         noOfStepsToCourseToc: 1,
-            //         isUserLocationAvalable: false,
-            //         status: true
-            //       }
-            //     }
-            // })
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: { 
+                  categoriesProfileData: {
+                    hasFilledLocation: false,
+                    showOnlyMandatoryFields: true,
+                    profile: 'teacher',
+                    isRootPage: true,
+                    noOfStepsToCourseToc: 1,
+                    isUserLocationAvalable: false,
+                    status: true
+                  }
+                }
+            })
+            done();
         }, 0);
     });
 
-    it('should dismiss tnc and navigate on update logged in user ', () => {
+    it('should dismiss tnc and navigate on update logged in user ', (done) => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1541,13 +1549,14 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
+        }));
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
         tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockConsentService.getConsent = jest.fn(() => Promise.resolve())
-        skipOnboardingForLoginUser;
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = true;
         // update user as guest flow 
         mockFrameworkDetailsService.getFrameworkDetails = jest.fn(() => Promise.resolve({
             profileUserTypes: [{
@@ -1568,21 +1577,22 @@ describe('TncUpdateHandlerService', () => {
             handle: 'sample_profile',
             source: 'server',
             profileType: 'teacher'
-        })) as any
+        }))
         mockEvents.publish = jest.fn()
          // act
          tncUpdateHandlerService.presentTncPage(ProfileData);
          // assert
         setTimeout(() => {
             // expect(mockAppGlobalService.getCurrentUser ).toHaveBeenCalled();
-            // expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile')
+            expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile')
+            done();
         }, 0);
     });
     it('should dismiss tnc and navigate to USER_TYPE_SELECTION_LOGGEDIN page if profile type is not none or other ', (done) => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1590,8 +1600,9 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'none'
-        })) as any;
-        !skipOnboardingForLoginUser;
+        }));
+        let onboardingfalse = onboarding;
+        onboardingfalse.skipOnboardingForLoginUser = false;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
@@ -1618,7 +1629,7 @@ describe('TncUpdateHandlerService', () => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
@@ -1627,8 +1638,9 @@ describe('TncUpdateHandlerService', () => {
                 dob: 'sample_dob'
             },
             profileType: 'teacher'
-        })) as any;
-        !skipOnboardingForLoginUser;
+        }));
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = false;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false, profile: 'teacher'}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
@@ -1655,15 +1667,16 @@ describe('TncUpdateHandlerService', () => {
         // arrange
         mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
         mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})) as any;
+        mockProfileService.getServerProfilesDetails = jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url', dob: 'sample_dob'})),
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile: {
                 tncLatestVersionUrl: 'sample_tnc_url',
                 declarations: [{ name: 'sample-name' }],
             },
             profileType: 'none'
-        })) as any;
-        skipOnboardingForLoginUser;
+        }));
+        let onboardingTrue = onboarding;
+        onboardingTrue.skipOnboardingForLoginUser = true;
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: true, profile: 'teacher'}))
         mockRouter.navigate = jest.fn()

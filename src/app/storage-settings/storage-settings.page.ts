@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AppHeaderService } from '../../services/app-header.service';
-import { CommonUtilService, } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService, } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Subscription, Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
 import {
@@ -14,11 +14,11 @@ import {
   StorageService,
   StorageTransferProgress,
   StorageVolume
-} from '@project-sunbird/sunbird-sdk';
-import { SbPopoverComponent } from '../../app/components/popups/sb-popover/sb-popover.component';
+} from 'sunbird-sdk';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
-import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '../../services/telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '@app/services/telemetry-constants';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AndroidPermissionsService } from 'services/android-permissions/android-permissions.service';
 import { AndroidPermission, AndroidPermissionsStatus } from 'services/android-permissions/android-permission';
 import { Location } from '@angular/common';

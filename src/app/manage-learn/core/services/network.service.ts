@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { Network } from '@ionic-native/network/ngx';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 

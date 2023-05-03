@@ -1,7 +1,7 @@
-import {SbPreferencePopupComponent} from '../../../../app/components/popups/sb-preferences-popup/sb-preferences-popup.component';
+import {SbPreferencePopupComponent} from '@app/app/components/popups/sb-preferences-popup/sb-preferences-popup.component';
 import {ModalController} from '@ionic/angular';
-import {TelemetryGeneratorService} from '../../../../services';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
+import {TelemetryGeneratorService} from '@app/services';
+import {AppVersion} from '@ionic-native/app-version/ngx';
 
 describe('SbPreferencesPopupComponent', () => {
     let sbPreferencesPopupComponent: SbPreferencePopupComponent;

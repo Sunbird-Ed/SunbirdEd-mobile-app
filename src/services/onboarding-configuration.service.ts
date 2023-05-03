@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
-import { OnboardingScreenType, PreferenceKey, SwitchableTabsConfig, ProfileConstants } from "../app/app.constant";
-import { GUEST_TEACHER_TABS, initTabs } from "../app/module.service";
-import { Events } from '../util/events';
-import { DeviceRegisterService, Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { OnboardingScreenType, PreferenceKey, SwitchableTabsConfig, ProfileConstants } from "@app/app/app.constant";
+import { GUEST_TEACHER_TABS, initTabs } from "@app/app/module.service";
+import { Events } from '@app/util/events';
+import { DeviceRegisterService, Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { AppGlobalService } from "./app-global-service.service";
 import { CommonUtilService } from "./common-util.service";
 import { ContainerService } from "./container.services";

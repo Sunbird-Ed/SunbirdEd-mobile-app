@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService,
          TelemetryGeneratorService, PageId, Environment, ImpressionType,
-         InteractSubtype, InteractType } from '../../services';
+         InteractSubtype, InteractType } from '@app/services';
 import { CourseService, Course, CourseBatchStatus, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
@@ -186,7 +186,7 @@ describe('CurriculumCoursesPage', () => {
             id: 'do_123',
             type: 'course'
         }as any];
-        mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList) as any;
+        mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList);
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         const telemetryObject = new TelemetryObject(undefined, undefined, '');

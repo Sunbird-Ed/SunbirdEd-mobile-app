@@ -4,27 +4,27 @@ import {
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
   NetworkError, GetContentStateRequest, ContentStateResponse
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Environment, InteractSubtype, PageId } from './telemetry-constants';
-import { Map } from '../app/telemetryutil';
+import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
-import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '../app/app.constant';
-import { Events } from '../util/events';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { ContentUtil } from '../util/content-util';
+import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
+import { Events } from '@app/util/events';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { UserConsent } from '@project-sunbird/client-services/models';
-import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { FormConstants } from '../app/form.constants';
+import { FormConstants } from '@app/app/form.constants';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;
@@ -373,8 +373,8 @@ export class LocalCourseService {
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
     const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
         .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
-    const today = (window as any).dayjs();
-    const enrollmentEndDate = ((window as any).dayjs(endDate)).add(1, 'days');
+    const today = window.dayjs();
+    const enrollmentEndDate = (window.dayjs(endDate)).add(1, 'days');
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
@@ -383,7 +383,7 @@ export class LocalCourseService {
     if (today.diff(countTimeOfEOD) > 0) {
       return undefined;
     }
-    const duration = (window as any).dayjs.duration(enrollmentEndDate.diff(today));
+    const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
     return duration.format('D [day(s)] H [h] m [m]');
   }
 

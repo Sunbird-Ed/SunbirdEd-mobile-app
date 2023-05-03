@@ -1,12 +1,12 @@
 import {of, throwError} from 'rxjs';
 import {SelfDeclaredTeacherEditPage} from './self-declared-teacher-edit.page';
-import {Consent, ProfileService, SharedPreferences, UpdateConsentResponse} from '@project-sunbird/sunbird-sdk';
+import {Consent, ProfileService, SharedPreferences, UpdateConsentResponse} from 'sunbird-sdk';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Platform, PopoverController} from '@ionic/angular';
-import {Events} from '../../../util/events';
-import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService} from '../../../services';
-import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '../../../services/telemetry-constants';
-import {FormValidationAsyncFactory} from '../../../services/form-validation-async-factory/form-validation-async-factory';
+import {Events} from '@app/util/events';
+import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService} from '@app/services';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {FormValidationAsyncFactory} from '@app/services/form-validation-async-factory/form-validation-async-factory';
 import {Location} from '@angular/common';
 import {PreferenceKey} from '../../app.constant';
 import {mockSelfDeclarationForm, mockTenantPersonaInfoForm} from '../../../services/formandframeworkutil.service.spec.data';
@@ -28,7 +28,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
         isDefaultChannelProfile: jest.fn(() => of(true)),
         updateServerProfileDeclarations: jest.fn(() => of({})),
         updateConsent: jest.fn(() => of({}))
-    } as any;
+    };
     const mockSharedPreferences: Partial<SharedPreferences> = {
 
     };
@@ -211,7 +211,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         case PreferenceKey.DEVICE_LOCATION:
                             return of('{\"state\":\"Odisha\",\"district\":\"Cuttack\"}');
                     }
-                }) as any;
+                });
 
                 // act
                 selfDeclaredTeacherEditPage.ionViewWillEnter();
@@ -233,7 +233,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
                         case PreferenceKey.IP_LOCATION:
                             return of('{\"state\":\"Odisha\",\"district\":\"Cuttack\"}');
                     }
-                }) as any;
+                });
 
                 // act
                 selfDeclaredTeacherEditPage.ionViewWillEnter();
@@ -274,7 +274,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
                     case FormConstants.SELF_DECLARATION:
                         return Promise.resolve(mockSelfDeclarationForm);
                 }
-            }) as any;
+            });
             // act
             selfDeclaredTeacherEditPage.ionViewDidEnter();
             // assert
@@ -561,7 +561,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
 
         it('should catch error', (done) => {
             // arrange
-            mockEvents['public'] = jest.fn(() => throwError({Error: "Something went wrong"})) as any
+            mockEvents.public = jest.fn(() => throwError({Error: "Something went wrong"}))
             // act
             selfDeclaredTeacherEditPage.submit().then(() => {
                 // assert
@@ -575,7 +575,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
 
         it('should invoke initTenantSpecificForm method with the given tenant in the event', () => {
             // arrange
-            selfDeclaredTeacherEditPage['selectedTenant'];
+            selfDeclaredTeacherEditPage['selectedTenant'] = undefined;
             const initFormMock =   jest.spyOn(selfDeclaredTeacherEditPage, 'initTenantSpecificForm');
             // act
             selfDeclaredTeacherEditPage.tenantPersonaFormValueChanges({
@@ -583,7 +583,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
                 persona: 'teacher'
             });
             // assert
-            expect(initFormMock).toHaveBeenCalledWith('01234567890', true);
+            expect(initFormMock).toHaveBeenCalledWith('01234567890', false);
         });
 
         it('should invoke initTenantSpecificForm method with the given tenant in the event', () => {
@@ -646,7 +646,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
             selfDeclaredTeacherEditPage['stateList'] = [{
                 code: 'sample_state_code',
                 id: 'sample_state_id'
-            }] as any;
+            }];
             const initFormMock =   jest.spyOn(selfDeclaredTeacherEditPage, 'initTenantSpecificForm');
             // act
             selfDeclaredTeacherEditPage.declarationFormValueChanges({
@@ -1002,7 +1002,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
                 }
             }) => {
                 mockProfileService.updateConsent = jest.fn(() => throwError({code:"NETWORK_ERROR"}));
-            })) as any;
+            }));
             mockCommonUtilService.showToast = jest.fn();
             // act
             selfDeclaredTeacherEditPage.updateConsent({uid: 'sampleUid'}, '1233', '1232');

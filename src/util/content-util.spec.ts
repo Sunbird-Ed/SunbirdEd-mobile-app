@@ -1,5 +1,5 @@
-import { Content } from '@project-sunbird/sunbird-sdk';
-import { ContentUtil } from '../util/content-util';
+import { Content } from 'sunbird-sdk';
+import { ContentUtil } from '@app/util/content-util';
 import { mockSupportedUserTypeConfig } from '../services/profile-handler.spec.data';
 
 describe('ContentUtil', () => {
@@ -10,7 +10,7 @@ describe('ContentUtil', () => {
                 contentData: {
                     itemSetPreviewUrl: undefined
                 }
-            } as any;
+            };
 
             // act / assert
             expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(undefined);
@@ -22,7 +22,7 @@ describe('ContentUtil', () => {
                 contentData: {
                     itemSetPreviewUrl: 'http://some_domain.com/som_path.some_extension'
                 }
-            } as any;
+            };
 
             // act / assert
             expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
@@ -40,7 +40,7 @@ describe('ContentUtil', () => {
                 contentData: {
                     itemSetPreviewUrl: 'http://some_domain.com/some_path.some_extension'
                 }
-            } as any;
+            };
 
             // act / assert
             expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
@@ -55,7 +55,7 @@ describe('ContentUtil', () => {
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
                 }
-            } as any;
+            };
 
             // act / assert
             expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
@@ -170,7 +170,7 @@ describe('ContentUtil', () => {
         it('should return undefined if contentData is empty', () => {
             // arrange
             // act / assert
-            expect(ContentUtil.mergeProperties({} as any, ['author', 'ceator'])).toBeUndefined();
+            expect(ContentUtil.mergeProperties({}, ['author', 'ceator'])).toBeUndefined();
         });
     });
 

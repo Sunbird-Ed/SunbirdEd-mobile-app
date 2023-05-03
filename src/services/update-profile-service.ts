@@ -5,18 +5,18 @@ import {
     GetSuggestedFrameworksRequest,
     NetworkError,
     Profile, ProfileService
-} from '@project-sunbird/sunbird-sdk';
-import {AppGlobalService} from '../services/app-global-service.service';
-import {PageId} from '../services/telemetry-constants';
+} from 'sunbird-sdk';
+import {AppGlobalService} from '@app/services/app-global-service.service';
+import {PageId} from '@app/services/telemetry-constants';
 import {Inject, Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import each from 'lodash/each';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import {CommonUtilService} from '../services/common-util.service';
-import {TelemetryGeneratorService} from '../services/telemetry-generator.service';
-import {Events} from '../util/events';
-import {SbProgressLoader} from '../services/sb-progress-loader.service';
+import {CommonUtilService} from '@app/services/common-util.service';
+import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
+import {Events} from '@app/util/events';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Injectable()
 

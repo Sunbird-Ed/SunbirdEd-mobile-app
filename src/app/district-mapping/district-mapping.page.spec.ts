@@ -3,19 +3,19 @@ import {
     AppGlobalService, AppHeaderService, CommonUtilService,
     FormAndFrameworkUtilService, TelemetryGeneratorService, AuditType, InteractType, CorReleationDataType, InteractSubtype
 } from '../../services';
-import { featureIdMap } from '../../feature-id-map';
-import { PageId, Environment, ImpressionType } from '../../services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
+import { PageId, Environment, ImpressionType } from '@app/services/telemetry-constants';
+import { DeviceInfo } from '../../../../sunbird-mobile-sdk/src/util/device';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { of, throwError } from 'rxjs';
 import {
     ProfileService, Profile, SharedPreferences, ProfileType, ProfileSource, DeviceRegisterResponse,
-    DeviceRegisterService,
-    DeviceInfo
-} from '@project-sunbird/sunbird-sdk';
-import { PreferenceKey } from '../../app/app.constant';
+    DeviceRegisterService
+} from 'sunbird-sdk';
+import { PreferenceKey } from '@app/app/app.constant';
 import { FormLocationFactory } from '../../services/form-location-factory/form-location-factory';
 import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';
@@ -33,7 +33,7 @@ describe('DistrictMappingPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(() => ''),
         showToast: jest.fn(),
-        isDeviceLocationAvailable: jest.fn()
+        isDeviceLocationAvailable: jest.fn(() => undefined)
     };
     const profile: Profile = {
         uid: '12345',
@@ -44,7 +44,7 @@ describe('DistrictMappingPage', () => {
     const mockProfileService: Partial<ProfileService> = {
         searchLocation: jest.fn(() => of([])),
         updateServerProfile: jest.fn(() => of(profile))
-    } as any;
+    };
     const mockPreferences: Partial<SharedPreferences> = {
         putString: jest.fn(() => of(undefined))
     };
@@ -168,14 +168,12 @@ describe('DistrictMappingPage', () => {
         });
     });
 
-    describe('ion view will enter', () => {
+    it('should unsubscribe backButton', () => {
         beforeEach(() => {
             window.history.pushState({ isShowBackButton: true }, '', '');
         });
-        it('should unsubscribe backButton', () => {
-            districtMappingPage.ionViewWillLeave();
-        });
-    })
+        districtMappingPage.ionViewWillLeave();
+    });
 
     it('should generate location capture telemetry', () => {
         // arrange
@@ -285,7 +283,7 @@ describe('DistrictMappingPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
-            mockDeviceRegisterService.registerDevice = jest.fn(() => of({})) as any;
+            mockDeviceRegisterService.registerDevice = jest.fn(() => of({}));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             jest.spyOn(districtMappingPage, 'generateSubmitInteractEvent').mockImplementation();
@@ -350,7 +348,7 @@ describe('DistrictMappingPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockDeviceRegisterService.registerDevice = jest.fn(() => of({})) as any;
+            mockDeviceRegisterService.registerDevice = jest.fn(() => of({}));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             jest.spyOn(districtMappingPage, 'generateSubmitInteractEvent').mockImplementation();
@@ -360,9 +358,9 @@ describe('DistrictMappingPage', () => {
             });
             districtMappingPage.profile = {
                 uid: 'sample-uid'
-            } as any;
-            mockProfileService.updateServerProfile = jest.fn(() => of({})) as any;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
+            };
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             jest.spyOn(districtMappingPage, 'generateLocationCaptured').mockImplementation();
             mockCommonUtilService.showToast = jest.fn();
@@ -420,7 +418,7 @@ describe('DistrictMappingPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockDeviceRegisterService.registerDevice = jest.fn(() => of({})) as any;
+            mockDeviceRegisterService.registerDevice = jest.fn(() => of({}));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             jest.spyOn(districtMappingPage, 'generateSubmitInteractEvent').mockImplementation();
@@ -430,9 +428,9 @@ describe('DistrictMappingPage', () => {
             });
             districtMappingPage.profile = {
                 uid: 'sample-uid'
-            } as any;
-            mockProfileService.updateServerProfile = jest.fn(() => of({})) as any;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
+            };
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             jest.spyOn(districtMappingPage, 'generateLocationCaptured').mockImplementation();
             mockCommonUtilService.showToast = jest.fn();
@@ -488,7 +486,7 @@ describe('DistrictMappingPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockDeviceRegisterService.registerDevice = jest.fn(() => of({})) as any;
+            mockDeviceRegisterService.registerDevice = jest.fn(() => of({}));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             jest.spyOn(districtMappingPage, 'generateSubmitInteractEvent').mockImplementation();
@@ -498,9 +496,9 @@ describe('DistrictMappingPage', () => {
             });
             districtMappingPage.profile = {
                 uid: 'sample-uid'
-            } as any;
+            };
             mockProfileService.updateServerProfile = jest.fn(() => throwError({}));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             jest.spyOn(districtMappingPage, 'generateLocationCaptured').mockImplementation();
             mockCommonUtilService.showToast = jest.fn();
@@ -552,7 +550,7 @@ describe('DistrictMappingPage', () => {
                 }
             } as any;
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockDeviceRegisterService.registerDevice = jest.fn(() => of({})) as any;
+            mockDeviceRegisterService.registerDevice = jest.fn(() => of({}));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
@@ -595,7 +593,7 @@ describe('DistrictMappingPage', () => {
                 },
                 profileType: ProfileType.TEACHER,
                 handle: 'sample-name'
-            })) as any;
+            }));
             mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([{
                 state: {code: 'sample-code', name: 'sample-name'},
                 district: {code: 'sample-code', name: 'sample-name'},
@@ -691,7 +689,7 @@ describe('DistrictMappingPage', () => {
                     firstName: 'sample-name',
                     userType: ProfileType.TEACHER
                 }
-            } as any;
+            };
             mockPreferences.getString = jest.fn(() => of(ProfileType.TEACHER));
             jest.spyOn(districtMappingPage, 'handleDeviceBackButton').mockImplementation(() => {
                 return;
@@ -927,7 +925,7 @@ describe('DistrictMappingPage', () => {
                 serverProfile: {
                     userSubType: undefined
                 }
-            } as any;
+            };
             // act
             districtMappingPage.onDataLoadStatusChange('');
             // assert

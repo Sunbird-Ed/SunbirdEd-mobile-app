@@ -10,11 +10,11 @@ import { NetworkService } from "../../core/services/network.service";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
-import { ContentDetailRequest, Content, ContentService } from '@project-sunbird/sunbird-sdk';
-import { NavigationService } from '../../../../services/navigation-handler.service';
-import { RouterLinks } from "../../../../app/app.constant";
-import { AppHeaderService } from "../../../../services/app-header.service";
-import { CommonUtilService } from "../../../../services/common-util.service";
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { RouterLinks } from "@app/app/app.constant";
+import { AppHeaderService } from "@app/services/app-header.service";
+import { CommonUtilService } from "@app/services/common-util.service";
 
 
 var environment = {

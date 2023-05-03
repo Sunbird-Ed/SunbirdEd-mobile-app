@@ -6,14 +6,14 @@ import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme
 import { SbTutorialPopupComponent } from '../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
 import { EventParams } from '../app/components/sign-in-card/event-params.interface';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { Observable, Observer } from 'rxjs';
 import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
     OAuthSession, Profile, ProfileService, ProfileSession, ProfileType, SharedPreferences
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';

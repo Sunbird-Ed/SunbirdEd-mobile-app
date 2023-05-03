@@ -1,11 +1,11 @@
 import { HasNotSelectedFrameworkGuard } from './has-not-selected-framework.guard';
-import { AppGlobalService, SplashScreenService, UtilityService } from '../services';
+import { AppGlobalService, SplashScreenService, UtilityService } from '@app/services';
 import { AuthService, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { CommonUtilService, OnboardingConfigurationService } from '../services';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { RouterLinks } from '../app/app.constant';
 
 describe('HasNotSelectedFrameworkGuard', () => {

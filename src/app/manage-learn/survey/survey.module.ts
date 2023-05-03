@@ -15,15 +15,16 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    declarations: [SurveyHomeComponent],
-    imports: [
-        CommonModule,
-        TranslateModule.forChild(),
-        IonicModule,
-        RouterModule.forChild(routes),
-        SharedModule,
-        CoreModule,
-    ],
-    providers: []
+  declarations: [SurveyHomeComponent],
+  imports: [
+    CommonModule,
+    TranslateModule.forChild(),
+    IonicModule,
+    RouterModule.forChild(routes),
+    SharedModule,
+    CoreModule,
+  ],
+  providers: [],
+  entryComponents:[]
 })
 export class SurveyModule {}

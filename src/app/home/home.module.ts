@@ -6,11 +6,11 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { IonicModule } from '@ionic/angular';
 import { UserHomePage } from './user-home/user-home.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { PipesModule } from '../../pipes/pipes.module';
+import { PipesModule } from '@app/pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
 import { CoreModule } from '../manage-learn/core/core.module';
 import { UserTypeGuard } from './user-type.guard';
-import { ComponentsModule } from '../../app/components/components.module';
+import { ComponentsModule } from '@app/app/components/components.module';
 
 const routes: Routes = [
   {

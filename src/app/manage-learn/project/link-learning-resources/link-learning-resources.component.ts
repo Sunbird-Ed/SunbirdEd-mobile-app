@@ -5,8 +5,8 @@ import { Location } from '@angular/common';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { LoaderService } from '../../core';
 import * as _ from 'underscore';
-import { ContentService, SearchType, ContentSearchResult } from '@project-sunbird/sunbird-sdk';
-import { NavigationService } from '../../../../services/navigation-handler.service';
+import { ContentService, SearchType, ContentSearchResult } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
 @Component({
   selector: 'app-link-learning-resources',
   templateUrl: './link-learning-resources.component.html',

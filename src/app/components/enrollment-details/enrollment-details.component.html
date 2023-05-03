@@ -18,8 +18,8 @@
                     <h5 class="subtitle title">{{ batches.batch.name }}</h5>
                     <p>{{batches.batch.startDate | date: 'dd/MM/yyyy' }} -
                         {{ batches.batch.endDate | date: 'dd/MM/yyyy' }}</p>
-                    <p *ngIf="batches?.batch?.creatorDetails?.firstName">{{ 'BATCH_CREATED_BY' | translate }}
-                        {{ batches.batch.creatorDetails.firstName }}</p>
+                    <p *ngIf="batch?.creatorDetails?.firstName">{{ 'BATCH_CREATED_BY' | translate }}
+                        {{ batch.creatorDetails.firstName }}</p>
                 </div>
                 <ion-button fill="clear" item-end class="subtitle buttontext" (click)="resumeCourse(batches)">
                     {{ 'RESUME' | translate }}</ion-button>

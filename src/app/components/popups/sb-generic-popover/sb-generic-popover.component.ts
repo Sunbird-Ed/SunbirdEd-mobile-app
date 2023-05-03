@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '../../../../util/events';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 
 @Component({

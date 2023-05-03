@@ -2,7 +2,7 @@ import { Component, NgZone, OnDestroy } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { CorrelationData, Rollup } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, Rollup } from 'sunbird-sdk';
 
 @Component({
   selector: 'sb-popover',

@@ -1,12 +1,12 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { AndroidPermission, AndroidPermissionsStatus } from '../../../../services/android-permissions/android-permission';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { Environment, InteractSubtype, PageId } from '../../../../services/telemetry-constants';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
 import { PopoverController,Platform, } from '@ionic/angular';
-import { ContentService, InteractType } from '@project-sunbird/sunbird-sdk';
-import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppGlobalService } from '../../../../services/app-global-service.service';
-import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
+import { ContentService, InteractType } from 'sunbird-sdk';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 
 @Component({
   selector: 'app-download-transcript-popup',

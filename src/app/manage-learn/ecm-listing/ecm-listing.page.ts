@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouterLinks } from '../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
 import { LocalStorageService, UtilsService } from '../core';
 import { EvidenceService } from '../core/services/evidence.service';

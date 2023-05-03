@@ -2,10 +2,10 @@ import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location as loc } from '../../app.constant';
-import { LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 
 @Component({

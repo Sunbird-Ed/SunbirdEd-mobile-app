@@ -165,9 +165,9 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 ---------------------------------------
 # IOS Development setup
 ## Prerequisites
-    1. Node js version 14.20.1
+    1. Node js version 10.18.1
     2. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
-    3. Cordova 11.0.0  using `npm i cordova@9.0.0 -g`
+    3. Cordova 9.0.0  using `npm i cordova@9.0.0 -g`
     4. cordova-res 0.15.3 - using `npm install -g cordova-res`
     5. ios-deploy  1.11.4 - using `brew install ios-deploy`
     all of the above should be installed globally

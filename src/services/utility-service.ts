@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {DeviceSpecification} from '@project-sunbird/sunbird-sdk';
-import {GenericAppConfig} from '../app/app.constant';
+import {DeviceSpecification} from 'sunbird-sdk';
+import {GenericAppConfig} from '@app/app/app.constant';
 
 declare const sbutility;
 

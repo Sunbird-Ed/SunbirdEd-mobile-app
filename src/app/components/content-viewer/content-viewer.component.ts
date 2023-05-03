@@ -1,7 +1,7 @@
 import { ModalController } from '@ionic/angular';
 import {  Component, Input, OnInit } from '@angular/core';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @Component({
     selector: "content-viewer",

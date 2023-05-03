@@ -1,17 +1,17 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '../../app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '../../app/module.service';
-import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
-import { LoginHandlerService } from '../../services/login-handler.service';
-import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { AppHeaderService } from '../../services/app-header.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { ContainerService } from '../../services/container.services';
-import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
-import { ProfileHandler } from '../../services/profile-handler';
-import { SplashScreenService } from '../../services/splash-screen.service';
+import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 import {
   AuditProps,
   AuditType, CorReleationDataType, Environment,
@@ -19,11 +19,11 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '../../services/telemetry-constants';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import {
   AuditState, CorrelationData, Profile,
@@ -32,8 +32,8 @@ import {
   ProfileType,
   SharedPreferences,
   UpdateServerProfileInfoRequest
-} from '@project-sunbird/sunbird-sdk';
-import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
+} from 'sunbird-sdk';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'page-user-type-selection',

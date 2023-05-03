@@ -48,7 +48,7 @@ describe('ShowVendorAppsComponent', () => {
                     break;
             }
         }),
-    } as any;
+    };
     const mockUtilityService: Partial<UtilityService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
@@ -104,7 +104,7 @@ describe('ShowVendorAppsComponent', () => {
                 }
             },
 
-        ] as any;
+        ];
         mockCommonUtilService.getAppName = jest.fn(() =>
             Promise.resolve('Sunbird')
         );
@@ -157,7 +157,7 @@ describe('ShowVendorAppsComponent', () => {
                     },
                     flags: 0
                 })
-            ) as any;
+            );
             mockTelemetryGeneratorService.generateSummaryTelemetry = jest.fn();
             mockPopoverCtrl.dismiss = jest.fn();
             // act

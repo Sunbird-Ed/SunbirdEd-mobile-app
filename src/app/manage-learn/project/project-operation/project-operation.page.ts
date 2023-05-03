@@ -5,13 +5,13 @@ import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
 import * as moment from 'moment';
-import { AppHeaderService } from '../../../../services/app-header.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkService, ProjectService, statusType, ToastService } from '../../core';
-import { RouterLinks } from '../../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import cloneDeep from 'lodash/cloneDeep';
 
 @Component({

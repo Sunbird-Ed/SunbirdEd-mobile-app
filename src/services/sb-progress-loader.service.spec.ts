@@ -112,7 +112,7 @@ describe('SbProgressLoader', () => {
             sbProgressLoader.hide(context)
             // assert
             setTimeout(() => {
-                mockModalController = undefined as any;
+                mockModalController = undefined;
                 done();
             }, 500);
         })

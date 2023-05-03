@@ -9,14 +9,14 @@ import { Platform } from '@ionic/angular';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences, SystemSettingsService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { ContainerService } from '../container.services';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -72,8 +72,8 @@ export class LogoutHandlerService {
           const availableLocationData = await this.preferences.getString(PreferenceKey.GUEST_USER_LOCATION).toPromise();
           await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, availableLocationData).toPromise();
         }
-        if(window['splashscreen']){
-          window['splashscreen'].clearPrefs();
+        if(window.splashscreen && splashscreen){
+          splashscreen.clearPrefs();
         }
       }),
       mergeMap((guestUserId: string) => {

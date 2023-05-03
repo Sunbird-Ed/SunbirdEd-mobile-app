@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ContentData, CorrelationData, Rollup, TelemetryObject} from '@project-sunbird/sunbird-sdk';
-import { ID, InteractType, PageId } from '../../../services/telemetry-constants';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../../services/common-util.service';
+import {ContentData, CorrelationData, Rollup, TelemetryObject} from 'sunbird-sdk';
+import { ID, InteractType, PageId } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
     selector: 'app-show-certificate-component',

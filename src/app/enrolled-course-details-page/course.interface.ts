@@ -1,4 +1,4 @@
-import { Batch, TelemetryObject, Rollup, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { Batch, TelemetryObject, Rollup, CorrelationData } from 'sunbird-sdk';
 
 
 export interface EnrollCourse {

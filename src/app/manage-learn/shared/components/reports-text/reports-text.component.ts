@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { SurveyProviderService } from '../../../../../app/manage-learn/core/services/survey-provider.service';
+import { SurveyProviderService } from '@app/app/manage-learn/core/services/survey-provider.service';
 
 @Component({
   selector: 'reports-text',

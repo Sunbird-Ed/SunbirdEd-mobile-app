@@ -6,8 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '../../../app/components/components.module';
-import { DirectivesModule } from '../../../directives/directives.module';
+import { ComponentsModule } from '@app/app/components/components.module';
+import { DirectivesModule } from '@app/directives/directives.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { RelevantContentsPage } from './relevant-contents.page';
 

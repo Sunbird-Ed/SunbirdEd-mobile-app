@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventTopics } from '../../../app/app.constant';
-import { CommonUtilService } from '../../../services/common-util.service';
+import { EventTopics } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
     Environment,
     ImpressionSubtype,
@@ -10,10 +10,10 @@ import {
     InteractSubtype,
     InteractType,
     PageId
-} from '../../../services/telemetry-constants';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { TextbookTocService } from './../textbook-toc-service';
@@ -41,17 +41,12 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     stckyindex: any;
     latestParentNodes: any;
     latestParentName: any;
-    depth: any;
-    corRelationList: any;
-    isDepthChild: any;
-    breadCrumb: any;
-    downloadProgress: any;
 
     constructor(
         private router: Router,
         public headerService: AppHeaderService,
         private platform: Platform,
-        public commonUtilService: CommonUtilService,
+        private commonUtilService: CommonUtilService,
         private popoverCtrl: PopoverController,
         private textbookTocService: TextbookTocService,
         private telemetryService: TelemetryGeneratorService,
@@ -171,5 +166,4 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         this.events.unsubscribe(EventTopics.TOC_COLLECTION_CHILD_ID);
     }
 
-    cancelDownload() {}
 }

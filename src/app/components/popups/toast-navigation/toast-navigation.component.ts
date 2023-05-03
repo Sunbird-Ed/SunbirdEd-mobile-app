@@ -12,7 +12,6 @@ export class ToastNavigationComponent implements OnDestroy {
   description: any;
   btnText: any;
   backButtonFunc: Subscription;
-  actionsButtons: any;
 
   constructor(
     public navParams: NavParams,
@@ -22,7 +21,6 @@ export class ToastNavigationComponent implements OnDestroy {
     this.message = this.navParams.get('message');
     this.description = this.navParams.get('description');
     this.btnText = this.navParams.get('btnText');
-    this.actionsButtons = this.navParams.get('actionsButtons');
   }
 
   ionViewWillEnter() {

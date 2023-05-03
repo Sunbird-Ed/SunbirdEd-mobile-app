@@ -1,4 +1,4 @@
-import { MyGroupsPopoverComponent } from '../../../../app/components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import { MyGroupsPopoverComponent } from '@app/app/components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import {
     CommonUtilService,
@@ -8,7 +8,7 @@ import {
     InteractType,
     PageId,
     TelemetryGeneratorService
-} from '../../../../services';
+} from '@app/services';
 
 describe('MyGroupsPopoverComponent', () => {
     let myGroupsPopoverComponent: MyGroupsPopoverComponent;

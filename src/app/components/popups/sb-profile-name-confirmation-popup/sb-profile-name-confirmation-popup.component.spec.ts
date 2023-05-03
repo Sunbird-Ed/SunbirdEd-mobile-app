@@ -1,12 +1,11 @@
 import { PopoverController } from '@ionic/angular';
 import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
-import { AppGlobalService, CommonUtilService } from '../../../../services';
+import { AppGlobalService, CommonUtilService, NavigationService, } from '@app/services';
 import { mockProfileData, paylod } from '../../../profile/profile.page.spec.data';
 import { ProfileNameConfirmationPopoverComponent } from './sb-profile-name-confirmation-popup.component';
 import { PageId } from '../../../../services/telemetry-constants';
 import { PreferenceKey } from '../../../app.constant';
-import { NavigationService } from '../../../../services/navigation-handler.service';
 
 describe('ProfileNameConfirmationPopoverComponent', () => {
     let profileNameConfirmationPopoverComponent: ProfileNameConfirmationPopoverComponent;

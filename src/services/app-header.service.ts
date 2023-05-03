@@ -1,9 +1,9 @@
 import {Inject, Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
-import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
-import {AppThemes, StatusBarTheme,AppMode} from '../app/app.constant';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {SharedPreferences} from 'sunbird-sdk';
+import {AppThemes, StatusBarTheme,AppMode} from '@app/app/app.constant';
 import onboarding from './../assets/configurations/config.json';
 
 

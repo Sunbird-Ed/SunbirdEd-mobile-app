@@ -1,10 +1,10 @@
 import { Component, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
-} from '../../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-filteroption',

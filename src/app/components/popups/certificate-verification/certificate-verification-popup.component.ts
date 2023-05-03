@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { CommonUtilService } from '../../../../services/common-util.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'app-certificate-verification-popover',

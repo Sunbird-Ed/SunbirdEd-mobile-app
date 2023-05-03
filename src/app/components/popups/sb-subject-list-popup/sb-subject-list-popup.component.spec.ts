@@ -1,8 +1,8 @@
 import { SbSubjectListPopupComponent } from './sb-subject-list-popup.component'
-import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '../../../../services';
+import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 import {ModalController, Platform} from '@ionic/angular';
 import { of } from 'rxjs';
-import {CorrelationData} from '@project-sunbird/sunbird-sdk';
+import {CorrelationData} from 'sunbird-sdk';
 
 describe('SbSubjectListPopupComponent', () => {
     let sbSubjectListPopupComponent: SbSubjectListPopupComponent;

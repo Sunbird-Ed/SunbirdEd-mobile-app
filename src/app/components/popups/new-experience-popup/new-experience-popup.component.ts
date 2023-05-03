@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '../../../../app/app.constant';
-import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences } from 'sunbird-sdk';
 import { Events } from '../../../../util/events';
 import { PageId, InteractSubtype } from '../../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';

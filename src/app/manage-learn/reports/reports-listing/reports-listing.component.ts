@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { AppHeaderService } from '../../../../services/app-header.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router} from '@angular/router';
-import { RouterLinks } from '../../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-reports-listing',

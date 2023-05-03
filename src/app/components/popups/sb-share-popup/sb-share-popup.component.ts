@@ -1,12 +1,12 @@
-import { UtilityService } from '../../../../services/utility-service';
+import { UtilityService } from '@app/services/utility-service';
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { AppGlobalService } from '../../../../services/app-global-service.service';
-import { ContentShareHandlerService } from '../../../../services/content/content-share-handler.service';
-import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../../../services/common-util.service';
-import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import {
   Environment,
   ImpressionType,
@@ -14,20 +14,20 @@ import {
   PageId,
   InteractType,
   InteractSubtype
-} from '../../../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import {
   TelemetryObject, ContentDetailRequest,
   ContentService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import {
   ShareUrl, ShareMode, MimeType
-} from '../../../../app/app.constant';
-import { ContentUtil } from '../../../../util/content-util';
+} from '@app/app/app.constant';
+import { ContentUtil } from '@app/util/content-util';
 import {
   AndroidPermission,
   AndroidPermissionsStatus
-} from '../../../../services/android-permissions/android-permission';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+} from '@app/services/android-permissions/android-permission';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -68,7 +68,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public popoverCtrl: PopoverController,
-    public platform: Platform,
+    private platform: Platform,
     private contentShareHandler: ContentShareHandlerService,
     private utilityService: UtilityService,
     private navParams: NavParams,

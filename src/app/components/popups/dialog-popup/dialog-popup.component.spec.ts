@@ -1,7 +1,7 @@
 import { DialogPopupComponent } from './dialog-popup.component';
 import { UtilityService } from '../../../../services/utility-service';
 import { PopoverController, NavParams } from '@ionic/angular';
-import {XwalkConstants } from '../../../../app/app.constant';
+import {XwalkConstants } from '@app/app/app.constant';
 
 describe('DialogPopupComponent', () => {
     let dialogPopupComponent: DialogPopupComponent;

@@ -1,7 +1,7 @@
 import { ViewCreditsComponent } from './view-credits.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { PageId, InteractSubtype, Environment, InteractType } from '../../../../services/telemetry-constants';
+import { PageId, InteractSubtype, Environment, InteractType } from '@app/services/telemetry-constants';
 
 describe('ViewCreditsComponent', () => {
     let viewCreditsComponent: ViewCreditsComponent;

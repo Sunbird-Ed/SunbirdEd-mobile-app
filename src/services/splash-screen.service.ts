@@ -18,8 +18,8 @@ export class SplashScreenService {
 
     async handleSunbirdSplashScreenActions(): Promise<undefined> {
         const stringifiedActions = await new Promise<string>((resolve) => {
-            if(this.platform.is('android') && window['splashscreen']){
-                window['splashscreen'].getActions((actionsTobeDone) => {
+            if(this.platform.is('android') && splashscreen){
+                splashscreen.getActions((actionsTobeDone) => {
                     resolve(actionsTobeDone);
                 });
             }
@@ -47,9 +47,9 @@ export class SplashScreenService {
                 }
             }
         }
-        if(window['splashscreen']){
-            window['splashscreen'].markImportDone();
-            window['splashscreen'].hide();
+        if(splashscreen){
+            splashscreen.markImportDone();
+            splashscreen.hide();
         }
     }
 

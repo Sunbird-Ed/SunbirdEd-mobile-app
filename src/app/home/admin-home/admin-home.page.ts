@@ -1,18 +1,18 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService } from '../../../services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
   Environment,
   ImpressionType,
   InteractSubtype,
   PageId
-} from '../../../services/telemetry-constants';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
-import { AppHeaderService } from '../../../services/app-header.service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { SunbirdQRScanner } from '../../../services/sunbirdqrscanner.service';
-import { ButtonPosition, CourseCardGridTypes } from '@project-sunbird/common-consumption';
+} from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import {
@@ -29,17 +29,17 @@ import {
   InteractType,
   FormService
 } from '@project-sunbird/sunbird-sdk';
-import { AggregatorPageType } from '../../../services/content/content-aggregator-namespaces';
-import { NavigationService } from '../../../services/navigation-handler.service';
+import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
+import { NavigationService } from '@app/services/navigation-handler.service';
 import { IonContent as ContentView } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
-import { DbService, LocalStorageService } from '../../../app/manage-learn/core';
-import { localStorageConstants } from '../../../app/manage-learn/core/constants/localStorageConstants';
-import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
-import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
-import { FieldConfig } from '../../../app/components/common-forms/field-config';
-import { FormConstants } from '../../../app/form.constants';
+import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
+import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
+import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
+import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-admin-home',
@@ -59,7 +59,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   guestUser: boolean;
   appLabel: string;
   newThemeTimeout: any;
-  ButtonPosition = ButtonPosition;
+
   displaySections: any[] = [];
   headerObservable: Subscription;
   @ViewChild('contentView', { static: false }) contentView: ContentView;

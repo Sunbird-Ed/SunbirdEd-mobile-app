@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app/app.constant';
-import { FieldConfig } from '../../app/components/common-forms/field-config';
-import { FormConstants } from '../../app/form.constants';
-import { TermsAndConditionsPage } from '../../app/terms-and-conditions/terms-and-conditions.page';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
+import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
 import { ModalController } from '@ionic/angular';
 import {
   AuthService,
   CachedItemRequestSourceFrom, Profile, ProfileService,
   ProfileType, ServerProfile, ServerProfileDetailsRequest,
   SharedPreferences
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
 import { ConsentService } from '../consent-service';
@@ -18,7 +18,7 @@ import { ExternalIdVerificationService } from '../externalid-verification.servic
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import onboarding from '../../assets/configurations/config.json';
 import { FrameworkDetailsService } from '../framework-details.service';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../telemetry-constants';
 import { SplashScreenService } from '../splash-screen.service';

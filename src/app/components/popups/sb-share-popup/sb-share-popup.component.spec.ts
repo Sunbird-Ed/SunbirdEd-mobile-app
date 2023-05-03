@@ -6,15 +6,15 @@ import {
     AndroidPermissionsService, InteractType, InteractSubtype, AppGlobalService
 } from '../../../../services';
 import { SbSharePopupComponent } from './sb-share-popup.component';
-import { ContentService } from '@project-sunbird/sunbird-sdk';
+import { ContentService } from 'sunbird-sdk';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import {
     Environment,
     ImpressionType,
     ID,
     PageId,
-} from '../../../../services/telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+} from '@app/services/telemetry-constants';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
 import { MimeType } from '../../../app.constant';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
@@ -61,9 +61,7 @@ describe('SbSharePopupComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(),
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {
-        translateMessage: jest.fn()
-    };
+    const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockPermissionService: Partial<AndroidPermissionsService> = {
         checkPermissions: jest.fn()
     };
@@ -108,7 +106,7 @@ describe('SbSharePopupComponent', () => {
         mockContentService.getContentDetails = jest.fn(() => of({
             identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: CsContentType.TEXTBOOK,
             primaryCategory: CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase()
-        })) as any;
+        }));
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, cb) => {
                 setTimeout(() => {
@@ -282,7 +280,7 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        })) as any;
+        }));
         // act
         sbSharePopupComponent.shareFile();
         // assert
@@ -293,19 +291,19 @@ describe('SbSharePopupComponent', () => {
         }, 0);
     });
 
-    it('should call storage permission pop-up and NOT_NOW clicked ', () => {
+    it('should call storage permission pop-up and NOT_NOW clicked ', (done) => {
         // arrange
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
             { hasPermission: false }));
         mockPopoverCtrl.dismiss = jest.fn();
-        const translate = mockCommonUtilService.translateMessage = jest.fn(('NOT_NOW') as any);
+
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(translate);
+            await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        }) as any;
+        });
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -314,22 +312,23 @@ describe('SbSharePopupComponent', () => {
         setTimeout(() => {
             // assert
             expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     InteractSubtype.NOT_NOW_CLICKED,
-            //     Environment.HOME,
-            //     PageId.PERMISSION_POPUP
-            // );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NOT_NOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP
+            );
             expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                 'FILE_MANAGER_PERMISSION_DESCRIPTION',
                 undefined,
                 'content-detail',
                 true
             );
+            done();
         }, 0);
     });
 
-    it('should call storage permission pop-up and ALLOW clicked and provide has permission false', () => {
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission false', (done) => {
         // arrange
         mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: false }));
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
@@ -338,11 +337,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        }) as any;
+        });
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -350,23 +349,24 @@ describe('SbSharePopupComponent', () => {
         // assert
         setTimeout(() => {
             // assert
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     InteractSubtype.ALLOW_CLICKED,
-            //     Environment.HOME,
-            //     PageId.PERMISSION_POPUP
-            // );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP
+            );
             expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                 'FILE_MANAGER_PERMISSION_DESCRIPTION',
                 undefined,
                 'content-detail',
                 true
             );
+            done();
         }, 0);
     });
 
 
-    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', () => {
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', (done) => {
         // arrange
         mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: true }));
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
@@ -375,11 +375,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        }) as any;
+        });
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -387,16 +387,17 @@ describe('SbSharePopupComponent', () => {
         // assert
         setTimeout(() => {
             // assert
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     InteractSubtype.ALLOW_CLICKED,
-            //     Environment.HOME,
-            //     PageId.PERMISSION_POPUP
-            // );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP
+            );
+            done();
         }, 0);
     });
 
-    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', () => {
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', (done) => {
         // arrange
         mockPermissionService.requestPermission = jest.fn(() => of({ isPermissionAlwaysDenied: true }));
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
@@ -405,11 +406,11 @@ describe('SbSharePopupComponent', () => {
 
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-            await callback(mockCommonUtilService.translateMessage = jest.fn(v => 'ALLOW'));
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
             return {
                 present: jest.fn(() => Promise.resolve())
             };
-        }) as any;
+        });
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.showSettingsPageToast = jest.fn();
         // act
@@ -417,18 +418,19 @@ describe('SbSharePopupComponent', () => {
         // assert
         setTimeout(() => {
             // assert
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     InteractSubtype.ALLOW_CLICKED,
-            //     Environment.HOME,
-            //     PageId.PERMISSION_POPUP
-            // );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP
+            );
             expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                 'FILE_MANAGER_PERMISSION_DESCRIPTION',
                 undefined,
                 'content-detail',
                 true
             );
+            done();
         }, 0);
     });
 

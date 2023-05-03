@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { RouterLinks } from '../../../app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { ObservationDetailComponent } from './observation-detail/observation-detail.component';
 import { ObservationHomeComponent } from './observation-home/observation-home.component';
 import { ObservationSubmissionComponent } from './observation-submission/observation-submission.component';

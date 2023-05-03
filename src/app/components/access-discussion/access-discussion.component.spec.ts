@@ -1,9 +1,9 @@
 import {DiscussionService,} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { DiscussionTelemetryService } from '../../../services/discussion/discussion-telemetry.service';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from './access-discussion.component';
-import { AppHeaderService, CommonUtilService } from '../../../services';
+import { AppHeaderService, CommonUtilService, NavigationService } from '@app/services';
 import { AppGlobalService, TelemetryGeneratorService } from '../../../services';
 
 describe('GroupDetailsPage', () => {

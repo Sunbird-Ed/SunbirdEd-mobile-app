@@ -13,7 +13,7 @@ import {
     InteractType,
     InteractSubtype,
 } from '../../services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';

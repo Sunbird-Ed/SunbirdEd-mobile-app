@@ -1,9 +1,9 @@
 import { SearchFilterPage } from './search-filter.page';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { ContentService } from '@project-sunbird/sunbird-sdk';
-import { CommonUtilService } from '../../services';
-import { FilterFormConfigMapper } from '../../app/search-filter/filter-form-config-mapper';
+import { ContentService } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services';
+import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, SearchFilterService, TelemetryGeneratorService } from '../../services';
@@ -107,7 +107,7 @@ describe('SearchFilterPage', () => {
                     }
                 ],
                 facets: ['se_mediums', 'se_gradeLevels']
-            } as any;
+            };
             mockFilterFormConfigMapper.map = jest.fn(() => Promise.resolve({
                 config: [{
                     facet: 'board',
@@ -116,7 +116,7 @@ describe('SearchFilterPage', () => {
                 defaults: {
                     values: ['english', 'hindi']
                 }
-            })) as any
+            }))
             mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(searchFilterPage['initialFilterCriteria']));
             JSON.parse = jest.fn().mockImplementationOnce(() => {
                 return searchFilterPage['initialFilterCriteria'];
@@ -175,7 +175,7 @@ describe('SearchFilterPage', () => {
                     }
                 ],
                 facets: ['se_mediums', 'se_gradeLevels']
-            } as any;
+            };
             mockFilterFormConfigMapper.map = jest.fn(() => Promise.resolve({
                 config: [{
                     facet: 'board',
@@ -184,7 +184,7 @@ describe('SearchFilterPage', () => {
                 defaults: {
                     values: ['english', 'hindi']
                 }
-            })) as any
+            }))
             mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(searchFilterPage['initialFilterCriteria']));
             JSON.parse = jest.fn().mockImplementationOnce(() => {
                 return searchFilterPage['initialFilterCriteria'];
@@ -212,13 +212,13 @@ describe('SearchFilterPage', () => {
     describe('resetFilter', () => {
         it('should delegate form reset to SbSearchFacetFilterComponent', () => {
             // arrange
-            let resetFilter = searchFilterPage.searchFilterComponent = {
+            searchFilterPage.searchFilterComponent = {
                 resetFilter: jest.fn()
-            } as any;
+            };
             // act
             searchFilterPage.resetFilter();
             // assert
-            expect(resetFilter).toHaveBeenCalled();
+            expect(searchFilterPage.searchFilterComponent.resetFilter).toHaveBeenCalled();
         });
 
         it('should delegate form reset to SbSearchFacetFilterComponent', () => {
@@ -235,7 +235,7 @@ describe('SearchFilterPage', () => {
             // arrange
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
-            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria })) as any;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())
@@ -268,7 +268,7 @@ describe('SearchFilterPage', () => {
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             searchFilterPage['isPageLoadedFirstTime'] = false;
-            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria })) as any;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())
@@ -335,12 +335,12 @@ describe('SearchFilterPage', () => {
                         }
                     ],
                     facets: ['se_mediums', 'se_gradeLevels']
-                } as any;
+                };
             });
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             searchFilterPage['isPageLoadedFirstTime'] = false;
-            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria })) as any;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())
@@ -400,12 +400,12 @@ describe('SearchFilterPage', () => {
                         }
                     ],
                     facets: ['se_mediums', 'se_gradeLevels']
-                } as any;
+                };
             });
             const sampleFilterCriteria = {};
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             searchFilterPage['isPageLoadedFirstTime'] = false;
-            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria })) as any;
+            mockContentService.searchContent = jest.fn(() => of({ filterCriteria: sampleFilterCriteria }));
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: jest.fn(),
                 dismiss: jest.fn(() => Promise.resolve())

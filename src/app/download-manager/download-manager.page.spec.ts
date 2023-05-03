@@ -15,10 +15,10 @@ import {
     CommonUtilService,
     FormAndFrameworkUtilService,
     TelemetryGeneratorService
-} from '../../services';
-import { RouterLinks, EventTopics } from '../../app/app.constant';
+} from '@app/services';
+import { RouterLinks, EventTopics } from '@app/app/app.constant';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';
@@ -97,7 +97,7 @@ describe('DownloadManagerPage', () => {
 
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn(() => ({ uid: 'sample_uid' }))
-    } as any;
+    };
 
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({
@@ -272,7 +272,7 @@ describe('DownloadManagerPage', () => {
                         return fn('sample_respone');
                 }
             });
-            downloadManagerPage.downloadsTab = undefined as any;
+            downloadManagerPage.downloadsTab = undefined;
             // act
             downloadManagerPage.ionViewWillEnter().then(() => {
                 // assert
@@ -559,7 +559,7 @@ describe('DownloadManagerPage', () => {
         it('should unsubscribe all events', () => {
             // arrange
             mockContentService.deleteContent = jest.fn(() => of([{ status: 'CONTENT_DELETED' }] as any));
-            mockEvents['unSubscribe'] = jest.fn((topic, fn) => {
+            mockEvents.unSubscribe = jest.fn((topic, fn) => {
                 switch (topic) {
                     case EventTopics.LAST_ACCESS_ON:
                         return fn('some_page_id');

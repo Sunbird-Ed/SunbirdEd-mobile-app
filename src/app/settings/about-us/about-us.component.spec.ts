@@ -1,16 +1,16 @@
-import {AboutUsComponent} from '../../../app/settings/about-us/about-us.component';
-import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
+import {AboutUsComponent} from '@app/app/settings/about-us/about-us.component';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {
     CommonUtilService,
     Environment,
     ImpressionType, InteractSubtype, InteractType,
     PageId,
     TelemetryGeneratorService
-} from '../../../services';
+} from '@app/services';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
 import {Router} from '@angular/router';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
+import {AppVersion} from '@ionic-native/app-version/ngx';
 import {AppHeaderService, UtilityService} from '../../../services';
 import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of, Subscription} from 'rxjs';
@@ -18,7 +18,7 @@ import {of, Subscription} from 'rxjs';
 window['sbutility'] = {
     removeFile: jest.fn(),
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
-} as any;
+};
 window.console.error = jest.fn()
 
 describe('AboutUsComponent', () => {
@@ -111,7 +111,7 @@ describe('AboutUsComponent', () => {
         mockAppHeaderService.headerConfigEmitted$ = of(mockConfig);
         mockAppHeaderService.getDefaultPageConfig = jest.fn(() => {
             return mockConfig;
-        }) as any;
+        });
         mockAppHeaderService.updatePageConfig = jest.fn();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -120,7 +120,7 @@ describe('AboutUsComponent', () => {
         const unsubscribeFn = jest.fn();
         aboutUsComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn
-        } as any;
+        };
         mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
         mockLocation.back = jest.fn();
         // act
@@ -166,7 +166,7 @@ describe('AboutUsComponent', () => {
 
         it('should return if no backbutton events', () => {
             // arrange
-            aboutUsComponent['backButtonFunc'];
+            aboutUsComponent['backButtonFunc'] = false;
             // act
             aboutUsComponent.ionViewWillLeave();
             // assert
@@ -177,27 +177,27 @@ describe('AboutUsComponent', () => {
     describe('ionViewDidLeave', () => {
         it('should remove sub utility file ', (done) => {
             // arrange
-            window['sbutility'] = {removeFile: jest.fn((fn) => fn())} as any
+            window['sbutility'].removeFile = jest.fn((fn) => fn())
             // act
             aboutUsComponent.ionViewDidLeave();
             // asert
             setTimeout(() => {
-                // expect(window['sbutility'].removeFile).toBeCalled();
-                expect(aboutUsComponent['loading']).toBeUndefined();
+                expect(window['sbutility'].removeFile).toBeCalled();
+                expect(aboutUsComponent.loading).toBeUndefined();
                 done();
             }, 10);
         })
         it('should catch error on remove sub utility file ', (done) => {
             // arrange
-            window['sbutility'] = {removeFile: jest.fn((success, error) => {
+            window['sbutility'].removeFile = jest.fn((success, error) => {
                 error({})
-            })} as any
+            })
             // act
             aboutUsComponent.ionViewDidLeave();
             // asert
             setTimeout(() => {
-                // expect(window['sbutility'].removeFile).toHaveBeenCalled();
-                expect(aboutUsComponent['loading']).toBeUndefined();
+                expect(window['sbutility'].removeFile).toHaveBeenCalled();
+                expect(aboutUsComponent.loading).toBeUndefined();
                 done();
             }, 10);
         })
@@ -224,7 +224,7 @@ describe('AboutUsComponent', () => {
             setTimeout(() => {
                 expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 expect(mockContentService.getContents).toHaveBeenCalled()
-                // expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled()
+                expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled()
                 done()
             }, 0);
         })
@@ -248,7 +248,7 @@ describe('AboutUsComponent', () => {
             setTimeout(() => {
                 expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 expect(mockContentService.getContents).toHaveBeenCalled()
-                // expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled();
+                expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled();
                 done()
             }, 0);
         })
@@ -264,16 +264,16 @@ describe('AboutUsComponent', () => {
                 {present,
                 dismiss}
             ));
-            window['sbutility'] = {shareSunbirdConfigurations: jest.fn((_, _1, success, error) => {
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
                 error({})
-            })} as any
+            })
             // act 
             aboutUsComponent.shareInformation()
             // assert
             setTimeout(() => {
                 expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 expect(mockContentService.getContents).toHaveBeenCalled()
-                // expect(window['sbutility'].shareSunbirdConfigurations).toThrowError();
+                expect(window['sbutility'].shareSunbirdConfigurations).toThrowError();
                 done()
             }, 0);
         })
@@ -286,16 +286,16 @@ describe('AboutUsComponent', () => {
             mockProfileService.getAllProfiles = jest.fn(()=> of([]))
             mockContentService.getContents = jest.fn(() => of([]))
             mockCommonUtilService.getLoader = jest.fn(() => undefined);
-            window['sbutility'] = {shareSunbirdConfigurations: jest.fn((_, _1, success, error) => {
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
                 error({})
-            })} as any
+            })
             // act 
             aboutUsComponent.shareInformation()
             // assert
             setTimeout(() => {
                 expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 expect(mockContentService.getContents).toHaveBeenCalled()
-                // expect(window['sbutility'].shareSunbirdConfigurations).toThrowError();
+                expect(window['sbutility'].shareSunbirdConfigurations).toThrowError();
                 done()
             }, 0);
         })
@@ -314,16 +314,16 @@ describe('AboutUsComponent', () => {
             mockSharedPreferences.putString = jest.fn(() => of())
             mockSharedPreferences.getString = jest.fn(() => of('true'))
             mockSocialSharing.share = jest.fn(() => Promise.reject())
-            window['sbutility'] = {shareSunbirdConfigurations: jest.fn((_, _1, success, error) => {
+            window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
                 success({})
-            })} as any
+            })
             // act 
             aboutUsComponent.shareInformation()
             // assert
             setTimeout(() => {
                 expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
                 expect(mockContentService.getContents).toHaveBeenCalled()
-                // expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled();
+                expect(window['sbutility'].shareSunbirdConfigurations).toHaveBeenCalled();
                 done()
             }, 0);
         })
@@ -331,19 +331,18 @@ describe('AboutUsComponent', () => {
     describe('handleBackButton()', () => {
         it('should ', () => {
             // arrange
-            aboutUsComponent['ShouldGenerateBackClickedTelemetry'] = true;
+            aboutUsComponent.ShouldGenerateBackClickedTelemetry = true;
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((x, callback) => callback()),
                 is: jest.fn()
-            } as any;
+            };
             mockLocation.back = jest.fn();
             const unsubscribeFn = jest.fn();
             aboutUsComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
             } as any;
             // act
-            aboutUsComponent.ionViewWillEnter();
-            // aboutUsComponent.handleBackButton();
+            aboutUsComponent.handleBackButton();
             // assert
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
@@ -357,7 +356,7 @@ describe('AboutUsComponent', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
             mockUtilityService.getBuildConfigValue = jest.fn();
-            window['cordova']['InAppBrowser'].open = jest.fn()
+            window.cordova['InAppBrowser'].open = jest.fn()
             // act
             aboutUsComponent.openTermsOfUse()
             // assert

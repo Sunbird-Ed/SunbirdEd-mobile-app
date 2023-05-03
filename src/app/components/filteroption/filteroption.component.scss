@@ -26,7 +26,7 @@
       font-weight: 600 !important;
     }
   
-  .option-box::part(content) {
+  .option-box .popover-content {
     margin: 0;
     width: 100% !important;
     max-height: 70% !important;

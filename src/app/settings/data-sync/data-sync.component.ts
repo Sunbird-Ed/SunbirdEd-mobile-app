@@ -5,17 +5,17 @@ import {
   Environment,
   ImpressionType,
   InteractSubtype, InteractType, PageId
-} from '../../../services/telemetry-constants';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+} from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
   ArchiveObjectType, ArchiveService,
   ObjectNotFoundError, TelemetryAutoSyncModes, TelemetryImpressionRequest, TelemetryService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 
 declare const cordova;
 
@@ -49,7 +49,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
       map((ts) => {
         if (ts) {
-          return (window as any).dayjs(ts).format('DD/MM/YYYY, hh:mm a');
+          return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
         }
 
         return undefined;
@@ -160,7 +160,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       ignoreSyncThreshold: true
     }).subscribe();
 
-    window['sbsync'].onSyncSucces(async (syncStat) => {
+    sbsync.onSyncSucces(async (syncStat) => {
       if (syncStat.telemetry_error) {
         if (this.loader) {
           await this.loader.dismiss();

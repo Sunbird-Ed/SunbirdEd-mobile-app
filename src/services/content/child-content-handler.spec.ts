@@ -1,6 +1,6 @@
 import { ChildContentHandler } from '../../services/content/child-content-handler';
 import { of } from 'rxjs';
-import { ContentService } from '@project-sunbird/sunbird-sdk';
+import { ContentService } from 'sunbird-sdk';
 import { mockChildContentData } from './child-content.handler.spec.data';
 describe('ChildContentHandler', () => {
     let childContentHandler: ChildContentHandler;

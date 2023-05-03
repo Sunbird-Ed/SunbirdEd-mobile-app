@@ -35,7 +35,7 @@ describe('SupportAcknowledgement', () => {
 
     describe('close popup', () => {
         it('should emit an event to close popup', () => {
-            supportAcknowledgement.closeEvents = {emit : jest.fn()} as any;
+            supportAcknowledgement.closeEvents = {emit : jest.fn()};
             // act
             supportAcknowledgement.close();
 

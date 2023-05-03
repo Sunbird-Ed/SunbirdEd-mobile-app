@@ -3,11 +3,11 @@ import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewCh
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../../app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import {
   Environment,
   ImpressionType,
@@ -16,7 +16,7 @@ import {
   PageId,
   CorReleationDataType,
   AuditType
-} from '../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import {
   Framework,
   FrameworkCategoryCode,
@@ -29,20 +29,20 @@ import {
   ProfileService,
   ProfileType,
   CorrelationData,
-  AuditState} from '@project-sunbird/sunbird-sdk';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { ContainerService } from '../../services/container.services';
-import { AppHeaderService } from '../../services/app-header.service';
-import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
+  AuditState} from 'sunbird-sdk';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import { AlertController, Platform } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
-import { SplashScreenService } from '../../services/splash-screen.service';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
-import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -155,11 +155,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit() {
-    window['cordova']['plugins']['webViewChecker'].getCurrentWebViewPackageInfo()
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then((packageInfo) => {
         this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
-          let ver = webviewVersion as any;
-          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= ver) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
             this.animatedQRImageRef.nativeElement.style.width =
               this.animatedQRImageRef.nativeElement.style.height = 'auto';
             this.animatedQRImageRef.nativeElement.style.minWidth =

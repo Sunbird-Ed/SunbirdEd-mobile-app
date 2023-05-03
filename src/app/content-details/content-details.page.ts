@@ -1,13 +1,13 @@
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Network } from '@ionic-native/network/ngx';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
   Platform,
   PopoverController
 } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Subscription, Observable } from 'rxjs';
 import {
   Content,
@@ -41,24 +41,24 @@ import {
   ContentMarkerRequest,
   MarkerType,
   Profile
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 
-import { Map } from '../../app/telemetryutil';
-import { ConfirmAlertComponent } from '../../app/components';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { AppHeaderService } from '../../services/app-header.service';
+import { Map } from '@app/app/telemetryutil';
+import { ConfirmAlertComponent } from '@app/app/components';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
   ShareItemType, PreferenceKey, MaxAttempt, ProfileConstants
-} from '../../app/app.constant';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { CourseUtilService } from '../../services/course-util.service';
-import { UtilityService } from '../../services/utility-service';
-import { LocalCourseService } from '../../services/local-course.service';
-import { ContentInfo } from '../../services/content/content-info';
-import { DialogPopupComponent } from '../../app/components/popups/dialog-popup/dialog-popup.component';
+} from '@app/app/app.constant';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { UtilityService } from '@app/services/utility-service';
+import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentInfo } from '@app/services/content/content-info';
+import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
   Environment,
   ImpressionType,
@@ -67,16 +67,16 @@ import {
   Mode,
   PageId,
   CorReleationDataType,
-} from '../../services/telemetry-constants';
-import { FileSizePipe } from '../../pipes/file-size/file-size';
-import { SbGenericPopoverComponent } from '../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { RatingHandler } from '../../services/rating/rating-handler';
-import { ProfileSwitchHandler } from '../../services/user-groups/profile-switch-handler';
-import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
-import { ChildContentHandler } from '../../services/content/child-content-handler';
-import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
-import { ContentUtil } from '../../util/content-util';
-import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+} from '@app/services/telemetry-constants';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { RatingHandler } from '@app/services/rating/rating-handler';
+import { ProfileSwitchHandler } from '@app/services/user-groups/profile-switch-handler';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ChildContentHandler } from '@app/services/content/child-content-handler';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ContentUtil } from '@app/util/content-util';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map, filter, take, tap } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -84,11 +84,11 @@ import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import {ShowVendorAppsComponent} from '../../app/components/show-vendor-apps/show-vendor-apps.component';
-import {FormConstants} from '../../app/form.constants';
-import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
+import {FormConstants} from '@app/app/form.constants';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 
 
@@ -194,7 +194,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   config: any;
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
-  showMoreFlag: any = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -208,10 +207,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
-    public platform: Platform,
+    private platform: Platform,
     public appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private network: Network,
@@ -231,7 +230,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
     private sanitizer: DomSanitizer,
-    public screenOrientation: ScreenOrientation
+    private screenOrientation: ScreenOrientation
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -1403,7 +1402,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * @param objRollup object roll up
    * @param corRelationList correlation List
    */
-  readLessorReadMore(param, objRollup?, corRelationList?) {
+  readLessorReadMore(param, objRollup, corRelationList) {
     if(param === 'read-more-clicked'){
       this.appGlobalService.setAccessibilityFocus('read-more-content')
     } else {

@@ -1,11 +1,11 @@
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { TelemetryService, TelemetryObject, TelemetryErrorCode, ProfileType } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, TelemetryObject, TelemetryErrorCode, ProfileType } from 'sunbird-sdk';
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId,
   LogLevel
-} from '../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { of } from 'rxjs';
-import {Context, SbProgressLoader} from '../services/sb-progress-loader.service';
+import {Context, SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('TelemetryGeneratorService', () => {
   let telemetryGeneratorService: TelemetryGeneratorService;
@@ -35,11 +35,7 @@ describe('TelemetryGeneratorService', () => {
       primaryCategory: 'Learning Resource'
     }
   } as any;
-  let mockSbProgressLoader: Partial<SbProgressLoader> = {
-    contexts: {
-      entries: []
-    }
-  } as any;
+  const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
   beforeAll(() => {
     telemetryGeneratorService = new TelemetryGeneratorService(
@@ -56,22 +52,17 @@ describe('TelemetryGeneratorService', () => {
     expect(telemetryGeneratorService).toBeTruthy();
   });
 
-  xit('should invoke interact() with proper arguments', () => {
+  it('should invoke interact() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts?.set('SAMPLE_ID', {
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
       id: 'SAMPLE_ID',
       ignoreTelemetry: {
         when: {
           interact: /{“pageid”:“collection-detail”}/
         }
-    }}) as any
-    let entries = ['SAMPLE_ID', {
-      id: 'SAMPLE_ID',
-      ignoreTelemetry: {
-        when: {
-          interact: /{“pageid”:“collection-detail”}/
-        }
-    }}]
+      }
+    });
     // act
     telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -94,17 +85,17 @@ describe('TelemetryGeneratorService', () => {
     expect(mockInteract.mock.calls[0][0]['correlationData']).toEqual(corRelationList);
   });
 
-  xit('should invoke impression() with proper arguments', () => {
+  it('should invoke impression() with proper arguments', () => {
     // arrange
-    // mockSbProgressLoader.contexts as any;
-    // mockSbProgressLoader.contexts?.set('SAMPLE_ID', {
-    //   id: 'SAMPLE_ID',
-    //   ignoreTelemetry: {
-    //     when: {
-    //       impression: /{“pageid”:“collection-detail”}/
-    //     }
-    //   }
-    // }) as any;
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          impression: /{“pageid”:“collection-detail”}/
+        }
+      }
+    });
     // act
     telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL, '',
       PageId.COLLECTION_DETAIL,
@@ -227,7 +218,7 @@ describe('TelemetryGeneratorService', () => {
     expect(mockImpression.mock.calls[0][0]['env']).toEqual(Environment.HOME);
   });
 
-  xdescribe('generateBackClickedTelemetry', () => {
+  describe('generateBackClickedTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -255,7 +246,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generatePageViewTelemetry', () => {
+  describe('generatePageViewTelemetry', () => {
     it('should invoke impression() with proper arguments', () => {
       // arrange
       // act
@@ -272,7 +263,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateSpineLoadingTelemetry', () => {
+  describe('generateSpineLoadingTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -293,7 +284,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateCancelDownloadTelemetry', () => {
+  describe('generateCancelDownloadTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -313,7 +304,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateDownloadAllClickTelemetry', () => {
+  describe('generateDownloadAllClickTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -332,7 +323,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generatePullToRefreshTelemetry', () => {
+  describe('generatePullToRefreshTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -346,7 +337,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('readLessOrReadMore', () => {
+  describe('readLessOrReadMore', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -362,7 +353,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateProfilePopulatedTelemetry', () => {
+  describe('generateProfilePopulatedTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       const profile = {
@@ -383,7 +374,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateAppLaunchTelemetry', () => {
+  describe('generateAppLaunchTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -397,7 +388,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generateExtraInfoTelemetry', () => {
+  describe('generateExtraInfoTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -413,7 +404,7 @@ describe('TelemetryGeneratorService', () => {
 
   });
 
-  xdescribe('generateContentCancelClickedTelemetry', () => {
+  describe('generateContentCancelClickedTelemetry', () => {
     it('should invoke interact() with proper arguments', () => {
       // arrange
       // act
@@ -454,7 +445,7 @@ describe('TelemetryGeneratorService', () => {
 
   });
 
-  xdescribe('generateUtmInfoTelemetry', () => {
+  describe('generateUtmInfoTelemetry', () => {
     it('should invoke interact() for generate UtmInfo telemetry', () => {
       // arrange
       const value = [
@@ -469,7 +460,7 @@ describe('TelemetryGeneratorService', () => {
         id: 'sample-id',
         type: 'sample-type',
         version: 'sample-version'
-      } as any;
+      };
       // act
       telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', object);
       // assert
@@ -481,7 +472,7 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
-  xdescribe('generatefastLoadingTelemetry()', () => {
+  describe('generatefastLoadingTelemetry()', () => {
     it('should invoke interact() for generate fastloading telemetry', () => {
       // arrange
       jest.spyOn(telemetryGeneratorService, 'generateInteractTelemetry');

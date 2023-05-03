@@ -3,15 +3,13 @@ import { DownloadsTabComponent } from './downloads-tab.component';
 import {
     AppHeaderService,
     CommonUtilService,
+    NavigationService,
     TelemetryGeneratorService
-} from '../../../services';
+} from '@app/services';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import { of } from 'rxjs';
 import { Environment, InteractSubtype, PageId, InteractType, ActionButtonType } from '../../../services/telemetry-constants';
-import { NavigationService } from '../../../services/navigation-handler.service';
-import { ObservationService } from '../../manage-learn/observation/observation.service';
-import { Router } from '@angular/router';
 
 describe('DownloadManagerPage', () => {
     let downloadsTabComponent: DownloadsTabComponent;
@@ -58,10 +56,6 @@ describe('DownloadManagerPage', () => {
         headerEventEmitted$: of('')
     };
 
-    const mockObservationService: Partial<ObservationService> = {};
-
-    const mockRouter: Partial<Router> = {};
-
     beforeAll(() => {
         downloadsTabComponent = new DownloadsTabComponent(
             mockPopOverController as PopoverController,
@@ -69,9 +63,7 @@ describe('DownloadManagerPage', () => {
             mockEvents as Events,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockNavService as NavigationService,
-            mockAppHeaderService as AppHeaderService,
-            mockObservationService as ObservationService,
-            mockRouter as Router
+            mockAppHeaderService as AppHeaderService
         );
     });
 
@@ -131,7 +123,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -176,7 +168,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -202,7 +194,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -236,7 +228,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -265,7 +257,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -305,7 +297,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -340,7 +332,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -374,7 +366,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -408,7 +400,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -510,7 +502,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             downloadsTabComponent.deleteAllConfirm = { dismiss: jest.fn() };
             downloadsTabComponent.deleteAllPopupPresent = true;
             // act
@@ -538,7 +530,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -563,7 +555,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -588,7 +580,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             mockPopOverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 dismiss: jest.fn(() => Promise.resolve({})),
@@ -625,7 +617,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id2',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             downloadsTabComponent.deleteAllConfirm = { dismiss: jest.fn() };
             downloadsTabComponent.deleteAllPopupPresent = true;
             // act
@@ -642,7 +634,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id1',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             downloadsTabComponent.deleteAllConfirm = { dismiss: jest.fn() };
             downloadsTabComponent.deleteAllPopupPresent = true;
             // act
@@ -659,7 +651,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id1',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             downloadsTabComponent.deleteAllConfirm = { dismiss: jest.fn() };
             downloadsTabComponent.deleteAllPopupPresent = true;
             // act
@@ -674,7 +666,7 @@ describe('DownloadManagerPage', () => {
                 identifier: 'do_id1',
                 primaryCategory: 'Course',
                 pkgVersion: '1'
-            }] as any;
+            }];
             downloadsTabComponent.deleteAllConfirm = { dismiss: jest.fn() };
             downloadsTabComponent.deleteAllPopupPresent = false;
             // act

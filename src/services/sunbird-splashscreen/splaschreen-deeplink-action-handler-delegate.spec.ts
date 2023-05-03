@@ -1,7 +1,7 @@
 import {SplaschreenDeeplinkActionHandlerDelegate} from './splaschreen-deeplink-action-handler-delegate';
 import {MimeType, RouterLinks} from '../../app/app.constant';
 import {Router} from '@angular/router';
-import {Events} from '../../util/events';
+import {Events} from '@app/util/events';
 import {of} from 'rxjs';
 import {
     AuthService,
@@ -14,11 +14,11 @@ import {
     SharedPreferences,
     StorageService,
     TelemetryService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import {AppGlobalService} from '../app-global-service.service';
 import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
 import {CommonUtilService} from '../../services/common-util.service';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
+import {AppVersion} from '@ionic-native/app-version/ngx';
 import {UtilityService} from '../utility-service';
 import {LoginHandlerService} from '../login-handler.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -33,7 +33,7 @@ import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegat
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {jest} from '@jest/globals';
-import {LoginNavigationHandlerService} from '../../services';
+import {LoginNavigationHandlerService} from '@app/services';
 import { Platform } from '@ionic/angular';
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
@@ -55,7 +55,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     const mockEvents: Partial<Events> = {
         publish: jest.fn(),
         subscribe: jest.fn()
-    } as any;
+    };
     const mockPlatform: Partial<Platform> = {
         is: jest.fn(platform => platform === 'ios')
     };
@@ -124,8 +124,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             };
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
@@ -145,8 +145,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             };
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
@@ -166,8 +166,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             };
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryService.updateCampaignParameters = jest.fn();
@@ -179,7 +179,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 isAvailableLocally: false,
                 children: {identifier: 'do_212911645382959104166'}
             };
-            mockContentService.getContentDetails = jest.fn(() => of(content)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(content));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
@@ -205,8 +205,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             };
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
@@ -267,8 +267,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             };
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
@@ -283,9 +283,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
 
         it('should check for payload and action if its search navigate to SearchPage', (done) => {
             // arrange
-            mockRouter.navigate = jest.fn() as any;
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockRouter.navigate = jest.fn();
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_SEARCH', data: {request: 'sample'}});
             // assert
@@ -298,9 +298,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         describe('action_GOTO', () => {
             it('should handle payload and action navigation goTO', (done) => {
                 // arrange
-                mockRouter.navigate = jest.fn() as any;
-                mockSbProgressLoader.show = jest.fn() as any;
-                mockSbProgressLoader.hide = jest.fn() as any;
+                mockRouter.navigate = jest.fn();
+                mockSbProgressLoader.show = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({
                     action: 'ACTION_GOTO',
@@ -315,9 +315,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
 
             it('should handle and navigate if there is no data request', (done) => {
                 // arrange
-                mockRouter.navigate = jest.fn() as any;
-                mockSbProgressLoader.show = jest.fn() as any;
-                mockSbProgressLoader.hide = jest.fn() as any;
+                mockRouter.navigate = jest.fn();
+                mockSbProgressLoader.show = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_GOTO', data: {request: {route: 'sample'}}});
                 // assert
@@ -331,8 +331,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         it('should look for ACTION_SETPROFILE and if matches update profile according to the data', (done) => {
             // arrange
             mockUpdateProfileService.checkProfileData = jest.fn();
-            mockAppGlobalService.getCurrentUser = jest.fn() as any;
-            mockSbProgressLoader.show = jest.fn() as any;
+            mockAppGlobalService.getCurrentUser = jest.fn();
+            mockSbProgressLoader.show = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({
                 action: 'ACTION_SETPROFILE',
@@ -347,9 +347,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
 
         it('should navigate to details page if ACTION_PLAY is set', (done) => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => of(mockContentData)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(mockContentData));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockRouter.navigate = jest.fn() as any;
+            mockRouter.navigate = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_PLAY', data: {request: {objectId: 'do-123'}}});
             // assert
@@ -365,8 +365,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryService.updateCampaignParameters = jest.fn();
@@ -378,7 +378,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 isAvailableLocally: false,
                 children: {identifier: 'do_212911645382959104166'}
             };
-            mockContentService.getContentDetails = jest.fn(() => of(content)) as any;
+            mockContentService.getContentDetails = jest.fn(() => of(content));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
             mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
             // act
@@ -402,8 +402,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockSbProgressLoader.show = jest.fn() as any;
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
             mockSharedPreferences.getString = jest.fn(() => of('false'));
             mockFrameworkService.searchOrganization = jest.fn(() => of({
@@ -411,23 +411,23 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 content: [{
                     id: 'sample_id'
                 }]
-            })) as any;
+            }));
             mockProfileService.updateProfile = jest.fn(() => of({
                 uid: 'sample_uid',
                 handle: 'sample_handle',
                 board: ['cbse']
-            })) as any;
+            }));
             mockFrameworkService.getChannelDetails = jest.fn(() => of({
                 defaultFramework: ''
-            })) as any;
+            }));
             mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{
                     code: 'sample_code'
                 }]
-            )) as any;
-            mockRouter.navigate = jest.fn() as any;
+            ));
+            mockRouter.navigate = jest.fn();
             mockLocation.replaceState = jest.fn();
             mockRouter.serializeUrl = jest.fn(() => 'sample_serialize_url');
-            mockRouter.createUrlTree = jest.fn() as any;
+            mockRouter.createUrlTree = jest.fn();
             mockTelemetryService.updateCampaignParameters = jest.fn();
             mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
             mockPageAssembleService.setPageAssembleChannel = jest.fn();
@@ -455,21 +455,21 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             // arrange
             mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
-            mockSbProgressLoader.show = jest.fn() as any;
+            mockSbProgressLoader.show = jest.fn();
             mockTelemetryService.updateCampaignParameters = jest.fn();
             mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
-            mockSbProgressLoader.hide = jest.fn() as any;
+            mockSbProgressLoader.hide = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('true'));
             mockContentService.getContentDetails = jest.fn(() => of({
                 contentData: {
                     status: 'Unlisted'
                 },
                 mimeType: MimeType.COLLECTION
-            })) as any;
+            }));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn() as any;
+            mockRouter.navigate = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.ntp.net.in/play/collection/do_21271706502665830417247?contentId=do_21271701994615603217195'});
             // assert
@@ -490,20 +490,20 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 // arrange
                 mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
                 mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
-                mockSbProgressLoader.show = jest.fn() as any;
+                mockSbProgressLoader.show = jest.fn();
                 mockTelemetryService.updateCampaignParameters = jest.fn();
                 mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
-                mockSbProgressLoader.hide = jest.fn() as any;
+                mockSbProgressLoader.hide = jest.fn();
                 mockSharedPreferences.getString = jest.fn(() => of('true'));
                 mockContentService.getContentDetails = jest.fn(() => of({
                     mimeType: MimeType.COLLECTION,
                     isAvailableLocally: true
-                })) as any;
+                }));
                 mockAppGlobalService.resetSavedQuizContent = jest.fn();
                 mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-                mockRouter.navigate = jest.fn() as any;
-                mockContentService.getChildContents = jest.fn(() => of()) as any;
+                mockRouter.navigate = jest.fn();
+                mockContentService.getChildContents = jest.fn(() => of());
                 mockNavigationService.navigateToCollection = jest.fn();
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({
@@ -527,23 +527,23 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 // arrange
                 mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
                 mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
-                mockSbProgressLoader.show = jest.fn() as any;
+                mockSbProgressLoader.show = jest.fn();
                 mockTelemetryService.updateCampaignParameters = jest.fn();
                 mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
-                mockSbProgressLoader.hide = jest.fn() as any;
+                mockSbProgressLoader.hide = jest.fn();
                 mockSharedPreferences.getString = jest.fn(() => of('true'));
                 mockContentService.getContentDetails = jest.fn(() => of({
                     mimeType: MimeType.COLLECTION,
                     isAvailableLocally: false
-                })) as any;
+                }));
                 mockAppGlobalService.resetSavedQuizContent = jest.fn();
                 mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
                 mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-                mockRouter.navigate = jest.fn() as any;
-                mockContentService.importContent = jest.fn(() => of()) as any;
+                mockRouter.navigate = jest.fn();
+                mockContentService.importContent = jest.fn(() => of());
                 mockContentService.getContentHeirarchy = jest.fn(() => of({
                     identifier: 'do_123',
-                })) as any;
+                }));
                 mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => 'file://');
                 mockNavigationService.navigateToCollection = jest.fn();
                 // act

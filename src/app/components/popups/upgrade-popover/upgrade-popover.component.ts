@@ -7,9 +7,9 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-} from '../../../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 declare const cordova;
 

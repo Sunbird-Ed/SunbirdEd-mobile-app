@@ -2,11 +2,11 @@ import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { AppGlobalService } from '../../../services/app-global-service.service';
-import { AppHeaderService } from '../../../services/app-header.service';
-import { CommonUtilService } from '../../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Router } from '@angular/router';
-import { RouterLinks, MenuOverflow, ProfileConstants } from '../../../app/app.constant';
+import { RouterLinks, MenuOverflow, ProfileConstants } from '@app/app/app.constant';
 import {
   InteractType,
   InteractSubtype,
@@ -14,7 +14,7 @@ import {
   ImpressionType,
   CorReleationDataType,
   ID
-} from '../../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
   GroupService, GetByIdRequest, Group,
@@ -29,16 +29,16 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
-} from '../../../app/profile/overflow-menu/overflow-menu.component';
+} from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
 import {
   SbGenericPopoverComponent
-} from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { FilterPipe } from '../../../pipes/filter/filter.pipe';
+} from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
 import { ViewMoreActivityActionsDelegate, ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
-import { NavigationService } from '../../../services/navigation-handler.service';
-import { AccessDiscussionComponent } from '../../../app/components/access-discussion/access-discussion.component';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 @Component({
   selector: 'app-group-details',
@@ -74,8 +74,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     username: '',
     identifier: ''
   };
-  searchMember: any;
-  searchActivity: any;
   @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
@@ -90,7 +88,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     public platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
@@ -410,7 +408,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  async showReactivateGroupPopup() {
+  private async showReactivateGroupPopup() {
     this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,

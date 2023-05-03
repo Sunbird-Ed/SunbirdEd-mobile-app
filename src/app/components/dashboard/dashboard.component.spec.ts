@@ -1,16 +1,16 @@
 import { PageId, Environment, ImpressionType, InteractSubtype } from '../../../services/telemetry-constants';
 import { DashboardComponent } from './dashboard.component';
 import { Router } from '@angular/router';
-import { TelemetryGeneratorService } from '../../../services';
+import { TelemetryGeneratorService } from '@app/services';
 import { AppHeaderService, AppGlobalService, CommonUtilService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { InteractType } from '@project-sunbird/sunbird-sdk';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { StoragePermissionHandlerService } from '../../../services/storage-permission/storage-permission-handler.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 
 describe('DashboardComponent', () => {
     let dashboardComponent: DashboardComponent;

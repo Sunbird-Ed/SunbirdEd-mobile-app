@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
-import { UtilsService } from '../../../../../app/manage-learn/core';
+import { UtilsService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-slider-type-input',

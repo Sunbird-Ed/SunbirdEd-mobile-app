@@ -1,7 +1,7 @@
 import { PageFilterPage } from '../page-filter/page-filter.page';
-import { FrameworkUtilService } from '@project-sunbird/sunbird-sdk';
+import { FrameworkUtilService } from 'sunbird-sdk';
 import { PopoverController, NavParams, MenuController, Platform } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
     AppGlobalService,
@@ -95,7 +95,7 @@ describe('PageFilterPage', () => {
         getCurrentUser: jest.fn(() => ({
             syllabus: ''
         }))
-    } as any;
+    };
 
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn((_, fn) => fn({
@@ -209,11 +209,11 @@ describe('PageFilterPage', () => {
     });
 
     describe('cancel()', () => {
-        it('should generate interact telemetry and dismiss the popup', () => {
+        it('should generate interact telemetry and dismiss the popup', (done) => {
             // arrange
-            // (cloneDeep as any).mockImplementationOnce((data) => {
-            // });
-            jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+            (cloneDeep as any).mockImplementationOnce((data) => {
+                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+            });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
             pageFilterPage.initFilterValues();
@@ -221,39 +221,41 @@ describe('PageFilterPage', () => {
             pageFilterPage.cancel();
             // assert
             setTimeout(() => {
-                // expect(pageFilterPage.callback.applyFilter).toHaveBeenCalled();
-                // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                //     InteractType.OTHER,
-                //     InteractSubtype.FILTER_CONFIG,
-                //     Environment.HOME,
-                //     PageId.LIBRARY_PAGE_FILTER, undefined, []);
-                expect(applyFilterMock.mock.calls[0]).toEqual(undefined);
+                expect(pageFilterPage.callback.applyFilter).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH,
+                    InteractSubtype.CANCEL,
+                    Environment.HOME,
+                    PageId.LIBRARY);
+                expect(applyFilterMock.mock.calls[0][0]).toEqual({ contentType: ['Story', 'Worksheet'] });
                 expect(mockPopOverController.dismiss).toHaveBeenCalled();
+                done();
             }, 0);
         });
     });
 
     describe('apply()', () => {
-        it('should not invoke applyFilter() of callback', () => {
+        it('should not invoke applyFilter() of callback', (done) => {
             // arrange
-            // (cloneDeep as any).mockImplementationOnce((data) => {
-            // });
-            jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+            (cloneDeep as any).mockImplementationOnce((data) => {
+                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+            });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
             pageFilterPage.initFilterValues();
             pageFilterPage.apply();
             // assert
             setTimeout(() => {
-                // expect(pageFilterPage.callback.applyFilter).toHaveBeenCalled();
-                expect(applyFilterMock.mock.calls[0]).toEqual(undefined);
+                expect(pageFilterPage.callback.applyFilter).toHaveBeenCalled();
+                expect(applyFilterMock.mock.calls[0][0]).toEqual({ contentType: ['Story', 'Worksheet'] });
                 expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ apply: true });
+                done();
             }, 0);
         });
 
         it('should invoke applyFilter() of callback', (done) => {
             // arrange
-            pageFilterPage.callback = undefined as any;
+            pageFilterPage.callback = undefined;
             // act
             pageFilterPage.initFilterValues();
             pageFilterPage.apply();
@@ -268,7 +270,7 @@ describe('PageFilterPage', () => {
     describe('onLanguageChange()', () => {
         it('should not update the selected values', () => {
             // arrange
-            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
+            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
             // act
             pageFilterPage.onLanguageChange();
             // assert
@@ -279,15 +281,17 @@ describe('PageFilterPage', () => {
         });
         it('should update the selected values', () => {
             // arrange
-            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
+            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
             pageFilterPage.filters[7] = pageFilterPage.filters[6];
             delete  pageFilterPage.filters[7].resourceTypeValues;
             // act
             pageFilterPage.initFilterValues();
             pageFilterPage.onLanguageChange();
             // assert
-            expect(pageFilterPage.filters[6]).toEqual(
-                {"code": "contentType", "frameworkCategory": true, "index": 1, "name": undefined, "selected": [undefined, undefined], "selectedValuesIndices": [0, 1], "translations": "{\"en\":\"ContentType\"}", "values": [undefined, undefined, undefined]});
+            expect(pageFilterPage.filters[6].selected).toEqual([
+                undefined,
+                undefined
+              ]);
         });
     });
 
@@ -327,11 +331,11 @@ describe('PageFilterPage', () => {
     describe('ionViewWillLeave()', () => {
         it('should open the popup window', () => {
             // arrange
-            let unsubscribe = pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()} as any;
+            pageFilterPage.backButtonFunc = { unsubscribe: jest.fn()};
             // act
             pageFilterPage.ionViewWillLeave();
             // assert
-            // expect(unsubscribe).toHaveBeenCalled();
+            expect( pageFilterPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
             expect(mockMenuController.enable).toHaveBeenCalledWith(true);
         });
     });

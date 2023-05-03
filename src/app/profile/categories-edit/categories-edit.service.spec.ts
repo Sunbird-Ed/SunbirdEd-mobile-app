@@ -3,10 +3,10 @@ import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService, CommonUtilService, ContainerService, FormAndFrameworkUtilService } from '../../../services';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
-import { Events } from '../../../util/events';
-import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
+import { Events } from '@app/util/events';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { Location } from '@angular/common';
-import { ExternalIdVerificationService } from '../../../services/externalid-verification.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 describe('CategoriesEditService', () => {
     let categoriesEditService: CategoriesEditService;

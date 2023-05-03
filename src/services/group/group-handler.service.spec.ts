@@ -3,13 +3,13 @@ import { CommonUtilService, TelemetryGeneratorService } from '..';
 import { Location } from '@angular/common';
 import {
     GroupService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { InteractType, InteractSubtype, Environment, ID } from '../telemetry-constants';
 
 describe('GroupHandlerService', () => {
     let groupHandlerService: GroupHandlerService;
-    const mockGroupService: GroupService = {} as any;
+    const mockGroupService: GroupService = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockLocation: Partial<Location> = {};
@@ -60,7 +60,7 @@ describe('GroupHandlerService', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.addActivities = jest.fn(() => of({})) as any;
+            mockGroupService.addActivities = jest.fn(() => of({}));
             mockCommonUtilService.showToast = jest.fn();
             // act
             groupHandlerService.addActivityToGroup('group_id', 'activity_id', 'activity_type', 'some_page_id', []);
@@ -128,7 +128,7 @@ describe('GroupHandlerService', () => {
                         errorCode: 'EXCEEDED_ACTIVITY_MAX_LIMIT'
                     }]
                 }
-            })) as any;
+            }));
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             // act
@@ -188,7 +188,7 @@ describe('GroupHandlerService', () => {
                         errorCode: 'Err'
                     }]
                 }
-            })) as any;
+            }));
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             // act

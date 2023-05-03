@@ -5,21 +5,21 @@ import {
   OnInit, ViewChild
 } from '@angular/core';
 import { Event, NavigationExtras, NavigationStart, Router } from '@angular/router';
-import { ActivePageService } from '../services/active-page/active-page-service';
-import { LogoutHandlerService } from '../services/handlers/logout-handler.service';
-import { TncUpdateHandlerService } from '../services/handlers/tnc-update-handler.service';
-import { NetworkAvailabilityToastService } from '../services/network-availability-toast/network-availability-toast.service';
-import { NotificationService as LocalNotification } from '../services/notification.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
+import { NotificationService as LocalNotification } from '@app/services/notification.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
   CorReleationDataType, Environment,
   ID, ImpressionType, InteractSubtype, InteractType,
   PageId
-} from '../services/telemetry-constants';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+} from '@app/services/telemetry-constants';
+import { Network } from '@ionic-native/network/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
-import { Events } from '../util/events';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';
@@ -31,18 +31,18 @@ import {
   Profile, ProfileService, ProfileType, SharedPreferences,
   SunbirdSdk, DebuggingService,
   SystemSettings, SystemSettingsService, TelemetryAutoSyncService, TelemetryService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
-import { AppGlobalService } from '../services/app-global-service.service';
-import { CommonUtilService } from '../services/common-util.service';
-import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
-import { UtilityService } from '../services/utility-service';
-import { AppHeaderService } from '../services/app-header.service';
-import { AppRatingService } from '../services/app-rating.service';
-import { SplashScreenService } from '../services/splash-screen.service';
-import { LocalCourseService } from '../services/local-course.service';
-import { LoginHandlerService } from '../services/login-handler.service';
-import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { AppRatingService } from '@app/services/app-rating.service';
+import { SplashScreenService } from '@app/services/splash-screen.service';
+import { LocalCourseService } from '@app/services/local-course.service';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
 import {
   AppThemes, EventTopics, GenericAppConfig,
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation, OnboardingScreenType
@@ -50,8 +50,8 @@ import {
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
-import { SegmentationTagService, TagPrefixConstants } from '../services/segmentation-tag/segmentation-tag.service';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 declare const cordova;
 declare const window;
@@ -262,11 +262,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   checkAndroidWebViewVersion() {
     let that = this;
-    cordova.plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
-          let ver = webviewVersion as number;
-          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= ver) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
             document.getElementById('update-webview-container').style.display = 'block';
             that.telemetryGeneratorService.generateImpressionTelemetry(
               ImpressionType.VIEW, '',
@@ -285,7 +284,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   openPlaystore() {
-    cordova.plugins['webViewChecker'].openGooglePlayPage()
+    plugins['webViewChecker'].openGooglePlayPage()
       .then(function () { })
       .catch(function (error) { 
         console.error(error);

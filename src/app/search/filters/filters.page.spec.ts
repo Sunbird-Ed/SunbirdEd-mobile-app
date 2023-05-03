@@ -1,21 +1,22 @@
-import { FormAndFrameworkUtilService } from '../../../services';
+import { FormAndFrameworkUtilService } from '@app/services';
 
 import { FiltersPage } from './filters.page';
-import { ContentService } from '@project-sunbird/sunbird-sdk';
+import { ContentService, InteractType } from '@project-sunbird/sunbird-sdk';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '../../../util/events';
+import { Events } from '@app/util/events';
 import {
   CommonUtilService,
   TelemetryGeneratorService,
   AppHeaderService,
+  InteractSubtype,
+  Environment,
+  PageId
 } from '../../../services';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { mockSupportedUserTypeConfig } from '../../../services/profile-handler.spec.data';
 import { mockFilterCriteria } from './filters.page.spec.data';
-import find from 'lodash/find';
-
 describe('FiltersPage', () => {
   let filtersPage: FiltersPage;
 
@@ -39,7 +40,7 @@ describe('FiltersPage', () => {
         return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
       });
     })
-  } as any;
+  };
   const mockPlatform: Partial<Platform> = {
   };
   mockPlatform.backButton = {
@@ -98,7 +99,7 @@ describe('FiltersPage', () => {
     expect(filtersPage).toBeTruthy();
   });
 
-  xdescribe('ngOnInit', () => {
+  describe('ngOnInit', () => {
     it('should execute fetchChannelIdName and execute init', (done) => {
       //arrange
       mockFormAndFrameworkUtilService.changeChannelIdToName = jest.fn(() => Promise.resolve(
@@ -132,7 +133,7 @@ describe('FiltersPage', () => {
 
   it('should execute getFilterValues if facet is undefined', () => {
     //arrange
-    let facet;
+    const facet = null;
     //act
     filtersPage.getFilterValues(facet);
     //assert
@@ -201,7 +202,7 @@ describe('FiltersPage', () => {
         done();
       });
     });
-    xit('should invoke searchContent API with error', (done) => {
+    it('should invoke searchContent API with error', (done) => {
       // arrange
       mockFormAndFrameworkUtilService.changeChannelNameToId = jest.fn(() => {
         return {
@@ -265,9 +266,9 @@ describe('FiltersPage', () => {
       expect(filtersPage.getSelectedOptionCount).toBeTruthy();
     });
   });
-  xit('reset', () => {
+  it('reset', () => {
     //arrange
-    let facetfilter = JSON.parse = jest.fn().mockImplementationOnce(() => {
+    JSON.parse = jest.fn().mockImplementationOnce(() => {
       return {
         facetFilters: [{
           name: 'se_mediums', values: [

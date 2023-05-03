@@ -5,10 +5,10 @@ import {
   appLanguages,
   ProgressPopupContext,
   IgnoreTelemetryPatters
-} from '../../app/app.constant';
+} from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { Observable, of } from 'rxjs';
 import {
   PageAssembleService,
@@ -37,18 +37,18 @@ import {
   Rollup,
   FetchEnrolledCourseRequest,
   CourseService
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
 import { TranslateService } from '@ngx-translate/core';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
-import { ContentUtil } from '../../util/content-util';
+import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 import { Location } from '@angular/common';
@@ -57,12 +57,11 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 import { ContentInfo } from '../content/content-info';
 import { ContentPlayerHandler } from '../content/player/content-player-handler';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
-import { FormConstants } from '../../app/form.constants';
-import {UpdateProfileService} from '../../services/update-profile-service';
-import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
+import { FormConstants } from '@app/app/form.constants';
+import {UpdateProfileService} from '@app/services/update-profile-service';
+import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import { Platform } from '@ionic/angular';
 
-declare const cordova;
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;
@@ -266,7 +265,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private generateUtmTelemetryEvent(identifier, dialCode, url) {
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
     const utmUrl = url.slice(url.indexOf('?') + 1);
-    const params: any = qs.parse(utmUrl);
+    const params: { [param: string]: string } = qs.parse(utmUrl);
     const utmcData: CorrelationData[] = [];
 
     if (utmUrl !== url) {

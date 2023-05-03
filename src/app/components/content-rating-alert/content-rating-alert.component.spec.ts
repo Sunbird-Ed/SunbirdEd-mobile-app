@@ -5,7 +5,7 @@ import { ContentFeedbackService,
     ContentFeedback,
     FormService,
     SharedPreferences
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { Observable, of, throwError } from 'rxjs';
@@ -15,7 +15,7 @@ import {
     InteractSubtype,
     InteractType,
     ImpressionSubtype
-} from '../../../services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { Location } from '@angular/common';
 
 describe('ContentRatingAlertComponent', () => {
@@ -38,7 +38,7 @@ describe('ContentRatingAlertComponent', () => {
             primaryCategory: 'Learning Resource'
         },
         versionKey: '1234'
-    } as any;
+    };
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn((arg) => {
             let value;

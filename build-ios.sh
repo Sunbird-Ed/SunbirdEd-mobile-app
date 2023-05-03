@@ -62,7 +62,7 @@ mkdir platforms
 
 npm uninstall code-push
 npm uninstall cordova-plugin-dialogs
-npm install @awesome-cordova-plugins/ionic-webview@5.33.1
+npm install @ionic-native/ionic-webview@5.33.1
 npm install cordova-plugin-inappbrowser
 npm install com.telerik.plugins.nativepagetransitions@0.7.0
 

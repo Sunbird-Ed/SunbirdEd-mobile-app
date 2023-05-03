@@ -1,10 +1,10 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Platform, NavParams, PopoverController, MenuController } from '@ionic/angular';
-import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from '@project-sunbird/sunbird-sdk';
-import { ProfileConstants } from '../../../../app/app.constant';
+import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
+import { ProfileConstants } from '@app/app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonUtilService } from '../../../../services/common-util.service';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
   selector: 'app-edit-contact-details-popup',

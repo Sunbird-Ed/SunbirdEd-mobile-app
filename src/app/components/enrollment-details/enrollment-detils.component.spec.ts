@@ -1,5 +1,5 @@
 import {
-    NavParams,
+    NavParams, Events,
     PopoverController, NavController
 } from '@ionic/angular';
 import { NgZone } from '@angular/core';
@@ -7,13 +7,12 @@ import {
     TelemetryGeneratorService, CommonUtilService, LocalCourseService,
     InteractSubtype, InteractType, PageId, AppGlobalService, Environment
 } from '../../../services';
-import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences } from 'sunbird-sdk';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
 import { of } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
-import { CategoryKeyTranslator } from '../../../pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { NavigationService } from '../../../services/navigation-handler.service';
-import { Events } from '../../../util/events';
 describe('enrollmentdetailcomponent', () => {
 
     let enrollmentDetails: EnrollmentDetailsComponent;
@@ -25,7 +24,7 @@ describe('enrollmentdetailcomponent', () => {
     const mockNavController: Partial<NavController> = {};
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => 'Dummy')
-    } as any;
+    };
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
     };
@@ -148,7 +147,7 @@ describe('enrollmentdetailcomponent', () => {
                     identifier: 'do_id'
                 }
             };
-            jest.spyOn(enrollmentDetails, 'saveContentContext').mockImplementation();
+            spyOn(enrollmentDetails, 'saveContentContext').and.stub();
             // act
             enrollmentDetails.resumeCourse(content);
             // assert
@@ -173,13 +172,13 @@ describe('enrollmentdetailcomponent', () => {
                 present: jest.fn(),
                 dismiss: jest.fn()
             };
-            jest.spyOn(enrollmentDetails, 'navigateToDetailPage').mockImplementation();
+            spyOn(enrollmentDetails, 'navigateToDetailPage').and.stub();
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
             jest.spyOn(loader, 'dismiss');
-            mockNgZone.run = jest.fn((callback) => callback()) as any;
+            mockNgZone.run = jest.fn((callback) => callback());
             // act
             enrollmentDetails.enrollIntoBatch(content);
             // assert
@@ -216,7 +215,7 @@ describe('enrollmentdetailcomponent', () => {
             mockTelemetryGeneratorService.isCollection = jest.fn(() => false);
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
-            mockNgZone.run = jest.fn((callback) => callback()) as any;
+            mockNgZone.run = jest.fn((callback) => callback());
             // act
             enrollmentDetails.enrollIntoBatch(batch);
             // assert
@@ -248,7 +247,7 @@ describe('enrollmentdetailcomponent', () => {
             };
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
-            mockNgZone.run = jest.fn((callback) => callback()) as any;
+            mockNgZone.run = jest.fn((callback) => callback());
             // act
             enrollmentDetails.enrollIntoBatch(content);
             // assert

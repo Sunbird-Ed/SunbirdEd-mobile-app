@@ -1,6 +1,6 @@
 import { AppGlobalService, CommonUtilService, ContainerService, OnboardingConfigurationService } from '../../services';
 import { TabsPage } from './tabs.page';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import { IonRouterOutlet, IonTabs, ToastController } from '@ionic/angular';
 import { ProfileService, ProfileSource, ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
@@ -95,7 +95,7 @@ describe('TabsPage', () => {
         authService: {
             getSession: jest.fn()
         }
-    } as any;
+    };
     const mockSharedPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('')),
         putString: jest.fn(),
@@ -140,52 +140,52 @@ describe('TabsPage', () => {
     describe('ngOnInit', () => {
         it('should check session and return if undefined', () => {
             // arrange
-            const getSession = mockAppGlobalService.authService = {
+            mockAppGlobalService.authService = {
                 getSession: jest.fn(() => of(undefined))
-            } as any
-            mockAppGlobalService.guestProfileType = ProfileType.TEACHER;
+            }
+            mockAppGlobalService.guestProfileType = 'teacher'
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true)
             mockContainerService.getAllTabs = jest.fn(() => [{name:'qrscanner', root: ''}]);
             // act
             tabsPage.ngOnInit();
             // assert
-            // expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
+            expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
         });
 
         it('should check session and return if undefined and guest profile is not admin', () => {
             // arrange
-            const getSession = mockAppGlobalService.authService = {
+            mockAppGlobalService.authService = {
                 getSession: jest.fn(() => of(undefined))
-            }  as any
-            mockAppGlobalService.guestProfileType = ProfileType.STUDENT;
+            }
+            mockAppGlobalService.guestProfileType = 'student'
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false)
             mockContainerService.getAllTabs = jest.fn(() => [{name:'qrscanner', root: ''}]);
             // act
             tabsPage.ngOnInit();
             // assert
-            // expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
+            expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
         });
 
         it('should check session and return if welcoem toast prefernce is false', () => {
             // arrange
-            const getSession = mockAppGlobalService.authService = {
+            mockAppGlobalService.authService = {
                 getSession: jest.fn(() => of(true))
-            } as any
-            mockAppGlobalService.guestProfileType = ProfileType.ADMIN;
+            }
+            mockAppGlobalService.guestProfileType = 'administrator'
             mockSharedPreferences.getString = jest.fn(() => of('administrator'))
             mockContainerService.getAllTabs = jest.fn(() => [{name:'qrscanner', root: ''}]);
             // act
             tabsPage.ngOnInit();
             // assert
-            // expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
+            expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
         });
 
         it('should check session and get profile deatils', () => {
             // arrange
-            const getSession = mockAppGlobalService.authService = {
+            mockAppGlobalService.authService = {
                 getSession: jest.fn(() => of({usertoken: 'some_token'}))
-            } as any
-            mockAppGlobalService.guestProfileType = ProfileType.ADMIN;
+            }
+            mockAppGlobalService.guestProfileType = 'administrator'
             const req = {
                 userId: 'some_token',
                 requiredFields: ProfileConstants.REQUIRED_FIELDS,
@@ -201,7 +201,7 @@ describe('TabsPage', () => {
             // act
             tabsPage.ngOnInit()
             // assert
-            // expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled();
+            expect(mockAppGlobalService.authService.getSession).toHaveBeenCalled()
         })
     })
 
@@ -253,7 +253,7 @@ describe('TabsPage', () => {
     describe('checkAndroidWebViewVersion', () => {
         it('should getCurrentWebViewPackageInfo', () => {
             // arrange
-            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName:''}))}}} as any
+            window.cordova.plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName:''}))}}
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert
@@ -261,7 +261,7 @@ describe('TabsPage', () => {
 
         it('should getCurrentWebViewPackageInfo else case on version name', () => {
             // arrange
-            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({}))}}} as any
+            window.cordova.plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({}))}}
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert
@@ -269,7 +269,7 @@ describe('TabsPage', () => {
 
         it('should catch error getCurrentWebViewPackageInfo', () => {
             // arrange
-            window['cordova'] = {plugins: {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.reject({error:''}))}}} as any
+            window.cordova.plugins = {webViewChecker: {getCurrentWebViewPackageInfo: jest.fn(() => Promise.reject({error:''}))}}
             // act
             tabsPage.checkAndroidWebViewVersion();
             // assert
@@ -317,7 +317,7 @@ describe('TabsPage', () => {
     describe('openScanner', () => {
         it('should open scanner', () => {
             // arrange
-            mockEvents['public'] = jest.fn() as any
+            mockEvents.public = jest.fn()
             // act
             tabsPage.openScanner({label: 'label'})
             // assert

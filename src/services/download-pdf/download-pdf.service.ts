@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
-import { AndroidPermission } from '../../services/android-permissions/android-permission';
+import { AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { Content } from '@project-sunbird/sunbird-sdk';
 
 

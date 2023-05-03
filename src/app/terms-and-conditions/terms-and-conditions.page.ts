@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AppGlobalService } from '../../services';
+import { AppGlobalService } from '@app/services';
 import { CommonUtilService } from '../../services/common-util.service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
+import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { ProfileConstants } from '../app.constant';
 

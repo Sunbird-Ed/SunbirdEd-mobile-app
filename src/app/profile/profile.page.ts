@@ -5,7 +5,7 @@ import {
   IonRefresher,
   Platform,
 } from '@ionic/angular';
-import { Events } from '../../util/events';
+import { Events } from '@app/util/events';
 import {
   ContentCard,
   ProfileConstants,
@@ -13,12 +13,12 @@ import {
   ContentFilterConfig,
   EventTopics,
   OTPTemplates
-} from '../../app/app.constant';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { AppHeaderService } from '../../services/app-header.service';
+} from '@app/app/app.constant';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import {
   AuthService,
   ContentSearchCriteria,
@@ -50,37 +50,37 @@ import {
   Framework,
   FrameworkCategoryCodesGroup,
   FrameworkDetailsRequest
-} from '@project-sunbird/sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId, ID } from '../../services/telemetry-constants';
+} from 'sunbird-sdk';
+import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import { EditContactVerifyPopupComponent } from '../../app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
-} from '../../app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
+} from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import {
   AccountRecoveryInfoComponent
 } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { AndroidPermissionsService } from '../../services/android-permissions/android-permissions.service';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import {
   AndroidPermissionsStatus,
   AndroidPermission
-} from '../../services/android-permissions/android-permission';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+} from '@app/services/android-permissions/android-permission';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from '@project-sunbird/common-form-elements';
-import { CertificateDownloadAsPdfService } from "@project-sunbird/sb-svg2pdf";
-import { NavigationService } from '../../services/navigation-handler.service';
-import { ContentUtil } from '../../util/content-util';
+import { FieldConfig } from 'common-form-elements';
+import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
-import { ProfileHandler } from '../../services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { OrganizationSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
-import { LocationHandler } from '../../services/location-handler';
+import { LocationHandler } from '@app/services/location-handler';
 import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { statusType } from '../manage-learn/core';
@@ -107,7 +107,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation: any = {};
+  userLocation = {};
   appName = '';
   boardList = [];
   mediumList = [];
@@ -166,6 +166,7 @@ export class ProfilePage implements OnInit {
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private zone: NgZone,
@@ -175,7 +176,7 @@ export class ProfilePage implements OnInit {
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
@@ -185,6 +186,7 @@ export class ProfilePage implements OnInit {
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,

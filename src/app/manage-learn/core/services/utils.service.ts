@@ -7,16 +7,16 @@ import {
   ProfileService,
   AuthService,
   CachedItemRequestSourceFrom
-} from "@project-sunbird/sunbird-sdk";
-import { ProfileConstants, RouterLinks } from "../../../../app/app.constant";
-import { CommonUtilService } from "../../../../services/common-util.service";
+} from "sunbird-sdk";
+import { ProfileConstants, RouterLinks } from "@app/app/app.constant";
+import { CommonUtilService } from "@app/services/common-util.service";
 import { KendraApiService } from "./kendra-api.service";
 import { urlConstants } from "../constants/urlConstants";
 import { AlertController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { storageKeys } from "../../storageKeys";
-import { Events } from '../../../../util/events';
+import { Events } from '@app/util/events';
 
 @Injectable({
   providedIn: "root"

@@ -5,7 +5,7 @@ import {
     TelemetryStartRequest,
     TelemetryEndRequest,
     Rollup
-} from '@project-sunbird/sunbird-sdk';
+} from 'sunbird-sdk';
 import { Mode, Environment } from '../services/telemetry-constants';
 
 
