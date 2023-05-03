@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, StoreRating } from '../app/app.constant';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 @Injectable()
 export class AppRatingService {
@@ -20,7 +20,7 @@ export class AppRatingService {
   }
 
   private setInitialDate() {
-    const presentDate = window.dayjs().format();
+    const presentDate = (window as any).dayjs().format();
     this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise().then();
   }
 
@@ -29,14 +29,14 @@ export class AppRatingService {
   }
 
   private createFolder(rate) {
-    this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
+    this.fileCtrl.createDir(window['cordova'].file.dataDirectory, StoreRating.FOLDER_NAME, true)
       .then(() => {
         this.writeFile(rate);
       });
   }
 
   private writeFile(rate) {
-    this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
+    this.fileCtrl.writeFile(window['cordova'].file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true }).then(() => { });
   }
 

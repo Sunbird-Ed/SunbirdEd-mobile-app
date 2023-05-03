@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { XwalkConstants } from '@app/app/app.constant';
-import { UtilityService } from '@app/services/utility-service';
+import { XwalkConstants } from '../../../../app/app.constant';
+import { UtilityService } from '../../../../services/utility-service';
 @Component({
   selector: 'app-dialog-popup',
   templateUrl: './dialog-popup.component.html',

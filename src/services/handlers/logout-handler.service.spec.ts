@@ -1,8 +1,8 @@
 import { LogoutHandlerService } from './logout-handler.service';
 import {
     AuthService, ProfileService, SharedPreferences, ProfileType, InteractType, SystemSettingsService
-} from 'sunbird-sdk';
-import { Events } from '@app/util/events';
+} from '@project-sunbird/sunbird-sdk';
+import { Events } from '../../util/events';
 import { ContainerService } from '../container.services';
 import { Router } from '@angular/router';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../services';
@@ -11,7 +11,7 @@ import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
 import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import { Platform } from '@ionic/angular';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 
 describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
@@ -20,7 +20,7 @@ describe('LogoutHandlerService', () => {
         getAllProfiles: jest.fn(() => of([])),
         getActiveProfileSession: jest.fn(() => of({})),
         deleteProfile: jest.fn((id) => of({}))
-    };
+    } as any;
     const mockAuthService: Partial<AuthService> = {
         resignSession: jest.fn(() => from(new Promise<void>((resolve) => {
             resolve();
@@ -31,7 +31,7 @@ describe('LogoutHandlerService', () => {
         getBoolean: jest.fn(() => of(true)),
         putString: jest.fn(() => of(undefined)),
         putBoolean: jest.fn(() => of(undefined))
-    };
+    } as any;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
         isAccessibleForNonStudentRole: jest.fn(() => true)
@@ -63,7 +63,7 @@ describe('LogoutHandlerService', () => {
 
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
         getSystemSettings: jest.fn(() => of({id: 'googleClientId'}))
-    };
+    } as any;
 
     const mockGooglePlus: Partial<GooglePlus> = {
         trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
@@ -150,12 +150,12 @@ describe('LogoutHandlerService', () => {
         });
 
 
-        it('should logout_google', async(done) => {
+        it('should logout_google', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            mockSharedPreferences.putBoolean = jest.fn(() => of(undefined));
+            mockSharedPreferences.putBoolean = jest.fn(() => of(undefined)) as any;
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             // act
             logoutHandlerService.onLogout();
@@ -173,7 +173,7 @@ describe('LogoutHandlerService', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            const res = mockSharedPreferences.getBoolean = jest.fn(() => of(PreferenceKey.IS_GOOGLE_LOGIN));
+            const res = mockSharedPreferences.getBoolean = jest.fn(() => of(PreferenceKey.IS_GOOGLE_LOGIN)) as any;
             mockGooglePlus.disconnect = jest.fn();
             // act
             logoutHandlerService.onLogout();
@@ -185,11 +185,11 @@ describe('LogoutHandlerService', () => {
             })
         });
         
-        it ('should try silent login catch error while disconnecting google plus', async(done) => {
+        it ('should try silent login catch error while disconnecting google plus', (done) => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of());
+            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value:''})) as any;
             mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
                 webClientId: clientId.value
             }));
@@ -223,13 +223,13 @@ describe('LogoutHandlerService', () => {
             };
             mockPlatform.is = jest.fn(platform => platform === 'android');
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
-            window['splashscreen'] = false
+            // window.splashscreen = {} as any;
             mockProfileService.getAllProfiles = jest.fn(() => of([{
                 uid: '1234567890',
                 handle: 'SAMPLE_HANDLE',
                 profileType: 'student',
                 source: 'local'
-            }]));
+            }])) as any;
             // act
             logoutHandlerService.onLogout();
             // assert
@@ -488,7 +488,7 @@ describe('LogoutHandlerService', () => {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
-            mockSharedPreferences.putString = jest.fn(() => of(PreferenceKey.SELECTED_USER_TYPE, '1234567890'));
+            mockSharedPreferences.putString = jest.fn(() => of(PreferenceKey.SELECTED_USER_TYPE, '1234567890')) as any;
             mockProfileService.getAllProfiles = jest.fn(() => of([]));
             // act
             logoutHandlerService.onLogout();

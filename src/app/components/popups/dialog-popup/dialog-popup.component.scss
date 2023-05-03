@@ -1,6 +1,6 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_variables.scss";
-.popover-alert .popover-content {
+.popover-alert::part(content) {
     margin: 0;
     width: 100% !important;
     max-height: 70% !important;

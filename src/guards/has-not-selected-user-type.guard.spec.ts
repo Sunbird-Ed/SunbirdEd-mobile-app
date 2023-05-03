@@ -1,9 +1,9 @@
 import { HasNotSelectedUserTypeGuard } from './has-not-selected-user-type.guard';
-import { SplashScreenService } from '@app/services';
+import { SplashScreenService } from '../services';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
 
 
 describe('HasNotSelectedUserTypeGuard', () => {
@@ -54,7 +54,7 @@ describe('HasNotSelectedUserTypeGuard', () => {
         it('should return false if route has onReload property true and skip onboard for Admin', (done) => {
             // arrange
             mockActivatedRoute.snapshot = { params: { comingFrom: false } } as any;
-            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => Promise.resolve(true));
             mockSharedPreference.getString = jest.fn(() => of("administrator"))
             // act
             const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'true' } } as any);
@@ -70,7 +70,7 @@ describe('HasNotSelectedUserTypeGuard', () => {
         it('should return false if route has onReload property true and skip onboard and naviagte to profile settings page', (done) => {
             // arrange
             mockActivatedRoute.snapshot = { params: { comingFrom: false } } as any;
-            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => Promise.resolve(true));
             mockSharedPreference.getString = jest.fn(() => of("teacher"))
             // act
             const response = hasNotSelectedUserTypeGuard.resolve({ queryParams: { onReload: 'true' } } as any);

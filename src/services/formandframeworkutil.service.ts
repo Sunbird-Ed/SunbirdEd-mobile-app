@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import {
     CategoryTerm,
     FormRequest,
@@ -21,13 +21,13 @@ import {
     WebviewSessionProviderConfig,
     SignInError,
     FrameworkCategoryCode,
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '../app/app.constant';
 import { map } from 'rxjs/operators';
-import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import { EventParams } from '../app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
-import { FormConstants } from '@app/app/form.constants';
+import { FormConstants } from '../app/form.constants';
 
 @Injectable()
 export class FormAndFrameworkUtilService {

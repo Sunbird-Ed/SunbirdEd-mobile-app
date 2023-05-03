@@ -1,20 +1,20 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {PreferenceKey, RouterLinks} from '@app/app/app.constant';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
+import {PreferenceKey, RouterLinks} from '../../app/app.constant';
+import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { ConsentPopoverActionsDelegate, LocalCourseService } from '../../services/local-course.service';
 import {
   Platform, PopoverController
 } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Subscription } from 'rxjs';
 import {
   Batch,
   CorrelationData, Rollup, SharedPreferences,
   TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { EventTopics } from '../../app/app.constant';
 import { AppHeaderService } from '../../services/app-header.service';
 import { CommonUtilService } from '../../services/common-util.service';
@@ -82,7 +82,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
   }
 
   async ngOnInit() {
-    this.todayDate = window.dayjs().format('YYYY-MM-DD');
+    this.todayDate = (window as any).dayjs().format('YYYY-MM-DD');
     this.userId = await this.appGlobalService.getActiveProfileUid();
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }

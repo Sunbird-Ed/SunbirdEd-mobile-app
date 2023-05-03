@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {ColorMapping} from '@app/app/app.constant';
+import {ColorMapping} from '../../app/app.constant';
 
 @Pipe({
     name: 'randomColorMapPipe',

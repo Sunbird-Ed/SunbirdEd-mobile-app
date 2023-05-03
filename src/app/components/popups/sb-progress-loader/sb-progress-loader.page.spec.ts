@@ -1,4 +1,4 @@
-import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import { SbProgressLoaderPage } from '../../../../app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { Platform } from '@ionic/angular';
 
 describe('SbProgressLoaderPage', () => {

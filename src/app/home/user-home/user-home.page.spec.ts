@@ -1,6 +1,6 @@
 import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {ModalController, PopoverController} from '@ionic/angular';
 import {Events} from '../../../util/events';
 import {AppGlobalService, PageId, TelemetryGeneratorService} from '../../../services';
@@ -46,7 +46,7 @@ describe('UserHomePage', () => {
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockRouter: Partial<Router> = {
         navigate: jest.fn()
-    };
+    } as any;
     const mockNavService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
         navigateToCollection: jest.fn(),
@@ -218,7 +218,7 @@ describe('UserHomePage', () => {
                 }
             ]
         }));
-        mockAppGlobalService.getPageIdForTelemetry = jest.fn(() => PageId.HOME);
+        mockAppGlobalService.getPageIdForTelemetry = jest.fn(() => PageId.HOME) as any;
         mockSunbirdQRScanner.startScanner = jest.fn(() => Promise.resolve('sample_data'));
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
@@ -230,7 +230,7 @@ describe('UserHomePage', () => {
             controlFunctionPayload: {
                 values: [{expiry: 111111}]
             }
-        }];
+        }] as any;
         mockContentAggregatorHandler.populateIcons = jest.fn(() => mockUserHomeData);
         // act
         userHomePage.ngOnInit();
@@ -267,7 +267,7 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi']
-        }));
+        })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
             identifier: '12345',
@@ -292,13 +292,13 @@ describe('UserHomePage', () => {
             controlFunctionPayload: {
                 showBanner: true
             }
-        }];
+        }] as any;
         mockSegmentationTagService.exeCommands = [{
             controlFunction: 'BANNER_CONFIG',
             controlFunctionPayload: {
                 values: [{expiry: 111111}]
             }
-        }];
+        }] as any;
         // act
         userHomePage.ionViewWillEnter();
         // assert
@@ -333,7 +333,7 @@ describe('UserHomePage', () => {
             subject: ['english'],
             grade: ['class1'],
             profileType: ProfileType.STUDENT,
-        }));
+        })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
             identifier: '12345',
@@ -499,7 +499,7 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi']
-        }));
+        })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
             identifier: '12345',
@@ -524,7 +524,7 @@ describe('UserHomePage', () => {
                 showBanner: true,
                 values: [{expiry: 111111}]
             }
-        }];
+        }] as any;
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         // act
         userHomePage.tabViewWillEnter();
@@ -871,8 +871,8 @@ describe('UserHomePage', () => {
     describe('ionViewWillLeave', ()=>{
         it('should unsubscribe', ()=>{
             // arrange
-            userHomePage.refresher = { disabled: true };
-            mockEvents.unsubscribe = jest.fn(() => []);
+            userHomePage.refresher = { disabled: true } as any;
+            mockEvents.unsubscribe = jest.fn(() => []) as any;
             // act
             userHomePage.ionViewWillLeave();
             //assert
@@ -912,8 +912,8 @@ describe('UserHomePage', () => {
             mockRouter.navigate = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            userHomePage.onFrameworkSelectionSubmit({}, formOutput, mockRouter, mockCommonUtilService,
-                mockTelemetryGeneratorService, []).then(() => {
+            userHomePage.onFrameworkSelectionSubmit({}, formOutput, mockRouter as any, mockCommonUtilService as any,
+                mockTelemetryGeneratorService as any, []).then(() => {
                 // assert
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalled();
@@ -928,7 +928,7 @@ describe('UserHomePage', () => {
             };
             mockCommonUtilService.showToast = jest.fn();
             // act
-            userHomePage.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService, mockTelemetryGeneratorService, []).then(() => {
+            userHomePage.onFrameworkSelectionSubmit({}, {}, mockRouter as any, mockCommonUtilService as any, mockTelemetryGeneratorService as any, []).then(() => {
                 // assert
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI');
                 done();

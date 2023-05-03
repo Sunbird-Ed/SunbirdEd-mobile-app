@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { PrivacyPolicyAndTCComponent } from './components/privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { PopoverController } from '@ionic/angular';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { CommonUtilService } from '../../../services/common-util.service';
 import { StartImprovementComponent } from './components/start-improvement/start-improvement.component';
 
 @Injectable({

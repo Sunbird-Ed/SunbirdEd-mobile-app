@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 import {
   ContentService,
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CollectionService,  } from './collection.service';
 import { CommonUtilService } from './common-util.service';
 
@@ -41,10 +41,10 @@ describe('LocalCourseService', () => {
             name: 'name',
             identifier: 'id'
         };
-        mockContentService.getContentDetails = jest.fn(() => of(contentDetails));
-        mockContentService.getContentHeirarchy = jest.fn(() => of(courseHeirarchy));
+        mockContentService.getContentDetails = jest.fn(() => of(contentDetails)) as any;
+        mockContentService.getContentHeirarchy = jest.fn(() => of(courseHeirarchy)) as any;
         // act
-        collectionService.fetchCollectionData('id').then((res) => {
+        collectionService.fetchCollectionData('id', '').then((res) => {
             expect(res).toEqual(courseHeirarchy);
             done();
         });
@@ -59,10 +59,10 @@ describe('LocalCourseService', () => {
             name: 'name',
             identifier: 'id'
         };
-        mockContentService.getContentDetails = jest.fn(() => of(contentDetails));
-        mockContentService.getChildContents = jest.fn(() => of(collection));
+        mockContentService.getContentDetails = jest.fn(() => of(contentDetails)) as any;
+        mockContentService.getChildContents = jest.fn(() => of(collection)) as any;
         // act
-        collectionService.fetchCollectionData('id').then((res) => {
+        collectionService.fetchCollectionData('id', '').then((res) => {
             expect(res).toEqual(collection);
             done();
         });
@@ -72,7 +72,7 @@ describe('LocalCourseService', () => {
         // arrange
         mockContentService.getContentDetails = jest.fn(() => throwError(''));
         // act
-        collectionService.fetchCollectionData('id').catch((err) => {
+        collectionService.fetchCollectionData('id', '').catch((err) => {
             done();
         });
     });

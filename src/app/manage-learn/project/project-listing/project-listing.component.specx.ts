@@ -1,5 +1,5 @@
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
-import { ProjectListingComponent } from './project-listing.component'
+import { ProjectListingComponent } from '../project-listing/project-listing.component'
 
 describe('ProjectListingComponent', () => {
   let projectListingComponent: ProjectListingComponent;
@@ -121,7 +121,7 @@ describe('ProjectListingComponent', () => {
       showBurgerMenu: true,
       pageTitle: 'string',
       actionButtons: ['true'],
-    }));
+    })) as any;
     mockHeaderService.updatePageConfig = jest.fn();
     mockPlatform.backButton = {
       subscribeWithPriority: jest.fn((_, cb) => {
@@ -641,7 +641,7 @@ describe('ProjectListingComponent', () => {
       showBurgerMenu: true,
       pageTitle: 'string',
       actionButtons: ['true'],
-    }));
+    })) as any;
     //act
     projectListingComponent.ionViewWillLeave();
     //assert

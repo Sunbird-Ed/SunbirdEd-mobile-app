@@ -2,14 +2,14 @@ import { ManageUserProfilesPage } from './manage-user-profiles.page';
 import {
   ProfileService,
   SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Location } from '@angular/common';
 import { of, Subscription } from 'rxjs';
 
@@ -17,7 +17,7 @@ describe('ManageUserProfilesPage', () => {
 
   let manageUserProfilesPage: ManageUserProfilesPage;
 
-  const mockProfileService: Partial<ProfileService> = {
+  let mockProfileService: Partial<ProfileService> = {
     getActiveSessionProfile: jest.fn(() => of({
       uid: 'sample_uid'
     })),
@@ -30,8 +30,9 @@ describe('ManageUserProfilesPage', () => {
           id: 'sample_uid_2'
         },
       ])),
+      switchSessionToManagedProfile: jest.fn(() => of())
     }
-  };
+  } as any;
   const mockSharedPreferences: Partial<SharedPreferences> = {};
   const mockAppHeaderService: Partial<AppHeaderService> = {};
   const mockRouter: Partial<Router> = {};
@@ -186,9 +187,10 @@ describe('ManageUserProfilesPage', () => {
       // arrange
       manageUserProfilesPage['selectedUser'] = { id: 'uid' };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      mockProfileService.managedProfileManager = {
+      mockProfileService = {
+        managedProfileManager: {
         switchSessionToManagedProfile: jest.fn(() => of())
-      };
+      }} as any;
       mockEvents.publish = jest.fn(() => []);
       mockTncUpdateHandlerService.checkForTncUpdate = jest.fn();
       mockRouter.navigate = jest.fn();

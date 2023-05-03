@@ -21,9 +21,9 @@ import {
     TelemetryGeneratorService,
     UtilityService,
 } from '../../services';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileSwitchHandler } from '../../services/user-groups/profile-switch-handler';
@@ -31,7 +31,7 @@ import { RatingHandler } from '../../services/rating/rating-handler';
 import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
 import { ChildContentHandler } from '../../services/content/child-content-handler';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
-import { of, throwError, EMPTY, Subscription } from 'rxjs';
+import { of, throwError, EMPTY } from 'rxjs';
 import { mockContentData } from '../../app/content-details/content-details.page.spec.data';
 import {
     Environment,
@@ -44,14 +44,14 @@ import {
 import { ContentUtil } from '../../util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -79,7 +79,7 @@ describe('ContentDetailsPage', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn(() => ({uid: 'user_id'})),
-    };
+    } as any;
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
         generateEndTelemetry: jest.fn()
@@ -124,7 +124,7 @@ describe('ContentDetailsPage', () => {
     };
     const mockChildContentHandler: Partial<ChildContentHandler> = {
         contentHierarchyInfo: [{ id: 'do-123' }]
-    };
+    } as any;
     const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
     const mockFileTransfer: Partial<FileTransfer> = {};
@@ -134,7 +134,7 @@ describe('ContentDetailsPage', () => {
     const mockCourseService: Partial<CourseService> = {};
     const mockFormFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
-    global.window['segmentation'] = {
+    global['window']['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -556,10 +556,11 @@ describe('ContentDetailsPage', () => {
     describe('downloadContent', () => {
         it('should return event for download initiated', (done) => {
             // arrange
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = {
                 contentData: {
                     size: '64kb'
@@ -573,14 +574,14 @@ describe('ContentDetailsPage', () => {
                 size: '64kb'
             };
             mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
-            mockContentService.importContent = jest.fn(() => of([{ status: -1 }]));
+            mockContentService.importContent = jest.fn(() => of([{ status: -1 }])) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.downloadContent();
             // assert
             setTimeout(() => {
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.DOWNLOAD_INITIATE,
@@ -595,14 +596,15 @@ describe('ContentDetailsPage', () => {
         });
 
         it('should return null for else part', (done) => {
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.downloadContent();
             setTimeout(() => {
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 done();
             }, 0);
         });
@@ -613,7 +615,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            }));
+            })) as any;
             mockProfileService.addContentAccess = jest.fn(() => of(true));
             mockEvents.publish = jest.fn();
             mockContentService.setContentMarker = jest.fn(() => of(true));
@@ -646,7 +648,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            }));
+            })) as any;
             mockProfileService.addContentAccess = jest.fn(() => of(false));
             mockContentService.setContentMarker = jest.fn(() => of(true));
             // act
@@ -696,7 +698,7 @@ describe('ContentDetailsPage', () => {
                 isAvailableLocally: true,
                 contentAccess: 'content-access',
                 isUpdateAvailable: true
-            };
+            } as any;
             jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation();
             contentDetailsPage.isResumedCourse = true;
             contentDetailsPage.resumedCourseCardData = {
@@ -750,7 +752,7 @@ describe('ContentDetailsPage', () => {
                 isUpdateAvailable: true,
                 me_totalDownloads: true,
                 lastUpdatedTime: 0
-            };
+            } as any;
             jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation();
             contentDetailsPage.isResumedCourse = false;
             contentDetailsPage.resumedCourseCardData = {
@@ -811,7 +813,7 @@ describe('ContentDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }));
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } })) as any;
             const content = { hierachyInfo: [ { id: 'do-123' } ] };
             mockCommonUtilService.showToast = jest.fn();
             contentDetailsPage.cardData = content;
@@ -840,7 +842,7 @@ describe('ContentDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockContentService.getContentDetails = jest.fn(() => of({ contentData: {} }));
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: {} })) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
@@ -867,7 +869,7 @@ describe('ContentDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockContentService.getContentDetails = jest.fn(() => of(undefined));
+            mockContentService.getContentDetails = jest.fn(() => of(undefined)) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
@@ -890,7 +892,7 @@ describe('ContentDetailsPage', () => {
             const content = { hierachyInfo: [ { id: 'do-123' } ] };
             contentDetailsPage.cardData = content;
             const identifier = 'do_123', refreshContentDetails = true, showRating = true;
-            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }));
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } })) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
@@ -901,7 +903,7 @@ describe('ContentDetailsPage', () => {
                 return Promise.resolve();
             });
             mockContentPlayerHandler.setContentPlayerLaunchStatus = jest.fn();
-            mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
+            mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({})) as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -1001,13 +1003,13 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openPDFPreview()', () => {
-        it('should download pdf if not available locally', (done) => {
+        it('should download pdf if not available locally', () => {
             // arrange
-            const content: Partial<Content> = {
+            const content = {
                 contentData: {
                     itemSetPreviewUrl: 'http://some_domain.com/som_path.some_extension'
                 }
-            };
+            } as any;
             const mockPresent = jest.fn(() => Promise.resolve());
             const mockDismiss = jest.fn(() => Promise.resolve());
             const mockDownload = jest.fn(() => Promise.resolve({
@@ -1025,26 +1027,31 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn();
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn()
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).toHaveBeenCalled();
                 expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
-                done();
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
             });
         });
 
         it('should not download pdf if available locally', (done) => {
             // arrange
-            const content: Partial<Content> = {
+            const content = {
                 basePath: '/some_local_path/some_local_path',
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
                 }
-            };
+            } as any;
             const mockPresent = jest.fn(() => Promise.resolve());
             const mockDismiss = jest.fn(() => Promise.resolve());
             const mockDownload = jest.fn(() => Promise.resolve({
@@ -1061,15 +1068,21 @@ describe('ContentDetailsPage', () => {
                 return {
                     download: mockDownload
                 };
-            });
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn();
+            }) as any;
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn()
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(mockFileTransfer.create).not.toHaveBeenCalled();
                 expect(mockDownload).not.toHaveBeenCalled();
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 done();
@@ -1078,7 +1091,7 @@ describe('ContentDetailsPage', () => {
 
         it('should show error toast on file print failure', (done) => {
             // arrange
-            const content: Partial<Content> = {
+            const content = {
                 basePath: '/some_local_path/some_local_path',
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
@@ -1101,12 +1114,18 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(true); });
-            window.cordova.plugins['printer'].print = jest.fn(() => { throw new Error('UNEXPECTED_ERROR'); });
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(true)}),
+                        print: jest.fn(() => {throw new Error('UNEXPECTED_ERROR');})
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins['printer'].print).toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).toHaveBeenCalledWith(
                     'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
@@ -1115,9 +1134,9 @@ describe('ContentDetailsPage', () => {
             });
         });
 
-        it('should show error toast on fileCanPrint() returns false', (done) => {
+        it('should show error toast on fileCanPrint() returns false', () => {
             // arrange
-            const content: Partial<Content> = {
+            const content = {
                 basePath: 'file://some_local_path/some_local_path',
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
@@ -1140,16 +1159,21 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             })as any;
-            window.cordova.plugins['printer'].canPrintItem = jest.fn((_, cb) => { cb(false); });
+            window['cordova'] = {
+                plugins: {
+                    printer: {
+                        canPrintItem: jest.fn((_, cb) => {cb(false)}),
+                    }
+                }
+            } as any
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
-                expect(window.cordova.plugins['printer'].print).not.toHaveBeenCalledWith(
+                expect(window['cordova']['plugins']['printer'].print).not.toHaveBeenCalledWith(
                     'file://some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
-                done();
             });
         });
     });
@@ -1383,9 +1407,9 @@ describe('ContentDetailsPage', () => {
                     case PreferenceKey.CONTENT_CONTEXT:
                         return of(contenxt);
                 }
-            });
+            }) as any;
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(10));
-            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false })) as any
             // act
             contentDetailsPage.getContentState();
             // assert
@@ -1416,7 +1440,7 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
-            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false })) as any
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({ progress: 100, contentStatusData: contentStatusData }));
             // act
             contentDetailsPage.getContentState();
@@ -1450,7 +1474,7 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
-            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false })) as any
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
             // act
             contentDetailsPage.getContentState();
@@ -1484,7 +1508,7 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
-            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false })) as any
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
             // act
             contentDetailsPage.getContentState();
@@ -1550,7 +1574,7 @@ describe('ContentDetailsPage', () => {
                     progress: 100
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123'
             };
@@ -1573,7 +1597,7 @@ describe('ContentDetailsPage', () => {
                     progress: {}
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123'
             };
@@ -1598,7 +1622,7 @@ describe('ContentDetailsPage', () => {
                     progress: 100
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-1234'
             };
@@ -1616,8 +1640,8 @@ describe('ContentDetailsPage', () => {
         it('should return message for IMPORT_COMPLETED', (done) => {
             mockEventBusService.events = jest.fn(() => of({
                 type: 'IMPORT_COMPLETED'
-            }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            })) as any;
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123'
             };
@@ -1643,8 +1667,8 @@ describe('ContentDetailsPage', () => {
         it('should failed for file IMPORT_COMPLETED', (done) => {
             mockEventBusService.events = jest.fn(() => of({
                 type: 'IMPORT_COMPLETED'
-            }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            })) as any;
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123'
             };
@@ -1671,7 +1695,7 @@ describe('ContentDetailsPage', () => {
                     size: '64kb'
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123',
                 contentData: {
@@ -1695,7 +1719,7 @@ describe('ContentDetailsPage', () => {
                     size: undefined
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123',
                 contentData: {
@@ -1725,7 +1749,7 @@ describe('ContentDetailsPage', () => {
                     }
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123',
                 mimeType: 'sample-mimeType',
@@ -1752,7 +1776,7 @@ describe('ContentDetailsPage', () => {
                     licenseDetails: undefined
                 }
             }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             contentDetailsPage.content = {
                 identifier: 'do-123',
                 mimeType: 'application/vnd.ekstep.h5p-archive',
@@ -1925,13 +1949,13 @@ describe('ContentDetailsPage', () => {
             const unsubscribe = jest.fn();
             contentDetailsPage['eventSubscription'] = {
                 unsubscribe
-            };
+            } as any;
             contentDetailsPage.contentDeleteObservable = {
                 unsubscribe
             };
             contentDetailsPage.backButtonFunc = {
                 unsubscribe
-            };
+            } as any;
             // act
             contentDetailsPage.ionViewWillLeave();
             // assert
@@ -2062,6 +2086,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: 'sample-url'} };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
@@ -2075,7 +2100,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
                 expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
                 done();
@@ -2088,6 +2113,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: 'sample-url' } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
@@ -2101,7 +2127,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
                 expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
                 expect(presentFN).toHaveBeenCalled();
@@ -2116,12 +2142,13 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable;
             contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
             // act
             contentDetailsPage.openConfirmPopUp();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 done();
             }, 0);
         });
@@ -2152,7 +2179,7 @@ describe('ContentDetailsPage', () => {
                 handle: 'SAMPLE_HANDLE',
                 profileType: 'student',
                 source: 'local'
-            }]));
+            }])) as any;
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             // act
             contentDetailsPage.calculateAvailableUserCount();
@@ -2205,7 +2232,7 @@ describe('ContentDetailsPage', () => {
     it('should return rateing for content', () => {
         // arrange
         const popUpType = 'rating';
-        mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
+        mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({})) as any;
         // act
         contentDetailsPage.rateContent(popUpType);
         // assert
@@ -2262,7 +2289,7 @@ describe('ContentDetailsPage', () => {
         it('should generate telemetry for cancel download', (done) => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockContentService.cancelDownload = jest.fn(() => of(undefined));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockTelemetryGeneratorService.generateContentCancelClickedTelemetry = jest.fn();
             contentDetailsPage.isUpdateAvail = false;
             // act
@@ -2296,7 +2323,7 @@ describe('ContentDetailsPage', () => {
         it('should generate telemetry for update available', (done) => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockContentService.cancelDownload = jest.fn(() => of(undefined));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockTelemetryGeneratorService.generateContentCancelClickedTelemetry = jest.fn();
             contentDetailsPage.isUpdateAvail = true;
             // act
@@ -2330,7 +2357,7 @@ describe('ContentDetailsPage', () => {
         it('should generate telemetry for cancel download for catch part', (done) => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockContentService.cancelDownload = jest.fn(() => throwError({ error: 'error' }));
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             // act
             contentDetailsPage.cancelDownload();
             // assert
@@ -2425,12 +2452,12 @@ describe('ContentDetailsPage', () => {
 
 
     describe('promptToLogin', () => {
-        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', async (done) => {
+        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation()
             // act
-            await contentDetailsPage.promptToLogin();
+            contentDetailsPage.promptToLogin();
             // assert
             setTimeout(() => {
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
@@ -2441,7 +2468,7 @@ describe('ContentDetailsPage', () => {
         it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, and network available', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            contentDetailsPage.telemetryObject = { id: 'sample-id' } as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -2463,7 +2490,7 @@ describe('ContentDetailsPage', () => {
         it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, on dismiss can delete is false or empty string', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            contentDetailsPage.telemetryObject = { id: 'sample-id' } as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -2482,7 +2509,7 @@ describe('ContentDetailsPage', () => {
         it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin, can delete true on dismiss', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            contentDetailsPage.telemetryObject = { id: 'sample-id' } as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -2523,7 +2550,7 @@ describe('ContentDetailsPage', () => {
         it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            contentDetailsPage.telemetryObject = { id: 'sample-id' };
+            contentDetailsPage.telemetryObject = { id: 'sample-id' } as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -2621,7 +2648,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => of([{ status: -1 }]));
+            mockContentService.importContent = jest.fn(() => of([{ status: -1 }])) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.importContent(identifiers, isChild);
@@ -2642,7 +2669,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => of([{ status: 2 }]));
+            mockContentService.importContent = jest.fn(() => of([{ status: 2 }])) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.importContent(identifiers, isChild);
@@ -2802,8 +2829,8 @@ describe('ContentDetailsPage', () => {
     it('should get extras from content || navigation when getExtras() called', (done) => {
         // arrange
         // contentDetailsPage.content = mockContentData.extras.state;
-        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
-      //  spyOn(contentDetailsPage, 'getNavParams');
+        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData) as any;
+      // jest.spyOn(contentDetailsPage, 'getNavParams');
         jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
             return {};
         });
@@ -2813,7 +2840,7 @@ describe('ContentDetailsPage', () => {
         jest.spyOn(contentDetailsPage, 'setContentDetails').mockImplementation(() => {
             return Promise.resolve();
         });
-        mockDownloadService.getActiveDownloadRequests = jest.fn(() => of([{identifier: 'sample-id'}]));
+        mockDownloadService.getActiveDownloadRequests = jest.fn(() => of([{identifier: 'sample-id'}])) as any;
         // act
         contentDetailsPage.getNavParams();
         // assert
@@ -2828,7 +2855,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
-            const called:  { [topic: EventTopics]: boolean } = {};
+            const called:  any = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
                 if (called[topic]) {
                     return;
@@ -2846,7 +2873,7 @@ describe('ContentDetailsPage', () => {
             });
             mockRatingHandler.resetRating = jest.fn();
             jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation();
-            mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
+            mockRouter.getCurrentNavigation = jest.fn(() => mockContentData) as any;
             mockProfileService.getActiveProfileSession = jest.fn(() =>
                 of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
             mockProfileSwitchHandler.switchUser = jest.fn();
@@ -2858,7 +2885,7 @@ describe('ContentDetailsPage', () => {
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;
-            });
+            }) as any;
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
             mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
             contentDetailsPage['course'] = {
@@ -2890,7 +2917,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
-            const called: { [topic: EventTopics]: boolean } = {};
+            const called: any = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
                 if (called[topic]) {
                     return;
@@ -2904,11 +2931,11 @@ describe('ContentDetailsPage', () => {
                 // }
             });
             mockProfileSwitchHandler.switchUser = jest.fn();
-            spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
+            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;
-            });
+            }) as any;
             contentDetailsPage.course = {
                 contentId: 'content_id'
             };
@@ -2938,7 +2965,8 @@ describe('ContentDetailsPage', () => {
         jest.spyOn(contentDetailsPage, 'subscribeEvents').mockImplementation(() => {
             return;
         });
-        jest.spyOn(mockContentService, 'getContentDetails').mockResolvedValue(of({ contentData: { size: '12KB', status: 'Retired' } }));
+        let content = { contentData: { size: '12KB', status: 'Retired' } } as any;
+        jest.spyOn(mockContentService, 'getContentDetails').mockReturnValue(of(content));
 
         const dismissFn = jest.fn(() => Promise.resolve());
         const presentFn = jest.fn(() => Promise.resolve());
@@ -3008,7 +3036,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'END') {
                 mockPlayerService.savePlayerState = jest.fn(() => of());
                 contentDetailsPage.isPlayerPlaying = false;
@@ -3031,7 +3059,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'EXIT') {
                 mockPlayerService.deletePlayerSaveState = jest.fn(() => of());
                 mockScreenOrientation.type = 'landscape-primary';
@@ -3055,10 +3083,10 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             mockScreenOrientation.type = 'landscape-primary';
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
-            mockEvents.publish = jest.fn(() => Promise.resolve());
+            mockEvents.publish = jest.fn(() => Promise.resolve()) as any;
             jest.spyOn(contentDetailsPage, 'playNextContent').mockImplementation();
             // act
             contentDetailsPage.playerEvents(event);
@@ -3084,8 +3112,12 @@ describe('ContentDetailsPage', () => {
                 pkgVersion: 'v-3',
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id');
-            cordova.plugins['InAppUpdateManager'].checkForImmediateUpdate = jest.fn(() => of()) as any;
+            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id') as any;
+            window['cordova']['plugins'] = {
+                InAppUpdateManager: {
+                    checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
+                }
+            } as any;
             // act
             contentDetailsPage.playerEvents(event);
             // assert
@@ -3103,7 +3135,7 @@ describe('ContentDetailsPage', () => {
                 isContentDisabled: event.edata.maxLimitExceeded,
                 isLastAttempt: event.edata.isLastAttempt
             };
-            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => of());
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => of()) as any;
             // act
             contentDetailsPage.playerEvents(event);
             // assert

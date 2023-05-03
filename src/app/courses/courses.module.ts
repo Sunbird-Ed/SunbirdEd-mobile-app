@@ -8,7 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { CoursesPage } from './courses.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '../../pipes/pipes.module';
-import { DirectivesModule } from '@app/directives/directives.module';
+import { DirectivesModule } from '../../directives/directives.module';
 import { ComponentsModule } from '../components/components.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 

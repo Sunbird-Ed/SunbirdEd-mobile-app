@@ -11,9 +11,10 @@
     "e2e": "ng e2e",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
-    "ionic-build:apk": "ng build --source-map --plugin ~build-customization-plugin.js && cordova build android",
-    "ionic-build": "ng build --configuration=$npm_config_angular_configuration && cordova build android --prod --release --buildConfig ./buildConfig/build.json",
+    "ionic-build": "ng build --source-map && node attach-source-maps.js && cordova build android",
+    "ionic-build:prod": "ng build --configuration=$npm_config_angular_configuration && cordova build android --prod --release --verbose --buildConfig ./buildConfig/build.json",
     "ionic-build:debug": "ng build --configuration=$npm_config_angular_configuration && cordova build android --debug --buildConfig ./buildConfig/build.json",
     "ionic-serve": "ionic cordova run android --livereload --configuration=hmr",
     "sonar-scanner": "sonar-scanner",
@@ -22,58 +23,61 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~12.2.17",
-    "@angular/common": "^12.2.17",
-    "@angular/core": "^12.2.17",
-    "@angular/forms": "^12.2.17",
-    "@angular/platform-browser": "^12.2.17",
-    "@angular/platform-browser-dynamic": "^12.2.17",
-    "@angular/router": "^12.2.17",
-    "@ionic-native/android-permissions": "^5.30.0",
-    "@ionic-native/app-version": "^5.15.1",
-    "@ionic-native/camera": "^5.36.0",
-    "@ionic-native/chooser": "^5.30.0",
-    "@ionic-native/core": "^5.15.1",
-    "@ionic-native/device": "^5.15.1",
-    "@ionic-native/diagnostic": "^5.30.0",
-    "@ionic-native/file": "^5.15.1",
-    "@ionic-native/file-chooser": "^5.30.0",
-    "@ionic-native/file-opener": "^5.15.1",
-    "@ionic-native/file-path": "^5.30.0",
-    "@ionic-native/file-transfer": "^5.36.0",
-    "@ionic-native/google-plus": "^5.33.0",
-    "@ionic-native/http": "^5.34.0",
-    "@ionic-native/image-picker": "^5.30.0",
-    "@ionic-native/ionic-webview": "^5.15.1",
-    "@ionic-native/keyboard": "^5.15.1",
-    "@ionic-native/local-notifications": "^5.15.1",
-    "@ionic-native/media": "^5.30.0",
-    "@ionic-native/native-page-transitions": "^5.23.0",
-    "@ionic-native/network": "5.31.1",
-    "@ionic-native/photo-library": "^5.30.0",
-    "@ionic-native/photo-viewer": "^5.30.0",
-    "@ionic-native/screen-orientation": "^5.15.1",
-    "@ionic-native/sign-in-with-apple": "^5.36.0",
-    "@ionic-native/social-sharing": "^5.15.1",
-    "@ionic-native/status-bar": "^5.15.1",
-    "@ionic-native/streaming-media": "^5.30.0",
-    "@ionic/angular": "5.9.4",
+    "@angular/animations": "13.4.0",
+    "@angular/common": "13.4.0",
+    "@angular/core": "13.4.0",
+    "@angular/forms": "13.4.0",
+    "@angular/platform-browser": "13.4.0",
+    "@angular/platform-browser-dynamic": "13.4.0",
+    "@angular/router": "13.4.0",
+    "@awesome-cordova-plugins/android-permissions": "6.3.0",
+    "@awesome-cordova-plugins/app-version": "6.3.0",
+    "@awesome-cordova-plugins/camera": "6.3.0",
+    "@awesome-cordova-plugins/chooser": "6.3.0",
+    "@awesome-cordova-plugins/core": "6.3.0",
+    "@awesome-cordova-plugins/device": "6.3.0",
+    "@awesome-cordova-plugins/diagnostic": "6.3.0",
+    "@awesome-cordova-plugins/fcm": "^6.3.0",
+    "@awesome-cordova-plugins/file": "6.3.0",
+    "@awesome-cordova-plugins/file-chooser": "6.3.0",
+    "@awesome-cordova-plugins/file-opener": "6.3.0",
+    "@awesome-cordova-plugins/file-path": "6.3.0",
+    "@awesome-cordova-plugins/file-transfer": "6.3.0",
+    "@awesome-cordova-plugins/google-plus": "6.3.0",
+    "@awesome-cordova-plugins/http": "6.3.0",
+    "@awesome-cordova-plugins/image-picker": "6.3.0",
+    "@awesome-cordova-plugins/ionic-webview": "6.3.0",
+    "@awesome-cordova-plugins/keyboard": "6.3.0",
+    "@awesome-cordova-plugins/local-notifications": "6.3.0",
+    "@awesome-cordova-plugins/media": "6.3.0",
+    "@awesome-cordova-plugins/native-page-transitions": "6.3.0",
+    "@awesome-cordova-plugins/network": "6.3.0",
+    "@awesome-cordova-plugins/photo-library": "6.3.0",
+    "@awesome-cordova-plugins/photo-viewer": "6.3.0",
+    "@awesome-cordova-plugins/screen-orientation": "6.3.0",
+    "@awesome-cordova-plugins/sign-in-with-apple": "6.3.0",
+    "@awesome-cordova-plugins/social-sharing": "6.3.0",
+    "@awesome-cordova-plugins/status-bar": "6.3.0",
+    "@awesome-cordova-plugins/streaming-media": "6.3.0",
+    "@ionic/angular": "6.7.4",
+    "@ionic/cordova-builders": "9.0.0",
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "5.1.1",
-    "@project-sunbird/common-consumption": "^5.1.1",
-    "@project-sunbird/common-form-elements-v9": "5.0.3",
+    "@project-sunbird/client-services": "5.1.2",
+    "@project-sunbird/common-consumption": "6.0.1",
+    "@project-sunbird/common-form-elements": "6.0.0",
     "@project-sunbird/content-player": "5.1.0",
     "@project-sunbird/discussions-ui-v8": "2.6.0-beta.2",
     "@project-sunbird/sb-dashlet": "1.0.4",
-    "@project-sunbird/sb-notification": "^5.0.9",
+    "@project-sunbird/sb-notification": "6.0.0",
     "@project-sunbird/sb-styles": "0.0.16",
     "@project-sunbird/sunbird-epub-player-v9": "5.2.1",
-    "@project-sunbird/sunbird-pdf-player-v9": "4.8.1",
+    "@project-sunbird/sunbird-pdf-player-v9": "5.1.1",
     "@project-sunbird/sunbird-quml-player-v9": "5.0.2",
-    "@project-sunbird/sunbird-sdk": "5.1.1",
+    "@project-sunbird/sunbird-sdk": "6.0.0",
     "@project-sunbird/sunbird-video-player-v9": "5.2.4",
+    "@project-sunbird/sb-svg2pdf": "6.0.2",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "chartjs-plugin-stacked100": "^0.7.1",
@@ -114,6 +118,7 @@
     "cordova-sqlite-storage": "6.0.0",
     "cordova.plugins.diagnostic": "^5.0.2",
     "core-js": "^2.6.10",
+    "datatables.net-dt": "^1.13.4",
     "datatables.net-fixedcolumns": "^3.3.3",
     "dayjs": "1.9.8",
     "dom-to-image": "^2.6.0",
@@ -123,18 +128,18 @@
     "hammerjs": "^2.0.8",
     "ionic-plugin-keyboard": "2.2.1",
     "ionic4-rating": "^1.0.9",
+    "jest-preset-angular": "12.2.6",
     "jspdf": "^2.0.0",
     "jwt-decode": "^2.2.0",
-    "katex": "^0.12.0",
+    "katex": "^0.11.1",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.20",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.4",
-    "ng-recaptcha": "^5.0.0",
+    "ng-recaptcha": "^9.0.0",
     "ng2-charts": "^2.4.2",
-    "ng2-material-dropdown": "0.11.0",
-    "ngx-bootstrap": "^5.6.2",
-    "ngx-build-plus": "^11.0.0",
+    "ng2-material-dropdown": "1.0.0",
+    "ngx-bootstrap": "^8.0.0",
     "ngx-chips": "2.2.2",
     "ngx-infinite-scroll": "^10.0.1",
     "ngx-moment": "^5.0.0",
@@ -142,7 +147,6 @@
     "pouchdb-adapter-cordova-sqlite": "^2.0.7",
     "pouchdb-find": "^7.2.2",
     "rxjs": "^6.6.3",
-    "sb-svg2pdf": "0.0.11",
     "sb-tag-manager": "^3.9.19",
     "tslib": "^2.0.0",
     "uk.co.workingedge.phonegap.plugin.istablet": "^1.2.0",
@@ -154,7 +158,7 @@
     "zone.js": "~0.11.4"
   },
   "resolutions": {
-    "ng2-material-dropdown": "0.11.0"
+    "ng2-material-dropdown": "1.0.0"
   },
   "config": {
     "ionic_source_map_type": "inline-source-map",
@@ -166,13 +170,12 @@
     "assert": false
   },
   "devDependencies": {
-    "@angular-devkit/architect": "^0.1202.18",
-    "@angular-devkit/build-angular": "^12.2.18",
-    "@angular/cli": "~12.2.18",
-    "@angular/compiler": "^12.2.17",
-    "@angular/compiler-cli": "~12.2.17",
-    "@angular/language-service": "^12.2.17",
-    "@angularclass/hmr": "^3.0.0",
+    "@angular-devkit/build-angular": "13.3.11",
+    "@angular/cli": "13.3.11",
+    "@angular/compiler": "13.4.0",
+    "@angular/compiler-cli": "13.4.0",
+    "@angular/language-service": "13.4.0",
+    "@angularclass/hmr": "3.0.0",
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.4.4",
@@ -180,14 +183,12 @@
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-typescript": "^7.9.0",
-    "@ionic/angular-toolkit": "^3.1.0",
-    "@ionic/v4-migration-tslint": "^1.7.1",
+    "@ionic/angular-toolkit": "^6.0.0",
     "@project-sunbird/sb-themes": "0.0.86",
     "@project-sunbird/telemetry-sdk": "0.0.29",
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^28.0.3",
     "@types/lodash": "^4.14.180",
     "@types/node": "12.11.5",
-    "babel-jest": "^25.4.0",
     "babel-polyfill": "^6.26.0",
     "code-push": "^3.0.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
@@ -208,7 +209,7 @@
     "cordova-plugin-telerik-imagepicker": "^2.3.3",
     "cordova-zip-plugin": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "fs-extra": "^8.1.0",
-    "jest": "^25.4.0",
+    "jest": "^28.0.3",
     "plist": "^3.0.2",
     "properties-reader": "^2.2.0",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git#release-5.0.2",
@@ -219,7 +220,7 @@
     "tiny-glob": "^0.2.9",
     "ts-node": "^10.9.1",
     "tslint": "~6.1.0",
-    "typescript": "4.3.5"
+    "typescript": "4.6.4"
   },
   "description": "An Ionic project",
   "cordova": {
@@ -296,70 +297,6 @@
     "platforms": [
       "android",
       "ios"
-    ]
-  },
-  "jest": {
-    "browser": false,
-    "globals": {
-      "cordova": true
-    },
-    "setupFiles": [
-      "<rootDir>/src/__tests__/setup.js"
-    ],
-    "rootDir": "./",
-    "roots": [
-      "<rootDir>/src/app",
-      "<rootDir>/src/config",
-      "<rootDir>/src/directives",
-      "<rootDir>/src/guards",
-      "<rootDir>/src/pipes",
-      "<rootDir>/src/services",
-      "<rootDir>/src/util"
-    ],
-    "moduleDirectories": [
-      "node_modules"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "testMatch": [
-      "**/?(*.)(spec).ts"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
-    ],
-    "transform": {
-      "^.+\\.(ts|js)$": "babel-jest"
-    },
-    "coverageReporters": [
-      "text"
-    ],
-    "moduleNameMapper": {
-      "^@app/(.*)$": "<rootDir>/src/$1",
-      "^sunbird-sdk": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk",
-      "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1",
-      "@project-sunbird/common-consumption": [
-        "<rootDir>/node_modules/@project-sunbird/common-consumption"
-      ],
-      "@project-sunbird/common-consumption/*": [
-        "<rootDir>/node_modules/@project-sunbird/common-consumption/*"
-      ],
-      "common-form-elements": [
-        "<rootDir>/node_modules/@project-sunbird/common-form-elements-v9"
-      ],
-      "common-form-elements/*": [
-        "<rootDir>/node_modules/@project-sunbird/common-form-elements-v9/*"
-      ]
-    },
-    "transformIgnorePatterns": [],
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/src/app/*/*.module.ts",
-      "<rootDir>/src/app/animations/*.ts",
-      "<rootDir>/src/app/manage-learn/"
     ]
   }
 }

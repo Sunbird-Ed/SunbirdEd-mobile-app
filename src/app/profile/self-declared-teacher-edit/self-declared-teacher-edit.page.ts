@@ -1,31 +1,31 @@
 import { Location } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormConstants } from '@app/app/form.constants';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { FormConstants } from '../../../app/form.constants';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {
   AuditType,
   CorReleationDataType, Environment,
   ID,
   ImpressionType, InteractSubtype, InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ConsentService } from '@app/services/consent-service';
-import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
+} from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ConsentService } from '../../../services/consent-service';
+import { FormValidationAsyncFactory } from '../../../services/form-validation-async-factory/form-validation-async-factory';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { ConsentStatus } from '@project-sunbird/client-services/models';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from '@project-sunbird/common-form-elements';
 import { Subscription } from 'rxjs';
 import {
   AuditState,
   Consent, CorrelationData, LocationSearchResult, ProfileService,
   ServerProfile, SharedPreferences,
   TelemetryObject, FrameworkService, OrganizationSearchCriteria
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 
 @Component({

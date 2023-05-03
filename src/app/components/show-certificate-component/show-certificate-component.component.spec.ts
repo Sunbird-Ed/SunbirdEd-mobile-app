@@ -1,5 +1,5 @@
 import { ShowCertificateComponent } from './show-certificate-component.component';
-import { CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService } from '@app/services';
+import { CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService } from '../../../services';
 
 describe('ShowCertificateComponent', () => {
     let showCertificateComponent: ShowCertificateComponent;
@@ -25,7 +25,7 @@ describe('ShowCertificateComponent', () => {
             identifier: 'do_123',
             contentType: 'course',
             pkgVersion: 1
-        };
+        } as any;
         let scoreKey = '>=';
         showCertificateComponent.certificateDetails = { key1: { criteria: { enrollment: { status: 1 }} }, 
         key2: { criteria: { enrollment: { status: 2 }, assessment: {score: {[scoreKey]: 20}} } } }
@@ -37,7 +37,7 @@ describe('ShowCertificateComponent', () => {
             identifier: 'do_123',
             contentType: 'course',
             pkgVersion: 1
-        };
+        } as any;
         let scoreKey = '>=';
         showCertificateComponent.certificateDetails = { key1: {  } }
         showCertificateComponent.ngOnInit();

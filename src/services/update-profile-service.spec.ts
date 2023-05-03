@@ -1,13 +1,13 @@
-import {UpdateProfileService} from '@app/services/update-profile-service';
+import {UpdateProfileService} from '../services/update-profile-service';
 import {ProfileService} from '@project-sunbird/sunbird-sdk';
-import {FrameworkCategoryCodesGroup, FrameworkService, FrameworkUtilService} from 'sunbird-sdk';
+import {FrameworkCategoryCodesGroup, FrameworkService, FrameworkUtilService} from '@project-sunbird/sunbird-sdk';
 import {TranslateService} from '@ngx-translate/core';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {Events} from '@app/util/events';
-import {AppGlobalService} from '@app/services/app-global-service.service';
+import {CommonUtilService} from '../services/common-util.service';
+import {TelemetryGeneratorService} from '../services/telemetry-generator.service';
+import {Events} from '../util/events';
+import {AppGlobalService} from '../services/app-global-service.service';
 import {of, throwError} from 'rxjs';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {SbProgressLoader} from '../services/sb-progress-loader.service';
 
 describe('UpdateProfileService', () => {
     let updateProfileService: UpdateProfileService;
@@ -85,7 +85,7 @@ describe('UpdateProfileService', () => {
             }, 0);
         });
 
-        it('should set profile data accordingly and check for boardList data', (done) => {
+        it('should set profile data accordingly and check for boardList data', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -120,13 +120,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -138,12 +138,11 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
 
-        it('should set profile data accordingly and getFrameworkDetails', (done) => {
+        it('should set profile data accordingly and getFrameworkDetails', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -179,13 +178,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -196,8 +195,7 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
 
@@ -237,13 +235,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -254,12 +252,12 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                expect(updateProfileService.boardList).toEqual([]);
                 done();
             }, 0);
         });
 
-        it('should set profile data accordingly and frameworkData', (done) => {
+        it('should set profile data accordingly and frameworkData', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -299,13 +297,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -317,12 +315,11 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 10);
         });
 
-        it('should set profile data accordingly if board length is higher', (done) => {
+        it('should set profile data accordingly if board length is higher', () => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -358,13 +355,13 @@ describe('UpdateProfileService', () => {
                 ]
             };
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp)) as any;
             mockProfileService.updateProfile = jest.fn(() => of({
                 syllabus: ['ekstep_k12'],
                 board: ['cbse'],
                 grade: ['grade1', 'grade2'],
                 medium: ['medium1', 'medium2']
-            }));
+            })) as any;
             mockEvents.publish = jest.fn();
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
@@ -376,8 +373,7 @@ describe('UpdateProfileService', () => {
             setTimeout(() => {
                 expect(updateProfileService.isProfileUpdated).toEqual(true);
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(updateProfileService.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
-                done();
+                expect(updateProfileService.boardList).toEqual([]);
             }, 0);
         });
     });

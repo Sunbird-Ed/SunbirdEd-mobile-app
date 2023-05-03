@@ -1,7 +1,7 @@
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../util/events';
 import { GroupGuideLinesPopoverComponent } from './group-guidelines-popup.component';
-import { CommonUtilService, UtilityService } from '@app/services';
+import { CommonUtilService, UtilityService } from '../../../../services';
 import { Location } from '@angular/common';
 
 describe('SbGenericPopoverComponent', () => {
@@ -49,7 +49,7 @@ describe('SbGenericPopoverComponent', () => {
         groupGuideLinesPopoverComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
         } as any;
-        mockCommonUtilService.getAppName = jest.fn(() => 'sunbird');
+        mockCommonUtilService.getAppName = jest.fn(() => 'sunbird') as any;
         groupGuideLinesPopoverComponent.shouldUpdateUserLevelGroupTnc = false
         // act
         groupGuideLinesPopoverComponent.ngOnInit();
@@ -72,7 +72,7 @@ describe('SbGenericPopoverComponent', () => {
         groupGuideLinesPopoverComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
         } as any;
-        mockCommonUtilService.getAppName = jest.fn(() => 'sunbird');
+        mockCommonUtilService.getAppName = jest.fn(() => 'sunbird') as any;
         groupGuideLinesPopoverComponent.shouldUpdateUserLevelGroupTnc = true
         // act
         groupGuideLinesPopoverComponent.ngOnInit();

@@ -8,7 +8,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfileSettingsPage } from './profile-settings.page';
 import { TranslateModule } from '@ngx-translate/core';
-import {PipesModule} from '@app/pipes/pipes.module';
+import {PipesModule} from '../../pipes/pipes.module';
 
 const routes: Routes = [
   {

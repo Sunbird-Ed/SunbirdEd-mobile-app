@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
-import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
-import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
+import { LoaderService, UtilsService } from '../../../../../app/manage-learn/core';
+import { KendraApiService } from '../../../../../app/manage-learn/core/services/kendra-api.service';
+import { UnnatiDataService } from '../../../../../app/manage-learn/core/services/unnati-data.service';
 import { ModalController, Platform } from '@ionic/angular';
 import * as _ from 'underscore';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
+import { urlConstants } from '../../../../../app/manage-learn/core/constants/urlConstants';
 import { Location } from '@angular/common';
 
 @Component({

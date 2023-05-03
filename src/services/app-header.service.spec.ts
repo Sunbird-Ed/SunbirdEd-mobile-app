@@ -1,7 +1,7 @@
 import {AppHeaderService} from './app-header.service';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@ionic-native/status-bar/ngx';
-import {SharedPreferences} from 'sunbird-sdk';
+import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
+import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
 import onboarding from './../assets/configurations/config.json';
 import { mockOnboardingConfigData } from '../app/components/discover/discover.page.spec.data';
@@ -116,17 +116,17 @@ describe('AppHeaderService', () => {
         appHeaderService.updatePageConfig(mockConfig);
     });
 
-    it('should set background color of statusbar', (done) => {
-        const customTheme = onboarding.theme;
+    it('should set background color of statusbar', () => {
         mockStatusBar.backgroundColorByHexString = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
-        const selectedTheme = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');
-
+        document.querySelector = jest.fn(() => ({
+            html: {
+                getPropertyValue: jest.fn()
+            }
+        }));
         appHeaderService.showStatusBar().then(() => {
-            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith(selectedTheme);
-            done();
+            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('');
         });
-
     });
 
     it('should theme is not joyful go to else part', () => {

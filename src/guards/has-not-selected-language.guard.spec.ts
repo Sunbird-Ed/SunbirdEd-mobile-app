@@ -1,9 +1,9 @@
 import { HasNotSelectedLanguageGuard } from './has-not-selected-language.guard';
-import { SplashScreenService } from '@app/services';
+import { SplashScreenService } from '../services';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
 
 
 describe('HasNotSelectedLanguageGuard', () => {
@@ -48,7 +48,7 @@ describe('HasNotSelectedLanguageGuard', () => {
     describe('resolve', () => {
         it('should return false if route has onReload property true and skipOnboarding as true and navigate to user type selection page', (done) => {
             // arrange
-            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => true);
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => Promise.resolve(true));
             // act
             const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);
             // assert
@@ -61,7 +61,7 @@ describe('HasNotSelectedLanguageGuard', () => {
 
         it('should return true if route has onReload property true and skipOnboarding as false', (done) => {
             // arrange
-            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => false);
+            mockOnBoardingConfigurationService.skipOnboardingStep = jest.fn(() => Promise.resolve(false));
 
             // act
             const response = hasNotSelectedLanguageGuard.resolve({ queryParams: { onReload: 'true' } } as any);

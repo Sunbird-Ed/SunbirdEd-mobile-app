@@ -1,13 +1,13 @@
 import {AuthService, Profile, ProfileService, SegmentationService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
-import {AppGlobalService} from '@app/services';
-import {FormAndFrameworkUtilService} from '@app/services';
+import {AppGlobalService} from '../../services';
+import {FormAndFrameworkUtilService} from '../../services';
 import {SegmentationTagService} from './segmentation-tag.service';
-import {NotificationService} from '@app/services/notification.service';
+import {NotificationService} from '../../services/notification.service';
 import {cmdList, validCmdList} from './segmentation-tag.service.spec.data';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {DebuggingService} from 'sunbird-sdk';
-import {Events} from '@app/util/events';
+import {DebuggingService} from '@project-sunbird/sunbird-sdk';
+import {Events} from '../../util/events';
 
 
 describe('SegmentationTagService ', () => {
@@ -30,7 +30,7 @@ describe('SegmentationTagService ', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getSegmentationCommands: jest.fn(() => Promise.resolve(cmdList)),
         getFormFields: jest.fn(() => Promise.resolve())
-    };
+    } as any;
     const mockSharedPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('key_value'))
     };
@@ -41,7 +41,7 @@ describe('SegmentationTagService ', () => {
     const mockEvent: Partial<Events> = {};
     const mockDebuggingService: Partial<DebuggingService> = {};
 
-    global.window.segmentation = {
+    global['window'].segmentation = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -51,7 +51,7 @@ describe('SegmentationTagService ', () => {
         SBActionCriteriaService: {
             evaluateCriteria: jest.fn(() => validCmdList)
         }
-    };
+    } as any;
 
     beforeAll(() => {
         segmentationTagService = new SegmentationTagService(
@@ -250,7 +250,7 @@ describe('SegmentationTagService ', () => {
                         id: 14
                     }]
                 }]
-            }];
+            }] as any;
             // act
             segmentationTagService.handleLocalNotificationTap();
             // assert

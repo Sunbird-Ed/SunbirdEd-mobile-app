@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { ContentUtil } from '@app/util/content-util';
+import { FileSizePipe } from '../../../pipes/file-size/file-size';
+import { ContentUtil } from '../../../util/content-util';
 import { NavParams, PopoverController, ToastController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AuthService,
@@ -12,7 +12,7 @@ import {
   CorrelationData,
   OAuthSession,
   Rollup
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';

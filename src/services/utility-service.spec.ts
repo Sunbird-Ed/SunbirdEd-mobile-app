@@ -23,7 +23,7 @@ describe('UtilityService', () => {
             getAppAvailabilityStatus: jest.fn(() => { }),
             startActivityForResult: jest.fn(() => { }),
             openFileManager: jest.fn(() => { })
-        };
+        } as any;
         utilityService = new UtilityService();
     });
 

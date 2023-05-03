@@ -1,6 +1,6 @@
 import { Component, Input} from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 @Component({
     selector: 'app-sb-preferences-popup',

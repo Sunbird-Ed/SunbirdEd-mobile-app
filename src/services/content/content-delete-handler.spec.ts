@@ -1,11 +1,11 @@
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { TelemetryGeneratorService, CommonUtilService } from '../../services';
-import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from '@app/services/telemetry-constants';
+import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { of, throwError } from 'rxjs';
-import { ContentService, Content, TelemetryObject } from 'sunbird-sdk';
+import { ContentService, Content, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { ContentInfo } from './content-info';
 describe('ContentDeleteHandler', () => {
     let contentDeleteHandler: ContentDeleteHandler;

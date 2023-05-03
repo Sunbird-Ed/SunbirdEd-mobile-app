@@ -194,7 +194,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.downloadIdentifiers = new Set(['do_2127509912525127681407', 'do_2127509912525127681408']);
             chapterDetailsPage.isBatchNotStarted = true;
             mockCommonUtilService.showToast = jest.fn();
-            mockDatePipe.transform = jest.fn(() => 'sample-data');
+            mockDatePipe.transform = jest.fn(() => 'sample-data') as any;
             mockCommonUtilService.translateMessage = jest.fn(() => '');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -206,7 +206,7 @@ describe('ChapterDetailsPage', () => {
                 present: presentFn,
                 onDidDismiss: onDidDismissFn
             }) as any);
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any as any;
             const importData: ContentImportResponse[] = [
                 { identifier: 'do_123456789', status: ContentImportStatus.NOT_FOUND },];
             mockContentService.importContent = jest.fn(() => of(importData));
@@ -228,7 +228,7 @@ describe('ChapterDetailsPage', () => {
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             chapterDetailsPage.downloadIdentifiers = new Set(['do_2127509912525127681407', 'do_2127509912525127681408']);
             chapterDetailsPage.isBatchNotStarted = true;
-            mockDatePipe.transform = jest.fn(() => 'sample-data');
+            mockDatePipe.transform = jest.fn(() => 'sample-data') as any;
             mockCommonUtilService.translateMessage = jest.fn(() => '');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -240,7 +240,7 @@ describe('ChapterDetailsPage', () => {
                 present: presentFn,
                 onDidDismiss: onDidDismissFn
             }) as any);
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any as any;
             const importData: ContentImportResponse[] = [
                 { identifier: 'do_1234567880', status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD }];
             mockContentService.importContent = jest.fn(() => of(importData));
@@ -283,7 +283,7 @@ describe('ChapterDetailsPage', () => {
                 present: presentFn,
                 onDidDismiss: onDidDismissFn
             }) as any);
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             mockContentService.importContent = jest.fn(() => throwError({ error: 'NETWORK_ERROR' }));
             mockFileSizePipe.transform = jest.fn();
             chapterDetailsPage.courseCardData = mockCourseCardData;
@@ -314,7 +314,7 @@ describe('ChapterDetailsPage', () => {
                 present: presentFn,
                 onDidDismiss: onDidDismissFn
             }) as any);
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             mockContentService.importContent = jest.fn(() => throwError({ error: 'UNABLE_TO_FETCH_CONTENT' }));
             mockFileSizePipe.transform = jest.fn();
             chapterDetailsPage.courseCardData = mockCourseCardData;
@@ -728,7 +728,7 @@ describe('ChapterDetailsPage', () => {
             };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => of({})) as any;
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getContentState(true);
             // assert
@@ -753,7 +753,7 @@ describe('ChapterDetailsPage', () => {
             };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => throwError({ error: 'error' }));
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getContentState(true);
             // assert
@@ -791,7 +791,7 @@ describe('ChapterDetailsPage', () => {
                 startDate: '2020-06-02',
                 cert_templates: 'sample'
             })) as any;
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
@@ -806,7 +806,7 @@ describe('ChapterDetailsPage', () => {
                     cert_templates: 'sample'
                 });
                 expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
-                expect(chapterDetailsPage.courseStartDate.batchId).toBe(chapterDetailsPage.batchDetails.batchId);
+                expect(chapterDetailsPage.courseStartDate.batchId).toBe(chapterDetailsPage.courseContent.batchId);
                 done();
             }, 0);
         });
@@ -820,7 +820,7 @@ describe('ChapterDetailsPage', () => {
                 status: 2,
                 startDate: '2020-06-02'
             })) as any;
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
@@ -843,8 +843,8 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
-            mockCourseService.getBatchDetails = jest.fn(() => of(undefined));
-            mockZone.run = jest.fn((fn) => fn());
+            mockCourseService.getBatchDetails = jest.fn(() => of(undefined)) as any;
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
@@ -866,7 +866,7 @@ describe('ChapterDetailsPage', () => {
                 status: 3,
                 startDate: '2020-06-02'
             })) as any;
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
@@ -890,7 +890,7 @@ describe('ChapterDetailsPage', () => {
                 batch: { staus: 1 }
             };
             mockCourseService.getBatchDetails = jest.fn(() => throwError({ error: 'error' }));
-            mockZone.run = jest.fn((fn) => fn());
+            mockZone.run = jest.fn((fn) => fn()) as any as any;
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
@@ -966,8 +966,8 @@ describe('ChapterDetailsPage', () => {
 
             chapterDetailsPage.childContents = [{
                 identifier: 'sample-content-id'
-            }];
-            mockAppGlobalService.generateCourseUnitCompleteTelemetry = jest.fn(() => true);
+            }] as any;
+            mockAppGlobalService.generateCourseUnitCompleteTelemetry = jest.fn(() => of(true)) as any;
             mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
             // act
             chapterDetailsPage.checkChapterCompletion();
@@ -990,7 +990,7 @@ describe('ChapterDetailsPage', () => {
                 identifier: 'sample-content-id'
             }, {
                 identifier: 'sample-id-2'
-            }];
+            }] as any;
             // act
             chapterDetailsPage.checkChapterCompletion();
             // arrange
@@ -1081,7 +1081,7 @@ describe('ChapterDetailsPage', () => {
         it('should load FirstChildren', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
+            chapterDetailsPage.childContents = [{ identifier: 'do-123' }] as any;
             chapterDetailsPage.isBatchNotStarted = false;
             chapterDetailsPage.userId = 'sample-user-token';
             jest.spyOn(chapterDetailsPage, 'loadFirstChildren').mockImplementation(() => {
@@ -1090,8 +1090,8 @@ describe('ChapterDetailsPage', () => {
             mockContentPlayerHandler.playContent = jest.fn();
             mockPreferences.getBoolean = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData)) as any;
-            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
-            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false })) as any
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false)) as any;
 
             // act
             chapterDetailsPage.startLearning();
@@ -1227,7 +1227,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.userId = 'sample-user-token';
             mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
             mockCommonUtilService.showToast = jest.fn();
-            mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockDatePipe.transform = jest.fn(() => '2020-06-04') as any;
             mockPreferences.getBoolean = jest.fn(() => of(false));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -1303,10 +1303,10 @@ describe('ChapterDetailsPage', () => {
                     { contentId: 'do-1-123', status: 1 },
                     { contentId: 'do-2-123', status: 0 }
                 ]
-            };
+            } as any;
             chapterDetailsPage.childContents = [
                 { identifier: 'do-123' }, { identifier: 'sample-id-2' }
-            ];
+            ] as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({
                 isLastAttempt: true,
@@ -1314,7 +1314,7 @@ describe('ChapterDetailsPage', () => {
                 currentAttempt: 50,
                 maxAttempts: 100,
             }));
-            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false));
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false)) as any;
             mockContentPlayerHandler.playContent = jest.fn();
             //act
             chapterDetailsPage.continueLearning();
@@ -1342,10 +1342,10 @@ describe('ChapterDetailsPage', () => {
                     { contentId: 'do-1-123', status: 1 },
                     { contentId: 'do-2-123', status: 0 }
                 ]
-            };
+            } as any;
             chapterDetailsPage.childContents = [
                 { identifier: 'do-123' }, { identifier: 'sample-id-2' }
-            ];
+            ] as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({
                 isLastAttempt: true,
@@ -1353,7 +1353,7 @@ describe('ChapterDetailsPage', () => {
                 currentAttempt: 50,
                 maxAttempts: 100,
             }));
-            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve({ isCloseButtonClicked: true, limitExceeded: true }));
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve({ isCloseButtonClicked: true, limitExceeded: true })) as any;
             mockContentPlayerHandler.playContent = jest.fn();
             //act
             chapterDetailsPage.continueLearning();
@@ -1405,7 +1405,7 @@ describe('ChapterDetailsPage', () => {
                         status: 0
                     }
                 ]
-            };
+            } as any;
             // act
             chapterDetailsPage.continueLearning();
             // asser
@@ -1527,7 +1527,7 @@ describe('ChapterDetailsPage', () => {
                         status: 0
                     }
                 ]
-            };
+            } as any;
             // act
             chapterDetailsPage.continueLearning();
             // asser
@@ -1556,7 +1556,7 @@ describe('ChapterDetailsPage', () => {
                     }
                 ]
             };
-            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false));
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false)) as any;
             // act
             chapterDetailsPage.continueLearning();
             // asser
@@ -1671,7 +1671,7 @@ describe('ChapterDetailsPage', () => {
                     createdBy: 'sample-creator'
                 }
             };
-            chapterDetailsPage.batches = [{ enrollmentEndDate: '05/05/2022' }]
+            chapterDetailsPage.batches = [{ enrollmentEndDate: '05/05/2022' }] as any
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = false;
             chapterDetailsPage.isBatchNotStarted = false;
@@ -1844,7 +1844,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = true;
             chapterDetailsPage.isBatchNotStarted = true;
-            mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            mockDatePipe.transform = jest.fn(() => '2020-06-02') as any;
             mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
             mockCommonUtilService.showToast = jest.fn();
             // act
@@ -1964,16 +1964,17 @@ describe('ChapterDetailsPage', () => {
             // arrnge
             mockCommonUtilService.getLoader = jest.fn();
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
-            chapterDetailsPage.batches = [{ batchId: 'sample-batch-id' }];
+            chapterDetailsPage.batches = [{ batchId: 'sample-batch-id' }] as any;
             jest.spyOn(chapterDetailsPage, 'enrollIntoBatch').mockImplementation(() => {
                 return Promise.resolve();
             });
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toEqual(1);
                 done();
@@ -1992,17 +1993,18 @@ describe('ChapterDetailsPage', () => {
             }, {
                 batchId: 'sample-batch-id',
                 status: 2
-            }];
+            }] as any;
             jest.spyOn(chapterDetailsPage, 'enrollIntoBatch').mockImplementation(() => {
                 return Promise.resolve();
             });
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBeGreaterThan(0);
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.COURSE_BATCHES],
@@ -2039,12 +2041,13 @@ describe('ChapterDetailsPage', () => {
             };
             chapterDetailsPage.batches = [];
             // mockCommonUtilService.showToast = jest.fn();
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBe(0);
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
                 expect(dismissFn).toBeTruthy();
@@ -2065,12 +2068,13 @@ describe('ChapterDetailsPage', () => {
             };
             chapterDetailsPage.batches = [];
             mockCommonUtilService.showToast = jest.fn();
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(network).toBeFalsy();
                 expect(chapterDetailsPage.batches.length).toBe(0);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
                 expect(dismissFn).toBeTruthy();
@@ -2088,13 +2092,14 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockLocalCourseService.isEnrollable = jest.fn(() => false);
+            let network = mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             // act
             chapterDetailsPage.navigateToBatchListPage();
 
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(network).toBeTruthy();
                 expect(mockLocalCourseService.isEnrollable).toHaveBeenCalled();
                 done();
             }, 0);
@@ -2138,7 +2143,7 @@ describe('ChapterDetailsPage', () => {
             const items = {
                 id: 'do-123',
                 courseId: 'sample-course-id'
-            };
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -2146,9 +2151,7 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = true;
-            jest.spyOn(chapterDetailsPage, 'promptToLogin').mockImplementation(() => {
-                return Promise.resolve();
-            });
+            jest.spyOn(chapterDetailsPage, 'promptToLogin').mockImplementation();
             // act
             chapterDetailsPage.enrollIntoBatch(items);
             // assert
@@ -2164,7 +2167,7 @@ describe('ChapterDetailsPage', () => {
             const items = {
                 id: 'do-123',
                 courseId: 'sample-course-id'
-            };
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -2172,7 +2175,7 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = false;
-            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { });
+            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { }) as any;
             const prepareResponseValue = new Map();
             prepareResponseValue['enrollReq'] = { name: 'sample-name' };
             mockLocalCourseService.prepareRequestValue = jest.fn(() => prepareResponseValue);
@@ -2212,7 +2215,7 @@ describe('ChapterDetailsPage', () => {
             const items = {
                 id: 'do-123',
                 courseId: 'sample-course-id'
-            };
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
@@ -2220,7 +2223,7 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = false;
-            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { });
+            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { }) as any;
             const prepareResponseValue = new Map();
             prepareResponseValue['enrollReq'] = { name: 'sample-name' };
             mockLocalCourseService.prepareRequestValue = jest.fn(() => prepareResponseValue);
@@ -2301,7 +2304,7 @@ describe('ChapterDetailsPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockRouter.navigate = jest.fn();
@@ -2353,7 +2356,7 @@ describe('ChapterDetailsPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockRouter.navigate = jest.fn();
@@ -2410,7 +2413,7 @@ describe('ChapterDetailsPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockRouter.navigate = jest.fn();
@@ -2466,7 +2469,7 @@ describe('ChapterDetailsPage', () => {
                     case 'OVERLAY_SIGN_IN':
                         return 'OVERLAY_SIGN_IN';
                 }
-            });
+            }) as any;
             // act
             chapterDetailsPage.promptToLogin(batchdetail);
             // assert
@@ -2625,7 +2628,7 @@ describe('ChapterDetailsPage', () => {
                 payload: { contentId: 'do-123' }
             };
             mockEventsBusService.events = jest.fn(() => of(event as any));
-            mockZone.run = jest.fn((fn) => fn()) as any;
+            mockZone.run = jest.fn((fn) => fn()) as any as any as any;
             //act
             chapterDetailsPage.subscribeSdkEvent();
             //assert

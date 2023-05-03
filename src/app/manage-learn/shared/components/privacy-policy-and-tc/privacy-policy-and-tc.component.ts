@@ -1,8 +1,8 @@
 import { Component, Input,OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { RouterLinks } from '@app/app/app.constant';
-import { UtilityService } from '@app/services/utility-service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { RouterLinks } from '../../../../../app/app.constant';
+import { UtilityService } from '../../../../../services/utility-service';
+import { CommonUtilService } from '../../../../../services/common-util.service';
 
 @Component({
   selector: 'app-privacy-policy-and-tc',

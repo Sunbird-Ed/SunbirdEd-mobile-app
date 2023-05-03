@@ -3,7 +3,7 @@ import { Consent, ConsentStatus } from '@project-sunbird/client-services/models'
 import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
 import { ConsentService } from './consent-service';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
 describe('ConsentService', () => {
   let consentService: ConsentService;
@@ -51,7 +51,7 @@ describe('ConsentService', () => {
       }));
       mockProfileService.updateConsent = jest.fn(() => of({
         message: 'success'
-      }));
+      })) as any;
       mockCommonUtilService.showToast = jest.fn();
       // act
       consentService.showConsentPopup(course);

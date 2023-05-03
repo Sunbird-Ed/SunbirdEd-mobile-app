@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { CommonUtilService, TelemetryGeneratorService } from '../../services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
@@ -12,7 +12,8 @@ describe('ContentShareHandlerService', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(() => Promise.resolve('app_name')),
         showToast: jest.fn(),
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        buildPermissionPopover: jest.fn(() => Promise.resolve({} as any))
     };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
@@ -82,12 +83,13 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            let msg = mockCommonUtilService.translateMessage('NOT_NOW');
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+                await callback(msg) as any;
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             // act
             storagePermissionHandlerService.checkForPermissions(PageName)
             setTimeout(() => {
@@ -104,12 +106,13 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            let msg = mockCommonUtilService.translateMessage('ALLOW');
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                await callback(msg);
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}))
             // act
             storagePermissionHandlerService.checkForPermissions(PageName)
@@ -124,12 +127,13 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            let msg = mockCommonUtilService.translateMessage('ALLOW');
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                await callback(msg);
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             mockPermissionService.requestPermission = jest.fn(() => of({isPermissionAlwaysDenied: true}))
             // act
             storagePermissionHandlerService.checkForPermissions(PageName)
@@ -149,12 +153,13 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            let msg = mockCommonUtilService.translateMessage('ALLOW');
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                await callback(msg);
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             mockPermissionService.requestPermission = jest.fn(() => of({}))
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.showSettingsPageToast = jest.fn();
@@ -176,12 +181,13 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            let msg = mockCommonUtilService.translateMessage('');
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-                await callback(mockCommonUtilService.translateMessage(''));
+                await callback(msg);
                 return {
                     present: jest.fn(() => Promise.resolve())
                 };
-            });
+            }) as any;
             // act
             storagePermissionHandlerService.checkForPermissions(PageName)
             setTimeout(() => {

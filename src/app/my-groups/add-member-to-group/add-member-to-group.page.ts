@@ -10,7 +10,7 @@ import {
   SystemSettingsService,
   SharedPreferences,
   CorrelationData
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
@@ -20,15 +20,15 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { UtilityService } from '@app/services/utility-service';
+} from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { UtilityService } from '../../../services/utility-service';
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
-import { PreferenceKey, GroupErrorCodes } from '@app/app/app.constant';
+import { animationGrowInFromEvent } from '../../../app/animations/animation-grow-in-from-event';
+import { PreferenceKey, GroupErrorCodes } from '../../../app/app.constant';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({

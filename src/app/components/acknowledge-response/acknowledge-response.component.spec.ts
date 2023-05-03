@@ -10,7 +10,7 @@ describe('', () => {
 
     beforeAll(() => {
         acknowledgeResponseComponent = new AcknowledgeResponseComponent(
-            mockCommonUtilService
+            mockCommonUtilService as any
         );
     });
 

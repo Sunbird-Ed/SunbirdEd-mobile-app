@@ -3,14 +3,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { PageId, Environment, ImpressionType, InteractSubtype, InteractType, ID } from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CollectionService } from '@app/services/collection.service';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
+import { FilterPipe } from '../../../pipes/filter/filter.pipe';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { PageId, Environment, ImpressionType, InteractSubtype, InteractType, ID } from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CollectionService } from '../../../services/collection.service';
+import { AndroidPermissionsService } from '../../../services/android-permissions/android-permissions.service';
 import {
   GroupService, GroupMember, Content,
   Group, MimeType, CorrelationData, TrackingEnabled
@@ -22,10 +22,10 @@ import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from './../../app.constant';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { File } from '@ionic-native/file/ngx';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { AndroidPermission, AndroidPermissionsStatus } from '../../../services/android-permissions/android-permission';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -58,7 +58,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private router: Router,
     private filterPipe: FilterPipe,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
@@ -224,7 +224,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
         const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+        const folderPath = this.platform.is('ios') ? window['cordova'].file.documentsDirectory : window['cordova'].file.externalRootDirectory 
         const downloadDirectory = `${folderPath}Download/`;
         
         this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
@@ -324,5 +324,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       ID.SELECT_ACTIVITY_DASHBOARD
     );
   }
-
+  onActivityCardClick($event, activity) {  }
+  activityMenuClick($event, activity, i) {}
 }

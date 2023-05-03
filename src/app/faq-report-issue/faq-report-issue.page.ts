@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { AudienceFilter, ProfileConstants, FormConfigSubcategories, PrimaryCategory } from '../app.constant';
 import {
   ProfileService,
@@ -20,7 +20,7 @@ import {
   TelemetrySyncStat,
   CorrelationData,
   LogLevel
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
   Environment,
   InteractType,
@@ -29,20 +29,20 @@ import {
   InteractSubtype,
   CorReleationDataType,
   ID
-} from '@app/services/telemetry-constants';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+} from '../../services/telemetry-constants';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
+import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';

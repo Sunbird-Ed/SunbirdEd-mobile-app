@@ -14,7 +14,6 @@ import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { DownloadsHeaderComponent } from './downloads-tab/downloads-header/downloads-header.component';
 import { RouterLinks } from '../app.constant';
 import { ComponentsModule } from '../components/components.module';
-import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 
 
 
@@ -39,18 +38,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    PipesModule,
-    DirectivesModule,
-    ComponentsModule
-  ],
-  declarations: [DownloadManagerPage,
-    NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],
-  entryComponents: [OverflowMenuComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        PipesModule,
+        DirectivesModule,
+        ComponentsModule
+    ],
+    declarations: [DownloadManagerPage,
+        NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent]
 })
 export class DownloadManagerPageModule { }

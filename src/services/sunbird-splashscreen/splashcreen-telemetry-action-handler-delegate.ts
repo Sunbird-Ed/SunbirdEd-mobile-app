@@ -1,8 +1,8 @@
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { Observable, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { TelemetryService, InteractType, CorrelationData } from 'sunbird-sdk';
-import { Environment, ImpressionType, PageId, CorReleationDataType } from '@app/services/telemetry-constants';
+import { TelemetryService, InteractType, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { Environment, ImpressionType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { mapTo } from 'rxjs/operators';
 
 interface TelemetryActionPayload {

@@ -1,7 +1,7 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { OtpPage } from './otp.page';
@@ -394,7 +394,7 @@ describe('OtpPage', () => {
                     code: '234'
                 }]
             }
-            let response = new Response();
+            let response:any = new Response();
                 response = {responseCode: 400, body: { params: {err:'UOS_OTPVERFY0063'}, result: {remainingAttempt: 1}}};
             const error: HttpClientError = new HttpClientError('Error', response);
             mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
@@ -433,7 +433,7 @@ describe('OtpPage', () => {
                     code: '234'
                 }]
             }
-            let response = new Response();
+            let response: any = new Response();
                 response = {responseCode: 402, body: { params: {err:'UOS_OTPVERFY0063'}, result: {remainingAttempt: 1}}};
             const error: HttpClientError = new HttpClientError('Error', response);
             mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
@@ -472,7 +472,7 @@ describe('OtpPage', () => {
                     code: '234'
                 }]
             }
-            let response = new Response();
+            let response: any = new Response();
                 response = {responseCode: 400, body: "", result: {remainingAttempt: 1}};
             const error: HttpClientError = new HttpClientError('Error', response);
             mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any
@@ -511,7 +511,7 @@ describe('OtpPage', () => {
                     code: '234'
                 }]
             }
-            let response = new Response();
+            let response: any = new Response();
                 response = {responseCode: 400, body: { params: {err:'UOS_OTPVERFY0063'}, result: {remainingAttempt: 0}}};
             const error: HttpClientError = new HttpClientError('Error', response);
             mockProfileService.verifyOTP = jest.fn(() => throwError(error)) as any

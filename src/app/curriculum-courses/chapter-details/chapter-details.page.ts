@@ -1,19 +1,19 @@
 import { share } from 'rxjs/operators';
-import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
+import { SbSharePopupComponent } from '../../../app/components/popups/sb-share-popup/sb-share-popup.component';
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { Router, NavigationExtras } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
+import { SbPopoverComponent } from '../../../app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import {
   RouterLinks, PreferenceKey, EventTopics, AssessmentConstant,
   MimeType, ShareItemType, BatchConstants, ProfileConstants, MaxAttempt
-} from '@app/app/app.constant';
+} from '../../../app/app.constant';
 import {
   SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
   CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus,
@@ -21,8 +21,8 @@ import {
   EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
   ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
   ContentUpdate, ContentImport, Rollup, AuditState, ProfileService, CourseBatchesRequest
-} from 'sunbird-sdk';
-import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
+} from '@project-sunbird/sunbird-sdk';
+import { EnrollCourse } from '../../../app/enrolled-course-details-page/course.interface';
 import { DatePipe, Location } from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
 import {
@@ -30,17 +30,17 @@ import {
   InteractSubtype, ImpressionType, AuditType
 } from './../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
-import { ConfirmAlertComponent } from '@app/app/components';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { ContentUtil } from '@app/util/content-util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { ConfirmAlertComponent } from '../../../app/components';
+import { FileSizePipe } from '../../../pipes/file-size/file-size';
+import { ContentUtil } from '../../../util/content-util';
+import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
+import { ContentPlayerHandler } from '../../../services/content/player/content-player-handler';
+import { ConsentPopoverActionsDelegate, LocalCourseService } from '../../../services/local-course.service';
+import { CategoryKeyTranslator } from '../../../pipes/category-key-translator/category-key-translator-pipe';
 import {
   ProfileNameConfirmationPopoverComponent
-} from '@app/app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+} from '../../../app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-chapter-details',
@@ -885,7 +885,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+    const folderPath = this.platform.is('ios') ? window['cordova'].file.documentsDirectory : window['cordova'].file.externalDataDirectory;
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -1085,5 +1085,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       );
     }
   }
+
+  cancelDownload() {}
 
 }

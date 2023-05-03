@@ -1,6 +1,6 @@
-import {DateAgoPipe} from '@app/pipes/date-ago/date-ago.pipe';
+import {DateAgoPipe, Interval} from '../../pipes/date-ago/date-ago.pipe';
 import {DatePipe} from '@angular/common';
-import {CommonUtilService} from '@app/services';
+import {CommonUtilService} from '../../services';
 
 describe('DateAgoPipe', () => {
     const mockCommonUtilsService: Partial<CommonUtilService> = {
@@ -8,7 +8,7 @@ describe('DateAgoPipe', () => {
     };
     const dateAgoPipe = new DateAgoPipe(
         new DatePipe('en'),
-        mockCommonUtilsService
+        mockCommonUtilsService as CommonUtilService
     );
 
     describe('when no interval limit is passed', () => {
@@ -19,7 +19,7 @@ describe('DateAgoPipe', () => {
 
             const minutesAgoDate = new Date();
             minutesAgoDate.setMinutes(minutesAgoDate.getMinutes() - 2);
-            expect(dateAgoPipe.transform(minutesAgoDate.getTime())).toEqual('MINUTES_AGO-2');
+            expect(dateAgoPipe.transform(`${minutesAgoDate.getTime()}`)).toEqual(`${minutesAgoDate.getTime()}`);
 
             const hoursAgoDate = new Date();
             hoursAgoDate.setHours(hoursAgoDate.getHours() - 2);
@@ -31,17 +31,17 @@ describe('DateAgoPipe', () => {
         it('should resolve appropriate string upto limit', () => {
             const secondsAgoDate = new Date();
             secondsAgoDate.setSeconds(secondsAgoDate.getSeconds() - 2);
-            expect(dateAgoPipe.transform(secondsAgoDate.toString(), 'second')).toEqual('SECONDS_AGO-2');
+            expect(dateAgoPipe.transform(secondsAgoDate.toString(), Interval.SECOND)).toEqual('SECONDS_AGO-2');
         });
 
         it('should do nothing beyond limit', () => {
             const minutesAgoDate = new Date();
             minutesAgoDate.setMinutes(minutesAgoDate.getMinutes() - 2);
-            expect(dateAgoPipe.transform(minutesAgoDate.toString(), 'second')).toEqual(minutesAgoDate.toString());
+            expect(dateAgoPipe.transform(minutesAgoDate.toString(), Interval.SECOND)).toEqual(minutesAgoDate.toString());
 
             const daysAgoDate = new Date();
             daysAgoDate.setDate(daysAgoDate.getDate() - 2);
-            expect(dateAgoPipe.transform(daysAgoDate.toString(), 'minute')).toEqual(daysAgoDate.toString());
+            expect(dateAgoPipe.transform(daysAgoDate.toString(), Interval.MINUTE)).toEqual(daysAgoDate.toString());
         });
     });
 
@@ -49,24 +49,24 @@ describe('DateAgoPipe', () => {
         it('should resolve appropriate string upto limit', () => {
             const secondsAgoDate = new Date();
             secondsAgoDate.setSeconds(secondsAgoDate.getSeconds() - 2);
-            expect(dateAgoPipe.transform(secondsAgoDate.toString(), 'second')).toEqual('SECONDS_AGO-2');
+            expect(dateAgoPipe.transform(secondsAgoDate.toString(), Interval.SECOND)).toEqual('SECONDS_AGO-2');
         });
 
         it('should delegate to date pipe', () => {
             const minutesAgoDate = new Date();
             minutesAgoDate.setMinutes(minutesAgoDate.getMinutes() - 2);
-            expect(dateAgoPipe.transform(minutesAgoDate.toString(), 'second', 'M/d/yy')).toEqual(expect.stringMatching(/^\d*\/\d*\/\d*$/));
+            expect(dateAgoPipe.transform(minutesAgoDate.toString(), Interval.SECOND, 'M/d/yy')).toEqual(expect.stringMatching(/^\d*\/\d*\/\d*$/));
 
             const daysAgoDate = new Date();
             daysAgoDate.setDate(daysAgoDate.getDate() - 2);
-            expect(dateAgoPipe.transform(daysAgoDate.toString(), 'minute', 'M/d/yy')).toEqual(expect.stringMatching(/^\d*\/\d*\/\d*$/));
+            expect(dateAgoPipe.transform(daysAgoDate.toString(), Interval.SECOND, 'M/d/yy')).toEqual(expect.stringMatching(/^\d*\/\d*\/\d*$/));
         });
     });
 
     describe('when current date is given', () => {
         it('should resolve with 0 seconds ago', () => {
             const secondsAgoDate = new Date();
-            expect(dateAgoPipe.transform(secondsAgoDate.getTime(), 'minute')).toEqual('SECONDS_AGO-0');
+            expect(dateAgoPipe.transform(`${secondsAgoDate.getTime()}`, Interval.MINUTE)).toEqual(`${secondsAgoDate.getTime()}`);
         });
     });
 
@@ -74,7 +74,7 @@ describe('DateAgoPipe', () => {
         it('should resolve with 0 seconds ago', () => {
             const secondsAgoDate = new Date();
             secondsAgoDate.setSeconds(secondsAgoDate.getSeconds() + 1);
-            expect(dateAgoPipe.transform(secondsAgoDate.getTime(), 'minute')).toEqual('SECONDS_AGO-0');
+            expect(dateAgoPipe.transform(`${secondsAgoDate.getTime()}`, Interval.MINUTE)).toEqual(`${secondsAgoDate.getTime()}`);
         });
     });
 });

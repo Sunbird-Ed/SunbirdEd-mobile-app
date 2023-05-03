@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -8,8 +8,8 @@ import { AttachmentService, DbService, NetworkService, ProjectService, statusTyp
 import { actions } from '../../core/constants/actions.constants';
 import * as _ from "underscore";
 import { Location } from '@angular/common';
-import { RouterLinks } from '@app/app/app.constant';
-import { GenericPopUpService } from '../../shared';
+import { RouterLinks } from '../../../../app/app.constant';
+import { GenericPopUpService } from '../../shared/generic.popup';
 
 @Component({
   selector: 'app-add-file',

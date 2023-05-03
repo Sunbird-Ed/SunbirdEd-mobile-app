@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DhitiApiService } from '@app/app/manage-learn/core/services/dhiti-api.service';
+import { DhitiApiService } from '../../../../../app/manage-learn/core/services/dhiti-api.service';
 import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-report-list',

@@ -1,14 +1,14 @@
 import { DiscoverComponent } from './discover.page';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
 import { AppGlobalService, CommonUtilService, FormAndFrameworkUtilService, OnboardingConfigurationService, TelemetryGeneratorService } from '../../../services';
 import { NavigationService } from '../../../services/navigation-handler.service';
-import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
-import { ContentFilterConfig } from '@app/app/app.constant';
+import { mockDiscoverPageData } from '../../../app/components/discover/discover.page.spec.data';
+import { ContentFilterConfig } from '../../../app/app.constant';
 import { ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { PrimaryCaregoryMapping } from '../../app.constant';
@@ -58,18 +58,15 @@ describe('DiscoverComponent', () => {
         discoverComponent = new DiscoverComponent(
             mockSharedPrefernces as SharedPreferences,
             mockAppVersion as AppVersion,
-            mockHeaderService as AppHeaderService,
             mockRouter as Router,
-            mockEvents as Events,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockContentAggregatorHandler as ContentAggregatorHandler,
             mockNavService as NavigationService,
             mockCommonUtilService as CommonUtilService,
             mockPopoverController as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService,
             mockPlatform as Platform,
-            mockOnBoardingConfigService
+            mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
 
@@ -105,8 +102,9 @@ describe('DiscoverComponent', () => {
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             PrimaryCaregoryMapping['primarycategory'] = { icon: 'icon path' }
             mockPlatform.is = jest.fn(platform => platform === 'android');
-            mockDiscoverPageData[1].code = 'other_boards';
-            mockDiscoverPageData[3].data[0].icon = undefined;
+            let mockDiscoverPageData = [{
+                code: 'other_boards'
+            },  {}, {data: [{icon: undefined}]}];
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
             const data = jest.fn((fn => fn({ name: 'notification' })));
             mockHeaderService.headerEventEmitted$ = {

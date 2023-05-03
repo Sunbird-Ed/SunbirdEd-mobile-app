@@ -3,16 +3,17 @@ import {
   ContentService, StorageService, ContentExportRequest,
   ContentExportResponse, Content, Rollup,
   CorrelationData, TelemetryObject,
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment } from '../telemetry-constants';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ContentUtil } from '../../util/content-util';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { AppGlobalService } from '../app-global-service.service';
 import { Platform } from '@ionic/angular';
 
+declare const cordova;
 @Injectable({
   providedIn: 'root'
 })

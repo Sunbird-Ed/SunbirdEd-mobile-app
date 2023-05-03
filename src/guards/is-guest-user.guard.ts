@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router } from '@angular/router';
-import { AuthService } from 'sunbird-sdk';
+import { AuthService } from '@project-sunbird/sunbird-sdk';
 
 @Injectable()
 export class IsGuestUserGuard implements CanLoad {

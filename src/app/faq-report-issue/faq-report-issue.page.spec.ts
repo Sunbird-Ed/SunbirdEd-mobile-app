@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     SharedPreferences,
     ProfileService,
@@ -12,12 +12,11 @@ import {
     DeviceInfo,
     FrameworkService,
     FrameworkUtilService,
-    TelemetryService,
-    TelemetryGeneratorService
- } from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+    TelemetryService
+ } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { AppHeaderService, FormAndFrameworkUtilService, TelemetryGeneratorService } from '../../services';
 import { Location } from '@angular/common';
 import {
     mockNavigationResp,
@@ -29,12 +28,12 @@ import {
     mockFrameworkList
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
+import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
-};
+} as any;
 
 describe('FaqReportIssuePage', () => {
     let faqReportIssuePage: FaqReportIssuePage;
@@ -48,7 +47,7 @@ describe('FaqReportIssuePage', () => {
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of(mockProfile)),
         getAllProfiles: jest.fn(() => of([mockUserProfile]))
-    };
+    } as any;
     const mockContentService: Partial<ContentService> = {
         getContents: jest.fn(() => of([]))
     };
@@ -58,11 +57,11 @@ describe('FaqReportIssuePage', () => {
     const mockFrameworkService: Partial<FrameworkService> = {
         getFrameworkDetails: jest.fn(() => of(mockFrameworkList)),
         getFrameworkCategoryTerms: jest.fn(() => of(mockFrameworkList))
-    };
+    } as any;
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
         getActiveChannelSuggestedFrameworkList: jest.fn(),
         getFrameworkCategoryTerms: jest.fn(() => of(mockFrameworkList))
-    };
+    } as any;
     const mockTelemetryService: Partial<TelemetryService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
@@ -72,18 +71,18 @@ describe('FaqReportIssuePage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn(() => mockUserProfile),
         getSelectedBoardMediumGrade: jest.fn(() => 'Karnataka, English, Class 7')
-    };
+    } as any;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
         translateMessage: jest.fn(),
         currentLang: 'en'
-    };
+    } as any;
     const mockAppHeaderService: Partial<AppHeaderService> = {
         showHeaderWithBackButton: jest.fn(),
         headerEventEmitted$: {
             subscribe: jest.fn((fn) => fn({name: 'back'}))
         }
-    };
+    } as any;
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
@@ -103,7 +102,7 @@ describe('FaqReportIssuePage', () => {
     };
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn(fn => fn())
-    };
+    } as any;
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getStateContactList: jest.fn(() => Promise.resolve(mockStateList))
     };
@@ -113,7 +112,7 @@ describe('FaqReportIssuePage', () => {
         getGradeConfigOptionsBuilder: jest.fn(),
         getSubjectConfigOptionsBuilder: jest.fn(),
     };
-    const mockAliasBoardName: Partia<AliasBoardName> = {
+    const mockAliasBoardName: Partial<AliasBoardName> = {
         transform: jest.fn()
     };
 
@@ -151,7 +150,7 @@ describe('FaqReportIssuePage', () => {
         mockAppGlobalService.formConfig = mockFormConfig;
         it('should call constructor and interpret formConfig', () => {
             // arrange
-            spyOn(faqReportIssuePage, 'arrayListHandling');
+            jest.spyOn(faqReportIssuePage, 'arrayListHandling');
             // assert
             expect(faqReportIssuePage).toBeTruthy();
             expect(faqReportIssuePage.formContext).toBeDefined();
@@ -199,7 +198,7 @@ describe('FaqReportIssuePage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([1,2,3]));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([1,2,3])) as any;
             // act
             await faqReportIssuePage.getBoardDetails();
             // assert
@@ -239,7 +238,7 @@ describe('FaqReportIssuePage', () => {
             const syncStat = {
                 syncedEventCount: 0
             };
-            mockTelemetryService.sync = jest.fn(() => of(syncStat));
+            mockTelemetryService.sync = jest.fn(() => of(syncStat)) as any;
             // act
             faqReportIssuePage.submit();
             // assert
@@ -256,7 +255,7 @@ describe('FaqReportIssuePage', () => {
             const syncStat = {
                 error: 'Error'
             };
-            mockTelemetryService.sync = jest.fn(() => of(syncStat));
+            mockTelemetryService.sync = jest.fn(() => of(syncStat)) as any;
             jest.spyOn(faqReportIssuePage, 'showContactBoard');
             // act
             faqReportIssuePage.submit();
@@ -274,7 +273,7 @@ describe('FaqReportIssuePage', () => {
             const syncStat = {
                 syncedEventCount: 1
             };
-            mockTelemetryService.sync = jest.fn(() => of(syncStat));
+            mockTelemetryService.sync = jest.fn(() => of(syncStat)) as any;
             jest.spyOn(faqReportIssuePage, 'ackknowledgeResponse');
             // act
             faqReportIssuePage.submit();
@@ -304,8 +303,8 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.children.subcategory['notify'] = true;
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+            jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+            jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
@@ -318,8 +317,8 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.category = 'otherissues';
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+            jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+            jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
@@ -330,13 +329,13 @@ describe('FaqReportIssuePage', () => {
         it('should other issue selected', () => {
             // arrange
             mockFormValue.category = 'otherissues';
-            mockFormValue.subcategory = undefined;
+            mockFormValue.subcategory = undefined as any;
             mockFormValue.children['category'] = mockFormValue.children.subcategory;
-            delete mockFormValue.children.subcategory
+            // delete mockFormValue.children.subcategory
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
             faqReportIssuePage.showSupportContact = false;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
+            jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert

@@ -6,12 +6,12 @@ import {
     Framework,
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, AlertController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -79,7 +79,7 @@ describe('ProfileSettingsPage', () => {
         initialOnboardingScreenName: '',
         getAppConfig: jest.fn(() => mockOnboardingConfigData),
         getOnboardingConfig: jest.fn(() => Promise.resolve())
-    }
+    } as any
 
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
@@ -162,7 +162,7 @@ describe('ProfileSettingsPage', () => {
             return;
         });
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
             return;
         });
@@ -219,14 +219,15 @@ describe('ProfileSettingsPage', () => {
             return;
         });
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({})) as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
             return;
         });
         jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
             return Promise.resolve();
         });
-        profileSettingsPage.profileSettingsForm['valueChanges'] = of({} as any);
+        profileSettingsPage['profileSettingsForm'] = {
+            valueChanges: of({} as any)} as any;
         // act
         profileSettingsPage.ngOnInit().then(() => {
             // assert
@@ -243,6 +244,7 @@ describe('ProfileSettingsPage', () => {
     it('should subscribe formControl to call ngOnDestroy()', () => {
         // arrange
         const formControlSubscriptions: Partial<Subscription> = { unsubscribe: jest.fn() };
+        profileSettingsPage['formControlSubscriptions'] = formControlSubscriptions as any;
         // act
         profileSettingsPage.ngOnDestroy();
         // assert
@@ -442,7 +444,7 @@ describe('ProfileSettingsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
+            jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}) as any);
             mockCommonUtilService.showToast = jest.fn();
             const values = new Map();
             values['board'] = 'na';
@@ -509,7 +511,7 @@ describe('ProfileSettingsPage', () => {
         jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
         });
-        mockActivatedRoute.snapshot.queryParams = { reOnboard: true };
+        mockActivatedRoute['snapshot'] = {queryParams: { reOnboard: true }}as any;
         profileSettingsPage.hideBackButton = true;
         // act
         profileSettingsPage.ionViewWillEnter();
@@ -531,7 +533,7 @@ describe('ProfileSettingsPage', () => {
         jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
         });
-        mockActivatedRoute.snapshot.queryParams = null;
+        mockActivatedRoute['snapshot'] = { queryParams: null} as any;
         profileSettingsPage.hideBackButton = false;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
@@ -602,7 +604,7 @@ describe('ProfileSettingsPage', () => {
 
     it('should submit form details for board blanked to call onSubmitAttempt()', () => {
         // arrange
-        const syllabusData = new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
+        const syllabusData = new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' } as any);
         mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         const values = new Map();
@@ -845,7 +847,7 @@ describe('ProfileSettingsPage', () => {
             profileSettingsPage['headerObservable'] = {
                 unsubscribe: jest.fn()
             };
-            profileSettingsPage['unregisterBackButton'] = null;
+            profileSettingsPage['unregisterBackButton'] = null as any;
             // act
             profileSettingsPage.ionViewWillLeave();
             // assert

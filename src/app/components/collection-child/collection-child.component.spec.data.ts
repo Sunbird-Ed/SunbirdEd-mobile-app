@@ -1,4 +1,4 @@
-import { Content, ContentStateResponse } from 'sunbird-sdk';
+import { Content, ContentStateResponse } from '@project-sunbird/sunbird-sdk';
 import { Navigation } from '@angular/router';
 
 export const mockChildContentData: Content = {
@@ -16,7 +16,7 @@ export const mockChildContentData: Content = {
         contentType: 'resources'
     }],
 
-};
+} as any;
 
 export const mockCompletedContentStatusData: ContentStateResponse = {
    contentList: [{

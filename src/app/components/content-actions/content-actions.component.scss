@@ -14,17 +14,15 @@
             border-bottom: 0px;
         }
     }
-    .content-action  {
-        .popover-content {
-            position: fixed !important;
-            top: $base-block-space !important;
-            @include ltr() {
-                right: $base-block-space !important;
-                left: unset !important;
-            }
-            @include rtl() {
-                left: $base-block-space !important;
-                right: unset !important;
-            } 
+    .content-action::part(content) {
+        position: fixed !important;
+        top: $base-block-space !important;
+        @include ltr() {
+            right: $base-block-space !important;
+            left: unset !important;
+        }
+        @include rtl() {
+            left: $base-block-space !important;
+            right: unset !important;
         }
     }

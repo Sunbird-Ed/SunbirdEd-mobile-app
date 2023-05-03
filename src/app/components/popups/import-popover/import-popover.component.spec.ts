@@ -1,27 +1,27 @@
 import { ImportPopoverComponent } from './import-popover.component';
 import { NgZone } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { FileSizePipe } from '../../../../pipes/file-size/file-size';
 import {
     ContentEventType,
     EventsBusEvent,
     EventsBusService
-} from 'sunbird-sdk';
-import { TelemetryGeneratorService, AppGlobalService } from '@app/services';
+} from '@project-sunbird/sunbird-sdk';
+import { TelemetryGeneratorService, AppGlobalService } from '../../../../services';
 import {
     Environment,
     ImpressionType,
     PageId,
     ID,
     InteractType
-} from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 import { of } from 'rxjs';
 
 describe('ImportPopoverComponent', () => {
     let importPopoverComponent: ImportPopoverComponent;
     const mockEventBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
-    };
+    } as any;
 
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
@@ -29,7 +29,7 @@ describe('ImportPopoverComponent', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         isOnBoardingCompleted: jest.fn(() => true)
-    };
+    } as any;
     const mockPopoverController: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
@@ -62,7 +62,7 @@ describe('ImportPopoverComponent', () => {
     };
     const mockNgZone: Partial<NgZone> = {
         run : jest.fn((fn) => fn())
-    };
+    } as any;
     beforeAll(() => {
         importPopoverComponent = new ImportPopoverComponent(
             mockEventBusService as EventsBusService,

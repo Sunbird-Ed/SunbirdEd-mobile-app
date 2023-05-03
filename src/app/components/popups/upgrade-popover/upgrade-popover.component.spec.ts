@@ -2,16 +2,16 @@ import { UpgradePopoverComponent } from './upgrade-popover.component';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService } from '../../../../services';
 import { InteractType } from '@project-sunbird/sunbird-sdk';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
 
-    window.cordova.plugins = {
+    window['cordova']['plugins'] = {
         InAppUpdateManager: {
             checkForImmediateUpdate: jest.fn((fn) => (fn = jest.fn()))
         }
-    };
+    } as any;
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('some_string'))
     };

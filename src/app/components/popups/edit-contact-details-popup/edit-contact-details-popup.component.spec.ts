@@ -2,9 +2,9 @@ import { EditContactDetailsPopupComponent } from './edit-contact-details-popup.c
 import { CommonUtilService } from '../../../../services';
 import { PopoverController, Platform, NavParams, MenuController } from '@ionic/angular';
 import { of, throwError } from 'rxjs';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 
 describe('EditContactDetailsPopupComponent', () => {
     let editContactDetailsPopupComponent: EditContactDetailsPopupComponent;
@@ -101,7 +101,7 @@ describe('EditContactDetailsPopupComponent', () => {
     it('should dismiss the popup when cancel is invoked', () => {
         // arrange
         // act
-        editContactDetailsPopupComponent.cancel({ sourceCapabilities: true });
+        editContactDetailsPopupComponent.cancel();
         // assert
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ isEdited: false });
     });

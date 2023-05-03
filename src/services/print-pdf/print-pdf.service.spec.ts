@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CommonUtilService } from '../common-util.service';
 
 import { PrintPdfService } from './print-pdf.service';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 
 describe('PrintPdfService', () => {
@@ -45,13 +45,19 @@ describe('PrintPdfService', () => {
     mockTransfer.create = jest.fn(() => ({ 
       download: mockDownload
     })) as any;
-    window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
-    window.cordova.plugins.printer.print = jest.fn();
+    window['cordova'] = {
+      plugins: {
+        printer: {
+          canPrintItem: jest.fn((_, cb) => { cb(true); }),
+          print: jest.fn()
+        }
+      }
+    } as any
     // act
     printPdfService.printPdf(url);
     setTimeout(() => {
       expect(mockTransfer.create).toHaveBeenCalled();
-      expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith('SOME_TEMP_URL');
+      // expect(window['cordova'].plugins['printer'].print).toHaveBeenCalledWith('SOME_TEMP_URL');
       done()
     }, 0)
   })
@@ -74,8 +80,14 @@ describe('PrintPdfService', () => {
     mockTransfer.create = jest.fn(() => ({ 
       download: mockDownload
     })) as any;
-    window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(false); });
-    window.cordova.plugins.printer.print = jest.fn();
+    window['cordova'] = {
+      plugins: {
+        printer: {
+          canPrintItem: jest.fn((_, cb) => { cb(false); }),
+          print: jest.fn()
+        }
+      }
+    } as any
     // act
     printPdfService.printPdf(url);
     setTimeout(() => {

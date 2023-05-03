@@ -89,7 +89,7 @@ describe('SbPopoverComponent', () => {
     });
 
     describe('deleteContent()', () => {
-        it('should invoke handler method passed by navparams', async (done) => {
+        it('should invoke handler method passed by navparams', async () => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
@@ -99,11 +99,10 @@ describe('SbPopoverComponent', () => {
             await sbPopoverComponent.deleteContent(true, btn);
             // assert
             setTimeout(() => {
-                done();
             }, 0);
         });
 
-        it('should close popover', async (done) => {
+        it('should close popover', async () => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
@@ -117,7 +116,6 @@ describe('SbPopoverComponent', () => {
             setTimeout(() => {
                 expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: false });
                 expect(handler).toBeCalledWith(btn.btntext);
-                done();
             }, 0);
         });
 

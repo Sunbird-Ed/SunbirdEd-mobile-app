@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { RouterLinks } from "@app/app/app.constant";
+import { RouterLinks } from "../../../../app/app.constant";
 import { Router } from "@angular/router";
 import {
   LoaderService,
@@ -12,8 +12,8 @@ import { KendraApiService } from "../../core/services/kendra-api.service";
 import { Subscription } from "rxjs";
 import { storageKeys } from "../../storageKeys";
 import { ObservationService } from "../observation.service";
-import { AppHeaderService } from "@app/services/app-header.service";
-import { CommonUtilService } from "@app/services/common-util.service";
+import { AppHeaderService } from "../../../../services/app-header.service";
+import { CommonUtilService } from "../../../../services/common-util.service";
 @Component({
   selector: "app-observation-home",
   templateUrl: "./observation-home.component.html",

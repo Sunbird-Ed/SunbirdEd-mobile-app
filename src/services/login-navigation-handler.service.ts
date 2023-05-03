@@ -1,6 +1,6 @@
-import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants, SystemSettingsIds } from '@app/app/app.constant';
-import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
-import { Context as SbProgressLoaderContext, SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants, SystemSettingsIds } from '../app/app.constant';
+import { Environment, InteractType, PageId } from '../services/telemetry-constants';
+import { Context as SbProgressLoaderContext, SbProgressLoader } from '../services/sb-progress-loader.service';
 import {
     SharedPreferences,
     ProfileService,
@@ -11,18 +11,18 @@ import {
     ProfileSource,
     SignInError,
     SystemSettingsService
-} from 'sunbird-sdk';
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+} from '@project-sunbird/sunbird-sdk';
+import { initTabs, LOGIN_TEACHER_TABS } from '../app/module.service';
 import { Inject, Injectable, NgZone } from '@angular/core';
-import { Events } from '@app/util/events';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContainerService } from '@app/services/container.services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { Events } from '../util/events';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { ContainerService } from '../services/container.services';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { CommonUtilService } from '../services/common-util.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { mergeMap, tap } from 'rxjs/operators';
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 import { Platform } from '@ionic/angular';
 
 @Injectable()

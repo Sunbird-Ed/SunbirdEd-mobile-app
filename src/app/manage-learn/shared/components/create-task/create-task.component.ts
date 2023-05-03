@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { AttachmentService, ToastService, UtilsService } from '../../../../../app/manage-learn/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 @Component({

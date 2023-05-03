@@ -39,7 +39,7 @@ import {
   ProfileService,
   AuditState,
   TrackingEnabled
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
   Environment, ImpressionType, InteractSubtype, InteractType,
@@ -47,17 +47,17 @@ import {
   AuditType, ImpressionSubtype
 } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
-import { Events } from '@app/util/events';
-import { RatingHandler } from '@app/services/rating/rating-handler';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { Events } from '../../util/events';
+import { RatingHandler } from '../../services/rating/rating-handler';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
 import { map } from 'rxjs/operators';
-import { ContentUtil } from '@app/util/content-util';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import {ContentInfo} from '@app/services/content/content-info';
+import { ContentUtil } from '../../util/content-util';
+import { NavigationService } from '../../services/navigation-handler.service';
+import {ContentInfo} from '../../services/content/content-info';
 declare const cordova;
 
 @Component({

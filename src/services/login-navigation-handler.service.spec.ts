@@ -7,22 +7,22 @@ import {
     SignInError,
     SystemSettingsService
 } from '@project-sunbird/sunbird-sdk';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { Events } from '@app/util/events';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContainerService } from '@app/services/container.services';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { Events } from '../util/events';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { ContainerService } from '../services/container.services';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { CommonUtilService } from '../services/common-util.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { of, throwError } from 'rxjs';
 import { Platform } from '@ionic/angular';
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 import { PreferenceKey } from '../app/app.constant';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = require.requireActual('@project-sunbird/sunbird-sdk');
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewStateSessionProvider() {
@@ -34,8 +34,8 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
     };
 });
 
-jest.mock('@app/app/module.service', () => {
-    const actual = require.requireActual('@app/app/module.service');
+jest.mock('../app/module.service', () => {
+    const actual = jest.requireActual('../app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {
@@ -63,7 +63,7 @@ describe('LoginNavigationHandlerService', () => {
         deleteProfile: jest.fn((id) => of()),
         getAllProfiles: jest.fn(() => of([mockUserProfile])),
         setActiveSessionForProfile: jest.fn(() => of())
-    };
+    } as any;
     const mockAuthService: Partial<AuthService> = {
         resignSession: jest.fn()
     };
@@ -93,7 +93,7 @@ describe('LoginNavigationHandlerService', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
         getSystemSettings: jest.fn(() => of({ id: 'googleClientId' }))
-    };
+    } as any;
     const mockGooglePlus: Partial<GooglePlus> = {
         trySilentLogin: jest.fn(() => Promise.resolve('resolve')),
         disconnect: jest.fn(() => Promise.reject())
@@ -167,13 +167,13 @@ describe('LoginNavigationHandlerService', () => {
             mockAuthService.setSession = jest.fn(() => throwError(signInError));
             mockSbProgressLoader.hide = jest.fn()
             mockSharedPreferences.getString = jest.fn(() => of(''));
-            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of());
+            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value: ''})) as any;
             mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
                 webClientId: clientId.value
             }));
             mockGooglePlus.disconnect = jest.fn();
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
-            mockAuthService.resignSession = jest.fn(() => Promise.resolve())
+            mockAuthService.resignSession = jest.fn(() => Promise.resolve()) as any;
 
             // act
             loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true, componentData: ''}, 'sub');
@@ -193,13 +193,13 @@ describe('LoginNavigationHandlerService', () => {
             mockSharedPreferences.getBoolean = jest.fn(() => of(false));
             mockPlatform.is = jest.fn(platform => platform === "android");
             mockSharedPreferences.getString = jest.fn(() => of());
-            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of());
+            const clientId = mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value: ''})) as any;
             mockGooglePlus.trySilentLogin = jest.fn(() => Promise.resolve({
                 webClientId: clientId.value
             }));
             mockGooglePlus.disconnect = jest.fn();
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
-            mockAuthService.resignSession = jest.fn(() => Promise.resolve())
+            mockAuthService.resignSession = jest.fn(() => Promise.resolve()) as any;
             // act
             loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true, componentData: ''}, 'sub');
             // assert
@@ -222,7 +222,7 @@ describe('LoginNavigationHandlerService', () => {
             }));
 
             mockSharedPreferences.getString = jest.fn(() => of('true'));
-            mockSharedPreferences.putString = jest.fn(() => of('administrator'))
+            mockSharedPreferences.putString = jest.fn(() => of('administrator')) as any
 
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 id: '',
@@ -233,13 +233,13 @@ describe('LoginNavigationHandlerService', () => {
                     slug: '',
                     orgName: ''
                 }
-            }));
+            })) as any;
             jest.spyOn(loginNavigationHandlerService, 'generateLoginInteractTelemetry').getMockImplementation();
             mockProfileService.createProfile = jest.fn(() => of());
-            mockSharedPreferences.putString = jest.fn(() => of('administrator'));
+            mockSharedPreferences.putString = jest.fn(() => of('administrator')) as any;
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockEvents.publish = jest.fn();
             mockSbProgressLoader.hide = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -250,7 +250,7 @@ describe('LoginNavigationHandlerService', () => {
             mockProfileService.isDefaultChannelProfile = jest.fn(() => of(true));
 
             // act
-            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true });
+            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true }, '');
             // assert
             setTimeout(() => {
                 expect(mockAuthService.setSession).toHaveBeenCalled();
@@ -273,7 +273,7 @@ describe('LoginNavigationHandlerService', () => {
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockEvents.publish = jest.fn();
             mockSbProgressLoader.hide = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -284,7 +284,7 @@ describe('LoginNavigationHandlerService', () => {
             mockProfileService.isDefaultChannelProfile = jest.fn(() => of(false));
 
             // act
-            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true });
+            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: true }, '');
             // assert
             setTimeout(() => {
                 expect(mockAuthService.setSession).toHaveBeenCalled();
@@ -312,13 +312,13 @@ describe('LoginNavigationHandlerService', () => {
                     slug: '',
                     orgName: ''
                 }
-            }));
+            })) as any;
             jest.spyOn(loginNavigationHandlerService, 'generateLoginInteractTelemetry').getMockImplementation();
-            mockProfileService.createProfile = jest.fn(() => throwError());
+            mockProfileService.createProfile = jest.fn(() => throwError({}));
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             mockEvents.publish = jest.fn();
             mockSbProgressLoader.hide = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -329,7 +329,7 @@ describe('LoginNavigationHandlerService', () => {
             mockProfileService.isDefaultChannelProfile = jest.fn(() => of(false));
 
             // act
-            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: false });
+            loginNavigationHandlerService.setSession({}, { source: 'profile', redirectUrlAfterLogin: false }, '');
             // assert
             setTimeout(() => {
                 expect(mockAuthService.setSession).toHaveBeenCalled();
@@ -359,7 +359,7 @@ describe('LoginNavigationHandlerService', () => {
                 syllabus: [''],
                 source: ProfileSource.SERVER
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile)) as any;
             mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfile));
@@ -386,7 +386,7 @@ describe('LoginNavigationHandlerService', () => {
                 syllabus: [''],
                 source: ProfileSource.SERVER
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile)) as any;
             mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfile));
@@ -413,7 +413,7 @@ describe('LoginNavigationHandlerService', () => {
                 syllabus: [''],
                 source: ProfileSource.SERVER
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => of(mockProfile)) as any;
             mockProfileService.updateProfile = jest.fn(() => of(mockProfile));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => throwError({ Error: "" }));
