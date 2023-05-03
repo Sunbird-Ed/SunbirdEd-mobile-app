@@ -17,6 +17,7 @@ jobs:
             if [ ! -d "node_modules" ]; then
             npm i -f
             fi
+          no_output_timeout: 60m
       - save_cache:
           key: node_modules_cache_{{ checksum "package-lock.json" }}
           paths:
