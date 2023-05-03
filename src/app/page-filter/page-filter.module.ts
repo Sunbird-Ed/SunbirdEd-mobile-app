@@ -6,8 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { PageFilterPage } from './page-filter.page';
-import { DirectivesModule } from '@app/directives/directives.module';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { DirectivesModule } from '../../directives/directives.module';
+import { PipesModule } from '../../pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [

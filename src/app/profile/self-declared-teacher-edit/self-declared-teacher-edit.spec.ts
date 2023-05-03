@@ -1,12 +1,12 @@
 import {of, throwError} from 'rxjs';
 import {SelfDeclaredTeacherEditPage} from './self-declared-teacher-edit.page';
-import {Consent, ProfileService, SharedPreferences, UpdateConsentResponse} from 'sunbird-sdk';
+import {Consent, ProfileService, SharedPreferences, UpdateConsentResponse} from '@project-sunbird/sunbird-sdk';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Platform, PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService} from '@app/services';
-import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
-import {FormValidationAsyncFactory} from '@app/services/form-validation-async-factory/form-validation-async-factory';
+import {Events} from '../../../util/events';
+import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService} from '../../../services';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '../../../services/telemetry-constants';
+import {FormValidationAsyncFactory} from '../../../services/form-validation-async-factory/form-validation-async-factory';
 import {Location} from '@angular/common';
 import {PreferenceKey} from '../../app.constant';
 import {mockSelfDeclarationForm, mockTenantPersonaInfoForm} from '../../../services/formandframeworkutil.service.spec.data';

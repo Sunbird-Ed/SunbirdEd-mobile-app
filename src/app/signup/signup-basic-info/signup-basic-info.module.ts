@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { SignupBasicInfoPage } from './signup-basic-info.page';
 import { RouterModule, Routes } from '@angular/router';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonFormElementsModule } from 'common-form-elements';
 

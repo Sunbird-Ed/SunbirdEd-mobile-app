@@ -2,24 +2,24 @@ import { Location } from '@angular/common';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { featureIdMap } from '@app/feature-id-map';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
-import { LocationHandler } from '@app/services/location-handler';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { featureIdMap } from '../../feature-id-map';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { FormLocationFactory } from '../../services/form-location-factory/form-location-factory';
+import { LocationHandler } from '../../services/location-handler';
+import { ProfileHandler } from '../../services/profile-handler';
 import {
   AuditType, CorReleationDataType, Environment,
   ID, ImpressionType,
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { FieldConfig } from 'common-form-elements';
 import { concat, defer, of, Subscription } from 'rxjs';
@@ -29,12 +29,12 @@ import {
   DeviceRegisterService,
   FormRequest, LocationSearchResult, Profile, ProfileService,
   SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
 import {ProfileType} from '@project-sunbird/sunbird-sdk';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
 @Component({
   selector: 'app-district-mapping',
@@ -376,7 +376,7 @@ export class DistrictMappingPage implements OnDestroy {
     }
   }
 
-  private skipLocation() {
+  skipLocation() {
     this.router.navigate([`/${RouterLinks.TABS}`]);
     this.events.publish('update_header');
   }

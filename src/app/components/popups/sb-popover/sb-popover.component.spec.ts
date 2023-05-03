@@ -89,21 +89,21 @@ describe('SbPopoverComponent', () => {
     });
 
     describe('deleteContent()', () => {
-        it('should invoke handler method passed by navparams', async (done) => {
+        it('should invoke handler method passed by navparams', (done) => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
                 btntext: 'button'
             };
             // act
-            await sbPopoverComponent.deleteContent(true, btn);
+            sbPopoverComponent.deleteContent(true, btn);
             // assert
             setTimeout(() => {
                 done();
             }, 0);
         });
 
-        it('should close popover', async (done) => {
+        it('should close popover', (done) => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
@@ -112,7 +112,7 @@ describe('SbPopoverComponent', () => {
             const handler = jest.fn();
             jest.spyOn(mockNavParams, 'get').mockReturnValue(handler);
             // act
-            await sbPopoverComponent.deleteContent(false, btn);
+            sbPopoverComponent.deleteContent(false, btn);
             // assert
             setTimeout(() => {
                 expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: false });

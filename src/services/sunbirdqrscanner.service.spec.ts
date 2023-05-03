@@ -2,7 +2,7 @@ import {SunbirdQRScanner} from './sunbirdqrscanner.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ModalController, Platform, ToastController} from '@ionic/angular';
 import {Router} from '@angular/router';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {CommonUtilService} from './common-util.service';
 import {AndroidPermissionsService} from './android-permissions/android-permissions.service';
 import {ContainerService} from './container.services';
@@ -19,8 +19,8 @@ import {
     InteractType, Mode,
     PageId
 } from './telemetry-constants';
-import {AndroidPermission, PermissionAskedEnum} from '@app/services/android-permissions/android-permission';
-import {Profile, ProfileType} from 'sunbird-sdk';
+import {AndroidPermission, PermissionAskedEnum} from '../services/android-permissions/android-permission';
+import {Profile, ProfileType} from '@project-sunbird/sunbird-sdk';
 
 describe('SunbirdQRScanner', () => {
     let sunbirdQRScanner: SunbirdQRScanner;

@@ -1,12 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import {
     InteractSubtype,
     InteractType,
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+} from '../../services/telemetry-constants';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import {
     WebviewStateSessionProviderConfig,
     WebviewRegisterSessionProviderConfig,
@@ -19,19 +19,19 @@ import {
     SharedPreferences,
     NativeAppleSessionProvider,
     NativeKeycloakSessionProvider
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {Router} from '@angular/router';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
-import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
+import {SbProgressLoader} from '../../services/sb-progress-loader.service';
+import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+import {PreferenceKey, SystemSettingsIds} from '../../app/app.constant';
 import {Location} from '@angular/common';
 import {
     SignInWithApple,
     AppleSignInResponse,
     AppleSignInErrorResponse,
     ASAuthorizationAppleIDRequest
-} from '@ionic-native/sign-in-with-apple/ngx';
+} from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 import { Platform } from '@ionic/angular';
 import { FieldConfig } from 'common-form-elements';
 
@@ -125,7 +125,7 @@ export class SignInPage implements OnInit {
         this.loginButtonValidation = Object.values(event).every(x => (x !== null && x !== ''));
     }
                 
-    async onLabelClickEvent() {
+    async onLabelClickEvent(event: any) {
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewForgotPasswordSessionProviderConfig: WebviewSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;

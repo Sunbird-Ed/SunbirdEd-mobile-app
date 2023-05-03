@@ -1,13 +1,13 @@
-import {UpdateProfileService} from '@app/services/update-profile-service';
+import {UpdateProfileService} from '../services/update-profile-service';
 import {ProfileService} from '@project-sunbird/sunbird-sdk';
-import {FrameworkCategoryCodesGroup, FrameworkService, FrameworkUtilService} from 'sunbird-sdk';
+import {FrameworkCategoryCodesGroup, FrameworkService, FrameworkUtilService} from '@project-sunbird/sunbird-sdk';
 import {TranslateService} from '@ngx-translate/core';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {Events} from '@app/util/events';
-import {AppGlobalService} from '@app/services/app-global-service.service';
+import {CommonUtilService} from '../services/common-util.service';
+import {TelemetryGeneratorService} from '../services/telemetry-generator.service';
+import {Events} from '../util/events';
+import {AppGlobalService} from '../services/app-global-service.service';
 import {of, throwError} from 'rxjs';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {SbProgressLoader} from '../services/sb-progress-loader.service';
 
 describe('UpdateProfileService', () => {
     let updateProfileService: UpdateProfileService;

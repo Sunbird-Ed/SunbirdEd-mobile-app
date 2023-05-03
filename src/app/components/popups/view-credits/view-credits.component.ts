@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { ContentUtil } from '@app/util/content-util';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { Environment, InteractType, InteractSubtype } from '../../../../services/telemetry-constants';
+import { ContentUtil } from '../../../../util/content-util';
 
 @Component({
   selector: 'app-view-credits',

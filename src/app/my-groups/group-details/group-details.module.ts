@@ -1,4 +1,4 @@
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -8,8 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GroupDetailsPage } from './group-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ComponentsModule } from '../../components/components.module';
-import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 import { AddActivityToGroupPage } from '../add-activity-to-group/add-activity-to-group.page';
 import { ViewMoreActivityPage } from '../view-more-activity/view-more-activity.page';
 import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
@@ -30,20 +29,19 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [GroupDetailsPage, AddActivityToGroupPage, ViewMoreActivityPage],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    CommonConsumptionModule,
-    ComponentsModule,
-    PipesModule
-  ],
-  exports: [GroupDetailsPage],
-  providers: [ViewMoreActivityDelegateService],
-  entryComponents: [OverflowMenuComponent]
+    declarations: [GroupDetailsPage, AddActivityToGroupPage, ViewMoreActivityPage],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        CommonConsumptionModule,
+        ComponentsModule,
+        PipesModule
+    ],
+    exports: [GroupDetailsPage],
+    providers: [ViewMoreActivityDelegateService]
 })
 export class GroupDetailsPageModule {}

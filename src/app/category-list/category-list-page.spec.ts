@@ -10,8 +10,8 @@ import {
     Environment, InteractSubtype, InteractType, PageId, SearchFilterService,
     TelemetryGeneratorService
 } from '../../services';
-import { ContentUtil } from '@app/util/content-util';
-import { RouterLinks } from '@app/app/app.constant';
+import { ContentUtil } from '../../util/content-util';
+import { RouterLinks } from '../../app/app.constant';
 import { ModalController } from '@ionic/angular';
 
 describe('CategoryListPage', () => {

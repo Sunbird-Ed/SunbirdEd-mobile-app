@@ -1,23 +1,23 @@
 import { Location } from '@angular/common';
 import { Component, Inject, Input, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { BatchConstants, ContentCard, PreferenceKey, RouterLinks, ViewMore } from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { BatchConstants, ContentCard, PreferenceKey, RouterLinks, ViewMore } from '../../app/app.constant';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { CourseUtilService } from '../../services/course-util.service';
+import { NavigationService } from '../../services/navigation-handler.service';
 import {
   CorReleationDataType, Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { ContentUtil } from '../../util/content-util';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Subscription } from 'rxjs';
 import {
   Batch, Content,
@@ -37,7 +37,7 @@ import {
   FetchEnrolledCourseRequest, LogLevel, SearchType,
   SharedPreferences,
   SortOrder
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 
 @Component({
@@ -115,6 +115,7 @@ export class ViewMoreActivityComponent implements OnInit {
   objVer;
   loader: any;
   isLoading = false;
+  defaultAppIcon: '';
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -124,7 +125,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private events: Events,
     private ngZone: NgZone,
     private courseUtilService: CourseUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,

@@ -1,5 +1,5 @@
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
-import {FormAndFrameworkUtilService} from '@app/services';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
+import {FormAndFrameworkUtilService} from '../../services';
 
 describe('alias-board-name', () => {
     let aliasBoardName: AliasBoardName;

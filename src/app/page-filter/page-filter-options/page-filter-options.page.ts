@@ -5,7 +5,7 @@ import {
   Platform,
   PopoverController,
 } from '@ionic/angular';
-import { PageAssembleFilter } from 'sunbird-sdk';
+import { PageAssembleFilter } from '@project-sunbird/sunbird-sdk';
 @Component({
   selector: 'app-page-filter-options',
   templateUrl: './page-filter-options.page.html',

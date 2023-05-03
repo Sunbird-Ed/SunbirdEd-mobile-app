@@ -1,14 +1,14 @@
 import { Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { ContentUtil } from '@app/util/content-util';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Network } from '@ionic-native/network/ngx';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
+import { AggregatorPageType } from '../../services/content/content-aggregator-namespaces';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ProfileHandler } from '../../services/profile-handler';
+import { ContentUtil } from '../../util/content-util';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { IonRefresher, Platform, PopoverController, ToastController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import forEach from 'lodash/forEach';
@@ -27,7 +27,7 @@ import {
   FrameworkService, FrameworkUtilService, GetFrameworkCategoryTermsRequest, NetworkError, PageAssembleCriteria, PageName,
   Profile, ProfileService, SharedPreferences,
   SortOrder, TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
   BatchConstants, ContentCard,
   ContentFilterConfig, EventTopics,

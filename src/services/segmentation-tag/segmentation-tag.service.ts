@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants} from '../../app/app.constant';
 import {
     AuthService,
     DebuggingService,
@@ -7,13 +7,13 @@ import {
     ProfileService,
     SegmentationService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {AppGlobalService} from '../app-global-service.service';
-import {NotificationService} from '@app/services/notification.service';
+import {NotificationService} from '../../services/notification.service';
 import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {FormConstants} from '@app/app/form.constants';
-import {Events} from '@app/util/events';
+import {FormConstants} from '../../app/form.constants';
+import {Events} from '../../util/events';
 
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';

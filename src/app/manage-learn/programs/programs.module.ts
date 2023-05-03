@@ -5,7 +5,7 @@ import { ProgramListingComponent } from './program-listing/program-listing.compo
 import { SolutionListingComponent } from './solution-listing/solution-listing.component';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../shared/shared.module';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '../core/core.module';
@@ -22,16 +22,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ProgramListingComponent, SolutionListingComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    TranslateModule.forChild(),
-    SharedModule,
-    IonicModule,
-    FormsModule,
-    CoreModule,
-  ],
-  entryComponents:[]
+    declarations: [ProgramListingComponent, SolutionListingComponent],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes),
+        TranslateModule.forChild(),
+        SharedModule,
+        IonicModule,
+        FormsModule,
+        CoreModule,
+    ]
 })
 export class ProgramsModule {}

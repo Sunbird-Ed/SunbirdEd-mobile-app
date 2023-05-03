@@ -7,11 +7,11 @@ import {
     FormService,
     NetworkError,
     CertificateAlreadyDownloaded, FrameworkService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { PopoverController, ToastController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import {
     AndroidPermissionsService,
     AppGlobalService,
@@ -19,16 +19,16 @@ import {
     CommonUtilService, Environment,
     FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId,
     TelemetryGeneratorService
-} from '@app/services';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+} from '../../services';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { of, throwError } from 'rxjs';
 import { mockFormData, mockProfileData } from './profile.page.spec.data';
-import { ContentFilterConfig, RouterLinks } from '@app/app/app.constant';
+import { ContentFilterConfig, RouterLinks } from '../../app/app.constant';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';

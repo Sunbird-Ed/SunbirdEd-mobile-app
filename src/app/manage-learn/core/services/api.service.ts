@@ -5,11 +5,11 @@ import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
-import { AuthService, DeviceInfo, SharedPreferences } from 'sunbird-sdk';
+import { AuthService, DeviceInfo, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
 import { ApiUtilsService } from './api-utils.service';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 
 
 

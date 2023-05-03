@@ -3,10 +3,10 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
@@ -19,10 +19,10 @@ import {
 } from '../../../services';
 import { Location } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../services/profile-handler';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { of, throwError } from 'rxjs';
 import { CachedItemRequestSourceFrom, Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app.constant';
@@ -202,37 +202,37 @@ describe('CategoryEditPage', () => {
         });
     });
 
-    describe('constructor ', () => {
-        beforeEach(() => {
-            categoryEditPage = new CategoriesEditPage(
-                mockProfileService as ProfileService,
-                mockFrameworkService as FrameworkService,
-                mockFrameworkUtilService as FrameworkUtilService,
-                mockSharedPreferences as SharedPreferences,
-                mockCommonUtilService as CommonUtilService,
-                mockFb as FormBuilder,
-                mockTranslate as TranslateService,
-                mockAppGlobalService as AppGlobalService,
-                mockHeaderService as AppHeaderService,
-                mockRouter as Router,
-                mockLocation as Location,
-                mockPlatform as Platform,
-                mockActivePageService as ActivePageService,
-                mockProgressLoader as SbProgressLoader,
-                mockProfileHandler as ProfileHandler,
-                mockSegmentationTagService as SegmentationTagService,
-                mockCategoriesEditService as CategoriesEditService,
-                mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
-            );
-            mockCommonUtilService.translateMessage = jest.fn(() => ({
-                toLocaleUpperCase: jest.fn()
-            })) as any
-            mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
-        })
-    })
+    // describe('constructor ', () => {
+    //     beforeEach(() => {
+    //         categoryEditPage = new CategoriesEditPage(
+    //             mockProfileService as ProfileService,
+    //             mockFrameworkService as FrameworkService,
+    //             mockFrameworkUtilService as FrameworkUtilService,
+    //             mockSharedPreferences as SharedPreferences,
+    //             mockCommonUtilService as CommonUtilService,
+    //             mockFb as FormBuilder,
+    //             mockTranslate as TranslateService,
+    //             mockAppGlobalService as AppGlobalService,
+    //             mockHeaderService as AppHeaderService,
+    //             mockRouter as Router,
+    //             mockLocation as Location,
+    //             mockPlatform as Platform,
+    //             mockActivePageService as ActivePageService,
+    //             mockProgressLoader as SbProgressLoader,
+    //             mockProfileHandler as ProfileHandler,
+    //             mockSegmentationTagService as SegmentationTagService,
+    //             mockCategoriesEditService as CategoriesEditService,
+    //             mockTelemetryGeneratorService as TelemetryGeneratorService,
+    //             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+    //         );
+    //         mockCommonUtilService.translateMessage = jest.fn(() => ({
+    //             toLocaleUpperCase: jest.fn()
+    //         })) as any
+    //         mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
+    //     })
+    // })
     describe('ngOnInit', () => {
-        it('should populate the supported attributes, return if value is not array', async(done) => {
+        it('should populate the supported attributes, return if value is not array', (done) => {
             // arrange
             mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
             categoryEditPage.profile = {
@@ -301,7 +301,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, return if value has no length', async(done) => {
+        it('should populate the supported attributes, return if value has no length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -370,7 +370,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, for board length', async(done) => {
+        it('should populate the supported attributes, for board length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -442,7 +442,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, if has value', async(done) => {
+        it('should populate the supported attributes, if has value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -652,7 +652,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel', async(done) => {
+        it('should populate the supported attributes gradeLevel', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -718,7 +718,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel, has some value', async(done) => {
+        it('should populate the supported attributes gradeLevel, has some value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {

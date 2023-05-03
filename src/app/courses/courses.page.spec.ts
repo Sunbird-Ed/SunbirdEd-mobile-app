@@ -1,15 +1,15 @@
 import { CoursesPage } from './courses.page';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { NgZone } from '@angular/core';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { CourseUtilService } from '../../services/course-util.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
@@ -26,7 +26,7 @@ import {
     PageAssembleService,
     ProfileType,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { BatchConstants, ContentCard, PageName } from '../app.constant';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { Camera, CameraOptions, MediaType, PictureSourceType } from "@ionic-native/camera/ngx";
-import { Chooser } from "@ionic-native/chooser/ngx";
-import { FilePath } from "@ionic-native/file-path/ngx";
-import { File } from "@ionic-native/file/ngx";
+import { Camera, CameraOptions, MediaType, PictureSourceType } from "@awesome-cordova-plugins/camera/ngx";
+import { Chooser } from "@awesome-cordova-plugins/chooser/ngx";
+import { FilePath } from "@awesome-cordova-plugins/file-path/ngx";
+import { File } from "@awesome-cordova-plugins/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
@@ -207,7 +207,7 @@ export class AttachmentService {
 
   async openFile() {
     try {
-      const file = await this.chooser.getFile('application/pdf');
+      const file: any = await this.chooser.getFile({mimeTypes:'application/pdf'});
       let sizeOftheFile: number = file.data.length
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
         this.actionSheetController.dismiss();

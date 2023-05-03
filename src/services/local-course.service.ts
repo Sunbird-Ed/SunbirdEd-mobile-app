@@ -4,27 +4,27 @@ import {
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
   NetworkError, GetContentStateRequest, ContentStateResponse
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Environment, InteractSubtype, PageId } from './telemetry-constants';
-import { Map } from '@app/app/telemetryutil';
+import { Map } from '../app/telemetryutil';
 import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
-import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
-import { Events } from '@app/util/events';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { ContentUtil } from '@app/util/content-util';
+import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '../app/app.constant';
+import { Events } from '../util/events';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { ContentUtil } from '../util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
 import { UserConsent } from '@project-sunbird/client-services/models';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { FormConstants } from '@app/app/form.constants';
+import { FormConstants } from '../app/form.constants';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;

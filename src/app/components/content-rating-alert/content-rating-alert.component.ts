@@ -1,10 +1,10 @@
 import { Location } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
-import { FormConstants } from '@app/app/form.constants';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
+import { FormConstants } from '../../../app/form.constants';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import {
   Environment,
   ImpressionSubtype,
@@ -13,9 +13,9 @@ import {
   InteractType,
   LogLevel,
   LogType
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
+} from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ContentUtil } from '../../../util/content-util';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import {
   ContentFeedback,
@@ -24,7 +24,7 @@ import {
   SharedPreferences,
   TelemetryFeedbackRequest, TelemetryLogRequest,
   TelemetryObject, TelemetryService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-content-rating-alert',

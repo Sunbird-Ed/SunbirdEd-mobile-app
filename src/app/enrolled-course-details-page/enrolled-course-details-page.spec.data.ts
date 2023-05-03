@@ -1,5 +1,5 @@
 import { Navigation } from '@angular/router';
-import { Content, ContentData } from 'sunbird-sdk';
+import { Content, ContentData } from '@project-sunbird/sunbird-sdk';
 import { PageId } from '../../services/telemetry-constants';
 
 export const mockEnrolledData: Partial<Navigation> = {
@@ -66,7 +66,7 @@ export const mockEnrolledData: Partial<Navigation> = {
         ],
         visibility: 'Default',
         toc_url: 'https://artifact/do_212911645382959104165_toc.json',
-        contentTypesCount: '{\'CourseUnit\:1,\'Resource\:5}',
+        contentTypesCount: '{\"CourseUnit\":1,\"Resource\":5}',
         consumerId: 'a9cb3a83-a164-4bf0-aa49-b834cebf1c07',
         childNodes: [
           'do_212911623572824064157',
@@ -116,7 +116,7 @@ const data: Partial<ContentData> = {
   audience: [
     'Learner'
   ],
-  contentTypesCount: '{\'CourseUnit\:7,\'Resource\:7}',
+  contentTypesCount: '{\"CourseUnit\":7,\"Resource\":7}',
   childNodes: [
     'do_21281258639128166411497',
     'do_212686715674877952160',

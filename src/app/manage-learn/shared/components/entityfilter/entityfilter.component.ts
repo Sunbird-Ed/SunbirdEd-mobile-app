@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { LoaderService, LocalStorageService, UtilsService } from '@app/app/manage-learn/core';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
-import { AssessmentApiService } from '@app/app/manage-learn/core/services/assessment-api.service';
-import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
+import { LoaderService, LocalStorageService, UtilsService } from '../../../../../app/manage-learn/core';
+import { urlConstants } from '../../../../../app/manage-learn/core/constants/urlConstants';
+import { AssessmentApiService } from '../../../../../app/manage-learn/core/services/assessment-api.service';
+import { KendraApiService } from '../../../../../app/manage-learn/core/services/kendra-api.service';
 import { IonInfiniteScroll, ModalController, NavParams } from '@ionic/angular';
 
 @Component({
@@ -193,4 +193,6 @@ export class EntityfilterComponent implements OnInit {
   ngOnInit() {
     this.getTargettedEntityType();
   }
+
+  detectBottom() {}
 }

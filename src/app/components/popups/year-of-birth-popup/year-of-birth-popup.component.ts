@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-year-of-birth-popup',

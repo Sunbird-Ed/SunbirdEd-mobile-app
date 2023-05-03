@@ -1,6 +1,6 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,14 +12,14 @@ import {
   GetFrameworkCategoryTermsRequest,
   PageAssembleFilter,
   CachedItemRequestSourceFrom
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
 import { AppGlobalService } from 'services/app-global-service.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
 import { CommonUtilService } from 'services/common-util.service';
 import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
-import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
+import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 
 @Component({
   selector: 'app-page-filter',

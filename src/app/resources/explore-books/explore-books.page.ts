@@ -23,12 +23,12 @@ import {
   CorrelationData,
   FilterValue,
   SearchType
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -37,7 +37,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({

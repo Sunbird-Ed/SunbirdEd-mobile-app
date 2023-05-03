@@ -7,9 +7,9 @@ import {
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,
@@ -30,7 +30,7 @@ import {
 import { Location } from '@angular/common';
 import { of, Subscription, throwError } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../../services/profile-handler';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';

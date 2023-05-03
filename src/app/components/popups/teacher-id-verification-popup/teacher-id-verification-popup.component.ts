@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { PopoverController, NavParams } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../util/events';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProfileService, UserMigrateRequest, HttpClientError } from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { featureIdMap } from '@app/feature-id-map';
+import { ProfileService, UserMigrateRequest, HttpClientError } from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { featureIdMap } from '../../../../feature-id-map';
 import {
   Environment,
   ImpressionType,
@@ -13,7 +13,7 @@ import {
   InteractType,
   PageId,
   ID
-} from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 
 export enum TeacherIdPopupFlags {
   STATE_CONFIRMATION = 'stateConfirmation',

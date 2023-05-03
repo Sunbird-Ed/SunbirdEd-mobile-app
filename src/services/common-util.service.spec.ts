@@ -6,17 +6,17 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData } from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { PreferenceKey } from '@app/app/app.constant';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { SharedPreferences, ProfileService, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
+import { PreferenceKey } from '../app/app.constant';
+import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { NgZone } from '@angular/core';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
