@@ -22,7 +22,7 @@ import { error } from "console";
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
 
-    window['cordova'].plugins = {
+    window['cordova']['plugins'] = {
         InAppUpdateManager: {
             isUpdateAvailable: jest.fn((fn) => fn(Promise.resolve('22')))
         }

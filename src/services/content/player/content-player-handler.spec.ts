@@ -114,7 +114,7 @@ describe('ContentPlayerHandler', () => {
                     l1 :  'do_212936404296335360119'
                 }
             }
-            window['cordova'].plugins = {
+            window['cordova']['plugins'] = {
                 InAppUpdateManager: {
                     checkForImmediateUpdate: jest.fn((fn, fn1) => {
                         fn(),

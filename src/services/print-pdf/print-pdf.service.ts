@@ -25,10 +25,10 @@ export class PrintPdfService {
         .download(url, window['cordova'].file.cacheDirectory + url.substring(url.lastIndexOf('/') + 1));
       url = entry.toURL();
 
-      window['cordova'].plugins.printer.canPrintItem(url, (canPrint: boolean) => {
+      window['cordova']['plugins'].printer.canPrintItem(url, (canPrint: boolean) => {
         console.log(url);
         if (canPrint) {
-          window['cordova'].plugins.printer.print(url);
+          window['cordova']['plugins'].printer.print(url);
         } else {
           this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');
         }
