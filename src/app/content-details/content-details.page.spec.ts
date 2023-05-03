@@ -2425,12 +2425,12 @@ describe('ContentDetailsPage', () => {
 
 
     describe('promptToLogin', () => {
-        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', async (done) => {
+        it('should be logged in before play the content by invoked promptToLogin() if user loggedin', (done) => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation()
             // act
-            await contentDetailsPage.promptToLogin();
+            contentDetailsPage.promptToLogin();
             // assert
             setTimeout(() => {
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
@@ -2803,7 +2803,7 @@ describe('ContentDetailsPage', () => {
         // arrange
         // contentDetailsPage.content = mockContentData.extras.state;
         mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
-      //  spyOn(contentDetailsPage, 'getNavParams');
+      // jest.spyOn(contentDetailsPage, 'getNavParams');
         jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
             return {};
         });
@@ -2904,7 +2904,7 @@ describe('ContentDetailsPage', () => {
                 // }
             });
             mockProfileSwitchHandler.switchUser = jest.fn();
-            spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
+           jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;

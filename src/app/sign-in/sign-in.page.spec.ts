@@ -19,8 +19,8 @@ import {Platform} from '@ionic/angular';
 import { AppGlobalService, LoginHandlerService } from '../../services';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 
-jest.mock('@project-sunbird/sunbird-sdk'', () => {
-    const actual = jest.requireActual('@project-sunbird/sunbird-sdk'');
+jest.mock('@project-sunbird/sunbird-sdk', () => {
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewStateSessionProvider() {

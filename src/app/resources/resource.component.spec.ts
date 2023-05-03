@@ -302,7 +302,7 @@ describe('ResourcesComponent', () => {
         };
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
         jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();
@@ -331,7 +331,7 @@ describe('ResourcesComponent', () => {
         };
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
         jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();

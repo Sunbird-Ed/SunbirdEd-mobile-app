@@ -15,7 +15,7 @@ import {SegmentationTagService} from '../../../services/segmentation-tag/segment
 import {RouterLinks} from '../../../app/app.constant';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
-    const actual = require.requireActual('@project-sunbird/sunbird-sdk');
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewLoginSessionProvider() {
@@ -24,7 +24,7 @@ jest.mock('@project-sunbird/sunbird-sdk', () => {
 });
 
 jest.mock('../../../app/module.service', () => {
-    const actual = require.requireActual('../../../app/module.service');
+    const actual = jest.requireActual('../../../app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {

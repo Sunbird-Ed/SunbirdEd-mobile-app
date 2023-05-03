@@ -93,7 +93,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('enrollIntoBatch', () => {
-    it('should Enrol into batch, and when the return is true', async (done) => {
+    it('should Enrol into batch, and when the return is true', (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -131,7 +131,7 @@ describe('LocalCourseService', () => {
       });
     });
 
-    it('should Enrol into batch, and when the return is true for updateConsent catchPart', async (done) => {
+    it('should Enrol into batch, and when the return is true for updateConsent catchPart', (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -161,7 +161,7 @@ describe('LocalCourseService', () => {
       mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
-      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockCourseService.enrollCourse).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });

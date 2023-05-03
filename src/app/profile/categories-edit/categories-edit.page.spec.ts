@@ -202,37 +202,37 @@ describe('CategoryEditPage', () => {
         });
     });
 
-    describe('constructor ', () => {
-        beforeEach(() => {
-            categoryEditPage = new CategoriesEditPage(
-                mockProfileService as ProfileService,
-                mockFrameworkService as FrameworkService,
-                mockFrameworkUtilService as FrameworkUtilService,
-                mockSharedPreferences as SharedPreferences,
-                mockCommonUtilService as CommonUtilService,
-                mockFb as FormBuilder,
-                mockTranslate as TranslateService,
-                mockAppGlobalService as AppGlobalService,
-                mockHeaderService as AppHeaderService,
-                mockRouter as Router,
-                mockLocation as Location,
-                mockPlatform as Platform,
-                mockActivePageService as ActivePageService,
-                mockProgressLoader as SbProgressLoader,
-                mockProfileHandler as ProfileHandler,
-                mockSegmentationTagService as SegmentationTagService,
-                mockCategoriesEditService as CategoriesEditService,
-                mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
-            );
-            mockCommonUtilService.translateMessage = jest.fn(() => ({
-                toLocaleUpperCase: jest.fn()
-            })) as any
-            mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
-        })
-    })
+    // describe('constructor ', () => {
+    //     beforeEach(() => {
+    //         categoryEditPage = new CategoriesEditPage(
+    //             mockProfileService as ProfileService,
+    //             mockFrameworkService as FrameworkService,
+    //             mockFrameworkUtilService as FrameworkUtilService,
+    //             mockSharedPreferences as SharedPreferences,
+    //             mockCommonUtilService as CommonUtilService,
+    //             mockFb as FormBuilder,
+    //             mockTranslate as TranslateService,
+    //             mockAppGlobalService as AppGlobalService,
+    //             mockHeaderService as AppHeaderService,
+    //             mockRouter as Router,
+    //             mockLocation as Location,
+    //             mockPlatform as Platform,
+    //             mockActivePageService as ActivePageService,
+    //             mockProgressLoader as SbProgressLoader,
+    //             mockProfileHandler as ProfileHandler,
+    //             mockSegmentationTagService as SegmentationTagService,
+    //             mockCategoriesEditService as CategoriesEditService,
+    //             mockTelemetryGeneratorService as TelemetryGeneratorService,
+    //             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+    //         );
+    //         mockCommonUtilService.translateMessage = jest.fn(() => ({
+    //             toLocaleUpperCase: jest.fn()
+    //         })) as any
+    //         mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
+    //     })
+    // })
     describe('ngOnInit', () => {
-        it('should populate the supported attributes, return if value is not array', async(done) => {
+        it('should populate the supported attributes, return if value is not array', (done) => {
             // arrange
             mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
             categoryEditPage.profile = {
@@ -301,7 +301,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, return if value has no length', async(done) => {
+        it('should populate the supported attributes, return if value has no length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -370,7 +370,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, for board length', async(done) => {
+        it('should populate the supported attributes, for board length', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -442,7 +442,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes, if has value', async(done) => {
+        it('should populate the supported attributes, if has value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -652,7 +652,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel', async(done) => {
+        it('should populate the supported attributes gradeLevel', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {
@@ -718,7 +718,7 @@ describe('CategoryEditPage', () => {
             });
         });
 
-        it('should populate the supported attributes gradeLevel, has some value', async(done) => {
+        it('should populate the supported attributes gradeLevel, has some value', (done) => {
             // arrange
             categoryEditPage.profile = {
                 serverProfile: {

@@ -151,7 +151,7 @@ describe('FaqReportIssuePage', () => {
         mockAppGlobalService.formConfig = mockFormConfig;
         it('should call constructor and interpret formConfig', () => {
             // arrange
-            spyOn(faqReportIssuePage, 'arrayListHandling');
+           jest.spyOn(faqReportIssuePage, 'arrayListHandling');
             // assert
             expect(faqReportIssuePage).toBeTruthy();
             expect(faqReportIssuePage.formContext).toBeDefined();
@@ -304,8 +304,8 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.children.subcategory['notify'] = true;
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+           jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
@@ -318,8 +318,8 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.category = 'otherissues';
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+           jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
@@ -336,7 +336,7 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
             faqReportIssuePage.showSupportContact = false;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert

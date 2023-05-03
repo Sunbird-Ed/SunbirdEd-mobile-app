@@ -250,7 +250,7 @@ describe('PlayerPage', () => {
     })
 
     describe('ionviewWillEnter', () => {
-        it('should initialize the backbutton handle else case', async (done) => {
+        it('should initialize the backbutton handle else case', (done) => {
             window.setInterval = jest.fn((fn) => fn({}), 500) as any;
             playerPage.playerType ='sunbird-old-player';
             playerPage.previewElement = {
@@ -303,7 +303,7 @@ describe('PlayerPage', () => {
                 done();
             }, 0);
         });
-        it('should initialize the backbutton', async (done) => {
+        it('should initialize the backbutton', (done) => {
             window.setInterval = jest.fn((fn) => fn({}), 500) as any;
             playerPage.playerType ='sunbird-old-player';
             playerPage.config = {

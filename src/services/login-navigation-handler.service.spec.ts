@@ -21,8 +21,8 @@ import { Platform } from '@ionic/angular';
 import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 import { PreferenceKey } from '../app/app.constant';
 
-jest.mock('@project-sunbird/sunbird-sdk'', () => {
-    const actual = require.requireActual('@project-sunbird/sunbird-sdk'');
+jest.mock('@project-sunbird/sunbird-sdk', () => {
+    const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
     return {
         ...actual,
         WebviewStateSessionProvider() {
@@ -35,7 +35,7 @@ jest.mock('@project-sunbird/sunbird-sdk'', () => {
 });
 
 jest.mock('../app/module.service', () => {
-    const actual = require.requireActual('../app/module.service');
+    const actual = jest.requireActual('../app/module.service');
     return {
         ...actual,
         initTabs: jest.fn().mockImplementation(() => {

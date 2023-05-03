@@ -42,7 +42,7 @@ describe('SbDownloadPopupComponent', () => {
 
     it('should emit cancel download event', () => {
         // arrange
-        spyOn(sbDownloadPopupComponent.cancelDownloadEmit, 'emit');
+       jest.spyOn(sbDownloadPopupComponent.cancelDownloadEmit, 'emit');
         // act
         sbDownloadPopupComponent.ngOnInit();
         sbDownloadPopupComponent.cancelDownload();

@@ -150,7 +150,7 @@ describe('LogoutHandlerService', () => {
         });
 
 
-        it('should logout_google', async(done) => {
+        it('should logout_google', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -185,7 +185,7 @@ describe('LogoutHandlerService', () => {
             })
         });
         
-        it ('should try silent login catch error while disconnecting google plus', async(done) => {
+        it ('should try silent login catch error while disconnecting google plus', (done) => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };

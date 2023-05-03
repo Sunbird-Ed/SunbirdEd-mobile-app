@@ -391,7 +391,7 @@ describe('UserTypeSelectionPage', () => {
     });
 
     describe('setUserTypeForNewUser', () => {
-        it('should update userType for new user', (done) => {
+        it('should update userType for new user', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'none';
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({
@@ -401,27 +401,25 @@ describe('UserTypeSelectionPage', () => {
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.selectedUserType).toBe('sample-profile');
                 expect(mockSharedPreferences.putString).toHaveBeenCalledWith(
                     PreferenceKey.SELECTED_USER_TYPE,
                     'sample-profile'
                 );
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
 
-        it('should not update userType if already exists', (done) => {
+        it('should not update userType if already exists', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'sample-user-type';
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
     });
 

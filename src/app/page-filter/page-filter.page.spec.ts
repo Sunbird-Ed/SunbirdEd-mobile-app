@@ -212,7 +212,7 @@ describe('PageFilterPage', () => {
         it('should generate interact telemetry and dismiss the popup', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
@@ -238,7 +238,7 @@ describe('PageFilterPage', () => {
         it('should not invoke applyFilter() of callback', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
