@@ -8,8 +8,6 @@ app_version_code = 1
 // Staging envornment properties
 staging_base_url = https://staging.sunbirded.org
 staging_device_register_base_url= https://apistaging.ntp.net.in
-staging_mobile_app_key = sunbird-0.1
-staging_mobile_app_secret = c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx
 staging_deeplink_base_url = staging.sunbirded.org
 
 // Fabric Keys
