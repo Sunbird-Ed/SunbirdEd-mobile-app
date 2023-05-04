@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { ToastService, UtilsService, LoaderService } from '../../core';
+import { ToastService, UtilsService, LoaderService, LocalStorageService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { storageKeys } from '../../storageKeys';
 
 @Component({
   selector: 'app-solution-listing',
@@ -44,7 +45,8 @@ export class SolutionListingComponent {
     private platform: Platform,
     private toast: ToastService,
     private ulsdp: UpdateLocalSchoolDataService,
-    private deeplinkActionHandler:SplaschreenDeeplinkActionHandlerDelegate
+    private deeplinkActionHandler: SplaschreenDeeplinkActionHandlerDelegate,
+    private localStorage: LocalStorageService
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -71,8 +73,8 @@ export class SolutionListingComponent {
 
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-        this.location.back();
-      });
+      this.location.back();
+    });
   }
 
   selectedSolution(data) {
@@ -84,13 +86,32 @@ export class SolutionListingComponent {
         this.redirectProject(data);
         break;
       case 'survey':
-        this.surveyRedirect(data);
+        this.onSurveyClick(data);
         break;
       case 'course':
         this.courseRedirect(data);
         break;
       default:
         break;
+    }
+  }
+
+  onSurveyClick(data) {
+    if (data.submissionId && data.submissionId.length) {
+      this.localStorage
+        .getLocalStorage(storageKeys.submissionIdArray)
+        .then((allId) => {
+          if (allId.includes(data.submissionId)) {
+            this.redirect(data.submissionId);
+          } else {
+            this.surveyRedirect(data);
+          }
+        })
+        .catch(error => {
+          this.surveyRedirect(data);
+        })
+    } else {
+      this.surveyRedirect(data);
     }
   }
 
@@ -127,6 +148,7 @@ export class SolutionListingComponent {
         submisssionId: submissionId,
         evidenceIndex: 0,
         sectionIndex: 0,
+        isSurvey:true
         // schoolName: 'sample',
       },
     });
@@ -139,23 +161,23 @@ export class SolutionListingComponent {
     }
     if (!projectId) {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data._id], {
-          queryParams: {
-              programId: this.programId,
-              solutionId: data._id,
-              type: 'assignedToMe',
-              listing: 'program'
-          },
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe',
+          listing: 'program'
+        },
       });
-  } else {
+    } else {
       this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-          queryParams: {
-              projectId: projectId,
-              programId: this.programId,
-              solutionId: data._id,
-              type: 'assignedToMe'
-          },
+        queryParams: {
+          projectId: projectId,
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe'
+        },
       });
-  }
+    }
   }
   redirectObservaiton(data) {
     let observationId = '';

@@ -10,6 +10,7 @@ staging_base_url = https://staging.sunbirded.org
 staging_device_register_base_url= https://apistaging.ntp.net.in
 staging_deeplink_base_url = staging.sunbirded.org
 
+
 // Fabric Keys
 release_fabric_api_key = 4a735dc3520070ad4ea3339e4d8d2bb00efe8eaa
 release_fabric_api_secret = a98a1c7293881445c6e471588c3adaaef3814c89bdf26b4c1393196162ba9e1c
