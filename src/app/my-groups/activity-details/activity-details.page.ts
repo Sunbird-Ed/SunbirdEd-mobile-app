@@ -324,6 +324,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       ID.SELECT_ACTIVITY_DASHBOARD
     );
   }
-  onActivityCardClick($event, activity) {  }
-  activityMenuClick($event, activity, i) {}
+  onActivityCardClick(e, activity) { 
+    console.log('event on card', e)
+  }
+
+  activityMenuClick(e, activity, i) {
+    console.log('event on menu', e)
+  }
 }

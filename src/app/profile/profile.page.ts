@@ -49,7 +49,8 @@ import {
   CsLearnerCertificate,
   Framework,
   FrameworkCategoryCodesGroup,
-  FrameworkDetailsRequest
+  FrameworkDetailsRequest,
+  OrganizationSearchCriteria
 } from '@project-sunbird/sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -78,7 +79,6 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 import { FormConstants } from '../form.constants';
 import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
-import { OrganizationSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { LocationHandler } from '../../services/location-handler';
 import { urlConstants } from '../manage-learn/core/constants/urlConstants';

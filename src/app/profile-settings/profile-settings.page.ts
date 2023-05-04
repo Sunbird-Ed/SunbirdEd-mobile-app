@@ -29,7 +29,8 @@ import {
   ProfileService,
   ProfileType,
   CorrelationData,
-  AuditState} from '@project-sunbird/sunbird-sdk';
+  AuditState,
+  CachedItemRequestSourceFrom} from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
@@ -41,7 +42,6 @@ import { AlertController, Platform } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '../../services/splash-screen.service';
-import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 @Component({

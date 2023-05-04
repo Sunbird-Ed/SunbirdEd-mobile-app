@@ -53,7 +53,7 @@ import { ContentUtil } from '../../util/content-util';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { ContentInfo } from '../../services/content/content-info';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
-import { LocalCourseService } from '../../services/local-course.service';
+import { LocalCourseService, ConsentPopoverActionsDelegate } from '../../services/local-course.service';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
@@ -61,7 +61,6 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
-import { ConsentPopoverActionsDelegate } from '../../services/local-course.service';
 import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '../../services/consent-service';
 import {
@@ -2614,6 +2613,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
-  assignForumData($event: any) { }
+  assignForumData(e: any) {
+    console.log('assignForumData', e)
+   }
 
 }

@@ -1085,7 +1085,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       );
     }
   }
-
-  cancelDownload() {}
+  
+  cancelDownload() {
+    console.log('cancel download');
+  }
 
 }

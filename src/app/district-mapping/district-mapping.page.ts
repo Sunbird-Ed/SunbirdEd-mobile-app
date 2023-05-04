@@ -28,11 +28,10 @@ import {
   AuditState, CorrelationData, DeviceInfo, DeviceRegisterRequest,
   DeviceRegisterService,
   FormRequest, LocationSearchResult, Profile, ProfileService,
-  SharedPreferences
+  SharedPreferences, ProfileType
 } from '@project-sunbird/sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
-import {ProfileType} from '@project-sunbird/sunbird-sdk';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
