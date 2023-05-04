@@ -4,7 +4,8 @@ import {
   ProfileConstants,
   appLanguages,
   ProgressPopupContext,
-  IgnoreTelemetryPatters
+  IgnoreTelemetryPatters,
+  MimeType, EventTopics, RouterLinks, LaunchType
 } from '../../app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
@@ -39,7 +40,6 @@ import {
   CourseService
 } from '@project-sunbird/sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';

@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {PreferenceKey, RouterLinks} from '../../app/app.constant';
+import {PreferenceKey, RouterLinks, EventTopics} from '../../app/app.constant';
 import { CategoryKeyTranslator } from '../../pipes/category-key-translator/category-key-translator-pipe';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { ConsentPopoverActionsDelegate, LocalCourseService } from '../../services/local-course.service';
@@ -15,7 +15,6 @@ import {
   CorrelationData, Rollup, SharedPreferences,
   TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
-import { EventTopics } from '../../app/app.constant';
 import { AppHeaderService } from '../../services/app-header.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import {

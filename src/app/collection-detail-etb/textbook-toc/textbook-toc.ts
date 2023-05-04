@@ -171,5 +171,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         this.events.unsubscribe(EventTopics.TOC_COLLECTION_CHILD_ID);
     }
 
-    cancelDownload() {}
+    cancelDownload() {
+        console.log('cancel download');
+    }
 }

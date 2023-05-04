@@ -209,5 +209,7 @@ export class ProjectTemplatePage {
     }
   }
 
-  openStartIMPPopup() {}
+  openStartIMPPopup() {
+    console.log('start popup');
+  }
 }

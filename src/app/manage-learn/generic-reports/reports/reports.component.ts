@@ -209,5 +209,7 @@ export class ReportsComponent implements OnInit {
     await modal.present();
   }
 
-  clickOnGraphEventEmit(event: any) {}
+  clickOnGraphEventEmit(event: any) {
+    console.log('event ', event);
+  }
 }
