@@ -1320,6 +1320,9 @@ app-resources{
   width: auto;
 }
 
+.popover-my-groups::part(content) {
+ position: unset; 
+}
 .popover-my-groups {
   .mg-popup-container{
     height: 100%;
