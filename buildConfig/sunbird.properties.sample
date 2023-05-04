@@ -1,35 +1,37 @@
 Mandatory properties
 
 //App specific Properties
-staging_app_id = org.sunbird.app.staging
-app_name = Sunbird
-app_version_code = 1
+staging_app_id = STAGING_APP_ID
+app_name = APP_NAME
+app_version_code = APP_VERSION_CODE
 
 // Staging envornment properties
-staging_base_url = https://staging.sunbirded.org
-staging_device_register_base_url= https://apistaging.ntp.net.in
-staging_deeplink_base_url = staging.sunbirded.org
+staging_base_url = STAGING_BASE_URL
+staging_device_register_base_url= STAGING_DEVICE_REGISTER_BASE_URL
+staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
+staging_mobile_app_key = STAGING_MOBILE_APP_KEY
+staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
 
 
 // Fabric Keys
-release_fabric_api_key = 4a735dc3520070ad4ea3339e4d8d2bb00efe8eaa
-release_fabric_api_secret = a98a1c7293881445c6e471588c3adaaef3814c89bdf26b4c1393196162ba9e1c
+release_fabric_api_key = RELEASE_FABRIC_API_KEY
+release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
 
 // Configurable Properties
-support_email = dummy@example.com
+support_email = SUPPORT_EMAIL
 
 
 Optional properties
 
 // Staging envornment properties.
-staging_channel_id = 505c7c48ac6dc1edc9b08f21db5a571d
-staging_producer_id = staging.diksha.app
-staging_merge_account_base_url= https://merge.staging.ntp.net.in
-staging_deeplink_ncert_url = epathshala.nic.in
-staging_deeplink_igot_url = igot.gov.in
-staging_tou_base_url = https://static.preprod.ntp.net.in
-staging_survey_base_url= https://google.com/
-staging_projects_base_url = https://google.com
+staging_channel_id = STAGING_CHANNEL_ID
+staging_producer_id = STAGING_PRODUCER_ID
+staging_merge_account_base_url= STAGING_MERGE_ACCOUNT_BASE_URL
+staging_deeplink_ncert_url = STAGING_DEEPLINK_NCERT_URL
+staging_deeplink_igot_url = STAGING_DEEPLINK_IGOT_URL
+staging_tou_base_url = STAGING_TOU_BASE_URL
+staging_survey_base_url= STAGING_SURVEY_BASE_URL
+staging_projects_base_url = STAGING_PROJECTS_BASE_URL
 ​
 ​
 
