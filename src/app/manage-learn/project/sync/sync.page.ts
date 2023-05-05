@@ -36,7 +36,10 @@ export class SyncPage implements  OnDestroy {
   taskId;
   fileName;
   isShare;
-  syncCompletedProjects = []
+  syncCompletedProjects = [];
+  isSubmission;
+  retryCount: number = 0;
+
   constructor(
     private routerparam: ActivatedRoute,
     private toast: ToastService,
@@ -68,6 +71,7 @@ export class SyncPage implements  OnDestroy {
           this.isShare = params.share == 'true';
           this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
+          this.isSubmission = params.isSubmission || false;
         } else {
           //sync mutiple projects
           this.getAllUnSyncedProject();
@@ -192,6 +196,7 @@ export class SyncPage implements  OnDestroy {
 
   //Syn project API call
   doSyncCall() {
+    this.allProjects[this.syncIndex].status = (this.isSubmission ==='true') ?  statusType.submitted :this.allProjects[this.syncIndex].status;
     const paylod = this.createSyncPayload();
     this.syncServ.syncApiRequest(paylod).then(success => {
       this.allProjects[this.syncIndex] = this.syncServ.removeKeys(this.allProjects[this.syncIndex], ['isNew', 'isEdit']);
@@ -245,6 +250,7 @@ export class SyncPage implements  OnDestroy {
 
   cloudUpload(imageDetails) {
     this.syncServ.cloudImageUpload(imageDetails).then(success => {
+      this.retryCount =0;
       delete this.attachments[this.imageUploadIndex].cloudStorage;
       delete this.attachments[this.imageUploadIndex].uploadUrl;
       delete this.attachments[this.imageUploadIndex].isUploaded;
@@ -255,11 +261,20 @@ export class SyncPage implements  OnDestroy {
         this.doSyncCall();
       }
     }).catch(error => {
-      console.log(error)
-      this.imageUploadIndex++;
-      this.cloudUpload(this.attachments[this.imageUploadIndex])
+      this.retryCount++;
+      if (this.retryCount > 3) {
+        this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
+          this.toast.showMessage(translations,'danger');
+        });
+        this.location.back();
+      } else {
+        this.cloudUpload(this.attachments[this.imageUploadIndex]);
+      }
     })
   }
+
+
+
 
   getPdfUrl(fileName=this.allProjects[this.syncIndex]?.title, taskId?) {
    let task_id = taskId ? taskId : '';
