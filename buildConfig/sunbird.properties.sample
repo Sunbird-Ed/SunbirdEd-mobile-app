@@ -1,43 +1,19 @@
-//Mandatory properties
 
-//App specific Properties
+// App specific Properties
 staging_app_id = STAGING_APP_ID
 app_name = APP_NAME
 app_version_code = APP_VERSION_CODE
 
 // Staging environment properties
+
+// mandatory
 staging_base_url = STAGING_BASE_URL
 staging_device_register_base_url= STAGING_DEVICE_REGISTER_BASE_URL
 staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
 staging_mobile_app_key = STAGING_MOBILE_APP_KEY
 staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
 
-// Dev environment properties
-dev_base_url = DEV_BASE_URL
-dev_device_register_base_url= DEV_DEVICE_REGISTER_BASE-URL
-dev_deeplink_base_url = DEV_DEEPLINK_BASE_URL
-dev_mobile_app_key = DEV_MOBILE_APP_KEY
-dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
-
-// Production environment properties
-production_base_url = PRODUCTION_BASE_URL
-production_device_register_base_url= PRODUCTION_DEVICE_REGISTER_BASE_URL
-production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
-production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
-production_mobile_app_secret = PRODUCTION_MOBILE_APP_SECRET
-
-
-// Fabric Keys
-release_fabric_api_key = RELEASE_FABRIC_API_KEY
-release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
-
-// Configurable Properties
-support_email = SUPPORT_EMAIL
-
-
-// Optional properties
-
-// Staging environment properties
+// optional
 staging_channel_id = STAGING_CHANNEL_ID
 staging_producer_id = STAGING_PRODUCER_ID
 staging_merge_account_base_url= STAGING_MERGE_ACCOUNT_BASE_URL
@@ -48,6 +24,15 @@ staging_survey_base_url= STAGING_SURVEY_BASE_URL
 staging_projects_base_url = STAGING_PROJECTS_BASE_URL
 
 // Dev environment properties
+
+// mandatory
+dev_base_url = DEV_BASE_URL
+dev_device_register_base_url= DEV_DEVICE_REGISTER_BASE-URL
+dev_deeplink_base_url = DEV_DEEPLINK_BASE_URL
+dev_mobile_app_key = DEV_MOBILE_APP_KEY
+dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
+
+// optional
 dev_channel_id = DEV_CHANNEL_ID
 dev_producer_id = DEV_PRODUCER_ID
 dev_merge_account_base_url= DEV_MERGE_ACCOUNT_BASE_URL
@@ -58,6 +43,15 @@ dev_survey_base_url= DEV_SURVEY_BASE_URL
 dev_projects_base_url= DEV_PROJECTS_BASE_URL
 
 // Production environment properties
+
+// mandatory
+production_base_url = PRODUCTION_BASE_URL
+production_device_register_base_url= PRODUCTION_DEVICE_REGISTER_BASE_URL
+production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
+production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
+production_mobile_app_secret = PRODUCTION_MOBILE_APP_SECRET
+
+// optional
 production_channel_id = PRODUCTION_CHANNEL_ID
 production_producer_id = PRODUCTION_PRODUCER_ID
 production_merge_account_base_url= PRODUCTION_MERGE_ACCOUNT_BASE_URL
@@ -66,6 +60,15 @@ production_deeplink_igot_url = PRODUCTION_DEEPLINK_IGOT_URL
 production_tou_base_url = PRODUCTION_TOU_BASE_URL
 production_survey_base_url= PRODUCTION_SURVEY_BASE_URL
 production_projects_base_url= PRODUCTION_PROJECTS_BASE_URL
+
+
+// Fabric Keys
+release_fabric_api_key = RELEASE_FABRIC_API_KEY
+release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
+
+// Configurable Properties
+support_email = SUPPORT_EMAIL
+
 ​
 ​
 
