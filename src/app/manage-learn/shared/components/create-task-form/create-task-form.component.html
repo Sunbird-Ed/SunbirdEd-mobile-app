@@ -19,12 +19,22 @@
     <ion-label id="endate">
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
-    <ion-icon name="caret-down-outline" slot="end"></ion-icon>
-    <ion-datetime for="endate" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
-      display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date"
-      placeholder={{today}}>
-   
-    </ion-datetime>
+    <!-- <ion-icon name="caret-down-outline" slot="end"></ion-icon> -->
+    <ion-datetime-button datetime="taskDate"  (click)="setOpen(true)"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true" [isOpen]="istaskDateModalOpen">
+          <ng-template>
+             <ion-toolbar>
+              <ion-button (click)="setOpen(false)" slot="end">Close</ion-button>
+               </ion-toolbar>
+       <ion-datetime presentation="date" id="taskDate" for="endate" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
+        display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date"
+        placeholder={{today}}>
+        </ion-datetime>
+        <div class="flex-container _justify-content-end">
+            <ion-button (click)="setOpen(false)">Close</ion-button>
+        </div>
+      </ng-template>
+    </ion-modal>
   </ion-item>
 
   <ion-item class="custom-item" lines="none">
