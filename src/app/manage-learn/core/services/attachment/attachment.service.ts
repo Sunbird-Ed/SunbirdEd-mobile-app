@@ -83,7 +83,7 @@ export class AttachmentService {
     return actionSheet.onDidDismiss();
   }
 
-  takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
+  async takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
       quality: 20,
       sourceType: sourceType,
@@ -93,15 +93,15 @@ export class AttachmentService {
       destinationType: this.camera.DestinationType.FILE_URI,
     };
 
-    this.camera
+    await this.camera
       .getPicture(options)
-      .then((imagePath) => {
+      .then(async(imagePath) => {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
           if (!newFilePath.includes("file://")) {
             newFilePath = "file://" + imagePath
           }
-            this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
+            await this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
               if (isValidFile) {
                 this.filePath
                   .resolveNativePath(newFilePath)
@@ -112,7 +112,7 @@ export class AttachmentService {
               }
             })
         } else {
-          this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
+          await this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
             if (isValidFile) {
               this.copyFile(imagePath);
             }
@@ -287,13 +287,13 @@ export class AttachmentService {
     this.payload = payload;
     switch (type) {
       case 'openCamera':
-        this.takePicture(this.camera.PictureSourceType.CAMERA);
+        await this.takePicture(this.camera.PictureSourceType.CAMERA);
         break;
       case 'openGallery':
-        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
       case 'openFiles':
-        this.openFile();
+        await this.openFile();
         break;
     }
   }
