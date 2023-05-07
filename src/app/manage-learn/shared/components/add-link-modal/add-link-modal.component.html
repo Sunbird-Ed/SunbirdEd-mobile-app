@@ -1,12 +1,15 @@
 <div class="custom-popup">
-  <div class="pop-container">
-    <ion-icon name="close" (click)="cancel()" class="close-attach-popup"></ion-icon>
+  <div class="pop-container"> 
     <div class="pop-msg">
-      <h5>
-        {{'FRMELEMNTS_MSG_COPY_PASTE_LINKS_BELOW' | translate}}
-      </h5>
+      <div class="flex-container pop-heading">
+        <h5>
+          {{'FRMELEMNTS_MSG_COPY_PASTE_LINKS_BELOW' | translate}}
+        </h5>
+        <ion-icon name="close-circle" (click)="cancel()" class="close-attach-popup"></ion-icon>
+      </div>
       <div class="text-area-container">
-        <ion-textarea rows="5" placeholder="{{'FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER' | translate}}" [(ngModel)]="links">
+        <ion-textarea rows="1" placeholder="{{'FRMELEMNTS_LBL_LINK_TEXTAREA_PLACEHOLDER' | translate}}" [(ngModel)]="links"
+        (ionInput)="onChange($event)" (paste)="pasteLink($event)">
         </ion-textarea>
       </div>
     </div>
@@ -14,7 +17,7 @@
         <ion-button class="custom-btn-txt-transform-none"  color="light" (click)="cancel()">
           {{'CANCEL' | translate}}
         </ion-button>
-        <ion-button class="custom-btn-txt-transform-none" color="primary" (click)="submit()">
+        <ion-button class="custom-btn-txt-transform-none" [ngClass]="{'btn-disabled': !links}" (click)="submit()">
           {{'FRMELEMNTS_BTN_ADD_LINK' | translate}}
         </ion-button>
       </div>
