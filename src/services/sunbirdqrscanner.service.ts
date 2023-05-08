@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { QrScannerIOSComponent } from '@app/app/components/qr-scanner-ios/qr-scanner-ios.component';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
-import { ContainerService } from '@app/services/container.services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { QrScannerIOSComponent } from '../app/components/qr-scanner-ios/qr-scanner-ios.component';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../app/module.service';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { AndroidPermissionsService } from '../services/android-permissions/android-permissions.service';
+import { ContainerService } from '../services/container.services';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
-import { CorrelationData, Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
+import { CorrelationData, Profile, ProfileType, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from './android-permissions/android-permission';
 import {
   CorReleationDataType, Environment,
@@ -20,7 +20,7 @@ import {
   Mode,
   PageId
 } from './telemetry-constants';
-import { ManageLearnCertificateService } from '@app/app/manage-learn/core/services/manage-learn-certificate.service';
+import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { CommonUtilService } from './common-util.service';

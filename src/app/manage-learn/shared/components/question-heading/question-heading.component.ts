@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../../util/events';
 import { ModalController } from '@ionic/angular';
 import { HintComponent } from '../hint/hint.component';
 

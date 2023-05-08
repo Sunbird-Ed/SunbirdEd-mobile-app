@@ -1,6 +1,6 @@
 import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {ModalController, PopoverController} from '@ionic/angular';
 import {Events} from '../../../util/events';
 import {AppGlobalService, PageId, TelemetryGeneratorService} from '../../../services';

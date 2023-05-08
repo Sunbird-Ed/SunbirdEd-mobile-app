@@ -1,7 +1,7 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { OtpPage } from './otp.page';

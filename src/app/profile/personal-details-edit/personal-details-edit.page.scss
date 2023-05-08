@@ -25,7 +25,7 @@
             opacity: 1;
         }
     }
-    .popover-alert .popover-content {
+    .popover-alert::part(content) {
       margin: 0;
       width: 100% !important;
       max-height: 70% !important;

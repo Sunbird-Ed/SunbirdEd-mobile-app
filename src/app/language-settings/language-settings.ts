@@ -1,24 +1,24 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { Map } from '@app/app/telemetryutil';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { NotificationService } from '@app/services/notification.service';
+import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { Map } from '../../app/telemetryutil';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { NotificationService } from '../../services/notification.service';
 import {
   AuditProps, AuditType, CorReleationDataType, Environment, ID, ImpressionType, InteractSubtype,
   InteractType, PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { AuditState, CorrelationData, SharedPreferences } from 'sunbird-sdk';
-import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { AuditState, CorrelationData, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
 
 export interface ILanguages {
   label: string;

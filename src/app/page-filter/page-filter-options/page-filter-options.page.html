@@ -61,7 +61,7 @@
       class="subtitle"></ion-searchbar>
     <div class="scroll-list" *ngIf="showTopicFilterList">
       <ion-list class="topic-item">
-        <ion-item *ngFor="let items of filteredTopicArr" (click)="changeValue(items.name, index)">
+        <ion-item *ngFor="let items of filteredTopicArr; let i = index" (click)="changeValue(items.name, i)">
           <span
             [ngClass]="{'text-selected':isSelected(items.name), 'text-unselected':!isSelected(items.name)}">{{ items.name }}</span>
           <ion-icon class="icon-margin" item-right name='checkmark' *ngIf="isSelected(items.name)"
@@ -85,7 +85,7 @@
           <div *ngIf="isGroupShown(i)" style="width: 60%">
             <div *ngFor="let items of topicsVal[i]; let item = index">
               <div [ngClass]="{'text-selected':isSelected(items.name),'text-unselected':!isSelected(items.name)}"
-                (click)="changeValue(items.name, index)"><span>
+                (click)="changeValue(items.name, item)"><span>
                 {{items.name}}</span>
                 <span style="margin-top: 20%">
                   <ion-icon item-right name='checkmark' *ngIf="isSelected(items.name)"

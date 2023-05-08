@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { AppHeaderService } from '../../services/app-header.service';
 import {
   RouterLinks, PreferenceKey,
   SystemSettingsIds, ProfileConstants
@@ -17,23 +17,23 @@ import {
   ServerProfileDetailsRequest,
   AcceptTermsConditionRequest
 } from '@project-sunbird/sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
 import {
   ImpressionType,
   PageId,
   Environment, InteractType, InteractSubtype, ID, CorReleationDataType
-} from '@app/services/telemetry-constants';
+} from '../../services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { GroupGuideLinesPopoverComponent } from '../components/popups/group-guidelines-popup/group-guidelines-popup.component';
 import { CsGroupUpdateGroupGuidelinesRequest } from '@project-sunbird/client-services/services/group/interface';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 
 interface GroupData extends Group {
   initial: string;

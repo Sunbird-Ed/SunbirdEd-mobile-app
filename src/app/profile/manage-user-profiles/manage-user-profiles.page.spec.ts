@@ -2,14 +2,14 @@ import { ManageUserProfilesPage } from './manage-user-profiles.page';
 import {
   ProfileService,
   SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Location } from '@angular/common';
 import { of, Subscription } from 'rxjs';
 

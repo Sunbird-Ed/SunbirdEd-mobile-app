@@ -1,7 +1,7 @@
 import { NavigationService } from './navigation-handler.service';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../app/app.constant';
 import { Router } from '@angular/router';
-import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { CommonUtilService, TelemetryGeneratorService } from '../services';
 import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { mockProfileData } from '../app/profile/profile.page.spec.data';
 

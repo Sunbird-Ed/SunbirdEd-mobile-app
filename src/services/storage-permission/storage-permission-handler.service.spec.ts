@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { CommonUtilService, TelemetryGeneratorService } from '../../services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';

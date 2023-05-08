@@ -1,11 +1,11 @@
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService, AppGlobalService} from '../../../../services';
-import { DeviceInfo } from 'sunbird-sdk';
-import { SbAppSharePopupComponent } from '@app/app/components/popups';
+import { DeviceInfo } from '@project-sunbird/sunbird-sdk';
+import { SbAppSharePopupComponent } from '../../../../app/components/popups';
 import {PopoverController, Platform, NavParams, ToastController} from '@ionic/angular';
-import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '@app/services';
-import { ShareMode } from '@app/app/app.constant';
+import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '../../../../services';
+import { ShareMode } from '../../../../app/app.constant';
 import {Router} from '@angular/router';
 import {of} from 'rxjs';
 

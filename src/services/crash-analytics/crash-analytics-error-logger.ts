@@ -1,6 +1,6 @@
 import { ErrorHandler, Optional, Injector, Injectable } from '@angular/core';
-import { SunbirdSdk, TelemetryErrorRequest } from 'sunbird-sdk';
-import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { SunbirdSdk, TelemetryErrorRequest } from '@project-sunbird/sunbird-sdk';
+import { ActivePageService } from '../../services/active-page/active-page-service';
 import { Router } from '@angular/router';
 @Injectable()
 export class CrashAnalyticsErrorLogger extends ErrorHandler {

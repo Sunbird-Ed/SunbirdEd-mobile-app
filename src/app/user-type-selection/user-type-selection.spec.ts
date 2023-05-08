@@ -2,9 +2,9 @@ import { UserTypeSelectionPage } from './user-type-selection';
 import {
     ProfileService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
@@ -18,8 +18,8 @@ import {
 } from '../../services';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
+import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
+import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import {
     CorReleationDataType, Environment, InteractSubtype, InteractType, LoginHandlerService, PageId,
     SplashScreenService
@@ -391,7 +391,7 @@ describe('UserTypeSelectionPage', () => {
     });
 
     describe('setUserTypeForNewUser', () => {
-        it('should update userType for new user', (done) => {
+        it('should update userType for new user', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'none';
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({
@@ -401,27 +401,25 @@ describe('UserTypeSelectionPage', () => {
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.selectedUserType).toBe('sample-profile');
                 expect(mockSharedPreferences.putString).toHaveBeenCalledWith(
                     PreferenceKey.SELECTED_USER_TYPE,
                     'sample-profile'
                 );
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
 
-        it('should not update userType if already exists', (done) => {
+        it('should not update userType if already exists', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'sample-user-type';
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
     });
 

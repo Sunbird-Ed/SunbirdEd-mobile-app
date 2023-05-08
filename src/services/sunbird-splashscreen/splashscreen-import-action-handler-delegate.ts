@@ -3,7 +3,7 @@ import { ImportPopoverComponent } from '../../app/components/popups/import-popov
 import { UtilityService } from '../../services/utility-service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { defer, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, map, mapTo, reduce, takeUntil, tap } from 'rxjs/operators';
 import { CommonUtilService } from 'services/common-util.service';
@@ -20,7 +20,7 @@ import {
   TelemetryErrorRequest,
   TelemetryService,
   StorageService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 
 @Injectable()

@@ -1,8 +1,8 @@
 
 import { AppRatingAlertComponent } from './rating-alert.component';
-import { TelemetryService, SharedPreferences } from 'sunbird-sdk';
+import { TelemetryService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     UtilityService,
     AppRatingService,

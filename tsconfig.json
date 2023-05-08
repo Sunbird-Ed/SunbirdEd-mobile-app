@@ -2,7 +2,10 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "enableIvy": false
+    "enableIvy": true,
+    "compilationMode": "partial",
+    "fullTemplateTypeCheck": true, 
+    "strictInjectionParameters": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
@@ -36,8 +39,8 @@
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption"],
       "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption/*"],
-      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements-v9"],
-      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements-v9/*"]
+      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements"],
+      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements/*"]
     }
   },
   "include": [

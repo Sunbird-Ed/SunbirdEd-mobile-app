@@ -4,14 +4,14 @@ import {
     Component, ViewEncapsulation, OnInit, OnDestroy
 } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
     Environment, ImpressionType, InteractSubtype, InteractType,
     PageId, CorReleationDataType, ID
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 

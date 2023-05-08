@@ -64,7 +64,7 @@ export const mockContentData: Partial<Navigation> = {
                 ],
                 visibility: 'Default',
                 toc_url: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_212911645382959104165/artifact/do_212911645382959104165_toc.json',
-                contentTypesCount: '{\'CourseUnit\:1,\'Resource\:5}',
+                contentTypesCount: '{\"CourseUnit\":1,\"Resource\":5}',
                 consumerId: 'a9cb3a83-a164-4bf0-aa49-b834cebf1c07',
                 childNodes: [
                     'do_212911623572824064157',

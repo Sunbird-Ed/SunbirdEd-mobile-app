@@ -1,4 +1,4 @@
-import {ResourcesComponent} from '@app/app/resources/resources.component';
+import {ResourcesComponent} from '../../app/resources/resources.component';
 import {
     ContentEventType,
     ContentSearchCriteria,
@@ -15,9 +15,9 @@ import {
     ProfileType,
     SearchType,
     SharedPreferences,
-} from 'sunbird-sdk';
-import {EventsBusServiceImpl} from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import {ContentServiceImpl} from 'sunbird-sdk/content/impl/content-service-impl';
+} from '@project-sunbird/sunbird-sdk';
+import {EventsBusServiceImpl} from '@project-sunbird/sunbird-sdk/events-bus/impl/events-bus-service-impl';
+import {ContentServiceImpl} from '@project-sunbird/sunbird-sdk/content/impl/content-service-impl';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -32,15 +32,15 @@ import {
     SunbirdQRScanner,
     TelemetryGeneratorService,
     ProfileHandler
-} from '@app/services';
+} from '../../services';
 import {MenuController, PopoverController, ToastController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Network} from '@ionic-native/network/ngx';
+import {Events} from '../../util/events';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
+import {Network} from '@awesome-cordova-plugins/network/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {NEVER, of, Subscription} from 'rxjs';
 import {ContentFilterConfig, EventTopics, PreferenceKey, PrimaryCategory, RouterLinks, ViewMore} from '../app.constant';
 import {CorReleationDataType, ImpressionType} from '../../services/telemetry-constants';
@@ -302,7 +302,7 @@ describe('ResourcesComponent', () => {
         };
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
         jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();
@@ -331,7 +331,7 @@ describe('ResourcesComponent', () => {
         };
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
         jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
-        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();

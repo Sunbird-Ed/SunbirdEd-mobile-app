@@ -6,9 +6,9 @@ import {
   ImpressionType, InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../../../../services/telemetry-constants';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import { Subscription } from 'rxjs';
 
 @Component({

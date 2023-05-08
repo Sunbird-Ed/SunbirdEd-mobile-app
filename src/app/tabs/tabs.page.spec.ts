@@ -1,6 +1,6 @@
 import { AppGlobalService, CommonUtilService, ContainerService, OnboardingConfigurationService } from '../../services';
 import { TabsPage } from './tabs.page';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { IonRouterOutlet, IonTabs, ToastController } from '@ionic/angular';
 import { ProfileService, ProfileSource, ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';

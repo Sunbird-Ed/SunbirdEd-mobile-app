@@ -8,10 +8,10 @@ import {IonicModule} from '@ionic/angular';
 import {CategoryListPage} from './category-list-page';
 import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import {TranslateModule} from '@ngx-translate/core';
-import {ComponentsModule} from '@app/app/components/components.module';
+import {ComponentsModule} from '../../app/components/components.module';
 import {CommonFormElementsModule, SbSearchFilterModule} from 'common-form-elements';
-import {PipesModule} from '@app/pipes/pipes.module';
-import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
+import {PipesModule} from '../../pipes/pipes.module';
+import {SearchFilterPage} from '../../app/search-filter/search-filter.page';
 
 const routes: Routes = [
     {
@@ -21,9 +21,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    entryComponents: [
-        SearchFilterPage
-    ],
     imports: [
         CommonModule,
         FormsModule,

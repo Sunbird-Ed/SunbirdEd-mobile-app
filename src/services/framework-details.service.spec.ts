@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { FrameworkUtilService } from 'sunbird-sdk';
+import { FrameworkUtilService } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { FrameworkDetailsService } from './framework-details.service';
 import { LocationHandler } from './location-handler';

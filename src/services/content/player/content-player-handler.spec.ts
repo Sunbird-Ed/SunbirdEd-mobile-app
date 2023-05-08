@@ -1,13 +1,13 @@
 import { ContentPlayerHandler } from '../../../services/content/player/content-player-handler';
 import {TelemetryGeneratorService, CommonUtilService, AppHeaderService, UtilityService} from '../../../services';
-import { PlayerService, CourseService } from 'sunbird-sdk';
-import { File } from '@ionic-native/file/ngx';
+import { PlayerService, CourseService } from '@project-sunbird/sunbird-sdk';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { CanvasPlayerService } from '../../canvas-player.service';
 import { Router } from '@angular/router';
 import { of, identity } from 'rxjs';
 import { mockPlayerConfigData, mockContent } from './content.player-handler.spec.data';
 import { ContentInfo } from '../content-info';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../../util/content-util';
 
 describe('ContentPlayerHandler', () => {
     let contentPlayerHandler: ContentPlayerHandler;

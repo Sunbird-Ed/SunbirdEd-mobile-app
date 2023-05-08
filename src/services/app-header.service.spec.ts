@@ -1,7 +1,7 @@
 import {AppHeaderService} from './app-header.service';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@ionic-native/status-bar/ngx';
-import {SharedPreferences} from 'sunbird-sdk';
+import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
+import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
 import onboarding from './../assets/configurations/config.json';
 import { mockOnboardingConfigData } from '../app/components/discover/discover.page.spec.data';

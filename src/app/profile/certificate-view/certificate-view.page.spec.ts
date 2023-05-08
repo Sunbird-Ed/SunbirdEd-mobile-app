@@ -1,8 +1,8 @@
 import {CertificateService, CourseService} from '@project-sunbird/sunbird-sdk';
 import {CertificateDownloadService} from 'sb-svg2pdf';
-import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '@app/services';
+import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '../../../services';
 import {Router} from '@angular/router';
-import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {FileOpener} from '@awesome-cordova-plugins/file-opener/ngx';
 import {Platform, PopoverController, ToastController} from '@ionic/angular';
 import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';

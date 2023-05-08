@@ -1,4 +1,4 @@
-import {DataSyncComponent} from '@app/app/settings/data-sync/data-sync.component';
+import {DataSyncComponent} from '../../../app/settings/data-sync/data-sync.component';
 import {
     ArchiveExportProgress,
     ArchiveObjectExportProgress,
@@ -8,9 +8,9 @@ import {
     TelemetryAutoSyncModes,
     TelemetryService,
     TelemetrySyncStat
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     CommonUtilService,
     Environment,
@@ -19,7 +19,7 @@ import {
     InteractType,
     PageId,
     TelemetryGeneratorService
-} from '@app/services';
+} from '../../../services';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
 import {EMPTY, of, throwError} from 'rxjs';

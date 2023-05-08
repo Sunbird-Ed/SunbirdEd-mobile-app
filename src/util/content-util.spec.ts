@@ -1,5 +1,5 @@
-import { Content } from 'sunbird-sdk';
-import { ContentUtil } from '@app/util/content-util';
+import { Content } from '@project-sunbird/sunbird-sdk';
+import { ContentUtil } from '../util/content-util';
 import { mockSupportedUserTypeConfig } from '../services/profile-handler.spec.data';
 
 describe('ContentUtil', () => {

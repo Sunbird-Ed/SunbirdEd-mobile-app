@@ -14,19 +14,19 @@
     <ion-title class="color f16" role="heading" aria-level="1" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group pr-12 fontResize-container" slot="end">
       <button type="button" [attr.aria-pressed]="false" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
-        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilityfont}}"
+        attr.aria-label="{{'DECREASE_FONT' | translate }}"
         class="fontResizeBtn fontResizeBtn_A-"
-        title="{{resourceService?.frmelmnts?.lbl?.accessibilityfont}}"
+        title="{{'DECREASE_FONT' | translate }}"
         (click)="changeFontSize('decrease');" #decreaseFontSize>A-</button>
       <button [attr.aria-pressed]="false" type="button" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
-        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilityfntdflt}}"
+        attr.aria-label="{{'DEFAULT_FONT' | translate }}"
         class="fontResizeBtn fontResizeBtn_A"
-        title="{{resourceService?.frmelmnts?.lbl?.accessibilityfntdflt}}"
+        title="{{'DEFAULT_FONT' | translate }}"
         (click)="changeFontSize('reset');" #resetFontSize>A</button>
       <button [attr.aria-pressed]="false" type="button" tabindex="0" *ngIf="headerConfig?.actionButtons?.indexOf('font-accessibility') >=0"
-        attr.aria-label="{{resourceService?.frmelmnts?.lbl?.accessibilitytextsize}}"
+        attr.aria-label="{{'INCREASE_FONT' | translate }}"
         class="fontResizeBtn fontResizeBtn_A+"
-        title="{{resourceService?.frmelmnts?.lbl?.accessibilitytextsize}}"
+        title="{{'INCREASE_FONT' | translate }}"
         (click)="changeFontSize('increase');" #increaseFontSize>A+</button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
@@ -189,9 +189,9 @@
             <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
           <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" role="button"
-            menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
+            menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
           <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" role="button"
-            menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
+            menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>

@@ -1,7 +1,7 @@
 import { PageFilterPage } from '../page-filter/page-filter.page';
-import { FrameworkUtilService } from 'sunbird-sdk';
+import { FrameworkUtilService } from '@project-sunbird/sunbird-sdk';
 import { PopoverController, NavParams, MenuController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
     AppGlobalService,
@@ -212,7 +212,7 @@ describe('PageFilterPage', () => {
         it('should generate interact telemetry and dismiss the popup', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act
@@ -238,7 +238,7 @@ describe('PageFilterPage', () => {
         it('should not invoke applyFilter() of callback', (done) => {
             // arrange
             (cloneDeep as any).mockImplementationOnce((data) => {
-                return require.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
+                return jest.requireActual('lodash/cloneDeep')(pageFilterPage.filters);
             });
             const applyFilterMock = jest.spyOn(pageFilterPage.callback, 'applyFilter');
             // act

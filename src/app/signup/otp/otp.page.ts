@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProfileConstants, OTPTemplates, RouterLinks, PreferenceKey } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileConstants, OTPTemplates, RouterLinks, PreferenceKey } from '../../../app/app.constant';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { Location } from '@angular/common';
 
 @Component({

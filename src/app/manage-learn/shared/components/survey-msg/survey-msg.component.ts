@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { AppHeaderService } from '../../../../../services/app-header.service';
 import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({

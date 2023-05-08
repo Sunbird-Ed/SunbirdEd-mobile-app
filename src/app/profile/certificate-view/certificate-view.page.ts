@@ -1,20 +1,20 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { ApplicationHeaderKebabMenuComponent } from '../../../app/components/application-header/application-header-kebab-menu.component';
+import { urlConstants } from '../../../app/manage-learn/core/constants/urlConstants';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
-import { CertificateDownloadService } from 'sb-svg2pdf';
-import { CertificateService, InteractType } from 'sunbird-sdk';
+import { CertificateDownloadService } from "@project-sunbird/sb-svg2pdf";
+import { CertificateService, InteractType } from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
-import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
+import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
 declare var cordova;
 
 @Component({

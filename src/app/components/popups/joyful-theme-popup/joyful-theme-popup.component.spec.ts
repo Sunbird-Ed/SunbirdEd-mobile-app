@@ -1,7 +1,7 @@
-import {JoyfulThemePopupComponent} from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import {JoyfulThemePopupComponent} from '../../../../app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
 import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {NavParams, PopoverController} from '@ionic/angular';
-import {AppHeaderService} from '@app/services';
+import {AppHeaderService} from '../../../../services';
 import {of} from 'rxjs';
 
 describe('JoyfulThemePopup', () => {

@@ -1,5 +1,5 @@
 import { SearchPage } from './search.page';
-import { MimeType, RouterLinks } from '@app/app/app.constant';
+import { MimeType, RouterLinks } from '../../app/app.constant';
 import {
     FrameworkService,
     FrameworkUtilService,
@@ -12,12 +12,12 @@ import {
     PageAssembleService,
     FrameworkCategoryCodesGroup,
     ContentImportStatus
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, NavController, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -25,14 +25,14 @@ import {
     AppHeaderService
 } from 'services';
 import { Location } from '@angular/common';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '../../services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService, OnboardingConfigurationService, CorReleationDataType } from '../../services';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../services/profile-handler';
 import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
 import { Search, SwitchableTabsConfig } from '../app.constant';
 import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';

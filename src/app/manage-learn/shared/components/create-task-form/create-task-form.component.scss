@@ -33,7 +33,7 @@
     margin-bottom: 15px;
 }
 .file-list{
-    margin: auto; 
+    margin: auto 0px;
     font-size: 1.5rem;
 }
 .custom-item{
@@ -48,6 +48,7 @@
     --border-color: #999999 !important;
   }
 .attachments-box{
+    color: $black-color !important;
     background: $white;
     margin-bottom: 35px;
     height: auto;
@@ -61,9 +62,21 @@
         color: #{$blue}; 
         text-align:right;
         float: right;
-        margin: 10px 10px; 
+        margin: 10px 0px; 
         }
     }
+
+    .attachment-label{
+        ion-icon{
+            font-size: 1.25rem;
+            position: absolute;
+        }
+       span{
+           margin-left:25px;
+           word-break: break-all;
+       }
+    }
+
     .img{
         margin: 5px 5px;
         margin-bottom: -5px;
@@ -76,6 +89,27 @@
         margin-top: 5px;
         margin-bottom: 5px;
         font-weight: 500;
+    }
+    .align-item{
+        align-items: baseline;
+        margin: 5px 0px;
+    }
+    .action-btn{
+            background: transparent;
+            box-shadow: none !important;
+            margin-top: -7px;
+        p{
+            margin-bottom: 0px;
+            font-size: 0.75rem !important;
+            margin-top: -5px;
+            text-align: center;
+            font-weight: 600;
+            color: $black-color !important;
+        }
+    }
+    ion-icon{
+        font-size: 1.25rem;
+         color: $black-color !important;
     }
 }
 .container {

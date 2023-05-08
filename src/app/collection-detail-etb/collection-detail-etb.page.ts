@@ -10,14 +10,14 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ContentUtil } from '@app/util/content-util';
+import { FileSizePipe } from '../../pipes/file-size/file-size';
+import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
+import { ContentInfo } from '../../services/content/content-info';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ContentUtil } from '../../util/content-util';
 import { IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 import isObject from 'lodash/isObject';
@@ -51,19 +51,19 @@ import {
   StorageService,
   TelemetryErrorCode,
   TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
 import { AppGlobalService } from '../../services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CorReleationDataType, Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from '../../services/telemetry-constants';
 import { CollectionChildComponent } from '../components/collection-child/collection-child.component';
 import { ConfirmAlertComponent } from '../components/confirm-alert/confirm-alert.component';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { TextbookTocService } from './textbook-toc-service';
-import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-collection-detail-etb',

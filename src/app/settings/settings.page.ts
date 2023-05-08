@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
@@ -16,12 +16,12 @@ import {
   TelemetryImpressionRequest,
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { Events } from '@app/util/events';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { Events } from '../../util/events';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
 import { SbAppSharePopupComponent } from '../components/popups/sb-app-share-popup/sb-app-share-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 

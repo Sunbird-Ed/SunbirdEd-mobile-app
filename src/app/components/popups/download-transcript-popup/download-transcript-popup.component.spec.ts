@@ -1,12 +1,12 @@
 import { Platform, PopoverController } from '@ionic/angular';
 import { DownloadTranscriptPopupComponent } from './download-transcript-popup.component';
-import { ContentService } from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentService } from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../../services/common-util.service';
 import {
   AndroidPermissionsService,
   AppGlobalService,
   TelemetryGeneratorService
-} from '@app/services';
+} from '../../../../services';
 import { of } from 'rxjs';
 
 describe('DownloadTranscriptPopupComponent', () => {

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Location as LocationType } from '@app/app/app.constant';
+import { Location as LocationType } from '../../app/app.constant';
 import { CommonUtilService } from '../common-util.service';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { Location } from '@project-sunbird/client-services/models/location';

@@ -1,5 +1,5 @@
 import { MimeType } from './../../app/app.constant';
-import { Content } from 'sunbird-sdk';
+import { Content } from '@project-sunbird/sunbird-sdk';
 import { Pipe, PipeTransform } from '@angular/core';
 /*
   Contents are filtered based on given mimetype

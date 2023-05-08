@@ -1,7 +1,7 @@
 import {SplaschreenDeeplinkActionHandlerDelegate} from './splaschreen-deeplink-action-handler-delegate';
 import {MimeType, RouterLinks} from '../../app/app.constant';
 import {Router} from '@angular/router';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {of} from 'rxjs';
 import {
     AuthService,
@@ -14,11 +14,11 @@ import {
     SharedPreferences,
     StorageService,
     TelemetryService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {AppGlobalService} from '../app-global-service.service';
 import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
 import {CommonUtilService} from '../../services/common-util.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {UtilityService} from '../utility-service';
 import {LoginHandlerService} from '../login-handler.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -33,7 +33,7 @@ import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegat
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {jest} from '@jest/globals';
-import {LoginNavigationHandlerService} from '@app/services';
+import {LoginNavigationHandlerService} from '../../services';
 import { Platform } from '@ionic/angular';
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {

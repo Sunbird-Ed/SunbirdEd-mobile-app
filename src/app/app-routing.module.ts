@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouterLinks } from './app.constant';
-import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { HasNotSelectedLanguageGuard } from '@app/guards/has-not-selected-language.guard';
-import { HasNotSelectedUserTypeGuard } from '@app/guards/has-not-selected-user-type.guard';
-import { IsGuestUserGuard } from '@app/guards/is-guest-user.guard';
+import { HasNotBeenOnboardedGuard } from '../guards/has-not-been-onboarded.guard';
+import { HasNotSelectedFrameworkGuard } from '../guards/has-not-selected-framework.guard';
+import { HasNotSelectedLanguageGuard } from '../guards/has-not-selected-language.guard';
+import { HasNotSelectedUserTypeGuard } from '../guards/has-not-selected-user-type.guard';
+import { IsGuestUserGuard } from '../guards/is-guest-user.guard';
 import { MlGuard } from './manage-learn/core/guards/ml.guard';
 
 const routes: Routes = [
@@ -152,5 +152,8 @@ const routes: Routes = [
     HasNotSelectedUserTypeGuard,
     HasNotSelectedFrameworkGuard,
     IsGuestUserGuard],
+    schemas: [
+      CUSTOM_ELEMENTS_SCHEMA
+    ]
 })
 export class AppRoutingModule { }

@@ -20,20 +20,20 @@ import {
   FrameworkCategoryCode,
   SharedPreferences,
   InteractType
-} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+} from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, PageId, } from '@app/services/telemetry-constants';
-import { ActivePageService } from '@app/services/active-page/active-page-service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { Environment, InteractSubtype, PageId, } from '../../../services/telemetry-constants';
+import { ActivePageService } from '../../../services/active-page/active-page-service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
+import { ProfileHandler } from '../../../services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
 
 

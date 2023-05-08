@@ -1,21 +1,21 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
-import { AppRatingService } from '@app/services/app-rating.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { UtilityService } from '@app/services/utility-service';
-import { SharedPreferences, TelemetryService } from 'sunbird-sdk';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppRatingService } from '../../../services/app-rating.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { UtilityService } from '../../../services/utility-service';
+import { SharedPreferences, TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Observable } from 'rxjs';
-import { PreferenceKey, StoreRating } from '@app/app/app.constant';
+import { PreferenceKey, StoreRating } from '../../../app/app.constant';
 import {
   Environment,
   ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { map } from 'rxjs/operators';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 
 enum ViewType {
   APP_RATE = 'appRate',

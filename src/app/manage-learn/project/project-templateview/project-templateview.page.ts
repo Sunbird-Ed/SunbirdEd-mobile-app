@@ -4,20 +4,20 @@ import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
-import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { UtilsService } from '../../../../app/manage-learn/core/services/utils.service';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import {  ProjectService, ToastService } from '../../core';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { PreferenceKey } from '@app/app/app.constant';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { PreferenceKey } from '../../../../app/app.constant';
 import { Subscription } from 'rxjs';
 
 import {
   SharedPreferences
-} from 'sunbird-sdk';
-import { ProfileNameConfirmationPopoverComponent } from '@app/app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+} from '@project-sunbird/sunbird-sdk';
+import { ProfileNameConfirmationPopoverComponent } from '../../../../app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { Location } from '@angular/common';
 @Component({
   selector: 'app-project-templateview',

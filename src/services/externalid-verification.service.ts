@@ -1,14 +1,14 @@
 import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import {
     TeacherIdVerificationComponent
-} from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
+} from '../app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import {PreferenceKey, ProfileConstants} from '../app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';

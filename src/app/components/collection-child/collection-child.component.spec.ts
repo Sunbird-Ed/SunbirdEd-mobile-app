@@ -4,7 +4,7 @@ import { NgZone } from '@angular/core';
 import { CommonUtilService, ComingSoonMessageService, TelemetryGeneratorService } from '../../../services';
 import { TextbookTocService } from '../../collection-detail-etb/textbook-toc-service';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router } from '@angular/router';
 import {
   mockChildContentData,
@@ -16,9 +16,9 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { Content } from 'sunbird-sdk';
-import { EventTopics } from '@app/app/app.constant';
+} from '../../../services/telemetry-constants';
+import { Content } from '@project-sunbird/sunbird-sdk';
+import { EventTopics } from '../../../app/app.constant';
 import { ExploreConstants, MimeType, RouterLinks } from '../../app.constant';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';

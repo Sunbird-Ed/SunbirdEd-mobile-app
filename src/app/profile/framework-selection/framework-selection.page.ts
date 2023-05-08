@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { FrameworkCommonFormConfigBuilder } from '../../../services/common-form-config-builders/framework-common-form-config-builder';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
   CorReleationDataType,
   PageId,
   ImpressionType, Environment
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
-import { FieldConfigOptionsBuilder } from '@app/app/components/common-forms/field-config';
+import { FieldConfigOptionsBuilder } from '../../../app/components/common-forms/field-config';
 
 @Injectable({ providedIn: 'root' })
 export class FrameworkSelectionDelegateService {

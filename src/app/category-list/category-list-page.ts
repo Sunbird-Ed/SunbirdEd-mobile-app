@@ -1,8 +1,8 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { SearchFilterService } from '@app/services/search-filter/search-filter.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { SearchFilterService } from '../../services/search-filter/search-filter.service';
 import {
     CorReleationDataType,
     Environment,
@@ -10,7 +10,7 @@ import {
     InteractSubtype,
     InteractType,
     PageId,
-} from '@app/services/telemetry-constants';
+} from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import {
     ContentService,
@@ -24,18 +24,18 @@ import {
     SearchType,
     CorrelationData,
     Profile
-} from 'sunbird-sdk';
-import { AggregatorConfigField, ContentAggregation } from 'sunbird-sdk/content/handlers/content-aggregator';
-import { ContentUtil } from '@app/util/content-util';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ScrollToService } from '@app/services/scroll-to.service';
+} from '@project-sunbird/sunbird-sdk';
+import { AggregatorConfigField, ContentAggregation } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
+import { ContentUtil } from '../../util/content-util';
+import { ProfileConstants, RouterLinks } from '../../app/app.constant';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ScrollToService } from '../../services/scroll-to.service';
 import { ModalController } from '@ionic/angular';
-import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
+import { SearchFilterPage } from '../../app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
-import { ObjectUtil } from '@app/util/object.util';
+import { ObjectUtil } from '../../util/object.util';
 
 @Component({
     selector: 'app-category-list-page',

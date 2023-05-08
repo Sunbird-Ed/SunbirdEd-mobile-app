@@ -9,9 +9,9 @@ import {
     StorageService,
     TelemetryErrorCode,
     TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {IonContent, Platform, PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -35,12 +35,12 @@ import {
     mockContentData
 } from './collection-detail-etb-page.spec.data';
 import { of, Subscription, throwError } from 'rxjs';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { EventTopics } from '@app/app/app.constant';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
+import { EventTopics } from '../../app/app.constant';
 import { ShareItemType} from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { isObject } from 'util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
@@ -210,7 +210,7 @@ describe('collectionDetailEtbPage', () => {
         }));
         mockHeaderService.updatePageConfig = jest.fn();
         mockevents.publish = jest.fn();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+        jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
@@ -236,8 +236,8 @@ describe('collectionDetailEtbPage', () => {
             actionButtons: ['download']
         } as any);
         mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
-        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockImplementation();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.ionViewWillEnter();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
@@ -258,7 +258,7 @@ describe('collectionDetailEtbPage', () => {
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
         mockContentService.importContent = jest.fn(() => of());
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         setTimeout(() => {
             expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { ContentImport } from 'sunbird-sdk';
-import { ViewCreditsComponent } from '@app/app/components/popups/view-credits/view-credits.component';
+import { ContentImport } from '@project-sunbird/sunbird-sdk';
+import { ViewCreditsComponent } from '../app/components/popups/view-credits/view-credits.component';
 
 declare const cordova;
 @Injectable()
