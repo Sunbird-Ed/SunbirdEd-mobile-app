@@ -8,7 +8,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 import { localStorageConstants } from "../../constants/localStorageConstants";
 import { LoaderService } from "../loader/loader.service";
-import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { ImagePicker, ImagePickerOptions } from '@awesome-cordova-plugins/image-picker/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -360,14 +360,14 @@ export class AttachmentService {
   async openAllFile(path?) {
     try {
       const file = await this.chooser.getFile();
-      let sizeOftheFile: number = file.data.length
+      let sizeOftheFile: number = file.size
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
         this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
       } else {
         const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
-        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.path)
         if (writtenFile.isFile) {
           const data = {
             name: newFileName,
