@@ -549,6 +549,7 @@ export class CommonUtilService {
 
     isAccessibleForNonStudentRole(profileType) {
         return profileType === ProfileType.TEACHER ||
+            profileType === ProfileType.STUDENT ||
             profileType === ProfileType.OTHER ||
             profileType === ProfileType.ADMIN ||
             profileType === ProfileType.PARENT;

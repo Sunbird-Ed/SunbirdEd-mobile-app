@@ -16,6 +16,9 @@
           "options": {
             "outputPath": "www",
             "index": "src/index.html",
+            "customWebpackConfig": {
+              "path": "config/webpack.config.js"
+            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -92,6 +95,7 @@
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
               "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
             ],
+            "es5BrowserSupport": true,
             "preserveSymlinks": true
           },
           "configurations": {

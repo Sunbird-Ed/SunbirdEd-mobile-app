@@ -266,8 +266,8 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
-    if(this.projectlisting){
+    if(this.projectlisting || this.stateData?.referenceFrom === 'link'){
+    this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
     await this.router
       .navigate([`/${RouterLinks.PROJECT}`], {
         queryParams: {
@@ -276,9 +276,10 @@ export class ProjectTemplateviewPage implements OnInit {
       })
     }
     if(this.programlisting){
+     await this.router.navigate([`/${RouterLinks.HOME}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
-      }
+    }
     setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
@@ -288,6 +289,7 @@ export class ProjectTemplateviewPage implements OnInit {
           projectId: this.project.projectId,
           programId: this.programId,
           solutionId: this.solutionId,
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         },
       });
     } else {
@@ -370,11 +372,13 @@ export class ProjectTemplateviewPage implements OnInit {
     await alert.present();
   }
   openStartIMPPopup(){
-    this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
-      if(data){
-        this.doAction();
-      }
-    })
+    if(!this.project?.projectId){
+      this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
+        if(data){
+          this.doAction();
+        }
+      })
+    }
    }
    private async showProfileNameConfirmationPopup() {
      let listing;

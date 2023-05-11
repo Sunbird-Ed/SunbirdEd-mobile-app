@@ -349,6 +349,19 @@ describe('PlayerPage', () => {
                 }
             ]));
             mockStatusBar.hide = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: [
+                                'https://obj.stage.sunbirded.org/**'
+                            ]
+                        }
+                    }
+                }
+            ]));
             mockPlatform.backButton = {
                 subscribeWithPriority: jest.fn((_, fn) => fn()),
             } as any;
