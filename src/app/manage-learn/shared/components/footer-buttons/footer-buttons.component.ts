@@ -28,7 +28,7 @@ export class FooterButtonsComponent implements OnChanges {
   }
   @Input() isFirst: boolean;
   @Input() isStartBTNEnabled:boolean;
-  @Input() showStartButton : boolean;
+  @Input() showStartButton : boolean = false;
   @Input() isLast: boolean;
   @Output() nextAction = new EventEmitter();
   @Output() backAction = new EventEmitter();
@@ -40,7 +40,7 @@ export class FooterButtonsComponent implements OnChanges {
   @Input() isSubmitted;
   @Input() enableGps;
   @Input() showSubmit;
-  @Input() viewOnly:boolean;
+  @Input() viewOnly:boolean = false;
 
   percentage: number = 0;
 

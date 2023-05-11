@@ -11,17 +11,19 @@
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="BackupWebStorage" value="none" />
-    <preference name="SplashScreenDelay" value="5000" />
     <preference name="Orientation" value="portrait" />
+    <preference name="FadeSplashScreen" value="false" />
     <preference name="AndroidLaunchMode" value="singleInstance" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyContentPlayer.js" type="before_build" />
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <platform name="android">
         <hook src="attach-source-maps.js" type="before_build" />
-        <preference name="android-targetSdkVersion" value="31" />
+        <preference name="android-targetSdkVersion" value="32" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
+        <hook src="scripts/android/fix-android-11-migration.js" type="before_run" />
+        <hook src="scripts/android/fix-android-11-migration.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_build" />
         <hook src="scripts/copyBundledData.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
@@ -53,27 +55,23 @@
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+        <preference name="AndroidWindowSplashScreenAnimationDuration" value="5000" />
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <splash density="land-ldpi" src="resources/android/splash/drawable-ldpi-splash.png" />
-        <splash density="land-mdpi" src="resources/android/splash/drawable-ldpi-splash.png" />
-        <splash density="land-hdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
-        <splash density="land-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
-        <splash density="land-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
-        <splash density="land-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
-        <splash density="port-ldpi" src="resources/android/splash/drawable-ldpi-splash.png" />
-        <splash density="port-mdpi" src="resources/android/splash/drawable-ldpi-splash.png" />
-        <splash density="port-hdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
-        <splash density="port-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
-        <splash density="port-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
-        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <icon density="mdpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <icon density="hdpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <icon density="xhdpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <icon density="xxhdpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <icon density="xxxhdpi" src="resources/android/icon/drawable-ldpi-icon.xml" />
+        <preference name="AutoHideSplashScreen" value="true" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" />
+        <preference name="FadeSplashScreen" value="false" />
+        <preference name="SplashScreen" value="resources/android/splash/drawable-ldpi-splash.png" />
+        <preference name="SplashScreen" value="resources/android/splash/drawable-hdpi-splash.png" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/drawable-ldpi-splash.png" />
         <resource-file src="resources/android/icon/mipmap-hdpi-icon.png" target="app/src/main/res/mipmap-hdpi/n_icon.png" />
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
+        <resource-file src="splash_styles.xml" target="app/src/main/res/drawable/splash_styles.xml" />
     </platform>
     <platform name="ios">
         <allow-navigation href="*" />
@@ -114,19 +112,6 @@
         <icon height="58" src="resources/ios/icon/icon-small@2x.png" width="58" />
         <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87" />
         <icon height="1024" src="resources/ios/icon/icon-1024.png" width="1024" />
-        <splash height="1136" src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" />
-        <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
-        <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
-        <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
-        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
-        <splash height="2048" src="resources/ios/splash/Default-Landscape@~ipadpro.png" width="2732" />
-        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
-        <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
-        <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
-        <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
-        <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
-        <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
-        <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
     <content src="index.html" />
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
@@ -174,7 +159,6 @@
     </plugin>
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
-    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-5.1.1" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />

@@ -284,7 +284,7 @@ export class ProjectService {
   }
 
   async mapProjectToUser({ programId, solutionId, templateId, isATargetedSolution, hasAcceptedTAndC }) {
-    let payload = { programId: programId, solutionId: solutionId };
+    let payload = { programId: programId, solutionId: solutionId, hasAcceptedTAndC: hasAcceptedTAndC };
     const config = {
       url: urlConstants.API_URLS.IMPORT_LIBRARY_PROJECT + templateId + '?isATargetedSolution=false',
       payload: payload,
