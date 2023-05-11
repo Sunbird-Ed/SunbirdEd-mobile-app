@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ToastService } from '@app/app/manage-learn/core';
+import {ToastService} from '../../../core/services/toast/toast.service';
 @Component({
   selector: 'app-add-link-modal',
   templateUrl: './add-link-modal.component.html',

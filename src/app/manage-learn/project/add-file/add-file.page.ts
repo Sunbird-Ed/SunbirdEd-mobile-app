@@ -159,8 +159,8 @@ export class AddFilePage implements OnInit {
 
   delete(index) {
     this.attachments.splice(index, 1);
-    this.update('delete');
-    this.task.isEdit = true;
+    this.update('save');
+    this.taskId ? this.task.isEdit = true :'';
   }
 
   async onAction(event) {
