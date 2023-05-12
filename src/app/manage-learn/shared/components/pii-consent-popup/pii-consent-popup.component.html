@@ -1,0 +1,42 @@
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+      <ion-title class="sb-popover-title" role="heading" aria-level="2">{{'PROFILE_DETAILS_TITLE' | translate}}
+      </ion-title>
+  </ion-toolbar>
+</ion-header>
+<div id="main-content" class="consent-popover-info">
+    <div class="d-flex-col">
+        <div class="body" *ngIf="detailsList.length">
+            <div *ngFor="let element of detailsList">
+                <p class="profile-info-section">
+                  <span class="font-weight-600">{{element.key}}</span>
+                  <span class="profile-info">{{element.value}}</span>
+                </p>
+            </div>
+        </div>
+        <div class="footer">
+            <div>
+                <p>
+                  <ion-icon name="information-circle" aria-hidden="true" color="#333333"></ion-icon>
+                  <span class="font-weight-600 ml-8">{{'FRMELEMNTS_LBL_CONSENT_POPUP_INFO' | translate}}</span>
+                </p>
+            </div>
+            <div class="d-flex">
+                <span>
+                    <ion-checkbox class="terms-checkbox" (ionChange)="changeEvent($event)"></ion-checkbox>
+                </span>
+                  <p class="font-weight-600 pl-8">
+                      <span>{{ consentMessage1 | translate }}</span>
+                      <span (click)="openTermsOfUse()" class="terms-info">{{ consentMessage2 | translate }}</span>
+                      <span>{{ consentMessage3 | translate }}</span>
+                  </p>
+            </div>
+            <div class="button-section d-flex flex-jc-space-around">
+              <ion-button class="custom-btn-txt-transform-none" expand="block" (click)="dontShare()">{{'FRMELEMNTS_BTN_DONOT_SHARE' | translate}}</ion-button>
+              <ion-button class="custom-btn-txt-transform-none" expand="block" (click)="share()" [ngClass]="!isAgreed ? 'disable' : 'enable'">
+                {{'SHARE' | translate}}
+              </ion-button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<ion-content class="ion-padding">
+  <ion-card class="details-block w-100">
+    <div class="title">{{programDetails?.programName}}</div>
+    <div class="description">{{description}}
+      <span class="read-more" (click)="showMore=!showMore; readMoreOrLess()" *ngIf="programDetails?.description?.length > characterLimit">
+        {{ (showMore ? 'READ_LESS' : 'READ_MORE') | translate }}
+      </span>
+    </div>
+    <div class="hr-line"></div>
+    <ion-button class="custom-btn-txt-transform-none" (click)="showConsentPopup()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
+      {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
+    </ion-button>
+    <ng-template #showMessage>
+      <div class="program-joined-message">
+        {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'd/M/yyyy')}  }}
+			</div>
+    </ng-template>
+  </ion-card>
+
+  <div class="section-filter">
+    <sb-library-filters [list]="filtersList" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"  
+        (selectedFilter)="onFilterChange($event);" *ngIf="filtersList?.length">
+    </sb-library-filters>
+  </div>
+
+  <ion-card class="section-card" *ngFor="let data of filteredList">
+    <div class="d-flex flex-jc-space-between p-10 section-details" (click)="selectSection(data?.sectionName)">
+      <div class="section-name">{{data?.sectionName}}</div>
+      <div class="icon">
+        <ion-icon name="{{selectedSection == data?.sectionName?'chevron-up':'chevron-down'}}"></ion-icon>
+      </div>
+    </div>
+    <div *ngIf="selectedSection == data?.sectionName">
+      <div *ngFor="let section of data?.sectionList">
+        <app-item-list-card [title]="section?.name" (click)="cardClick()">
+        </app-item-list-card>
+      </div>
+    </div>
+  </ion-card>
+
+  <div *ngIf="!solutionsList.length" class="no-data">
+    <app-no-data message="{{'FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES'|translate}}" [color]="'text-primary'"></app-no-data>
+  </div>
+  <div class="text-center no-data" *ngIf="solutionsList.length && !filteredList.length">
+    <div class="message-1"><b>{{"EMPTY_SEARCH_RESULTS" | translate}}.</b></div>
+    <div>{{"FRMELEMNTS_MSG_NO_SOLUTIONS_FOR_PROGRAM" | translate:{'type':selectedSection} }}</div>
+  </div>
+  <app-share-profile-data (save)="save($event)" [dataSharingStatus]="sharingStatus" [type]="'program'" [lastUpdatedOn]="programDetails?.programEndDate" *ngIf="programDetails?.programJoined">
+  </app-share-profile-data>
+</ion-content>

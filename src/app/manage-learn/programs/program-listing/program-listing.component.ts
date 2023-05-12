@@ -84,7 +84,7 @@ export class ProgramListingComponent implements OnInit {
     }
 
     selectedProgram(id) {
-        this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, id]);
+        this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.DETAILS}`, id]);
     }
 
     handleNavBackButton() {

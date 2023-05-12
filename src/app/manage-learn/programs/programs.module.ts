@@ -9,6 +9,8 @@ import { RouterLinks } from '../../../app/app.constant';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '../core/core.module';
+import { ProgramDetailsComponent } from './program-details/program-details.component';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 const routes: Routes = [
   {
@@ -19,10 +21,14 @@ const routes: Routes = [
     path: `${RouterLinks.SOLUTIONS}/:id`,
     component: SolutionListingComponent,
   },
+  {
+    path: `${RouterLinks.DETAILS}/:id`,
+    component: ProgramDetailsComponent,
+  },
 ];
 
 @NgModule({
-    declarations: [ProgramListingComponent, SolutionListingComponent],
+    declarations: [ProgramListingComponent, SolutionListingComponent, ProgramDetailsComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(routes),
@@ -31,6 +37,7 @@ const routes: Routes = [
         IonicModule,
         FormsModule,
         CoreModule,
+        CommonConsumptionModule
     ]
 })
 export class ProgramsModule {}

@@ -1374,5 +1374,19 @@
   "FRMELEMNTS_MSG_NOT_MET_CERTIFCATE":" Sorry ! You have not met the certificate criteria for this Improvement Project.",
   "INCREASE_FONT": "Increase font size",
   "DEFAULT_FONT": "Default font size",
-  "DECREASE_FONT": "Decrease font size"
+  "DECREASE_FONT": "Decrease font size",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP":"Join program",
+  "FRMELEMNTS_MSG_NO_SOLUTIONS_FOR_PROGRAM":"There are no {{type}} attached to this program",
+  "FRMELEMNTS_MSG_PROGRAM_JOINED":"You have joined this program, please complete the resources by {{date}}",
+  "FRMELEMNTS_MSG_SHARE_DATA_INFO": "You have agreed to share your profile details with the {{type}} administrator",
+  "FRMELEMNTS_MSG_DONOT_SHARE_DATA_INFO": "You have not agreed to share your profile details with the {{type}} administrator",
+  "FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES":"Please change and update your profile details to view program resources",
+  "FRMELEMNTS_LBL_OBSERVATIONS":"Observations",
+  "FRMELEMNTS_LBL_COURSES":"Courses",
+  "FRMELEMNTS_LBL_SURVEYS":"Surveys",
+  "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1": "I consent to share my details with the administrators of this program. All program administrators are bound by the ",
+  "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2":"in their use of my data",
+  "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and DIKSHA Terms ",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
+  "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully"
 }
