@@ -24,6 +24,7 @@ export class DateTypeInputComponent implements OnInit {
   questionValid: boolean;
   currentDate;
   futureDate;
+  calendarOpen : boolean = false;
 
   constructor(
     private utils: UtilsService,
@@ -60,6 +61,7 @@ export class DateTypeInputComponent implements OnInit {
     this.data.validation.max = this.data.validation.max === "currentDate" ? new Date().toISOString().split('T')[0] : this.data.validation.max;
     this.data.validation.min = this.data.validation.min === "currentDate" ? new Date().toISOString().split('T')[0] : this.data.validation.min;
     this.checkForValidation();
+    if(this.data?.dateFormat)this.data.dateFormat =  this.data?.dateFormat.replace("DD", "dd")
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
   }
 
@@ -71,6 +73,12 @@ export class DateTypeInputComponent implements OnInit {
   checkForValidation(): void {
     this.data.isCompleted = this.utils.isQuestionComplete(this.data);
     this.data.endTime = this.questionValid ? Date.now() : "";
+    this. calendarPopover(false);
   }
 
+  calendarPopover(isOpen : boolean){
+    if(!this.data?.autoCapture){
+      this.calendarOpen =  isOpen;
+    }
+  }
 }
