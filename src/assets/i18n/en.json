@@ -1023,6 +1023,7 @@
   "FRMELEMENTS_LBL_CAMERA": "Camera",
   "FRMELEMENTS_LBL_UPLOAD_FILE": "Upload file",
   "FRMELEMENTS_LBL_UPLOAD_IMAGE": "Upload image",
+  "FRMELEMENTS_LBL_UPLOAD_VIDEO":"Upload video",
   "FRMELEMENTS_LBL_DATE": "Date",
   "FRMELEMENTS_LBL_CAPTURE": "Capture",
   "FRMELEMNTS_LBL_ENTITIES": "Entities",
@@ -1134,7 +1135,7 @@
   "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG": "Due to a technical problem, we are unable to process the request",
   "FRMELEMNTS_MSG_PLEASE_NETWORK": "Please check your network connection and try again",
   "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL": "New Task has been successfully created.",
-  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No schools found",
+  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No {{entity}} found",
   "FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM": "Please select the entity to select your program",
   "FRMELEMNTS_MSG_NO_DATA_AVAILABLE": "No Data available",
   "FRMELEMNTS_MSG_TASK_ADDED_SUCCESSFULLY": "Task Added Successfully",
@@ -1388,5 +1389,6 @@
   "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2":"in their use of my data",
   "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and DIKSHA Terms ",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
-  "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully"
+  "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
+  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again"
 }

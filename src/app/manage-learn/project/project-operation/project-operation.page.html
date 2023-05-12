@@ -24,26 +24,35 @@
       <ion-col size="6">
         <ion-item lines="none">
           <ion-label position="stacked">
-            {{'FRMELEMNTS_LBL_FROM' | translate }}
+            {{'FRMELEMNTS_LBL_FROM' | translate }}  <ion-icon name="caret-down" slot="end"></ion-icon>
           </ion-label>
-
-          <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"
-            display-timezone="utc" value={{today}} [(ngModel)]="template.startDate" class="project-date"
-            placeholder={{today}} (ionChange)="resetEndDate($event)">
-          </ion-datetime>
-
-          <ion-icon name="caret-down" slot="end"></ion-icon>
+          <ion-input
+          (click)="setStartDate(true)" value="{{template.startDate | date :'dd/MM/YYYY'}}"
+          ></ion-input>
+          <ion-popover [isOpen]="projecStartDateModalOpen"  (ionPopoverWillDismiss)="setStartDate(false)">
+            <ng-template>
+              <ion-datetime presentation="date" id="datetime" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"
+              display-timezone="utc" value={{today}} [(ngModel)]="template.startDate" class="project-date"
+              placeholder={{today}} (ngModelChange)="resetEndDate($event)">
+            </ion-datetime>
+            </ng-template>
+          </ion-popover>
         </ion-item>
       </ion-col>
       <ion-col size="6">
         <ion-item lines="none">
           <ion-label position="stacked">
-            {{'FRMELEMNTS_LBL_TO' | translate}}
+            {{'FRMELEMNTS_LBL_TO' | translate }} <ion-icon name="caret-down" slot="end"></ion-icon>
           </ion-label>
-          <ion-datetime min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
-            value={{today}} [(ngModel)]="template.endDate" class="project-date" placeholder={{today}}>
+          <ion-input
+          (click)="setEndDate(true)" value="{{template.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+          <ion-popover [isOpen]="projectEndDateModalOpen" (ionPopoverWillDismiss)="setEndDate(false)">
+            <ng-template>
+          <ion-datetime presentation="date" id="endDate" min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
+            value={{today}} [(ngModel)]="template.endDate" class="project-date" placeholder={{today}} (ngModelChange)="setEndDate(false)">
           </ion-datetime>
-          <ion-icon name="caret-down" slot="end"></ion-icon>
+        </ng-template>
+          </ion-popover>
         </ion-item>
       </ion-col>
     </ion-row>

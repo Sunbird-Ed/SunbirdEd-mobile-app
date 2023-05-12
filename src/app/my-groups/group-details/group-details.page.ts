@@ -438,7 +438,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
       this.isGroupLoading = true;
+      const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+        id: this.groupId
+      };
       try {
+        const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
