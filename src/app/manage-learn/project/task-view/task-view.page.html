@@ -10,14 +10,14 @@
         <img src="assets/imgs/timetable.png" class="filter-icon-calendar" (click)="setTaskEndDate()"  alt=""/>
       </ion-col>
       <ion-col size="9">
-        <ion-datetime-button datetime="taskEndDate"></ion-datetime-button>
-        <ion-modal [keepContentsMounted]="true">
-          <ng-template>
-        <ion-datetime presentation="date" id="taskEndDate" (ionChange)="setDate()" #dateTime value="{{task?.endDate}}" display-timezone="utc"
-        min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="task.endDate">
-        </ion-datetime>
-      </ng-template>
-    </ion-modal>
+      <ion-input  (click)="setOpen(true)" value="{{task.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+    <ion-popover  [isOpen]="taskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
+      <ng-template>
+    <ion-datetime presentation="date" id="taskEndDate" #dateTime value="{{task?.endDate}}" display-timezone="utc"
+    min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="task.endDate" (ngModelChange)="setOpen(false,'update')">
+    </ion-datetime>
+  </ng-template>
+    </ion-popover>
       </ion-col>
     </ion-row>
     <ion-row>
