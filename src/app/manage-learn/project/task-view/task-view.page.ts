@@ -52,6 +52,7 @@ export class TaskViewPage {
   };
   viewOnlyMode: boolean = false;
   stateData;
+  taskDateModalOpen = false;
 
   constructor(
     private router: Router,
@@ -420,6 +421,12 @@ export class TaskViewPage {
       return this.subTaskCount == 0 || this.subTaskCount == undefined || this.subTaskCount > 0; // disabled all the time 
     } else {
       return this.subTaskCount > 0;
+    }
+  }
+  setOpen(isOpen: boolean, type ? : any) {
+    this.taskDateModalOpen = isOpen;
+    if(type && type =='update'){
+      this.update();
     }
   }
 }
