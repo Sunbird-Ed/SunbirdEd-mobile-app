@@ -12,7 +12,9 @@ export class CreateTaskFormComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
   statuses = statuses;
-  today
+  today;
+  istaskDateModalOpen = false;
+
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,
@@ -55,5 +57,9 @@ export class CreateTaskFormComponent implements OnInit {
 
   share() {
     this.toast.showMessage('FRMELEMNTS_MSG_COMING_SOON', 'danger');
+  }
+
+  setOpen(isOpen: boolean) {
+    this.istaskDateModalOpen = isOpen;
   }
 }
