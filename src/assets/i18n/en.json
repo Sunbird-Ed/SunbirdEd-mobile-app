@@ -1390,5 +1390,7 @@
   "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and DIKSHA Terms ",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
   "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
-  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again"
+  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again",
+  "EXPLORE_PROGRAMS":"Explore Programs",
+  "FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER":"Search your programs here"
 }
