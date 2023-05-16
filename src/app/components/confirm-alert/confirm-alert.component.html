@@ -1,7 +1,7 @@
 <ion-header class="sb-popover-header">
-  <ion-toolbar class="sb-popover-toolbar">
-    <ion-title class="sb-popover-title" role="heading" aria-level="1" *ngIf="!isUpdateAvail">{{'DOWNLOAD' | translate}}
-      <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+  <ion-toolbar class="sb-popover-toolbar">   
+    <ion-title class="sb-popover-title"  *ngIf="!isUpdateAvail" aria-label="download">{{'DOWNLOAD' | translate}}
+      <ion-icon name="close" aria-label="close button" class="sb-modal-close" (click)="closePopover()"></ion-icon>
     </ion-title>
     <ion-title class="sb-popover-title" role="heading" aria-level="1" *ngIf="isUpdateAvail">{{'UPDATE' | translate}}
       <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
