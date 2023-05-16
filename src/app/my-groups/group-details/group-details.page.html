@@ -133,7 +133,7 @@
 
 <ion-footer *ngIf="activeTab=='activities' && loggedinUser?.role === 'admin'">
   <div class="cd-btn" *ngIf="!isSuspended">
-    <button class="sb-btn-large" (click)="navigateToAddActivityPage()">
+    <button class="sb-btn-large" (click)="navigateToAddActivityPage()" aria-label="add activity button">
       + {{'ADD_ACTIVITY' | translate}}
     </button>
   </div>
