@@ -40,7 +40,7 @@ export interface NetworkInfo {
 }
 @Injectable()
 export class CommonUtilService {
-    public networkAvailability$: Observable<boolean>;
+    public networkAvailability$: Observable<any>;
 
     networkInfo: NetworkInfo = {
         isNetworkAvailable: navigator.onLine
@@ -73,19 +73,21 @@ export class CommonUtilService {
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
-                map((v: any) => v.type === 'online'),
-            )
-        ).pipe(
-            distinctUntilChanged(),
-            share(),
-            tap((status) => {
+                map((v) => {
                 this.zone.run(() => {
-                    this.networkInfo = {
-                        isNetworkAvailable: status
-                    };
+                    if(v === 'connected'){
+                        this.networkInfo = {
+                            isNetworkAvailable: true
+                        };
+                    }else{
+                        this.networkInfo = {
+                            isNetworkAvailable: false
+                        };
+                    }
                 });
-            })
-        );
+                } ),
+            )
+        )
     }
 
     showToast(translationKey, isInactive?, cssToast?, duration?, position?, fields?: string | any) {
