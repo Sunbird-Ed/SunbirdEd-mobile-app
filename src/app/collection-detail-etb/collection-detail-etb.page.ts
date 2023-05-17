@@ -349,23 +349,23 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.playBtnConfig = {
       label: this.commonUtilService.translateMessage('PLAY'),
       show: true
     };
 
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
     window['scrollWindow'] = this.ionContent;
       this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
         share());
     
   }
 
-  ionViewWillEnter() {
-    this.headerService.showStatusBar();
+  async ionViewWillEnter() {
+    await this.headerService.showStatusBar();
     this.registerDeviceBackButton();
-    this.zone.run(() => {
+    this.zone.run(async () => {
       this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
         this.handleHeaderEvents(eventName);
       });
@@ -378,7 +378,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.shownGroups = undefined;
       this.assignCardData();
       this.resetVariables();
-      this.setContentDetails(this.identifier, true);
+      await this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
         this.playContent(data);
       });
@@ -403,8 +403,8 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {
-    this.sbProgressLoader.hide({ id: this.identifier });
+  async ionViewDidEnter() {
+    await this.sbProgressLoader.hide({ id: this.identifier });
   }
 
   private assignCardData() {
@@ -419,14 +419,14 @@ export class CollectionDetailEtbPage implements OnInit {
     this.didViewLoad = true;
   }
 
-  refreshContentDetails(data) {
+  async refreshContentDetails(data) {
     this.resetVariables();
     this.shownGroups = undefined;
     this.hiddenGroups.clear();
     this.setExtrasData(data);
     this.didViewLoad = false;
     this.assignCardData();
-    this.setContentDetails(this.identifier, true);
+    await this.setContentDetails(this.identifier, true);
     this.subscribeSdkEvent();
   }
 
@@ -434,7 +434,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.commonUtilService.openUrlInBrowser(url);
   }
 
-  markContent() {
+  async markContent() {
     const addContentAccessRequest: ContentAccess = {
       status: ContentAccessStatus.PLAYED,
       contentId: this.identifier,
@@ -445,6 +445,8 @@ export class CollectionDetailEtbPage implements OnInit {
       if (data) {
         this.events.publish(EventTopics.LAST_ACCESS_ON, true);
       }
+    }).catch((error) => { 
+      console.error(error);
     });
     const contentMarkerRequest: ContentMarkerRequest = {
       uid: profile.uid,
@@ -454,7 +456,7 @@ export class CollectionDetailEtbPage implements OnInit {
       isMarked: true,
       extraInfo: {}
     };
-    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
+    await this.contentService.setContentMarker(contentMarkerRequest).toPromise();
   }
 
   // toggle the card
@@ -511,7 +513,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
 
-  handleBackButton() {
+  async handleBackButton() {
     this.didViewLoad = false;
     this.generateEndEvent(this.objId, this.objType, this.objVer);
 
@@ -519,7 +521,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else {
       this.location.back();
     }
@@ -795,11 +797,11 @@ export class CollectionDetailEtbPage implements OnInit {
     const option = { contentId: this.identifier, hierarchyInfo }; 
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
-              this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
+              await this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
             }
             if (this.textbookTocService.textbookIds.content) {
               this.activeContent = this.textbookTocService.textbookIds.content;
@@ -939,7 +941,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
 
@@ -985,12 +987,12 @@ export class CollectionDetailEtbPage implements OnInit {
             // but we have to refresh only the child content.
             this.showLoading = false;
             this.refreshHeader();
-            this.setContentDetails(this.identifier, false);
+            await this.setContentDetails(this.identifier, false);
           } else {
             if (this.isUpdateAvailable && contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
               this.showLoading = false;
               this.refreshHeader();
-              this.setContentDetails(this.identifier, false);
+              await this.setContentDetails(this.identifier, false);
             } else {
               if (contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
                 this.showLoading = false;
@@ -1024,14 +1026,14 @@ export class CollectionDetailEtbPage implements OnInit {
         const hierarchyInfo = this.cardData.hierarchyInfo ? this.cardData.hierarchyInfo : null;
         const contentUpdateEvent = event as ContentUpdate;
         if (contentUpdateEvent.type === ContentEventType.UPDATE && hierarchyInfo === null) {
-          this.zone.run(() => {
+          this.zone.run(async () => {
             if (this.parentContent) {
               const parentIdentifier = this.parentContent.contentId || this.parentContent.identifier;
               this.showLoading = true;
               this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.contentDetail, false);
               this.importContent([parentIdentifier], false);
             } else {
-              this.setContentDetails(this.identifier, false);
+              await this.setContentDetails(this.identifier, false);
             }
           });
         }
@@ -1279,7 +1281,7 @@ export class CollectionDetailEtbPage implements OnInit {
       correlationList: this.corRelationList,
       hierachyInfo: undefined,
     };
-    this.contentDeleteHandler.showContentDeletePopup(this.contentDetail, this.isChild, contentInfo, this.pageId);
+    await this.contentDeleteHandler.showContentDeletePopup(this.contentDetail, this.isChild, contentInfo, this.pageId);
   }
 
   refreshHeader() {
@@ -1306,7 +1308,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
 
-  private redirectToActivedownloads() {
+  private async redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
@@ -1323,7 +1325,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.telemetryObject,
         undefined, this.objRollup,
         this.corRelationList);
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+      await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   async onFilterMimeTypeChange(val, idx, currentFilter?) {  

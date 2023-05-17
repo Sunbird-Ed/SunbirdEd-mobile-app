@@ -35,9 +35,9 @@ export class ExternalIdVerificationService {
     }
 
     async showExternalIdVerificationPopup() {
-        this.appGlobalService.closeSigninOnboardingLoader();
+        await this.appGlobalService.closeSigninOnboardingLoader();
         if (this.appGlobalService.redirectUrlAfterLogin) {
-            this.router.navigate(
+            await this.router.navigate(
                 [this.appGlobalService.redirectUrlAfterLogin],
                 {
                     state: {
@@ -105,7 +105,7 @@ export class ExternalIdVerificationService {
         }
         const source = await this.preferences.getString(PreferenceKey.NAVIGATION_SOURCE).toPromise();
         if (source === 'courses') {
-            this.router.navigateByUrl('tabs/courses');
+            await this.router.navigateByUrl('tabs/courses');
         }
         await this.resetNavigationSource();
     }
@@ -116,7 +116,7 @@ export class ExternalIdVerificationService {
             const limitedSharingContentId = this.appGlobalService.limitedShareQuizContent;
             if (limitedSharingContentId) {
                 this.appGlobalService.limitedShareQuizContent = null;
-                this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
+                await this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
                 resolve(true);
             } else {
                 resolve(false);
@@ -126,10 +126,12 @@ export class ExternalIdVerificationService {
 
     checkJoinTraining() {
         if (this.appGlobalService.isJoinTraningOnboardingFlow) {
-            return new Promise<boolean>(async (resolve) => {
-                await this.localCourseService.checkCourseRedirect();
-                this.appGlobalService.isJoinTraningOnboardingFlow = false;
-                resolve(true);
+            return new Promise<boolean>((resolve) => {
+                (async () => {
+                    await this.localCourseService.checkCourseRedirect();
+                    this.appGlobalService.isJoinTraningOnboardingFlow = false;
+                    resolve(true);
+                })
             });
         }
     }

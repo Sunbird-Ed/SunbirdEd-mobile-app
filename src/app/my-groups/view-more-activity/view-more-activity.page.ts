@@ -105,7 +105,7 @@ export class ViewMoreActivityPage implements  OnDestroy {
                 if (isRemoved) {
                     this.activityGroup.items.splice(i, 1);
                 }
-            });
+            }).catch(e => console.error(e));
         }
     }
 

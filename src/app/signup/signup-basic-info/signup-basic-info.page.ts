@@ -72,8 +72,8 @@ export class SignupBasicInfoPage implements OnInit {
     });
   }
 
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
 
   goBack() {

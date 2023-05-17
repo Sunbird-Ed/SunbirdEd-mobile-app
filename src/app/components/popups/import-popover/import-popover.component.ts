@@ -51,8 +51,8 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
         this.fileSize = this.navParams.get('size');
         this.onLoadClicked = this.navParams.get('onLoadClicked');
         this.fileSize = this.fileSizePipe.transform(this.fileSize, 2);
-        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-            this.popoverCtrl.dismiss();
+        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+            await this.popoverCtrl.dismiss();
             this.backButtonFunc.unsubscribe();
         });
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -63,9 +63,9 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
         );
     }
 
-    closePopover() {
+    async closePopover() {
         if (!this.importingAndDisablingButton) {
-            this.popoverCtrl.dismiss();
+            await this.popoverCtrl.dismiss();
         }
     }
 
@@ -85,7 +85,7 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
             ID.LOAD_CLICKED
           );
         this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
-            this.zone.run(() => {
+            this.zone.run(async () => {
                 if (event.type === ContentEventType.IMPORT_PROGRESS) {
                     this.currentCount = event.payload.currentCount;
                     this.totalCount = event.payload.totalCount;
@@ -93,9 +93,9 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
 
                 if (event.type === ContentEventType.IMPORT_COMPLETED) {
                     if (this.deleteChecked) {
-                        this.popoverCtrl.dismiss({isDeleteChecked: true});
+                        await this.popoverCtrl.dismiss({isDeleteChecked: true});
                     } else {
-                        this.popoverCtrl.dismiss({isDeleteChecked: false});
+                        await this.popoverCtrl.dismiss({isDeleteChecked: false});
                     }
                 }
             });

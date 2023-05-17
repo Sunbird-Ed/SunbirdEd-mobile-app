@@ -90,13 +90,13 @@ export class AddMemberToGroupPage {
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
   }
 
   async ionViewDidEnter() {
@@ -104,7 +104,7 @@ export class AddMemberToGroupPage {
       const addMemberInfoScreen = await this.preferences.getBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP).toPromise();
       if (!addMemberInfoScreen) {
         this.addMemberInfoPopupRef.nativeElement.click();
-        this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
+        await this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
       }
     } catch (err) {
     }
@@ -215,7 +215,7 @@ export class AddMemberToGroupPage {
 
   async onAddToGroupClick() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
 

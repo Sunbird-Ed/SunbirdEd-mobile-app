@@ -76,14 +76,14 @@ export class SignInPage implements OnInit {
         this.appHeaderService.hideStatusBar();
     }
 
-    ionViewWillLeave() {
-        this.appHeaderService.showStatusBar();
-        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
+    async ionViewWillLeave() {
+        await this.appHeaderService.showStatusBar();
+        await this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
     }
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
-        this.login();
+        await this.login();
     }
 
     async login() {
@@ -167,7 +167,7 @@ export class SignInPage implements OnInit {
                 keycloakMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
                 await loginSessionProviderConfigloader.dismiss();
             } catch (e) {
-                this.sbProgressLoader.hide({id: 'login'});
+                await this.sbProgressLoader.hide({id: 'login'});
                 await loginSessionProviderConfigloader.dismiss();
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;

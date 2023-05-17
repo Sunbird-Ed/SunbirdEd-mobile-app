@@ -102,17 +102,19 @@ export class CommonUtilService {
         }
 
         this.translate.get(translationKey, replaceObject).subscribe(
-            async (translatedMsg: any) => {
-                const toastOptions = {
-                    message: translatedMsg,
-                    duration: duration ? duration : 3000,
-                    position: position ? position : 'bottom',
-                    cssClass: cssToast ? cssToast : ''
-                };
-
-                let toast = await this.toastController.create(toastOptions);
-                toast = this.addPopupAccessibility(toast, translatedMsg);
-                await toast.present();
+            (translatedMsg: any) => {
+                (async () => {
+                    const toastOptions = {
+                        message: translatedMsg,
+                        duration: duration ? duration : 3000,
+                        position: position ? position : 'bottom',
+                        cssClass: cssToast ? cssToast : ''
+                    };
+    
+                    let toast = await this.toastController.create(toastOptions);
+                    toast = this.addPopupAccessibility(toast, translatedMsg);
+                    await toast.present();
+                })
             }
         );
     }
@@ -178,7 +180,7 @@ export class CommonUtilService {
      * @param name Name of the language
      * @param code language code
      */
-    changeAppLanguage(name, code?) {
+    async changeAppLanguage(name, code?) {
         if (!Boolean(code)) {
             const foundValue = appLanguages.filter(language => language.name === name);
 
@@ -189,8 +191,8 @@ export class CommonUtilService {
 
         if (code) {
             this.translate.use(code);
-            this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, code).toPromise().then();
-            this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, name).toPromise().then();
+            await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, code).toPromise();
+            await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, name).toPromise();
         }
     }
 
@@ -210,7 +212,7 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
+            await this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
                 (dialCode ? dialCode : ''));
             return;
         }
@@ -509,7 +511,7 @@ export class CommonUtilService {
                         subscribeTopic.push(profile.board[0].concat('-', m.concat('-', g)));
                     });
                 });
-                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
                     if (data) {
                         subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
                         subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
@@ -531,7 +533,7 @@ export class CommonUtilService {
                 });
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
-            });
+            }).catch((e) => console.error(e));
     }
 
     getFormattedDate(date: string | Date) {
@@ -576,16 +578,16 @@ export class CommonUtilService {
         });
 
         toast = this.addPopupAccessibility(toast, this.translateMessage(description, appName));
-        toast.present();
+        await toast.present();
 
-        toast.onWillDismiss().then((res) => {
+        await toast.onWillDismiss().then(async (res) => {
             if (res.role === 'cancel') {
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.SETTINGS_CLICKED,
                     isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
                     pageId);
-                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+                await this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
             }
         });
     }

@@ -131,7 +131,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content: Content, depth) {
+  async navigateToDetailsPage(content: Content, depth) {
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = {
         contentClicked: content.identifier
@@ -154,7 +154,7 @@ export class CollectionChildComponent implements OnInit {
       const values = {
         contentClicked: content.identifier
       };
-      this.zone.run(async () => {
+      await this.zone.run(async () => {
          if(ContentUtil.isTrackable(content)) {
             this.isDepthChild = true;
             const collectionDetailsParams: NavigationExtras = {

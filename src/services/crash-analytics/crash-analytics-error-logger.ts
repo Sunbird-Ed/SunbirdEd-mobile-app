@@ -14,7 +14,7 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
         window.addEventListener('unhandledrejection', this.handleError);
     }
 
-    handleError(error: Error | string | any): void {
+    async handleError(error: Error | string | any): Promise<void> {
         const telemetryErrorRequest: TelemetryErrorRequest = {
             errorCode: '',
             errorType: '',
@@ -36,7 +36,7 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
         } catch (e) { }
 
         if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
-            SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
+            await SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
         }
 
         super.handleError(error);

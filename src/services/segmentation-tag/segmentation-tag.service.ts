@@ -82,7 +82,7 @@ export class SegmentationTagService {
                         }
                     });
                 }
-            });
+            }).catch(err => console.error(err));
     }
 
     getPersistedSegmentaion() {
@@ -104,7 +104,7 @@ export class SegmentationTagService {
                             this.getSegmentCommand();
                         });
                 }
-            });
+            }).catch(err => console.error(err));
     }
 
     getSegmentCommand() {
@@ -115,15 +115,15 @@ export class SegmentationTagService {
                 this.comdList = cmdList.filter(v => !v.targetedClient);
                 this.evalCriteria();
             }
-        });
+        }).catch(err => console.error(err));
     }
 
-    evalCriteria() {
+    async evalCriteria() {
         const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
             window['segmentation'].SBTagService.__tagList,
             this.comdList
         );
-        this.executeCommand(validCommand);
+        await this.executeCommand(validCommand);
         this.evalExecutedCommands();
     }
 
@@ -134,7 +134,7 @@ export class SegmentationTagService {
         ** if new command then execute command and store it in executedCommandList
         */
         const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-        validCmdList.forEach(cmdCriteria => {
+        for (const cmdCriteria of validCmdList) {
             if (!this.exeCommands.find(ele => ele.commandId === cmdCriteria.commandId)) {
                 switch (cmdCriteria.controlFunction) {
                     case CommandFunctions.LOCAL_NOTIFICATION:
@@ -149,7 +149,7 @@ export class SegmentationTagService {
                     case CommandFunctions.DEBUGGING:
                         if (cmdCriteria.controlFunctionPayload && cmdCriteria.controlFunctionPayload.traceId && !revert) {
                             this.exeCommands.push(cmdCriteria);
-                            this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                            await this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
                             this.debugginService.enableDebugging(cmdCriteria.controlFunctionPayload.traceId)
                                 .subscribe((isDebugMode) => {
                                     this.events.publish('debug_mode', isDebugMode);
@@ -160,7 +160,7 @@ export class SegmentationTagService {
                         break;
                 }
             }
-        });
+        }
         this.handleLocalNotificationTap();
     }
 
@@ -175,7 +175,7 @@ export class SegmentationTagService {
         }
     }
 
-    evalExecutedCommands() {
+    async evalExecutedCommands() {
         const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
             window['segmentation'].SBTagService.__tagList,
             this.exeCommands
@@ -184,7 +184,7 @@ export class SegmentationTagService {
         for (let i = (invalidcomd.length - 1); i >= 0; i--) {
             this.exeCommands.splice(this.exeCommands.indexOf(invalidcomd[i]), 1);
         }
-        this.executeCommand(invalidcomd, true);
+        await this.executeCommand(invalidcomd, true);
     }
 
     createSegmentTags(res) {

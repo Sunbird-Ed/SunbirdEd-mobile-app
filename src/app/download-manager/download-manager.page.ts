@@ -75,9 +75,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private storage: LocalStorageService,
     private utils: UtilsService
   ) {
-    this.events.subscribe(EventTopics.LAST_ACCESS_ON, (data) => {
+    this.events.subscribe(EventTopics.LAST_ACCESS_ON, async (data) => {
       if (data) {
-        this.getDownloadedContents();
+        await this.getDownloadedContents();
       }
     });
   }
@@ -100,16 +100,16 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
     this.headerService.showHeaderWithHomeButton(['download', 'settings']);
     await this.getAppStorageInfo();
-    this.getDownloadedContents();
+    await this.getDownloadedContents();
     this.checkAvailableSpace();
-    this.fetchStorageDestination();
-    this.events.subscribe(EventTopics.HAMBURGER_MENU_CLICKED, () => {
-      this.closeSelectAllPopup();
+    await this.fetchStorageDestination();
+    this.events.subscribe(EventTopics.HAMBURGER_MENU_CLICKED, async () => {
+      await this.closeSelectAllPopup();
     });
   }
 
   private async getAppName() {
-    return this.commonUtilService.getAppName()
+    return await this.commonUtilService.getAppName()
       .then((appName: any) => {
         this.appName = appName;
       });
@@ -177,7 +177,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             })
           }
         }
-        this.storage
+        await this.storage
         .getLocalStorage(storageKeys.downloadedObservations)
         .then(resp => {
           resp.sort(function(a, b) {
@@ -190,7 +190,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             data.push(res);
           });
         });
-        this.ngZone.run(async () => {
+        await this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
       });
@@ -211,11 +211,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
     if (!emitedContents.selectedContents.length) {
       this.deleteProjects(projectContents);
-      this.deleteObservations(observationContents);
+      this.deleteObservations(observationContents).then().catch(e => console.error(e));
       return;
     }
     this.deleteProjects(projectContents)
-    this.deleteObservations(observationContents);
+    this.deleteObservations(observationContents).then().catch(e => console.error(e));
 
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents,
@@ -281,16 +281,15 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     });
     await this.deleteAllConfirm.present();
 
-    this.deleteAllConfirm.onDidDismiss().then((response) => {
-      if (response) {
-        this.contentService.clearContentDeleteQueue().toPromise();
-      }
-    });
-    this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
+    let response = this.deleteAllConfirm.onDidDismiss()
+    if (response) {
+      await this.contentService.clearContentDeleteQueue().toPromise();
+    }
+    await this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
     this.contentService.getContentDeleteQueue().pipe(
       skip(1),
       takeWhile((list) => !!list.length),
-      finalize(async () => {
+      finalize(() => {
         this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`);
 
@@ -329,7 +328,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       sortOrder: SortOrder.DESC,
       sortAttribute: sortAttr
     }];
-    this.getDownloadedContents();
+    this.getDownloadedContents().then().catch(e => console.error(e));
   }
 
   ionViewWillLeave(): void {
@@ -342,40 +341,40 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   private subscribeContentUpdateEvents() {
     this.events.subscribe('savedResources:update', async (res) => {
       if (res && res.update) {
-        this.getDownloadedContents(false, true);
+        await this.getDownloadedContents(false, true);
         await this.getAppStorageInfo();
       }
     });
   }
 
-  private handleHeaderEvents($event) {
+  private async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
         this.redirectToActivedownloads();
         break;
       case 'settings':
-        this.closeSelectAllPopup();
+        await this.closeSelectAllPopup();
         this.redirectToSettings();
         break;
     }
   }
   
-  private redirectToActivedownloads() {
+  private async redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS);
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  private redirectToSettings() {
+  private async redirectToSettings() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SETTINGS_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS);
-    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
+    await this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
   private async fetchStorageDestination() {
@@ -400,9 +399,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
-      tap((volumeInfo) => {
+      tap(async (volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          this.presentPopupForLessStorageSpace();
+          await this.presentPopupForLessStorageSpace();
         }
       })
     )
@@ -412,7 +411,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async closeSelectAllPopup() {
     if (this.downloadsTab && this.downloadsTab.deleteAllConfirm) {
       await this.downloadsTab.deleteAllConfirm.dismiss();
-      this.downloadsTab.unSelectAllContents();
+      await this.downloadsTab.unSelectAllContents();
     }
   }
 

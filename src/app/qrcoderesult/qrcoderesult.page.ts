@@ -185,7 +185,7 @@ export class QrcoderesultPage implements OnDestroy {
                 left: 0,
                 behavior: 'smooth'
               });
-            });
+            }).catch(e => console.error(e));
             this.textbookTocService.resetTextbookIds();
           }
         }, 100);
@@ -235,7 +235,7 @@ export class QrcoderesultPage implements OnDestroy {
           contentId: this.identifier
         };
         this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
-          .then((content: Content) => {
+          .then(async (content: Content) => {
             this.showSheenAnimation = false;
             this.childrenData = content.children;
             this.parents.splice(0, this.parents.length);
@@ -254,7 +254,7 @@ export class QrcoderesultPage implements OnDestroy {
               !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
               this.backToPreviusPage = false;
               this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-              this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+              await this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
                 state: {
                   content: this.results[0],
                   isSingleContent: this.isSingleContent,
@@ -271,8 +271,8 @@ export class QrcoderesultPage implements OnDestroy {
       }
       this.backToPreviusPage = false;
     }
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
+      await this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
       this.unregisterBackButton.unsubscribe();
     });
     this.generateNewImpressionEvent(this.dialCode);
@@ -341,16 +341,16 @@ export class QrcoderesultPage implements OnDestroy {
       this.goBack();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       if (await this.commonUtilService.isDeviceLocationAvailable()) {
-        this.navCtrl.pop();
+        await this.navCtrl.pop();
         const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' }, replaceUrl: true };
-        this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+        await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
       } else {
         const navigationExtras: NavigationExtras = {
           state: {
             isShowBackButton: false
           }
         };
-        this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+        await this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
       }
     } else if (this.appGlobalService.isGuestUser
       && this.isSingleContent
@@ -362,7 +362,7 @@ export class QrcoderesultPage implements OnDestroy {
           showFrameworkCategoriesMenu: true
         }
       };
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
       this.goBack();
     }
@@ -398,20 +398,20 @@ export class QrcoderesultPage implements OnDestroy {
                   isShowBackButton: false
                 }
               };
-              this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+              await this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
             } else {
-              this.navCtrl.navigateBack([RouterLinks.TABS]);
+              await this.navCtrl.navigateBack([RouterLinks.TABS]);
             }
-            this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
+            await this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
           } else {
-            this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
+            await this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
             window.history.go(-2);
           }
         } else if (this.results && this.results.length === 1 &&
           !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
           this.backToPreviusPage = false;
           this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-          this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+          await this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.results[0],
               isSingleContent: this.isSingleContent,
@@ -422,12 +422,12 @@ export class QrcoderesultPage implements OnDestroy {
           });
         }
       })
-      .catch((err) => {
+      .catch(async (err) => {
         console.log('err1-->', err);
         this.zone.run(() => {
           this.showChildrenLoader = false;
         });
-        this.commonUtilService.showContentComingSoonAlert(this.source);
+        await this.commonUtilService.showContentComingSoonAlert(this.source);
         this.location.back();
 
       });
@@ -455,7 +455,7 @@ export class QrcoderesultPage implements OnDestroy {
   /**
    * Play content
    */
-  playContent(content: Content, isStreaming: boolean, contentInfo?: ContentInfo) {
+  async playContent(content: Content, isStreaming: boolean, contentInfo?: ContentInfo) {
     if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
       return;
@@ -496,7 +496,7 @@ export class QrcoderesultPage implements OnDestroy {
       undefined,
       undefined,
       this.corRelationList);
-    this.contentPlayerHandler.launchContentPlayer(content,
+    await this.contentPlayerHandler.launchContentPlayer(content,
         isStreaming,
         false,
         contentInfo ? contentInfo : localContentInfo,
@@ -608,13 +608,13 @@ export class QrcoderesultPage implements OnDestroy {
       emitUpdateIfAny: refreshContentDetails
     };
     this.contentService.getContentDetails(option).toPromise()
-      .then((data: any) => {
+      .then(async (data: any) => {
         if (data) {
           this.content.contentAccess = data.contentAccess ? data.contentAccess : [];
         }
 
         this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-        this.ratingHandler.showRatingPopup(false, this.content, 'automatic', this.corRelationList, null);
+        await this.ratingHandler.showRatingPopup(false, this.content, 'automatic', this.corRelationList, null);
         this.contentPlayerHandler.setLastPlayedContentId('');
       })
       .catch((error: any) => {
@@ -779,7 +779,7 @@ export class QrcoderesultPage implements OnDestroy {
       });
   }
 
-  skipSteps() {
+  async skipSteps() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NO_QR_CODE_CLICKED,
@@ -789,9 +789,9 @@ export class QrcoderesultPage implements OnDestroy {
     if (this.appGlobalService.isOnBoardingCompleted && this.appGlobalService.isProfileSettingsCompleted) {
 
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true } });
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true } });
     }
   }
   private showAllChild(content: any) {
@@ -850,9 +850,9 @@ export class QrcoderesultPage implements OnDestroy {
     return false;
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if($event.name === 'back'){
-      this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
+      await this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
     }
   }
 

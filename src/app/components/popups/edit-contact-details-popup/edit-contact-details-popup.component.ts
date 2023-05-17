@@ -47,10 +47,10 @@ export class EditContactDetailsPopupComponent {
   }
 
 
-  ionViewWillEnter() {
-    this.menuCtrl.enable(false);
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+  async ionViewWillEnter() {
+    await this.menuCtrl.enable(false);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
     });
   }
 
@@ -97,7 +97,7 @@ export class EditContactDetailsPopupComponent {
         }
       }, async (error) => {
         if (error.response && error.response.body.params.err === 'UOS_USRRED0013') {
-          this.generateOTP();
+          await this.generateOTP();
         } else if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
           this.blockedAccount = true;
           if (this.loader) {
@@ -145,9 +145,9 @@ export class EditContactDetailsPopupComponent {
           this.loader = undefined;
         }
         if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
-          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.phone });
+          await this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.phone });
         } else {
-          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.email });
+          await this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.email });
         }
       })
       .catch(async (err) => {
@@ -155,7 +155,7 @@ export class EditContactDetailsPopupComponent {
           await this.loader.dismiss();
           this.loader = undefined;
         }
-        this.popOverCtrl.dismiss({ isEdited: false });
+        await this.popOverCtrl.dismiss({ isEdited: false });
         if (err.hasOwnProperty(err) === 'UOS_OTPCRT0059') {
           this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');
         }
@@ -166,8 +166,8 @@ export class EditContactDetailsPopupComponent {
     await this.popOverCtrl.dismiss({ isEdited: false });
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true);
+  async ionViewWillLeave() {
+    await this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }

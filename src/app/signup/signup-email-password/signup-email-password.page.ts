@@ -34,7 +34,7 @@ export class SignupEmailPasswordPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
   }
-  ngOnInit() {
+  async ngOnInit() {
     this.contactType = 'phone';
     this.mobileNumberConfig = [{
       code: 'phone',
@@ -56,7 +56,7 @@ export class SignupEmailPasswordPage implements OnInit {
       }]
     }];
     this.contactConfig = this.mobileNumberConfig;
-    this.setappname()
+    await this.setappname()
   }
   async setappname() {
     this.appName = await this.commonUtilService.getAppName();
@@ -104,7 +104,7 @@ export class SignupEmailPasswordPage implements OnInit {
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
       }
-      this.generateOTP();
+      await this.generateOTP();
       if (this.loader) {
         await this.loader.dismiss();
         this.loader = undefined;
@@ -137,7 +137,7 @@ export class SignupEmailPasswordPage implements OnInit {
             userData: this.userData
           }
         };
-        this.router.navigate([RouterLinks.OTP], navigationExtras);
+        await this.router.navigate([RouterLinks.OTP], navigationExtras);
       })
       .catch(async (err) => {
         if (this.loader) {
@@ -156,8 +156,8 @@ export class SignupEmailPasswordPage implements OnInit {
   statusChanges(event) {
     this.isFormValid = event.isValid;
   }
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
 
   goBack() {

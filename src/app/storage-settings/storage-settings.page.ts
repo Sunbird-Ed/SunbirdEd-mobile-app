@@ -102,19 +102,18 @@ export class StorageSettingsPage implements OnInit {
       }),
       map((summary) => summary[0].sizeOnDevice) as any
     );
-    this.appVersion.getAppName()
-      .then((appName) => {
-        this.appName = appName;
-      });
+    this.appVersion.getAppName().then((appName) => {
+      this.appName = appName;
+    }).catch((e) => console.error(e));
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.STORAGE_SETTINGS,
       Environment.DOWNLOADS);
     this.fetchStorageVolumes();
-    this.fetchStorageDestination();
+    await this.fetchStorageDestination();
   }
 
   ionViewWillEnter() {
@@ -129,13 +128,13 @@ export class StorageSettingsPage implements OnInit {
     const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 
     if (permissionStatus.hasPermission) {
-      this.showShouldTransferContentsPopup();
+      await this.showShouldTransferContentsPopup();
     } else if (permissionStatus.isPermissionAlwaysDenied) {
       this.revertSelectedStorageDestination();
       await this.commonUtilService.showSettingsPageToast
       ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
     } else {
-      this.showStoragePermissionPopup();
+      await this.showStoragePermissionPopup();
     }
   }
 
@@ -200,12 +199,12 @@ export class StorageSettingsPage implements OnInit {
                 Environment.HOME,
                 PageId.PERMISSION_POPUP);
             this.permissionsService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
-                .subscribe((status: AndroidPermissionsStatus) => {
+                .subscribe(async (status: AndroidPermissionsStatus) => {
                   if (status.hasPermission) {
-                    this.showShouldTransferContentsPopup();
+                    await this.showShouldTransferContentsPopup();
                   } else if (status.isPermissionAlwaysDenied) {
                     this.revertSelectedStorageDestination();
-                    this.commonUtilService.showSettingsPageToast
+                    await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, true);
                   } else {
                     this.revertSelectedStorageDestination();
@@ -217,7 +216,7 @@ export class StorageSettingsPage implements OnInit {
     );
     await confirm.present();
 
-    confirm.onWillDismiss().then(({ data }) => {
+    await confirm.onWillDismiss().then(({ data }) => {
       if (data.buttonClicked === null) {
         this.revertSelectedStorageDestination();
       }
@@ -306,18 +305,22 @@ export class StorageSettingsPage implements OnInit {
       filter(e => e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT ||
         e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY),
       take(1)
-    ).subscribe(async (e) => {
-      if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
-        this.showDuplicateContentPopup();
-      } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
-        setTimeout(async () => {
-          if (this.transferringContentsPopup) {
-            await this.transferringContentsPopup.dismiss();
-          }
-        }, 1000);
-        this.showLowMemoryToast();
-        this.revertSelectedStorageDestination();
-      }
+    ).subscribe((e) => {
+      (async () => {
+        if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
+          await this.showDuplicateContentPopup();
+        } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
+          setTimeout(() => {
+            (async () => {
+              if (this.transferringContentsPopup) {
+                await this.transferringContentsPopup.dismiss();
+              }
+            })
+          }, 1000);
+          await this.showLowMemoryToast();
+          this.revertSelectedStorageDestination();
+        }
+      })
     });
 
     const transferProgress$ = this.eventsBusService.events(EventNamespace.STORAGE).pipe(
@@ -326,12 +329,13 @@ export class StorageSettingsPage implements OnInit {
       map((e: StorageTransferProgress) => e.payload.progress)
     );
 
-    const transferProgressSubscription = transferProgress$
-      .subscribe(null, null, async () => {
-        if (this.transferringContentsPopup) {
-          await this.transferringContentsPopup.dismiss();
-        }
-        this.showSuccessTransferPopup(this.transferringContentsPopup, storageDestination);
+    const transferProgressSubscription = transferProgress$.subscribe(null, null, () => {
+        (async () => {
+          if (this.transferringContentsPopup) {
+            await this.transferringContentsPopup.dismiss();
+          }
+          await this.showSuccessTransferPopup(this.transferringContentsPopup, storageDestination);
+        })
       });
 
     this.transferringContentsPopup = await this.popoverCtrl.create({
@@ -427,7 +431,7 @@ export class StorageSettingsPage implements OnInit {
           Environment.DOWNLOADS,
           PageId.TRANSFERING_CONTENT_POPUP
         );
-        this.showCancellingTransferPopup(this.transferringContentsPopup, storageDestination);
+        await this.showCancellingTransferPopup(this.transferringContentsPopup, storageDestination);
       }
 
       return;
@@ -444,7 +448,7 @@ export class StorageSettingsPage implements OnInit {
       return;
     }
 
-    this.storageService.cancelTransfer().toPromise();
+    await this.storageService.cancelTransfer().toPromise();
 
     this.eventsBusService.events(EventNamespace.STORAGE).pipe(
       filter(e =>
@@ -453,17 +457,19 @@ export class StorageSettingsPage implements OnInit {
       ),
       take(1)
     )
-      .subscribe(async (e) => {
-        if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
-          this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
-            StorageDestination.EXTERNAL_STORAGE :
-            StorageDestination.INTERNAL_STORAGE;
-
-          await this.cancellingTransferPopup.dismiss();
-        } else if (e.type === StorageEventType.TRANSFER_COMPLETED) {
-          await this.cancellingTransferPopup.dismiss();
-          this.showSuccessTransferPopup(this.cancellingTransferPopup, storageDestination);
-        }
+      .subscribe((e) => {
+        (async () => {
+          if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
+            this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
+              StorageDestination.EXTERNAL_STORAGE :
+              StorageDestination.INTERNAL_STORAGE;
+  
+            await this.cancellingTransferPopup.dismiss();
+          } else if (e.type === StorageEventType.TRANSFER_COMPLETED) {
+            await this.cancellingTransferPopup.dismiss();
+            await this.showSuccessTransferPopup(this.cancellingTransferPopup, storageDestination);
+          }
+        })
       });
 
     this.cancellingTransferPopup = await this.popoverCtrl.create({

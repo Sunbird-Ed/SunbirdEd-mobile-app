@@ -112,11 +112,11 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
       if (this.disableDeviceBackButton) {
         return;
       }
-      this.popoverCtrl.dismiss();
+      await this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -143,7 +143,7 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   async deleteContent(canDelete: boolean = false, btn?) {
-    this.popoverCtrl.dismiss({ canDelete });
+    await this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
       this.navParams.get('handler')(btn.btntext);
     }

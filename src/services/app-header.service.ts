@@ -46,32 +46,32 @@ export class AppHeaderService {
         return defaultConfig;
     }
 
-    hideHeader() {
+    async hideHeader() {
         const defaultConfig = this.getDefaultPageConfig();
         defaultConfig.showHeader = false;
         defaultConfig.showBurgerMenu = false;
         this.updatePageConfig(defaultConfig);
-        this.menuCtrl.enable(false);
+        await this.menuCtrl.enable(false);
     }
 
-    showHeaderWithBackButton(iconList?, pageTitle?) {
+    async showHeaderWithBackButton(iconList?, pageTitle?) {
         const defaultConfig = this.getDefaultPageConfig();
         defaultConfig.showHeader = true;
         defaultConfig.showBurgerMenu = false;
         defaultConfig.actionButtons = iconList ? iconList : [];
         defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
-        this.menuCtrl.enable(false);
+        await this.menuCtrl.enable(false);
     }
 
-    showHeaderWithHomeButton(iconList?, pageTitle?) {
+    async showHeaderWithHomeButton(iconList?, pageTitle?) {
         const defaultConfig = this.getDefaultPageConfig();
         defaultConfig.showHeader = true;
         defaultConfig.showBurgerMenu = true;
         defaultConfig.actionButtons = iconList ? iconList : [];
         defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
-        this.menuCtrl.enable(true);
+        await this.menuCtrl.enable(true);
     }
 
     updatePageConfig(config) {

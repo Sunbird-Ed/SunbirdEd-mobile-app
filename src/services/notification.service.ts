@@ -72,7 +72,7 @@ export class NotificationService implements SbNotificationService {
 
         this.notificationId = this.notificationData.id || '';
         this.setNotificationParams(this.notificationData);
-        this.handleNotification();
+        await this.handleNotification();
     }
 
     async deleteNotification(notificationData): Promise<boolean> {
@@ -128,17 +128,17 @@ export class NotificationService implements SbNotificationService {
         this._notificationPaylod = payload;
     }
 
-    setupLocalNotification(language?: string, payLoad?: any): any {
+    async setupLocalNotification(language?: string, payLoad?: any): Promise<any> {
         if (language) {
             this.selectedLanguage = language;
-            this.localNotifications.cancelAll();
+            await this.localNotifications.cancelAll();
         }
         if (payLoad) {
             this.setTrigerConfig(payLoad);
         } else {
             this.formnFrameworkUtilService.getNotificationFormConfig().then(fields => {
                 this.setTrigerConfig(fields);
-            });
+            }).catch(err => console.log(err));
         }
     }
 
@@ -151,7 +151,7 @@ export class NotificationService implements SbNotificationService {
                         if (!element.isEnabled && ids.findIndex(ele => ele === element.id) !== -1) {
                             this.localNotifications.cancel(element.id).then(resp => {
                                 console.log('Local Notification Disabled for:' + element.id, resp);
-                            });
+                            }).catch(err => console.error(err));
                         } else if (element.isEnabled && ids.findIndex(ele => ele === element.id) === -1) {
                             this.setLocalNotification(element);
                         }
@@ -160,7 +160,7 @@ export class NotificationService implements SbNotificationService {
                             this.setLocalNotification(element);
                         }
                     }
-                });
+                }).catch(err => console.error(err));
             });
         }
     }
@@ -236,7 +236,7 @@ export class NotificationService implements SbNotificationService {
         this.appName = await this.appVersion.getAppName();
     }
 
-    setNotificationParams(data) {
+    async setNotificationParams(data) {
         this.notificationPayload = data;
         let type;
         let actionData;
@@ -252,10 +252,7 @@ export class NotificationService implements SbNotificationService {
                 this.externalUrl = actionData.deepLink;
                 break;
             case ActionType.UPDATE_APP:
-                this.utilityService.getBuildConfigValue('APPLICATION_ID')
-                    .then(value => {
-                        this.appId = value;
-                    });
+                this.appId = await this.utilityService.getBuildConfigValue('APPLICATION_ID')
                 break;
             case ActionType.COURSE_UPDATE:
             case ActionType.CONTENT_UPDATE:
@@ -278,7 +275,7 @@ export class NotificationService implements SbNotificationService {
                     formField: searchFilters,
                     fromLibrary: false
                 };
-                this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
+                await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
                 break;
         }
     }
@@ -298,7 +295,7 @@ export class NotificationService implements SbNotificationService {
         this.generateClickInteractEvent(valuesMap, InteractSubtype.NOTIFICATION_READ);
         }
         if (this.identifier) {
-            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier, false, null, null, null, corRelationList);
+            await this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier, false, null, null, null, corRelationList);
             this.identifier = null;
         } else if (this.appId) {
             await this.utilityService.openPlayStore(this.appId);
@@ -345,7 +342,7 @@ export class NotificationService implements SbNotificationService {
         this.redirectNotification(notificationData)
     }
 
-    redirectNotification(notificationData) {
+    async redirectNotification(notificationData) {
         if(notificationData.action.additionalInfo.group) {
             if (notificationData.action.type === 'group-activity-removed' ||
                 notificationData.action.type === 'member-added') 
@@ -355,10 +352,10 @@ export class NotificationService implements SbNotificationService {
                         groupId: notificationData.action.additionalInfo.group.id
                     }
                 };
-                this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+                await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
             } 
             else if (notificationData.action.type === 'group-activity-added') {
-                this.redirectToActivityDetails(notificationData)
+                await this.redirectToActivityDetails(notificationData)
             }
         }
     }

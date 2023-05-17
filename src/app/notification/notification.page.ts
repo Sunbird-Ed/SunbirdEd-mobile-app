@@ -61,10 +61,10 @@ export class NotificationPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.fetchNotificationList();
-    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
-      this.fetchNotificationList();
+  async ngOnInit() {
+    await this.fetchNotificationList();
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, async () => {
+      await this.fetchNotificationList();
     });
   }
 
@@ -112,7 +112,7 @@ export class NotificationPage implements OnInit {
     valuesMap['swipeDirection'] = swipeDirection;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
 
-    this.notificationService.deleteNotification({ event: {}, data: notification });
+    await this.notificationService.deleteNotification({ event: {}, data: notification });
   }
 
   handleTelemetry(event) {

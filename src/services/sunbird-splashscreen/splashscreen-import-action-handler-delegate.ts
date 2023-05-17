@@ -106,20 +106,20 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
               reduce((acc, event) => event, undefined),
               tap((event: ContentEvent) => {
                 if (event.type === ContentEventType.IMPORT_COMPLETED) {
-                  importPopover.onDidDismiss().then(({ data }) => {
+                  importPopover.onDidDismiss().then(async ({ data }) => {
                     if (data.isDeleteChecked) {
-                      this.utilityService.removeFile(filePath);
+                      await this.utilityService.removeFile(filePath);
                     } else {
                       console.log('deleteNotChecked');
                     }
-                    this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
-                  });
+                    await this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
+                  }).catch((err) => console.error(err));
                 }
               }),
               mapTo(undefined)
             );
           })
-        ).toPromise();
+        ).toPromise().then(() => {}).catch((e) => console.error(e));
 
         return of(undefined);
       }
@@ -175,7 +175,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
     }
   }
 
-  generateImportErrorTelemetry(error) {
+  async generateImportErrorTelemetry(error) {
     const telemetryErrorRequest: TelemetryErrorRequest = {
       errorCode: error,
       errorType: 'mobile-app',
@@ -183,7 +183,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       pageId: 'home'
     };
     if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
-      SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
+      await SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
     }
   }
 

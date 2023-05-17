@@ -62,7 +62,7 @@ export class SubProfileEditPage {
 
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
-    });
+    }).catch(() => {});
   }
 
   ionViewWillEnter() {

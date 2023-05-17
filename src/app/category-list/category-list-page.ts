@@ -156,8 +156,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();
                     this.subscriptions.push(
-                        facetFilterControl.valueChanges.subscribe((v) => {
-                            this.onPrimaryFacetFilterSelect(filter, v);
+                        facetFilterControl.valueChanges.subscribe(async (v) => {
+                            await this.onPrimaryFacetFilterSelect(filter, v);
                         })
                     );
                     acc.addControl(filter.code, facetFilterControl);
@@ -315,14 +315,14 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
                 this.filterPillList = [];
-                setTimeout(() => {
+                setTimeout(async () => {
                     this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
                     if (this.filterPillList.length) {
                         this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
                         if (this.filterPillList.length === 1) {
                             this.selectedFilterPill = this.filterPillList[0];
                         } else {
-                            this.pillFilterHandler(this.filterPillList[0]);
+                            await this.pillFilterHandler(this.filterPillList[0]);
                         }
                     }
                 }, 0);
@@ -411,7 +411,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    navigateToViewMorePage(items, subject, totalCount) {
+    async navigateToViewMorePage(items, subject, totalCount) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
@@ -423,7 +423,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION },
                 { id: this.formField || '', type: CorReleationDataType.CONTENT}
             ];
-            this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
+            await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
                 state: {
                     contentList: items,
                     subjectName: subject,
@@ -433,11 +433,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
+            await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
         }
     }
 
-    navigateToDetailPage(event, sectionName) {
+    async navigateToDetailPage(event, sectionName) {
         event.data = event.data.content ? event.data.content : event.data;
         const item = event.data;
         const index = event.index;
@@ -461,7 +461,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
             this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
+            await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
         }
     }
 
@@ -495,7 +495,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.resentFilterCriteria = result.data.appliedFilterCriteria;
                 await this.applyFilter(result.data.appliedFilterCriteria);
             }
-        });
+        }).catch(e => console.error(e));
     }
 
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {

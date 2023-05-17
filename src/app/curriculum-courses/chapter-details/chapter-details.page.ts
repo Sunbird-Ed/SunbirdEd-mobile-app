@@ -172,12 +172,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.downloadIdentifiers = new Set();
     this.headerService.showHeaderWithBackButton();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
-    this.subscribeUtilityEvents();
+    await this.subscribeUtilityEvents();
     this.subscribeSdkEvent();
     await this.checkLoggedInOrGuestUser();
     this.childContents = [];
     if (this.isFromDeeplink) {
-      this.getAllBatches();
+      await this.getAllBatches();
     }
     this.getAllContents(this.chapter);
     this.checkChapterCompletion();
@@ -190,10 +190,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.location.back();
     });
     if (this.hasInit) {
-      this.getContentState(false);
+      await this.getContentState(false);
     } else {
       this.hasInit = !this.hasInit;
-      this.getContentState(true);
+      await this.getContentState(true);
     }
 
     if (!this.guestUser) {
@@ -221,9 +221,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.isAlreadyEnrolled = true;
       }
       if (this.isFromDeeplink) {
-        this.getContentState(true);
+        await this.getContentState(true);
       }
-      this.getBatchDetails();
+      await this.getBatchDetails();
       console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
     }
@@ -249,9 +249,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  ionViewDidEnter(): void {
-    this.sbProgressLoader.hide({ id: 'login' });
-    this.sbProgressLoader.hide({ id: this.courseContent.identifier });
+  async ionViewDidEnter(): Promise<void> {
+    await this.sbProgressLoader.hide({ id: 'login' });
+    await this.sbProgressLoader.hide({ id: this.courseContent.identifier });
   }
 
   ngOnDestroy() {
@@ -335,7 +335,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  saveContentContext(userId, courseId, batchId, batchStatus) {
+  async saveContentContext(userId, courseId, batchId, batchStatus) {
     const contentContextMap = new Map();
     // store content context in the below map
     contentContextMap['userId'] = userId;
@@ -351,7 +351,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
 
     // store the contentContextMap in shared preference and access it from SDK
-    this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
+    await this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
   }
 
   getAllContents(collection) {
@@ -436,7 +436,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.courseContent.batchId = res.batchId;
       console.log('enrol succ event -->', this.courseContent);
       await this.getBatchDetails();
-      this.getContentState(true);
+      await this.getContentState(true);
     });
 
   }
@@ -459,9 +459,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }).toPromise();
 
     if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
-      this.startContent();
+      await this.startContent();
     } else {
-      this.showProfileNameConfirmationPopup();
+      await this.showProfileNameConfirmationPopup();
     }
   }
 
@@ -517,7 +517,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       };
       this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
     } else {
-      this.startLearning();
+      await this.startLearning();
     }
   }
 
@@ -538,9 +538,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     await actionPopover.present();
     const { data } = await actionPopover.onDidDismiss();
     if (data && data.download) {
-      this.showDownloadConfirmationAlert();
+      await this.showDownloadConfirmationAlert();
     } else if (data.share) {
-      this.share();
+      await this.share();
     }
   }
 
@@ -566,7 +566,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     await popover.present();
   }
 
-  openContentDetails(event) {
+  async openContentDetails(event) {
     if (!event) {
       return;
     }
@@ -581,7 +581,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
-            this.joinTraining();
+            await this.joinTraining();
           }
         } else {
           if (this.isBatchNotStarted) {
@@ -618,14 +618,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
     const ongoingBatches = [];
     if (this.batches.length === 1) {
-      this.enrollIntoBatch(this.batches[0]);
+      await this.enrollIntoBatch(this.batches[0]);
     } else {
       this.batches.forEach(batch => {
         if (batch.status === 1) {
           ongoingBatches.push(batch);
         }
       });
-      this.router.navigate([RouterLinks.COURSE_BATCHES], {
+      await this.router.navigate([RouterLinks.COURSE_BATCHES], {
         state: {
           ongoingBatches,
           upcommingBatches: [],
@@ -641,7 +641,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   async enrollIntoBatch(item: Batch) {
     this.loader = await this.commonUtilService.getLoader();
     if (this.guestUser) {
-      this.promptToLogin(item);
+      await this.promptToLogin(item);
     } else {
       await this.loader.present();
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
@@ -701,10 +701,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
           return false;
         }
       }
-      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
-      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
+      await this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
+      await this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
       this.appGlobalService.resetSavedQuizContent();
-      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+      await this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 
@@ -759,7 +759,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       cssClass: 'sb-popover info',
     });
     await confirm.present();
-    confirm.onDidDismiss().then(({ data }) => {
+    await confirm.onDidDismiss().then(async ({ data }) => {
       if (data && data.canDelete) {
         if (data.btn) {
           if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
@@ -767,7 +767,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             return false;
           }
         }
-        this.navigateToBatchListPage();
+        await this.navigateToBatchListPage();
       }
     });
   }
@@ -775,7 +775,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   /**
    * Redirect to child content details page
    */
-  navigateToChildrenDetailsPage(content: Content, depth): void {
+  async navigateToChildrenDetailsPage(content: Content, depth): Promise<void> {
     const values = {
       contentClicked: content.identifier
     };
@@ -789,7 +789,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.corRelationList
     );
 
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], this.generateContentNavExtras(content, depth));
+    await this.router.navigate([RouterLinks.CONTENT_DETAILS], this.generateContentNavExtras(content, depth));
   }
 
   private generateContentNavExtras(content: Content, depth) {
@@ -950,7 +950,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events()
       .subscribe((event: EventsBusEvent) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           // Show download percentage
           if (event.type === DownloadEventType.PROGRESS) {
             const downloadEvent = event as DownloadProgress;
@@ -958,7 +958,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
 
               if (this.downloadProgress === 100) {
-                this.getBatchDetails();
+                await this.getBatchDetails();
                 this.headerService.showHeaderWithBackButton();
               }
             }
@@ -1054,9 +1054,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     );
   }
 
-  onConsentPopoverShow() {
+  async onConsentPopoverShow() {
     if (this.loader) {
-      this.loader.dismiss();
+      await this.loader.dismiss();
       this.loader = undefined;
     }
   }
@@ -1074,7 +1074,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     const { data } = await popUp.onDidDismiss();
     if (data !== undefined) {
       if (data.buttonClicked) {
-        this.startContent();
+        await this.startContent();
       }
     } else {
       this.telemetryGeneratorService.generateInteractTelemetry(

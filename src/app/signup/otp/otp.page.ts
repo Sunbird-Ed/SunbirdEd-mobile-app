@@ -34,8 +34,11 @@ export class OtpPage implements OnInit {
     public router: Router) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
-    this.contactNumber = this.userData?.contactInfo?.phone ? (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, '*')
-      : this.userData?.contactInfo?.email;
+    if (this.userData?.contactInfo?.phone) {
+      this.contactNumber = (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, '*')
+    } else {
+      this.contactNumber = this.userData?.contactInfo?.email;
+    }
   }
 
   goBack() {
@@ -107,7 +110,7 @@ export class OtpPage implements OnInit {
                 hasFilledLocation: true,
                 showOnlyMandatoryFields: true,
               };
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: categoriesProfileData
               });
             }).catch(async (error) => {
@@ -180,8 +183,8 @@ export class OtpPage implements OnInit {
     }
   }
 
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
 
   changeEvent(event) {

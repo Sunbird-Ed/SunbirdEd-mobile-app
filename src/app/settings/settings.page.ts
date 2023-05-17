@@ -70,9 +70,9 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton(['font-accessibility']);
-    this.appVersion.getAppName()
+    await this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
         this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
@@ -101,22 +101,22 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
     this.chosenLanguageString = this.commonUtilService.translateMessage('CURRENT_LANGUAGE');
-    this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
+    await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
       .then(value => {
         this.selectedLanguage = `${this.chosenLanguageString} : ${value}`;
       });
   }
 
-  dataSync() {
+  async dataSync() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DATA_SYNC_CLICKED);
-    this.router.navigate(['settings/data-sync']);
+    await this.router.navigate(['settings/data-sync']);
   }
 
-  aboutUs() {
+  async aboutUs() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ABOUT_APP_CLICKED);
-    this.router.navigate([`/${RouterLinks.SETTINGS}/about-us`]);
+    await this.router.navigate([`/${RouterLinks.SETTINGS}/about-us`]);
   }
 
   async shareApp() {
@@ -138,9 +138,9 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  showPermissionPage() {
+  async showPermissionPage() {
     const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-    this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+    await this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
   }
 
   async showMergeAccountConfirmationPopup() {
@@ -161,7 +161,7 @@ export class SettingsPage implements OnInit {
             btnClass: 'popover-color popover-button-allow',
           }
         ],
-        handler: (selectedButton: string) => {
+        handler: async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
@@ -169,7 +169,7 @@ export class SettingsPage implements OnInit {
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
             );
-            confirm.dismiss();
+            await confirm.dismiss();
           } else if (selectedButton === this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_BTN_MERGE')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
@@ -177,8 +177,8 @@ export class SettingsPage implements OnInit {
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
             );
-            confirm.dismiss();
-            this.mergeAccount();
+            await confirm.dismiss();
+            await this.mergeAccount();
           }
         },
       },
@@ -229,9 +229,11 @@ export class SettingsPage implements OnInit {
           }
         } as MergeServerProfilesRequest;
       }),
-      tap(async () => {
-        loader = await this.commonUtilService.getLoader();
-        await loader.present();
+      tap(() => {
+        (async () => {
+          loader = await this.commonUtilService.getLoader();
+          await loader.present();
+        })
       }),
       mergeMap((mergeServerProfilesRequest) => {
         return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
@@ -260,31 +262,33 @@ export class SettingsPage implements OnInit {
 
         throw e;
       }),
-      tap(async () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.OTHER,
-          InteractSubtype.MERGE_ACCOUNT_SUCCESS,
-          Environment.SETTINGS,
-          PageId.SETTINGS
-        );
+      tap(() => {
+        (async () => {
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.MERGE_ACCOUNT_SUCCESS,
+            Environment.SETTINGS,
+            PageId.SETTINGS
+          );
 
-        const successPopover = await this.popoverCtrl.create({
-          component: SbPopoverComponent,
-          componentProps: {
-            sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
-            icon: null,
-            actionsButtons: [
-              {
-                btntext: this.commonUtilService.translateMessage('OKAY'),
-                btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-              },
-            ],
-            sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
-          },
-          cssClass: 'sb-popover'
-        });
+          const successPopover = await this.popoverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+              sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
+              icon: null,
+              actionsButtons: [
+                {
+                  btntext: this.commonUtilService.translateMessage('OKAY'),
+                  btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                },
+              ],
+              sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
+            },
+            cssClass: 'sb-popover'
+          });
 
-        await successPopover.present();
+          await successPopover.present();
+        })
       }),
       finalize(() => {
         if (loader) {
@@ -320,13 +324,13 @@ export class SettingsPage implements OnInit {
               },
             ],
             icon: null,
-            handler: (selectedButton: string) => {
+            handler: async (selectedButton: string) => {
               console.log(selectedButton);
               if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
                 this.debugmode = false;
               } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
-                this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
-                this.observeDebugging();
+                await this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                await this.observeDebugging();
                 this.commonUtilService.showToast('DEBUG_ON_MESSAGE');
               }
             }

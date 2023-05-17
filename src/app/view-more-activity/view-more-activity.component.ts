@@ -137,7 +137,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private popoverCtrl: PopoverController,
     private navService: NavigationService
   ) {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (this.router.getCurrentNavigation().extras.state) {
         console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
         this.uid = this.router.getCurrentNavigation().extras.state.uid;
@@ -156,7 +156,7 @@ export class ViewMoreActivityComponent implements OnInit {
         if (this.headerTitle !== this.title) {
           this.offset = 0;
           this.loadMoreBtn = true;
-          this.mapper();
+          await this.mapper();
         }
       }
     });
@@ -242,13 +242,13 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Load more result
    */
-  loadMore() {
+  async loadMore() {
     this.isLoadMore = true;
     this.offset = this.offset + this.searchLimit;
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_INTERNET_TITLE'));
     } else {
-      this.mapper();
+      await this.mapper();
     }
   }
 
@@ -266,16 +266,16 @@ export class ViewMoreActivityComponent implements OnInit {
 
       case ViewMore.PAGE_COURSE_POPULAR:
         this.pageType = 'popularCourses';
-        this.search();
+        await this.search();
         break;
 
       case ViewMore.PAGE_TV_PROGRAMS:
         this.pageType = 'tvPrograms';
-        this.search();
+        await this.search();
         break;
 
       default:
-        this.search();
+        await this.search();
     }
     console.log('search List =>', this.searchList);
   }
@@ -310,7 +310,7 @@ export class ViewMoreActivityComponent implements OnInit {
   getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
     this.contentService.getContentDetails({ contentId: identifier, objectType: content.objectType }).toPromise()
-      .then((data: Content) => {
+      .then(async (data: Content) => {
         if (Boolean(data.isAvailableLocally)) {
           const contentDetailsParams: NavigationExtras = {
             state: {
@@ -325,7 +325,7 @@ export class ViewMoreActivityComponent implements OnInit {
               resumedCourseCardData: this.resumeContentData
             }
           };
-          this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
+          await this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
         } else {
           this.subscribeSdkEvent();
           this.showOverlay = true;
@@ -373,7 +373,7 @@ export class ViewMoreActivityComponent implements OnInit {
 
   subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.ngZone.run(() => {
+      this.ngZone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
           this.downloadPercentage = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
@@ -393,7 +393,7 @@ export class ViewMoreActivityComponent implements OnInit {
               resumedCourseCardData: this.resumeContentData
             }
           };
-          this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
+          await this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
         }
       });
     }) as any;
@@ -475,14 +475,14 @@ export class ViewMoreActivityComponent implements OnInit {
     return img;
   }
 
-  openCourseDetails(course, index) {
+  async openCourseDetails(course, index) {
     this.index = index;
     const payload = {
       guestUser: this.guestUser,
       enrolledCourses: this.enrolledCourses
     };
 
-    this.checkRetiredOpenBatch(course, this.pageType, payload);
+    await this.checkRetiredOpenBatch(course, this.pageType, payload);
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string, payload?: any) {
@@ -504,9 +504,9 @@ export class ViewMoreActivityComponent implements OnInit {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
-      this.navigateToDetailsPage(content, layoutName);
+      await this.navigateToDetailsPage(content, layoutName);
     } else if (retiredBatches.length) {
-      this.navigateToBatchListPopup(content, layoutName, retiredBatches, payload);
+      await this.navigateToBatchListPopup(content, layoutName, retiredBatches, payload);
     }
     await this.loader.dismiss();
   }
@@ -530,8 +530,8 @@ export class ViewMoreActivityComponent implements OnInit {
         this.loader = await this.commonUtilService.getLoader();
         await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((res: Batch[]) => {
-            this.zone.run(async () => {
+          .then(async (res: Batch[]) => {
+            await this.zone.run(async () => {
               const batches = res;
               if (batches.length) {
                 batches.forEach((batch, key) => {
@@ -564,7 +564,7 @@ export class ViewMoreActivityComponent implements OnInit {
 
               } else {
                 await this.loader.dismiss();
-                this.navigateToDetailsPage(content, layoutName);
+                await this.navigateToDetailsPage(content, layoutName);
                 this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
               }
             });
@@ -573,7 +573,7 @@ export class ViewMoreActivityComponent implements OnInit {
             console.log('error while fetching course batches ==>', error);
           });
       } else {
-        this.router.navigate([RouterLinks.COURSE_BATCHES]);
+        await this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -604,7 +604,7 @@ export class ViewMoreActivityComponent implements OnInit {
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
 
-    this.zone.run(async () => {
+    await this.zone.run(async () => {
       if (layoutName === 'enrolledCourse') {
         this.navService.navigateToTrackableCollection({ content });
       } else {

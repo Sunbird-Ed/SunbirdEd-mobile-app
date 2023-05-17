@@ -65,8 +65,8 @@ export class ContentRatingAlertComponent {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.getUserId();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.content = this.navParams.get('content');
@@ -78,7 +78,7 @@ export class ContentRatingAlertComponent {
     this.navigateBack = this.navParams.get('navigateBack');
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.RATING_POPUP,
@@ -103,7 +103,7 @@ export class ContentRatingAlertComponent {
     }, err => {
       console.log(err);
     });
-    this.invokeContentRatingFormApi();
+    await this.invokeContentRatingFormApi();
     const ratingDomTag = document.getElementsByTagName('rating');
     this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, this.userRating);
   }
@@ -132,17 +132,17 @@ export class ContentRatingAlertComponent {
     this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, ratingCount);
   }
 
-  cancel() {
-    this.popOverCtrl.dismiss();
+  async cancel() {
+    await this.popOverCtrl.dismiss();
   }
-  closePopover() {
+  async closePopover() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CLOSE_CLICKED,
       Environment.HOME,
       ImpressionSubtype.RATING_POPUP, this.telemetryObject
     );
-    this.popOverCtrl.dismiss();
+    await this.popOverCtrl.dismiss();
   }
 
   submit() {
@@ -223,16 +223,16 @@ export class ContentRatingAlertComponent {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     await this.formAndFrameworkUtilService.getFormFields({...FormConstants.CONTENT_FEEDBACK, subType: selectedLanguage}).then((res) => {
       this.populateComments(res);
-    }).catch((error) => {
-      this.getDefaultContentRatingFormApi();
+    }).catch(async (error) => {
+      await this.getDefaultContentRatingFormApi();
     });
   }
 
   async getDefaultContentRatingFormApi() {
     await this.formAndFrameworkUtilService.getFormFields(FormConstants.CONTENT_FEEDBACK).then((res) => {
       this.populateComments(res);
-    }).catch((error) => {
-      this.getDefaultContentRatingFormApi();
+    }).catch(async (error) => {
+      await this.getDefaultContentRatingFormApi();
     });
   }
 
@@ -252,16 +252,16 @@ export class ContentRatingAlertComponent {
       comment: this.allComments ? this.allComments : '',
       message: ''
     };
-    this.contentService.sendFeedback(option).subscribe((res) => {
+    this.contentService.sendFeedback(option).subscribe(async (res) => {
       viewDismissData.message = 'rating.success';
-      this.popOverCtrl.dismiss(viewDismissData);
+      await this.popOverCtrl.dismiss(viewDismissData);
       this.commonUtilService.showToast('THANK_FOR_RATING', false, 'green-toast');
       if (this.navigateBack) {
         this.location.back();
       }
-    }, (data) => {
+    }, async (data) => {
       viewDismissData.message = 'rating.error';
-      this.popOverCtrl.dismiss(viewDismissData);
+      await this.popOverCtrl.dismiss(viewDismissData);
     });
   }
 

@@ -56,17 +56,17 @@ export class LoginNavigationHandlerService {
 
             await this.refreshTenantData(value.slug, value.title);
 
-            this.ngZone.run(() => {
-                this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
+            this.ngZone.run(async () => {
+                await this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
                     (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
-                this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
+                await this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise();
                 this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
-                this.sbProgressLoader.hide({ id: 'login' });
+                await this.sbProgressLoader.hide({ id: 'login' });
             });
         } catch (err) {
             await this.logoutOnImpropperLoginProcess();
 
-            this.sbProgressLoader.hide({ id: 'login' });
+            await this.sbProgressLoader.hide({ id: 'login' });
             if (err instanceof SignInError) {
                 this.commonUtilService.showToast(err.message);
             } else {
@@ -166,8 +166,8 @@ export class LoginNavigationHandlerService {
                 if (isDefaultChannelProfile) {
                     appName = await this.appVersion.getAppName();
                 }
-                this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise().then();
-                this.preferences.putString(PreferenceKey.APP_NAME, appName).toPromise().then();
+                await this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise();
+                await this.preferences.putString(PreferenceKey.APP_NAME, appName).toPromise();
                 (window as any).splashscreen.setContent(appName, tenantInfo.appLogo);
                 resolve();
             } catch (error) {
@@ -205,11 +205,11 @@ export class LoginNavigationHandlerService {
         return this.profileService.updateProfile(profileRequest).toPromise().then(() => {
             return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
                 return this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-                    .then((success: any) => {
+                    .then(async (success: any) => {
                         const userId = success.uid;
                         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
                         if (userId !== 'null') {
-                            this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
+                            await this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise();
                         }
                     }).catch(() => {
                         return 'null';
@@ -241,7 +241,7 @@ export class LoginNavigationHandlerService {
             this.profileService.getActiveProfileSession().toPromise()
                 .then((profile) => {
                     this.profileService.deleteProfile(profile.uid).subscribe()
-                });
+                }).catch(err => console.error(err));
         }
 
         this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
@@ -283,7 +283,7 @@ export class LoginNavigationHandlerService {
                     console.log(err);
                 });
             }
-            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
         }
     }
 

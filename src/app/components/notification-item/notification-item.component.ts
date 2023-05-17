@@ -29,7 +29,7 @@ export class NotificationItemComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-  handleDeepLink() {
+  async handleDeepLink() {
     const valuesMap = new Map();
     valuesMap['notificationBody'] = this.itemData.actionData;
     if (this.itemData.actionData.deepLink && this.itemData.actionData.deepLink.length) {
@@ -44,6 +44,6 @@ export class NotificationItemComponent {
 
     this.notificationDelegate.notificationId = this.itemData.id || '';
     this.notificationDelegate.setNotificationParams(this.itemData);
-    this.notificationDelegate.handleNotification();
+    await this.notificationDelegate.handleNotification();
   }
 }

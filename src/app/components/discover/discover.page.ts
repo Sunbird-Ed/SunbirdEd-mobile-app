@@ -58,16 +58,16 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
-  ngOnInit() {
-    this.appVersion.getAppName().then((appName: any) => {
+  async ngOnInit() {
+    await this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements(this.platform.is('ios') ? true : false);
+    await this.fetchDisplayElements(this.platform.is('ios') ? true : false);
   }
 
-  doRefresh(refresher) {
+  async doRefresh(refresher) {
     this.hideRefresher.emit(true);
-    this.fetchDisplayElements(refresher);
+    await this.fetchDisplayElements(refresher);
   }
 
   async fetchDisplayElements(refresher?) {
@@ -128,7 +128,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   async openSearchPage() {
     const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_COURSE);
-    this.router.navigate([RouterLinks.SEARCH], {
+    await this.router.navigate([RouterLinks.SEARCH], {
       state: {
         primaryCategories,
         source: PageId.COURSES
@@ -136,7 +136,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     });
   }
 
-  handlePillSelect(event, section) {
+  async handlePillSelect(event, section) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -191,21 +191,21 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       correlationList
     );
 
-    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
+    await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToDetailPage(event) {
+  async navigateToDetailPage(event) {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
-  navigateToViewMoreContentsPage(section, pageName?) {
+  async navigateToViewMoreContentsPage(section, pageName?) {
     const params: NavigationExtras = {
       state: {
         requestParams: {
@@ -215,7 +215,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
         pageName: ViewMore.PAGE_COURSE_POPULAR
       }
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    await this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
   async onViewMorePillList(event, section) {
@@ -273,7 +273,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     return displayItems;
   }
 
-  tabViewWillEnter() {
-    this.fetchDisplayElements();
+  async tabViewWillEnter() {
+    await this.fetchDisplayElements();
   }
 }

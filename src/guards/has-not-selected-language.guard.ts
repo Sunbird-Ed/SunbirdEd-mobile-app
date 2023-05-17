@@ -36,16 +36,16 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
             this.navigateToUserTypeSelection();
             return false;
         }
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
         return true;
     }
 
-    private navigateToUserTypeSelection(){
+    private async navigateToUserTypeSelection(){
         const navigationExtras: NavigationExtras = {
             state: {
                 forwardMigration: true
             }
         };
-        this.router.navigate(['/', 'user-type-selection'], navigationExtras);
+        await this.router.navigate(['/', 'user-type-selection'], navigationExtras);
     }
 }

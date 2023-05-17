@@ -84,7 +84,7 @@ export class ContentPlayerHandler {
 
             request['correlationData'] = [correlationData];
         }
-        this.playerService.getPlayerConfig(content, request).subscribe((data) => {
+        this.playerService.getPlayerConfig(content, request).subscribe(async (data) => {
             data['data'] = {};
             if (isCourse || (content.contentData &&
                 content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED)) {
@@ -104,9 +104,9 @@ export class ContentPlayerHandler {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then((json) => {
+                        this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then(async (json) => {
                             data['data'] = JSON.stringify(json);
-                            this.router.navigate([RouterLinks.PLAYER],
+                            await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
 
                         }).catch((error) => {
@@ -114,9 +114,9 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.file.readAsText(`file://${data.metadata.basePath}/`, 'index.json').then((response)=> {
+                        this.file.readAsText(`file://${data.metadata.basePath}/`, 'index.json').then(async (response)=> {
                             data['data'] = response;
-                            this.router.navigate([RouterLinks.PLAYER],
+                            await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
                                         corRelation: contentInfo.correlationList, isCourse } });
                         }).catch((e) => {
@@ -125,7 +125,7 @@ export class ContentPlayerHandler {
                     
                     });
                 } else {
-                    this.router.navigate([RouterLinks.PLAYER],
+                    await this.router.navigate([RouterLinks.PLAYER],
                         { state: { config: data, course : contentInfo.course, navigateBackToContentDetails,
                                 corRelation: contentInfo.correlationList, isCourse } });
                 }
@@ -133,7 +133,7 @@ export class ContentPlayerHandler {
                 if (callback && (data.metadata.mimeType === 'video/mp4' || data.metadata.mimeType === 'video/webm')) {
                     callback({ state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
                 } else {
-                    this.router.navigate([RouterLinks.PLAYER],
+                    await this.router.navigate([RouterLinks.PLAYER],
                         { state: { contentToPlay : content , config: data,  course : contentInfo.course, navigateBackToContentDetails,
                                 corRelation: contentInfo.correlationList, isCourse , childContent: isChildContent } });
                 }
@@ -156,7 +156,7 @@ export class ContentPlayerHandler {
         this.lastPlayedContentId = contentId;
     }
 
-    playContent(content: Content, navExtras: NavigationExtras, telemetryDetails, isCourse: boolean,
+    async playContent(content: Content, navExtras: NavigationExtras, telemetryDetails, isCourse: boolean,
                 navigateBackToContentDetails: boolean = true, hideHeaders: boolean = true) {
         if (hideHeaders) {
             this.appHeaderService.hideHeader();
@@ -187,13 +187,13 @@ export class ContentPlayerHandler {
             isStreaming = false;
             shouldDownloadAndPlay = true;
         } else {
-            this.router.navigate([RouterLinks.CONTENT_DETAILS], navExtras);
+            await this.router.navigate([RouterLinks.CONTENT_DETAILS], navExtras);
             return;
         }
 
         // Executes only if the conditions are passed else skip
         this.generateInteractTelemetry(isStreaming, telemetryDetails.pageId, contentInfo);
-        this.launchContentPlayer(playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, isCourse, navigateBackToContentDetails);
+        await this.launchContentPlayer(playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, isCourse, navigateBackToContentDetails);
     }
 
     private generateInteractTelemetry(isStreaming: boolean, pageId: string, contentInfo) {

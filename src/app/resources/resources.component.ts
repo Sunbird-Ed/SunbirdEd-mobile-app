@@ -270,7 +270,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         if (val && val.length) {
           this.selectedLanguage = val;
         }
-      });
+      }).catch(e => console.error(e));
     this.subscribeUtilityEvents();
     this.appVersion.getAppName()
       .then((appName: any) => {
@@ -287,14 +287,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).subscribe((profile: Profile) => {
       this.profile = profile;
     });
-    this.events.subscribe('savedResources:update', (res) => {
+    this.events.subscribe('savedResources:update', async (res) => {
       if (res && res.update) {
-        this.getLocalContent();
+        await this.getLocalContent();
       }
     });
-    this.events.subscribe('event:showScanner', (data) => {
+    this.events.subscribe('event:showScanner', async (data) => {
       if (data.pageName === PageId.LIBRARY) {
-        this.qrScanner.startScanner(PageId.LIBRARY, false);
+        await this.qrScanner.startScanner(PageId.LIBRARY, false);
       }
     });
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -329,12 +329,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.getCurrentUser();
     this.initNetworkDetection();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    this.appNotificationService.handleNotification();
+    await this.appNotificationService.handleNotification();
 
-    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, async (data: string) => {
       this.scrollToTop();
       if (data === '') {
-        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+        await this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
 
@@ -376,7 +376,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   /**
    * It will fetch the guest user profile details
    */
-  getCurrentUser(): void {
+  async getCurrentUser(): Promise<void> {
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     const profileType = this.appGlobalService.getGuestUserType();
     this.showSignInCard = false;
@@ -393,13 +393,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
 
     this.profile = this.appGlobalService.getCurrentUser();
-    this.getLocalContent();
+    await this.getLocalContent();
   }
 
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria) {
+  async getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -445,7 +445,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
-    this.getGroupByPage(isAfterLanguageChange);
+    await this.getGroupByPage(isAfterLanguageChange);
   }
 
   // Make this method as private
@@ -621,21 +621,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.refresher.disabled = false;
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
     if (utilityConfigFields.find(field => field.code === 'experienceSwitchPopupConfig').config.isEnabled) {
-      this.coachTimeout = setTimeout(() => {
-        this.appGlobalService.showNewTabsSwitchPopup();
+      this.coachTimeout = setTimeout(async () => {
+        await this.appGlobalService.showNewTabsSwitchPopup();
        }, 2000);
     }
   }
 
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
+    this.eventSubscription = this.eventsBusService.events().subscribe(async (event: EventsBusEvent) => {
       if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-        this.getLocalContent();
+        await this.getLocalContent();
       }
     }) as any;
   }
 
-  swipeDownToRefresh(refresher?, avoidRefreshList?) {
+  async swipeDownToRefresh(refresher?, avoidRefreshList?) {
     this.refresh = true;
     this.storyAndWorksheets = [];
 
@@ -643,18 +643,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (refresher) {
       refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
-      this.getGroupByPage(false);
+      await this.getGroupByPage(false);
     } else {
       this.getPopularContent(false, null);
     }
   }
 
-  scanQRCode() {
+  async scanQRCode() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.QRCodeScanClicked,
       Environment.HOME,
       PageId.LIBRARY);
-    this.qrScanner.startScanner(PageId.LIBRARY);
+    await this.qrScanner.startScanner(PageId.LIBRARY);
   }
 
   async search() {
@@ -664,7 +664,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       PageId.LIBRARY);
     const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_LIBRARY);
-    this.router.navigate([RouterLinks.SEARCH], {
+    await this.router.navigate([RouterLinks.SEARCH], {
       state: {
         primaryCategories,
         source: PageId.LIBRARY,
@@ -692,7 +692,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then((res: CategoryTerm[]) => {
         this.subjects = res;
-      });
+      }).catch(e => console.error(e));
   }
 
   getMediumData(frameworkId, categories): any {
@@ -707,7 +707,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
         this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
-      });
+      }).catch(e => console.error(e));
   }
 
   arrangeMediumsByUserData(categoryMediumsParam) {
@@ -758,7 +758,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
             }
           }
         }
-      });
+      }).catch(e => console.error(e));
   }
 
   generateClassInteractTelemetry(currentClass: string, previousClass: string) {
@@ -789,7 +789,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.classClickHandler(event.data.index, isClassClicked);
   }
 
-  classClickHandler(index, isClassClicked?: boolean) {
+  async classClickHandler(index, isClassClicked?: boolean) {
     if (isClassClicked) {
       this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq.grade[0]);
     }
@@ -797,7 +797,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.dynamicResponse = [];
-      this.getGroupByPage(false);
+      await this.getGroupByPage(false);
     }
 
     for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
@@ -827,14 +827,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.mediumClickHandler(event.data.index, event.data.text, isMediumClicked);
   }
 
-  mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
+  async mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
     if (isMediumClicked) {
       this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
     }
     this.getGroupByPageReq.medium = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
       this.dynamicResponse = [];
-      this.getGroupByPage(false);
+      await this.getGroupByPage(false);
     }
     for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
       if (this.categoryMediumNamesArray[i] === mediumName) {
@@ -850,7 +850,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }, 1000);
   }
 
-  navigateToDetailPage(event, sectionName) {
+  async navigateToDetailPage(event, sectionName) {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
@@ -870,11 +870,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
-  navigateToTextbookPage(items, subject) {
+  async navigateToTextbookPage(items, subject) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -882,7 +882,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       ContentUtil.getTelemetryObject(items));
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
-      this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
+      await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           contentList: items,
           subjectName: subject
@@ -893,14 +893,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
   }
 
-  launchContent() {
-    this.router.navigate([RouterLinks.PLAYER]);
+  async launchContent() {
+    await this.router.navigate([RouterLinks.PLAYER]);
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'search':
-        this.search();
+        await this.search();
         break;
       case 'download':
         this.redirectToActivedownloads();
@@ -933,22 +933,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.tutorialPopover.present();
   }
 
-  redirectToActivedownloads() {
+  async redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  redirectToNotifications() {
+  async redirectToNotifications() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NOTIFICATION_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    this.router.navigate([RouterLinks.NOTIFICATION]);
+    await this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
   logScrollEnd(event) {
@@ -962,8 +962,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
   }
 
-  scrollToTop() {
-    this.contentView.scrollToTop();
+  async scrollToTop() {
+    await this.contentView.scrollToTop();
   }
 
   async exploreOtherContents() {
@@ -977,7 +977,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         selectedMedium: this.getGroupByPageReq.medium
       }
     };
-    this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
+    await this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
 
     const corRelationList: Array<CorrelationData> = [];
     corRelationList.push({ id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD });
@@ -1071,7 +1071,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.frameworkSelectionDelegateService.delegate = undefined;
   }
 
-  onCourseCardClick(event) {
+  async onCourseCardClick(event) {
     const corRelationList: Array<CorrelationData> = [];
     corRelationList.push({ id: event.data.title || '', type: CorReleationDataType.SUBJECT });
     corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
@@ -1103,7 +1103,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         undefined,
         corRelationList
       );
-      this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
+      await this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
     } else {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -1125,7 +1125,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
   }
 
-  navigateToViewMoreContentsPage(section) {
+  async navigateToViewMoreContentsPage(section) {
     let navState = {};
     switch (section.dataSrc.type) {
       case 'TRACKABLE_COLLECTIONS':
@@ -1149,7 +1149,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const params: NavigationExtras = {
       state: navState
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    await this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
   async requestMoreContent() {
@@ -1163,7 +1163,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
       {
         state: {
           showHeader: true,
@@ -1217,7 +1217,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       formOutput,
       corRelation
     };
-    router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
+    await router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
 
   tabViewWillEnter() {

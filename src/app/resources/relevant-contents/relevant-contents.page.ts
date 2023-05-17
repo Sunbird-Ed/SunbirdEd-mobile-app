@@ -78,7 +78,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       this.corRelation);
   }
 
-  private getNavParam() {
+  private async getNavParam() {
     this.isLoading = true;
     const navExtras = this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state;
     if (navExtras) {
@@ -93,8 +93,8 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     }
     this.getDefaultBoard();
     this.prepareContentRequest();
-    this.getRelevantContents();
-    this.getSimilarContents();
+    await this.getRelevantContents();
+    await this.getSimilarContents();
     this.corRelation.push({ id: PageId.RELEVANT_CONTENTS, type: CorReleationDataType.FROM_PAGE });
   }
 
@@ -157,7 +157,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
 
   }
 
-  navigateToTextBookDetailPage(event) {
+  async navigateToTextBookDetailPage(event) {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
@@ -179,7 +179,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
         { content: item, corRelation: corRelationList }
       );
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -203,7 +203,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       Environment.HOME,
       PageId.RELEVANT_CONTENTS);
 
-    this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
+    await this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
       state: {
         corRelation: this.corRelation
       }

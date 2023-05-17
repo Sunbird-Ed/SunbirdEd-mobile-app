@@ -29,8 +29,8 @@ export class GroupGuideLinesPopoverComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.appName = await this.commonUtilService.getAppName();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
       if(this.shouldUpdateUserLevelGroupTnc) {
         this.location.back();
       }
@@ -42,13 +42,13 @@ export class GroupGuideLinesPopoverComponent implements OnInit, OnDestroy {
     this.backButtonFunc.unsubscribe();
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+  async closePopover() {
+    await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  continue() {
+  async continue() {
     if (this.agreedToGroupGuidelines) {
-        this.popoverCtrl.dismiss({ isLeftButtonClicked: true });
+        await this.popoverCtrl.dismiss({ isLeftButtonClicked: true });
     } else {
         this.showGroupGuideLinesError = true;
     }

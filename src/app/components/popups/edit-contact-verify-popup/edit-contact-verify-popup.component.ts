@@ -40,10 +40,10 @@ export class EditContactVerifyPopupComponent {
   }
 
 
-  ionViewWillEnter() {
-    this.menuCtrl.enable(false);
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+  async ionViewWillEnter() {
+    await this.menuCtrl.enable(false);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
       this.unregisterBackButton.unsubscribe();
     });
   }
@@ -69,10 +69,10 @@ export class EditContactVerifyPopupComponent {
         };
       }
       this.profileService.verifyOTP(req).toPromise()
-        .then(() => {
-          this.popOverCtrl.dismiss({ OTPSuccess: true, value: this.key });
+        .then(async () => {
+          await this.popOverCtrl.dismiss({ OTPSuccess: true, value: this.key });
         })
-        .catch(error => {
+        .catch(async error => {
           if (HttpClientError.isInstance(error)
            && error.response.responseCode === 400) {
             if (typeof error.response.body  === 'object') {
@@ -82,7 +82,7 @@ export class EditContactVerifyPopupComponent {
                 this.otp = '';
                 this.invalidOtp = true;
               } else {
-                this.popOverCtrl.dismiss();
+                await this.popOverCtrl.dismiss();
                 this.commonUtilService.showToast('OTP_FAILED');
               }
             }
@@ -132,12 +132,12 @@ export class EditContactVerifyPopupComponent {
     }
   }
 
-  cancel() {
-    this.popOverCtrl.dismiss({ OTPSuccess: false });
+  async cancel() {
+    await this.popOverCtrl.dismiss({ OTPSuccess: false });
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true);
+  async ionViewWillLeave() {
+    await this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }

@@ -165,7 +165,7 @@ export class LocalCourseService {
       const batch = JSON.parse(batchDetails);
       const course = JSON.parse(courseDetail);
       if (course.createdBy !== this.userId && isLoggedInUser) {
-        this.enrollBatchAfterlogin(batch, course);
+        await this.enrollBatchAfterlogin(batch, course);
       } else {
         this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
           batchId: batch.id,
@@ -173,7 +173,7 @@ export class LocalCourseService {
         });
         this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
       }
-      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
+      await this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
     }
   }
 
@@ -200,8 +200,8 @@ export class LocalCourseService {
       userConsent: course.userConsent
     };
     this.enrollIntoBatch(enrollCourse, undefined, course).toPromise()
-      .then(() => {
-        this.zone.run(async () => {
+      .then(async () => {
+        await this.zone.run(async () => {
           this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', course));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: batch.id,
@@ -210,16 +210,16 @@ export class LocalCourseService {
           const appLabel = await this.appVersion.getAppName();
           this.events.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: false, appName: appLabel });
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
-          this.getEnrolledCourses();
+          await this.getEnrolledCourses();
           this.navigateTocourseDetails();
           await this.sbProgressLoader.hide({ id: 'login' });
         });
-      }, (err) => {
-        this.zone.run(async () => {
+      }, async (err) => {
+        await this.zone.run(async () => {
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           if (NetworkError.isInstance(err)) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-            this.getEnrolledCourses();
+            await this.getEnrolledCourses();
           } else if (HttpClientError.isInstance(err)) {
             if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
               this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -251,14 +251,14 @@ export class LocalCourseService {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (enrolledCourses) => {
         if (enrolledCourses) {
-          this.zone.run(() => {
+          this.zone.run(async () => {
             if (enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
               for (const course of enrolledCourses) {
                 courseList.push(course);
               }
               this.appGlobalService.setEnrolledCourseList(courseList);
-              this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
+              await this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
             }
           });
         }
@@ -267,32 +267,34 @@ export class LocalCourseService {
   }
 
   async getCourseProgress(courseContext) {
-    return new Promise(async (resolve, reject) => {
-      const request: GetContentStateRequest = {
-        userId: this.appGlobalService.getUserId(),
-        courseId: courseContext.courseId,
-        contentIds: courseContext.leafNodeIds,
-        returnRefreshedContentStates: false,
-        batchId: courseContext.batchId,
-        fields: ['progress', 'score']
-      };
-      let progress = 0;
-      try {
-        const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
-        if (contentStatusData && contentStatusData.contentList) {
-          const viewedContents = [];
-          for (const contentId of courseContext.leafNodeIds) {
-            if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
-              viewedContents.push(contentId);
+    return new Promise((resolve, reject) => {
+      (async () => {
+        const request: GetContentStateRequest = {
+          userId: this.appGlobalService.getUserId(),
+          courseId: courseContext.courseId,
+          contentIds: courseContext.leafNodeIds,
+          returnRefreshedContentStates: false,
+          batchId: courseContext.batchId,
+          fields: ['progress', 'score']
+        };
+        let progress = 0;
+        try {
+          const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
+          if (contentStatusData && contentStatusData.contentList) {
+            const viewedContents = [];
+            for (const contentId of courseContext.leafNodeIds) {
+              if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
+                viewedContents.push(contentId);
+              }
             }
+            progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
+  
           }
-          progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
-
+          resolve({ progress, contentStatusData });
+        } catch (err) {
+          resolve({ progress });
         }
-        resolve({ progress, contentStatusData });
-      } catch (err) {
-        resolve({ progress });
-      }
+      })
     });
   }
 

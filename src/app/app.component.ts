@@ -140,7 +140,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         // This is not required untill NavigationController implementation
         // for all deeplinked pages
       }, (match) => {
-        // TODO handle matching URLs
+        // handle matching URLs
       }, (nomatch) => {
         // nomatch.$link - the full link data
         // Only URL has to sent to the deeplink service
@@ -148,7 +148,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.platform.ready().then(async () => {
       if (this.platform.is('iphone') || this.platform.is('ipad')) {
         this.iosDeeplink();
@@ -159,17 +159,17 @@ export class AppComponent implements OnInit, AfterViewInit {
         window['segmentation'].init();
       }
       window['segmentation'].SBTagService.pushTag(['android'], TagPrefixConstants.ALL, true);
-      this.formAndFrameworkUtilService.init();
+      await this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
-      this.fcmTokenWatcher(); // Notification related
+      await this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;
           window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
-        });
+        }).catch((e) => console.error(e));
       this.checkForExperiment();
-      this.receiveNotification();
+      await this.receiveNotification();
       this.utilityService.getDeviceSpec()
         .then((deviceSpec) => {
           this.debuggingService.deviceId = deviceSpec.id;
@@ -180,14 +180,13 @@ export class AppComponent implements OnInit, AfterViewInit {
           };
           window['segmentation'].SBTagService.pushTag(devSpec, TagPrefixConstants.DEVICE_CONFIG, true);
           this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
-        });
+        }).catch((e) => console.error(e));
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      //this.startOpenrapDiscovery();
-      this.saveDefaultSyncSetting();
-      this.checkAppUpdateAvailable();
-      this.makeEntryInSupportFolder();
+      await this.saveDefaultSyncSetting();
+      await this.checkAppUpdateAvailable();
+      await this.makeEntryInSupportFolder();
       await this.commonUtilService.populateGlobalCData();
       await this.getSelectedLanguage();
       await this.getDeviceProfile();
@@ -214,11 +213,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
-      this.utils.initilizeML();
+      await this.utils.initilizeML();
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
-    });
-
+    }).catch(e => console.error(e));
+    await this.handleEvents();
+  }
+  
+  async handleEvents(){
     this.headerService.headerConfigEmitted$.subscribe(config => {
       this.headerConfig = config;
     });
@@ -237,8 +239,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.segmentationTagService.handleLocalNotificationTap();
     });
 
-    if (cordova.plugins.notification && cordova.plugins.notification.local &&
-      cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
+    if (cordova?.plugins?.notification?.local?.launchDetails?.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
       this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
 
@@ -257,7 +258,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
-    this.checkCurrentOrientation();
+    await this.checkCurrentOrientation();
   }
 
   checkAndroidWebViewVersion() {
@@ -304,7 +305,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
-        if (res && res.value) {
+        if (res?.value) {
           const value = JSON.parse(res.value);
           if (value.deploymentKey) {
             this.preferences.putString(PreferenceKey.DEPLOYMENT_KEY, value.deploymentKey).subscribe();
@@ -331,6 +332,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
           Environment.HOME, PageId.HOME);
       }
+    }).catch((error) => { 
+      console.error(error);
     });
   }
 
@@ -398,8 +401,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private storeFCMToken(token: string) {
-    this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
+  private async storeFCMToken(token: string) {
+    await this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
   /* Notification data will be received in data variable
@@ -423,7 +426,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       );
       await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
-    FCMPlugin.onNotification((data) => {
+    FCMPlugin.onNotification(async (data) => {
       data['isRead'] = data.wasTapped ? 1 : 0;
       data['actionData'] = JSON.parse(data['actionData']);
       this.notificationServices.addNotification(data).subscribe((status) => {
@@ -447,7 +450,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.notificationSrc.notificationId = data.id || '';
         this.notificationSrc.setNotificationParams(data);
         if (this.isForeground) {
-          this.notificationSrc.handleNotification();
+          await this.notificationSrc.handleNotification();
         }
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
@@ -491,12 +494,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
-        this.db.createDb();
+        await this.db.createDb();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
-          this.router.navigate([RouterLinks.TABS]);
+          await this.router.navigate([RouterLinks.TABS]);
         }
         this.segmentationTagService.getPersistedSegmentaion();
       }, 100);
@@ -506,19 +509,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   /**
    * Enter all methods which should trigger during OnInit and User Sign-In.
    */
-  reloadSigninEvents() {
-    this.checkForTncUpdate();
+  async reloadSigninEvents() {
+    await this.checkForTncUpdate();
   }
 
-  reloadGuestEvents() {
-    this.checkDeviceLocation();
-    this.checkGuestUserType();
+  async reloadGuestEvents() {
+    await this.checkDeviceLocation();
+    await this.checkGuestUserType();
   }
 
   private async checkGuestUserType() {
     const isAdminUser = (await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise() === ProfileType.ADMIN);
     if (isAdminUser && this.appGlobalService.isGuestUser) {
-      this.loginHandlerService.signIn();
+      await this.loginHandlerService.signIn();
     }
   }
 
@@ -531,13 +534,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.platform.resume.subscribe(() => {
+    this.platform.resume.subscribe(async () => {
       if (!this.appGlobalService.isNativePopupVisible) {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
-      this.splashScreenService.handleSunbirdSplashScreenActions();
+      await this.splashScreenService.handleSunbirdSplashScreenActions();
       this.checkForCodeUpdates();
-      this.notificationSrc.handleNotification();
+      await this.notificationSrc.handleNotification();
       this.isForeground = true;
       this.segmentationTagService.getPersistedSegmentaion();
     });
@@ -570,19 +573,19 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (this.router.url === `/${RouterLinks.PROFILE_SETTINGS}` && this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.PROFILE_SETTINGS)
         ) {
         if (await this.menuCtrl.isOpen()) {
-          this.menuCtrl.close();
+          await this.menuCtrl.close();
         } else {
           if (this.platform.is('ios')) {
             this.headerService.showHeaderWithHomeButton();
           } else {
-            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+            await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
           }
         }
       } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
-          this.mlloader.stopLoader()
+          await this.mlloader.stopLoader()
           this.location.back();
         }
       }
@@ -598,10 +601,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private subscribeEvents() {
     this.events.subscribe(EventTopics.TAB_CHANGE, (pageId) => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.generateInteractEvent(pageId);
         // Added below code to generate Impression Before Interact for Library,Courses,Profile
-        this.generateImpressionEvent(pageId);
+        await this.generateImpressionEvent(pageId);
       });
     });
 
@@ -717,7 +720,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         };
         await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }
   }
@@ -733,7 +736,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async makeEntryInSupportFolder() {
     return new Promise<void>((resolve => {
       (window).sbutility.makeEntryInSunbirdSupportFile((result) => {
-        this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
+        this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then().catch(e => console.error(e));
         resolve();
       }, () => {
       });
@@ -744,9 +747,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this.preferences.getString(PreferenceKey.SYNC_CONFIG).toPromise()
       .then(val => {
         if (val === undefined || val === '' || val === null) {
-          this.preferences.putString(PreferenceKey.SYNC_CONFIG, 'ALWAYS_ON').toPromise().then();
+          this.preferences.putString(PreferenceKey.SYNC_CONFIG, 'ALWAYS_ON').toPromise().then().catch(e => console.error(e));
         }
-      });
+      }).catch((error) => { 
+        console.error(error);
+      });;
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
@@ -817,10 +822,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
+    }).catch((error) => { 
+      console.error(error);
     });
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'back') {
       const routeUrl = this.router.url;
 
@@ -854,7 +861,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             if (this.platform.is('ios')) {
               this.headerService.showHeaderWithHomeButton();
             } else {
-              this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+              await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
             }
         } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
           this.headerService.sidebarEvent($event);
@@ -879,7 +886,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
+        await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
       case 'SETTINGS': {
@@ -888,7 +895,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.SETTINGS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigate([`/${RouterLinks.SETTINGS}`]);
+        await this.router.navigate([`/${RouterLinks.SETTINGS}`]);
         break;
       }
       case 'LANGUAGE': {
@@ -897,7 +904,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.LANGUAGE_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, true]);
+        await this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, true]);
         break;
       }
 
@@ -907,11 +914,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.HELP_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
+        await this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
         break;
 
       case 'LOGOUT':
-        this.logoutHandlerService.onLogout();
+        await this.logoutHandlerService.onLogout();
         break;
 
       case 'UPDATE':
@@ -934,24 +941,24 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           const routerValue = this.router.url.split('/').pop();
           if (routerValue === PageId.USER || routerValue === PageId.RESOURCES) {
-            this.router.navigate([RouterLinks.SIGN_IN], {state: {source: routerValue}});
+            await this.router.navigate([RouterLinks.SIGN_IN], {state: {source: routerValue}});
           } else {
-            this.router.navigate([RouterLinks.SIGN_IN]);
+            await this.router.navigate([RouterLinks.SIGN_IN]);
           }
         }
         break;
       case 'MLREPORTS':
-        this.router.navigate([RouterLinks.REPORTS], {});
+        await this.router.navigate([RouterLinks.REPORTS], {});
         break;
       case 'ORIENTATION':
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
         if (currentOrientation === AppOrientation.LANDSCAPE) {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
+          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         } else {
-          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-          this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
+          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+          await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         }
     }
@@ -977,13 +984,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
-    ).subscribe(() => {
-      this.logoutHandlerService.onLogout();
+    ).subscribe(async () => {
+      await this.logoutHandlerService.onLogout();
     });
   }
 
   private getCampaignParameter() {
-    this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then((data) => {
+    this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then(async (data) => {
       if (data) {
         const response = JSON.parse(data);
         const utmValue = response['val'];
@@ -1000,7 +1007,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           PageId.HOME,
           undefined,
           utmTelemetry);
-        this.utilityService.clearUtmInfo();
+        await this.utilityService.clearUtmInfo();
       }
     })
       .catch(error => {
@@ -1047,13 +1054,15 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
           await this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(ipLocationMap)).toPromise();
         }
+      }).catch((error) => { 
+        console.error(error);
       });
     }
   }
 
-  navigateToDownloads() {
+  async navigateToDownloads() {
     this.isPlannedMaintenanceStarted = false;
-    this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
+    await this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
   }
 
 
@@ -1080,17 +1089,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   async applyJoyfulTheme() {
       await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
-      this.headerService.showStatusBar();
+      await this.headerService.showStatusBar();
   }
 
   private async checkCurrentOrientation() {
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
     if (currentOrientation === AppOrientation.LANDSCAPE) {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
     } else {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-      this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
     }
   }
 }

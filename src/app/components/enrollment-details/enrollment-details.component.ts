@@ -74,15 +74,14 @@ export class EnrollmentDetailsComponent implements OnInit {
         return this.popOverCtrl.dismiss(data);
     }
 
-    resumeCourse(content: any) {
+    async resumeCourse(content: any) {
         this.saveContentContext(content);
 
-        this.close().then(() => {
-            this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
-        });
+        await this.close();
+        this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
     }
 
-    saveContentContext(content: any) {
+    async saveContentContext(content: any) {
         const contentContextMap = new Map();
         // store content context in the below map
         contentContextMap['userId'] = content.userId;
@@ -93,7 +92,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         }
 
         // store the contentContextMap in shared preference and access it from SDK
-        this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise();
+        await this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise();
     }
 
     async enrollIntoBatch(batch: any) {
@@ -114,14 +113,14 @@ export class EnrollmentDetailsComponent implements OnInit {
         };
         this.localCourseService.enrollIntoBatch(enrollCourse, undefined, this.content).toPromise()
             .then((data: any) => {
-                this.zone.run(() => {
+                this.zone.run(async () => {
                     this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.content));
                     this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
                         batchId: batch.id,
                         courseId: batch.courseId
                     });
                     loader.dismiss();
-                    this.popOverCtrl.dismiss({ isEnrolled: true, batchId: batch.id, courseId: batch.courseId });
+                    await this.popOverCtrl.dismiss({ isEnrolled: true, batchId: batch.id, courseId: batch.courseId });
                     this.navigateToDetailPage(this.content);
                 });
             }, (error) => {

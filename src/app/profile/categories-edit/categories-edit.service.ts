@@ -100,26 +100,26 @@ export class CategoriesEditService {
     }
   }
 
-  private executeUserPostOnboardingSteps(isSSOUser, updatedProfile, navigateToCourse?) {
+  private async executeUserPostOnboardingSteps(isSSOUser, updatedProfile, navigateToCourse?) {
     if (!isSSOUser) {
-      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
+      await this.appGlobalService.showYearOfBirthPopup(updatedProfile);
     }
     if (this.appGlobalService.isJoinTraningOnboardingFlow) {
       window.history.go(-navigateToCourse);
     } else {
-      this.router.navigate([RouterLinks.TABS]);
+      await this.router.navigate([RouterLinks.TABS]);
     }
     this.events.publish('update_header');
-    this.externalIdVerificationService.showExternalIdVerificationPopup();
+    await this.externalIdVerificationService.showExternalIdVerificationPopup();
   }
 
-  private navigateToDistrictMapping(navigateToCourse?) {
+  private async navigateToDistrictMapping(navigateToCourse?) {
     const navigationExtras: NavigationExtras = {
       state: {
         isShowBackButton: false,
         noOfStepsToCourseToc: navigateToCourse + 1
       }
     };
-    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+    await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 }

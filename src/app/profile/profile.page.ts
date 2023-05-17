@@ -207,17 +207,17 @@ export class ProfilePage implements OnInit {
       }
     });
 
-    this.events.subscribe('loggedInProfile:update', (framework) => {
+    this.events.subscribe('loggedInProfile:update', async (framework) => {
       if (framework) {
         this.updateLocalProfile(framework);
-        this.refreshProfileData();
+        await this.refreshProfileData();
       } else {
-        this.doRefresh();
+        await this.doRefresh();
       }
     });
 
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (data) => {
-      this.doRefresh();
+      await this.doRefresh();
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
@@ -228,7 +228,7 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     this.getCategories();
-    this.doRefresh();
+    await this.doRefresh();
     this.appName = await this.appVersion.getAppName();
   }
 
@@ -265,7 +265,7 @@ export class ProfilePage implements OnInit {
     }
     return this.refreshProfileData(refresher)
       .then(() => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
           setTimeout(async () => {
             this.events.publish('refresh:profile');
             this.refresh = false;
@@ -274,10 +274,10 @@ export class ProfilePage implements OnInit {
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
-          this.getLearnerPassbook();
-          this.getEnrolledCourses(refresher);
-          this.searchContent();
-          this.getSelfDeclaredDetails();
+          await this.getLearnerPassbook();
+          await this.getEnrolledCourses(refresher);
+          await this.searchContent();
+          await this.getSelfDeclaredDetails();
           this.getProjectsCertificate();
         });
       })
@@ -319,8 +319,8 @@ export class ProfilePage implements OnInit {
             that.isRefreshProfile = !that.isRefreshProfile;
           }
           that.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
-            .then((profileData) => {
-              that.zone.run(async () => {
+            .then(async (profileData) => {
+              await that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
                 // ******* Segmentation
@@ -339,7 +339,7 @@ export class ProfilePage implements OnInit {
                 window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
                 this.segmentationTagService.evalCriteria();
                 // *******
-                that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
+                await that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 const role: string = (!that.profile.profileUserType.type ||
                   (that.profile.profileUserType.type
@@ -356,13 +356,13 @@ export class ProfilePage implements OnInit {
                         if (!frameWorkData['status']) {
 
                         }
-                      });
+                      }).catch(e => console.error(e));
                     that.formatRoles();
                     that.getOrgDetails();
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
-                  });
+                  }).catch(e => console.error(e));
                   if(profileData && profileData.framework && Object.keys(profileData.framework).length == 0) {
                     await this.getFrameworkDetails();
                   }
@@ -374,7 +374,7 @@ export class ProfilePage implements OnInit {
               reject();
             });
         }
-      });
+      }).catch(e => console.error(e));
     });
   }
 
@@ -453,7 +453,7 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE, null);
   }
 
-  showLessTrainings(listName): void {
+  async showLessTrainings(listName): Promise<void> {
     switch (listName) {
       case 'myLearning':
         this.myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
@@ -461,7 +461,7 @@ export class ProfilePage implements OnInit {
       case 'learnerPassbook':
         this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
         this.learnerPassbookCount = null;
-        this.getLearnerPassbook();
+        await this.getLearnerPassbook();
         break;
     }
   }
@@ -587,11 +587,11 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  downloadCertificate(data,type?){
+  async downloadCertificate(data,type?){
     if(type && type == 'project'){
-    this.projectCertificateDownload(data);
+      await this.projectCertificateDownload(data);
     }else{
-      this.downloadTrainingCertificate(data)
+      await this.downloadTrainingCertificate(data)
     }
   }
   async projectCertificateDownload(project){
@@ -605,12 +605,12 @@ export class ProfilePage implements OnInit {
           if (this.platform.is('ios')) {
             (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
           } else {
-            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+            await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
               state: { request }
             });
           }
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
   }
@@ -644,7 +644,7 @@ export class ProfilePage implements OnInit {
               return;
             }
           }
-          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+          await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
             state: { request }
           });
         } else {
@@ -662,7 +662,7 @@ export class ProfilePage implements OnInit {
           await this.downloadLegacyCertificate(course, toast);
         }
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
   }
@@ -747,18 +747,18 @@ export class ProfilePage implements OnInit {
         this.formAndFrameworkUtilService.updateLoggedInUser(this.profile, resp)
           .then((success) => {
             console.log('updateLocalProfile-- ', success);
-          });
-      });
+          }).catch(e => console.error(e));
+      }).catch(e => console.error(e));
   }
 
 
-  navigateToCategoriesEditPage() {
+  async navigateToCategoriesEditPage() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.EDIT_CLICKED,
         Environment.HOME,
         PageId.PROFILE, null);
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -886,7 +886,7 @@ export class ProfilePage implements OnInit {
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (updateContact && data && data.OTPSuccess) {
-        this.updatePhoneInfo(data.value);
+        await this.updatePhoneInfo(data.value);
       }
     } else {
       const componentProps = {
@@ -902,7 +902,7 @@ export class ProfilePage implements OnInit {
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (updateContact && data && data.OTPSuccess) {
-        this.updateEmailInfo(data.value);
+        await this.updateEmailInfo(data.value);
       }
       return data;
     }
@@ -939,7 +939,7 @@ export class ProfilePage implements OnInit {
     this.profileService.updateServerProfile(request).toPromise()
       .then(async () => {
         await loader.dismiss();
-        this.doRefresh();
+        await this.doRefresh();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage(successMessage));
       }).catch(async () => {
         await loader.dismiss();
@@ -953,14 +953,14 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  private redirectToActiveDownloads() {
+  private async redirectToActiveDownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.PROFILE);
 
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   toggleTooltips(event, field) {
@@ -1080,7 +1080,7 @@ export class ProfilePage implements OnInit {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => console.error(err));
       }
     });
   }
@@ -1138,7 +1138,7 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  openSelfDeclareTeacherForm(type) {
+  async openSelfDeclareTeacherForm(type) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -1155,7 +1155,7 @@ export class ProfilePage implements OnInit {
       telemetryId
     );
 
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
       state: {
         profile: this.profile
       }
@@ -1205,7 +1205,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  shareUsername() {
+  async shareUsername() {
     let fullName = this.profile.firstName;
     if (this.profile.lastName) {
       fullName = fullName + ' ' + this.profile.lastName;
@@ -1215,7 +1215,7 @@ export class ProfilePage implements OnInit {
       user_name: fullName,
       sunbird_id: this.profile.userName
     });
-    this.socialSharing.share(translatedMsg);
+    await this.socialSharing.share(translatedMsg);
   }
 
   private async getFrameworkDetails() {
@@ -1276,7 +1276,7 @@ export class ProfilePage implements OnInit {
   private getCategories() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.categories = categories.supportedFrameworkConfig;
-    });
+    }).catch(e => console.error(e));
   }
   
   getProjectsCertificate(){

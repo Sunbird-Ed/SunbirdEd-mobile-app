@@ -133,7 +133,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             }
         });
 
-        this.router.navigate([RouterLinks.SEARCH], {
+        await this.router.navigate([RouterLinks.SEARCH], {
             state: {
                 activityTypeData: data,
                 source: PageId.GROUP_DETAIL,

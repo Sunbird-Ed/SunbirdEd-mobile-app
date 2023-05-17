@@ -50,7 +50,7 @@ export class LogoutHandlerService {
       this.profileService.getActiveProfileSession().toPromise()
       .then((profile) => {
         this.profileService.deleteProfile(profile.uid).subscribe()
-      });
+      }).catch((e) => console.log(e));
     }
 
     this.segmentationTagService.persistSegmentation();
@@ -105,7 +105,7 @@ export class LogoutHandlerService {
           console.log(err);
         });
       }
-      this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+      await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
     }
   }
 
@@ -117,7 +117,7 @@ export class LogoutHandlerService {
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
       true : false;
     if (selectedUserType === ProfileType.ADMIN && !isOnboardingCompleted) {
-      this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+      await this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
     } else {
       this.events.publish('UPDATE_TABS');
     }
@@ -130,10 +130,10 @@ export class LogoutHandlerService {
 
     if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else if (selectedUserType !== ProfileType.ADMIN) {
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');

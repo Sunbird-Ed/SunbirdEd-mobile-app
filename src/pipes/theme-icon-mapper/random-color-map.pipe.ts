@@ -16,7 +16,8 @@ export class RandomColorMapPipe implements PipeTransform {
     transform(key: string, index?: number): any {
         if (!RandomColorMapPipe.cache[key]) {
             if (!index && index !== 0) {
-                RandomColorMapPipe.cache[key] = this.colors[Math.floor(Math.random() * this.colors.length)];
+                let val = Math.random();
+                RandomColorMapPipe.cache[key] = this.colors[Math.floor(val * this.colors.length)];
             } else {
                 RandomColorMapPipe.cache[key] = this.colors[(index % this.colors.length)];
             }

@@ -63,17 +63,17 @@ export class TncUpdateHandlerService {
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then(async (profile) => {
         if (this.hasProfileTncUpdated(profile)) {
-          this.presentTncPage({ profile, tncService: this });
+          await this.presentTncPage({ profile, tncService: this });
         } else {
           const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
           if (!profile.managedBy && !await this.isSSOUser(userDetails) && !profile.dob) {
-              this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+            await this.router.navigate([RouterLinks.SIGNUP_BASIC]);
           } else {
-            this.checkBmc(profile);
+            await this.checkBmc(profile);
           }
         }
-      }).catch(e => {
-        this.appGlobalService.closeSigninOnboardingLoader();
+      }).catch(async (e) => {
+        await this.appGlobalService.closeSigninOnboardingLoader();
       });
   }
 
@@ -107,12 +107,12 @@ export class TncUpdateHandlerService {
         if (isTCAccepted) {
           await this.getProfileDetailsAndUpdateLoggedInUser(result.data, loader);
         } else {
-          this.dismissLoader(loader);
+          await this.dismissLoader(loader);
           await this.logoutOnSecondBackNavigation();
         }
         await this.dismissTncPage();
       } catch (e) {
-        this.dismissLoader(loader);
+        await this.dismissLoader(loader);
         await this.logoutOnSecondBackNavigation();
       }
     } else {
@@ -132,7 +132,7 @@ export class TncUpdateHandlerService {
     }).toPromise();
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
       .then(async (value) => {
-        this.dismissLoader(loader);
+        await this.dismissLoader(loader);
         if (!this.appGlobalService.signinOnboardingLoader) {
           this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
           await this.appGlobalService.signinOnboardingLoader.present();
@@ -150,27 +150,27 @@ export class TncUpdateHandlerService {
         let userLocationAvailable = this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig);
         let isSSoUser = await this.isSSOUser(profile)
         if (!profile.serverProfile.managedBy && !await this.isSSOUser(profile) && !profile.serverProfile.dob) {
-          this.router.navigate([RouterLinks.SIGNUP_BASIC]);
+          await this.router.navigate([RouterLinks.SIGNUP_BASIC]);
         } else if (value['status']) {
           if (userLocationAvailable || isSSoUser) {
             await this.dismissTncPage();
-            this.appGlobalService.closeSigninOnboardingLoader();
+            await this.appGlobalService.closeSigninOnboardingLoader();
             categoriesProfileData['status'] = value['status']
             categoriesProfileData['isUserLocationAvalable'] = true;
             await this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
-            this.externalIdVerificationService.showExternalIdVerificationPopup();
-            this.splashScreenService.handleSunbirdSplashScreenActions();
+            await this.externalIdVerificationService.showExternalIdVerificationPopup();
+            await this.splashScreenService.handleSunbirdSplashScreenActions();
           } else {
             if (onboarding.skipOnboardingForLoginUser && profile.profileType !== ProfileType.ADMIN) {
               await this.updateUserAsGuest();
             } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 categoriesProfileData['status'] = value['status']
                 categoriesProfileData['isUserLocationAvalable'] = false;
-                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                await this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                 state: { categoriesProfileData }
             });
             } else {
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: categoriesProfileData
               });
             }
@@ -178,10 +178,10 @@ export class TncUpdateHandlerService {
         } else {
           // closeSigninOnboardingLoader() is called in CategoryEdit page
           await this.dismissTncPage();
-          this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
+          await this.handleNavigation(isSSoUser, profile, categoriesProfileData, value);
         }
       }).catch(async e => {
-        this.dismissLoader(loader);
+        await this.dismissLoader(loader);
       });
   }
 
@@ -193,15 +193,15 @@ export class TncUpdateHandlerService {
       if (onboarding.skipOnboardingForLoginUser) {
         await this.updateUserAsGuest();
       } else {
-        this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+        await this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
           state: {categoriesProfileData}
         });
       }
     } else {
       if (value['status'] && !this.appGlobalService.isJoinTraningOnboardingFlow) {
-        this.router.navigate(['/', RouterLinks.TABS]);
+        await this.router.navigate(['/', RouterLinks.TABS]);
       } else {
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+        await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
           state: categoriesProfileData
         });
       }
@@ -210,7 +210,7 @@ export class TncUpdateHandlerService {
 
   private async logoutOnSecondBackNavigation() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
-    this.logoutHandlerService.onLogout();
+    await this.logoutHandlerService.onLogout();
     await this.dismissTncPage();
   }
 
@@ -248,7 +248,7 @@ export class TncUpdateHandlerService {
       if ( guestProfile.board && guestProfile.board.length && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN) {
         await this.updateUserAsGuest(guestProfile);
       } else {
-        this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
+        await this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       }
     } else {
       if (!onboarding.skipOnboardingForLoginUser) {
@@ -268,12 +268,12 @@ export class TncUpdateHandlerService {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.navigateToBmc(serverProfile, userprofile, locationMappingConfig);
+    await this.navigateToBmc(serverProfile, userprofile, locationMappingConfig);
   }
 
   private async navigateToBmc(serverProfile, userprofile, locationMappingConfig) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
-      .then((value) => {
+      .then(async (value) => {
         const categoriesProfileData = {
           hasFilledLocation: this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig),
           showOnlyMandatoryFields: true,
@@ -285,7 +285,7 @@ export class TncUpdateHandlerService {
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
           (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()
               || serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
-              this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+              await this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                 state: { categoriesProfileData }
               });
         } else if (userprofile.profileType === ProfileType.NONE ||
@@ -294,15 +294,15 @@ export class TncUpdateHandlerService {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] =
           this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig);
-          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+          await this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
         } else {
-          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+          await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
             state: categoriesProfileData
           });
         }
-      });
+      }).catch((e) => console.error(e));
   }
 
   async isSSOUser(profile: Profile): Promise<boolean> {
@@ -323,25 +323,25 @@ export class TncUpdateHandlerService {
           this.navigateToDistrictMapping();
         } else {
           if (!(await this.isSSOUser(userDetails))) {
-            this.appGlobalService.showYearOfBirthPopup(userDetails.serverProfile);
+            await this.appGlobalService.showYearOfBirthPopup(userDetails.serverProfile);
           }
-          this.externalIdVerificationService.showExternalIdVerificationPopup();
+          await this.externalIdVerificationService.showExternalIdVerificationPopup();
         }
       })
-      .catch(() => {
-        this.appGlobalService.closeSigninOnboardingLoader();
-        this.externalIdVerificationService.showExternalIdVerificationPopup();
+      .catch(async () => {
+        await this.appGlobalService.closeSigninOnboardingLoader();
+        await this.externalIdVerificationService.showExternalIdVerificationPopup();
       });
   }
 
-  private navigateToDistrictMapping() {
+  private async navigateToDistrictMapping() {
     const navigationExtras: NavigationExtras = {
       state: {
         isShowBackButton: false,
         noOfStepsToCourseToc: 1
       }
     };
-    this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+    await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 
   private async updateUserAsGuest(guestProfile?: any) {

@@ -69,10 +69,10 @@ export class AccessDiscussionComponent implements OnInit {
         type: this.fetchForumIdReq.type
       }
     ];
-    this.discussionService.createUser(this.createUserReq).subscribe((response) => {
+    this.discussionService.createUser(this.createUserReq).subscribe(async (response) => {
       const userId = response.result.userId.uid
       const result = [this.forumDetails.cid];
-        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
+        await this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
           categories: JSON.stringify({ result }),
           userId: userId

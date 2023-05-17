@@ -35,9 +35,9 @@ import { ContentViewerComponent } from './../components/content-viewer/content-v
 export class FaqHelpPage implements OnInit {
 
   consumptionFaqUrl: SafeResourceUrl;
-
+  randVal = Math.random();
   faq: any = {
-    url: './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random()
+    url: './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + this.randVal
   };
   selectedLanguage: string;
   chosenLanguageString: any;
@@ -104,17 +104,14 @@ export class FaqHelpPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName) => {
-        this.appName = appName;
-      });
+  async ngOnInit() {
+    this.appName = await this.appVersion.getAppName()
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
-    this.getSelectedLanguage();
-    this.getDataFromUrl();
+    await this.getSelectedLanguage();
+    await this.getDataFromUrl();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -210,7 +207,8 @@ export class FaqHelpPage implements OnInit {
 
     await this.formAndFrameworkUtilService.getConsumptionFaqsUrl().then((url: string) => {
       if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
-        url += '?selectedlang=' + this.selectedLanguage + '&randomid=' + Math.random();
+        let val = Math.random();
+        url += '?selectedlang=' + this.selectedLanguage + '&randomid=' + val;
         this.faq.url = url;
         this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
       } else {
@@ -290,7 +288,7 @@ export class FaqHelpPage implements OnInit {
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;
-    this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
+    await this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
         data: this.faqData,
         corRelation: this.corRelation
@@ -322,8 +320,8 @@ export class FaqHelpPage implements OnInit {
     this.selectedFaqCategory.constants = this.constants;
   }
 
-  enableFaqReport(event) {
-    this.navigateToReportIssue();
+  async enableFaqReport(event) {
+    await this.navigateToReportIssue();
   }
 
   async onVideoSelect(event) {

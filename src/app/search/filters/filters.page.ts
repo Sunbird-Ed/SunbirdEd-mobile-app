@@ -52,8 +52,8 @@ export class FiltersPage implements OnInit, OnDestroy {
     this.handleBackButton();
   }
 
-    ngOnInit(): void {
-    this.fetchChannelIdName();
+  async ngOnInit(): Promise<void> {
+    await this.fetchChannelIdName();
     this.init();
   }
 
@@ -93,7 +93,7 @@ export class FiltersPage implements OnInit, OnDestroy {
     await popUp.present();
     const { data } = await popUp.onDidDismiss();
     if (data && data.isFilterApplied) {
-      this.applyInterimFilter();
+      await this.applyInterimFilter();
     }
   }
 

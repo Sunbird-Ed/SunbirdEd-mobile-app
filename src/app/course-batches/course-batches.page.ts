@@ -127,7 +127,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     );
 
     if (this.isGuestUser) {
-      this.joinTraining(batch);
+      await this.joinTraining(batch);
     } else {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
@@ -144,8 +144,8 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
       };
 
       this.localCourseService.enrollIntoBatch(enrollCourse, this, this.course).toPromise()
-        .then((data: boolean) => {
-          this.zone.run(async () => {
+        .then(async (data: boolean) => {
+          await this.zone.run(async () => {
             this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: batch.id,
@@ -193,9 +193,9 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
           return false;
         }
       }
-      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
-      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
-      this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
+      await this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
+      await this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      await this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.LOGIN_CLICKED,
         Environment.HOME,
@@ -204,13 +204,13 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         undefined,
         this.objRollup,
         this.corRelationList);
-      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
+      await this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 
-  onConsentPopoverShow() {
+  async onConsentPopoverShow() {
     if (this.loader) {
-      this.loader.dismiss();
+      await this.loader.dismiss();
       this.loader = undefined;
     }
   }

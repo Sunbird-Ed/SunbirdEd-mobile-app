@@ -178,7 +178,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
         await this.loader.dismiss();
-      });
+      }).catch(e => console.error(e));
   }
 
   ngOnInit() {
@@ -187,7 +187,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.appName = appName;
         console.log('AppName', this.appName);
       }
-    );
+    ).catch(e => console.error(e));
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
@@ -213,7 +213,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.appGlobalService.formConfig = undefined;
   }
 
-  receiveMessage(event) {
+  async receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
     // send telemetry for all events except Initiate-Email
@@ -223,7 +223,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       event.data.initiateEmailBody = this.getBoardMediumGrade(event.data.initiateEmailBody) + event.data.initiateEmailBody;
       this.generateInteractTelemetry(event.data.action, values);
       // launch email sharing
-      this.sendMessage(event.data.initiateEmailBody);
+      await this.sendMessage(event.data.initiateEmailBody);
     }
   }
 
@@ -265,8 +265,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
                     console.error(error);
                   });
               }
-            });
-        });
+            }).catch(e => console.error(e));
+        }).catch(e => console.error(e));
     }, (error) => {
       console.error('ERROR - ' + error);
     });
@@ -315,7 +315,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     return userDetails;
   }
 
-  submit() {
+  async submit() {
     if (!this.isFormValid) {
       return false;
     }
@@ -391,24 +391,24 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         ID.NOTIFICATION_REQUEST
       );
     }
-    this.syncTelemetry();
+    await this.syncTelemetry();
   }
   
   private generateLogTelemetry(){
      
   }
 
-  takeAction(action?: string) {
+  async takeAction(action?: string) {
     switch (action) {
       case 'contactBoard':
-        this.showContactBoard();
+        await this.showContactBoard();
         break;
       case 'initiateEmail':
-        this.initiateEmailAction();
+        await this.initiateEmailAction();
         break;
       default:
         if (this.formContext === FormConfigSubcategories.CONTENT_AVAILABILITY) {
-          this.openExploreBooksComponent();
+          await this.openExploreBooksComponent();
         } else {
           this.ackknowledgeResponse();
         }
@@ -501,7 +501,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
       }
     });
-    this.initiateEmailAction();
+    await this.initiateEmailAction();
   }
 
   prepareTelemetryCorrelation(): Array<CorrelationData> {
@@ -543,8 +543,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
-    }).subscribe((syncStat: TelemetrySyncStat) => {
-      that.zone.run(async () => {
+    }).subscribe(async (syncStat: TelemetrySyncStat) => {
+      await that.zone.run(async () => {
         if (syncStat.error) {
           await loader.dismiss();
           return;

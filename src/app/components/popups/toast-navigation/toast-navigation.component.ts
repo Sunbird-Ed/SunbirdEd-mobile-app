@@ -26,8 +26,8 @@ export class ToastNavigationComponent implements OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -38,7 +38,7 @@ export class ToastNavigationComponent implements OnDestroy {
     }
   }
 
-  onSuccessClick() {
-    this.popoverCtrl.dismiss(true);
+  async onSuccessClick() {
+    await this.popoverCtrl.dismiss(true);
   }
 }

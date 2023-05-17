@@ -43,22 +43,22 @@ export class AccountRecoveryInfoComponent implements OnInit {
               public  platform: Platform,
               private menuCtrl: MenuController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.recoveryIdType = (this.recoveryPhone.length > 0) ? RecoveryType.PHONE : RecoveryType.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
-    this.menuCtrl.enable(false);
+    await this.menuCtrl.enable(false);
   }
 
   ionViewWillEnter() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
     });
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true);
+  async ionViewWillLeave() {
+    await this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -86,9 +86,9 @@ export class AccountRecoveryInfoComponent implements OnInit {
           }
         })
       )
-        .subscribe((data: any) => {
+        .subscribe(async (data: any) => {
           if (data && data.response === 'SUCCESS') {
-            this.popOverCtrl.dismiss({ isEdited: true });
+            await this.popOverCtrl.dismiss({ isEdited: true });
             this.generateRecoveryTelemetry(type);
           }
         }, (error) => {

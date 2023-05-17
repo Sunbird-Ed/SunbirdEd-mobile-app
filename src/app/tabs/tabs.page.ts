@@ -54,7 +54,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (session) {
       if ((await this.preferences.getString('SHOW_WELCOME_TOAST').toPromise()) === 'true') {
-        this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
+        await this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
 
         const serverProfile = await this.profileService.getServerProfilesDetails({
           userId: session.userToken,
@@ -63,9 +63,9 @@ export class TabsPage implements OnInit, AfterViewInit {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
     }
-    this.refreshTabs();
+    await this.refreshTabs();
     this.events.subscribe('UPDATE_TABS', async (data) => {
-      this.refreshTabs(data);
+      await this.refreshTabs(data);
     });
   }
 
@@ -74,7 +74,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
     this.tabs = this.container.getAllTabs();
     if (!data || (data && !data.navigateToCourse)) {
-    this.router.navigate(['/tabs/' + this.tabs[0].root]);
+      await this.router.navigate(['/tabs/' + this.tabs[0].root]);
     }
   }
 
@@ -84,7 +84,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   setQRStyles() {
-    setTimeout(async () => {
+    setTimeout(() => {
       if (document.getElementById('qrScannerIcon') && document.getElementById('backdrop')) {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
           ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
@@ -96,7 +96,6 @@ export class TabsPage implements OnInit, AfterViewInit {
       } else {
         this.setQRStyles();
       }
-
     }, 2000);
   }
 
@@ -119,14 +118,18 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
       setTimeout(() => {
-        const tab:any = 'courses';
-        this.tabRef.select(tab);
+        (async () => {
+          const tab:any = 'courses';
+          await this.tabRef.select(tab);
+        })
       }, 300);
     });
     this.events.subscribe('to_profile', () => {
       setTimeout(() => {
-        const tab:any = 'profile';
-        this.tabRef.select(tab);
+        (async () => {
+          const tab:any = 'profile';
+          await this.tabRef.select(tab);
+        })
       }, 300);
     });
   }
@@ -135,7 +138,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.publish(EventTopics.TAB_CHANGE, tab.label);
   }
 
-  ionTabsDidChange(event: any) {
+  async ionTabsDidChange(event: any) {
     this.selectedTab = event.tab;
     this.setQRTabRoot(event.tab);
     if (event.tab === 'resources') {
@@ -145,7 +148,7 @@ export class TabsPage implements OnInit, AfterViewInit {
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
     }
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
-    this.checkOnboardingProfileDetails();
+    await this.checkOnboardingProfileDetails();
   }
 
   public async onTabClick(tab) {
@@ -160,7 +163,7 @@ export class TabsPage implements OnInit, AfterViewInit {
 
   async checkOnboardingProfileDetails() {
     if (!this.appGlobalService.isUserLoggedIn() && !this.appGlobalService.isOnBoardingCompleted) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], {
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], {
         state: {
           hideBackButton: true
         }

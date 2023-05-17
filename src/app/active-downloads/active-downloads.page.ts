@@ -89,8 +89,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     }
   }
 
-  ionViewWillEnter() {
-    this.fetchStorageDestination();
+  async ionViewWillEnter() {
+    await this.fetchStorageDestination();
     this.checkAvailableSpace();
   }
 
@@ -100,7 +100,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       Environment.DOWNLOADS, '');
   }
 
-  cancelAllDownloads(): void {
+  async cancelAllDownloads(): Promise<void> {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_ALL_CLICKED,
@@ -111,10 +111,10 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       undefined,
       featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
     );
-    this.showCancelPopUp();
+    await this.showCancelPopUp();
   }
 
-  cancelDownload(downloadRequest: DownloadRequest): void {
+  async cancelDownload(downloadRequest: DownloadRequest): Promise<void> {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
@@ -125,7 +125,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       undefined,
       featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
     );
-    this.showCancelPopUp(downloadRequest);
+    await this.showCancelPopUp(downloadRequest);
   }
 
   getContentDownloadProgress(contentId: string): number {
@@ -168,7 +168,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
           this._toast = undefined;
         }
         if (!available) {
-          this.presentPopupForOffline();
+          await this.presentPopupForOffline();
         }
       }
       this.networkFlag = available;
@@ -265,9 +265,9 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
-      tap((volumeInfo) => {
+      tap(async (volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          this.presentPopupForLessStorageSpace();
+          await this.presentPopupForLessStorageSpace();
         }
       })
     ).subscribe();

@@ -240,7 +240,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   async ngOnInit() {
-    this.getAppName();
+    await this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
     this.appPrimaryColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-medium');
   }
@@ -264,13 +264,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.selectedSwitchableTab = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise()
   }
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
     if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
       }, 100);
     }
-    this.sbProgressLoader.hide({ id: this.dialCode });
+    await this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
     if (this.refresher) {
@@ -375,22 +375,22 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         && this.appGlobalService.isOnBoardingCompleted) {
         if (this.appGlobalService.isProfileSettingsCompleted) {
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' }, replaceUrl: true });
+            await this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' }, replaceUrl: true });
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
                 isShowBackButton: false
               }
             };
-            this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+            await this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
           }
         } else {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`],
+          await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`],
             { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true } });
         }
       } else {
         if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+          await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
         } else {
           this.popCurrentPage();
         }
@@ -405,8 +405,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.navigateToPreviousPage();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
+      await this.navigateToPreviousPage();
       if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult &&
         this.displayDialCodeResult[0].dialCodeResult.length) {
         this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -432,7 +432,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }, 500);
   }
 
-  openCollection(collection) {
+  async openCollection(collection) {
     const values = new Map();
     values.root = true;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -443,7 +443,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       values,
       undefined,
       this.corRelationList);
-    this.showContentDetails(collection, true);
+    await this.showContentDetails(collection, true);
   }
 
   async openContent(collection, content, index?, isQrCodeLinkToSingleContent?, markAsSelected?) {
@@ -505,7 +505,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
 
     if (this.isDialCodeSearch && !this.appGlobalService.isOnBoardingCompleted && await this.appGlobalService.getProfileSettingsStatus()) {
-      this.appGlobalService.setOnBoardingCompleted();
+      await this.appGlobalService.setOnBoardingCompleted();
     }
 
     switch (ContentUtil.isTrackable(content)) {
@@ -568,7 +568,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             corRelationList
           );
 
-          this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
+          await this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
             state: {
               content: params.content,
               corRelation: params.corRelation,
@@ -810,12 +810,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       });
     }
     this.profileService.updateProfile(req).toPromise()
-      .then((res: any) => {
+      .then(async (res: any) => {
         if (res.syllabus && res.syllabus.length && res.board && res.board.length
           && res.grade && res.grade.length && res.medium && res.medium.length) {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED);
           this.events.publish('refresh:profile');
-          this.appGlobalService.setOnBoardingCompleted();
+          await this.appGlobalService.setOnBoardingCompleted();
         }
         this.commonUtilService.handleToTopicBasedNotification();
         this.appGlobalService.guestUserProfile = res;
@@ -832,7 +832,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       Environment.HOME,
       this.source || PageId.SEARCH);
     const filterCriteriaData = this.responseData.filterCriteria;
-    filterCriteriaData.facetFilters.forEach(element => {
+    filterCriteriaData.facetFilters.forEach(async element => {
       this.searchFilterConfig.forEach(item => {
         if (element.name === item.code) {
           element.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
@@ -848,7 +848,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           }
         });
       });
-      this.router.navigate(['/filters'], {
+      await this.router.navigate(['/filters'], {
         state: {
           filterCriteria: this.responseData.filterCriteria,
           initialfilterCriteria: this.initialFilterCriteria,
@@ -1052,11 +1052,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       });
   }
 
-  private addSearchHistoryEntry() {
+  private async addSearchHistoryEntry() {
     if (!this.searchKeywords) {
       return;
     }
-    this.searchHistoryService
+    await this.searchHistoryService
       .addEntry({
         query: this.searchKeywords,
         namespace: SearchHistoryNamespaces.LIBRARY
@@ -1109,8 +1109,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((res: Batch[]) => {
-            this.zone.run(async () => {
+          .then(async (res: Batch[]) => {
+            await this.zone.run(async () => {
               this.batches = res;
               if (this.batches.length) {
                 this.batches.forEach((batch) => {
@@ -1137,14 +1137,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                 await popover.present();
                 const { data } = await popover.onDidDismiss();
                 if (data && data.isEnrolled) {
-                  this.getEnrolledCourses();
+                  await this.getEnrolledCourses();
                 }
                 if (data && typeof data.isEnrolled === 'function') {
                   (data.isEnrolled as Function).call(this);
                 }
               } else {
                 await this.loader.dismiss();
-                this.showContentDetails(content, true);
+                await this.showContentDetails(content, true);
               }
             });
           })
@@ -1160,13 +1160,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  init() {
+  async init() {
     this.generateImpressionEvent();
     const values = new Map();
     values.from = this.source;
     this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
     if (this.dialCode !== undefined && this.dialCode.length > 0) {
-      this.getContentForDialCode();
+      await this.getContentForDialCode();
     }
 
     this.event.subscribe('search.applyFilter', (filterCriteria) => {
@@ -1278,10 +1278,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  processDialCodeResult(dialResult) {
+  async processDialCodeResult(dialResult) {
     console.log('dialresult', dialResult);
     const displayDialCodeResult = [];
-    dialResult.forEach(searchResult => {
+    dialResult.forEach(async searchResult => {
       const collectionArray: Array<any> = searchResult.collections;
       const contentArray: Array<any> = searchResult.contents;
       const addedContent = new Array<any>();
@@ -1363,7 +1363,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
       if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
         this.isSingleContent = true;
-        this.openContent(contentArray[0], contentArray[0], 0, true);
+        await this.openContent(contentArray[0], contentArray[0], 0, true);
         // return;
       }
     });
@@ -1378,7 +1378,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         '',
         PageId.DIAL_NOT_LINKED,
         Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source, undefined, this.dialCode);
+      await this.commonUtilService.showContentComingSoonAlert(this.source, undefined, this.dialCode);
     }
   }
 
@@ -1437,21 +1437,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       .then((data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
-            this.zone.run(() => {
-              this.showContentDetails(child, false, true);
+            this.zone.run(async () => {
+              await this.showContentDetails(child, false, true);
             });
           } else {
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
-            setTimeout(() => {
-              this.showContentDetails(this.childContent, false, false);
+            setTimeout(async () => {
+              await this.showContentDetails(this.childContent, false, false);
             }, 400);
           }
         } else {
-          this.zone.run(() => {
-            this.showContentDetails(child);
+          this.zone.run(async () => {
+            await this.showContentDetails(child);
           });
         }
       }).catch((err) => {
@@ -1705,11 +1705,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       });
   }
 
-  scrollToTop() {
-    this.contentView.scrollToTop();
+  async scrollToTop() {
+    await this.contentView.scrollToTop();
   }
 
-  goBack() {
+  async goBack() {
     if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult && this.displayDialCodeResult[0].dialCodeResult.length) {
       this.telemetryGeneratorService.generateBackClickedNewTelemetry(
         false,
@@ -1720,7 +1720,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
         Environment.HOME, true, undefined, this.corRelationList);
     }
-    this.navigateToPreviousPage();
+    await this.navigateToPreviousPage();
   }
 
   getContentCount(displayDialCodeResult) {
@@ -1749,7 +1749,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         return;
       }
     }
-    this.groupHandlerService.addActivityToGroup(
+    await this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
       (this.activityTypeData && this.activityTypeData.activityType) || {},
@@ -1758,7 +1758,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       -2);
   }
 
-  openSelectedContent() {
+  async openSelectedContent() {
     let index = 0;
     let content;
     this.searchContentResult.forEach((element, idx) => {
@@ -1767,7 +1767,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         content = element;
       }
     });
-    this.openContent(undefined, content, index, undefined, false);
+    await this.openContent(undefined, content, index, undefined, false);
   }
 
   private updateCsGroupAddableBloc(params, pageId) {
@@ -1859,13 +1859,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  redirectToNotifications() {
+  async redirectToNotifications() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NOTIFICATION_CLICKED,
       Environment.HOME,
       PageId.SEARCH);
-    this.router.navigate([RouterLinks.NOTIFICATION]);
+    await this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
     private enableHeaderEvents(){

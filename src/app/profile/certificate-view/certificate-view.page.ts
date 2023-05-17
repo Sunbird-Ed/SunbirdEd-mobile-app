@@ -65,8 +65,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private apiService : UnnatiDataService
   ) {}
 
-  ngOnInit() {
-    this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
+  async ngOnInit() {
+    await this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
     let paramData = this.router.getCurrentNavigation().extras.state.request;
       if( paramData.type == 'project'){
         this.projectData =  paramData;
@@ -83,14 +83,14 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         }
       }else{
         this.pageData =paramData;
-        this.loadCertificate();
+        await this.loadCertificate();
       } 
 
     this.appHeaderService.showHeaderWithBackButton();
   }
 
   ngAfterViewInit() {}
-  getProjectCertificate(){
+  async getProjectCertificate(){
     const config ={
       url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
      headers:{
@@ -98,7 +98,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       accept:this.acceptType
      }
     }
-    this.apiService.get(config).pipe(
+    await this.apiService.get(config).pipe(
       tap(this.initCertificateTemplate.bind(this)),
     ).toPromise();
   }
@@ -258,7 +258,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
               };
             }
             default: {
-              toast.dismiss();
+              await toast.dismiss();
               throw new Error('INVALID_OPTION');
             }
           }
@@ -270,7 +270,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
         console.error(e);
       } finally {
-        toast.dismiss();
+        await toast.dismiss();
       }
 
   }
@@ -307,13 +307,13 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       cssClass: 'certificate-popup'
     });
     this.onPopupOpen = true;
-    certificatePopover.present();
+    await certificatePopover.present();
     const { data } = await certificatePopover.onDidDismiss();
     this.onPopupOpen = false;
     if (!data) {
       return;
     }
-    this.listenActionEvents(data.option);
+    await this.listenActionEvents(data.option);
   }
 }
 

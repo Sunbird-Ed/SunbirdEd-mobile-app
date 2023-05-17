@@ -142,7 +142,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
-    this.appVersion.getAppName().then((appName) => {
+    await this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
     });
 
@@ -255,9 +255,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.hideOnboardingSplashScreen();
   }
 
-  hideOnboardingSplashScreen() {
+  async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
-      this.splashScreenService.handleSunbirdSplashScreenActions();
+      await this.splashScreenService.handleSunbirdSplashScreenActions();
     }
   }
 
@@ -272,9 +272,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const activePortal = await this.alertCtrl.getTop();
 
     if (activePortal) {
-      activePortal.dismiss();
+      await activePortal.dismiss();
     } else if (this.isInitialScreen && this.showQRScanner) {
-      this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
+      await this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
     } else if (!this.hideBackButton) {
       this.location.back();
     }
@@ -328,7 +328,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  handleBackButton(isNavBack) {
+  async handleBackButton(isNavBack) {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
     /* New Telemetry */
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -341,7 +341,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.showQRScanner = true;
       this.resetProfileSettingsForm();
     } else {
-      this.dismissPopup();
+      await this.dismissPopup();
     }
   }
 
@@ -369,10 +369,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
         this.resetProfileSettingsForm();
       }
-    });
+    }).catch(e => console.error(e));
   }
 
-  onSubmitAttempt() {
+  async onSubmitAttempt() {
     if (this.profileSettingsForm.valid) {
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'passed',
         PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
@@ -390,7 +390,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         undefined,
         correlationList
       );
-      this.submitProfileSettingsForm();
+      await this.submitProfileSettingsForm();
       return;
     }
 
@@ -482,7 +482,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           correlationList
         );
         await this.loader.dismiss();
-      });
+      }).catch(e => console.error(e));
   }
 
   private onSyllabusChange(): Observable<string[]> {
@@ -620,15 +620,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.appGlobalService.setOnBoardingCompleted();
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            await this.appGlobalService.setOnBoardingCompleted();
+            await this.router.navigate([`/${RouterLinks.TABS}`]);
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
                 isShowBackButton: true
               }
             };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
           }
         }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
@@ -833,7 +833,7 @@ private addAttributeSubscription() {
         this.supportedProfileAttributes = categories.supportedAttributes;
         this.addAttributeSubscription();
       }
-    });
+    }).catch(e => console.error(e));
   }
 
 }

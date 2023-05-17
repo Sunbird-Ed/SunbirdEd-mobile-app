@@ -20,8 +20,8 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
 
         if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.USER_TYPE_SELECTION)) {
             if (await this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise() === ProfileType.ADMIN) {
-                this.router.navigate([RouterLinks.SIGN_IN], { state: { hideBackBtn: true } });
-                this.splashScreenService.handleSunbirdSplashScreenActions();
+                await this.router.navigate([RouterLinks.SIGN_IN], { state: { hideBackBtn: true } });
+                await this.splashScreenService.handleSunbirdSplashScreenActions();
             } else {
                 this.navigateToProfileSettings();
             }
@@ -46,16 +46,16 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
             this.navigateToProfileSettings()
             return false;
         }
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
         return true;
     }
 
-    private navigateToProfileSettings(){
+    private async navigateToProfileSettings(){
         const navigationExtras: NavigationExtras = {
             state: {
                 forwardMigration: true
             }
         };
-        this.router.navigate(['/', RouterLinks.PROFILE_SETTINGS], navigationExtras);
+        await this.router.navigate(['/', RouterLinks.PROFILE_SETTINGS], navigationExtras);
     }
 }

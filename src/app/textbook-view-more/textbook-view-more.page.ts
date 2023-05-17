@@ -109,8 +109,8 @@ export class TextbookViewMorePage {
     }
   }
 
-  ionViewWillEnter() {
-    this.initAppHeader();
+  async ionViewWillEnter() {
+    await this.initAppHeader();
   }
 
   ionViewWillLeave() {
@@ -158,16 +158,18 @@ export class TextbookViewMorePage {
 
   loadData(event) {
     setTimeout(() => {
-      if (this.subjectName === "Recently published courses") {
-        this.fetchRecentPlublishedCourses();
-      } else {
-        this.fetchAndSortData({
-          ...this.searchCriteria,
-          facets: this.supportedFacets,
-          searchType: SearchType.SEARCH,
-          limit: 10
-        }, event)
-      }
+      (async () => {
+        if (this.subjectName === "Recently published courses") {
+          await this.fetchRecentPlublishedCourses();
+        } else {
+          await this.fetchAndSortData({
+            ...this.searchCriteria,
+            facets: this.supportedFacets,
+            searchType: SearchType.SEARCH,
+            limit: 10
+          }, event)
+        }
+      })
     }, 500);
   }
 
@@ -293,7 +295,7 @@ export class TextbookViewMorePage {
     });
   }
 
-  scrollUp() {
-    this.contentView.scrollToTop();
+  async scrollUp() {
+    await this.contentView.scrollToTop();
   }
 }

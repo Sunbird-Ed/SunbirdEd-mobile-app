@@ -19,20 +19,20 @@ export class ContentViewerComponent implements OnInit {
     
   }
 
-  ngOnInit() {
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+  async ngOnInit() {
+    await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     this.statusBar.hide();
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.statusBar.show();
     this.screenOrientation.unlock();
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
   }
 
-  eventHandler(event) {
+  async eventHandler(event) {
     if ((event === 'EXIT') || (event.edata && event.edata.type === 'EXIT')) {
-      this.modalCtrl.dismiss();
+      await this.modalCtrl.dismiss();
     }
   }
 }
