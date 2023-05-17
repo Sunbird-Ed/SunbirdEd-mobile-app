@@ -6,15 +6,17 @@
         {{ (showMore ? 'READ_LESS' : 'READ_MORE') | translate }}
       </span>
     </div>
-    <div class="hr-line"></div>
-    <ion-button class="custom-btn-txt-transform-none" (click)="showConsentPopup()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
-      {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
-    </ion-button>
-    <ng-template #showMessage>
-      <div class="program-joined-message">
-        {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'd/M/yyyy')}  }}
-			</div>
-    </ng-template>
+    <div *ngIf="isNewProgram">
+      <div class="hr-line"></div>
+      <ion-button class="custom-btn-txt-transform-none" (click)="showConsentPopup()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
+        {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
+      </ion-button>
+      <ng-template #showMessage>
+        <div class="program-joined-message">
+          {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'd/M/yyyy')}  }}
+        </div>
+      </ng-template>      
+    </div>
   </ion-card>
 
   <div class="section-filter">
@@ -32,7 +34,7 @@
     </div>
     <div *ngIf="selectedSection == data?.sectionName">
       <div *ngFor="let section of data?.sectionList">
-        <app-item-list-card [title]="section?.name" (click)="cardClick()">
+        <app-item-list-card [title]="section?.name" (click)="cardClick(section)">
         </app-item-list-card>
       </div>
     </div>

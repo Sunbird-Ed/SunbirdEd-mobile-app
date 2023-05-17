@@ -1377,6 +1377,7 @@
   "DEFAULT_FONT": "Default font size",
   "DECREASE_FONT": "Decrease font size",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP":"Join program",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG":"Please join {{name}} program to view and access this {{type}}",
   "FRMELEMNTS_MSG_NO_SOLUTIONS_FOR_PROGRAM":"There are no {{type}} attached to this program",
   "FRMELEMNTS_MSG_PROGRAM_JOINED":"You have joined this program, please complete the resources by {{date}}",
   "FRMELEMNTS_MSG_SHARE_DATA_INFO": "You have agreed to share your profile details with the {{type}} administrator",

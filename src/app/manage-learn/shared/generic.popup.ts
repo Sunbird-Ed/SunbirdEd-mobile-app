@@ -6,6 +6,7 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { StartImprovementComponent } from './components/start-improvement/start-improvement.component';
 import { PiiConsentPopupComponent } from './components/pii-consent-popup/pii-consent-popup.component';
 import { RouterLinks } from '../../../app/app.constant';
+import { JoinProgramComponent } from './components/join-program/join-program.component';
 
 @Injectable({
   providedIn: 'root',
@@ -77,7 +78,25 @@ export class GenericPopUpService {
     return data;
 }
 
-async showConsent(type?){
+async showJoinProgramForProjectPopup(header,name,type,button,message?){
+  const alert = await this.popOverCtrl.create({
+    component : JoinProgramComponent,
+    componentProps: {
+      header: header,
+      name: name,
+      type:type,
+      button: button,
+      message: message
+    },
+    cssClass: 'sb-popover',
+  });
+  await alert.present();
+  const {data} = await alert.onDidDismiss();
+  return data
+
+}
+
+async showConsent(type){
   let componentProps={}
   switch (type) {
     case 'program':
