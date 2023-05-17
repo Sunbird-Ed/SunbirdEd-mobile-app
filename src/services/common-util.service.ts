@@ -73,19 +73,13 @@ export class CommonUtilService {
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
-                map((v) => {
-                this.zone.run(() => {
-                    if(v === 'connected'){
+                map((status) => {
+                    this.zone.run(() => {
                         this.networkInfo = {
-                            isNetworkAvailable: true
-                        };
-                    }else{
-                        this.networkInfo = {
-                            isNetworkAvailable: false
-                        };
-                    }
-                });
-                } ),
+                            isNetworkAvailable: status === 'connected'
+                        }
+                    });
+                }),
             )
         )
     }
