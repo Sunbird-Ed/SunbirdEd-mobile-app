@@ -73,9 +73,14 @@
           <ion-col size="6">
             <ion-item class="ion-date-time" lines="none">
               <img src="assets/imgs/timetable.png" class="filter-icon subtask-date-picker" alt=""/>
-              <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate"
-                displayFormat="DD/MM/YYYY" min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc">
+              <ion-input  (click)="openSubtaskCalendar(true,subTaskIndex)" value="{{subtask?.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+              <ion-popover  [isOpen]="popoverReferences[subTaskIndex]" (ionPopoverWillDismiss)="openSubtaskCalendar(false,subTaskIndex)">
+                <ng-template>
+              <ion-datetime presentation="date" id="subTaskEndDate" #dateTime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate"
+              displayFormat="DD/MM/YYYY" min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" (ngModelChange)="openSubtaskCalendar(false,subTaskIndex,'update')">
               </ion-datetime>
+            </ng-template>
+              </ion-popover>
             </ion-item>
           </ion-col>
           <ion-col size="6">
