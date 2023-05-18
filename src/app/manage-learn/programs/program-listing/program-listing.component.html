@@ -1,24 +1,18 @@
-  <ion-content>
-    <ion-list>
-      <ion-item lines="none">
-        <div style="margin-top: 15px">
-          <ion-label>
-            <div class="title">{{'PROGRAMS' | translate }}</div>
-            <div>
-              <div class="desc">{{'PROGRAMS_DESC' | translate}}</div>
-            </div>
-          </ion-label>
-        </div>
-      </ion-item>
-    </ion-list>
-    <app-item-list-card [title]="data?.name"  [id]="data?._id"
-      (cardSelect)="selectedProgram($event)" *ngFor="let data of programs">
-   </app-item-list-card>
-    <app-no-data *ngIf="!programs?.length"></app-no-data>
-
-  </ion-content>
-  <div class="px-5">
-    <ion-button expand="block" class="custom-btn-txt-transform-none" (click)="loadMore();" *ngIf="programs?.length && count > programs?.length">
-      {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
+  <ion-content hide-header-footer overflow-scroll="true"
+  class="main-container avoid-bottom-tabs-space ui-container" scrollEvents="true">
+    <div class="header-section">
+      <div class="title">{{'EXPLORE_PROGRAMS' | translate }}</div>
+      <div class="desc">{{ description }}</div>
+      <ion-searchbar debounce="1000" placeholder="{{'FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER' | translate}}" [(ngModel)]="search"
+      (ionChange)="searchPrograms($event)" search-icon="search">
+      </ion-searchbar>
+    </div>
+    <app-item-list-card [title]="data?.name"  [id]="data?._id" [state]="data?.metaInformation?.state" [roles]="data?.metaInformation?.roles"
+    (cardSelect)="selectedProgram($event)" *ngFor="let data of programs">
+    </app-item-list-card>
+    <app-no-data *ngIf="!programs?.length" message="EMPTY_SEARCH_RESULTS"></app-no-data>
+    <ion-button class="custom-btn-txt-transform-none mx-8 mt-16 load-more" fill="outline" expand="block"
+    (click)="loadMore()" *ngIf="programs?.length && count > programs?.length">
+      {{ 'FRMELEMNTS_BTN_LOAD_MORE' | translate }}
     </ion-button>
-  </div>
+  </ion-content>
