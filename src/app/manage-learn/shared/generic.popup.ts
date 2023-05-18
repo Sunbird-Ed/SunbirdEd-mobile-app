@@ -4,11 +4,14 @@ import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { StartImprovementComponent } from './components/start-improvement/start-improvement.component';
+import { PiiConsentPopupComponent } from './components/pii-consent-popup/pii-consent-popup.component';
+import { RouterLinks } from '../../../app/app.constant';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GenericPopUpService {
+  consentPopup: any
   constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService) {}
 
     async showPPPForProjectPopUp(message, message1, linkLabel, header, link, type) {
@@ -73,4 +76,41 @@ export class GenericPopUpService {
     const { data } = await alert.onDidDismiss();
     return data;
 }
+
+async showConsent(type?){
+  let componentProps={}
+  switch (type) {
+    case 'program':
+      componentProps={
+        consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
+        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
+        redirectLink : RouterLinks.TERM_OF_USE
+      }
+      break;
+
+    default:
+      componentProps={
+        consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
+        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
+        redirectLink : RouterLinks.TERM_OF_USE
+      }
+      break;
+  }
+  this.consentPopup = await this.popOverCtrl.create({
+    component : PiiConsentPopupComponent,
+    componentProps : componentProps,
+    cssClass: 'sb-popover back-drop-hard',
+    backdropDismiss: false
+  })
+  await this.consentPopup.present()
+  let {data} = await this.consentPopup.onDidDismiss()
+  return data
+}
+
+async closeConsent(){
+  this.consentPopup ? await this.consentPopup.dismiss() : null
+}
+
 }

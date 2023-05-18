@@ -37,4 +37,11 @@ ion-card-header {
     border-bottom-right-radius: initial !important;
     margin-bottom: 2px;
   }
-  
+
+.role-item{
+    background-color: map-get($colors, light_grayish_green);
+    color: map-get($colors, office_green);
+    height: fit-content;
+    padding: 0px 5px;
+    border-radius: 10px;
+}

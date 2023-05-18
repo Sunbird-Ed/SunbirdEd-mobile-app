@@ -1,0 +1,79 @@
+@import 'src/assets/styles/_custom-mixins';
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
+
+.details-block{
+    margin-left: 0px;
+    padding: 15px;
+    .title{
+        font-size: 18px;
+        font-weight: 700;
+        padding: 0px 15px;
+        margin-bottom: 10px;
+        color: $black;
+    }
+    .description{
+        color: $black;
+        padding: 0px 15px;
+        font-weight: 600;
+    }
+}
+
+.hr-line {
+    height: 1px;
+    border: 1px solid map-get($colors, medium_gray);
+    margin: 10px 0px;
+}
+
+.program-joined-message{
+    background-color: map-get($colors, light_red);
+    padding: 10px;
+    font-weight: 700;
+    margin: 0px 15px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.read-more{
+    color: $blue;
+    text-decoration-line: underline;
+    font-weight: 600;
+}
+
+.section-filter{
+    background-color: var(--app-secondary-background);
+    border-radius: 25px;
+}
+
+.section-card{
+    border-radius: 25px !important;
+    padding: 5px;
+    margin: 10px 0px;
+    background-color: var(--app-secondary-background);
+    .icon{
+        background-color: $white;
+        box-shadow: var(--button-style-shadow);
+        height: 22px;
+        border-radius: 50%;
+    }
+}
+
+.section-details{
+    .section-name{
+        font-size: 18px;
+        font-weight: 600;
+        color: map-get($colors, bright_blue);
+        text-transform:capitalize;
+    }
+    ion-icon{
+        font-size: 22px;
+    }
+}
+
+.no-data{
+    margin: 100px 0px 50px 0px;
+    .message-1{
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+}
