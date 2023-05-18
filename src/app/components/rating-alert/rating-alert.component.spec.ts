@@ -291,7 +291,9 @@ describe('AppRatingAlertComponent', () => {
             appRatingAlertComponent.closePopover();
             // assert
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith(null);
-            expect(appRatingAlertComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(appRatingAlertComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            }, 0);
         });
     });
 

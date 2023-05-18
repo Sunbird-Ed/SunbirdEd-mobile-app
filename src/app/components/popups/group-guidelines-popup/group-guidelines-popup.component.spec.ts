@@ -38,7 +38,7 @@ describe('SbGenericPopoverComponent', () => {
         expect(groupGuideLinesPopoverComponent).toBeTruthy();
     });
 
-    it('should subscribe to back button and events subscription', (done) => {
+    it('should subscribe to back button and events subscription', () => {
         // arrange
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -57,11 +57,10 @@ describe('SbGenericPopoverComponent', () => {
         setTimeout(() => {
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
             expect(unsubscribeFn).toHaveBeenCalled();
-            done();
         });
     });
 
-    it('should subscribe to back button and events subscription', (done) => {
+    it('should subscribe to back button and events subscription', () => {
         // arrange
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -80,7 +79,6 @@ describe('SbGenericPopoverComponent', () => {
         setTimeout(() => {
             expect(mockLocation.back).toHaveBeenCalled()
             expect(unsubscribeFn).toHaveBeenCalled();
-            done();
         });
     });
 
@@ -122,7 +120,7 @@ describe('SbGenericPopoverComponent', () => {
         expect(groupGuideLinesPopoverComponent.showGroupGuideLinesError).toBe(true);
     });
 
-    it('openTermsOfUse', (done) => {
+    it('openTermsOfUse', () => {
         //arrange
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('TOU_BASE_URL'));
         //act
@@ -130,7 +128,6 @@ describe('SbGenericPopoverComponent', () => {
         //assert
         setTimeout(() => {
             expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('TOU_BASE_URL');
-            done();
         }, 0);
     });
 

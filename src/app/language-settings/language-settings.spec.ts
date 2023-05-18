@@ -514,20 +514,23 @@ describe('LanguageSettingsPage', () => {
         }, 450);
     });
 
-    it('should handle if conditions in ionViewWillLeave()', () => {
+    it('should handle if conditions in ionViewWillLeave()', async () => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
         languageSettingsPage.selectedLanguage = { code: undefined };
         languageSettingsPage.previousLanguage = 'hi';
         mockTranslateService.use = jest.fn();
+        languageSettingsPage.unregisterBackButton = {
+            unsubscribe: jest.fn()
+        } as any
         // act
         languageSettingsPage.ionViewWillLeave();
         // assert
         expect(mockTranslateService.use).toHaveBeenCalledWith('hi');
     });
 
-    it('should handle if inside if previous language is undefined set to english', () => {
+    it('should handle if inside if previous language is undefined set to english', async() => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
@@ -540,7 +543,7 @@ describe('LanguageSettingsPage', () => {
         expect(mockTranslateService.use).toHaveBeenCalledWith('en');
     });
 
-    it('should cover else part if selectedLanguage.code is already set', () => {
+    it('should cover else part if selectedLanguage.code is already set', async() => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];

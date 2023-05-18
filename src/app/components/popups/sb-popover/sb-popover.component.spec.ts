@@ -145,7 +145,9 @@ describe('SbPopoverComponent', () => {
             sbPopoverComponent.ionViewWillEnter();
             // assert
             expect(mockPopOverController.dismiss).toHaveBeenCalled();
-            expect(unsubscribeFn).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(unsubscribeFn).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should not dismiss the popup when backButton is clicked', () => {

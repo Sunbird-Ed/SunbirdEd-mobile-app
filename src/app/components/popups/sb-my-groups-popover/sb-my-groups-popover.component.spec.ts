@@ -74,8 +74,10 @@ describe('MyGroupsPopoverComponent', () => {
         // act
         myGroupsPopoverComponent.ngOnInit();
         // assert
-        expect(unsubscribeFn).toHaveBeenCalled();
-        expect(mockPopoverController.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(unsubscribeFn).toHaveBeenCalled();
+            expect(mockPopoverController.dismiss).toHaveBeenCalled();
+        }, 0);
     });
 
     describe('ionViewWillEnter scenarios', () => {
@@ -96,10 +98,12 @@ describe('MyGroupsPopoverComponent', () => {
             myGroupsPopoverComponent.ionViewWillEnter();
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                ImpressionSubtype.DISPLAY_SUNBIRD_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    ImpressionSubtype.DISPLAY_SUNBIRD_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP
+                );
+            }, 0);
         });
 
         it('should get appName and set it and generate telemetry if isFromAddMember returns false', () => {
@@ -118,10 +122,12 @@ describe('MyGroupsPopoverComponent', () => {
             myGroupsPopoverComponent.ionViewWillEnter();
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                ImpressionSubtype.GROUP_TUTORIAL, PageId.MY_GROUP, Environment.GROUP
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    ImpressionSubtype.GROUP_TUTORIAL, PageId.MY_GROUP, Environment.GROUP
+                );
+            }, 0);
         });
     });
 

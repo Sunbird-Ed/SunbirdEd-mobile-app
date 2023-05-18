@@ -648,7 +648,7 @@ describe('PlayerPage', () => {
                 streamingUrl: 'streamingurl'
             } 
         }
-        mockEvents.publish = jest.fn(()=> Promise.resolve());
+        mockEvents.publish = jest.fn();
         mockLocation.back = jest.fn();
         playerPage.playNextContent();
         expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT , {

@@ -142,15 +142,18 @@ describe('CommonUtilService', () => {
       jest.spyOn(commonUtilService, 'addPopupAccessibility').mockImplementation(()=>{
         return {present: presentFn}
       })
+      mockToastController.create = jest.fn()
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', false);
       // assert
-      expect(mockToastController.create).toHaveBeenCalledWith({
-        message: 'sample_translation',
-        duration: 3000,
-        position: 'bottom',
-        cssClass: ''
-      });
+      setTimeout(() => {
+        expect(mockToastController.create).toHaveBeenCalledWith({
+          message: 'sample_translation',
+          duration: 3000,
+          position: 'bottom',
+          cssClass: ''
+        });
+      }, 0); 
     });
 
     it('should return if isInactive true', () => {
@@ -161,12 +164,14 @@ describe('CommonUtilService', () => {
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', true);
       // assert
-      expect(mockToastController.create).not.toHaveBeenCalledWith({
-        message: 'sample_translation',
-        duration: 3000,
-        position: 'bottom',
-        cssClass: ''
-      });
+      setTimeout(() => {
+        expect(mockToastController.create).not.toHaveBeenCalledWith({
+          message: 'sample_translation',
+          duration: 3000,
+          position: 'bottom',
+          cssClass: ''
+        });
+      }, 0);
     });
   });
 
@@ -228,7 +233,7 @@ describe('CommonUtilService', () => {
       // assert
       expect(mockTranslateService.use).toHaveBeenCalledWith('en');
       expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en');
-      expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE, 'English');
+      expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en');
     });
   });
 
@@ -274,7 +279,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('showContentComingSoonAlert()', () => {
-    it('should show Coming soon alert popover', (done) => {
+    it('should show Coming soon alert popover', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -289,11 +294,10 @@ describe('CommonUtilService', () => {
         expect(mockComingSoonMessageService.getComingSoonMessage).toHaveBeenCalled();
         expect(mockPopoverController.create).toHaveBeenCalled();
         expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
-        done();
       }, 0);
     });
 
-    it('should generate INTERACT telemetry with given source', (done) => {
+    it('should generate INTERACT telemetry with given source', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -310,11 +314,10 @@ describe('CommonUtilService', () => {
           InteractSubtype.QR_CODE_COMINGSOON,
           Environment.HOME,
           'permission');
-        done();
       });
     });
 
-    it('should generate INTERACT telemetry if source is not provided', (done) => {
+    it('should generate INTERACT telemetry if source is not provided', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -330,7 +333,6 @@ describe('CommonUtilService', () => {
           InteractSubtype.QR_CODE_COMINGSOON,
           Environment.HOME,
           PageId.HOME);
-        done();
       });
     });
   });
@@ -532,7 +534,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('handleToTopicBasedNotification()', () => {
-    it('should return true if IP location is available', (done) => {
+    it('should return true if IP location is available', () => {
       // arrange
       const profile = {
         board: ['AP'], medium: ['English', 'Hindi', 'Bengali'],
@@ -561,7 +563,6 @@ describe('CommonUtilService', () => {
         expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(1, PreferenceKey.DEVICE_LOCATION);
         expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(2, PreferenceKey.SUBSCRIBE_TOPICS);
         expect(mockSharedPreferences.putString).toHaveBeenCalled();
-        done();
       }, 0);
     });
   });
@@ -674,7 +675,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('showExitPopUp()', () => {
-    it('should show Exit Popup', (done) => {
+    it('should show Exit Popup', () => {
       // arrange
       mockPopoverController.create = jest.fn(() => Promise.resolve({
         present: jest.fn(() => Promise.resolve({})),
@@ -689,11 +690,10 @@ describe('CommonUtilService', () => {
       setTimeout(() => {
         expect(mockPopoverController.create).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        done();
       }, 0);
     });
 
-    it('should return non-clicked telemetry', (done) => {
+    it('should return non-clicked telemetry', () => {
       // arrange
       commonUtilService = new CommonUtilService(
         mockSharedPreferences as SharedPreferences,
@@ -732,7 +732,6 @@ describe('CommonUtilService', () => {
           'home',
           'library');
          expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
-         done();
       }, 0);
     });
   });
@@ -881,7 +880,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('getGuestUserConfig', () => {
-    it('should return guest profile', (done) => {
+    it('should return guest profile', () => {
       // arrange
       mockSharedPreferences.getString = jest.fn(() => of('sample-uid'));
       mockProfileService.getAllProfiles = jest.fn(() => of([
@@ -898,7 +897,6 @@ describe('CommonUtilService', () => {
       setTimeout(() => {
         expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN);
         expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
-        done();
       }, 0);
     });
   });

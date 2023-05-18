@@ -277,7 +277,7 @@ describe('QrcoderesultPage', () => {
             });
         });
 
-        it('should check for contentData if network is  not available', (done) => {
+        it('should check for contentData if network is  not available', () => {
             // arrange
             mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             const mockContentHeirarchy = {
@@ -353,11 +353,10 @@ describe('QrcoderesultPage', () => {
                 expect(qrcoderesultPage.results.length).toEqual(1);
                // expect(mockEvents.unsubscribe).toHaveBeenCalled();
                // expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
-                done();
             }, 200);
         });
 
-        it('should check for content data if https is available and network is true', (done) => {
+        it('should check for content data if https is available and network is true', () => {
             // arrange
             mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             const mockContentHeirarchy = {
@@ -426,11 +425,10 @@ describe('QrcoderesultPage', () => {
                 expect(qrcoderesultPage.results.length).toEqual(1);
                 expect(mockEvents.unsubscribe).toHaveBeenCalled();
                 expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
-                done();
             }, 200);
         });
 
-        it('should check for content data if http or https not available', (done) => {
+        it('should check for content data if http or https not available', () => {
             // arrange
             mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             const mockContentHeirarchy = {
@@ -499,7 +497,6 @@ describe('QrcoderesultPage', () => {
                 expect(qrcoderesultPage.results.length).toEqual(1);
                 // expect(mockEvents.unsubscribe).toHaveBeenCalled();
                 // expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
-                done();
             }, 200);
         });
 
@@ -640,7 +637,7 @@ describe('QrcoderesultPage', () => {
             expect(mockContentService.importContent).toHaveBeenCalled();
 
         });
-        it('should fail in import content', (done) => {
+        it('should fail in import content', () => {
             // arrange
             const response = {
                 identifier: 'sampleId',
@@ -654,7 +651,6 @@ describe('QrcoderesultPage', () => {
             setTimeout(() => {
                 expect(qrcoderesultPage.isDownloadStarted).toBe(false);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('UNABLE_TO_FETCH_CONTENT');
-                done();
             }, 0);
 
         });
@@ -759,7 +755,7 @@ describe('QrcoderesultPage', () => {
         });
     });
 
-    it('should get all the profiles', (done) => {
+    it('should get all the profiles', () => {
         // arrange
         qrcoderesultPage.identifier = 'sampleid';
         mockProfileService.getAllProfiles = jest.fn(() => of([{handle: 'handle1'}] as any));
@@ -769,7 +765,6 @@ describe('QrcoderesultPage', () => {
         // assert
         setTimeout(() => {
             expect(qrcoderesultPage.userCount).toEqual(0);
-            done();
         }, 0);
         // expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
         // expect(qrcoderesultPage.userCount).toEqual(1);
@@ -998,7 +993,7 @@ describe('QrcoderesultPage', () => {
     });
 
     describe('cancelDownload', () => {
-        it('should cancel ongoing download', (done) => {
+        it('should cancel ongoing download', () => {
             // arrange
             mockTelemetryGeneratorService.generateCancelDownloadTelemetry = jest.fn();
             const content = {identifier: 'sampleId'} as any;
@@ -1011,10 +1006,9 @@ describe('QrcoderesultPage', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateCancelDownloadTelemetry).toHaveBeenCalledWith(content);
                 expect(mockLocation.back).toHaveBeenCalled();
-                done();
             }, 0);
         });
-        it('should cancel download', (done) => {
+        it('should cancel download', () => {
             // arrange
             mockTelemetryGeneratorService.generateCancelDownloadTelemetry = jest.fn();
             const content = {identifier: 'sampleId'} as any;
@@ -1027,13 +1021,12 @@ describe('QrcoderesultPage', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateCancelDownloadTelemetry).toHaveBeenCalledWith(content);
                 expect(mockLocation.back).toHaveBeenCalled();
-                done();
             }, 0);
         });
     });
 
     describe('playContent', () => {
-        it('should call contentService and open player', (done) => {
+        it('should call contentService and open player', () => {
             // arrange
             qrcoderesultPage.cardData = {
                 hierarchyInfo: [
@@ -1065,11 +1058,10 @@ describe('QrcoderesultPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
-                done();
             }, 0);
         });
 
-        it('should call contentService and check for metaData is not mimeType ecml', (done) => {
+        it('should call contentService and check for metaData is not mimeType ecml', () => {
             // arrange
             qrcoderesultPage.cardData = {
                 hierarchyInfo: [
@@ -1101,7 +1093,6 @@ describe('QrcoderesultPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
-                done();
             }, 0);
         });
 

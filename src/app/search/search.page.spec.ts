@@ -295,8 +295,8 @@ describe('SearchPage', () => {
         // act
         searchPage.ionViewDidEnter();
         // assert
-        expect(searchPage.checkUserSession).toHaveBeenCalled();
         setTimeout(() => {
+            expect(searchPage.checkUserSession).toHaveBeenCalled();
             expect(searchPage.isFirstLaunch).toBeFalsy();
             expect(mockSbProgressLoader.hide).toHaveBeenCalled();
             done();
@@ -317,8 +317,8 @@ describe('SearchPage', () => {
         // act
         searchPage.ionViewDidEnter();
         // assert
-        expect(searchPage.checkUserSession).toHaveBeenCalled();
         setTimeout(() => {
+            expect(searchPage.checkUserSession).toHaveBeenCalled();
             expect(searchPage.isFirstLaunch).toBeTruthy();
             expect(mockSbProgressLoader.hide).toHaveBeenCalled();
             done();
@@ -2531,7 +2531,7 @@ describe('SearchPage', () => {
         })
 
         describe('handleDeviceBackButton', () => {
-            it('should handle Device BackButton for dialcode', () => {
+            it('should handle Device BackButton for dialcode', (done) => {
                 // arrange
                 const subscribeWithPriorityData = jest.fn((_, fn) => fn());
                 mockPlatform.backButton = {
@@ -2546,14 +2546,17 @@ describe('SearchPage', () => {
                 searchPage.handleDeviceBackButton();
                 // assert
                 expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBeGreaterThan(0);
-                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
-                    true,
-                    Environment.HOME,
-                    PageId.QR_BOOK_RESULT
-                );
+                setTimeout(() => {
+                    expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                        true,
+                        Environment.HOME,
+                        PageId.QR_BOOK_RESULT
+                    );
+                    done()
+                }, 0);
             });
 
-            it('should handle Device BackButton for dialcode', () => {
+            it('should handle Device BackButton for dialcode', (done) => {
                 // arrange
                 const subscribeWithPriorityData = jest.fn((_, fn) => fn());
                 mockPlatform.backButton = {
@@ -2569,14 +2572,17 @@ describe('SearchPage', () => {
                 searchPage.handleDeviceBackButton();
                 // assert
                 expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBeGreaterThan(0);
-                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
-                    true,
-                    Environment.ONBOARDING,
-                    PageId.QR_BOOK_RESULT
-                );
+                setTimeout(() => {
+                    expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                        true,
+                        Environment.ONBOARDING,
+                        PageId.QR_BOOK_RESULT
+                    );
+                    done()
+                }, 0);
             });
 
-            it('should handle Device BackButton', () => {
+            it('should handle Device BackButton', (done) => {
                 // arrange
                 const subscribeWithPriorityData = jest.fn((_, fn) => fn());
                 mockPlatform.backButton = {
@@ -2591,17 +2597,20 @@ describe('SearchPage', () => {
                 searchPage.handleDeviceBackButton();
                 // assert
                 expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBe(0);
-                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.SEARCH,
-                    Environment.HOME, false, undefined,
-                    undefined
-                );
+                setTimeout(() => {
+                    expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                        ImpressionType.SEARCH,
+                        Environment.HOME, false, undefined,
+                        undefined
+                    );
+                    done()
+                }, 0);
             });
         });
     });
 
     describe('goBack', () => {
-        it('should generate beck telemetry for qrCode', () => {
+        it('should generate beck telemetry for qrCode', (done) => {
             searchPage.displayDialCodeResult = [{
                 dialCodeResult: ['result-1']
             }];
@@ -2610,13 +2619,16 @@ describe('SearchPage', () => {
             // act
             searchPage.goBack();
             // assert
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
-                false,
-                Environment.ONBOARDING,
-                PageId.QR_BOOK_RESULT
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                    false,
+                    Environment.ONBOARDING,
+                    PageId.QR_BOOK_RESULT
+                );
+                done()
+            }, 0);
         });
-        it('should generate beck telemetry for qrCode', () => {
+        it('should generate beck telemetry for qrCode', (done) => {
             searchPage.displayDialCodeResult = [{
                 dialCodeResult: ['result-1']
             }];
@@ -2625,11 +2637,14 @@ describe('SearchPage', () => {
             // act
             searchPage.goBack();
             // assert
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
-                false,
-                Environment.HOME,
-                PageId.QR_BOOK_RESULT
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                    false,
+                    Environment.HOME,
+                    PageId.QR_BOOK_RESULT
+                );
+                done()
+            }, 0);
         });
         it('should generate search telemetry for qrCode', (done) => {
             searchPage.displayDialCodeResult = [{

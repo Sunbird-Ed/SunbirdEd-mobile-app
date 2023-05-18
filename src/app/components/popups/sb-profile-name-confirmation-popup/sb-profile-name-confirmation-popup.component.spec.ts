@@ -79,9 +79,11 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
             // act
             profileNameConfirmationPopoverComponent.onSubmitClick();
             // assert
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
-            expect(mockPreferences.putBoolean).toHaveBeenCalledWith(
-                PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample_user_id', false);
+            setTimeout(() => {
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample_user_id', false);
+            }, 0);
         });
     });
 

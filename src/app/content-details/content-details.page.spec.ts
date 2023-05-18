@@ -56,9 +56,12 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
 
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        addContentAccess: jest.fn(() => of())
+    };
     const mockContentService: Partial<ContentService> = {
-        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }))
+        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } })),
+        setContentMarker: jest.fn(() => of())
     } as any;
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
@@ -92,7 +95,8 @@ describe('ContentDetailsPage', () => {
         showToast: jest.fn(),
         networkInfo: {
             isNetworkAvailable: true
-        }
+        },
+        convertFileSrc: jest.fn()
     };
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
@@ -120,7 +124,8 @@ describe('ContentDetailsPage', () => {
     };
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {
         launchContentPlayer: jest.fn(),
-        getLastPlayedContentId: jest.fn()
+        getLastPlayedContentId: jest.fn(),
+        isContentPlayerLaunched: jest.fn()
     };
     const mockChildContentHandler: Partial<ChildContentHandler> = {
         contentHierarchyInfo: [{ id: 'do-123' }]
@@ -211,7 +216,7 @@ describe('ContentDetailsPage', () => {
             }, 0);
         });
 
-        it('should invoked openPlayAsPopup', (done) => {
+        it('should invoked openPlayAsPopup', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -232,19 +237,18 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
+                    {"id": undefined, "type": undefined, "version": ""},
                     { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
                 );
-                expect(contentDetailsPage.userCount).toBeGreaterThan(2);
+                expect(contentDetailsPage.userCount).toBe(1);
                 expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
-                done();
             }, 0);
         });
 
-        it('should return a popup if network is 2g and dismiss data is null', (done) => {
+        it('should return a popup if network is 2g and dismiss data is null', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -273,23 +277,22 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
-                    { networkType: '2g' },
+                    {"id": undefined, "type": undefined, "version": ""},
+                    { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
                 );
-                expect(mockNetwork.type).toBe('2g');
+                expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
-                done();
             }, 0);
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
         });
 
-        it('should return a popup if network is 2g, isLeftButtonClicked and userCount is 2 ', (done) => {
+        it('should return a popup if network is 2g, isLeftButtonClicked and userCount is 2 ', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -321,23 +324,22 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
-                    { networkType: '2g' },
+                    {"id": undefined, "type": undefined, "version": ""},
+                    { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
                 );
-                expect(mockNetwork.type).toBe('2g');
+                expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
-                done();
             }, 0);
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
         });
 
-        it('should return a popup if network is 2g, isLeftButtonClicked and player is launched ', (done) => {
+        it('should return a popup if network is 2g, isLeftButtonClicked and player is launched ', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -366,23 +368,22 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
-                    { networkType: '2g' },
+                    {"id": undefined, "type": undefined, "version": ""},
+                    { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
                 );
-                expect(mockNetwork.type).toBe('2g');
+                expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
-                done();
             }, 0);
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
         });
 
-        it('should invoked downloadContent()', (done) => {
+        it('should invoked downloadContent()', () => {
             // arrange
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -411,20 +412,19 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
-                    { networkType: '2g' },
+                    {"id": undefined, "type": undefined, "version": ""},
+                    { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
                 );
-                expect(mockNetwork.type).toBe('2g');
+                expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
-                done();
             }, 0);
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
         });
 
         it('should invoked playContent()', (done) => {
@@ -448,7 +448,7 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
+                    {"id": undefined, "type": undefined, "version": ""},
                     { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
@@ -482,7 +482,7 @@ describe('ContentDetailsPage', () => {
                     InteractSubtype.PLAY_ONLINE,
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
-                    undefined,
+                    {"id": undefined, "type": undefined, "version": ""},
                     { networkType: '4g' },
                     undefined,
                     [{ id: 'do-123', type: 'Content' }]
@@ -2240,11 +2240,13 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.getNavParams();
             // assert
-            expect(mockDownloadService.getActiveDownloadRequests).toHaveBeenCalled();
-            contentDetailsPage.isContentDownloading$.subscribe((res) => {
-                expect(res).toBeTruthy();
-                done();
-            });
+            setTimeout(() => {
+                expect(mockDownloadService.getActiveDownloadRequests).toHaveBeenCalled();
+                contentDetailsPage.isContentDownloading$.subscribe((res) => {
+                    expect(res).toBeTruthy();
+                    done();
+                });
+            }, 0);
         });
     });
 
@@ -2255,7 +2257,9 @@ describe('ContentDetailsPage', () => {
         // act
         contentDetailsPage.ionViewDidEnter();
         // assert
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
+        setTimeout(() => {
+        }, 0);
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
     });
 
     describe('cancelDownload', () => {

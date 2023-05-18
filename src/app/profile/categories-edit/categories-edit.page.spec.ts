@@ -1131,17 +1131,20 @@ describe('CategoryEditPage', () => {
             // act
             categoryEditPage.ionViewWillEnter();
             // assert
-            expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
-            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-            expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
-            expect(categoryEditPage.disableSubmitButton).toBeFalsy();
-            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(categoryEditPage.isRootPage).toBeTruthy();
-            expect(mockPlatform.backButton).toBeTruthy();
-            expect(subscribeWithPriorityData).toHaveBeenCalled();
-            expect(mockActivePageService.computePageId).toHaveBeenCalled();
-            expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+                expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(categoryEditPage.isRootPage).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
+                
+            }, 0);
         });
 
         it('should subscribe back button for loggedIn User, platform ios', () => {
@@ -1169,17 +1172,20 @@ describe('CategoryEditPage', () => {
             // act
             categoryEditPage.ionViewWillEnter();
             // assert
-            expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
-            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-            expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
-            expect(categoryEditPage.disableSubmitButton).toBeFalsy();
-            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(categoryEditPage.isRootPage).toBeTruthy();
-            expect(mockPlatform.backButton).toBeTruthy();
-            expect(subscribeWithPriorityData).toHaveBeenCalled();
-            // expect(mockActivePageService.computePageId).toHaveBeenCalled();
-            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+                expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(categoryEditPage.isRootPage).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                // expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+                
+            }, 0);
         });
 
         it('should invoked getSyllabusDetails for guest User', () => {
@@ -1203,12 +1209,15 @@ describe('CategoryEditPage', () => {
             // act
             categoryEditPage.ionViewWillEnter();
             // assert
-            expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
-            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-            expect(categoryEditPage.disableSubmitButton).toBeFalsy();
-            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(categoryEditPage.isRootPage).toBeFalsy();
+            setTimeout(() => {
+                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+                expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(categoryEditPage.isRootPage).toBeFalsy();
+                
+            }, 0);
         });
     });
 

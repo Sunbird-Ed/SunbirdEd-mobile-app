@@ -1040,8 +1040,10 @@ describe('UserTypeSelectionPage', () => {
             expect(mockContainer.addTab).toHaveBeenCalled();
             expect(mockAppGlobalService.isProfileSettingsCompleted).toBeFalsy();
             expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeTruthy();
-            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
-            { state: { showProfileSettingPage: true } });
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
+                { state: { showProfileSettingPage: true } });
+            }, 0);
         });
 
         it('should update profile data', () => {

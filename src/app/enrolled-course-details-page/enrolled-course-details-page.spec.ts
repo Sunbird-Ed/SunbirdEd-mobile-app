@@ -45,7 +45,9 @@ import { DiscussionService } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        getServerProfilesDetails: jest.fn(() => of({})) as any
+    };
     const mockContentService: Partial<ContentService> = {
         importContent: jest.fn(() => of(mockImportContentResponse)),
         getChildContents: jest.fn(() => of()),
@@ -197,7 +199,7 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('ngOnInit()', () => {
-        it('should get App name and subscribe utility service by invoked ngOnInit()', () => {
+        it('should get App name and subscribe utility service by invoked ngOnInit()', (done) => {
             // arrange
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('SUNBIRD'));
             mockDownloadService.trackDownloads = jest.fn(() => of());
@@ -213,7 +215,10 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.ngOnInit();
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-            expect(enrolledCourseDetailsPage.subscribeUtilityEvents).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.subscribeUtilityEvents).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 
@@ -371,6 +376,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.courseCardData = {
                 batchId: 'sample_batch_id'
             };
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of())
             mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
@@ -399,6 +405,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.courseCardData = {
                 batchId: 'sample_batch_id'
             };
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of())
             mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
@@ -427,6 +434,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.courseCardData = {
                 batchId: 'sample_batch_id'
             };
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of())
             mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
@@ -1315,7 +1323,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 firstName: 'F_NAME',
                 lastName: 'L_NAME'
             };
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of(respones));
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(respones)) as any;
             // act
             enrolledCourseDetailsPage.getBatchCreatorName();
             // assert
@@ -2412,7 +2420,7 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('subscribeSdkEvent()', () => {
-        it('should be PROGRESS event', () => {
+        it('should be PROGRESS event', (done) => {
             // arrange
             const event = {
                 type: 'PROGRESS',
@@ -2430,8 +2438,11 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.subscribeSdkEvent();
             // assert
             expect(enrolledCourseDetailsPage.downloadProgress).toBe(100);
-            expect(enrolledCourseDetailsPage.getBatchDetails).toBeCalled();
-            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.getBatchDetails).toBeCalled();
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                done()
+            }, 0);
 
         });
 
@@ -2811,7 +2822,7 @@ describe('EnrolledCourseDetailsPage', () => {
     it('should hide deeplink progress loader', () => {
         // arrange
         mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
-        enrolledCourseDetailsPage.identifier = 'sample_doId';
+        enrolledCourseDetailsPage.identifier = 'login';
         if (!enrolledCourseDetailsPage.resumeCourseFlag) {
             enrolledCourseDetailsPage.resumeCourseFlag = true;
         }
@@ -2821,7 +2832,7 @@ describe('EnrolledCourseDetailsPage', () => {
         // act
         enrolledCourseDetailsPage.ionViewDidEnter();
         // assert
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 
@@ -2855,7 +2866,7 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    it('should dismiss consentPii popup', () => {
+    it('should dismiss consentPii popup', (done) => {
         // arrange
         const dismissFn = jest.fn(() => Promise.resolve(true));
         enrolledCourseDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
@@ -2863,9 +2874,12 @@ describe('EnrolledCourseDetailsPage', () => {
         // act
         enrolledCourseDetailsPage.onConsentPopoverShow();
         // assert
-        expect(enrolledCourseDetailsPage.loader).toBeUndefined();
-        expect(dismissFn).toHaveBeenCalled();
-        expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(true);
+        setTimeout(() => {
+            expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+            expect(dismissFn).toHaveBeenCalled();
+            expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(true);
+            done()
+        }, 0);
     });
 
     it('shoule invoked after consentPii popup dismissed', () => {

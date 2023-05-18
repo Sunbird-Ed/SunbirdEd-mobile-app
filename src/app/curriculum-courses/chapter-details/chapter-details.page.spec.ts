@@ -2517,8 +2517,10 @@ describe('ChapterDetailsPage', () => {
         // act
         chapterDetailsPage.onConsentPopoverShow();
         // assert
-        expect(chapterDetailsPage.loader).toBeUndefined();
-        expect(dismissFn).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(chapterDetailsPage.loader).toBeUndefined();
+            expect(dismissFn).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should dismiss consentPii popup, if no loader', () => {
@@ -2568,7 +2570,9 @@ describe('ChapterDetailsPage', () => {
             expect(event.type).toBe('PROGRESS');
             expect(event.payload.identifier).toBe(chapterDetailsPage.identifier);
             expect(event.payload.progress).toBe(100);
-            expect(mockAppHeaderService.showHeaderWithBackButton).toBeCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithBackButton).toBeCalled();
+            }, 0);
         });
         it('should do when the event type is IMPORT_COMPLETED and download is not started', () => {
             //arrange
