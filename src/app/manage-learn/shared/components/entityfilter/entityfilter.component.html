@@ -5,7 +5,7 @@
         debounce="500"
         (keyup.enter)="searchEntity()"
         [(ngModel)]="searchQuery"
-        placeholder="Search Entity "
+        placeholder="Search {{entity}} "
         (ionClear)="searchQuery = ''; searchEntity()"
       ></ion-searchbar>
       <ion-button ion-button icon-only (click)="searchEntity()" class="serachBtn">
@@ -26,7 +26,7 @@
     </ion-list>
     <ion-list *ngIf="!selectableList?.length ">
       <div class="_flex-box _justify-content-center noDataMsg">
-        {{ 'FRMELEMNTS_MSG_NO_SCHOOL_FOUND' | translate }}
+        {{ 'FRMELEMNTS_MSG_NO_SCHOOL_FOUND' |  translate:{'entity': entity} }}
       </div>
     </ion-list>
   </div>

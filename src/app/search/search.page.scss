@@ -433,7 +433,7 @@
 .pills-filter {
   position: fixed;
   z-index: 1;
-  top: 8.5rem;
+  top: 6rem;
   padding-bottom: 0.5rem;
   background-color: var(--app-tertiary-background);
 }
@@ -445,7 +445,7 @@
   z-index: 1;
   background-color: var(--app-tertiary-background);
   width: 100%;
-  top: 13rem;
+  top: 9rem;
   height: 3rem;
   div {
     background-color: var(--app-white);
@@ -458,3 +458,15 @@
 .fixed-counter + .sc-container {  
   margin-top: 7rem;
 }
+
+.fixed-counter + .scc-container {
+  margin-top: 4rem;
+ }
+
+ .pills-filter+ .sbc-container {
+  margin-top: 6rem;
+ }
+ 
+ .sb-search-history-entry+ .sbcc-container {
+  margin-top: 3rem;
+ }
