@@ -556,6 +556,7 @@ export enum InteractSubtype {
     GOOGLE = 'google',
     APPLE = 'apple',
     STATE = 'state',
+    COURSE_KEBAB_MENU_CLICKED = 'course-kebab-menu-clicked',
 }
 
 export enum ID {

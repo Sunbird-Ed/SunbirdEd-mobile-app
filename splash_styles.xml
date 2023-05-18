@@ -1,0 +1,8 @@
+<resources>
+  <style name="SplashTheme" parent="android:Theme.Light">
+  </style>
+  <style name="Theme.RemoveSplashScreenTheme" parent="SplashTheme">
+    <item name="android:windowIsTranslucent">true</item>
+        <item name="">true</item>
+  </style>
+</resources>

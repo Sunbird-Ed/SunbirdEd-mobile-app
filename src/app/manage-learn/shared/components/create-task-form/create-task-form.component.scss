@@ -19,7 +19,7 @@
     font-size: $font-size-base;
     color: #999999;
     padding: 0px;
-    margin: 0px;
+    margin: 15px auto;
     }
 }
 .custom-datetime-label{
@@ -119,4 +119,11 @@
 ion-content ion-button {
     font-size: 0.875rem;
     height: 2.25rem;
+}
+
+.text-right {
+    text-align: right;
+  }
+.flex{
+    display: flex;
 }

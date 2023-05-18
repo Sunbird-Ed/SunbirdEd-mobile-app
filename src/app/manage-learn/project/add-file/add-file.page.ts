@@ -288,12 +288,6 @@ export class AddFilePage implements OnInit {
       this.attachments = [];
       this.doSyncAction(true);
     }, 0)
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      queryParams: {
-        projectId: this.project._id,
-        programId: this.project.programId,
-        solutionId: this.project.solutionId,
-      }, replaceUrl: true
-    });
+    this.location.back()
   }
 }
