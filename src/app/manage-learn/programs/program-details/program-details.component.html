@@ -8,7 +8,7 @@
     </div>
     <div *ngIf="isNewProgram">
       <div class="hr-line"></div>
-      <ion-button class="custom-btn-txt-transform-none" (click)="showConsentPopup()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
+      <ion-button class="custom-btn-txt-transform-none" (click)="join()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
         {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
       </ion-button>
       <ng-template #showMessage>
@@ -47,6 +47,7 @@
     <div class="message-1"><b>{{"EMPTY_SEARCH_RESULTS" | translate}}.</b></div>
     <div>{{"FRMELEMNTS_MSG_NO_SOLUTIONS_FOR_PROGRAM" | translate:{'type':selectedSection} }}</div>
   </div>
-  <app-share-profile-data (save)="save($event)" [dataSharingStatus]="sharingStatus" [type]="'program'" [lastUpdatedOn]="programDetails?.programEndDate" *ngIf="programDetails?.programJoined">
+  <app-share-profile-data (save)="save($event)" [dataSharingStatus]="sharingStatus" [type]="'program'" [lastUpdatedOn]="lastUpdatedOn"
+  *ngIf="programDetails?.programJoined && programDetails?.requestForPIIConsent">
   </app-share-profile-data>
 </ion-content>

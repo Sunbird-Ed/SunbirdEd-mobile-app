@@ -11,7 +11,7 @@ import { RouterLinks } from '../../../../app/app.constant';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 import { storageKeys } from '../../storageKeys';
-import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
   selector: 'app-program-details',
@@ -34,18 +34,20 @@ export class ProgramDetailsComponent implements OnInit {
   programDetails:any={}
   solutionsList:any=[]
   filteredList:any=[]
-  sharingStatus='ACTIVE'
+  sharingStatus:any='REVOKED'
   programId
   count = 0;
   limit = 25;
   page = 1;
   isNewProgram = false
-  userId
+  lastUpdatedOn:any
+  consentShared = false
+  payload
 
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
     private toastService: ToastService, private router: Router, private surveyProvider: SurveyProviderService, private ulsdp: UpdateLocalSchoolDataService,
-    private localStorage: LocalStorageService, private appGlobalService: AppGlobalService) {
+    private localStorage: LocalStorageService, private commonUtils: CommonUtilService) {
     this.translate.get(['ALL','FRMELEMNTS_LBL_PROJECTS','FRMELEMNTS_LBL_OBSERVATIONS','FRMELEMNTS_LBL_SURVEY']).subscribe((translation)=>{
       this.filtersList = Object.keys(translation).map(translateItem => { return translation[translateItem]})
     })
@@ -55,9 +57,7 @@ export class ProgramDetailsComponent implements OnInit {
     })
   }
 
-  ngOnInit() {
-    this.userId = this.appGlobalService.getUserId()
-  }
+  ngOnInit() {}
 
   ionViewWillEnter(){
     this.headerConfig = this.headerService.getDefaultPageConfig()
@@ -76,14 +76,24 @@ export class ProgramDetailsComponent implements OnInit {
         payload: payload,
       };
       this.kendraService.post(config).subscribe(
-        (success) => {
+        async(success) => {
           this.loader.stopLoader();
           if (success.result.data) {
             this.programDetails = success.result
             this.count = success.result.count;
             this.isNewProgram =  success.result.hasOwnProperty('requestForPIIConsent')
+            this.payload = {consumerId: success.result.rootOrganisations, objectId: success.result.programId}
             this.formatList()
             this.readMoreOrLess()
+            if(this.isNewProgram && this.programDetails.programJoined && this.programDetails?.requestForPIIConsent){
+              await this.popupService.getConsent('Program',this.payload).then((response)=>{
+                if(response){
+                  this.sharingStatus = response.status
+                  this.lastUpdatedOn = response.lastUpdatedOn
+                  this.consentShared = true
+                }
+              })
+            }
           }
         },
         (error) => {
@@ -136,23 +146,45 @@ export class ProgramDetailsComponent implements OnInit {
   joinProgram(){
     this.popupService.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",this.programDetails.programName,'program',
     "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
-      (data:any)=>{
+      async (data:any)=>{
         if(data){
-          this.showConsentPopup()
+          this.join()
         }
       }
     )
   }
+
+  async join(hideConsent?){
+    let payload = await this.utils.getProfileInfo();
+    if (payload) {
+      const config = {
+        url:`${urlConstants.API_URLS.JOIN_PROGRAM}${this.programId}`,
+        payload: {userRoleInformation:payload, consentShared:this.consentShared}
+      };
+      this.kendraService.post(config).subscribe(
+        (response) => {
+          if(response.status==200){
+            this.programDetails.programJoined = true
+            if(!hideConsent){
+              this.showConsentPopup()
+            }
+          }
+        },
+        (error) => {}
+      );
+    }
+  }
   
-  showConsentPopup(message?){
-    this.popupService.showConsent('program').then((data)=>{
-      if(data!==undefined){
-        this.programDetails.programJoined = true
-        if(message){
-          this.toastService.openToast(message)
+  showConsentPopup(){
+    if(this.programDetails?.requestForPIIConsent){
+      this.popupService.showConsent('Program',this.payload).then(async(data)=>{
+        if(data){
+          this.sharingStatus = data
+          this.consentShared = true
+          await this.join(true)
         }
-      }
-    })
+      })
+    }
   }
 
   cardClick(data){
@@ -176,19 +208,17 @@ export class ProgramDetailsComponent implements OnInit {
   }
 
   save(event){
-    let message
-    this.translate.get(['FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS']).subscribe((msg)=>{
-      message = msg['FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS']
-    })
     if(this.sharingStatus!==event){
-      this.showConsentPopup(message)
-      this.sharingStatus=event
+      this.showConsentPopup()
     }else{
-      this.toastService.openToast(message)
+      this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
     }
   }
 
   ionViewWillLeave(){
+    this.solutionsList = []
+    this.filteredList = []
+    this.selectedSection = ''
     this.popupService.closeConsent()
   }
 
@@ -277,9 +307,7 @@ export class ProgramDetailsComponent implements OnInit {
         this.ulsdp.mapSubmissionDataToQuestion(survey, false, true);
         this.storeRedirect(survey);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
 
   storeRedirect(survey): void {
@@ -297,5 +325,5 @@ export class ProgramDetailsComponent implements OnInit {
         isSurvey:true
       },
     });
-  }
+  } 
 }
