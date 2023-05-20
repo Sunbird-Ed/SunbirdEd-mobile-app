@@ -3,10 +3,15 @@ import { AppHeaderService } from '../../../../../src/services/app-header.service
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import { TranslateService } from '@ngx-translate/core';
 import { GenericPopUpService } from '../../shared';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { LoaderService, UtilsService, ToastService } from '../../core';
+import { LoaderService, UtilsService, ToastService, LocalStorageService } from '../../core';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { RouterLinks } from '../../../../app/app.constant';
+import { SurveyProviderService } from '../../core/services/survey-provider.service';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
+import { storageKeys } from '../../storageKeys';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
   selector: 'app-program-details',
@@ -29,15 +34,20 @@ export class ProgramDetailsComponent implements OnInit {
   programDetails:any={}
   solutionsList:any=[]
   filteredList:any=[]
-  sharingStatus='ACTIVE'
+  sharingStatus:any='REVOKED'
   programId
   count = 0;
   limit = 25;
   page = 1;
+  isNewProgram = false
+  lastUpdatedOn:any
+  consentShared = false
+  payload
 
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
-    private toastService: ToastService) {
+    private toastService: ToastService, private router: Router, private surveyProvider: SurveyProviderService, private ulsdp: UpdateLocalSchoolDataService,
+    private localStorage: LocalStorageService, private commonUtils: CommonUtilService) {
     this.translate.get(['ALL','FRMELEMNTS_LBL_PROJECTS','FRMELEMNTS_LBL_OBSERVATIONS','FRMELEMNTS_LBL_SURVEY']).subscribe((translation)=>{
       this.filtersList = Object.keys(translation).map(translateItem => { return translation[translateItem]})
     })
@@ -66,13 +76,24 @@ export class ProgramDetailsComponent implements OnInit {
         payload: payload,
       };
       this.kendraService.post(config).subscribe(
-        (success) => {
+        async(success) => {
           this.loader.stopLoader();
           if (success.result.data) {
             this.programDetails = success.result
             this.count = success.result.count;
+            this.isNewProgram =  success.result.hasOwnProperty('requestForPIIConsent')
+            this.payload = {consumerId: success.result.rootOrganisations, objectId: success.result.programId}
             this.formatList()
             this.readMoreOrLess()
+            if(this.isNewProgram && this.programDetails.programJoined && this.programDetails?.requestForPIIConsent){
+              await this.popupService.getConsent('Program',this.payload).then((response)=>{
+                if(response){
+                  this.sharingStatus = response.status
+                  this.lastUpdatedOn = response.lastUpdatedOn
+                  this.consentShared = true
+                }
+              })
+            }
           }
         },
         (error) => {
@@ -123,51 +144,186 @@ export class ProgramDetailsComponent implements OnInit {
   }
 
   joinProgram(){
-    // this.popupService.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",this.programDetails.programName,'program',
-    // "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
-    //   (data:any)=>{
-    //     if(data){
-    //       this.showConsentPopup()
-    //     }
-    //   }
-    // )
-  }
-  
-  showConsentPopup(message?){
-    this.popupService.showConsent('program').then((data)=>{
-      if(data!==undefined){
-        this.programDetails.programJoined = true
-        if(message){
-          this.toastService.openToast(message)
+    this.popupService.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",this.programDetails.programName,'program',
+    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
+      async (data:any)=>{
+        if(data){
+          this.join()
         }
       }
-    })
+    )
   }
 
-  cardClick(){
-    if(!this.programDetails.programJoined){
+  async join(hideConsent?){
+    let payload = await this.utils.getProfileInfo();
+    if (payload) {
+      const config = {
+        url:`${urlConstants.API_URLS.JOIN_PROGRAM}${this.programId}`,
+        payload: {userRoleInformation:payload, consentShared:this.consentShared}
+      };
+      this.kendraService.post(config).subscribe(
+        (response) => {
+          if(response.status==200){
+            this.programDetails.programJoined = true
+            if(!hideConsent){
+              this.showConsentPopup()
+            }
+          }
+        },
+        (error) => {}
+      );
+    }
+  }
+  
+  showConsentPopup(){
+    if(this.programDetails?.requestForPIIConsent){
+      this.popupService.showConsent('Program',this.payload).then(async(data)=>{
+        if(data){
+          this.sharingStatus = data
+          this.consentShared = true
+          await this.join(true)
+        }
+      })
+    }
+  }
+
+  cardClick(data){
+    if(!this.programDetails?.programJoined && this.isNewProgram){
       this.joinProgram()
+    }else{
+      switch (data.type) {
+        case 'improvementProject':
+          this.redirectProject(data);
+          break;
+        case 'observation':
+          this.redirectObservation(data);
+          break;
+        case 'survey':
+          this.onSurveyClick(data);
+          break;
+        default:
+          break;
+      }
     }
   }
 
   save(event){
-    let message
-    this.translate.get(['FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS']).subscribe((msg)=>{
-      message = msg['FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS']
-    })
     if(this.sharingStatus!==event){
-      this.showConsentPopup(message)
-      this.sharingStatus=event
+      this.showConsentPopup()
     }else{
-      this.toastService.openToast(message)
+      this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
     }
   }
 
   ionViewWillLeave(){
+    this.solutionsList = []
+    this.filteredList = []
+    this.selectedSection = ''
     this.popupService.closeConsent()
   }
 
   selectSection(name){
     this.selectedSection = name
   }
+
+  redirectProject(data) {
+    let projectId = '';
+    if (data.projectId) {
+      projectId = data.projectId;
+    }
+    if (!projectId) {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data._id], {
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe',
+          listing: 'program'
+        },
+      });
+    } else {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+        queryParams: {
+          projectId: projectId,
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe'
+        },
+      });
+    }
+  }
+
+  redirectObservation(data) {
+    let observationId = '';
+    if (data.observationId) {
+      observationId = data.observationId;
+    }
+    this.router.navigate(
+      [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          observationId: observationId,
+          solutionName: data.name,
+          entityType: data.entityType ? data.entityType : ''
+        },
+      }
+    );
+  }
+
+  onSurveyClick(data) {
+    if (data.submissionId && data.submissionId.length) {
+      this.localStorage
+        .getLocalStorage(storageKeys.submissionIdArray)
+        .then((allId) => {
+          if (allId.includes(data.submissionId)) {
+            this.redirect(data.submissionId);
+          } else {
+            this.surveyRedirect(data);
+          }
+        })
+        .catch(error => {
+          this.surveyRedirect(data);
+        })
+    } else {
+      this.surveyRedirect(data);
+    }
+  }
+
+  surveyRedirect(data) {
+    let surveyId = '';
+    if (data.surveyId) {
+      surveyId = data.surveyId;
+    }
+    this.surveyProvider
+      .getDetailsById(surveyId, data._id)
+      .then((res) => {
+        if (res.result && res.result.status == 'completed') {
+          // this.toast.openToast(res.message)
+          this.surveyProvider.showMsg('surveyCompleted');
+          return;
+        }
+        const survey = res.result;
+        this.ulsdp.mapSubmissionDataToQuestion(survey, false, true);
+        this.storeRedirect(survey);
+      })
+      .catch((err) => {});
+  }
+
+  storeRedirect(survey): void {
+    this.surveyProvider
+      .storeSurvey(survey.assessment.submissionId, survey)
+      .then((survey) => this.redirect(survey.assessment.submissionId));
+  }
+
+  redirect(submissionId: any): void {
+    this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+      queryParams: {
+        submisssionId: submissionId,
+        evidenceIndex: 0,
+        sectionIndex: 0,
+        isSurvey:true
+      },
+    });
+  } 
 }

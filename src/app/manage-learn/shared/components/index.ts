@@ -33,4 +33,5 @@ export * from './report-list/report-list.component';
 export * from './entity-search-local/entity-search-local.component';
 export * from './start-improvement/start-improvement.component';
 export * from './share-profile-data/share-profile-data.component';
-export * from './pii-consent-popup/pii-consent-popup.component'
+export * from './pii-consent-popup/pii-consent-popup.component';
+export * from './join-program/join-program.component'

@@ -104,11 +104,11 @@ convertDataSrcToObject(ele) {
   }
 
   share() {
-    this.popoverCtrl.dismiss(true)
+    this.popoverCtrl.dismiss('ACTIVE')
   }
 
   dontShare() {
-    this.popoverCtrl.dismiss(false)
+    this.popoverCtrl.dismiss('REVOKED')
   }
 
 }
