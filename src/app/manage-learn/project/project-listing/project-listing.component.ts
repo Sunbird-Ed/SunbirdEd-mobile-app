@@ -197,7 +197,6 @@ export class ProjectListingComponent {
         this.projects = [];
         this.page = 1;
         this.currentOnlineProjectLength = 0;
-
         this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
         this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
         this.searchText = '';
@@ -206,6 +205,7 @@ export class ProjectListingComponent {
 
     fetchProjectList() {
         this.projects = [];
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         if (this.networkFlag) {
             this.selectedFilterIndex !== 2 ? this.getProjectList() : this.getCreatedProjects()
         } else {
