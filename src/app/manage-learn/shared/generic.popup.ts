@@ -1,15 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { PrivacyPolicyAndTCComponent } from './components/privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { StartImprovementComponent } from './components/start-improvement/start-improvement.component';
+import { PiiConsentPopupComponent } from './components/pii-consent-popup/pii-consent-popup.component';
+import { RouterLinks } from '../../../app/app.constant';
+import { JoinProgramComponent } from './components/join-program/join-program.component';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { AppGlobalService } from '../../../services/app-global-service.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GenericPopUpService {
-  constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService) {}
+  consentPopup: any
+  constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService, @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    private appGlobalService: AppGlobalService) {}
 
     async showPPPForProjectPopUp(message, message1, linkLabel, header, link, type) {
         const alert = await this.popOverCtrl.create({
@@ -73,4 +81,91 @@ export class GenericPopUpService {
     const { data } = await alert.onDidDismiss();
     return data;
 }
+
+async showJoinProgramForProjectPopup(header,name,type,button,message?){
+  const alert = await this.popOverCtrl.create({
+    component : JoinProgramComponent,
+    componentProps: {
+      header: header,
+      name: name,
+      type:type,
+      button: button,
+      message: message
+    },
+    cssClass: 'sb-popover',
+  });
+  await alert.present();
+  const {data} = await alert.onDidDismiss();
+  return data
+
+}
+
+async showConsent(type, payload){
+  let componentProps={}
+  let payloadData:any = { userId : this.appGlobalService.getUserId(), objectType: type, ...payload }
+  switch (type.toLowerCase()) {
+    case 'program':
+      componentProps={
+        consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
+        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
+        redirectLink : RouterLinks.TERM_OF_USE
+      }
+      break;
+
+    default:
+      componentProps={
+        consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
+        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
+        redirectLink : RouterLinks.TERM_OF_USE
+      }
+      break;
+  }
+  this.consentPopup = await this.popOverCtrl.create({
+    component : PiiConsentPopupComponent,
+    componentProps : componentProps,
+    cssClass: 'sb-popover back-drop-hard',
+    backdropDismiss: false
+  })
+  await this.consentPopup.present()
+  let {data} = await this.consentPopup.onDidDismiss()
+  if(data){
+    const request = { ...payloadData, status : data }
+    const loader = await this.commonUtils.getLoader();
+    await loader.present();
+    await this.profileService.updateConsent(request).toPromise()
+      .then(async (response) => {
+        this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
+        await loader.dismiss();
+      })
+      .catch((e) => {
+        data=''
+        loader.dismiss();
+        if (e.code === 'NETWORK_ERROR') {
+          this.commonUtils.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
+  }
+  return data
+}
+
+async closeConsent(){
+  this.consentPopup ? await this.consentPopup.dismiss() : null
+}
+
+  async getConsent(type, payload){
+    const request = { userId : this.appGlobalService.getUserId(), ...payload }
+    let data:any=''
+    await this.profileService.getConsent(request).toPromise().then((response)=>{
+      data=response.consents[0]
+    }).catch(async (error)=>{
+      if (!error.response.body.result.consent && error.response.responseCode === 404) {
+        await this.showConsent(type, payload);
+    } else if (error.code === 'NETWORK_ERROR') {
+        this.commonUtils.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
+    })
+    return data
+  }
 }

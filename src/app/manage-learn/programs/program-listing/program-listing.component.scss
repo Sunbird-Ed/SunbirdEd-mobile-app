@@ -1,28 +1,38 @@
+@import "../../../../assets/styles/variables";
+
 .desc {
-    color: #555;
-    white-space: normal;
-    padding: 5px 0px 30px 0px;
-    margin-bottom: 10px;
-    font-size: 1rem;
+    font-size: 14px;
+    margin: 5px 0px;
 }
 
 .title{
-    font-size: 1rem;
+    font-size: 20px;
     font-weight: bold;
-    // color: $black;
-    color: black;
-}
-
-.list-md {
-    padding-top: 0px !important; 
-    padding-bottom: 0px !important;
 }
 
 .button-native {
     background: #DFE7F1 !important;
 }
 
-ion-button {
-    font-size: 0.875rem;
-    height: 2.25rem;
+.ui-container {
+    &::after {
+      height: 12.75rem !important;
+      background-image: none !important;
+    }
+  }
+
+.header-section{
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    padding: 0px 20px;
+    margin-bottom: 20px;
+}
+
+.load-more{
+    --background: var(--app-primary-background) !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    height: 44px;
+    font-size: 16px;
 }
