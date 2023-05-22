@@ -117,19 +117,15 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
-      setTimeout(() => {
-        (async () => {
-          const tab:any = 'courses';
-          await this.tabRef.select(tab);
-        })
+      setTimeout(async () => {
+        const tab:any = 'courses';
+        await this.tabRef.select(tab);
       }, 300);
     });
     this.events.subscribe('to_profile', () => {
-      setTimeout(() => {
-        (async () => {
-          const tab:any = 'profile';
-          await this.tabRef.select(tab);
-        })
+      setTimeout(async () => {
+        const tab:any = 'profile';
+        await this.tabRef.select(tab);
       }, 300);
     });
   }

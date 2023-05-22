@@ -126,12 +126,10 @@ export class ExternalIdVerificationService {
 
     checkJoinTraining() {
         if (this.appGlobalService.isJoinTraningOnboardingFlow) {
-            return new Promise<boolean>((resolve) => {
-                (async () => {
-                    await this.localCourseService.checkCourseRedirect();
-                    this.appGlobalService.isJoinTraningOnboardingFlow = false;
-                    resolve(true);
-                })
+            return new Promise<boolean>(async (resolve) => {
+                await this.localCourseService.checkCourseRedirect();
+                this.appGlobalService.isJoinTraningOnboardingFlow = false;
+                resolve(true);
             });
         }
     }

@@ -82,7 +82,7 @@ export class SelfDeclaredTeacherEditPage {
 
   async ionViewWillEnter() {
     this.handleDeviceBackButton();
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     await this.checkLocationAvailability();
 
     this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED, ID.TEACHER_DECLARATION);

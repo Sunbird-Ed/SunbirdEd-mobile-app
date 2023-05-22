@@ -23,7 +23,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
                 await this.router.navigate([RouterLinks.SIGN_IN], { state: { hideBackBtn: true } });
                 await this.splashScreenService.handleSunbirdSplashScreenActions();
             } else {
-                this.navigateToProfileSettings();
+                await this.navigateToProfileSettings();
             }
             return false;
         }
@@ -43,7 +43,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
 
         const selectedUser = await this.sharedPreferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         if (selectedUser && selectedUser !== ProfileType.ADMIN) {
-            this.navigateToProfileSettings()
+            await this.navigateToProfileSettings()
             return false;
         }
         await this.splashScreenService.handleSunbirdSplashScreenActions();

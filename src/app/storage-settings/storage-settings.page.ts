@@ -305,22 +305,18 @@ export class StorageSettingsPage implements OnInit {
       filter(e => e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT ||
         e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY),
       take(1)
-    ).subscribe((e) => {
-      (async () => {
-        if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
-          await this.showDuplicateContentPopup();
-        } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
-          setTimeout(() => {
-            (async () => {
-              if (this.transferringContentsPopup) {
-                await this.transferringContentsPopup.dismiss();
-              }
-            })
-          }, 1000);
-          await this.showLowMemoryToast();
-          this.revertSelectedStorageDestination();
-        }
-      })
+    ).subscribe(async (e) => {
+      if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
+        await this.showDuplicateContentPopup();
+      } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
+        setTimeout(async () => {
+          if (this.transferringContentsPopup) {
+            await this.transferringContentsPopup.dismiss();
+          }
+        }, 1000);
+        await this.showLowMemoryToast();
+        this.revertSelectedStorageDestination();
+      }
     });
 
     const transferProgress$ = this.eventsBusService.events(EventNamespace.STORAGE).pipe(
@@ -329,13 +325,11 @@ export class StorageSettingsPage implements OnInit {
       map((e: StorageTransferProgress) => e.payload.progress)
     );
 
-    const transferProgressSubscription = transferProgress$.subscribe(null, null, () => {
-        (async () => {
-          if (this.transferringContentsPopup) {
-            await this.transferringContentsPopup.dismiss();
-          }
-          await this.showSuccessTransferPopup(this.transferringContentsPopup, storageDestination);
-        })
+    const transferProgressSubscription = transferProgress$.subscribe(null, null, async () => {
+        if (this.transferringContentsPopup) {
+          await this.transferringContentsPopup.dismiss();
+        }
+        await this.showSuccessTransferPopup(this.transferringContentsPopup, storageDestination);
       });
 
     this.transferringContentsPopup = await this.popoverCtrl.create({
@@ -457,19 +451,17 @@ export class StorageSettingsPage implements OnInit {
       ),
       take(1)
     )
-      .subscribe((e) => {
-        (async () => {
-          if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
-            this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
-              StorageDestination.EXTERNAL_STORAGE :
-              StorageDestination.INTERNAL_STORAGE;
-  
-            await this.cancellingTransferPopup.dismiss();
-          } else if (e.type === StorageEventType.TRANSFER_COMPLETED) {
-            await this.cancellingTransferPopup.dismiss();
-            await this.showSuccessTransferPopup(this.cancellingTransferPopup, storageDestination);
-          }
-        })
+      .subscribe(async (e) => {
+        if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
+          this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
+            StorageDestination.EXTERNAL_STORAGE :
+            StorageDestination.INTERNAL_STORAGE;
+
+          await this.cancellingTransferPopup.dismiss();
+        } else if (e.type === StorageEventType.TRANSFER_COMPLETED) {
+          await this.cancellingTransferPopup.dismiss();
+          await this.showSuccessTransferPopup(this.cancellingTransferPopup, storageDestination);
+        }
       });
 
     this.cancellingTransferPopup = await this.popoverCtrl.create({

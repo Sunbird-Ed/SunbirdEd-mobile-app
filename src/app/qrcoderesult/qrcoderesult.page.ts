@@ -172,7 +172,7 @@ export class QrcoderesultPage implements OnDestroy {
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter(): void {
+  async ionViewWillEnter() {
     if (this.textbookTocService.textbookIds.unit) {
       this.chapterFirstChildId = '';
       this.getFirstChildOfChapter(this.textbookTocService.textbookIds.unit);
@@ -191,7 +191,7 @@ export class QrcoderesultPage implements OnDestroy {
         }, 100);
       }
     }
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     this.content = this.navData.content;
     this.corRelationList = this.navData.corRelation;
     this.shouldGenerateEndTelemetry = this.navData.shouldGenerateEndTelemetry;
@@ -504,7 +504,7 @@ export class QrcoderesultPage implements OnDestroy {
         false);
   }
 
-  playOnline(content, isStreaming: boolean) {
+  async playOnline(content, isStreaming: boolean) {
     const telemetryObject = ContentUtil.getTelemetryObject(content);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
@@ -533,13 +533,13 @@ export class QrcoderesultPage implements OnDestroy {
         hierachyInfo: content.hierarchyInfo,
         course: undefined
       };
-      this.playContent(content, isStreaming, contentInfo);
+      await this.playContent(content, isStreaming, contentInfo);
     } else {
-      this.navigateToDetailsPage(content);
+      await this.navigateToDetailsPage(content);
     }
   }
 
-  navigateToDetailsPage(content, paths?, contentIdentifier?) {
+  async navigateToDetailsPage(content, paths?, contentIdentifier?) {
     if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
       return;
@@ -559,7 +559,7 @@ export class QrcoderesultPage implements OnDestroy {
     }
     switch (ContentUtil.isTrackable(content)) {
       case 1:
-        this.navService.navigateToTrackableCollection({
+        await this.navService.navigateToTrackableCollection({
           content,
           corRelation: corRelationList
         });
@@ -568,7 +568,7 @@ export class QrcoderesultPage implements OnDestroy {
         if (paths && paths.length && paths.length >= 2) {
           this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
         }
-        this.navService.navigateToCollection({
+        await this.navService.navigateToCollection({
           content,
           corRelation: corRelationList
         });
@@ -579,7 +579,7 @@ export class QrcoderesultPage implements OnDestroy {
           Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
           !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
           PageId.DIAL_CODE_SCAN_RESULT);
-        this.navService.navigateToContent({
+        await this.navService.navigateToContent({
           content,
           depth: '1',
           isChildContent: true,
@@ -867,8 +867,8 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  openTextbookToc() {
-    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], {
+  async openTextbookToc() {
+    await this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], {
       childrenData: this.childrenData, parentId: this.identifier,
       stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
       latestParentNodes: this.latestParents

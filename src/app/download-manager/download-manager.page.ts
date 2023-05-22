@@ -91,14 +91,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'settings']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download', 'settings']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
 
-    this.headerService.showHeaderWithHomeButton(['download', 'settings']);
+    await this.headerService.showHeaderWithHomeButton(['download', 'settings']);
     await this.getAppStorageInfo();
     await this.getDownloadedContents();
     this.checkAvailableSpace();
@@ -350,7 +350,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   private async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'settings':
         await this.closeSelectAllPopup();
@@ -399,9 +399,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
-      tap(async (volumeInfo) => {
+      tap((volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          await this.presentPopupForLessStorageSpace();
+          this.presentPopupForLessStorageSpace().then().catch();
         }
       })
     )

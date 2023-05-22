@@ -136,7 +136,7 @@ export class TextbookViewMorePage {
     }
   }
 
-  navigateToDetailPage(item, index, sectionName) {
+  async navigateToDetailPage(item, index, sectionName) {
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
@@ -147,7 +147,7 @@ export class TextbookViewMorePage {
       ContentUtil.getTelemetryObject(item),
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, {
+      await this.navService.navigateToDetailPage(item, {
         content: item,
         corRelation: this.corRelationList
       });
@@ -157,19 +157,17 @@ export class TextbookViewMorePage {
   }
 
   loadData(event) {
-    setTimeout(() => {
-      (async () => {
-        if (this.subjectName === "Recently published courses") {
-          await this.fetchRecentPlublishedCourses();
-        } else {
-          await this.fetchAndSortData({
-            ...this.searchCriteria,
-            facets: this.supportedFacets,
-            searchType: SearchType.SEARCH,
-            limit: 10
-          }, event)
-        }
-      })
+    setTimeout(async () => {
+      if (this.subjectName === "Recently published courses") {
+        await this.fetchRecentPlublishedCourses();
+      } else {
+        await this.fetchAndSortData({
+          ...this.searchCriteria,
+          facets: this.supportedFacets,
+          searchType: SearchType.SEARCH,
+          limit: 10
+        }, event)
+      }
     }, 500);
   }
 

@@ -190,7 +190,7 @@ describe('collectionDetailEtbPage', () => {
         }, 0);
     });
 
-    it('should extract content data', () => {
+    it('should extract content data', (done) => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
@@ -217,11 +217,14 @@ describe('collectionDetailEtbPage', () => {
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
-        expect(mockContentService.importContent).toHaveBeenCalled();
-        expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-        expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-        expect(mockevents.publish).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
+            expect(mockContentService.importContent).toHaveBeenCalled();
+            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(mockevents.publish).toHaveBeenCalled();
+            done()
+        }, 0)
     });
 
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {

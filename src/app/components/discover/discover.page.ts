@@ -199,7 +199,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     const item = event.data;
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item });
+      await this.navService.navigateToDetailPage(item, { content: item });
     } else {
       await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
@@ -234,7 +234,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data, section);
+    await this.handlePillSelect(data, section);
   }
 
   ionViewWillLeave() {

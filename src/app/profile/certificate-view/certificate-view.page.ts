@@ -72,7 +72,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         this.projectData =  paramData;
         let keys = Object.keys(this.projectData.certificate);
         if( this.projectData.certificate &&  this.projectData.certificate.eligible && this.projectData.certificate.osid){
-          this.getProjectCertificate();
+          await this.getProjectCertificate();
         }else{
           if((this.projectData.certificate && (keys[this.projectData.certificate.eligible]  && !this.projectData.certificate.eligible) ) || (this.projectData.certificate && this.projectData.certificate.eligible && !this.projectData.certificate.osid)){
             this.message = 'FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON'
@@ -86,7 +86,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         await this.loadCertificate();
       } 
 
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
   }
 
   ngAfterViewInit() {}

@@ -142,7 +142,7 @@ export class OnboardingConfigurationService {
                 break;
 
             case OnboardingScreenType.DISTRICT_MAPPING:
-                this.setDistrictMappingDetails(config);
+                await this.setDistrictMappingDetails(config);
                 break;
 
             default:
@@ -198,9 +198,9 @@ export class OnboardingConfigurationService {
         let profile: Profile;
         profile = await this.profileService.updateProfile(updateProfileRequest).toPromise();
 
-        this.segmentationTagService.refreshSegmentTags(profile);
+        await this.segmentationTagService.refreshSegmentTags(profile);
         initTabs(this.container, GUEST_TEACHER_TABS);
-        this.segmentationTagService.createSegmentTags(profile);
+        await this.segmentationTagService.createSegmentTags(profile);
         await this.commonUtilService.handleToTopicBasedNotification();
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');

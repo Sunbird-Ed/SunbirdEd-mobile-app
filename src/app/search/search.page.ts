@@ -251,15 +251,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.enableHeaderEvents();
     if (this.isFromGroupFlow || this.searchWithBackButton) {
-      this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
+      await this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     } else {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
-      this.handleSearch(true);
+      await this.handleSearch(true);
     }
     this.selectedSwitchableTab = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise()
   }
@@ -312,9 +312,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     );
   }
 
-  onSearchHistoryTap(searchEntry: SearchEntry) {
+  async onSearchHistoryTap(searchEntry: SearchEntry) {
     this.searchKeywords = searchEntry.query;
-    this.handleSearch();
+    await this.handleSearch();
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -422,12 +422,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   loadData(event: any) {
-    setTimeout(() => {
+    setTimeout(async () => {
       let offset = this.searchContentResult == undefined ? 0 : this.searchContentResult.length;
       if(this.isFilterApplied) {
         this.applyFilter(offset);
       } else {
-        this.handleSearch(true, offset);
+        await this.handleSearch(true, offset);
       }
     }, 500);
   }
@@ -533,7 +533,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         if (CsGroupAddableBloc.instance.initialised) {
           this.updateCsGroupAddableBloc(params, PageId.COURSE_DETAIL);
         }
-        this.navService.navigateToTrackableCollection(
+        await this.navService.navigateToTrackableCollection(
           {
             source: this.source,
             groupId: this.groupId,
@@ -589,7 +589,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           if (CsGroupAddableBloc.instance.initialised) {
             this.updateCsGroupAddableBloc(params, PageId.COLLECTION_DETAIL);
           }
-          this.navService.navigateToCollection({
+          await this.navService.navigateToCollection({
             source: this.source,
             groupId: this.groupId,
             activityList: this.activityList,
@@ -605,7 +605,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         if (CsGroupAddableBloc.instance.initialised) {
           this.updateCsGroupAddableBloc(params, PageId.CONTENT_DETAIL);
         }
-        this.navService.navigateToContent({
+        await this.navService.navigateToContent({
           content: params.content,
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
@@ -876,11 +876,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.contentService.searchContent(modifiedCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
         this.totalCount = responseData.count
-        this.zone.run(() => {
+        this.zone.run(async () => {
           this.responseData = responseData;
           if (responseData) {
             if (this.isDialCodeSearch) {
-              this.processDialCodeResult(responseData.contentDataList);
+              await this.processDialCodeResult(responseData.contentDataList);
             } else {
               if (this.searchContentResult && this.searchContentResult.length > 0 && modifiedCriteria.offset > 0 && responseData.contentDataList.length > 0) {
                 responseData.contentDataList.forEach(ele => {
@@ -920,15 +920,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.isEmptyResult = false;
   }
 
-  handleSearch(shouldApplyProfileFilter = false, offset?: number) {
+  async handleSearch(shouldApplyProfileFilter = false, offset?: number) {
     if (offset == undefined) {
-      this.scrollToTop();
+      await this.scrollToTop();
     }
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL && !this.preAppliedFilter) {
       return;
     }
     this.showAddToGroupButtons = false;
-    this.addSearchHistoryEntry();
+    await this.addSearchHistoryEntry();
 
     this.showLoader = true;
 
@@ -1160,13 +1160,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  async init() {
+  init() {
     this.generateImpressionEvent();
     const values = new Map();
     values.from = this.source;
     this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
     if (this.dialCode !== undefined && this.dialCode.length > 0) {
-      await this.getContentForDialCode();
+      this.getContentForDialCode();
     }
 
     this.event.subscribe('search.applyFilter', (filterCriteria) => {
@@ -1176,7 +1176,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
   }
 
-  async getContentForDialCode() {
+  getContentForDialCode() {
     if (this.dialCode === undefined || this.dialCode.length === 0) {
       return;
     }
@@ -1185,9 +1185,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
-    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-      ContentFilterConfig.NAME_DIALCODE);
-    this.primaryCategories = primaryCategories;
+    this.formAndFrameworkUtilService.getSupportedContentFilterConfig(ContentFilterConfig.NAME_DIALCODE).then(categories => {
+      this.primaryCategories = categories;
+    }).catch(e => console.log(e));
 
     // Page API START
     const pageAssemblefilter: PageAssembleFilter = {};
@@ -1206,11 +1206,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
       .then((res: any) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           const sections = res.sections;
           if (sections && sections.length) {
             this.addCorRelation(sections[0].resmsgId, 'API');
-            this.processDialCodeResult(sections);
+            await this.processDialCodeResult(sections);
           }
           this.showLoader = false;
         });
@@ -1434,7 +1434,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       objectType: parent.objectType
     };
     this.contentService.getContentDetails(contentRequest).toPromise()
-      .then((data: Content) => {
+      .then(async (data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
             this.zone.run(async () => {
@@ -1446,11 +1446,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
             setTimeout(async () => {
-              await this.showContentDetails(this.childContent, false, false);
+              (async () => {
+                await this.showContentDetails(this.childContent, false, false);
+              })
             }, 400);
           }
         } else {
-          this.zone.run(async () => {
+          await this.zone.run(async () => {
             await this.showContentDetails(child);
           });
         }
@@ -1790,14 +1792,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     );
   }
 
-  searchOnFocus() {
+  async searchOnFocus() {
     this.enableSearch = true;
     this.searchInfolVisibility = 'hide';
-    this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
+    await this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
     this.appGlobalService.isDiscoverBackEnabled = true;
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
         if (this.isFromGroupFlow) {
@@ -1805,7 +1807,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         } else if(this.enableSearch) {
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
-          this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+          await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
           this.appGlobalService.isDiscoverBackEnabled = false;
         } else if (this.selectedSwitchableTab === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
           break;
@@ -1814,7 +1816,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         }
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
@@ -1870,8 +1872,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     private enableHeaderEvents(){
         if(!this.headerObservable){
-            this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-                this.handleHeaderEvents(eventName);
+            this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+              await this.handleHeaderEvents(eventName);
             });
         }
     }
@@ -1883,12 +1885,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         }
     }
 
-    tabViewWillEnter() {
+    async tabViewWillEnter() {
         if (this.isFromGroupFlow || this.searchWithBackButton) {
-            this.headerService.showHeaderWithBackButton
+            await this.headerService.showHeaderWithBackButton
             (null, this.commonUtilService.translateMessage('SEARCH_IN_APP', { 'app_name': this.appName}));
         } else {
-            this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+            await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
         }
         this.enableHeaderEvents();
     }

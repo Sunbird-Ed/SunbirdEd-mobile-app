@@ -147,18 +147,18 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         break;
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
-        this.goback();
+        await this.goback();
         break;
     }
   }
 
   private handleBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.MY_GROUP,
         Environment.GROUP,
         false);
-      this.goback();
+      await this.goback();
     });
   }
 

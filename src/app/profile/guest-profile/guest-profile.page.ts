@@ -97,14 +97,14 @@ export class GuestProfilePage implements OnInit {
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
   }
 
-  ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download']);
+  async ionViewWillEnter() {
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download']);
+    await this.headerService.showHeaderWithHomeButton(['download']);
   }
 
   ionViewWillLeave() {
@@ -146,7 +146,7 @@ export class GuestProfilePage implements OnInit {
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag([res.profileType], TagPrefixConstants.USER_ROLE, true);
-        this.segmentationTagService.evalCriteria();
+        await this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
@@ -251,9 +251,9 @@ export class GuestProfilePage implements OnInit {
     this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'download') {
-      this.redirectToActiveDownloads();
+      await this.redirectToActiveDownloads();
     }
   }
 

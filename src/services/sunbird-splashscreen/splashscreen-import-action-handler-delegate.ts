@@ -80,19 +80,18 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                       this.commonUtilService.showToast('CONTENT_IMPORTED');
                       return;
                     }
-
-                    response.forEach((contentImportResponse: ContentImportResponse) => {
+                    response.forEach(async (contentImportResponse: ContentImportResponse) => {
                       switch (contentImportResponse.status) {
                         case ContentImportStatus.ALREADY_EXIST:
-                          this.generateImportErrorTelemetry('CONTENT_ALREADY_EXIST');
+                          await this.generateImportErrorTelemetry('CONTENT_ALREADY_EXIST');
                           this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
                           throw ContentImportStatus.ALREADY_EXIST;
                         case ContentImportStatus.IMPORT_FAILED:
-                          this.generateImportErrorTelemetry('CONTENT_IMPORTED_FAILED');
+                          await this.generateImportErrorTelemetry('CONTENT_IMPORTED_FAILED');
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.IMPORT_FAILED;
                         case ContentImportStatus.NOT_FOUND:
-                          this.generateImportErrorTelemetry('NOT_FOUND');
+                          await this.generateImportErrorTelemetry('NOT_FOUND');
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.NOT_FOUND;
                       }

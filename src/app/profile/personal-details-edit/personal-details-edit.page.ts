@@ -72,14 +72,14 @@ export class PersonalDetailsEditPage implements OnInit {
 
   async ngOnInit() {
     await this.getStates();
-    this.initializeForm();
+    await this.initializeForm();
   }
 
   /**
    * Ionic life cycle event - Fires every time page visits
    */
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
   }
 
   /**

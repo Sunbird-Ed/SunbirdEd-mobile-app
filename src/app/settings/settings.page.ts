@@ -71,7 +71,7 @@ export class SettingsPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton(['font-accessibility']);
+    await this.headerService.showHeaderWithBackButton(['font-accessibility']);
     await this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
@@ -229,11 +229,9 @@ export class SettingsPage implements OnInit {
           }
         } as MergeServerProfilesRequest;
       }),
-      tap(() => {
-        (async () => {
-          loader = await this.commonUtilService.getLoader();
-          await loader.present();
-        })
+      tap(async () => {
+        loader = await this.commonUtilService.getLoader();
+        await loader.present();
       }),
       mergeMap((mergeServerProfilesRequest) => {
         return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
@@ -262,33 +260,31 @@ export class SettingsPage implements OnInit {
 
         throw e;
       }),
-      tap(() => {
-        (async () => {
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.OTHER,
-            InteractSubtype.MERGE_ACCOUNT_SUCCESS,
-            Environment.SETTINGS,
-            PageId.SETTINGS
-          );
+      tap(async () => {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.MERGE_ACCOUNT_SUCCESS,
+          Environment.SETTINGS,
+          PageId.SETTINGS
+        );
 
-          const successPopover = await this.popoverCtrl.create({
-            component: SbPopoverComponent,
-            componentProps: {
-              sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
-              icon: null,
-              actionsButtons: [
-                {
-                  btntext: this.commonUtilService.translateMessage('OKAY'),
-                  btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                },
-              ],
-              sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
-            },
-            cssClass: 'sb-popover'
-          });
+        const successPopover = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
+            icon: null,
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('OKAY'),
+                btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+              },
+            ],
+            sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
+          },
+          cssClass: 'sb-popover'
+        });
 
-          await successPopover.present();
-        })
+        await successPopover.present();
       }),
       finalize(() => {
         if (loader) {

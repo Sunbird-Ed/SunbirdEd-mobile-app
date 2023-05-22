@@ -157,8 +157,8 @@ describe('CreateEditGroupPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         setTimeout(() => {
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
                 undefined, undefined, undefined, undefined, createEditGroupPage.corRelationList);

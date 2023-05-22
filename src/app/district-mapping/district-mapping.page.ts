@@ -122,7 +122,7 @@ export class DistrictMappingPage implements OnDestroy {
     } catch (e) {
       await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
     }
-    await this.handleDeviceBackButton();
+    this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
@@ -135,7 +135,7 @@ export class DistrictMappingPage implements OnDestroy {
       PageId.DISTRICT_MAPPING,
       this.getEnvironment(), '', '', '', undefined,
       featureIdMap.location.LOCATION_CAPTURE);
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     const correlationList: Array<CorrelationData> = [];
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,

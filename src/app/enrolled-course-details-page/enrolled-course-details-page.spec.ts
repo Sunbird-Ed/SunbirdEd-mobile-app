@@ -1080,7 +1080,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_MSG_UNABLE_TO_ENROLL'));
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_MSG_UNABLE_TO_ENROLL', undefined));
                 done();
             }, 0);
         });
@@ -2446,7 +2446,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
         });
 
-        it('should be IMPORT_COMPLETED event', () => {
+        it('should be IMPORT_COMPLETED event', (done) => {
             // arrange
             const event = {
                 type: 'IMPORT_COMPLETED',
@@ -2467,12 +2467,15 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.subscribeSdkEvent();
             // assert
-            expect(enrolledCourseDetailsPage.isDownloadStarted).toBe(false);
-            expect(enrolledCourseDetailsPage.queuedIdentifiers.length).toBe(0);
-            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.isDownloadStarted).toBe(false);
+                expect(enrolledCourseDetailsPage.queuedIdentifiers.length).toBe(0);
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                done()
+            }, 0);
         });
 
-        it('should be IMPORT_COMPLETED event download not started', () => {
+        it('should be IMPORT_COMPLETED event download not started', (done) => {
             // arrange
             const event = {
                 type: 'IMPORT_COMPLETED',
@@ -2493,7 +2496,10 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.subscribeSdkEvent();
             // assert
-            expect(mockZone.run).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
         });
 
         it('should be SERVER_CONTENT_DATA event', () => {

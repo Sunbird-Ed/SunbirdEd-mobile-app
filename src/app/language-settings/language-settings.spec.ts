@@ -459,8 +459,8 @@ describe('LanguageSettingsPage', () => {
         languageSettingsPage.ionViewWillEnter();
         // assert
         expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         setTimeout(() => {
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',
@@ -498,9 +498,9 @@ describe('LanguageSettingsPage', () => {
         // act
         languageSettingsPage.ionViewWillEnter();
         // assert
-        expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         setTimeout(() => {
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',

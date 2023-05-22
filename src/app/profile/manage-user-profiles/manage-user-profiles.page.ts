@@ -79,8 +79,8 @@ export class ManageUserProfilesPage implements OnInit {
     }).catch(e => console.error(e));
   }
 
-  ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.appHeaderService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);

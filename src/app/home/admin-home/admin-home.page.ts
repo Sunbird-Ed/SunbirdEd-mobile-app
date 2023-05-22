@@ -106,18 +106,18 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     );
   }
 
-  tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+  async tabViewWillEnter() {
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe((eventName) => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async (eventName) => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   getCreateProjectForm() {
@@ -150,14 +150,10 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async getUserProfileDetails() {
-    this.profileService
-      .getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-      .subscribe(async (profile: Profile) => {
-        this.profile = profile;
-        this.getFrameworkDetails();
-        await this.fetchDisplayElements();
-        this.getCreateProjectForm();
-      });
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+    this.getFrameworkDetails();
+    await this.fetchDisplayElements();
+    this.getCreateProjectForm();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     this.appLabel = await this.commonUtilService.getAppName();
   }
@@ -282,13 +278,13 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     await this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
       default:
         console.warn('Use Proper Event name');

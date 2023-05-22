@@ -129,7 +129,7 @@ export class LearningResourcesPage {
       .getContentDetails(req)
       .toPromise()
       .then(async (data: Content) => {
-        this.navigateService.navigateToDetailPage(data, { content: data });
+        await this.navigateService.navigateToDetailPage(data, { content: data });
       });
   }
 }

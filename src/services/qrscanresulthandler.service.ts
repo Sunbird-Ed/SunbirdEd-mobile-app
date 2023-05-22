@@ -170,7 +170,7 @@ export class QRScannerResultHandler {
       contentId
     };
     this.contentService.getContentDetails(request).toPromise()
-      .then((content: Content) => {
+      .then(async (content: Content) => {
         const corRelationData: CorrelationData[] = [{
           id: CorReleationDataType.SCAN,
           type: CorReleationDataType.ACCESS_TYPE
@@ -181,7 +181,7 @@ export class QRScannerResultHandler {
             PageId.QRCodeScanner, ContentUtil.getTelemetryObject(content), corRelationData);
         }
 
-        this.navigateToDetailsPage(content,
+        await this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
@@ -281,7 +281,7 @@ export class QRScannerResultHandler {
     return corRelationList;
   }
 
-  navigateToDetailsPage(content, corRelationList) {
+  async navigateToDetailsPage(content, corRelationList) {
     const navigationExtras: NavigationExtras = {
       state: {
         content,
@@ -291,7 +291,7 @@ export class QRScannerResultHandler {
       }
     };
 
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content,
       navigationExtras.state
     );

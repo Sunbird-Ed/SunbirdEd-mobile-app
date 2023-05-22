@@ -18,7 +18,7 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
     async resolve(route: ActivatedRouteSnapshot): Promise<any> {
 
         if(await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.LANGUAGE_SETTINGS)){
-            this.navigateToUserTypeSelection();
+            await this.navigateToUserTypeSelection();
             return false;
         }
 
@@ -33,7 +33,7 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         this.guardActivated = true;
         const selectedLanguage = await this.sharedPreferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
         if (selectedLanguage) {
-            this.navigateToUserTypeSelection();
+            await this.navigateToUserTypeSelection();
             return false;
         }
         await this.splashScreenService.handleSunbirdSplashScreenActions();

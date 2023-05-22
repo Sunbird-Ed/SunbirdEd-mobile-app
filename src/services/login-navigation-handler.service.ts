@@ -56,7 +56,7 @@ export class LoginNavigationHandlerService {
 
             await this.refreshTenantData(value.slug, value.title);
 
-            this.ngZone.run(async () => {
+            await this.ngZone.run(async () => {
                 await this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
                     (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
                 await this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise();

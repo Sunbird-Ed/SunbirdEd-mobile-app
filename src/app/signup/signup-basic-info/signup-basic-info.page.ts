@@ -35,7 +35,7 @@ export class SignupBasicInfoPage implements OnInit {
 
   async ngOnInit() {
     this.appName = await this.commonUtilService.getAppName();
-    this.appHeaderService.hideHeader();
+    await this.appHeaderService.hideHeader();
     this.initiateYearSelecter();
   }
 

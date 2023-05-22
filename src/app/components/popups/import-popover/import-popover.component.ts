@@ -84,8 +84,8 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
             PageId.IMPORT_CONTENT_POPUP, undefined, undefined, undefined, undefined,
             ID.LOAD_CLICKED
           );
-        this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
-            this.zone.run(async () => {
+        this.eventSubscription = this.eventsBusService.events().subscribe(async (event: EventsBusEvent) => {
+            await this.zone.run(async () => {
                 if (event.type === ContentEventType.IMPORT_PROGRESS) {
                     this.currentCount = event.payload.currentCount;
                     this.totalCount = event.payload.totalCount;

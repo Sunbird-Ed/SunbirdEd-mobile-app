@@ -675,7 +675,7 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('extractApiResponse', () => {
-        it('should be return player response', () => {
+        it('should be return player response', (done) => {
             // arrange
             const request: Content = {
                 contentData: {
@@ -722,17 +722,20 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.extractApiResponse(request);
             // assert
-            expect(contentDetailsPage.isResumedCourse).toBeTruthy();
-            expect(mockChildContentHandler.setChildContents).toHaveBeenCalledWith(
-                contentDetailsPage.resumedCourseCardData.contentId, 0, 'do_212911645382959104165');
-            expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
-            expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
-            expect(contentDetailsPage.isChildContent).toBeTruthy();
-            expect(contentDetailsPage.streamingUrl).toBe(request.contentData.streamingUrl);
-            expect(contentDetailsPage.content.contentData.attributions).toBe('sample-1, sample-2');
+            setTimeout(() => {
+                expect(contentDetailsPage.isResumedCourse).toBeTruthy();
+                expect(mockChildContentHandler.setChildContents).toHaveBeenCalledWith(
+                    contentDetailsPage.resumedCourseCardData.contentId, 0, 'do_212911645382959104165');
+                expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
+                expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
+                expect(contentDetailsPage.isChildContent).toBeTruthy();
+                expect(contentDetailsPage.streamingUrl).toBe(request.contentData.streamingUrl);
+                expect(contentDetailsPage.content.contentData.attributions).toBe('sample-1, sample-2');
+                done();
+            }, 0);
         });
 
-        it('should not return api respone', () => {
+        it('should not return api respone', (done) => {
             // arrange
             const request: Content = {
                 contentData: {
@@ -778,9 +781,12 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.extractApiResponse(request);
             // assert
-            expect(contentDetailsPage.isResumedCourse).toBeFalsy();
-            expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
-            expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(contentDetailsPage.isResumedCourse).toBeFalsy();
+                expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
+                expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 

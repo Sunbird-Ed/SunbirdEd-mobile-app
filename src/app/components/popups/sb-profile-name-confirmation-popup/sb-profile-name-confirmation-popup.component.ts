@@ -56,17 +56,17 @@ export class ProfileNameConfirmationPopoverComponent {
   async onSubmitClick() {
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.profile.userId;
     await this.preferences.putBoolean(key, this.doNotShowAgain).toPromise().then();
-    this.closePopover({ buttonClicked: true });
+    await this.closePopover({ buttonClicked: true });
   }
 
   async closePopover(data?) {
     await this.popoverCtrl.dismiss(data);
   }
 
-  onProfilePageClick() {
+  async onProfilePageClick() {
     let payload = this.projectContent ? {code:'name',children:[]} : ''
-    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP,payload);
-    this.closePopover({ editProfileClicked: true });
+    await this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP,payload);
+    await this.closePopover({ editProfileClicked: true });
   }
 
 }

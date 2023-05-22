@@ -137,7 +137,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private popoverCtrl: PopoverController,
     private navService: NavigationService
   ) {
-    this.route.queryParams.subscribe(async params => {
+    this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
         console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
         this.uid = this.router.getCurrentNavigation().extras.state.uid;
@@ -156,7 +156,7 @@ export class ViewMoreActivityComponent implements OnInit {
         if (this.headerTitle !== this.title) {
           this.offset = 0;
           this.loadMoreBtn = true;
-          await this.mapper();
+          this.mapper();
         }
       }
     });
@@ -177,9 +177,9 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Ionic default life cycle hook
    */
-  ionViewWillEnter(): void {
-    this.zone.run(() => {
-      this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter(): Promise<void> {
+    await this.zone.run(async () => {
+      await this.headerService.showHeaderWithBackButton();
       if (this.tabBarElement) {
         this.tabBarElement.style.display = 'none';
       }
@@ -204,16 +204,17 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Search content
    */
-  async search() {
+  search() {
     this.isLoading = true;
-    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    const searchCriteria: ContentSearchCriteria = {
-      searchType: SearchType.FILTER,
-      languageCode: selectedLanguage
-    };
-    this.searchQuery.request['searchType'] = SearchType.FILTER;
-    this.searchQuery.request['offset'] = this.offset;
-    this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
+    this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(language => {
+      const selectedLanguage = language
+      const searchCriteria: ContentSearchCriteria = {
+        searchType: SearchType.FILTER,
+        languageCode: selectedLanguage
+      };
+      this.searchQuery.request['searchType'] = SearchType.FILTER;
+      this.searchQuery.request['offset'] = this.offset;
+      this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
       .then((data: ContentSearchResult) => {
         this.ngZone.run(() => {
           if (data && data.contentDataList) {
@@ -237,6 +238,7 @@ export class ViewMoreActivityComponent implements OnInit {
         console.error('Error: while fetching view more content');
         this.isLoading = false;
       });
+    }).catch();
   }
 
   /**
@@ -255,7 +257,7 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Mapper to call api based on page.Layout name
    */
-  async mapper() {
+  mapper() {
     const pageName = this.pageName;
     switch (pageName) {
       case ViewMore.PAGE_COURSE_ENROLLED:
@@ -266,16 +268,16 @@ export class ViewMoreActivityComponent implements OnInit {
 
       case ViewMore.PAGE_COURSE_POPULAR:
         this.pageType = 'popularCourses';
-        await this.search();
+        this.search();
         break;
 
       case ViewMore.PAGE_TV_PROGRAMS:
         this.pageType = 'tvPrograms';
-        await this.search();
+        this.search();
         break;
 
       default:
-        await this.search();
+        this.search();
     }
     console.log('search List =>', this.searchList);
   }
@@ -372,8 +374,8 @@ export class ViewMoreActivityComponent implements OnInit {
   }
 
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.ngZone.run(async () => {
+    this.eventSubscription = this.eventBusService.events().subscribe(async (event: EventsBusEvent) => {
+      await this.ngZone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
           this.downloadPercentage = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
@@ -452,7 +454,7 @@ export class ViewMoreActivityComponent implements OnInit {
         ImpressionType.SEARCH, params);
     }
   }
-  navigateToDetailPage(content: any): boolean {
+  async navigateToDetailPage(content: any): Promise<boolean> {
     if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       return false;
     }
@@ -467,7 +469,7 @@ export class ViewMoreActivityComponent implements OnInit {
       PageId.VIEW_MORE,
       ContentUtil.getTelemetryObject(content),
       values);
-    this.navService.navigateToDetailPage(content, { content });
+    await this.navService.navigateToDetailPage(content, { content });
   }
 
   getContentImg(content) {
@@ -606,9 +608,9 @@ export class ViewMoreActivityComponent implements OnInit {
 
     await this.zone.run(async () => {
       if (layoutName === 'enrolledCourse') {
-        this.navService.navigateToTrackableCollection({ content });
+        await this.navService.navigateToTrackableCollection({ content });
       } else {
-        this.navService.navigateToDetailPage(
+        await this.navService.navigateToDetailPage(
           content,
           { content }
         );

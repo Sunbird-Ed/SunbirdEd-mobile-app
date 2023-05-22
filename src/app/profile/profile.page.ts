@@ -232,15 +232,15 @@ export class ProfilePage implements OnInit {
     this.appName = await this.appVersion.getAppName();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.getCategories();
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton();
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton();
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton();
+    await this.headerService.showHeaderWithHomeButton();
   }
 
   ionViewWillLeave(): void {
@@ -337,7 +337,7 @@ export class ProfilePage implements OnInit {
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
                 window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-                this.segmentationTagService.evalCriteria();
+                await this.segmentationTagService.evalCriteria();
                 // *******
                 await that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
@@ -709,7 +709,7 @@ export class ProfilePage implements OnInit {
   /**
    * Navigate to the course/content details page
    */
-  navigateToDetailPage(content: any, layoutName: string, index: number): void {
+  async navigateToDetailPage(content: any, layoutName: string, index: number): Promise<void> {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (layoutName === ContentCard.LAYOUT_INPROGRESS) {
@@ -728,7 +728,7 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content,
       {
         content
@@ -764,8 +764,8 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  onEditProfileClicked() {
-    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
+  async onEditProfileClicked() {
+    await this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
   }
 
   /**
@@ -947,9 +947,9 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'download') {
-      this.redirectToActiveDownloads();
+      await this.redirectToActiveDownloads();
     }
   }
 
@@ -1050,7 +1050,7 @@ export class ProfilePage implements OnInit {
     try {
       const content = this.enrolledCourseList.find((course) => (course.courseId === training.courseId)
           && training.batch.batchId === course.batch.batchId);
-      this.navService.navigateToTrackableCollection(
+      await this.navService.navigateToTrackableCollection(
         {
           content
         }

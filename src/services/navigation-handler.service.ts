@@ -19,31 +19,31 @@ export class NavigationService {
         private events: Events
     ) { }
 
-    navigateToDetailPage(content, navExtras) {
+    async navigateToDetailPage(content, navExtras) {
         content = !content.trackable ? ((content.contentData && content.contentData.trackable) ? content.contentData : content) : content;
         if (content.trackable && content.trackable.enabled) {
             if (content.trackable.enabled === TrackingEnabled.YES) {
                 // Trackable
-                this.navigateToTrackableCollection(navExtras);
+                await this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
                 // Collection
-                this.navigateToCollection(navExtras);
+                await this.navigateToCollection(navExtras);
             } else {
                 // Content
-                this.navigateToContent(navExtras);
+                await this.navigateToContent(navExtras);
             }
         } else {
             // for backward compatibility, remove once not requried
             if (content.content ? (content.content.contentType.toLowerCase()
                 === CsContentType.COURSE.toLowerCase()) : content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
                 // Trackable
-                this.navigateToTrackableCollection(navExtras);
+                await this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
                 // Collection
-                this.navigateToCollection(navExtras);
+                await this.navigateToCollection(navExtras);
             } else {
                 // Content
-                this.navigateToContent(navExtras);
+                await this.navigateToContent(navExtras);
             }
         }
     }

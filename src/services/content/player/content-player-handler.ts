@@ -159,7 +159,7 @@ export class ContentPlayerHandler {
     async playContent(content: Content, navExtras: NavigationExtras, telemetryDetails, isCourse: boolean,
                 navigateBackToContentDetails: boolean = true, hideHeaders: boolean = true) {
         if (hideHeaders) {
-            this.appHeaderService.hideHeader();
+            await this.appHeaderService.hideHeader();
         }
         const playingContent = content;
 

@@ -302,12 +302,12 @@ export class DownloadsTabComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content) {
+  async navigateToDetailsPage(content) {
     if (content.type == 'project') {
-      this.navigateToProjectDetails(content)
+      await this.navigateToProjectDetails(content)
       return
     } else if(content.type == 'observation'){
-      this.navigateToObservationDetails(content)
+      await this.navigateToObservationDetails(content)
       return
     }
     const corRelationList: Array<CorrelationData> = [{
@@ -322,7 +322,7 @@ export class DownloadsTabComponent implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, content.identifier),
       corRelationList);
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content, { content }
     );
   }

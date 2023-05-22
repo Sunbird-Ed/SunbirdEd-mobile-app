@@ -49,11 +49,11 @@ export class ConsentPiiPopupComponent {
         };
         await this.popOverCtrl.dismiss(request);
     }
-    dontShare() {
-        this.closePopover(false);
+    async dontShare() {
+        await this.closePopover(false);
     }
-    share() {
-        this.closePopover(true);
+    async share() {
+        await this.closePopover(true);
     }
 
     converDataSrcToObject(ele) {

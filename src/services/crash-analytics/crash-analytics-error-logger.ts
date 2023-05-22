@@ -39,7 +39,7 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
             await SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
         }
 
-        super.handleError(error);
+        await super.handleError(error);
     }
 
 }

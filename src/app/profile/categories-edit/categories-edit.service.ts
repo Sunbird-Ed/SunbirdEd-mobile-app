@@ -51,9 +51,9 @@ export class CategoriesEditService {
       } catch {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         if (hasFilledLocation) {
-          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile, noOfStepsToCourseToc);
+          await this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile, noOfStepsToCourseToc);
         } else {
-          this.navigateToDistrictMapping(noOfStepsToCourseToc);
+          await this.navigateToDistrictMapping(noOfStepsToCourseToc);
         }
       }
 
@@ -63,9 +63,9 @@ export class CategoriesEditService {
       } else {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         if (hasFilledLocation || isSSOUser) {
-          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile)
+          await this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile)
         } else {
-          this.navigateToDistrictMapping();
+          await this.navigateToDistrictMapping();
         }
       }
     } else {
@@ -94,7 +94,7 @@ export class CategoriesEditService {
       });
       window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
       window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-      this.segmentationTagService.evalCriteria();
+      await this.segmentationTagService.evalCriteria();
     } catch (e) {
       console.log(e);
     }

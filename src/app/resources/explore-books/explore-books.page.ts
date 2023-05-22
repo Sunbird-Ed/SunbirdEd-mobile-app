@@ -183,7 +183,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.corRelationList);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.searchFormSubscription = this.onSearchFormChange()
       .subscribe(() => { });
 
@@ -195,7 +195,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.handleBackButton();
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     window.addEventListener('keyboardDidHide', this.showSortByButton);
     window.addEventListener('keyboardWillShow', this.hideSortByButton);
   }
@@ -327,7 +327,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     );
   }
 
-  openContent(content, index) {
+  async openContent(content, index) {
     const identifier = content.contentId || content.identifier;
     const value = new Map();
     value['identifier'] = identifier;
@@ -343,7 +343,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }
     };
 
-    this.navService.navigateToDetailPage(content, navigationExtras.state);
+    await this.navService.navigateToDetailPage(content, navigationExtras.state);
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

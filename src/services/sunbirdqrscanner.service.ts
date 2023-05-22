@@ -85,7 +85,7 @@ export class SunbirdQRScanner {
       
       this.platform.pause.pipe(
         take(1)
-      ).subscribe(() => this.stopScanner());
+      ).subscribe(async () => await this.stopScanner());
       this.generateImpressionTelemetry(source);
       this.generateStartEvent(source);
       if (this.platform.is("ios")) {
@@ -185,7 +185,7 @@ private async getProfileSettingConfig() {
     } else if (this.profile.profileType === ProfileType.STUDENT) {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
-    this.stopScanner();
+    await this.stopScanner();
     const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
     await this.router.navigate(['/tabs'], navigationExtras);
   }
@@ -208,8 +208,8 @@ private async getProfileSettingConfig() {
         swipeToClose: false
       })
       await this.qrModal.present();
-      this.qrModal.onWillDismiss().finally(() => {
-        this.stopScanner();
+      this.qrModal.onWillDismiss().finally(async () => {
+        await this.stopScanner();
       });
     }
     
@@ -217,7 +217,7 @@ private async getProfileSettingConfig() {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
           if (scannedData === 'skip') {
-            this.stopScanner();
+            await this.stopScanner();
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
               InteractSubtype.NO_QR_CODE_CLICKED,
@@ -256,7 +256,7 @@ private async getProfileSettingConfig() {
                 undefined,
                 corRelationList);
               this.generateImpressionTelemetry(source, dialCode);
-              this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
+              await this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
@@ -272,7 +272,7 @@ private async getProfileSettingConfig() {
               this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
               await this.showInvalidCodeAlert(scannedData);
             }
-            this.stopScanner();
+            await this.stopScanner();
           }
           resolve(scannedData);
         }, async (e) => {
@@ -280,7 +280,7 @@ private async getProfileSettingConfig() {
           if (this.platform.is("ios") && ["camera_access_denied", "camera_access_restricted"].includes(e)) {
             await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false)
           }
-          this.stopScanner();
+          await this.stopScanner();
         });
     });
   }

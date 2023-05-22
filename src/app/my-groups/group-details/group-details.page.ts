@@ -119,7 +119,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -154,9 +154,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.location.back();
   }
 
-  navigateToAddUserPage() {
+  async navigateToAddUserPage() {
     this.generateInteractTelemetry(InteractType.ADD_MEMBER, InteractSubtype.ADD_MEMBER_CLICKED, ID.ADD_MEMBER)
-    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
+    await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
       groupId: this.groupId,
       memberList: this.memberList,
       corRelation: this.corRelationList
@@ -296,7 +296,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.generateInteractTelemetry( InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
-        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+        await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
             corRelation: this.corRelationList
@@ -806,9 +806,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     return split[0];
   }
 
-  onActivityCardClick(event) {
+  async onActivityCardClick(event) {
     const activity = event.data;
-    this.navService.navigateToDetailPage(activity, {
+    await this.navService.navigateToDetailPage(activity, {
       content: activity,
       activityData: {
         group: this.groupDetails,
@@ -836,7 +836,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
             a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
           }
         });
-        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+        await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
           {
             supportedActivityList,
             groupId: this.groupId,
@@ -849,8 +849,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  navigateToViewMorePage(activityGroup) {
-    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
+  async navigateToViewMorePage(activityGroup) {
+    await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
       {
         isMenu: this.loggedinUser.role === 'admin',
         activityGroup,
@@ -859,14 +859,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       });
   }
 
-  onViewMoreCardClick(event: Event, activity: GroupActivity) {
+  async onViewMoreCardClick(event: Event, activity: GroupActivity) {
     const data = {
       data: {
         ...activity.activityInfo,
         type: activity.type
       }
     };
-    this.onActivityCardClick(data);
+    await this.onActivityCardClick(data);
   }
 
   onViewMoreCardMenuClick(event, activity) {

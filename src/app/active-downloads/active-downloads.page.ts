@@ -265,9 +265,9 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
-      tap(async (volumeInfo) => {
+      tap((volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          await this.presentPopupForLessStorageSpace();
+          this.presentPopupForLessStorageSpace().then().catch();
         }
       })
     ).subscribe();

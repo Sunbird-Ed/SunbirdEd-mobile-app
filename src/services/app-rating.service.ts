@@ -11,12 +11,11 @@ export class AppRatingService {
     private fileCtrl: File
   ) { }
 
-  checkInitialDate() {
-    this.preference.getString(PreferenceKey.APP_RATING_DATE).toPromise().then(res => {
-      if (!res) {
-        this.setInitialDate();
-      }
-    }).catch((e) => console.error(e));
+  async checkInitialDate() {
+    let res = await this.preference.getString(PreferenceKey.APP_RATING_DATE).toPromise()
+    if (!res) {
+      await this.setInitialDate();
+    }
   }
 
   private async setInitialDate() {
@@ -24,15 +23,13 @@ export class AppRatingService {
     await this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise();
   }
 
-  setEndStoreRate(rate) {
-    this.createFolder(rate);
+  async setEndStoreRate(rate) {
+    await this.createFolder(rate);
   }
 
-  private createFolder(rate) {
-    this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
-      .then(() => {
-        this.writeFile(rate);
-    }).catch((err) => console.error(err));
+  private async createFolder(rate) {
+    await this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
+    await this.writeFile(rate);
   }
 
   private async writeFile(rate) {

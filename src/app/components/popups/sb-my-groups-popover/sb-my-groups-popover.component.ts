@@ -64,8 +64,8 @@ export class MyGroupsPopoverComponent implements OnInit {
     await this.popOverCtrl.dismiss();
   }
 
-  getStarted() {
+  async getStarted() {
     console.log('get started clicked');
-    this.close(true);
+    await this.close(true);
   }
 }

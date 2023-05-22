@@ -331,8 +331,9 @@ export class AppGlobalService implements OnDestroy {
             }
             this.getCurrentUserProfile(eventParams);
         }
-        let result = await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
-        this.isOnBoardingCompleted = (result === 'true') ? true : false;
+        this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise().then((result) => {
+            this.isOnBoardingCompleted = (result === 'true') ? true : false;
+        }).catch(e => console.log(e))
     }
 
     private getCurrentUserProfile(eventParams?: EventParams) {

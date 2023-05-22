@@ -207,13 +207,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.navParams && this.navParams.stopScanner) {
-      setTimeout(() => {
-        this.scanner.stopScanner();
+      setTimeout(async () => {
+        await this.scanner.stopScanner();
       }, 500);
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (this.router.url === '/' + RouterLinks.PROFILE_SETTINGS) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -248,11 +248,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     // should be called everytime when entered to this page
     this.redirectToInitialRoute();
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
   }
 
-  ionViewDidEnter() {
-    this.hideOnboardingSplashScreen();
+  async ionViewDidEnter() {
+    await this.hideOnboardingSplashScreen();
   }
 
   async hideOnboardingSplashScreen() {
@@ -316,15 +316,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleDeviceBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.handleBackButton(false);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
+      await this.handleBackButton(false);
     });
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if($event.name === 'back')
     {
-      this.handleBackButton(true);
+      await this.handleBackButton(true);
     }
   }
 
@@ -607,13 +607,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
-        this.segmentationTagService.refreshSegmentTags(profile);
+        await this.segmentationTagService.refreshSegmentTags(profile);
         if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
         }
-        this.segmentationTagService.createSegmentTags(profile);
+        await this.segmentationTagService.createSegmentTags(profile);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
         await this.commonUtilService.handleToTopicBasedNotification();

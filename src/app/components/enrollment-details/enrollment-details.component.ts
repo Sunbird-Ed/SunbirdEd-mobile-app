@@ -75,7 +75,7 @@ export class EnrollmentDetailsComponent implements OnInit {
     }
 
     async resumeCourse(content: any) {
-        this.saveContentContext(content);
+        await this.saveContentContext(content);
 
         await this.close();
         this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
@@ -111,24 +111,24 @@ export class EnrollmentDetailsComponent implements OnInit {
             pageId: PageId.COURSE_BATCHES,
             courseId: this.courseId
         };
-        this.localCourseService.enrollIntoBatch(enrollCourse, undefined, this.content).toPromise()
-            .then((data: any) => {
-                this.zone.run(async () => {
-                    this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.content));
-                    this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-                        batchId: batch.id,
-                        courseId: batch.courseId
-                    });
-                    loader.dismiss();
-                    await this.popOverCtrl.dismiss({ isEnrolled: true, batchId: batch.id, courseId: batch.courseId });
-                    this.navigateToDetailPage(this.content);
+        try {
+            await this.localCourseService.enrollIntoBatch(enrollCourse, undefined, this.content).toPromise()
+            await this.zone.run(async () => {
+                this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.content));
+                this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+                    batchId: batch.id,
+                    courseId: batch.courseId
                 });
-            }, (error) => {
                 loader.dismiss();
+                await this.popOverCtrl.dismiss({ isEnrolled: true, batchId: batch.id, courseId: batch.courseId });
+                await this.navigateToDetailPage(this.content);
             });
+        } catch(error) {
+            loader.dismiss();
+        };
     }
 
-    navigateToDetailPage(content: any, layoutName?: string): void {
+    async navigateToDetailPage(content: any, layoutName?: string): Promise<void> {
         const identifier = content.contentId || content.identifier;
         let telemetryObject;
         if (layoutName === this.layoutInProgress) {
@@ -148,7 +148,7 @@ export class EnrollmentDetailsComponent implements OnInit {
             telemetryObject,
             values
         );
-        this.navService.navigateToDetailPage(content, { content });
+        await this.navService.navigateToDetailPage(content, { content });
     }
 
 }

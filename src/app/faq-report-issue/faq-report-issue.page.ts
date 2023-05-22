@@ -130,7 +130,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.formContext = this.router.getCurrentNavigation().extras.state.formCnotext;
       this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation || [];
       if (this.router.getCurrentNavigation().extras.state.showHeader) {
-        this.headerService.showHeaderWithBackButton();
+        this.headerService.showHeaderWithBackButton;
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
           this.handleHeaderEvents(eventName);
         });
@@ -188,8 +188,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         console.log('AppName', this.appName);
       }
     ).catch(e => console.error(e));
-    this.messageListener = (event) => {
-      this.receiveMessage(event);
+    this.messageListener = async (event) => {
+      await this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -323,11 +323,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
     if (this.formValues) {
       if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.subcategory)) {
-        this.takeAction(this.callToAction[this.formValues.subcategory]);
+        await this.takeAction(this.callToAction[this.formValues.subcategory]);
       } else if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.category)) {
-        this.takeAction(this.callToAction[this.formValues.category]);
+        await this.takeAction(this.callToAction[this.formValues.category]);
       } else {
-        this.takeAction();
+        await this.takeAction();
       }
     }
 
@@ -538,27 +538,28 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const correlationlist: Array<CorrelationData> = this.prepareTelemetryCorrelation();
-
+    let status;
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, undefined);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
     }).subscribe(async (syncStat: TelemetrySyncStat) => {
-      await that.zone.run(async () => {
-        if (syncStat.error) {
-          await loader.dismiss();
-          return;
-        } else if (!syncStat.syncedEventCount) {
-          await loader.dismiss();
-          return;
-        }
-
-        this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize, correlationlist);
-        await loader.dismiss();
-      });
+      status = syncStat
     }, async (error) => {
       await loader.dismiss();
       console.error('Telemetry Data Sync Error: ', error);
+    });
+    await that.zone.run(async () => {
+      if (status.error) {
+        await loader.dismiss();
+        return;
+      } else if (!status.syncedEventCount) {
+        await loader.dismiss();
+        return;
+      }
+
+      this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, status.syncedFileSize, correlationlist);
+      await loader.dismiss();
     });
   }
 

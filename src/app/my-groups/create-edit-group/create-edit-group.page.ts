@@ -62,7 +62,7 @@ export class CreateEditGroupPage {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
 
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);

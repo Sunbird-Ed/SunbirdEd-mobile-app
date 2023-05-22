@@ -103,7 +103,7 @@ export class PermissionComponent implements OnInit {
       this.showTabsPage = Boolean(this.navParams.showTabsPage);
     }
 
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.event.subscribe('event:showScanner', async (data) => {
       if (data.pageName === PageId.PERMISSION) {
         await this.scannerService.startScanner(PageId.PERMISSION, true);

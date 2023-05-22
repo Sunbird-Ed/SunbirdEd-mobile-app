@@ -269,7 +269,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.nextContentToBePlayed = extras.content;
       this.playerType = extras.mimeType === 'video/mp4' && !this.content.contentData["interceptionPoints"] ? 'sunbird-video-player' : undefined;
-      this.checkLimitedContentSharingFlag(extras.content);
+      await this.checkLimitedContentSharingFlag(extras.content);
       if (this.content && this.content.mimeType === 'application/vnd.sunbird.questionset' && !extras.content) {
         await this.getContentState();
       }
@@ -292,7 +292,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.subscribeEvents();
+    await this.subscribeEvents();
     this.appLists = await this.formFrameworkUtilService.getFormFields(FormConstants.VENDOR_APPS_CONFIG);
     this.appLists = this.appLists.filter((appData) => {
       if (appData.target.mimeType &&
@@ -318,11 +318,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async subscribeEvents() {
     // DEEPLINK_CONTENT_PAGE_OPEN is used to refresh the contend details on external deeplink clicked
-    this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, (data) => {
+    this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, async (data) => {
       if (data && data.content) {
         this.ratingHandler.resetRating();
         this.autoPlayQuizContent = data.autoPlayQuizContent || false;
-        this.checkLimitedContentSharingFlag(data.content);
+        await this.checkLimitedContentSharingFlag(data.content);
       }
     });
     this.appName = await this.appVersion.getAppName();
@@ -369,7 +369,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   async ionViewWillEnter() {
     this.headerService.hideStatusBar();
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
@@ -422,7 +422,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
-    this.popToPreviousPage(true);
+    await this.popToPreviousPage(true);
   }
 
   handleDeviceBackButton() {
@@ -443,9 +443,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   subscribePlayEvent() {
-    this.events.subscribe('playConfig', (config) => {
+    this.events.subscribe('playConfig', async (config) => {
       this.appGlobalService.setSelectedUser(config['selectedUser']);
-      this.playContent(config.streaming);
+      await this.playContent(config.streaming);
     });
   }
 
@@ -498,7 +498,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           if(this.cardData && this.cardData.hierachyInfo) {
             await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
           }
-          this.extractApiResponse(data);
+          await this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
           }
@@ -545,7 +545,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async extractApiResponse(data: Content) {
-    this.checkLimitedContentSharingFlag(data);
+    await this.checkLimitedContentSharingFlag(data);
 
     if (this.isResumedCourse) {
       const parentIdentifier = this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
@@ -633,7 +633,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
        if (data && data.hierarchyInfo) {
         await this.getNextContent(data.hierarchyInfo, data.identifier);
        }
-       this.playContent(true, true);
+       await this.playContent(true, true);
     }
   }
 
@@ -832,8 +832,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Subscribe Sunbird-SDK event to get content download progress
    */
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.zone.run(async () => {
+    this.eventSubscription = this.eventBusService.events().subscribe(async (event: EventsBusEvent) => {
+      await this.zone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
           if (downloadEvent.payload.identifier === this.content.identifier) {
@@ -1096,7 +1096,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup && !this.limitedShareContentFlag) {
           await this.openPlayAsPopup(isStreaming);
         } else {
-          this.playContent(isStreaming);
+          await this.playContent(isStreaming);
         }
       } else {
         this.downloadContent();
@@ -1110,7 +1110,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           Environment.ONBOARDING
         );
       }
-      this.playContent(isStreaming);
+      await this.playContent(isStreaming);
     }
   }
 
@@ -1161,7 +1161,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       return;
     }
     if (data && data.isLeftButtonClicked) {
-      this.playContent(isStreaming);
+      await this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
     }
   }
@@ -1298,7 +1298,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
     } else if (event.type === 'ended') {
       this.isContentPlayed = true;
-      this.rateContent('manual');
+      await this.rateContent('manual');
     } else if (event.type === 'REPLAY') {
       this.isPlayerPlaying = true;
     }
@@ -1693,18 +1693,18 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       await newThemePopover.present();
   }
 
-  async markContent() {
+  markContent() {
     const addContentAccessRequest: ContentAccess = {
       status: ContentAccessStatus.PLAYED,
       contentId: this.identifier,
       contentType: this.content.contentType
     };
     const profile: Profile = this.appGlobalService.getCurrentUser();
-    await this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
+    this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
       if (data) {
         this.events.publish(EventTopics.LAST_ACCESS_ON, true);
       }
-    });
+    }).catch(e => console.log(e));
     const contentMarkerRequest: ContentMarkerRequest = {
       uid: profile.uid,
       contentId: this.identifier,
@@ -1713,6 +1713,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       isMarked: true,
       extraInfo: {}
     };
-    await this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
+    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then().catch(e => console.log(e));
   }
 }

@@ -297,15 +297,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         await this.qrScanner.startScanner(PageId.LIBRARY, false);
       }
     });
-    this.events.subscribe('onAfterLanguageChange:update', (res) => {
+    this.events.subscribe('onAfterLanguageChange:update', async (res) => {
       if (res && res.selectedLanguage) {
         this.selectedLanguage = res.selectedLanguage;
-        this.getPopularContent(true);
+        await this.getPopularContent(true);
       }
     });
 
-    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
-      this.swipeDownToRefresh(false, true);
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, async () => {
+      await this.swipeDownToRefresh(false, true);
     });
 
     // Event for optional and forceful upgrade
@@ -326,13 +326,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         Environment.ONBOARDING
       );
     }
-    this.getCurrentUser();
+    await this.getCurrentUser();
     this.initNetworkDetection();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
     await this.appNotificationService.handleNotification();
 
     this.events.subscribe(EventTopics.TAB_CHANGE, async (data: string) => {
-      this.scrollToTop();
+      await this.scrollToTop();
       if (data === '') {
         await this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
@@ -588,22 +588,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    await this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
 
     this.getCategoryData();
 
-    this.getCurrentUser();
+    await this.getCurrentUser();
 
     await this.getChannelId();
 
     if (!this.pageLoadedSuccess) {
-      this.getPopularContent();
+      await this.getPopularContent();
     }
     this.subscribeSdkEvent();
 
@@ -628,10 +628,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventsBusService.events().subscribe(async (event: EventsBusEvent) => {
-      if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-        await this.getLocalContent();
-      }
+    this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
+      (async () => {
+        if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
+          await this.getLocalContent();
+        }
+      })
     }) as any;
   }
 
@@ -639,13 +641,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.refresh = true;
     this.storyAndWorksheets = [];
 
-    this.getCurrentUser();
+    await this.getCurrentUser();
     if (refresher) {
       refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
       await this.getGroupByPage(false);
     } else {
-      this.getPopularContent(false, null);
+      await this.getPopularContent(false, null);
     }
   }
 
@@ -703,14 +705,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
-      .then((res: CategoryTerm[]) => {
+      .then(async (res: CategoryTerm[]) => {
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
-        this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
+        await this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
       }).catch(e => console.error(e));
   }
 
-  arrangeMediumsByUserData(categoryMediumsParam) {
+  async arrangeMediumsByUserData(categoryMediumsParam) {
     if (this.appGlobalService.getCurrentUser() &&
       this.appGlobalService.getCurrentUser().medium &&
       this.appGlobalService.getCurrentUser().medium.length) {
@@ -725,11 +727,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       this.categoryMediumNamesArray = categoryMediumsParam;
       if (this.searchGroupingContents && this.searchGroupingContents.combination.medium) {
         const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
-        this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
+        await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
           if ((this.getGroupByPageReq.medium[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
-            this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+            await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
           }
         }
       }
@@ -744,17 +746,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
-      .then((res: CategoryTerm[]) => {
+      .then(async (res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
         if (this.searchGroupingContents && this.searchGroupingContents.combination.gradeLevel) {
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
-          this.classClickHandler(indexOfselectedClass);
+          await this.classClickHandler(indexOfselectedClass);
         } else {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
             if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
-              this.classClickHandler(i);
+              await this.classClickHandler(i);
             }
           }
         }
@@ -785,8 +787,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       values);
   }
 
-  classClickEvent(event, isClassClicked?: boolean) {
-    this.classClickHandler(event.data.index, isClassClicked);
+  async classClickEvent(event, isClassClicked?: boolean) {
+    await this.classClickHandler(event.data.index, isClassClicked);
   }
 
   async classClickHandler(index, isClassClicked?: boolean) {
@@ -823,8 +825,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
   }
 
-  mediumClickEvent(event, isMediumClicked?: boolean) {
-    this.mediumClickHandler(event.data.index, event.data.text, isMediumClicked);
+  async mediumClickEvent(event, isMediumClicked?: boolean) {
+    await this.mediumClickHandler(event.data.index, event.data.text, isMediumClicked);
   }
 
   async mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
@@ -868,7 +870,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
+      await this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
       await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
@@ -903,10 +905,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         await this.search();
         break;
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
       // case 'information':
       //   this.appTutorialScreen();
@@ -1116,7 +1118,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         corRelationList
       );
       console.log('Content Data', event);
-      this.navService.navigateToTrackableCollection(
+      await this.navService.navigateToTrackableCollection(
         {
           content: event.data.contents[0],
           corRelation: corRelationList
@@ -1220,8 +1222,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     await router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
 
-  tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+  async tabViewWillEnter() {
+    await this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
   }
 
   onScroll(event: any) {}

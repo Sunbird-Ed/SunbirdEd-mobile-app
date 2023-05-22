@@ -43,7 +43,7 @@ export class NotificationItemComponent {
     });
 
     this.notificationDelegate.notificationId = this.itemData.id || '';
-    this.notificationDelegate.setNotificationParams(this.itemData);
+    await this.notificationDelegate.setNotificationParams(this.itemData);
     await this.notificationDelegate.handleNotification();
   }
 }

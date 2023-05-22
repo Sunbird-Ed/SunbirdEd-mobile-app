@@ -146,9 +146,9 @@ export class PageFilterOptionsPage {
     await this.viewCtrl.dismiss();
   }
 
-  apply() {
+  async apply() {
     this.prevSelectedTopic = [...this.facets.selected];
-    this.confirm();
+    await this.confirm();
   }
 
 }

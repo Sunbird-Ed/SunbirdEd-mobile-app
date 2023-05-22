@@ -35,7 +35,7 @@ export class OtpPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
     if (this.userData?.contactInfo?.phone) {
-      this.contactNumber = (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, '*')
+      this.contactNumber = (this.userData.contactInfo.phone).replace(/\d(?=\d{4})/g, '*')
     } else {
       this.contactNumber = this.userData?.contactInfo?.email;
     }

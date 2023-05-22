@@ -170,7 +170,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   async ionViewWillEnter() {
     this.downloadIdentifiers = new Set();
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     await this.subscribeUtilityEvents();
     this.subscribeSdkEvent();
@@ -306,31 +306,33 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async getBatchDetails() {
+    let res;
     if (this.courseContent && this.courseContent.batchId) {
       this.courseService.getBatchDetails({ batchId: this.courseContent.batchId }).toPromise()
         .then((data: Batch) => {
-          this.zone.run(() => {
-            if (!data) {
-              return;
-            }
-            this.batchDetails = data;
-            if (data.cert_templates && Object.keys(data.cert_templates).length) {
-              this.isCertifiedCourse = true;
-            } else {
-              this.isCertifiedCourse = false;
-            }
-            if (this.batchDetails.status === 2) {
-              this.batchExp = true;
-            } else if (this.batchDetails.status === 0) {
-              this.isBatchNotStarted = true;
-              this.courseStartDate = this.batchDetails.startDate;
-            }
-            this.saveContentContext(this.appGlobalService.getUserId(),
-              this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
-          });
-        }).catch((err) => {
-          this.saveContentContext(this.appGlobalService.getUserId(),
-            this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
+          res = data
+        }).catch(async (err) => {
+          await this.saveContentContext(this.appGlobalService.getUserId(),
+          this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
+        });
+        await this.zone.run(async () => {
+          if (!res) {
+            return;
+          }
+          this.batchDetails = res;
+          if (res.cert_templates && Object.keys(res.cert_templates).length) {
+            this.isCertifiedCourse = true;
+          } else {
+            this.isCertifiedCourse = false;
+          }
+          if (this.batchDetails.status === 2) {
+            this.batchExp = true;
+          } else if (this.batchDetails.status === 0) {
+            this.isBatchNotStarted = true;
+            this.courseStartDate = this.batchDetails.startDate;
+          }
+          await this.saveContentContext(this.appGlobalService.getUserId(),
+            this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
         });
     }
   }
@@ -479,7 +481,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         return;
       }
 
-      this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(firstChild, 1), telemetryDetails, true);
+      await this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(firstChild, 1), telemetryDetails, true);
     } else if (!this.childContents || !this.childContents.length) {
       this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
     } else {
@@ -515,7 +517,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
-      this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
+      await this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
     } else {
       await this.startLearning();
     }
@@ -588,7 +590,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
               this.datePipe.transform(this.courseStartDate, 'mediumDate')));
           } else {
-            this.navigateToChildrenDetailsPage(event.data, 1);
+            await this.navigateToChildrenDetailsPage(event.data, 1);
           }
         }
       }
@@ -874,7 +876,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.isDownloadStarted = true;
         this.showCollapsedPopup = false;
         this.events.publish('header:decreasezIndex');
-        this.importContent(this.downloadIdentifiers, true, true);
+        await this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
       }
@@ -900,7 +902,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     return requestParams;
   }
 
-  importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
+  async importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
+    let res;
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
@@ -908,40 +911,41 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     };
     console.log('ContentImportRequest', option);
     this.contentService.importContent(option).toPromise()
-      .then((data: ContentImportResponse[]) => {
-        this.zone.run(() => {
-          if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
-            this.headerService.showHeaderWithBackButton();
-          }
-          if (data && data.length && this.isDownloadStarted) {
-            data.forEach((value) => {
-              if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
-                this.queuedIdentifiers.push(value.identifier);
-              } else if (value.status === ContentImportStatus.NOT_FOUND) {
-                this.faultyIdentifiers.push(value.identifier);
-              }
-            });
-
-            if (this.queuedIdentifiers.length === 0) {
-            }
-            if (this.faultyIdentifiers.length > 0) {
-              const stackTrace: any = {};
-              stackTrace.parentIdentifier = this.courseContentData.identifier;
-              stackTrace.faultyIdentifiers = this.faultyIdentifiers;
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
-            }
-          }
-        });
-      })
-      .catch((error) => {
-        this.zone.run(() => {
-          if (error && error.error === 'NETWORK_ERROR') {
-            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-          } else {
-            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
-          }
-        });
+    .then((data: ContentImportResponse[]) => {
+      res = data
+    })
+    .catch((error) => {
+      this.zone.run(() => {
+        if (error && error.error === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+        } else {
+          this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+        }
       });
+    });
+    await this.zone.run(async () => {
+      if (res && res[0].status === ContentImportStatus.NOT_FOUND) {
+        await this.headerService.showHeaderWithBackButton();
+      }
+      if (res && res.length && this.isDownloadStarted) {
+        res.forEach((value) => {
+          if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
+            this.queuedIdentifiers.push(value.identifier);
+          } else if (value.status === ContentImportStatus.NOT_FOUND) {
+            this.faultyIdentifiers.push(value.identifier);
+          }
+        });
+
+        if (this.queuedIdentifiers.length === 0) {
+        }
+        if (this.faultyIdentifiers.length > 0) {
+          const stackTrace: any = {};
+          stackTrace.parentIdentifier = this.courseContentData.identifier;
+          stackTrace.faultyIdentifiers = this.faultyIdentifiers;
+          this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+        }
+      }
+    });
   }
 
   /**
@@ -949,8 +953,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
    */
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events()
-      .subscribe((event: EventsBusEvent) => {
-        this.zone.run(async () => {
+      .subscribe(async (event: EventsBusEvent) => {
+        await this.zone.run(async () => {
           // Show download percentage
           if (event.type === DownloadEventType.PROGRESS) {
             const downloadEvent = event as DownloadProgress;
@@ -959,14 +963,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
               if (this.downloadProgress === 100) {
                 await this.getBatchDetails();
-                this.headerService.showHeaderWithBackButton();
+                await this.headerService.showHeaderWithBackButton();
               }
             }
           }
 
           // Get child content
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-            this.headerService.showHeaderWithBackButton();
+            await this.headerService.showHeaderWithBackButton();
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
               if (this.queuedIdentifiers.includes(contentImportCompleted.payload.contentId)) {
@@ -1000,8 +1004,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
           if (contentUpdateEvent.payload && contentUpdateEvent.payload.contentId === this.courseContentData.identifier &&
             contentUpdateEvent.type === ContentEventType.UPDATE
             && hierarchyInfo === null) {
-            this.zone.run(() => {
-              this.headerService.hideHeader();
+            await this.zone.run(async () => {
+              await this.headerService.hideHeader();
             });
           }
 

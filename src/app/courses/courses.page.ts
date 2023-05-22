@@ -212,16 +212,16 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.events.unsubscribe(EventTopics.SIGN_IN_RELOAD);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.refresher.disabled = false;
     this.isVisible = true;
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['search', 'download']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download']);
+    await this.headerService.showHeaderWithHomeButton(['search', 'download']);
   }
 
   async ionViewDidEnter() {
@@ -288,9 +288,9 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.onBoardingProgress = progress.cardProgress;
     });
 
-    this.events.subscribe('course:resume', (data) => {
+    this.events.subscribe('course:resume', async (data) => {
       this.resumeContentData = data.content;
-      this.getContentDetails(data.content);
+      await this.getContentDetails(data.content);
     });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
@@ -306,8 +306,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       }
     });
 
-    this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, () => {
-      this.ngZone.run(async () => {
+    this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, async () => {
+      await this.ngZone.run(async () => {
         await this.getAggregatorResult();
       });
     });
@@ -435,8 +435,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     const that = this;
 
     this.pageFilterCallBack = {
-      applyFilter(filter, appliedFilter, isChecked) {
-        that.ngZone.run(async () => {
+      async applyFilter(filter, appliedFilter, isChecked) {
+        await that.ngZone.run(async () => {
           const criteria: PageAssembleCriteria = {
             name: PageName.COURSE,
             source: 'app'
@@ -569,7 +569,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  getContentDetails(content) {
+  async getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
     this.corRelationList = [
       {
@@ -582,26 +582,26 @@ export class CoursesPage implements OnInit, OnDestroy {
       objectType: content.objectType,
       emitUpdateIfAny: false
     };
-    this.contentService.getContentDetails(request).toPromise()
-      .then((data: Content) => {
+    try {
+      let data: Content = await this.contentService.getContentDetails(request).toPromise()
         if (data && data.isAvailableLocally) {
           if (data.contentData.pkgVersion < content.content.pkgVersion) {
             this.contentDetailsImportCall(identifier);
           } else {
             this.showOverlay = false;
-            this.navigateToContentDetailsPage(content);
+            await this.navigateToContentDetailsPage(content);
           }
         } else {
           this.contentDetailsImportCall(identifier);
         }
-      })
-      .catch((err) => {
+      }
+      catch(err) {
         if (NetworkError.isInstance(err)) {
           this.commonUtilService.showToast('NO_INTERNET');
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         }
-      });
+      }
   }
 
   private contentDetailsImportCall(identifier) {
@@ -716,8 +716,8 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   private subscribeSdkEvent() {
-    this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.ngZone.run(() => {
+    this.eventSubscription = this.eventBusService.events().subscribe(async (event: EventsBusEvent) => {
+      await this.ngZone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
           this.downloadPercentage = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
@@ -725,7 +725,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED && this.downloadPercentage === 100) {
           this.showOverlay = false;
-          this.navigateToContentDetailsPage(this.resumeContentData);
+          await this.navigateToContentDetailsPage(this.resumeContentData);
         }
       });
     }) as any;
@@ -751,10 +751,10 @@ export class CoursesPage implements OnInit, OnDestroy {
         await this.search();
         break;
       case 'filter':
-        this.showFilter();
+        await this.showFilter();
         break;
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
     }
   }
@@ -915,18 +915,18 @@ export class CoursesPage implements OnInit, OnDestroy {
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
     if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || ContentUtil.isTrackable(content) === 1) {
-      this.navService.navigateToTrackableCollection({
+      await this.navService.navigateToTrackableCollection({
         content,
         isCourse: true,
         corRelation: corRelationList
       });
     } else if (content.mimeType === MimeType.COLLECTION) {
-      this.navService.navigateToCollection({
+      await this.navService.navigateToCollection({
         content,
         corRelation: corRelationList
       });
     } else {
-      this.navService.navigateToContent({
+      await this.navService.navigateToContent({
         content,
         isCourse: true,
         corRelation: corRelationList

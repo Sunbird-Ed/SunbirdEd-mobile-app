@@ -156,8 +156,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();
                     this.subscriptions.push(
-                        facetFilterControl.valueChanges.subscribe(async (v) => {
-                            await this.onPrimaryFacetFilterSelect(filter, v);
+                        facetFilterControl.valueChanges.subscribe((v) => {
+                            this.onPrimaryFacetFilterSelect(filter, v).then(() => {}).catch();
                         })
                     );
                     acc.addControl(filter.code, facetFilterControl);
@@ -189,7 +189,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async ionViewWillEnter() {
-        this.appHeaderService.showHeaderWithBackButton();
+        await this.appHeaderService.showHeaderWithBackButton();
 
         const corRelationList: Array<CorrelationData> = [];
         corRelationList.push({ id: this.formField.facet, type: CorReleationDataType.FORM_PAGE });
@@ -315,14 +315,14 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
                 this.filterPillList = [];
-                setTimeout(async () => {
+                setTimeout(() => {
                     this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
                     if (this.filterPillList.length) {
                         this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
                         if (this.filterPillList.length === 1) {
                             this.selectedFilterPill = this.filterPillList[0];
                         } else {
-                            await this.pillFilterHandler(this.filterPillList[0]);
+                            this.pillFilterHandler(this.filterPillList[0]).then(() => {}).catch();
                         }
                     }
                 }, 0);
@@ -459,7 +459,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             ContentUtil.generateRollUp(undefined, identifier),
             this.corRelationList);
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-            this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
+            await this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
             await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
         }

@@ -365,9 +365,9 @@ export class CollectionDetailEtbPage implements OnInit {
   async ionViewWillEnter() {
     await this.headerService.showStatusBar();
     this.registerDeviceBackButton();
-    this.zone.run(async () => {
-      this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-        this.handleHeaderEvents(eventName);
+    await this.zone.run(async () => {
+      this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+        await this.handleHeaderEvents(eventName);
       });
       this.headerConfig = this.headerService.getDefaultPageConfig();
       this.headerConfig.actionButtons = ['download'];
@@ -379,8 +379,8 @@ export class CollectionDetailEtbPage implements OnInit {
       this.assignCardData();
       this.resetVariables();
       await this.setContentDetails(this.identifier, true);
-      this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
-        this.playContent(data);
+      this.events.subscribe(EventTopics.CONTENT_TO_PLAY, async (data) => {
+        await this.playContent(data);
       });
       this.subscribeSdkEvent();
     });
@@ -388,15 +388,15 @@ export class CollectionDetailEtbPage implements OnInit {
       this.scrollPosition = event['scrollTop'];
     });
 
-    this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, (data) => {
+    this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, async (data) => {
       if (data.content) {
-        this.refreshContentDetails(data);
+        await this.refreshContentDetails(data);
       }
     });
     this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
       console.log('Next Content', data);
       this.content = data.content;
-      this.playContent(data);
+      await this.playContent(data);
       setTimeout(() => {
         this.contentPlayerHandler.setLastPlayedContentId('');
       }, 1000);
@@ -434,7 +434,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.commonUtilService.openUrlInBrowser(url);
   }
 
-  async markContent() {
+  markContent() {
     const addContentAccessRequest: ContentAccess = {
       status: ContentAccessStatus.PLAYED,
       contentId: this.identifier,
@@ -456,7 +456,7 @@ export class CollectionDetailEtbPage implements OnInit {
       isMarked: true,
       extraInfo: {}
     };
-    await this.contentService.setContentMarker(contentMarkerRequest).toPromise();
+    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then().catch();
   }
 
   // toggle the card
@@ -528,12 +528,12 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   registerDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
         false, this.cardData.identifier, this.corRelationList);
       this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
           false, this.cardData.identifier, this.corRelationList);
-      this.handleBackButton();
+      await this.handleBackButton();
     });
   }
 
@@ -550,7 +550,7 @@ export class CollectionDetailEtbPage implements OnInit {
       emitUpdateIfAny: refreshContentDetails
     };
     this.contentService.getContentDetails(option).toPromise()
-      .then((data: Content | any) => {
+      .then(async (data: Content | any) => {
         if (data) {
           this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
           if (data.contentData.attributions && data.contentData.attributions.length) {
@@ -598,7 +598,7 @@ export class CollectionDetailEtbPage implements OnInit {
               }).catch(() => {
                 this.showSheenAnimation = false;
               });
-            this.importContentInBackground([this.identifier], false);
+            await this.importContentInBackground([this.identifier], false);
           } else {
             this.showSheenAnimation = false;
             this.extractApiResponse(data);
@@ -695,9 +695,9 @@ export class CollectionDetailEtbPage implements OnInit {
    *
    * @param  identifiers contains list of content identifier(s)
    */
-  importContent(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
+  async importContent(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
     if (this.showLoading && !this.isDownloadStarted) {
-      this.headerService.hideHeader();
+      await this.headerService.hideHeader();
     }
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
@@ -796,8 +796,8 @@ export class CollectionDetailEtbPage implements OnInit {
     const hierarchyInfo = this.cardData.hierarchyInfo ? this.cardData.hierarchyInfo : null;
     const option = { contentId: this.identifier, hierarchyInfo }; 
     this.contentService.getChildContents(option).toPromise()
-      .then((data: Content) => {
-        this.zone.run(async () => {
+      .then(async (data: Content) => {
+        await this.zone.run(async () => {
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
@@ -887,16 +887,16 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
 
-  navigateToDetailsPage(content: any, depth, corRelationData?) {
+  async navigateToDetailsPage(content: any, depth, corRelationData?) {
     const corRelationList = [...this.corRelationList];
     if (corRelationData) {
       corRelationList.push(corRelationData);
     }
-    this.zone.run(() => {
+    await this.zone.run(async () => {
       switch (ContentUtil.isTrackable(content)) {
         case 1:
         case 0:
-          this.navService.navigateToTrackableCollection({
+          await this.navService.navigateToTrackableCollection({
             content,
             depth,
             contentState: this.stateData,
@@ -904,7 +904,7 @@ export class CollectionDetailEtbPage implements OnInit {
           });
           break;
         case -1:
-          this.navService.navigateToContent({
+          await this.navService.navigateToContent({
             isChildContent: true,
             content,
             depth,
@@ -940,8 +940,8 @@ export class CollectionDetailEtbPage implements OnInit {
    * Subscribe Sunbird-SDK event to get content download progress
    */
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      this.zone.run(async () => {
+    this.eventSubscription = this.eventBusService.events().subscribe(async (event: EventsBusEvent) => {
+      await this.zone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
           const downloadEvent = event as DownloadProgress;
 
@@ -1026,7 +1026,7 @@ export class CollectionDetailEtbPage implements OnInit {
         const hierarchyInfo = this.cardData.hierarchyInfo ? this.cardData.hierarchyInfo : null;
         const contentUpdateEvent = event as ContentUpdate;
         if (contentUpdateEvent.type === ContentEventType.UPDATE && hierarchyInfo === null) {
-          this.zone.run(async () => {
+          await this.zone.run(async () => {
             if (this.parentContent) {
               const parentIdentifier = this.parentContent.contentId || this.parentContent.identifier;
               this.showLoading = true;
@@ -1293,17 +1293,17 @@ export class CollectionDetailEtbPage implements OnInit {
     this.events.publish('header:setzIndexToNormal');
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
           true, this.cardData.identifier, this.corRelationList);
           this.telemetryGeneratorService.generateBackClickedTelemetry(this.pageId, Environment.HOME,
             true, this.cardData.identifier, this.corRelationList);
-        this.handleBackButton();
+        await this.handleBackButton();
         break;
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
     }
   }
@@ -1355,10 +1355,10 @@ export class CollectionDetailEtbPage implements OnInit {
         this.corRelationList);
   }
 
-  openTextbookToc() {
+  async openTextbookToc() {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
-    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+    await this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
       { childrenData: this.childrenData, parentId: this.identifier });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -1431,9 +1431,9 @@ export class CollectionDetailEtbPage implements OnInit {
     (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
 
-  importContentInBackground(identifiers: Array<string>, isChild: boolean) {
+  async importContentInBackground(identifiers: Array<string>, isChild: boolean) {
     if (this.showLoading && !this.isDownloadStarted) {
-      this.headerService.hideHeader();
+      await this.headerService.hideHeader();
     }
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
@@ -1493,7 +1493,7 @@ export class CollectionDetailEtbPage implements OnInit {
       });
   }
 
-  playContent(event, corRelationData?) {
+  async playContent(event, corRelationData?) {
     const corRelationList = [...this.corRelationList];
     if (corRelationData) {
       corRelationList.push(corRelationData);
@@ -1515,11 +1515,11 @@ export class CollectionDetailEtbPage implements OnInit {
       }
     };
 
-    this.contentPlayerHandler.playContent(event.content, navExtras, telemetryDetails, false);
+    await this.contentPlayerHandler.playContent(event.content, navExtras, telemetryDetails, false);
 
   }
 
-  tocCardClick(event) {
+  async tocCardClick(event) {
     if (!(event.event instanceof Event)) {
       return;
     }
@@ -1531,7 +1531,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.setActiveContentData(event, InteractSubtype.CONTENT_CLICKED, corRelationData);
 
-    this.navigateToDetailsPage(event.data, 1, corRelationData);
+    await this.navigateToDetailsPage(event.data, 1, corRelationData);
   }
 
   playButtonClick(event) {

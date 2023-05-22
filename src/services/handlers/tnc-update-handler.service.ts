@@ -320,7 +320,7 @@ export class TncUpdateHandlerService {
       .then(async (custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
-          this.navigateToDistrictMapping();
+          await this.navigateToDistrictMapping();
         } else {
           if (!(await this.isSSOUser(userDetails))) {
             await this.appGlobalService.showYearOfBirthPopup(userDetails.serverProfile);

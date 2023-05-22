@@ -165,11 +165,11 @@ export class CollectionChildComponent implements OnInit {
                 breadCrumb: this.breadCrumb
               }
             };
-            this.navService.navigateToCollection(collectionDetailsParams.state);
+            await this.navService.navigateToCollection(collectionDetailsParams.state);
           }
 
           else{
-            const goToContentDetails = () => {
+            const goToContentDetails = async () => {
               this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
               this.telemetryService.generateInteractTelemetry(
@@ -190,7 +190,7 @@ export class CollectionChildComponent implements OnInit {
                   ...this.addActivityToGroupData
                 }
               };
-              this.navService.navigateToContent(contentDetailsParams.state);
+              await this.navService.navigateToContent(contentDetailsParams.state);
             };
 
             if (content.primaryCategory === CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase()

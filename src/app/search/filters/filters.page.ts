@@ -63,7 +63,7 @@ export class FiltersPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([]);
+    await this.headerService.showHeaderWithBackButton([]);
   }
 
   ionViewWillLeave() {

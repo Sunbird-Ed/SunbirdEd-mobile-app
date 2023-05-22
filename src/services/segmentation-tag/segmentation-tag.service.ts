@@ -110,10 +110,10 @@ export class SegmentationTagService {
     getSegmentCommand() {
         // FormConfig for Segment
         this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
-        .then(cmdList => {
+        .then(async cmdList => {
             if (cmdList && cmdList.length) {
                 this.comdList = cmdList.filter(v => !v.targetedClient);
-                this.evalCriteria();
+                await this.evalCriteria();
             }
         }).catch(err => console.error(err));
     }
@@ -124,7 +124,7 @@ export class SegmentationTagService {
             this.comdList
         );
         await this.executeCommand(validCommand);
-        this.evalExecutedCommands();
+        await this.evalExecutedCommands();
     }
 
     async executeCommand(validCmdList, revert?) {
@@ -138,7 +138,7 @@ export class SegmentationTagService {
             if (!this.exeCommands.find(ele => ele.commandId === cmdCriteria.commandId)) {
                 switch (cmdCriteria.controlFunction) {
                     case CommandFunctions.LOCAL_NOTIFICATION:
-                        this.notificationSrc.setupLocalNotification(selectedLanguage, cmdCriteria.controlFunctionPayload);
+                        await this.notificationSrc.setupLocalNotification(selectedLanguage, cmdCriteria.controlFunctionPayload);
                         this.exeCommands.push(cmdCriteria);
                         break;
                     case CommandFunctions.BANNER:
@@ -187,17 +187,17 @@ export class SegmentationTagService {
         await this.executeCommand(invalidcomd, true);
     }
 
-    createSegmentTags(res) {
+    async createSegmentTags(res) {
         const tagObj = {
           board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
           grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
           medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
-        this.evalCriteria();
+        await this.evalCriteria();
       }
     
-      refreshSegmentTags(profile) {
+      async refreshSegmentTags(profile) {
         const tagObj = {
             board: profile.board,
             grade: profile.grade,
@@ -205,7 +205,7 @@ export class SegmentationTagService {
             medium: profile.medium,
           };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
-        this.evalCriteria();
+        await this.evalCriteria();
     }
 }
 

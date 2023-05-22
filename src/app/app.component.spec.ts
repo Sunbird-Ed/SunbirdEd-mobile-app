@@ -1561,8 +1561,8 @@ describe('AppComponent', () => {
             appComponent.ngOnInit();
             // assert
             jest.advanceTimersByTime(2100);
-            expect(mockEvents.subscribe).toHaveBeenCalled();
             setTimeout(() => {
+                expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
@@ -1603,8 +1603,8 @@ describe('AppComponent', () => {
             appComponent.ngOnInit();
             // assert
             jest.advanceTimersByTime(2100);
-            expect(mockEvents.subscribe).toHaveBeenCalled();
             setTimeout(() => {
+                expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
@@ -1655,8 +1655,8 @@ describe('AppComponent', () => {
                 appComponent.ngOnInit();
                 // assert
                 jest.advanceTimersByTime(2100);
-                expect(mockEvents.subscribe).toHaveBeenCalled();
                 setTimeout(() => {
+                    expect(mockEvents.subscribe).toHaveBeenCalled();
                     expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
                         InteractType.TOUCH,
                         InteractSubtype.TAB_CLICKED,
@@ -1707,10 +1707,10 @@ describe('AppComponent', () => {
                 appComponent.ngOnInit();
                 // assert
                 jest.advanceTimersByTime(2100);
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                jest.useRealTimers();
-                jest.clearAllTimers();
                 setTimeout(() => {
+                    expect(mockEvents.subscribe).toHaveBeenCalled();
+                    jest.useRealTimers();
+                    jest.clearAllTimers();
                     expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                         InteractType.TOUCH,
                         InteractSubtype.TAB_CLICKED,

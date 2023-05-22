@@ -62,7 +62,7 @@ export class CurriculumCoursesPage {
   }
 
   async ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
 
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);

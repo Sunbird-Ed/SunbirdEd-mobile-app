@@ -162,13 +162,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     await this.getUserProfileDetails();
   }
 
@@ -394,19 +394,19 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item });
+      await this.navService.navigateToDetailPage(item, { content: item });
     } else {
       await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
 
       default: console.warn('Use Proper Event name');
@@ -491,7 +491,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
     if (data && data.showPreference) {
-      this.editProfileDetails();
+      await this.editProfileDetails();
     }
   }
 
@@ -518,7 +518,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data, section, true);
+    await this.handlePillSelect(data, section, true);
   }
 
   mapContentFacteTheme(displayItems) {
@@ -714,7 +714,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     await this.getUserProfileDetails();
   }
 
@@ -754,7 +754,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           }
         }
         section['description'] = (banner.ui && banner.ui.landing && banner.ui.landing.description) || '';
-        this.handlePillSelect({ data: [{ value: banner }] }, section);
+        await this.handlePillSelect({ data: [{ value: banner }] }, section);
         break;
       case 'banner_content':
         await this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,

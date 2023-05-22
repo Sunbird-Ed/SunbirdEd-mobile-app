@@ -71,8 +71,8 @@ export class AppRatingAlertComponent implements OnInit {
       map((logo) => logo || './assets/imgs/ic_launcher.png')
     );
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.closePopover();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.closePopover();
     });
   }
 
@@ -112,7 +112,7 @@ export class AppRatingAlertComponent implements OnInit {
       undefined,
       { rateLaterCount: this.rateLaterClickedCount }
     );
-    this.closePopover();
+    await this.closePopover();
   }
 
   async rateOnStore() {

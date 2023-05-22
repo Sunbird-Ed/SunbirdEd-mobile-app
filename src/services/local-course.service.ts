@@ -267,35 +267,33 @@ export class LocalCourseService {
   }
 
   async getCourseProgress(courseContext) {
-    return new Promise((resolve, reject) => {
-      (async () => {
-        const request: GetContentStateRequest = {
-          userId: this.appGlobalService.getUserId(),
-          courseId: courseContext.courseId,
-          contentIds: courseContext.leafNodeIds,
-          returnRefreshedContentStates: false,
-          batchId: courseContext.batchId,
-          fields: ['progress', 'score']
-        };
-        let progress = 0;
-        try {
-          const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
-          if (contentStatusData && contentStatusData.contentList) {
-            const viewedContents = [];
-            for (const contentId of courseContext.leafNodeIds) {
-              if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
-                viewedContents.push(contentId);
-              }
+    return new Promise(async (resolve, reject) => {
+      const request: GetContentStateRequest = {
+        userId: this.appGlobalService.getUserId(),
+        courseId: courseContext.courseId,
+        contentIds: courseContext.leafNodeIds,
+        returnRefreshedContentStates: false,
+        batchId: courseContext.batchId,
+        fields: ['progress', 'score']
+      };
+      let progress = 0;
+      try {
+      const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
+        if (contentStatusData && contentStatusData.contentList) {
+          const viewedContents = [];
+          for (const contentId of courseContext.leafNodeIds) {
+            if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
+              viewedContents.push(contentId);
             }
-            progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
-  
           }
-          resolve({ progress, contentStatusData });
-        } catch (err) {
-          resolve({ progress });
+          progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
+
         }
-      })
-    });
+        resolve({ progress, contentStatusData });
+      } catch (err) {
+        resolve({ progress });
+      }
+    })
   }
 
   isEnrollable(batches, course) {

@@ -62,7 +62,7 @@ export class AccessDiscussionComponent implements OnInit {
       Environment.DISCUSSION,
       PageId.GROUP_DETAIL
     );
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [
       {
         id: this.fetchForumIdReq.identifier[0],

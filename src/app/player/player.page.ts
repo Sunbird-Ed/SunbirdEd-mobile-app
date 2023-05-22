@@ -217,14 +217,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                       () => { }
                     );
                   } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                    this.closeIframe();
+                    await this.closeIframe();
                   }
                 } else if (this.isJSON(resp.data)) {
                   const response = JSON.parse(resp.data);
                   if (response.event === 'renderer:navigate') {
                     this.navigateBackToTrackableCollection = true;
                     this.navigateBackToContentDetails = false;
-                    this.closeIframe({
+                    await this.closeIframe({
                       identifier: response.data.identifier
                     });
                   }
@@ -346,7 +346,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           await this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
       } else if (event.edata.type === 'DEVICE_ROTATION_CLICKED') {
-        this.toggleDeviceOrientation();
+        await this.toggleDeviceOrientation();
       }
     }
   }
@@ -468,8 +468,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    setTimeout(() => {
-      this.closeIframe(content);
+    setTimeout(async () => {
+      await this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
       content,
@@ -569,7 +569,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
               this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
-              this.closeIframe();
+              await this.closeIframe();
             } else {
               this.location.back();
             }

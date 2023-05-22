@@ -128,13 +128,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.setAppLogo();
+    await this.setAppLogo();
     this.setAppVersion();
-    this.events.subscribe('user-profile-changed', () => {
-      this.setAppLogo();
+    this.events.subscribe('user-profile-changed', async () => {
+      await this.setAppLogo();
     });
-    this.events.subscribe('app-global:profile-obj-changed', () => {
-      this.setAppLogo();
+    this.events.subscribe('app-global:profile-obj-changed', async () => {
+      await this.setAppLogo();
     });
     this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, async () => {
       await this.getUnreadNotifications();
@@ -162,8 +162,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.listenDownloads();
     this.listenNotifications();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      this.setAppLogo();
+    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      await this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
     this.preference.getString('data-mode').subscribe((val)=>{
@@ -192,11 +192,16 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       });
   }
 
-  async setLanguageValue() {
-    this.selectedLanguage = await this.preference.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise();
-    let langCode = await this.preference.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-    console.log('Language code: ', langCode);
-    this.notification.setupLocalNotification(langCode);
+  setLanguageValue() {
+    this.preference.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
+    .then(value => {
+      this.selectedLanguage = value;
+    }).catch(e => console.log(e));
+    this.preference.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
+    .then(async langCode => {
+      console.log('Language code: ', langCode);
+      await this.notification.setupLocalNotification(langCode);
+    }).catch(e => console.log(e));
   }
 
   listenDownloads() {
@@ -410,9 +415,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cssClass: 'sb-popover'
     });
     await confirm.present();
-    setTimeout(async () => {
+    setTimeout(() => {
       if (confirm) {
-        await confirm.dismiss();
+        confirm.dismiss().then().catch();
       }
     }, 3000);
     const { data } = await confirm.onDidDismiss();

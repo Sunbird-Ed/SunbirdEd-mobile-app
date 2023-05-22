@@ -330,17 +330,17 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.ionViewWillEnter();
             // assert
-            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-            expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
-            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
-                InteractSubtype.FAST_LOADING_INITIATED,
-                PageId.DIAL_CODE_SCAN_RESULT,
-                undefined,
-                undefined,
-                undefined,
-                [{id: 'do-123', type: 'Content'}]
-            );
             setTimeout(() => {
+                expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+                expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
+                expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                    InteractSubtype.FAST_LOADING_INITIATED,
+                    PageId.DIAL_CODE_SCAN_RESULT,
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.PAGE_REQUEST, '',
                     PageId.QR_CONTENT_RESULT,
@@ -403,17 +403,17 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.ionViewWillEnter();
             // assert
-            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-            expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
-            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
-                InteractSubtype.FAST_LOADING_INITIATED,
-                PageId.DIAL_CODE_SCAN_RESULT,
-                undefined,
-                undefined,
-                undefined,
-                [{id: 'do-123', type: 'Content'}]
-            );
             setTimeout(() => {
+                expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+                expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
+                expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                    InteractSubtype.FAST_LOADING_INITIATED,
+                    PageId.DIAL_CODE_SCAN_RESULT,
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.PAGE_REQUEST, '',
                     PageId.QR_CONTENT_RESULT,
@@ -475,17 +475,17 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.ionViewWillEnter();
             // assert
-            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-            expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
-            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
-                InteractSubtype.FAST_LOADING_INITIATED,
-                PageId.DIAL_CODE_SCAN_RESULT,
-                undefined,
-                undefined,
-                undefined,
-                [{id: 'do-123', type: 'Content'}]
-            );
             setTimeout(() => {
+                expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+                expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
+                expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                    InteractSubtype.FAST_LOADING_INITIATED,
+                    PageId.DIAL_CODE_SCAN_RESULT,
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.PAGE_REQUEST, '',
                     PageId.QR_CONTENT_RESULT,
@@ -1119,18 +1119,20 @@ describe('QrcoderesultPage', () => {
         // act
         qrcoderesultPage.openTextbookToc();
         // assert
-        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
-            [`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-            expect.anything()
-        );
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.DROPDOWN_CLICKED,
-            Environment.HOME,
-            PageId.DIAL_CODE_SCAN_RESULT,
-            undefined,
-            values
-        );
+        setTimeout(() => {
+            expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
+                [`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+                expect.anything()
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.DROPDOWN_CLICKED,
+                Environment.HOME,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                values
+            );
+        }, 0);
     });
 
     describe('playOnline', () => {

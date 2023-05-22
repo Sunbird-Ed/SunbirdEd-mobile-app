@@ -93,8 +93,8 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     }
     this.getDefaultBoard();
     this.prepareContentRequest();
-    await this.getRelevantContents();
-    await this.getSimilarContents();
+    this.getRelevantContents();
+    this.getSimilarContents();
     this.corRelation.push({ id: PageId.RELEVANT_CONTENTS, type: CorReleationDataType.FROM_PAGE });
   }
 
@@ -107,33 +107,37 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.searchRequest.mode = 'hard';
   }
 
-  private async getRelevantContents() {
-    this.relevantContentList = await this.fetchContentResult(this.searchRequest);
+  private getRelevantContents() {
+    this.fetchContentResult(this.searchRequest).then(content => {
+      this.relevantContentList = content
+    }).catch(e => console.log(e));
   }
 
-  private async getSimilarContents() {
+  private getSimilarContents() {
     try {
       const similarContentRequest: ContentSearchCriteria = { ...this.searchRequest };
 
       if (this.selectedFramework.board && this.defaultBoard.length && this.selectedFramework.board.find(e => e === this.defaultBoard[0])) {
-        similarContentRequest.board = await this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]);
+        this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]).then(boardList => {
+          similarContentRequest.board = boardList
+        }).catch(e => console.log(e))
       } else {
         similarContentRequest.board = this.defaultBoard[0];
       }
       similarContentRequest.mode = 'soft';
 
       similarContentRequest.primaryCategories = this.getPrimaryCategoryList();
-      const contentList = await this.fetchContentResult(similarContentRequest);
-      contentList.sort((a) => {
-        const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
-        return val;
-      });
-      this.similarContentList = contentList;
-      this.isLoading = false;
+      this.fetchContentResult(similarContentRequest).then(contentList => {
+        contentList.sort((a) => {
+          const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
+          return val;
+        });
+        this.similarContentList = contentList;
+        this.isLoading = false;
+      }).catch(e => console.log(e));
     } catch (e) {
       this.isLoading = false;
     }
-
   }
 
   private async fetchContentResult(request: ContentSearchCriteria): Promise<any[]> {
@@ -174,7 +178,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(
+      await this.navService.navigateToDetailPage(
         item,
         { content: item, corRelation: corRelationList }
       );

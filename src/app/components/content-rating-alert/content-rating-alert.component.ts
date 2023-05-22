@@ -145,7 +145,7 @@ export class ContentRatingAlertComponent {
     await this.popOverCtrl.dismiss();
   }
 
-  submit() {
+  async submit() {
     let comment = '';
     this.ratingOptions.forEach(element => {
       if (element.key.toLowerCase() !== 'other' && element.isChecked) {
@@ -172,7 +172,7 @@ export class ContentRatingAlertComponent {
       Environment.HOME,
       this.pageId, this.telemetryObject, paramsMap
     );
-    this.generateContentRatingTelemetry(option);
+    await this.generateContentRatingTelemetry(option);
     if (this.allComments) {
       this.generateContentFeedbackTelemetry(option);
     }
@@ -246,23 +246,24 @@ export class ContentRatingAlertComponent {
     }
   }
 
-  generateContentRatingTelemetry(option) {
+  async generateContentRatingTelemetry(option) {
     const viewDismissData = {
       rating: this.ratingCount ? this.ratingCount : this.userRating,
       comment: this.allComments ? this.allComments : '',
       message: ''
     };
-    this.contentService.sendFeedback(option).subscribe(async (res) => {
+    this.contentService.sendFeedback(option).subscribe((res) => {
       viewDismissData.message = 'rating.success';
-      await this.popOverCtrl.dismiss(viewDismissData);
+    }, (data) => {
+      viewDismissData.message = 'rating.error';
+    });
+    await this.popOverCtrl.dismiss(viewDismissData);
+    if(viewDismissData.message === 'rating.success') {
       this.commonUtilService.showToast('THANK_FOR_RATING', false, 'green-toast');
       if (this.navigateBack) {
         this.location.back();
       }
-    }, async (data) => {
-      viewDismissData.message = 'rating.error';
-      await this.popOverCtrl.dismiss(viewDismissData);
-    });
+    }
   }
 
   generateContentFeedbackTelemetry(option1) {

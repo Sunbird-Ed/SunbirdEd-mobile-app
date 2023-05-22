@@ -62,7 +62,7 @@ export class NotificationService implements SbNotificationService {
 
     async handleNotificationClick(notificationData: EventNotification): Promise<void> {
         console.log('service handleNotificationClick', notificationData)
-        this.updateNotification(notificationData.data);
+        await this.updateNotification(notificationData.data);
         if (!notificationData || !notificationData.data || !notificationData.data.action) {
             return;
         }
@@ -71,7 +71,7 @@ export class NotificationService implements SbNotificationService {
         this.notificationData.isRead = 1;
 
         this.notificationId = this.notificationData.id || '';
-        this.setNotificationParams(this.notificationData);
+        await this.setNotificationParams(this.notificationData);
         await this.handleNotification();
     }
 
@@ -328,7 +328,7 @@ export class NotificationService implements SbNotificationService {
              );
     }
 
-    updateNotification(notificationData) {
+    async updateNotification(notificationData) {
         const req = {
             ids: [notificationData.id],
             userId: notificationData.userId
@@ -339,7 +339,7 @@ export class NotificationService implements SbNotificationService {
         }).catch((err) => {
             console.log('err', err)
         });
-        this.redirectNotification(notificationData)
+        await this.redirectNotification(notificationData)
     }
 
     async redirectNotification(notificationData) {
@@ -375,7 +375,7 @@ export class NotificationService implements SbNotificationService {
         const groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
         const activity = groupDetails.activitiesGrouped.find((g) => g.title === notificationData.action.additionalInfo.activity.type)
                          .items.find((a) => a.id === notificationData.action.additionalInfo.activity.id).activityInfo
-        this.navService.navigateToDetailPage(activity, {
+        await this.navService.navigateToDetailPage(activity, {
         content: activity,
         activityData: {
             group: groupDetails,

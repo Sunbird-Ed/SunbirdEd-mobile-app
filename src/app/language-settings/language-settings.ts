@@ -67,7 +67,7 @@ export class LanguageSettingsPage {
     this.activatedRoute.params.subscribe(async params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
-        this.headerService.hideHeader();
+        await this.headerService.hideHeader();
       } else {
         await this.headerService.showHeaderWithBackButton();
       }
@@ -85,7 +85,7 @@ export class LanguageSettingsPage {
         this.location.back();
       } else {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
           await this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
         }
@@ -99,9 +99,9 @@ export class LanguageSettingsPage {
     this.isFromSettings = Boolean(params['isFromSettings']);
 
     if (!this.isFromSettings) {
-      this.headerService.hideHeader();
+      await this.headerService.hideHeader();
     } else {
-      this.headerService.showHeaderWithBackButton();
+      await this.headerService.showHeaderWithBackButton();
     }
 
     this.appName = await this.commonUtilService.getAppName();
@@ -279,7 +279,7 @@ export class LanguageSettingsPage {
       this.events.publish('onAfterLanguageChange:update', {
         selectedLanguage: this.language
       });
-      this.notification.setupLocalNotification(this.language);
+      await this.notification.setupLocalNotification(this.language);
       const corRelationList: Array<CorrelationData> = [
         { id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE }
       ];

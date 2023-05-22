@@ -492,7 +492,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       from: CachedItemRequestSourceFrom.SERVER
     };
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
-      .then(updatedProfile => {
+      .then(async updatedProfile => {
          // ******* Segmentation
         let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
         Object.keys(segmentDetails).forEach((key) => {
@@ -507,7 +507,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
         window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-        this.segmentationTagService.evalCriteria();
+        await this.segmentationTagService.evalCriteria();
       }).catch(e => console.error(e));
   }
 

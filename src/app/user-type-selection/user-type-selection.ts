@@ -120,11 +120,11 @@ export class UserTypeSelectionPage implements OnDestroy {
       }, 350);
     }
     this.getNavParams();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
     this.appName = await this.commonUtilService.getAppName();
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     this.profile = this.appGlobalService.getCurrentUser();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
@@ -139,7 +139,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       }
       if (this.categoriesProfileData) {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
           await this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
         }
@@ -180,13 +180,13 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.USER_TYPE_SELECTION,
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         true);
-      this.handleBackButton();
+      await this.handleBackButton();
     }
   }
 
@@ -217,7 +217,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   }
 
   selectCard(userType, profileType) {
-    this.zone.run(async () => {
+    this.zone.run(() => {
       this.selectedUserType = profileType;
       this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
@@ -225,7 +225,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.commonUtilService.translateMessage(userType)
       );
 
-      await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
+      this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then().catch();
     });
     const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
@@ -239,15 +239,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     );
   }
 
-  continue() {
+  async continue() {
     // this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
       // if role types are same
       if (this.profile.profileType === this.selectedUserType) {
-        this.gotoNextPage();
+        await this.gotoNextPage();
       } else {
-        this.gotoNextPage(true);
+        await this.gotoNextPage(true);
       }
     } else {
       const profileRequest: Profile = {
@@ -256,7 +256,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         profileType: this.selectedUserType,
         source: ProfileSource.LOCAL
       };
-      this.setProfile(profileRequest);
+      await this.setProfile(profileRequest);
     }
   }
 
@@ -271,7 +271,7 @@ export class UserTypeSelectionPage implements OnDestroy {
               await this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
             }
             this.profile = success;
-            this.gotoNextPage();
+            await this.gotoNextPage();
             this.generateAuditEvents();
           }).catch(() => {
             return 'null';
@@ -297,7 +297,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
 
     if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
-      this.navigateToTabsAsGuest();
+      await this.navigateToTabsAsGuest();
     } else {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
@@ -350,7 +350,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     this.profileService.updateProfile(this.profile).toPromise()
       .then(async (res: any) => {
         if (page === 'TabsPage') {
-          this.navigateToTabsAsGuest();
+          await this.navigateToTabsAsGuest();
         } else if (this.categoriesProfileData) {
           await this.navigateToTabsAsLogInUser();
         } else {
@@ -442,8 +442,8 @@ export class UserTypeSelectionPage implements OnDestroy {
   }
 
   onSubmitAttempt() {
-    setTimeout(() => {
-      this.continue();
+    setTimeout(async () => {
+      await this.continue();
     }, 50);
   }
 

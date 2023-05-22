@@ -191,9 +191,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.getSelectedLanguage();
       await this.getDeviceProfile();
       if (this.appGlobalService.getUserId()) {
-        this.reloadSigninEvents();
+        await this.reloadSigninEvents();
       } else {
-        this.reloadGuestEvents();
+        await this.reloadGuestEvents();
       }
       this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
@@ -254,7 +254,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         corRelationList
       );
     }
-    this.notificationSrc.setupLocalNotification();
+    await this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
@@ -401,8 +401,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async storeFCMToken(token: string) {
-    await this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
+  private storeFCMToken(token: string) {
+    this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise().then().catch();
   }
 
   /* Notification data will be received in data variable
@@ -426,7 +426,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       );
       await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
-    FCMPlugin.onNotification(async (data) => {
+    FCMPlugin.onNotification((data) => {
       data['isRead'] = data.wasTapped ? 1 : 0;
       data['actionData'] = JSON.parse(data['actionData']);
       this.notificationServices.addNotification(data).subscribe((status) => {
@@ -448,9 +448,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           corRelationList
         );
         this.notificationSrc.notificationId = data.id || '';
-        this.notificationSrc.setNotificationParams(data);
+        this.notificationSrc.setNotificationParams(data).then().catch();
         if (this.isForeground) {
-          await this.notificationSrc.handleNotification();
+          this.notificationSrc.handleNotification().then().catch();
         }
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
@@ -493,7 +493,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         };
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
-        this.reloadSigninEvents();
+        await this.reloadSigninEvents();
         await this.db.createDb();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
@@ -534,13 +534,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.platform.resume.subscribe(async () => {
+    this.platform.resume.subscribe(() => {
       if (!this.appGlobalService.isNativePopupVisible) {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
-      await this.splashScreenService.handleSunbirdSplashScreenActions();
+      this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
       this.checkForCodeUpdates();
-      await this.notificationSrc.handleNotification();
+      this.notificationSrc.handleNotification().then().catch();
       this.isForeground = true;
       this.segmentationTagService.getPersistedSegmentaion();
     });
@@ -576,7 +576,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           await this.menuCtrl.close();
         } else {
           if (this.platform.is('ios')) {
-            this.headerService.showHeaderWithHomeButton();
+            await this.headerService.showHeaderWithHomeButton();
           } else {
             await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
           }
@@ -859,7 +859,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
             if (this.platform.is('ios')) {
-              this.headerService.showHeaderWithHomeButton();
+              await this.headerService.showHeaderWithHomeButton();
             } else {
               await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
             }
@@ -984,8 +984,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
-    ).subscribe(async () => {
-      await this.logoutHandlerService.onLogout();
+    ).subscribe(() => {
+      this.logoutHandlerService.onLogout().then().catch();
     });
   }
 
