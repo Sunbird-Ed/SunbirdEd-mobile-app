@@ -78,7 +78,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       this.corRelation);
   }
 
-  private async getNavParam() {
+  private getNavParam() {
     this.isLoading = true;
     const navExtras = this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state;
     if (navExtras) {

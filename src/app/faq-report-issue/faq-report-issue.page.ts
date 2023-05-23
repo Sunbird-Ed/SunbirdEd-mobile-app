@@ -130,7 +130,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.formContext = this.router.getCurrentNavigation().extras.state.formCnotext;
       this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation || [];
       if (this.router.getCurrentNavigation().extras.state.showHeader) {
-        this.headerService.showHeaderWithBackButton;
+        this.headerService.showHeaderWithBackButton();
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
           this.handleHeaderEvents(eventName);
         });

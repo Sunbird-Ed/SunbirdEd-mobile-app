@@ -118,7 +118,7 @@ export class AppRatingAlertComponent implements OnInit {
   async rateOnStore() {
     let pkg = await this.appVersion.getPackageName()
     await this.utilityService.openPlayStore(pkg);
-    this.appRatingService.setEndStoreRate(this.appRate);
+    await this.appRatingService.setEndStoreRate(this.appRate);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.PLAY_STORE_BUTTON_CLICKED,

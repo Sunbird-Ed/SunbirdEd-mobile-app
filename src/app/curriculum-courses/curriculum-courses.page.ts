@@ -104,7 +104,7 @@ export class CurriculumCoursesPage {
 
 
 
-  openCourseDetails(course) {
+  async openCourseDetails(course) {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
     const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -116,7 +116,7 @@ export class CurriculumCoursesPage {
       undefined,
       ContentUtil.generateRollUp(undefined, course.identifier),
       this.corRelationList);
-    this.navService.navigateToTrackableCollection(
+    await this.navService.navigateToTrackableCollection(
       {
         content: course,
         corRelationList: this.corRelationList

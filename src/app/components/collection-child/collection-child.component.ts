@@ -221,10 +221,10 @@ export class CollectionChildComponent implements OnInit {
               await this.assessemtnAlert.present();
               const { data } = await this.assessemtnAlert.onDidDismiss();
               if (data && data.isLeftButtonClicked === false) {
-                goToContentDetails();
+                await goToContentDetails();
               }
             } else {
-              goToContentDetails();
+              await goToContentDetails();
             }
         }
       });

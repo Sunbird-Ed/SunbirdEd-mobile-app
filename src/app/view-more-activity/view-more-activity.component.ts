@@ -137,7 +137,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private popoverCtrl: PopoverController,
     private navService: NavigationService
   ) {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (this.router.getCurrentNavigation().extras.state) {
         console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
         this.uid = this.router.getCurrentNavigation().extras.state.uid;
@@ -156,7 +156,7 @@ export class ViewMoreActivityComponent implements OnInit {
         if (this.headerTitle !== this.title) {
           this.offset = 0;
           this.loadMoreBtn = true;
-          this.mapper();
+          await this.mapper();
         }
       }
     });
@@ -204,9 +204,9 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Search content
    */
-  search() {
+  async search() {
     this.isLoading = true;
-    this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(language => {
+    await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(language => {
       const selectedLanguage = language
       const searchCriteria: ContentSearchCriteria = {
         searchType: SearchType.FILTER,
@@ -257,7 +257,7 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Mapper to call api based on page.Layout name
    */
-  mapper() {
+  async mapper() {
     const pageName = this.pageName;
     switch (pageName) {
       case ViewMore.PAGE_COURSE_ENROLLED:
@@ -268,16 +268,16 @@ export class ViewMoreActivityComponent implements OnInit {
 
       case ViewMore.PAGE_COURSE_POPULAR:
         this.pageType = 'popularCourses';
-        this.search();
+        await this.search();
         break;
 
       case ViewMore.PAGE_TV_PROGRAMS:
         this.pageType = 'tvPrograms';
-        this.search();
+        await this.search();
         break;
 
       default:
-        this.search();
+        await this.search();
     }
     console.log('search List =>', this.searchList);
   }

@@ -93,9 +93,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.groupListLoader = true;
     }
     this.handleBackButton();
-    this.headerService.showHeaderWithBackButton(['groupInfo']);
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    await this.headerService.showHeaderWithBackButton(['groupInfo']);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
     try {
       this.userId = await this.appGlobalService.getActiveProfileUid();

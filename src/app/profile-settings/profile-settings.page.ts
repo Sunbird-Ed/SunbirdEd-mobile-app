@@ -236,8 +236,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     if (history.state && history.state.showFrameworkCategoriesMenu) {
       this.showQRScanner = false;
     }
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
 
     if (history.state && history.state.hideBackButton !== undefined) {

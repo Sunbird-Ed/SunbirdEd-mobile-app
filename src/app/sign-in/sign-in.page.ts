@@ -65,15 +65,15 @@ export class SignInPage implements OnInit {
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
-        this.appHeaderService.hideHeader()
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
             window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
         }
     }
             
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.appHeaderService.hideStatusBar();
+        await this.appHeaderService.hideHeader()
     }
 
     async ionViewWillLeave() {

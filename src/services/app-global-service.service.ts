@@ -410,16 +410,16 @@ export class AppGlobalService implements OnDestroy {
     }
 
     private listenForEvents() {
-        this.event.subscribe(AppGlobalService.USER_INFO_UPDATED, () => {
-            this.initValues();
+        this.event.subscribe(AppGlobalService.USER_INFO_UPDATED, async () => {
+            await this.initValues();
         });
 
-        this.event.subscribe('refresh:profile', () => {
-            this.initValues();
+        this.event.subscribe('refresh:profile', async () => {
+            await this.initValues();
         });
 
-        this.event.subscribe('refresh:loggedInProfile', () => {
-            this.initValues();
+        this.event.subscribe('refresh:loggedInProfile', async () => {
+            await this.initValues();
         });
 
     }

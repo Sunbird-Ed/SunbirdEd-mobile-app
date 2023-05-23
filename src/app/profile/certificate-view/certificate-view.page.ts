@@ -49,6 +49,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   onPopupOpen = false;
   projectData:any;
   message:string;
+  paramData;
   constructor(
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
@@ -63,13 +64,14 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private apiService : UnnatiDataService
-  ) {}
+  ) {
+    this.paramData = this.router.getCurrentNavigation().extras.state.request;
+  }
 
   async ngOnInit() {
-    await this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
-    let paramData = this.router.getCurrentNavigation().extras.state.request;
-      if( paramData.type == 'project'){
-        this.projectData =  paramData;
+    await this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId).catch(err => console.log(err));
+      if(this.paramData.type == 'project'){
+        this.projectData = this.paramData;
         let keys = Object.keys(this.projectData.certificate);
         if( this.projectData.certificate &&  this.projectData.certificate.eligible && this.projectData.certificate.osid){
           await this.getProjectCertificate();
@@ -82,7 +84,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }else{
-        this.pageData =paramData;
+        this.pageData = this.paramData;
         await this.loadCertificate();
       } 
 

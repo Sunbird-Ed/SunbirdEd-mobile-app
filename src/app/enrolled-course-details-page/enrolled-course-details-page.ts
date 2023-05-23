@@ -660,10 +660,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         batchId: this.batchDetails.id
       };
       this.courseService.unenrollCourse(unenrolCourseRequest)
-        .subscribe(() => {
-          this.handleTelemetryAndToast(true, loader);
-        }, (error) => {
-          this.handleTelemetryAndToast(false, loader, error);
+        .subscribe(async () => {
+          await this.handleTelemetryAndToast(true, loader);
+        }, async (error) => {
+          await this.handleTelemetryAndToast(false, loader, error);
         });
     }
   }
@@ -1330,9 +1330,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   cancelDownload() {
     const showHeader = () => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.showLoading = false;
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.location.back();
       });
     };

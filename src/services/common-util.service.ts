@@ -102,19 +102,17 @@ export class CommonUtilService {
         }
 
         this.translate.get(translationKey, replaceObject).subscribe(
-            (translatedMsg: any) => {
-                (async () => {
-                    const toastOptions = {
-                        message: translatedMsg,
-                        duration: duration ? duration : 3000,
-                        position: position ? position : 'bottom',
-                        cssClass: cssToast ? cssToast : ''
-                    };
-    
-                    let toast = await this.toastController.create(toastOptions);
-                    toast = this.addPopupAccessibility(toast, translatedMsg);
-                    await toast.present();
-                })
+            async (translatedMsg: any) => {
+                const toastOptions = {
+                    message: translatedMsg,
+                    duration: duration ? duration : 3000,
+                    position: position ? position : 'bottom',
+                    cssClass: cssToast ? cssToast : ''
+                };
+
+                let toast = await this.toastController.create(toastOptions);
+                toast = this.addPopupAccessibility(toast, translatedMsg);
+                await toast.present();
             }
         );
     }

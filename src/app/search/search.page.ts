@@ -213,10 +213,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.source = extras.source;
       this.searchWithBackButton = extras.searchWithBackButton;
       this.hideSearchOption = extras.hideSearchOption;
-      if (this.source === PageId.GROUP_DETAIL) {
-        this.isFromGroupFlow = true;
-        this.searchOnFocus();
-      }
       this.groupId = extras.groupId;
       this.activityTypeData = extras.activityTypeData;
       this.activityList = extras.activityList;
@@ -246,6 +242,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   async ionViewWillEnter() {
+    if (this.source === PageId.GROUP_DETAIL) {
+      this.isFromGroupFlow = true;
+      await this.searchOnFocus();
+    }
     if (this.dialCode) {
       this.enableSearch = true;
     }
@@ -874,9 +874,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     });
     modifiedCriteria.offset = offset ? offset : 0;
     this.contentService.searchContent(modifiedCriteria).toPromise()
-      .then((responseData: ContentSearchResult) => {
+      .then(async (responseData: ContentSearchResult) => {
         this.totalCount = responseData.count
-        this.zone.run(async () => {
+        await this.zone.run(async () => {
           this.responseData = responseData;
           if (responseData) {
             if (this.isDialCodeSearch) {
@@ -1437,7 +1437,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       .then(async (data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
-            this.zone.run(async () => {
+            await this.zone.run(async () => {
               await this.showContentDetails(child, false, true);
             });
           } else {
@@ -1446,9 +1446,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
             setTimeout(async () => {
-              (async () => {
-                await this.showContentDetails(this.childContent, false, false);
-              })
+              await this.showContentDetails(this.childContent, false, false);
             }, 400);
           }
         } else {

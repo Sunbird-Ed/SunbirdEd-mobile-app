@@ -277,8 +277,8 @@ export class QrcoderesultPage implements OnDestroy {
     });
     this.generateNewImpressionEvent(this.dialCode);
     this.subscribeSdkEvent();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
   }
 

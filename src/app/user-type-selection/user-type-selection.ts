@@ -195,9 +195,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       this.selectCard(selectedUserTypeName, userType);
       this.generateUserTypeClicktelemetry(userType);
       if (!this.categoriesProfileData) {
-        setTimeout(() => {
-          this.continue();
-        }, 50);
+        this.onSubmitAttempt()
       }
     }
   }

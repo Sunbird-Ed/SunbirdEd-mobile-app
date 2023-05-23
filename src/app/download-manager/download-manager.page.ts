@@ -112,7 +112,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     return await this.commonUtilService.getAppName()
       .then((appName: any) => {
         this.appName = appName;
-      });
+      }).catch(err => console.log(err));
   }
 
   private async getAppStorageInfo(): Promise<AppStorageInfo> {
@@ -189,11 +189,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             res.identifier = res.programId + res.solutionId;
             data.push(res);
           });
-        });
+        }).catch(err => console.log(err));
         await this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
-      });
+      }).catch(err => console.log(err));
   }
 
   private generateInteractTelemetry(contentCount: number, usedSpace: number, availableSpace: number) {
@@ -399,9 +399,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   private checkAvailableSpace() {
     this.storageService.getStorageDestinationVolumeInfo().pipe(
-      tap((volumeInfo) => {
+      tap(async (volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          this.presentPopupForLessStorageSpace().then().catch();
+          await this.presentPopupForLessStorageSpace();
         }
       })
     )

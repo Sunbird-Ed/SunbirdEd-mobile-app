@@ -376,7 +376,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerService.updatePageConfig(this.headerConfig);
       this.hiddenGroups.clear();
       this.shownGroups = undefined;
-      this.assignCardData();
+      await this.assignCardData();
       this.resetVariables();
       await this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, async (data) => {
@@ -407,14 +407,14 @@ export class CollectionDetailEtbPage implements OnInit {
     await this.sbProgressLoader.hide({ id: this.identifier });
   }
 
-  private assignCardData() {
+  private async assignCardData() {
     if (!this.didViewLoad) {
       this.objRollup = ContentUtil.generateRollUp(this.cardData.hierarchyInfo, this.cardData.identifier);
       const contentType = this.cardData.contentData ? this.cardData.contentData.contentType : this.cardData.contentType;
       this.objType = contentType;
       this.generateStartEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
       this.generateImpressionEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
-      this.markContent();
+      await this.markContent();
     }
     this.didViewLoad = true;
   }
@@ -425,7 +425,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.hiddenGroups.clear();
     this.setExtrasData(data);
     this.didViewLoad = false;
-    this.assignCardData();
+    await this.assignCardData();
     await this.setContentDetails(this.identifier, true);
     this.subscribeSdkEvent();
   }
@@ -434,7 +434,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.commonUtilService.openUrlInBrowser(url);
   }
 
-  markContent() {
+  async markContent() {
     const addContentAccessRequest: ContentAccess = {
       status: ContentAccessStatus.PLAYED,
       contentId: this.identifier,
@@ -456,7 +456,7 @@ export class CollectionDetailEtbPage implements OnInit {
       isMarked: true,
       extraInfo: {}
     };
-    this.contentService.setContentMarker(contentMarkerRequest).toPromise().then().catch();
+    await this.contentService.setContentMarker(contentMarkerRequest).toPromise();
   }
 
   // toggle the card
@@ -601,7 +601,7 @@ export class CollectionDetailEtbPage implements OnInit {
             await this.importContentInBackground([this.identifier], false);
           } else {
             this.showSheenAnimation = false;
-            this.extractApiResponse(data);
+            await this.extractApiResponse(data);
           }
         }
       }).catch((error) => {
@@ -615,7 +615,7 @@ export class CollectionDetailEtbPage implements OnInit {
   /**
    * Function to extract api response.
    */
-  extractApiResponse(data: Content) {
+  async extractApiResponse(data: Content) {
     this.contentDetail = data;
     this.contentDetail.contentData.appIcon = ContentUtil.getAppIcon(this.contentDetail.contentData.appIcon,
       this.contentDetail.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
@@ -636,7 +636,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.isUpdateAvailable = true;
         this.showLoading = true;
         this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.contentDetail, false);
-        this.importContent([this.identifier], false);
+        await this.importContent([this.identifier], false);
       } else {
         this.isUpdateAvailable = false;
         this.setChildContents();
@@ -644,7 +644,7 @@ export class CollectionDetailEtbPage implements OnInit {
     } else {
       this.showLoading = true;
       this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.contentDetail, true);
-      this.importContent([this.identifier], false);
+      await this.importContent([this.identifier], false);
     }
 
     if (this.contentDetail.contentData.me_totalDownloads) {
@@ -1065,14 +1065,14 @@ export class CollectionDetailEtbPage implements OnInit {
   /**
    * Download single content
    */
-  downloadAllContent(): void {
+  async downloadAllContent(): Promise<void> {
     this.downloadProgress = 0;
     this.showLoading = true;
     this.isDownloadStarted = true;
     this.downloadPercentage = 0;
     this.showDownload = true;
     this.showCollapsedPopup = false;
-    this.importContent(Array.from(this.downloadIdentifiers), true, true);
+    await this.importContent(Array.from(this.downloadIdentifiers), true, true);
   }
 
   generateImpressionEvent(objectId, objectType, objectVersion) {
@@ -1209,7 +1209,7 @@ export class CollectionDetailEtbPage implements OnInit {
             undefined,
             this.objRollup,
             this.corRelationList);
-        this.downloadAllContent();
+        await this.downloadAllContent();
         this.events.publish('header:decreasezIndex');
       } else {
         this.generateCancelDownloadTelemetry();
@@ -1534,7 +1534,7 @@ export class CollectionDetailEtbPage implements OnInit {
     await this.navigateToDetailsPage(event.data, 1, corRelationData);
   }
 
-  playButtonClick(event) {
+  async playButtonClick(event) {
     const corRelationData = {
       id: (event && event.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
@@ -1542,7 +1542,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.setActiveContentData(event, InteractSubtype.PLAY_CLICKED, corRelationData);
 
-    this.playContent({ content: event.data }, corRelationData);
+    await this.playContent({ content: event.data }, corRelationData);
   }
 
   private setActiveContentData(event, telemetrySubType, corRelationData) {

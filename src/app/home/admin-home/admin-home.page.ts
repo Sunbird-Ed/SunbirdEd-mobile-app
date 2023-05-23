@@ -307,7 +307,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); 
+      await this.navService.navigateToDetailPage(item, { content: item }); 
     } else {
       await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }

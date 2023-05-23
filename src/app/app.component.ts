@@ -207,7 +207,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       }
       this.handleBackButton();
-      this.appRatingService.checkInitialDate();
+      await this.appRatingService.checkInitialDate();
       this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
@@ -389,20 +389,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async fcmTokenWatcher() {
     const fcmToken = await this.preferences.getString(PreferenceKey.FCM_TOKEN).toPromise();
     if (!fcmToken) {
-      FCMPlugin.getToken((token) => {
-        this.storeFCMToken(token);
+      FCMPlugin.getToken(async (token) => {
+        await this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
     } else {
-      FCMPlugin.onTokenRefresh((token) => {
-        this.storeFCMToken(token);
+      FCMPlugin.onTokenRefresh(async (token) => {
+        await this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
     }
   }
 
-  private storeFCMToken(token: string) {
-    this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise().then().catch();
+  private async storeFCMToken(token: string) {
+    await this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
   /* Notification data will be received in data variable
@@ -426,7 +426,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       );
       await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
-    FCMPlugin.onNotification((data) => {
+    FCMPlugin.onNotification(async (data) => {
       data['isRead'] = data.wasTapped ? 1 : 0;
       data['actionData'] = JSON.parse(data['actionData']);
       this.notificationServices.addNotification(data).subscribe((status) => {
@@ -448,9 +448,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           corRelationList
         );
         this.notificationSrc.notificationId = data.id || '';
-        this.notificationSrc.setNotificationParams(data).then().catch();
+        await this.notificationSrc.setNotificationParams(data);
         if (this.isForeground) {
-          this.notificationSrc.handleNotification().then().catch();
+          await this.notificationSrc.handleNotification();
         }
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
@@ -534,13 +534,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.platform.resume.subscribe(() => {
+    this.platform.resume.subscribe(async () => {
       if (!this.appGlobalService.isNativePopupVisible) {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
-      this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
+      await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
       this.checkForCodeUpdates();
-      this.notificationSrc.handleNotification().then().catch();
+      await this.notificationSrc.handleNotification().then().catch();
       this.isForeground = true;
       this.segmentationTagService.getPersistedSegmentaion();
     });
@@ -984,8 +984,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
-    ).subscribe(() => {
-      this.logoutHandlerService.onLogout().then().catch();
+    ).subscribe(async () => {
+      await this.logoutHandlerService.onLogout();
     });
   }
 

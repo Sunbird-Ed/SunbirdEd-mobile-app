@@ -78,7 +78,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         await this.saveContentContext(content);
 
         await this.close();
-        this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
+        await this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
     }
 
     async saveContentContext(content: any) {

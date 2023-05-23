@@ -101,8 +101,8 @@ export class GuestProfilePage implements OnInit {
     this.events.subscribe('update_header', async () => {
       await this.headerService.showHeaderWithHomeButton(['download']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
     await this.headerService.showHeaderWithHomeButton(['download']);
   }

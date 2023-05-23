@@ -415,9 +415,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cssClass: 'sb-popover'
     });
     await confirm.present();
-    setTimeout(() => {
+    setTimeout(async () => {
       if (confirm) {
-        confirm.dismiss().then().catch();
+        await confirm.dismiss();
       }
     }, 3000);
     const { data } = await confirm.onDidDismiss();
