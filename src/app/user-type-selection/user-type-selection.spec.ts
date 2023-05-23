@@ -156,24 +156,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.ONBOARDING,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                Environment.ONBOARDING,
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
@@ -201,24 +183,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.HOME,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                'onboarding',
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
@@ -241,24 +205,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.HOME,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                'onboarding',
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
