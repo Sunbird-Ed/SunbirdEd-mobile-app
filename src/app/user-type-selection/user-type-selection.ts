@@ -190,9 +190,9 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
+  async selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
     if (isActive) {
-      this.selectCard(selectedUserTypeName, userType);
+      await this.selectCard(selectedUserTypeName, userType);
       this.generateUserTypeClicktelemetry(userType);
       if (!this.categoriesProfileData) {
         this.onSubmitAttempt()
@@ -214,8 +214,8 @@ export class UserTypeSelectionPage implements OnDestroy {
     );
   }
 
-  selectCard(userType, profileType) {
-    this.zone.run(() => {
+  async selectCard(userType, profileType) {
+    await this.zone.run(async () => {
       this.selectedUserType = profileType;
       this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
@@ -223,7 +223,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.commonUtilService.translateMessage(userType)
       );
 
-      this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then().catch();
+      await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise();
     });
     const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
