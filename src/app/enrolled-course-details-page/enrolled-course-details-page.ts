@@ -1423,7 +1423,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   async resumeContent(): Promise<void> {
     if (!this.nextContent) {
-      await this.getContentState(true).then(() => {
+      await this.getContentState(true).then(async () => {
         await this.navigateToContentDetails(this.nextContent, 1);
       });
     } else {
