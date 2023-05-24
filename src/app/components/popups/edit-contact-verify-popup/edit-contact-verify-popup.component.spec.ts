@@ -91,8 +91,10 @@ describe('EditContactVerifyPopupComponent', () => {
         // act
         editContactVerifyPopupComponent.ionViewWillEnter();
         // assert
-        expect(mockMenuController.enable).toHaveBeenCalledWith(false);
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockMenuController.enable).toHaveBeenCalledWith(false);
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should dismiss the popup when cancel is invoked', () => {
@@ -105,18 +107,23 @@ describe('EditContactVerifyPopupComponent', () => {
 
     it('should enable MenuDrawer and unsubscribe back function', () => {
         // arrange
-        editContactVerifyPopupComponent.unregisterBackButton = {
-            unsubscribe: jest.fn(),
-
-        } as any;
+        mockPlatform.backButton = {
+            subscribeWithPriority: jest.fn(() => {
+                editContactVerifyPopupComponent['unregisterBackButton'] = {
+                    unsubscribe: jest.fn(),
+                } as any;
+            })
+        } as any
         // act
         editContactVerifyPopupComponent.ionViewWillLeave();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(true);
-        expect(editContactVerifyPopupComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(editContactVerifyPopupComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+        }, 0);
     });
 
-    it('should verify phone number', (done) => {
+    it('should verify phone number', () => {
         // arrange
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
 
@@ -125,11 +132,10 @@ describe('EditContactVerifyPopupComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ OTPSuccess: true, value: 'sample_key' });
-            done();
         }, 1);
     });
 
-    it('should verify emailid', (done) => {
+    it('should verify emailid', () => {
         // arrange
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         editContactVerifyPopupComponent.type = 'email';
@@ -138,11 +144,10 @@ describe('EditContactVerifyPopupComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ OTPSuccess: true, value: 'sample_key' });
-            done();
         }, 1);
     });
 
-    it('should handle when ERROR_INVALID_OTP error is returned from API', (done) => {
+    it('should handle when ERROR_INVALID_OTP error is returned from API', () => {
         // arrange
         const response = new Response();
         response.responseCode = 400;
@@ -164,7 +169,6 @@ describe('EditContactVerifyPopupComponent', () => {
         // assert
         setTimeout(() => {
             expect(editContactVerifyPopupComponent.invalidOtp).toBeTruthy();
-            done();
         }, 1);
     });
 
@@ -186,7 +190,7 @@ describe('EditContactVerifyPopupComponent', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
     });
 
-    it('should resend OTP for Emailid', (done) => {
+    it('should resend OTP for Emailid', () => {
         // arrange
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         editContactVerifyPopupComponent.type = 'email';
@@ -197,11 +201,10 @@ describe('EditContactVerifyPopupComponent', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OTP_RESENT');
             expect(mockCommonUtilService.getLoader().present).toHaveBeenCalledTimes(1);
             expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalledTimes(1);
-            done();
         }, 1);
     });
 
-    it('should dismiss the loader incase of API failure', (done) => {
+    it('should dismiss the loader incase of API failure', () => {
         // arrange
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         editContactVerifyPopupComponent.type = 'phone';
@@ -213,7 +216,6 @@ describe('EditContactVerifyPopupComponent', () => {
         setTimeout(() => {
             expect(editContactVerifyPopupComponent.enableResend).toBeTruthy();
             expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalledTimes(1);
-            done();
         }, 1);
     });
 

@@ -76,11 +76,11 @@ export class ManageUserProfilesPage implements OnInit {
   ngOnInit() {
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
-    });
+    }).catch(e => console.error(e));
   }
 
-  ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.appHeaderService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -143,15 +143,15 @@ export class ManageUserProfilesPage implements OnInit {
         await this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUser.profileUserType.type).toPromise();
         this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
       }
-      this.showSwitchSuccessPopup(this.selectedUser.firstName);
-      this.tncUpdateHandlerService.checkForTncUpdate();
+      await this.showSwitchSuccessPopup(this.selectedUser.firstName);
+      await this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
       console.error(err);
     });
   }
 
-  addUser() {
+  async addUser() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_ADD,
       '',
@@ -169,7 +169,7 @@ export class ManageUserProfilesPage implements OnInit {
       return;
     }
 
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
   }
 
   private handleHeaderEvents($event) {
@@ -198,15 +198,15 @@ export class ManageUserProfilesPage implements OnInit {
       cssClass: 'sb-popover'
     });
     await confirm.present();
-    setTimeout(() => {
+    setTimeout(async () => {
       if (confirm) {
-        confirm.dismiss();
+        await confirm.dismiss();
       }
     }, 3000);
     const { data } = await confirm.onDidDismiss();
     console.log(data);
     if (data) {
-      this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
     }
   }
 

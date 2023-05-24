@@ -30,7 +30,7 @@ export class SplashcreenTelemetryActionHandlerDelegate implements SplashscreenAc
           type: ImpressionType.PAGE_LOADED,
           pageId: PageId.SPLASH,
           correlationData: correlationList
-        }).toPromise();
+        }).toPromise().then().catch((e) => console.error(e));
         return this.telemetryService.impression({
           env: Environment.HOME,
           type: ImpressionType.VIEW,

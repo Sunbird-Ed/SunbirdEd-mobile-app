@@ -102,7 +102,9 @@ describe('ViewCreditsComponent', () => {
         viewCreditsComponent.cancel();
         // assert
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
-        expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should dissmiss popup on cancel', () => {

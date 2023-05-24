@@ -45,11 +45,11 @@ export class ActivityTocPage {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.selectedId = this.appGlobalService.selectedActivityCourseId;
         this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,

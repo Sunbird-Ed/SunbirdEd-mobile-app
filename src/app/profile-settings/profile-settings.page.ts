@@ -142,7 +142,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
-    this.appVersion.getAppName().then((appName) => {
+    await this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
     });
 
@@ -207,13 +207,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.navParams && this.navParams.stopScanner) {
-      setTimeout(() => {
-        this.scanner.stopScanner();
+      setTimeout(async () => {
+        await this.scanner.stopScanner();
       }, 500);
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (this.router.url === '/' + RouterLinks.PROFILE_SETTINGS) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -236,8 +236,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     if (history.state && history.state.showFrameworkCategoriesMenu) {
       this.showQRScanner = false;
     }
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
 
     if (history.state && history.state.hideBackButton !== undefined) {
@@ -248,16 +248,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     // should be called everytime when entered to this page
     this.redirectToInitialRoute();
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
   }
 
-  ionViewDidEnter() {
-    this.hideOnboardingSplashScreen();
+  async ionViewDidEnter() {
+    await this.hideOnboardingSplashScreen();
   }
 
-  hideOnboardingSplashScreen() {
+  async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
-      this.splashScreenService.handleSunbirdSplashScreenActions();
+      await this.splashScreenService.handleSunbirdSplashScreenActions();
     }
   }
 
@@ -272,9 +272,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const activePortal = await this.alertCtrl.getTop();
 
     if (activePortal) {
-      activePortal.dismiss();
+      await activePortal.dismiss();
     } else if (this.isInitialScreen && this.showQRScanner) {
-      this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
+      await this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
     } else if (!this.hideBackButton) {
       this.location.back();
     }
@@ -316,19 +316,19 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleDeviceBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.handleBackButton(false);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
+      await this.handleBackButton(false);
     });
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if($event.name === 'back')
     {
-      this.handleBackButton(true);
+      await this.handleBackButton(true);
     }
   }
 
-  handleBackButton(isNavBack) {
+  async handleBackButton(isNavBack) {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
     /* New Telemetry */
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -341,7 +341,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.showQRScanner = true;
       this.resetProfileSettingsForm();
     } else {
-      this.dismissPopup();
+      await this.dismissPopup();
     }
   }
 
@@ -369,10 +369,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
         this.resetProfileSettingsForm();
       }
-    });
+    }).catch(e => console.error(e));
   }
 
-  onSubmitAttempt() {
+  async onSubmitAttempt() {
     if (this.profileSettingsForm.valid) {
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'passed',
         PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
@@ -390,7 +390,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         undefined,
         correlationList
       );
-      this.submitProfileSettingsForm();
+      await this.submitProfileSettingsForm();
       return;
     }
 
@@ -482,7 +482,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           correlationList
         );
         await this.loader.dismiss();
-      });
+      }).catch(e => console.error(e));
   }
 
   private onSyllabusChange(): Observable<string[]> {
@@ -607,28 +607,28 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
-        this.segmentationTagService.refreshSegmentTags(profile);
+        await this.segmentationTagService.refreshSegmentTags(profile);
         if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
         }
-        this.segmentationTagService.createSegmentTags(profile);
+        await this.segmentationTagService.createSegmentTags(profile);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
         await this.commonUtilService.handleToTopicBasedNotification();
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.appGlobalService.setOnBoardingCompleted();
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            await this.appGlobalService.setOnBoardingCompleted();
+            await this.router.navigate([`/${RouterLinks.TABS}`]);
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
                 isShowBackButton: true
               }
             };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
           }
         }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
@@ -833,7 +833,7 @@ private addAttributeSubscription() {
         this.supportedProfileAttributes = categories.supportedAttributes;
         this.addAttributeSubscription();
       }
-    });
+    }).catch(e => console.error(e));
   }
 
 }

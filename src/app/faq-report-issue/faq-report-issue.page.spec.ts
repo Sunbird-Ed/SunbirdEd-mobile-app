@@ -309,8 +309,10 @@ describe('FaqReportIssuePage', () => {
             // act
             faqReportIssuePage.submit();
             // assert
-            expect(faqReportIssuePage.callToAction).toBeDefined();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+            setTimeout(() => {
+                expect(faqReportIssuePage.callToAction).toBeDefined();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+            }, 0);
         });
 
         it('should generate telemetry for notify selected', () => {

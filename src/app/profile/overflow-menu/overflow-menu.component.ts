@@ -23,8 +23,8 @@ export class OverflowMenuComponent {
     this.items = this.navParams.get('list') || [];
   }
 
-  open(event, item) {
-    this.popoverCtrl.dismiss({
+  async open(event, item) {
+    await this.popoverCtrl.dismiss({
       content: event.target.innerText,
       selectedItem: item
     });

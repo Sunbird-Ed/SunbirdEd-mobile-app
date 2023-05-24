@@ -56,11 +56,11 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.telemetryGeneratorService.generateImpressionTelemetry(
             ImpressionType.VIEW,
@@ -133,7 +133,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             }
         });
 
-        this.router.navigate([RouterLinks.SEARCH], {
+        await this.router.navigate([RouterLinks.SEARCH], {
             state: {
                 activityTypeData: data,
                 source: PageId.GROUP_DETAIL,

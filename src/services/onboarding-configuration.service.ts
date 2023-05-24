@@ -112,8 +112,8 @@ export class OnboardingConfigurationService {
             case OnboardingScreenType.LANGUAGE_SETTINGS:
                 const selectedLanguage = await this.sharedPreferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
                 if (!selectedLanguage) {
-                    this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, config.default.code).toPromise();
-                    this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE, config.default.label).toPromise();
+                    await this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, config.default.code).toPromise();
+                    await this.sharedPreferences.putString(PreferenceKey.SELECTED_LANGUAGE, config.default.label).toPromise();
                 }
                 break;
 
@@ -129,8 +129,8 @@ export class OnboardingConfigurationService {
                     };
                     await this.profileService.updateProfile(profileRequest).toPromise();
                     await this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise();
-                    this.sharedPreferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, profile.uid).toPromise().then();
-                    this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, config.default).toPromise();
+                    await this.sharedPreferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, profile.uid).toPromise();
+                    await this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, config.default).toPromise();
                 }
                 break;
 
@@ -142,7 +142,7 @@ export class OnboardingConfigurationService {
                 break;
 
             case OnboardingScreenType.DISTRICT_MAPPING:
-                this.setDistrictMappingDetails(config);
+                await this.setDistrictMappingDetails(config);
                 break;
 
             default:
@@ -198,9 +198,9 @@ export class OnboardingConfigurationService {
         let profile: Profile;
         profile = await this.profileService.updateProfile(updateProfileRequest).toPromise();
 
-        this.segmentationTagService.refreshSegmentTags(profile);
+        await this.segmentationTagService.refreshSegmentTags(profile);
         initTabs(this.container, GUEST_TEACHER_TABS);
-        this.segmentationTagService.createSegmentTags(profile);
+        await this.segmentationTagService.createSegmentTags(profile);
         await this.commonUtilService.handleToTopicBasedNotification();
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
@@ -216,17 +216,17 @@ export class OnboardingConfigurationService {
             && profile.medium && profile.medium.length;
     }
 
-    private setDistrictMappingDetails(config) {
+    private async setDistrictMappingDetails(config) {
         const req = {
             userDeclaredLocation: {
                 ...config.default, 
                 declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
             }
         };
-        this.deviceRegisterService.registerDevice(req).toPromise();
-        this.sharedPreferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+        await this.deviceRegisterService.registerDevice(req).toPromise();
+        await this.sharedPreferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
         this.commonUtilService.handleToTopicBasedNotification();
-        this.appGlobalService.setOnBoardingCompleted();
+        await this.appGlobalService.setOnBoardingCompleted();
     }
 
     initializedTabs(theme: string, userType: string) {

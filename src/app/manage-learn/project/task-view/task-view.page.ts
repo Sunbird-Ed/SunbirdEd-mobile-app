@@ -234,7 +234,7 @@ export class TaskViewPage {
   
       this.contentService.getContentDetails(req).toPromise()
         .then(async (data: Content) => {
-          this.navigateService.navigateToDetailPage(data, { content: data });
+          await this.navigateService.navigateToDetailPage(data, { content: data });
         });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');

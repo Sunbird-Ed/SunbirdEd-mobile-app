@@ -30,15 +30,15 @@ export class SbSubjectListPopupComponent implements OnInit {
     ) {
     }
 
-    handlePillSelect(event) {
+    async handlePillSelect(event) {
         if (!event || !event.data || !event.data.length) {
           return;
         }
-        this.modalCtrl.dismiss(event);
+        await this.modalCtrl.dismiss(event);
     }
 
-    closePopover() {
-        this.modalCtrl.dismiss();
+    async closePopover() {
+        await this.modalCtrl.dismiss();
     }
 
     ngOnInit(): void {

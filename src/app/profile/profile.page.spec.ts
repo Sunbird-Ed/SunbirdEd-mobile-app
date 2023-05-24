@@ -6,7 +6,7 @@ import {
     CourseService,
     FormService,
     NetworkError,
-    CertificateAlreadyDownloaded, FrameworkService
+    FrameworkService
 } from '@project-sunbird/sunbird-sdk';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
@@ -34,6 +34,7 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
+import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -146,7 +147,9 @@ describe('Profile.page', () => {
         evalCriteria: jest.fn()
     };
     const mockLocationHandler: Partial<LocationHandler> = {};
-
+    const mockUnnatiDataService: Partial<UnnatiDataService> = {
+        get: jest.fn(() => of()) 
+    }as any
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
@@ -177,7 +180,8 @@ describe('Profile.page', () => {
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
             mockPlatform as Platform,
-            mockLocationHandler as LocationHandler
+            mockLocationHandler as LocationHandler,
+            mockUnnatiDataService as UnnatiDataService
         );
     });
 
@@ -505,12 +509,15 @@ describe('Profile.page', () => {
     });
 
     describe('doRefresh()', () => {
-        it('should call loader and refresher to false', (done) => {
+        it('should call loader and refresher to false', () => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 dismiss: dismissFn
             }));
+            mockUnnatiDataService.get = jest.fn(() => of({
+                subscribe: jest.fn(() => ({data:{}}))
+            })) as any
             mockTelemetryGeneratorService.generatePullToRefreshTelemetry = jest.fn();
             const refresher = { target: { complete: jest.fn() } };
             mockEvents.publish = jest.fn();
@@ -529,11 +536,10 @@ describe('Profile.page', () => {
                     expect(dismissFn).toHaveBeenCalled();
                     expect(mockEvents.publish).toHaveBeenCalledWith('refresh:profile');
                     expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-                    done();
                 }, 500);
             });
         });
-        it('should call and present loader and go to catch block if refreshProfile data return some error', (done) => {
+        it('should call and present loader and go to catch block if refreshProfile data return some error', () => {
             // arrange
             const presentFn = jest.fn(() => Promise.resolve());
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -548,7 +554,6 @@ describe('Profile.page', () => {
                 // assert
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                done();
             }, 0);
         });
     });
@@ -677,8 +682,11 @@ describe('Profile.page', () => {
         expect(profilePage.myLearningLimit).toBe(3);
     });
 
-    it('should go to catch part and called showToast message', (done) => {
+    it('should go to catch part and called showToast message', () => {
         // arrange
+        mockUnnatiDataService.get = jest.fn(() => of({
+            subscribe: jest.fn(() => ({data: {}}))
+        }))
         mockFileOpener.open = jest.fn(() => Promise.reject('error'));
         mockCommonUtilService.showToast = jest.fn();
         jest.spyOn(console, 'log').mockImplementation();
@@ -688,11 +696,10 @@ describe('Profile.page', () => {
         setTimeout(() => {
             expect(console.log).toHaveBeenCalledWith('Error opening file', 'error');
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
-            done();
         }, 0);
     });
 
-    it('should open file when path given as parameter', (done) => {
+    it('should open file when path given as parameter', () => {
         // arrange
         mockFileOpener.open = jest.fn(() => Promise.resolve());
         jest.spyOn(console, 'log').mockImplementation();
@@ -701,13 +708,12 @@ describe('Profile.page', () => {
         // assert
         setTimeout(() => {
             expect(console.log).toHaveBeenCalledWith('File is opened');
-            done();
         }, 0);
     });
 
     describe('downloadTrainingCertificate()', () => {
 
-        it('should generate interact telemetry when permission requested and isAlwaysDenied set to false', (done) => {
+        it('should generate interact telemetry when permission requested and isAlwaysDenied set to false', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -765,11 +771,10 @@ describe('Profile.page', () => {
                     PageId.PROFILE,
                     true
                 );
-                done();
             }, 0);
         });
 
-        it('should generate interact telemetry when request permission has been set to false', (done) => {
+        it('should generate interact telemetry when request permission has been set to false', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -827,12 +832,11 @@ describe('Profile.page', () => {
                     PageId.PROFILE,
                     true
                 );
-                done();
             }, 0);
         });
 
 
-        it('should generate interact telemetry when permission popup for storage and ALLOW clicked and ', (done) => {
+        it('should generate interact telemetry when permission popup for storage and ALLOW clicked and ', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -876,11 +880,10 @@ describe('Profile.page', () => {
                     PageId.PROFILE,
                     true
                 );
-                done();
             }, 0);
         });
 
-        it('check for permission and returns isPermissionAlwaysDenied true', (done) => {
+        it('check for permission and returns isPermissionAlwaysDenied true', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -914,12 +917,11 @@ describe('Profile.page', () => {
                     true
                 );
                 expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-                done();
             }, 0);
         });
 
 
-        it('check for permission whether available or not', (done) => {
+        it('check for permission whether available or not', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({ hasPermission: true }));
@@ -955,11 +957,10 @@ describe('Profile.page', () => {
                 expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
                 expect(profilePage.openpdf).toHaveBeenCalledWith('sample_url');
-                done();
             }, 0);
         });
 
-        it('check for permission and calls for download certificate goes to catch block for networkError', (done) => {
+        it('check for permission and calls for download certificate goes to catch block for networkError', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({ hasPermission: true }));
@@ -997,11 +998,10 @@ describe('Profile.page', () => {
                 expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-                done();
             }, 0);
         });
 
-        it('should call for download legacyCertifcate if certificate has no identifeir', (done) => {
+        it('should call for download legacyCertifcate if certificate has no identifeir', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of(undefined));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({ hasPermission: true }));
@@ -1038,7 +1038,6 @@ describe('Profile.page', () => {
                     { id: 'sample_cert_id', type: 'Certificate', version: undefined },
                     values
                 );
-                done();
             }, 0);
         });
     });
@@ -1115,9 +1114,9 @@ describe('Profile.page', () => {
         });
     });
 
-    xdescribe('update phone and email test-suites', () => {
+    describe('update phone and email test-suites', () => {
         it('should translate message and call editContactPop with ' +
-            'current user phone number and user Id if phone number available', (done) => {
+            'current user phone number and user Id if phone number available', () => {
                 // arrange
                 mockCommonUtilService.translateMessage = jest.fn(v => v);
                 mockPopoverController.create = jest.fn(() => (Promise.resolve({
@@ -1147,11 +1146,10 @@ describe('Profile.page', () => {
                     expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                     expect(dismissFn).toHaveBeenCalled();
                     expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PHONE_UPDATE_SUCCESS');
-                    done();
                 }, 0);
             });
 
-        it('should update emailId when is any emailId is available', (done) => {
+        it('should update emailId when is any emailId is available', () => {
             // arrange
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -1180,12 +1178,11 @@ describe('Profile.page', () => {
                 expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
-                done();
             }, 0);
         });
     });
 
-    xit('should generate telemetry and generate popover and if edited set true and then update profile', (done) => {
+    it('should generate telemetry and generate popover and if edited set true and then update profile', () => {
         // arrange
         mockPopoverController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
@@ -1214,7 +1211,6 @@ describe('Profile.page', () => {
                 PageId.PROFILE
             );
             expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-            done();
         }, 0);
     });
 
@@ -1239,7 +1235,7 @@ describe('Profile.page', () => {
     });
 
     describe('openEnrolledCourse test-suites', () => {
-        it('should get contentDetails and navigate to course-details page', (done) => {
+        it('should get contentDetails and navigate to course-details page', () => {
             // arrange
             mockRouter.navigate = jest.fn();
             profilePage.enrolledCourseList = [{
@@ -1259,11 +1255,10 @@ describe('Profile.page', () => {
                         content: undefined
                     }
                 );
-                done();
             });
         });
 
-        it('should get contentDetails and throw console error', (done) => {
+        it('should get contentDetails and throw console error', () => {
             // arrange
             mockNavService.navigateToTrackableCollection = jest.fn();
             // act
@@ -1271,7 +1266,6 @@ describe('Profile.page', () => {
             setTimeout(() => {
                 // assert
                 expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalled();
-                done();
             }, 0);
         });
     });

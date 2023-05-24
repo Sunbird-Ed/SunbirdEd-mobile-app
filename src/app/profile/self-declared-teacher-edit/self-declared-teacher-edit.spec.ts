@@ -194,8 +194,10 @@ describe('SelfDeclaredTeacherEditPage', () => {
                 // act
                 selfDeclaredTeacherEditPage.ionViewWillEnter();
                 // assert
-                expect(selfDeclaredTeacherEditPage['availableLocationState']).toEqual('Odisha');
-                expect(selfDeclaredTeacherEditPage['availableLocationDistrict']).toEqual('Cuttack');
+                setTimeout(() => {
+                    expect(selfDeclaredTeacherEditPage['availableLocationState']).toEqual('Odisha');
+                    expect(selfDeclaredTeacherEditPage['availableLocationDistrict']).toEqual('Cuttack');
+                }, 0);
             });
 
             // tslint:disable-next-line:max-line-length

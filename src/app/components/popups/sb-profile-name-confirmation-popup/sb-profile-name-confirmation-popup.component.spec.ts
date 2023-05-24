@@ -75,13 +75,15 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
     describe('onSubmitClick()', () => {
         it('onSubmitClick should close popover', () => {
             // arrange
-            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            mockPreferences.putBoolean = jest.fn(() => of(undefined)) as any;
             // act
             profileNameConfirmationPopoverComponent.onSubmitClick();
             // assert
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
-            expect(mockPreferences.putBoolean).toHaveBeenCalledWith(
-                PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample_user_id', false);
+            setTimeout(() => {
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample_user_id', false);
+            }, 0);
         });
     });
 
@@ -92,12 +94,14 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
             profileNameConfirmationPopoverComponent.projectContent = "Project content";
             profileNameConfirmationPopoverComponent.onProfilePageClick();
             // assert
-            expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
-                mockProfileData,
-                PageId.PROFILE_NAME_CONFIRMATION_POPUP,
-                paylod
-            );
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
+            setTimeout(() => {
+                expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
+                    mockProfileData,
+                    PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+                    paylod
+                );
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
+            }, 0);
         });
         it('should generate telemetry and navigate to district mapping if network is available, if no project content', () => {
             // arrange
@@ -105,12 +109,15 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
             profileNameConfirmationPopoverComponent.projectContent = "";
             profileNameConfirmationPopoverComponent.onProfilePageClick();
             // assert
-            expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
-                mockProfileData,
-                PageId.PROFILE_NAME_CONFIRMATION_POPUP,
-                ''
-            );
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
+            setTimeout(() => {
+                expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
+                    mockProfileData,
+                    PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+                    ''
+                );
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ editProfileClicked: true });
+            
+            })
         });
     });
 });

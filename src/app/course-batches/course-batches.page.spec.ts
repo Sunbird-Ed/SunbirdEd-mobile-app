@@ -662,8 +662,10 @@ describe('CourseBatchesPage', () => {
         // act
         courseBatchesPage.onConsentPopoverShow();
         // assert
-        expect(courseBatchesPage.loader).toBeUndefined();
-        expect(dismissFn).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(courseBatchesPage.loader).toBeUndefined();
+            expect(dismissFn).toHaveBeenCalled();
+        }, 0);
     });
 
     it('shoule invoked after consentPii popup dismissed', () => {

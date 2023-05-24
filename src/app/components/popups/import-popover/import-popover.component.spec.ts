@@ -125,6 +125,13 @@ describe('ImportPopoverComponent', () => {
         it('should generate INTERACT telemetry when import is initiated', () => {
             // arrange
             importPopoverComponent.deleteChecked = true;
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn(() => {
+                    importPopoverComponent.backButtonFunc = {
+                        unsubscribe: jest.fn()
+                    } as any
+                })
+            } as any
             // act
             importPopoverComponent.importInitiated();
             importPopoverComponent.ngOnDestroy();
@@ -135,12 +142,19 @@ describe('ImportPopoverComponent', () => {
                 ID.LOAD_CLICKED);
         });
 
-        it('should update current and totalCount of imported content', (done) => {
+        it('should update current and totalCount of imported content', () => {
             // arrange
             mockEventBusService.events = jest.fn(() => of({
                 type: ContentEventType.IMPORT_PROGRESS,
                 payload: { currentCount: 1, totalCount: 10 }
             }));
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn(() => {
+                    importPopoverComponent.backButtonFunc = {
+                        unsubscribe: jest.fn()
+                    } as any
+                })
+            }as any
             // act
             importPopoverComponent.importInitiated();
 
@@ -148,42 +162,49 @@ describe('ImportPopoverComponent', () => {
             setTimeout(() => {
                 expect(importPopoverComponent.currentCount).toEqual(1);
                 expect(importPopoverComponent.totalCount).toEqual(10);
-                done();
             }, 0);
 
         });
 
-        it('should dismiss the popup  and emit isDeleteChecked: true', (done) => {
+        it('should dismiss the popup  and emit isDeleteChecked: true', () => {
             // arrange
             importPopoverComponent.deleteChecked = true;
             mockEventBusService.events = jest.fn(() => of({
                 type: ContentEventType.IMPORT_COMPLETED,
                 payload: {}
             }));
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn(() => {
+                    importPopoverComponent.backButtonFunc = {
+                        unsubscribe: jest.fn()
+                    } as any
+                })
+            }as any
             // act
             importPopoverComponent.importInitiated();
 
             // assert
             setTimeout(() => {
                 expect(mockPopoverController.dismiss).toHaveBeenCalledWith({isDeleteChecked: true});
-                done();
             }, 0);
         });
 
-        it('should dismiss the popup  and emit isDeleteChecked: false', (done) => {
+        it('should dismiss the popup  and emit isDeleteChecked: false', () => {
             // arrange
             importPopoverComponent.deleteChecked = false;
             mockEventBusService.events = jest.fn(() => of({
                 type: ContentEventType.IMPORT_COMPLETED,
                 payload: {}
             }));
+            importPopoverComponent.backButtonFunc = {
+                unsubscribe: jest.fn()
+            } as any
             // act
             importPopoverComponent.importInitiated();
 
             // assert
             setTimeout(() => {
                 expect(mockPopoverController.dismiss).toHaveBeenCalledWith({isDeleteChecked: false});
-                done();
             }, 0);
         });
     });

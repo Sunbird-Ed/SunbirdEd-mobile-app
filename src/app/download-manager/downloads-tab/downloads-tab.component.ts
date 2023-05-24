@@ -94,14 +94,14 @@ export class DownloadsTabComponent implements OnInit {
     this.showDeleteButton=true
 
     if (data === undefined) { // Backdrop clicked
-      if (!identifier) { this.unSelectAllContents(); }
+      if (!identifier) { await this.unSelectAllContents(); }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.OUTSIDE_POPUP_AREA_CLICKED,
         Environment.DOWNLOADS,
         PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
     } else if (data.closeDeletePopOver) { // Close clicked
-      if (!identifier) { this.unSelectAllContents(); }
+      if (!identifier) { await this.unSelectAllContents(); }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CLOSE_CLICKED,
@@ -170,7 +170,7 @@ export class DownloadsTabComponent implements OnInit {
     }
   }
 
-  selectAllContents() {
+  async selectAllContents() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SELECT_ALL_CLICKED,
@@ -181,7 +181,7 @@ export class DownloadsTabComponent implements OnInit {
     });
     this.showDeleteButton = false;
     this.showSelectAll = false;
-    this.deleteAllContents();
+    await this.deleteAllContents();
   }
 
   async unSelectAllContents(event?) {
@@ -211,7 +211,7 @@ export class DownloadsTabComponent implements OnInit {
         this.showSelectAll = true;
       }
       this.showDeleteButton = false;
-      this.deleteAllContents();
+      await this.deleteAllContents();
     } else {
       this.showDeleteButton = true;
       if (this.deleteAllPopupPresent) {
@@ -271,7 +271,7 @@ export class DownloadsTabComponent implements OnInit {
       this.deleteAllPopupPresent = false;
       const valuesMap = {};
       if (data && data.isLeftButtonClicked === null) {
-        this.unSelectAllContents();
+        await this.unSelectAllContents();
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.POPUP_DISMISSED,
@@ -281,7 +281,7 @@ export class DownloadsTabComponent implements OnInit {
         return;
       } else if (data.isLeftButtonClicked) {
         valuesMap['type'] = ActionButtonType.NEGATIVE;
-        this.unSelectAllContents();
+        await this.unSelectAllContents();
       } else {
         valuesMap['type'] = ActionButtonType.POSITIVE;
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -290,7 +290,7 @@ export class DownloadsTabComponent implements OnInit {
           Environment.DOWNLOADS,
           PageId.BULK_DELETE_POPUP, undefined,
           valuesMap);
-        this.showDeletePopup();
+          await this.showDeletePopup();
       }
       this.deleteAllConfirm = undefined;
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -302,12 +302,12 @@ export class DownloadsTabComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content) {
+  async navigateToDetailsPage(content) {
     if (content.type == 'project') {
-      this.navigateToProjectDetails(content)
+      await this.navigateToProjectDetails(content)
       return
     } else if(content.type == 'observation'){
-      this.navigateToObservationDetails(content)
+      await this.navigateToObservationDetails(content)
       return
     }
     const corRelationList: Array<CorrelationData> = [{
@@ -322,14 +322,14 @@ export class DownloadsTabComponent implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, content.identifier),
       corRelationList);
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content, { content }
     );
   }
 
-  navigateToProjectDetails(project) {
+  async navigateToProjectDetails(project) {
      const selectedFilter = project.isAPrivateProgram==false ? 'assignedToMe' : 'createdByMe';
-     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+     await this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
        queryParams: {
          projectId: project._id,
          programId: project.programId,
@@ -339,9 +339,9 @@ export class DownloadsTabComponent implements OnInit {
      });
   }
 
-  navigateToObservationDetails(solution) {
+  async navigateToObservationDetails(solution) {
     let { programId, solutionId, _id: observationId, name: solutionName } = solution;
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+    await this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {
         programId: programId,
         solutionId: solutionId,

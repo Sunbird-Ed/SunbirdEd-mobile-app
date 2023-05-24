@@ -40,8 +40,8 @@ export class SbTutorialPopupComponent implements OnInit {
         }, 2000);
     }
 
-    closePopover(continueClicked: boolean) {
-        this.popoverCtrl.dismiss();
+    async closePopover(continueClicked: boolean) {
+        await this.popoverCtrl.dismiss();
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,

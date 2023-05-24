@@ -40,7 +40,7 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   public async ngOnInit() {
-    this.appGlobalService.closeSigninOnboardingLoader();
+    await this.appGlobalService.closeSigninOnboardingLoader();
     this.appName = await this.appVersion.getAppName();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
@@ -61,8 +61,8 @@ export class TermsAndConditionsPage implements OnInit {
       subscribeWithPriority(999, async () => this.showToastOnFirstBackNavigation());
   }
 
-  ionViewDidEnter() {
-    this.sbProgressLoader.hide({id: 'login'});
+  async ionViewDidEnter() {
+    await this.sbProgressLoader.hide({id: 'login'});
   }
 
   public ionViewWillLeave() {
@@ -95,7 +95,7 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   public async onAcceptanceClick(): Promise<void> {
-    this.modalCtrl.dismiss({profileDetails: this.userProfileDetails, disableSubmitButton: this.disableSubmitButton})
+    await this.modalCtrl.dismiss({profileDetails: this.userProfileDetails, disableSubmitButton: this.disableSubmitButton})
   }
 
   private showToastOnFirstBackNavigation() {
@@ -108,8 +108,8 @@ export class TermsAndConditionsPage implements OnInit {
 
     this.unregisterBackButtonAction = this.platform.backButton.subscribeWithPriority(999, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
-      this.logoutHandlerService.onLogout();
-      this.modalCtrl.dismiss();
+      await this.logoutHandlerService.onLogout();
+      await this.modalCtrl.dismiss();
     });
   }
 

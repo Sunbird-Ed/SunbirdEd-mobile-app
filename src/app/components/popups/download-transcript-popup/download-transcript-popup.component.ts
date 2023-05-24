@@ -32,7 +32,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   }
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -44,7 +44,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
         await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
         resolve(false);
       } else {
-        this.showStoragePermissionPopup().then((result) => {
+        await this.showStoragePermissionPopup().then((result) => {
           if (result) {
             resolve(true);
           } else {
@@ -110,7 +110,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   
   async download() {
     const loader = await this.commonUtilService.getLoader();
-    this.popOverCtrl.dismiss();
+    await this.popOverCtrl.dismiss();
     await loader.present();
     await this.checkForPermissions().then(async (result) => {
       if (result) {
@@ -146,13 +146,13 @@ export class DownloadTranscriptPopupComponent implements OnInit {
           }
         }
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
     
   }
-  closePopover() {
-    this.popOverCtrl.dismiss();
+  async closePopover() {
+    await this.popOverCtrl.dismiss();
   }
 
 }

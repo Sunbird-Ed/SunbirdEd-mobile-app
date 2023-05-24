@@ -15,7 +15,7 @@ export class AliasBoardName implements PipeTransform {
         }
         this.formAndFrameworkUtilService.getBoardAliasName().then((fields) => {
             AliasBoardName.cachedAliases = fields;
-        });
+        }).catch(err => console.error(err));
     }
     transform(val: string): string {
         if (!AliasBoardName.cachedAliases) {

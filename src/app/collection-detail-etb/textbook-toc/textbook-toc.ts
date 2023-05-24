@@ -76,11 +76,11 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         this.getChildDataIdScrollEvent();
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
             this.handleBackButton(false);
             this.backButtonFunc();
@@ -155,12 +155,12 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         const headerSpaceHeight = 58;
         const deviceHeight = this.platform.height();
         this.events.subscribe(EventTopics.TOC_COLLECTION_CHILD_ID, (event) => {
-            setTimeout(() => {
+            setTimeout(async () => {
                 const idVal: any  = document.getElementById(event.id);
                 if (idVal) {
                     const offSetIdVal = idVal.offsetTop;
                     if (offSetIdVal && (deviceHeight - headerSpaceHeight) < offSetIdVal) {
-                        this.content.scrollToPoint(0, offSetIdVal, 500);
+                        await this.content.scrollToPoint(0, offSetIdVal, 500);
                     }
                 }
             }, 1000);

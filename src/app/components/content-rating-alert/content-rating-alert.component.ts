@@ -65,8 +65,8 @@ export class ContentRatingAlertComponent {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.getUserId();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.content = this.navParams.get('content');
@@ -78,7 +78,7 @@ export class ContentRatingAlertComponent {
     this.navigateBack = this.navParams.get('navigateBack');
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.RATING_POPUP,
@@ -103,7 +103,7 @@ export class ContentRatingAlertComponent {
     }, err => {
       console.log(err);
     });
-    this.invokeContentRatingFormApi();
+    await this.invokeContentRatingFormApi();
     const ratingDomTag = document.getElementsByTagName('rating');
     this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, this.userRating);
   }
@@ -132,20 +132,20 @@ export class ContentRatingAlertComponent {
     this.commonUtilService.setRatingStarAriaLabel(ratingDomTag, ratingCount);
   }
 
-  cancel() {
-    this.popOverCtrl.dismiss();
+  async cancel() {
+    await this.popOverCtrl.dismiss();
   }
-  closePopover() {
+  async closePopover() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CLOSE_CLICKED,
       Environment.HOME,
       ImpressionSubtype.RATING_POPUP, this.telemetryObject
     );
-    this.popOverCtrl.dismiss();
+    await this.popOverCtrl.dismiss();
   }
 
-  submit() {
+  async submit() {
     let comment = '';
     this.ratingOptions.forEach(element => {
       if (element.key.toLowerCase() !== 'other' && element.isChecked) {
@@ -172,7 +172,7 @@ export class ContentRatingAlertComponent {
       Environment.HOME,
       this.pageId, this.telemetryObject, paramsMap
     );
-    this.generateContentRatingTelemetry(option);
+    await this.generateContentRatingTelemetry(option);
     if (this.allComments) {
       this.generateContentFeedbackTelemetry(option);
     }
@@ -223,16 +223,16 @@ export class ContentRatingAlertComponent {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     await this.formAndFrameworkUtilService.getFormFields({...FormConstants.CONTENT_FEEDBACK, subType: selectedLanguage}).then((res) => {
       this.populateComments(res);
-    }).catch((error) => {
-      this.getDefaultContentRatingFormApi();
+    }).catch(async (error) => {
+      await this.getDefaultContentRatingFormApi();
     });
   }
 
   async getDefaultContentRatingFormApi() {
     await this.formAndFrameworkUtilService.getFormFields(FormConstants.CONTENT_FEEDBACK).then((res) => {
       this.populateComments(res);
-    }).catch((error) => {
-      this.getDefaultContentRatingFormApi();
+    }).catch(async (error) => {
+      await this.getDefaultContentRatingFormApi();
     });
   }
 
@@ -246,7 +246,7 @@ export class ContentRatingAlertComponent {
     }
   }
 
-  generateContentRatingTelemetry(option) {
+  async generateContentRatingTelemetry(option) {
     const viewDismissData = {
       rating: this.ratingCount ? this.ratingCount : this.userRating,
       comment: this.allComments ? this.allComments : '',
@@ -254,15 +254,16 @@ export class ContentRatingAlertComponent {
     };
     this.contentService.sendFeedback(option).subscribe((res) => {
       viewDismissData.message = 'rating.success';
-      this.popOverCtrl.dismiss(viewDismissData);
+    }, (data) => {
+      viewDismissData.message = 'rating.error';
+    });
+    await this.popOverCtrl.dismiss(viewDismissData);
+    if(viewDismissData.message === 'rating.success') {
       this.commonUtilService.showToast('THANK_FOR_RATING', false, 'green-toast');
       if (this.navigateBack) {
         this.location.back();
       }
-    }, (data) => {
-      viewDismissData.message = 'rating.error';
-      this.popOverCtrl.dismiss(viewDismissData);
-    });
+    }
   }
 
   generateContentFeedbackTelemetry(option1) {

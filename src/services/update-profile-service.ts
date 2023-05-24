@@ -226,21 +226,21 @@ export class UpdateProfileService {
             });
         }
         this.profileService.updateProfile(req).toPromise()
-            .then((res: any) => {
+            .then(async (res: any) => {
                 if (res.syllabus && res.syllabus.length && res.board && res.board.length
                     && res.grade && res.grade.length && res.medium && res.medium.length) {
                     this.events.publish(AppGlobalService.USER_INFO_UPDATED);
                     this.events.publish('refresh:profile');
-                    this.appGlobalService.setOnBoardingCompleted();
+                    await this.appGlobalService.setOnBoardingCompleted();
                 }
                 this.commonUtilService.handleToTopicBasedNotification();
                 this.appGlobalService.guestUserProfile = res;
                 this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
                     req, 'auto');
-                this.sbProgressLoader.hide({id: 'DEFAULT'});
+                await this.sbProgressLoader.hide({id: 'DEFAULT'});
             })
-            .catch(() => {
-                this.sbProgressLoader.hide({id: 'DEFAULT'});
+            .catch(async () => {
+                await this.sbProgressLoader.hide({id: 'DEFAULT'});
             });
     }
 

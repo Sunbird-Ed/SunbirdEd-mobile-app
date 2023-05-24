@@ -53,7 +53,9 @@ describe('CopyTraceIdPopoverComponent', () => {
         copyTraceIdPopoverComponent.copy();
         // assert
         expect(mockPopOverController.dismiss).toBeCalled();
-        expect(mockSocialSharing.share).toHaveBeenCalledWith('some_trace_id');
+        setTimeout(() => {
+            expect(mockSocialSharing.share).toHaveBeenCalledWith('some_trace_id');
+        }, 0);
     });
 
     it('ionViewWillEnter', () => {

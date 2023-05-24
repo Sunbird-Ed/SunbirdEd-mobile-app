@@ -143,7 +143,7 @@ describe('CreateEditGroupPage', () => {
         });
     });
 
-    it('should return headers with backButton', () => {
+    it('should return headers with backButton', (done) => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         const data = jest.fn((fn => fn({ name: 'sample-event' })));
         mockHeaderService.headerEventEmitted$ = {
@@ -157,21 +157,24 @@ describe('CreateEditGroupPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
-            undefined, undefined, undefined, undefined, createEditGroupPage.corRelationList);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.INITIATED,
-            '',
-            Environment.GROUP,
-            PageId.CREATE_GROUP,
-            undefined,
-            undefined,
-            undefined,
-            createEditGroupPage.corRelationList,
-            ID.CREATE_GROUP
-        );
+        setTimeout(() => {
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
+                undefined, undefined, undefined, undefined, createEditGroupPage.corRelationList);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.INITIATED,
+                '',
+                Environment.GROUP,
+                PageId.CREATE_GROUP,
+                undefined,
+                undefined,
+                undefined,
+                createEditGroupPage.corRelationList,
+                ID.CREATE_GROUP
+            );
+            done()
+        }, 0);
     });
 
     describe('ionViewWillLeave', () => {
