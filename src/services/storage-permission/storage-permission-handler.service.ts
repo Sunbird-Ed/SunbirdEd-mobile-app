@@ -30,7 +30,7 @@ export class StoragePermissionHandlerService {
       });
     }
     this.appName = await this.appVersion.getAppName();
-    return new Promise<boolean | undefined>(async (resolve) => {
+    return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -44,7 +44,7 @@ export class StoragePermissionHandlerService {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => reject(err));
       }
     });
   }

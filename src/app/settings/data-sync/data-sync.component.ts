@@ -66,15 +66,15 @@ export class DataSyncComponent implements OnInit, OnDestroy {
   }
 
   private async init() {
-    this.zone.run(async () => {
+    await this.zone.run(async () => {
       this.dataSyncType = (
         await this.telemetryService.autoSync.getSyncMode().toPromise() as TelemetryAutoSyncModes | undefined
       ) || TelemetryAutoSyncModes.ALWAYS_ON;
     });
   }
 
-  ngOnInit() {
-    this.init();
+  async ngOnInit() {
+    await this.init();
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;
     telemetryImpressionRequest.pageId = PageId.SETTINGS_DATASYNC;
@@ -93,10 +93,10 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSelected() {
+  async onSelected() {
     if (this.dataSyncType) {
       this.generateSyncTypeInteractTelemetry(this.dataSyncType);
-      this.telemetryService.autoSync.setSyncMode(this.dataSyncType).toPromise();
+      await this.telemetryService.autoSync.setSyncMode(this.dataSyncType).toPromise();
     }
   }
 
@@ -138,7 +138,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async (r) => {
         await loader.dismiss();
-        return this.social.share('', '', r.filePath, '');
+        return await this.social.share('', '', r.filePath, '');
       })
       .catch(async (e) => {
         await loader.dismiss();

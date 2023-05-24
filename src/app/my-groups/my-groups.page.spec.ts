@@ -462,12 +462,14 @@ describe('MyGroupsPage', () => {
             myGroupsPage.headerObservable = {
                 unsubscribe: jest.fn()
             };
+            myGroupsPage.unregisterBackButton = { unsubscribe: jest.fn() } as any;
             myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.headerObservable).toBeTruthy();
         });
 
         it('should unsubscribe headerService', () => {
             myGroupsPage.headerObservable = undefined;
+            myGroupsPage.unregisterBackButton = { unsubscribe: jest.fn() } as any;
             myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.headerObservable).toBeUndefined();
         });

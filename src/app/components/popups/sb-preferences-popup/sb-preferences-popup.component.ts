@@ -19,10 +19,10 @@ export class SbPreferencePopupComponent {
     ) {
         this.appVersion.getAppName().then((appName: any) => {
             this.appLabel = appName;
-        });
+        }).catch(err => console.error(err));
     }
 
-    changePreference() {
-        this.modalCtrl.dismiss({ showPreference: true });
+    async changePreference() {
+        await this.modalCtrl.dismiss({ showPreference: true });
     }
 }

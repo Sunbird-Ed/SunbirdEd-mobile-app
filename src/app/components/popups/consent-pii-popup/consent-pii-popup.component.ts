@@ -40,20 +40,20 @@ export class ConsentPiiPopupComponent {
                 value: this.converDataSrcToObject(element)
             });
         });
-        this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+        this.appName = await this.commonUtilService.getAppName();
     }
-    closePopover(data) {
+    async closePopover(data) {
         const request = {
             data,
             userId: this.profile.uid
         };
-        this.popOverCtrl.dismiss(request);
+        await this.popOverCtrl.dismiss(request);
     }
-    dontShare() {
-        this.closePopover(false);
+    async dontShare() {
+        await this.closePopover(false);
     }
-    share() {
-        this.closePopover(true);
+    async share() {
+        await this.closePopover(true);
     }
 
     converDataSrcToObject(ele) {

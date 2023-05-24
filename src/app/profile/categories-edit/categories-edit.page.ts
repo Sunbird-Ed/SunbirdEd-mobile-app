@@ -175,13 +175,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   /**
    * Ionic life cycle event - Fires every time page visits
    */
-  ionViewWillEnter() {
-    this.setDefaultBMG();
-    this.initializeLoader();
+  async ionViewWillEnter() {
+    await this.setDefaultBMG();
+    await this.initializeLoader();
     if (this.appGlobalService.isUserLoggedIn()) {
-      this.getLoggedInFrameworkCategory();
+      await this.getLoggedInFrameworkCategory();
     } else {
-      this.getSyllabusDetails();
+      await this.getSyllabusDetails();
     }
     this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -191,18 +191,18 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
 
     if (this.isRootPage) {
-      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
         }
       });
     }
   }
 
-  ionViewDidEnter() {
-    this.sbProgressLoader.hide({ id: 'login' });
+  async ionViewDidEnter() {
+    await this.sbProgressLoader.hide({ id: 'login' });
   }
 
   /**
@@ -236,7 +236,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
 
-    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
         if (!frameworks || !frameworks.length) {
           await this.loader.dismiss();
@@ -384,28 +384,28 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   /**
    * It will validate the forms and internally call submit method
    */
-  onSubmit() {
+  async onSubmit() {
     const formVal = this.profileEditForm.value;
     if (formVal.boards && !formVal.boards.length && this.syllabusList.length && this.isBoardAvailable) {
       if (this.showOnlyMandatoryFields) {
-        this.boardSelect.open();
+        await this.boardSelect.open();
       } else {
         this.showErrorToastMessage('BOARD');
       }
     } else if (formVal.medium && !formVal.medium.length && this.supportedProfileAttributes['medium']) {
       if (this.showOnlyMandatoryFields) {
-        this.mediumSelect.open();
+        await this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
     } else if (formVal.grades && !formVal.grades.length && this.supportedProfileAttributes['gradeLevel']) {
       if (this.showOnlyMandatoryFields) {
-        this.gradeSelect.open();
+        await this.gradeSelect.open();
       } else {
         this.showErrorToastMessage('CLASS');
       }
     } else {
-      this.submitForm(formVal);
+      await this.submitForm(formVal);
     }
   }
 
@@ -492,7 +492,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       from: CachedItemRequestSourceFrom.SERVER
     };
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
-      .then(updatedProfile => {
+      .then(async updatedProfile => {
          // ******* Segmentation
         let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
         Object.keys(segmentDetails).forEach((key) => {
@@ -507,8 +507,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
         window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-        this.segmentationTagService.evalCriteria();
-      });
+        await this.segmentationTagService.evalCriteria();
+      }).catch(e => console.error(e));
   }
 
   ionViewWillLeave() {
@@ -606,6 +606,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.supportedProfileAttributes = categories.supportedAttributes;
         this.addAttributeSubscription();
       }
-    });
+    }).catch(e => console.error(e));
   }
 }

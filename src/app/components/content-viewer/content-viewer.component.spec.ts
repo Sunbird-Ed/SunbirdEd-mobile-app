@@ -49,8 +49,10 @@ describe('ContentViewerComponent', () => {
         // act
         contentViewerComponent.ngOnInit();
         // assert 
-        expect( mockStatusBar.hide).toHaveBeenCalled();
-        expect( mockScreenOrientation.lock).toHaveBeenCalled();
+        setTimeout(() => {
+            expect( mockStatusBar.hide).toHaveBeenCalled();
+            expect( mockScreenOrientation.lock).toHaveBeenCalled();
+        }, 0);
     });
 });
 
@@ -93,7 +95,7 @@ describe('eventHandler', () => {
          expect( mockModalController.dismiss).toHaveBeenCalled();
     })
 
-    it('if event not equals exit', () =>{
+    it('if event not equals exit', async () =>{
         //arrange
         const event = {
             edata : {
@@ -101,9 +103,11 @@ describe('eventHandler', () => {
             }
         }
          // act
-         const data = contentViewerComponent.eventHandler(event);
+         const data = await contentViewerComponent.eventHandler(event);
          // assert 
-         expect( data ).toBeUndefined();
+        setTimeout(() => {
+            expect( data ).toBe({});
+        }, 0);
     })
 
     

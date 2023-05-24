@@ -64,8 +64,8 @@ export class PageFilterPage {
     });
   }
 
-  ionViewWillEnter() {
-    this.menuCtrl.enable(false);
+  async ionViewWillEnter() {
+    await this.menuCtrl.enable(false);
   }
 
   onLanguageChange() {
@@ -250,8 +250,8 @@ export class PageFilterPage {
     await this.popCtrl.dismiss();
   }
 
-  getRootOrganizations(index) {
-    this.formAndFrameworkUtilService.getRootOrganizations()
+  async getRootOrganizations(index) {
+    await this.formAndFrameworkUtilService.getRootOrganizations()
       .then(res => {
         this.filters[index].values = res;
       })
@@ -260,11 +260,11 @@ export class PageFilterPage {
       });
   }
 
-  ionViewWillLeave(): void {
+  async ionViewWillLeave(): Promise<void> {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.menuCtrl.enable(true);
+    await this.menuCtrl.enable(true);
   }
 }
 

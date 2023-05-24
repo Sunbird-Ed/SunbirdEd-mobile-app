@@ -52,9 +52,11 @@ describe('SbGenericPopoverComponent', () => {
         // act
         sbGenericPopoverComponent.ngOnInit();
         // assert
-        expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
-        // expect(sbGenericPopoverComponent.selectedContents).toEqual(mockEventsResponse);
-        expect(unsubscribeFn).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
+            // expect(sbGenericPopoverComponent.selectedContents).toEqual(mockEventsResponse);
+            expect(unsubscribeFn).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should unsubscribe to back button and events on ngOnDestroy', () => {

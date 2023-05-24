@@ -28,17 +28,17 @@ export class ConfirmAlertComponent implements OnDestroy {
     this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
     this.isUpdateAvail = this.navParams.get('isUpdateAvail');
     this.contentSize = this.navParams.get('contentSize');
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-    this.popOverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
     });
   }
 
-  selectOption(canDownload: boolean = false) {
-    this.popOverCtrl.dismiss(canDownload);
+  async selectOption(canDownload: boolean = false) {
+    await this.popOverCtrl.dismiss(canDownload);
   }
 
-  closePopover() {
-    this.popOverCtrl.dismiss();
+  async closePopover() {
+    await this.popOverCtrl.dismiss();
   }
 
   ngOnDestroy() {

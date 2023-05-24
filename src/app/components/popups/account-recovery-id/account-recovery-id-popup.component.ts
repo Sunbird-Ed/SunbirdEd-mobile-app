@@ -43,22 +43,22 @@ export class AccountRecoveryInfoComponent implements OnInit {
               public  platform: Platform,
               private menuCtrl: MenuController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.recoveryIdType = (this.recoveryPhone.length > 0) ? RecoveryType.PHONE : RecoveryType.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
-    this.menuCtrl.enable(false);
+    await this.menuCtrl.enable(false);
   }
 
   ionViewWillEnter() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
     });
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true);
+  async ionViewWillLeave() {
+    await this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -76,6 +76,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
   async submitRecoveryId(type: RecoveryType) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let loader = await this.commonUtilService.getLoader();
+      let data;
       const req: UpdateServerProfileInfoRequest = this.getReqPayload(type);
       await loader.present();
       this.profileService.updateServerProfile(req).pipe(
@@ -86,11 +87,8 @@ export class AccountRecoveryInfoComponent implements OnInit {
           }
         })
       )
-        .subscribe((data: any) => {
-          if (data && data.response === 'SUCCESS') {
-            this.popOverCtrl.dismiss({ isEdited: true });
-            this.generateRecoveryTelemetry(type);
-          }
+        .subscribe((res: any) => {
+          data = res;
         }, (error) => {
           if (error && error.response && error.response.body && error.response.body.params &&
             error.response.body.params.err === 'UOS_USRUPD0062') {
@@ -100,6 +98,10 @@ export class AccountRecoveryInfoComponent implements OnInit {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
         });
+        if (data && data.response === 'SUCCESS') {
+          await this.popOverCtrl.dismiss({ isEdited: true });
+          this.generateRecoveryTelemetry(type);
+        }
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }

@@ -92,8 +92,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
     this.generateShareClickTelemetry();
     this.generateImpressionTelemetry();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.shareType = this.shareOptions.link.value;
@@ -174,57 +174,57 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       ID.SHARE_CONFIRM);
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover() {
+    await this.popoverCtrl.dismiss();
   }
 
-  shareLink() {
+  async shareLink() {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     const shareParams = {
       byLink: true,
       link: this.shareUrl
     };
-    this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+    await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
       this.corRelationList, this.objRollup,  this.pageId);
-    this.popoverCtrl.dismiss();
+    await this.popoverCtrl.dismiss();
   }
 
   async shareFile() {
-    await this.checkForPermissions().then((result) => {
+    await this.checkForPermissions().then(async (result) => {
       if (result) {
         this.generateConfirmClickTelemetry(ShareMode.SEND);
         const shareParams = {
           byFile: true,
           link: this.shareUrl
         };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+        await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
           this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
       }
     });
   }
 
   async saveFile() {
-    await this.checkForPermissions().then((result) => {
+    await this.checkForPermissions().then(async (result) => {
       if (result) {
         this.generateConfirmClickTelemetry(ShareMode.SAVE);
         const shareParams = {
           saveFile: true,
         };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+        await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
           this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
       }
     });
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -243,7 +243,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => console.error(err));
       }
     });
   }

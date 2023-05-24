@@ -71,7 +71,7 @@ export class ContentDeleteHandler {
                   return false;
                 }
             }
-            this.deleteContent(content.identifier, isChildContent, contentInfo, pageId);
+            await this.deleteContent(content.identifier, isChildContent, contentInfo, pageId);
         }
     }
 

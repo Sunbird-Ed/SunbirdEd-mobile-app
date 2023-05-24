@@ -139,12 +139,12 @@ export class ContentActionsComponent {
               return false;
             }
           }
-          this.deleteContent();
+          await this.deleteContent();
         }
         break;
       }
       case 1: {
-        this.popOverCtrl.dismiss();
+        await this.popOverCtrl.dismiss();
         break;
       }
     }
@@ -162,15 +162,15 @@ export class ContentActionsComponent {
       undefined,
       this.objRollup,
       this.corRelationList);
-    this.popOverCtrl.dismiss({ unenroll: true });
+      await this.popOverCtrl.dismiss({ unenroll: true });
   }
 
   async download() {
-    this.popOverCtrl.dismiss({ download: true });
+    await this.popOverCtrl.dismiss({ download: true });
   }
 
   async share() {
-    this.popOverCtrl.dismiss({ share: true });
+    await this.popOverCtrl.dismiss({ share: true });
   }
 
   async deleteContent() {
@@ -191,21 +191,21 @@ export class ContentActionsComponent {
       .then(async (data: ContentDeleteResponse[]) => {
         await loader.dismiss();
         if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
-          this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
+          await this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
         } else {
           // Publish saved resources update event
           this.events.publish('savedResources:update', {
             update: true
           });
           console.log('delete response: ', data);
-          this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
-          this.popOverCtrl.dismiss({ isDeleted: true });
+          await this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
+          await this.popOverCtrl.dismiss({ isDeleted: true });
         }
       }).catch(async (error: any) => {
         await loader.dismiss();
         console.log('delete response: ', error);
-        this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
-        this.popOverCtrl.dismiss();
+        await this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
+        await this.popOverCtrl.dismiss();
       });
   }
 
@@ -220,7 +220,7 @@ export class ContentActionsComponent {
       undefined,
       this.objRollup,
       this.corRelationList);
-    this.popOverCtrl.dismiss({ syncProgress: true });
+      await this.popOverCtrl.dismiss({ syncProgress: true });
   }
 
 

@@ -121,7 +121,7 @@ export class CanvasPlayerService {
                         const x2js = new X2JS();
                         const json = x2js.xml2js(response);
                         resolve(json);
-                    });
+                    }).catch((e) => console.error(e));
                 } catch (error) {
                     reject('Unable to convert');
                 }

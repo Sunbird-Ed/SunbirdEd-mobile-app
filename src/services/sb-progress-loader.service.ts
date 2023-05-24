@@ -46,8 +46,8 @@ export class SbProgressLoader {
 
         await this.modal.present();
 
-        setTimeout(() => {
-            this.hide(context);
+        setTimeout(async () => {
+            await this.hide(context);
         }, 30 * 1000);
     }
 
@@ -71,8 +71,8 @@ export class SbProgressLoader {
 
         this.progress.next(100);
 
-        setTimeout(() => {
-            this.modal.dismiss();
+        setTimeout(async () => {
+            await this.modal.dismiss();
             this.modal = undefined;
         }, 500);
     }
