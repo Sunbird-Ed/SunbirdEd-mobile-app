@@ -48,11 +48,11 @@ export class ExploreBooksSortComponent {
     });
   }
 
-  dismiss() {
+  async dismiss() {
     if ((this.sortForm.value.board !== this.searchForm.value.board) || (this.sortForm.value.medium !== this.searchForm.value.medium)) {
-      this.modalCtrl.dismiss({ values: this.sortForm.value });
+      await this.modalCtrl.dismiss({ values: this.sortForm.value });
     } else {
-      this.modalCtrl.dismiss(null);
+      await this.modalCtrl.dismiss(null);
     }
   }
 }

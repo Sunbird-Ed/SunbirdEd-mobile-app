@@ -83,19 +83,19 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private db: DbService
   ) {}
 
-  ngOnInit() {
-    this.getUserProfileDetails();
-    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
-      this.getUserProfileDetails();
+  async ngOnInit() {
+    await this.getUserProfileDetails();
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, async () => {
+      await this.getUserProfileDetails();
     });
-    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, async (data: string) => {
       if (data === '') {
-        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+        await this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    this.events.subscribe('onAfterLanguageChange:update', (res) => {
+    this.events.subscribe('onAfterLanguageChange:update', async (res) => {
       if (res && res.selectedLanguage) {
-        this.fetchDisplayElements();
+        await this.fetchDisplayElements();
       }
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -106,19 +106,19 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     );
   }
 
-  tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+  async tabViewWillEnter() {
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe((eventName) => {
-      this.handleHeaderEvents(eventName);
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async (eventName) => {
+      await this.handleHeaderEvents(eventName);
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   getCreateProjectForm() {
@@ -129,7 +129,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           FormConstants.PROJECT_CREATE_META
         );
         if (createProjectMeta.length) {
-          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+          await this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
         }
         this.getTaskForm();
       }
@@ -144,28 +144,24 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           FormConstants.TASK_CREATE_META
         );
         if (createTaskMeta.length) {
-          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta);
+          await this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta);
         }
       }
     );
   }
 
   async getUserProfileDetails() {
-    this.profileService
-      .getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-      .subscribe((profile: Profile) => {
-        this.profile = profile;
-        this.getFrameworkDetails();
-        this.fetchDisplayElements();
-        this.getCreateProjectForm();
-      });
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+    this.getFrameworkDetails();
+    await this.fetchDisplayElements();
+    this.getCreateProjectForm();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     this.appLabel = await this.commonUtilService.getAppName();
   }
 
-  navigateToEditProfilePage() {
+  async navigateToEditProfilePage() {
     if (!this.guestUser) {
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -173,7 +169,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           isCurrentUser: true,
         },
       };
-      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+      await this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }
   }
 
@@ -203,7 +199,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         if (this.profile.grade && this.profile.grade.length) {
           this.grade = this.getFieldDisplayValues(this.profile.grade, 2);
         }
-      });
+      }).catch(e => console.error(e));
   }
 
   getFieldDisplayValues(field: Array<any>, index: number): string {
@@ -233,30 +229,30 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = this.contentAggregatorHandler.populateIcons(this.displaySections);
   }
 
-  onPillClick(event) {
+  async onPillClick(event) {
     switch (event.data[0].value.code) {
       case 'program':
-        this.router.navigate([RouterLinks.PROGRAM], {});
+        await this.router.navigate([RouterLinks.PROGRAM], {});
         this.generateTelemetry('PROGRAM_TILE_CLICKED');
         break;
       case 'project':
-        this.router.navigate([RouterLinks.PROJECT], {});
+        await this.router.navigate([RouterLinks.PROJECT], {});
         this.generateTelemetry('PROJECT_TILE_CLICKED');
         break;
       case 'observation':
-        this.router.navigate([RouterLinks.OBSERVATION], {});
+        await this.router.navigate([RouterLinks.OBSERVATION], {});
         this.generateTelemetry('OBSERVATION_TILE_CLICKED');
         break;
       case 'survey':
-        this.router.navigate([RouterLinks.SURVEY], {});
+        await this.router.navigate([RouterLinks.SURVEY], {});
         this.generateTelemetry('SURVEY_TILE_CLICKED');
         break;
       case 'report':
-        this.router.navigate([RouterLinks.REPORTS], {});
+        await this.router.navigate([RouterLinks.REPORTS], {});
         this.generateTelemetry('REPORTS_TILE_CLICKED');
         break;
       case 'course':
-        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
+        await this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
         this.generateTelemetry('COURSE_TILE_CLICKED');
 
     }
@@ -271,7 +267,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     );
   }
 
-  navigateToViewMoreContentsPage(section) {
+  async navigateToViewMoreContentsPage(section) {
     const params: NavigationExtras = {
       state: {
         enrolledCourses: section.data.sections[0].contents,
@@ -280,31 +276,31 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         userId: this.appGlobalService.getUserId(),
       },
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    await this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
       default:
         console.warn('Use Proper Event name');
     }
   }
 
-  redirectToActivedownloads() {
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+  async redirectToActivedownloads() {
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  redirectToNotifications() {
-    this.router.navigate([RouterLinks.NOTIFICATION]);
+  async redirectToNotifications() {
+    await this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
-  navigateToDetailPage(event, sectionName) {
+  async navigateToDetailPage(event, sectionName) {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
@@ -312,9 +308,9 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); 
+      await this.navService.navigateToDetailPage(item, { content: item }); 
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 

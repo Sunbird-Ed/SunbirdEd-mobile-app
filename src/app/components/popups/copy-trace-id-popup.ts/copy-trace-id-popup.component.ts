@@ -20,13 +20,13 @@ export class CopyTraceIdPopoverComponent {
     this.traceId = this.navParams.get('traceId');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
-  copy(){
-    this.popOverCtrl.dismiss();
-    this.socialSharing.share(this.traceId);
+  async copy(){
+    await this.popOverCtrl.dismiss();
+    await this.socialSharing.share(this.traceId);
   }
 
 }

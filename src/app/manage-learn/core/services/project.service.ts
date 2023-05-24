@@ -169,7 +169,7 @@ export class ProjectService {
       .toPromise()
       .then(async (data: Content) => {
         this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
+        await this.navigateService.navigateToDetailPage(data, { content: data });
       })
       .catch(error => {
         this.loader.stopLoader();

@@ -82,7 +82,7 @@ export class SelfDeclaredTeacherEditPage {
 
   async ionViewWillEnter() {
     this.handleDeviceBackButton();
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     await this.checkLocationAvailability();
 
     this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED, ID.TEACHER_DECLARATION);
@@ -97,7 +97,7 @@ export class SelfDeclaredTeacherEditPage {
 
   async ionViewDidEnter() {
     this.appName = await this.commonUtilService.getAppName();
-    this.getTenantPersonaForm();
+    await this.getTenantPersonaForm();
   }
 
   async getTenantPersonaForm() {
@@ -131,7 +131,7 @@ export class SelfDeclaredTeacherEditPage {
     this.tenantPersonaForm = personaTenantFormData;
     this.tenantPersonaForm[0].templateOptions.options = this.organisationList;
     if (this.selectedTenant) {
-      this.initTenantSpecificForm(this.selectedTenant, false);
+      await this.initTenantSpecificForm(this.selectedTenant, false);
     }
   }
 
@@ -139,7 +139,7 @@ export class SelfDeclaredTeacherEditPage {
     const formConfig = await this.formnFrameworkService.getFormFields(FormConstants.SELF_DECLARATION, rootOrgId);
     this.translateLabels(formConfig as any);
     if (formConfig.length) {
-      this.initializeFormData(formConfig, isFormLoaded);
+      await this.initializeFormData(formConfig, isFormLoaded);
     }
   }
 
@@ -446,22 +446,22 @@ export class SelfDeclaredTeacherEditPage {
     return null;
   }
 
-  tenantPersonaFormValueChanges(event) {
+  async tenantPersonaFormValueChanges(event) {
     this.tenantPersonaLatestFormValue = event;
     if (event && event.tenant) {
       if (!this.selectedTenant) {
         this.selectedTenant = event.tenant;
-        this.initTenantSpecificForm(this.selectedTenant, false);
+        await this.initTenantSpecificForm(this.selectedTenant, false);
       } else if (event.tenant !== this.selectedTenant) {
         this.previousOrgId = this.selectedTenant;
         this.selectedTenant = event.tenant;
         this.isTenantChanged = true;
-        this.initTenantSpecificForm(this.selectedTenant, true);
+        await this.initTenantSpecificForm(this.selectedTenant, true);
       }
     }
   }
 
-  declarationFormValueChanges(event) {
+  async declarationFormValueChanges(event) {
     this.declaredLatestFormValue = event;
     if (event && event.children && event.children.externalIds) {
       if (!this.selectedStateCode && event.children.externalIds['declared-state']) {
@@ -471,7 +471,7 @@ export class SelfDeclaredTeacherEditPage {
         this.selectedStateCode && this.selectedStateCode !== event.children.externalIds['declared-state']) {
         this.selectedStateCode = event.children.externalIds['declared-state'];
         const selectedState = this.getStateIdFromCode(this.selectedStateCode);
-        this.initTenantSpecificForm(selectedState && selectedState.id, true);
+        await this.initTenantSpecificForm(selectedState && selectedState.id, true);
       }
     }
   }

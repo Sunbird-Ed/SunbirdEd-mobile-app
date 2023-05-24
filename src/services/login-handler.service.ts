@@ -48,7 +48,7 @@ export class LoginHandlerService {
                 webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
                 await webviewSessionProviderConfigloader.dismiss();
             } catch (e) {
-                this.sbProgressLoader.hide({id: 'login'});
+                await this.sbProgressLoader.hide({id: 'login'});
                 await webviewSessionProviderConfigloader.dismiss();
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;

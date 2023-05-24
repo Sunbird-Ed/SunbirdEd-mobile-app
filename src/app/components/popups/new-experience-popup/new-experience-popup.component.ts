@@ -45,9 +45,9 @@ export class NewExperiencePopupComponent implements OnInit {
                 isNewUser
             }
         );
-        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
             SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {
@@ -63,12 +63,12 @@ export class NewExperiencePopupComponent implements OnInit {
         );
         await this.switchToHomeTabs();
         this.preference.putBoolean(PreferenceKey.IS_NEW_USER, false);
-        this.commonUtilService.populateGlobalCData();
-        this.popoverCtrl.dismiss();
+        await this.commonUtilService.populateGlobalCData();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToHomeTabs() {
-        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
             SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
         this.events.publish('UPDATE_TABS');
     }

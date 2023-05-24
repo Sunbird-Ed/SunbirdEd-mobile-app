@@ -194,5 +194,7 @@ export class EntityfilterComponent implements OnInit {
     this.getTargettedEntityType();
   }
 
-  detectBottom() {}
+  detectBottom() {
+    console.log('scroll');
+  }
 }

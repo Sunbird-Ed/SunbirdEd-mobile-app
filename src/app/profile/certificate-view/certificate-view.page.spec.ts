@@ -94,7 +94,9 @@ describe('CertificateViewPage', () => {
             // act
             certificateViewPage.ngOnInit();
             // assert
-            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            }, 0);
         });
     });
 

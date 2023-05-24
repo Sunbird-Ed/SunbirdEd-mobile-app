@@ -23,11 +23,11 @@ export class DialogPopupComponent {
     this.buttonText = this.navParams.get('buttonText');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
-  redirectToPlaystore() {
-    this.utilityService.openPlayStore(XwalkConstants.APP_ID);
+  async redirectToPlaystore() {
+    await this.utilityService.openPlayStore(XwalkConstants.APP_ID);
   }
 }

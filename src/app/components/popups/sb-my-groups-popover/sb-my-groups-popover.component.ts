@@ -34,16 +34,16 @@ export class MyGroupsPopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.buttonText = this.navParams.get('buttonText');
     this.isFromAddMember = this.navParams.get('isFromAddMember');
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
 
     if (this.isFromAddMember) {
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
@@ -54,18 +54,18 @@ export class MyGroupsPopoverComponent implements OnInit {
     }
   }
 
-  close(getStartedClicked: boolean) {
+  async close(getStartedClicked: boolean) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       getStartedClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
       Environment.GROUP,
       this.isFromAddMember ? PageId.ADD_MEMBER : PageId.MY_GROUP
     );
-    this.popOverCtrl.dismiss();
+    await this.popOverCtrl.dismiss();
   }
 
-  getStarted() {
+  async getStarted() {
     console.log('get started clicked');
-    this.close(true);
+    await this.close(true);
   }
 }

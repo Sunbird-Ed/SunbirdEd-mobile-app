@@ -28,17 +28,17 @@ export class ProfileSwitchHandler {
                 splashscreen.clearPrefs();
             }
         }
-        setTimeout(() => {
+        setTimeout(async () => {
             if (selectedProfile.profileType === ProfileType.STUDENT) {
                 initTabs(this.container, GUEST_STUDENT_TABS);
             } else {
                 initTabs(this.container, GUEST_TEACHER_TABS);
             }
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedProfile.profileType).toPromise().then();
+            await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedProfile.profileType).toPromise();
             this.events.publish('refresh:profile');
             this.events.publish(AppGlobalService.USER_INFO_UPDATED);
             this.appGlobalService.setSelectedUser(undefined);
-            this.router.navigate([RouterLinks.TABS]);
+            await this.router.navigate([RouterLinks.TABS]);
         }, 1000);
     }
 }

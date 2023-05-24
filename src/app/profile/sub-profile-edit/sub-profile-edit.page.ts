@@ -62,11 +62,11 @@ export class SubProfileEditPage {
 
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
-    });
+    }).catch(() => {});
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);

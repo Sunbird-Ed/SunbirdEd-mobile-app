@@ -111,7 +111,7 @@ describe('enrollmentdetailcomponent', () => {
     });
 
     describe('resumeCourse()', () => {
-        it('should call saveContext publish close and putString', () => {
+        it('should call saveContext publish close and putString', (done) => {
             // arrange
             const content = {
                 userId: 'userId',
@@ -132,9 +132,12 @@ describe('enrollmentdetailcomponent', () => {
             // act
             enrollmentDetails.resumeCourse(content);
             // assert
-            expect(enrollmentDetails.saveContentContext).toBeCalled();
-            expect(enrollmentDetails.close).toBeCalled();
-            expect(mockSharedPreferences.putString).toBeCalledWith(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
+            setTimeout(() => {
+                expect(enrollmentDetails.saveContentContext).toBeCalled();
+                expect(enrollmentDetails.close).toBeCalled();
+                expect(mockSharedPreferences.putString).toBeCalledWith(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
+                done()
+            }, 0)
         });
 
         it('should call navigate', (done) => {

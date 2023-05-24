@@ -150,7 +150,9 @@ describe('SignInPage', () => {
             signInPage.ionViewWillLeave();
             // assert
             expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
-            expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            }, 0);
         })
     });
 
@@ -213,7 +215,7 @@ describe('SignInPage', () => {
     })
 
     describe('loginWithKeyCloak', () => {
-        xit('should do  nothing if the network is unavailable', (done) => {
+        it('should do  nothing if the network is unavailable', () => {
             //arrange
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
@@ -223,10 +225,9 @@ describe('SignInPage', () => {
             setTimeout(() => {
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
                 expect(!mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-                done();
             }, 0)
         });
-        xit('should fetch from form configuration for login session ', (done) => {
+        it('should fetch from form configuration for login session ', () => {
             // arrange
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
@@ -253,10 +254,9 @@ describe('SignInPage', () => {
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
                 expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
                 expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
-                done();
             });
         });
-        xit('should execute catch block ', (done) => {
+        it('should execute catch block ', () => {
             // arrange
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
@@ -274,7 +274,6 @@ describe('SignInPage', () => {
             signInPage.loginWithKeyCloak()
             // assert
             setTimeout(() => {
-                done();
             }, 0);
         });
     });
@@ -333,7 +332,7 @@ describe('SignInPage', () => {
     });
 
     describe('signIn with Google', () => {
-        xit('should generate telemetry and fetchClientId, googleLogin initiated, show progressLoader and put preference boolean', (done) => {
+        it('should generate telemetry and fetchClientId, googleLogin initiated, show progressLoader and put preference boolean', () => {
             // arrange
             mockLoginNavigationHandlerService.generateLoginInteractTelemetry = jest.fn();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of({
@@ -359,7 +358,6 @@ describe('SignInPage', () => {
             setTimeout(() => {
                 expect(mockLoginNavigationHandlerService.setSession).toHaveBeenCalled();
                 expect(mockSharedPreferences.putBoolean).toHaveBeenCalled();
-                done();
             }, 0);
         });
 

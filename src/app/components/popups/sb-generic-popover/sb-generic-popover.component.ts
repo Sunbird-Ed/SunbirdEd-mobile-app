@@ -26,8 +26,8 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
     private events: Events) { }
 
   ngOnInit() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
       this.backButtonFunc.unsubscribe();
     });
 
@@ -41,12 +41,12 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
     this.backButtonFunc.unsubscribe();
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+  async closePopover() {
+    await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  deleteContent(buttonIndex: number = 0) {
-    this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
+  async deleteContent(buttonIndex: number = 0) {
+    await this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
   }
 
 }

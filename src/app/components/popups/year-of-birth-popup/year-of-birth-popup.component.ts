@@ -31,12 +31,12 @@ export class YearOfBirthPopupComponent implements OnInit {
     this.profileService.updateServerProfile(req).toPromise()
       .then(async () => {
         await loader.dismiss();
-        this.popOverCtrl.dismiss();
+        await this.popOverCtrl.dismiss();
       }).catch(async () => {
         if (loader) {
           await loader.dismiss();
         }
-        this.popOverCtrl.dismiss();
+        await this.popOverCtrl.dismiss();
       });
   }
 

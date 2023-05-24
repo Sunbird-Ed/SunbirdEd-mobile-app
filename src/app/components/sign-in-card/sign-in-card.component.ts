@@ -27,7 +27,7 @@ export class SignInCardComponent {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
-      });
+      }).catch((err) => {});
   }
 
   async signIn(skipNavigation?) {
@@ -41,6 +41,6 @@ export class SignInCardComponent {
         this.source, null
     );
 
-    this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
+    await this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
   }
 }

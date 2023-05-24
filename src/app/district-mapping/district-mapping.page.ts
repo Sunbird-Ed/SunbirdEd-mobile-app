@@ -28,11 +28,10 @@ import {
   AuditState, CorrelationData, DeviceInfo, DeviceRegisterRequest,
   DeviceRegisterService,
   FormRequest, LocationSearchResult, Profile, ProfileService,
-  SharedPreferences
+  SharedPreferences, ProfileType
 } from '@project-sunbird/sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
-import {ProfileType} from '@project-sunbird/sunbird-sdk';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
@@ -107,7 +106,7 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.initializeLoader();
+    await this.initializeLoader();
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     const isLoggedIn = this.appGlobalService.isUserLoggedIn();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
@@ -117,13 +116,13 @@ export class DistrictMappingPage implements OnDestroy {
         return acc;
       }, {});
     try {
-        await this.initialiseFormData({
-          ...FormConstants.LOCATION_MAPPING,
-          subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
-        });
-      } catch (e) {
-        await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
-      }
+      await this.initialiseFormData({
+        ...FormConstants.LOCATION_MAPPING,
+        subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
+      });
+    } catch (e) {
+      await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
+    }
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -137,7 +136,7 @@ export class DistrictMappingPage implements OnDestroy {
       PageId.DISTRICT_MAPPING,
       this.getEnvironment(), '', '', '', undefined,
       featureIdMap.location.LOCATION_CAPTURE);
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     const correlationList: Array<CorrelationData> = [];
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
@@ -171,7 +170,7 @@ export class DistrictMappingPage implements OnDestroy {
   }
 
   async submit() {
-    this.saveDeviceLocation();
+    await this.saveDeviceLocation();
     const locationCodes = [];
     for(const acc in this.formGroup.value.children['persona']) {
       if (this.formGroup.value.children['persona'][acc]) {
@@ -244,7 +243,7 @@ export class DistrictMappingPage implements OnDestroy {
                 userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid}
             }
           };
-          this.router.navigate([RouterLinks.SIGNUP_EMAIL], navigationExtras);
+          await this.router.navigate([RouterLinks.SIGNUP_EMAIL], navigationExtras);
       } else {
         if (this.isGoogleSignIn) {
           req['firstName'] = this.userData.name;
@@ -256,7 +255,7 @@ export class DistrictMappingPage implements OnDestroy {
         this.profileService.updateServerProfile(req).toPromise()
           .then(async () => {
             await loader.dismiss();
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
+            await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
             if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
               await this.saveDeviceLocation();
             }
@@ -269,7 +268,7 @@ export class DistrictMappingPage implements OnDestroy {
                 hasFilledLocation: true,
                 showOnlyMandatoryFields: true,
               };
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: categoriesProfileData
               });
             } else if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
@@ -279,11 +278,11 @@ export class DistrictMappingPage implements OnDestroy {
                 this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
             } else {
               if (this.profile && !isSSOUser) {
-                this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+                await this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
               }
               if (this.appGlobalService.isJoinTraningOnboardingFlow) {
                 window.history.go(-this.navigateToCourse);
-                this.externalIdVerificationService.showExternalIdVerificationPopup();
+                await this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
                 this.events.publish('update_header');
@@ -296,9 +295,9 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
             } else {
               if (this.profile && !isSSOUser) {
-                this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+                await this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
               }
-              this.router.navigate([`/${RouterLinks.TABS}`]);
+              await this.router.navigate([`/${RouterLinks.TABS}`]);
               this.events.publish('update_header');
             }
           });
@@ -310,7 +309,7 @@ export class DistrictMappingPage implements OnDestroy {
       this.location.back();
     } else { // add or update the device loc
       await this.saveDeviceLocation();
-      this.appGlobalService.setOnBoardingCompleted();
+      await this.appGlobalService.setOnBoardingCompleted();
       const navigationExtras: NavigationExtras = {
         state: {
           loginMode: 'guest'
@@ -326,7 +325,7 @@ export class DistrictMappingPage implements OnDestroy {
         undefined,
         corRelationList
       );
-      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
       this.events.publish('update_header');
     }
   }
@@ -346,11 +345,11 @@ export class DistrictMappingPage implements OnDestroy {
         declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
       }
     } as any;
-    this.deviceRegisterService.registerDevice(req).toPromise();
+    await this.deviceRegisterService.registerDevice(req).toPromise();
     if (this.appGlobalService.isGuestUser) {
-      this.preferences.putString(PreferenceKey.GUEST_USER_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+      await this.preferences.putString(PreferenceKey.GUEST_USER_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     }
-    this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+    await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     this.commonUtilService.handleToTopicBasedNotification();
     await loader.dismiss();
   }
@@ -377,8 +376,8 @@ export class DistrictMappingPage implements OnDestroy {
     }
   }
 
-  skipLocation() {
-    this.router.navigate([`/${RouterLinks.TABS}`]);
+  async skipLocation() {
+    await this.router.navigate([`/${RouterLinks.TABS}`]);
     this.events.publish('update_header');
   }
 
@@ -576,9 +575,9 @@ export class DistrictMappingPage implements OnDestroy {
           this.initialiseFormData({
             ...FormConstants.LOCATION_MAPPING,
             subType: (newStateValue as SbLocation).code,
-          }).catch((e) => {
+          }).catch(async (e) => {
             console.error(e);
-            this.initialiseFormData(FormConstants.LOCATION_MAPPING);
+            await this.initialiseFormData(FormConstants.LOCATION_MAPPING);
           });
         });
       }
@@ -706,8 +705,8 @@ export class DistrictMappingPage implements OnDestroy {
       featureIdMap.location.LOCATION_CAPTURE);
   }
 
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
   fieldConfig(){
     this.locationFormConfig.forEach(element => {

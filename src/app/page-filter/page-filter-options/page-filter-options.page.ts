@@ -50,8 +50,8 @@ export class PageFilterOptionsPage {
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10 , () => {
-      this.viewCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10 , async () => {
+      await this.viewCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -91,8 +91,8 @@ export class PageFilterOptionsPage {
 
   }
 
-  confirm() {
-    this.viewCtrl.dismiss();
+  async confirm() {
+    await this.viewCtrl.dismiss();
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
@@ -141,14 +141,14 @@ export class PageFilterOptionsPage {
     return '';
   }
 
-  cancel() {
+  async cancel() {
     this.facets.selected = [...this.prevSelectedTopic];
-    this.viewCtrl.dismiss();
+    await this.viewCtrl.dismiss();
   }
 
-  apply() {
+  async apply() {
     this.prevSelectedTopic = [...this.facets.selected];
-    this.confirm();
+    await this.confirm();
   }
 
 }

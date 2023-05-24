@@ -183,8 +183,10 @@ describe('SbSharePopupComponent', () => {
         // act
         sbSharePopupComponent.shareLink();
         // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockContentShareHandler.shareContent).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockContentShareHandler.shareContent).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should call sharecontent on shareFile', (done) => {

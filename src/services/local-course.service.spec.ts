@@ -725,7 +725,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('getCourseProgress', () => {
-    it('should calculate and return course progress', (done) => {
+    it('should calculate and return course progress', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -738,11 +738,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(100);
-        done();
       });
     });
 
-    it('should return 0 progress in case of failure ', (done) => {
+    it('should return 0 progress in case of failure ', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -752,11 +751,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
 
-    it('should return 0 progress if getContentState return empty response', (done) => {
+    it('should return 0 progress if getContentState return empty response', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -766,11 +764,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
 
-    it('should return 0 progress if getContentState return wrong data', (done) => {
+    it('should return 0 progress if getContentState return wrong data', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -780,7 +777,6 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
   });

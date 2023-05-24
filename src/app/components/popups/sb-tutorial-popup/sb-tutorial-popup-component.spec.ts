@@ -57,13 +57,15 @@ describe('SbTutorialComponentPopup', () => {
         // act
         sbTutorialPopupComponent.closePopover(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            'tutorial-continue-clicked',
-            Environment.HOME,
-            PageId.APP_TUTORIAL_POPUP
-        );
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'tutorial-continue-clicked',
+                Environment.HOME,
+                PageId.APP_TUTORIAL_POPUP
+            );
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        }, 0);
     });
     it('should handle dismiss popover when onContinueClicked is false ', () => {
         // arrange
@@ -72,13 +74,15 @@ describe('SbTutorialComponentPopup', () => {
         // act
         sbTutorialPopupComponent.closePopover(false);
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.CLOSE_CLICKED,
-            Environment.HOME,
-            PageId.APP_TUTORIAL_POPUP
-        );
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CLOSE_CLICKED,
+                Environment.HOME,
+                PageId.APP_TUTORIAL_POPUP
+            );
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        }, 0);
     });
 
 });

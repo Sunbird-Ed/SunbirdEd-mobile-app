@@ -5,10 +5,10 @@ export const animationShrinkOutTopRight: AnimationBuilder = (baseEl: HTMLElement
     const baseAnimation = createAnimation();
 
     const backdropAnimation = createAnimation();
-    backdropAnimation.addElement(baseEl.querySelector('ion-backdrop'));
+    backdropAnimation.addElement(baseEl.shadowRoot.querySelector('ion-backdrop'));
 
     const wrapperAnimation = createAnimation();
-    const wrapperEl = baseEl.querySelector('.popover-wrapper');
+    const wrapperEl = baseEl.shadowRoot.querySelector('.popover-wrapper');
     wrapperAnimation.addElement(wrapperEl);
 
     wrapperAnimation

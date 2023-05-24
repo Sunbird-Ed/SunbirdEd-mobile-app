@@ -62,17 +62,17 @@ export class AccessDiscussionComponent implements OnInit {
       Environment.DISCUSSION,
       PageId.GROUP_DETAIL
     );
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [
       {
         id: this.fetchForumIdReq.identifier[0],
         type: this.fetchForumIdReq.type
       }
     ];
-    this.discussionService.createUser(this.createUserReq).subscribe((response) => {
+    this.discussionService.createUser(this.createUserReq).subscribe(async (response) => {
       const userId = response.result.userId.uid
       const result = [this.forumDetails.cid];
-        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
+        await this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
           categories: JSON.stringify({ result }),
           userId: userId

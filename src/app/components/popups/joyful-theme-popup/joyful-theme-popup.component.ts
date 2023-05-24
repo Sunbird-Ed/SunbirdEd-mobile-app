@@ -32,19 +32,19 @@ export class JoyfulThemePopupComponent implements OnInit {
 
     async closePopover() {
         await this.switchToJoyfulTheme();
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {
         await this.switchToJoyfulTheme();
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToJoyfulTheme() {
         if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
             this.appTheme = AppThemes.JOYFUL;
             await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
-            this.appHeaderService.showStatusBar().then();
+            await this.appHeaderService.showStatusBar().then();
         }
     }
 }

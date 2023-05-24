@@ -122,22 +122,22 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.getUnreadNotifications();
     this.isTablet = window['isTablet'];
-    this.events.subscribe(EventTopics.ORIENTATION, () => {
-      this.checkCurrentOrientation();
+    this.events.subscribe(EventTopics.ORIENTATION, async () => {
+      await this.checkCurrentOrientation();
     });
   }
 
-  ngOnInit() {
-    this.setAppLogo();
+  async ngOnInit() {
+    await this.setAppLogo();
     this.setAppVersion();
-    this.events.subscribe('user-profile-changed', () => {
-      this.setAppLogo();
+    this.events.subscribe('user-profile-changed', async () => {
+      await this.setAppLogo();
     });
-    this.events.subscribe('app-global:profile-obj-changed', () => {
-      this.setAppLogo();
+    this.events.subscribe('app-global:profile-obj-changed', async () => {
+      await this.setAppLogo();
     });
-    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
-      this.getUnreadNotifications();
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, async () => {
+      await this.getUnreadNotifications();
     });
 
     this.events.subscribe('notification-status:update', (eventData) => {
@@ -162,14 +162,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.listenDownloads();
     this.listenNotifications();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      this.setAppLogo();
+    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      await this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
     this.preference.getString('data-mode').subscribe((val)=>{
       this.isDarkMode = val === AppMode.DARKMODE;
     });
-    this.checkForAppUpdate().then();
+    await this.checkForAppUpdate();
   }
   ngAfterViewInit() {
     this.changeFontSize('reset');
@@ -194,14 +194,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   setLanguageValue() {
     this.preference.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
-      .then(value => {
-        this.selectedLanguage = value;
-      });
+    .then(value => {
+      this.selectedLanguage = value;
+    }).catch(e => console.log(e));
     this.preference.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-      .then(langCode => {
-        console.log('Language code: ', langCode);
-        this.notification.setupLocalNotification(langCode);
-      });
+    .then(async langCode => {
+      console.log('Language code: ', langCode);
+      await this.notification.setupLocalNotification(langCode);
+    }).catch(e => console.log(e));
   }
 
   listenDownloads() {
@@ -232,13 +232,11 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  setAppLogo() {
+  async setAppLogo() {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.isLoggedIn = false;
       this.appLogo = './assets/imgs/ic_launcher.png';
-      this.appVersion.getAppName().then((appName: any) => {
-        this.appName = appName;
-      });
+      this.appName = await this.appVersion.getAppName()
     } else {
       this.isLoggedIn = true;
       this.preference.getString('app_logo').toPromise().then(value => {
@@ -247,18 +245,16 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         } else {
           this.appLogo = './assets/imgs/ic_launcher.png';
         }
-      });
-      this.preference.getString('app_name').toPromise().then(value => {
-        this.appName = value;
-      });
-      this.fetchManagedProfileDetails();
+      }).catch(err => console.error(err));
+      this.appName = await this.preference.getString('app_name').toPromise();
+      await this.fetchManagedProfileDetails();
     }
     this.refreshLoginInButton();
   }
 
   async toggleMenu() {
-    this.menuCtrl.toggle();
-    if (this.menuCtrl.isOpen()) {
+    await this.menuCtrl.toggle();
+    if (await this.menuCtrl.isOpen()) {
       const pageId = this.activePageService.computePageId(this.router.url);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -328,7 +324,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  addManagedUser() {
+  async addManagedUser() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
       return;
@@ -346,10 +342,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       ID.BTN_ADD
     );
 
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
   }
 
-  openManagedUsers() {
+  async openManagedUsers() {
     const pageId = this.activePageService.computePageId(this.router.url);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_MORE,
@@ -368,7 +364,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         profile: this.profile
       }
     };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
   }
 
   switchUser(user) {
@@ -394,9 +390,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, user.profileUserType.type).toPromise();
         this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
       }
-      this.menuCtrl.close();
-      this.showSwitchSuccessPopup(user.firstName);
-      this.tncUpdateHandlerService.checkForTncUpdate();
+      await this.menuCtrl.close();
+      await this.showSwitchSuccessPopup(user.firstName);
+      await this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
       console.error(err);
@@ -419,15 +415,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       cssClass: 'sb-popover'
     });
     await confirm.present();
-    setTimeout(() => {
+    setTimeout(async () => {
       if (confirm) {
-        confirm.dismiss();
+        await confirm.dismiss();
       }
     }, 3000);
     const { data } = await confirm.onDidDismiss();
     console.log(data);
     if (data) {
-      this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
     }
   }
 
@@ -436,7 +432,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.appTheme = AppThemes.JOYFUL;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
       document.querySelector('html').setAttribute('device-accessable-theme', 'accessible');
-      this.appHeaderService.showStatusBar().then();
+      await this.appHeaderService.showStatusBar().then();
     } else {
       document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
       this.appTheme = AppThemes.DEFAULT;
@@ -444,7 +440,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       document.querySelector('html').setAttribute('device-accessable-theme', '');
       this.appHeaderService.hideStatusBar();
     }
-    this.menuCtrl.close();
+    await this.menuCtrl.close();
   }
   async switchMode(){
     if (document.querySelector('html').getAttribute('data-mode') === AppMode.DEFAULT) {
@@ -452,7 +448,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.appTheme = AppMode.DARKMODE;
       document.querySelector('html').setAttribute('data-mode', AppMode.DARKMODE);
       await this.preference.putString('data-mode', AppMode.DARKMODE).toPromise();
-      this.appHeaderService.showStatusBar().then();
+      await this.appHeaderService.showStatusBar().then();
     } else {
       document.querySelector('html').setAttribute('data-mode', AppMode.DARKMODE);
       this.isDarkMode=false
@@ -461,19 +457,19 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       await this.preference.putString('data-mode', AppMode.DEFAULT).toPromise();
       this.appHeaderService.hideStatusBar();
     }
-    this.menuCtrl.close();
+    await this.menuCtrl.close();
   }
 
   async switchTabs() {
     this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
     let subType = InteractSubtype.OPTED_IN;
     if (this.currentSelectedTabs === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
-      this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+      await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
         SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
       this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
       subType = InteractSubtype.OPTED_OUT;
     } else if (!this.currentSelectedTabs || this.currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG) {
-      this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+      await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
         SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
       this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
       subType = InteractSubtype.OPTED_IN;
@@ -489,7 +485,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         }
     );
     await this.commonUtilService.populateGlobalCData();
-    this.menuCtrl.close();
+    await this.menuCtrl.close();
   }
 
   private async checkForAppUpdate() {
@@ -512,7 +508,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         options: this.headerConfig.kebabMenuOptions || []
       },
     });
-    kebabMenuPopover.present();
+    await kebabMenuPopover.present();
     const { data } = await kebabMenuPopover.onDidDismiss();
     if (!data) {
       return;
@@ -535,7 +531,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
   
 
-  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
+  async signin() { await this.router.navigate([RouterLinks.SIGN_IN]); }
 
   changeFontSize(value: string) {
     const elFontSize = window.getComputedStyle(document.documentElement).getPropertyValue('font-size');

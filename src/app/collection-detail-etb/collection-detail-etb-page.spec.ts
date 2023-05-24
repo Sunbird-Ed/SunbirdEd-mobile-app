@@ -174,7 +174,7 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage).toBeTruthy();
     });
 
-    it('should get the appName', () => {
+    it('should get the appName', (done) => {
         // arrange
         mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockDownloadService.trackDownloads = jest.fn(() => of());
@@ -183,11 +183,14 @@ describe('collectionDetailEtbPage', () => {
         collectionDetailEtbPage.ngOnInit();
         // assert
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-        expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PLAY');
+        setTimeout(() => {
+            expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PLAY');
+            done()
+        }, 0);
     });
 
-    it('should extract content data', () => {
+    it('should extract content data', (done) => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
@@ -214,11 +217,14 @@ describe('collectionDetailEtbPage', () => {
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
-        expect(mockContentService.importContent).toHaveBeenCalled();
-        expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-        expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-        expect(mockevents.publish).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
+            expect(mockContentService.importContent).toHaveBeenCalled();
+            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(mockevents.publish).toHaveBeenCalled();
+            done()
+        }, 0)
     });
 
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {
@@ -334,7 +340,7 @@ describe('collectionDetailEtbPage', () => {
 
     describe('IonViewWillEnter', () => {
 
-        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', (done) => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
@@ -370,16 +376,19 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
-            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
-            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+                expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+                expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+                done()
+            }, 0);
         });
 
-        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', () => {
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', (done) => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
@@ -415,13 +424,16 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
-            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
-            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+                expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+                expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 
