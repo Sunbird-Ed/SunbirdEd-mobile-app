@@ -1931,7 +1931,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         fields: ['progress', 'score']
       };
       await this.courseService.getContentState(request).toPromise()
-        .then((contentStateResponse: ContentStateResponse) => {
+        .then(async (contentStateResponse: ContentStateResponse) => {
           this.contentStatusData = contentStateResponse;
 
           this.initNextContent();
