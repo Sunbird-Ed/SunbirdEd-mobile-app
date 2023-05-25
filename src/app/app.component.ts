@@ -828,7 +828,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1)
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1)
         || (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS) !== -1)
-        || (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1)
         || (routeUrl.indexOf(RouterLinks.FAQ_HELP) !== -1)
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
