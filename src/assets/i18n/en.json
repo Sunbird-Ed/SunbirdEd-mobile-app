@@ -1377,6 +1377,5 @@
   "FRMELEMNTS_MSG_INVALID_ADDED_LINK":"Please check the link. Special characters, comma, spaces or new lines are not allowed.",
   "INCREASE_FONT": "Increase font size",
   "DEFAULT_FONT": "Default font size",
-  "DECREASE_FONT": "Decrease font size",
-  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again"
+  "DECREASE_FONT": "Decrease font size"
 }
