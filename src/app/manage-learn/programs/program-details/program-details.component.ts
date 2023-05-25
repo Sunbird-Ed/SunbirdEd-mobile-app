@@ -223,7 +223,7 @@ export class ProgramDetailsComponent implements OnInit {
   }
 
   selectSection(name){
-    this.selectedSection = name
+    name.show = !name.show;
   }
 
   redirectProject(data) {
