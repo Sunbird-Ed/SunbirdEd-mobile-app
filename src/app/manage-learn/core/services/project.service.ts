@@ -152,7 +152,7 @@ export class ProjectService {
     } else {
       id = resource.link.split('/').pop()
     }
-
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
@@ -196,6 +196,7 @@ export class ProjectService {
   }
 
   async startAssessment(projectId, id) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
@@ -247,6 +248,7 @@ export class ProjectService {
   }
 
   async checkReport(projectId, taskId) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
@@ -316,6 +318,7 @@ export class ProjectService {
     }
   }
   async openSyncSharePopup(type, name, project, taskId?) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (this.networkFlag) {
       let data;
       this.project = project;
