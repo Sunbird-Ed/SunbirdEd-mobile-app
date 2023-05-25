@@ -1384,7 +1384,7 @@
   "FRMELEMNTS_MSG_PROGRAM_JOINED":"You have joined this program, please complete the resources by {{date}}",
   "FRMELEMNTS_MSG_SHARE_DATA_INFO": "You have agreed to share your profile details with the {{type}} administrator",
   "FRMELEMNTS_MSG_DONOT_SHARE_DATA_INFO": "You have not agreed to share your profile details with the {{type}} administrator",
-  "FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES":"Please change and update your profile details to view program resources",
+  "FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES":"Change profile details to view resources of this program",
   "FRMELEMNTS_LBL_OBSERVATIONS":"Observations",
   "FRMELEMNTS_LBL_COURSES":"Courses",
   "FRMELEMNTS_LBL_SURVEYS":"Surveys",
@@ -1393,7 +1393,6 @@
   "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and DIKSHA Terms ",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
   "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
-  "FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED":"Evidence upload failed, please try again",
   "EXPLORE_PROGRAMS":"Explore Programs",
   "FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER":"Search your programs here"
 }
