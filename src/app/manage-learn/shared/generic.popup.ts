@@ -10,6 +10,8 @@ import { JoinProgramComponent } from './components/join-program/join-program.com
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { ConsentStatus } from '@project-sunbird/client-services/models';
 import { AppGlobalService } from '../../../services/app-global-service.service';
+import { KendraApiService } from '../core/services/kendra-api.service';
+import { urlConstants } from '../core/constants/urlConstants';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,9 @@ import { AppGlobalService } from '../../../services/app-global-service.service';
 export class GenericPopUpService {
   consentPopup: any
   constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService, @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private appGlobalService: AppGlobalService) {}
+    private appGlobalService: AppGlobalService,
+     private kendra : KendraApiService
+     ) {}
 
     async showPPPForProjectPopUp(message, message1, linkLabel, header, link, type) {
         const alert = await this.popOverCtrl.create({
@@ -167,5 +171,48 @@ async closeConsent(){
     }
     })
     return data
+  }
+
+  joinProgram(payloadData){
+    let programName = payloadData?.programName ? payloadData?.programName : payloadData?.programInformation?.programName 
+  return  this.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",programName,'program',
+    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
+      async (data:any)=>{
+        if(data){
+          return data;
+        }
+      }
+    )
+  }
+   async join(payloadData,profileData){
+    // let payload = await this.utils.getProfileInfo();
+    let programId = payloadData.programId ?payloadData.programId :payloadData?.programInformation?.programId;
+    if (profileData) {
+      const config = {
+        url:`${urlConstants.API_URLS.JOIN_PROGRAM}${programId}`,
+        payload: {userRoleInformation:profileData, consentShared:payloadData.consentShared}
+      };
+     this.kendra.post(config).subscribe((response) => {
+          if(response.status == 200){
+            return true;
+          }
+        },
+        (error) => {
+          return false;
+        }
+      );
+    }
+  }
+  
+
+async showConsentPopup(data,profileData){
+    if(!data?.requestForPIIConsent){
+      let payload = {consumerId: data.rootOrganisations, objectId: data.programId}
+       this.showConsent('Program',payload).then(resp =>{
+        if(data){
+          this.join(true,profileData)
+        }
+      })
+    }
   }
 }

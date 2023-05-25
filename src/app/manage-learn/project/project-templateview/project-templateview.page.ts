@@ -169,6 +169,10 @@ export class ProjectTemplateviewPage implements OnInit {
     this.actionItems = await actions.PROJECT_ACTIONS;
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
+    if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent){
+     let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programInformation.programId}
+      await this.popupService.getConsent('Program',payloadData);
+    }
     if(this.project.criteria){
       let criteria = Object.keys(this.project?.criteria?.conditions);
       criteria.forEach(element => {
@@ -220,7 +224,22 @@ export class ProjectTemplateviewPage implements OnInit {
     this.projectService.openResources(resource);
   }
 
-  doAction() {
+ doAction() {
+    if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
+      this.popupService.joinProgram(this.project)
+      .then(async resp => {
+        if(resp){
+          let profileData = await this.utils.getProfileInfo();
+          this.popupService.join(this.project,profileData).then((data :any) =>{
+            if(data){
+              this.project.programJoined = true
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programInformation.programId};
+              this.popupService.getConsent('Program',payload);
+            }
+          },error =>{})
+        }
+      });
+    }else{
     if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
       this.showProfileNameConfirmationPopup();
     }else{
@@ -252,6 +271,7 @@ export class ProjectTemplateviewPage implements OnInit {
     }
     }
   }
+}
   }
 
   gotoDetails() {

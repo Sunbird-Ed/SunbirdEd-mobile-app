@@ -35,6 +35,9 @@
     <div *ngIf="selectedSection == data?.sectionName">
       <div *ngFor="let section of data?.sectionList">
         <app-item-list-card [title]="section?.name" (click)="cardClick(section)">
+          <div class="certificate-tag" certificate *ngIf="section?.certificate || section?.certificateTemplateId">
+            {{'CERTIFICATE' | translate}}
+          </div>
         </app-item-list-card>
       </div>
     </div>

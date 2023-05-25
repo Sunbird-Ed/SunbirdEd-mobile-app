@@ -48,7 +48,7 @@ export class ProgramDetailsComponent implements OnInit {
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
     private toastService: ToastService, private router: Router, private surveyProvider: SurveyProviderService, private ulsdp: UpdateLocalSchoolDataService,
     private localStorage: LocalStorageService, private commonUtils: CommonUtilService) {
-    this.translate.get(['ALL','FRMELEMNTS_LBL_PROJECTS','FRMELEMNTS_LBL_OBSERVATIONS','FRMELEMNTS_LBL_SURVEY']).subscribe((translation)=>{
+    this.translate.get(['ALL','FRMELEMNTS_LBL_PROJECTS','FRMELEMNTS_LBL_OBSERVATIONS','FRMELEMNTS_LBL_SURVEYS']).subscribe((translation)=>{
       this.filtersList = Object.keys(translation).map(translateItem => { return translation[translateItem]})
     })
     activatedRoute.params.subscribe((param)=>{
