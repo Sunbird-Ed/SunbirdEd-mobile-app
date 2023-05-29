@@ -3,20 +3,27 @@
 @import "src/assets/styles/_variables.scss";
 
 .details-block{
-    margin-left: 0px;
-    padding: 15px;
-    .title{
-        font-size: 18px;
-        font-weight: 700;
-        padding: 0px 15px;
-        margin-bottom: 10px;
-        color: $black;
-    }
-    .description{
-        color: $black;
-        padding: 0px 15px;
-        font-weight: 600;
-    }
+    background-color: var(--app-primary-background);
+    position: sticky;
+    top: 0px;
+    z-index: 3;
+    padding-top: 5px;
+    ion-card{
+        margin-left: 0px;
+        padding: 15px;
+        .title{
+            font-size: 18px;
+            font-weight: 700;
+            padding: 0px 15px;
+            margin-bottom: 10px;
+            color: $black;
+        }
+        .description{
+            color: $black;
+            padding: 0px 15px;
+            font-weight: 600;
+        }
+    } 
 }
 
 .hr-line {

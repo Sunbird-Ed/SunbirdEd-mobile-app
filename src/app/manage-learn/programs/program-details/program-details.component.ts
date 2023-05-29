@@ -41,7 +41,6 @@ export class ProgramDetailsComponent implements OnInit {
   page = 1;
   isNewProgram = false
   lastUpdatedOn:any
-  consentShared = false
   payload
 
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
@@ -86,11 +85,11 @@ export class ProgramDetailsComponent implements OnInit {
             this.formatList()
             this.readMoreOrLess()
             if(this.isNewProgram && this.programDetails.programJoined && this.programDetails?.requestForPIIConsent){
-              await this.popupService.getConsent('Program',this.payload).then((response)=>{
+              let profileData = await this.utils.getProfileInfo();
+              await this.popupService.getConsent('Program',this.payload,this.programDetails,profileData).then((response)=>{
                 if(response){
                   this.sharingStatus = response.status
                   this.lastUpdatedOn = response.lastUpdatedOn
-                  this.consentShared = true
                 }
               })
             }
@@ -119,7 +118,7 @@ export class ProgramDetailsComponent implements OnInit {
 
   formatList(){
     this.programDetails.data.forEach(data => {
-     let sectionName=data.type=='improvementProject'?'projects':data.type=='survey'?data.type:data.type+'s'
+     let sectionName=data.type=='improvementProject'?'projects':data.type+'s'
      let index = this.solutionsList.findIndex((val)=>{return val.sectionName==sectionName})
      if(index!==-1){
       this.solutionsList[index].sectionList.push(data)
@@ -144,44 +143,33 @@ export class ProgramDetailsComponent implements OnInit {
   }
 
   joinProgram(){
-    this.popupService.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",this.programDetails.programName,'program',
-    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
-      async (data:any)=>{
-        if(data){
-          this.join()
-        }
+    this.popupService.joinProgram(this.programDetails,'program',"FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(async(data)=>{
+      if(data){
+        this.join()
       }
-    )
+    })
   }
 
-  async join(hideConsent?){
-    let payload = await this.utils.getProfileInfo();
-    if (payload) {
-      const config = {
-        url:`${urlConstants.API_URLS.JOIN_PROGRAM}${this.programId}`,
-        payload: {userRoleInformation:payload, consentShared:this.consentShared}
-      };
-      this.kendraService.post(config).subscribe(
-        (response) => {
-          if(response.status==200){
-            this.programDetails.programJoined = true
-            if(!hideConsent){
-              this.showConsentPopup()
-            }
-          }
-        },
-        (error) => {}
-      );
-    }
+  async join(){
+    let profileData = await this.utils.getProfileInfo();
+    await this.popupService.join(this.programDetails,profileData).then(async(response:any)=>{
+      if(response){
+        this.programDetails.programJoined = true
+        this.showConsentPopup()
+        if(!this.programDetails.requestForPIIConsent){
+          this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS');
+        }
+      }
+    })
   }
   
-  showConsentPopup(){
+  async showConsentPopup(){
+    let profileData = await this.utils.getProfileInfo();
     if(this.programDetails?.requestForPIIConsent){
-      this.popupService.showConsent('Program',this.payload).then(async(data)=>{
+      this.popupService.showConsent('Program',this.payload,this.programDetails, profileData).then(async(data)=>{
         if(data){
           this.sharingStatus = data
-          this.consentShared = true
-          await this.join(true)
+          this.programDetails.consentShared = true
         }
       })
     }
@@ -222,8 +210,12 @@ export class ProgramDetailsComponent implements OnInit {
     this.popupService.closeConsent()
   }
 
-  selectSection(name){
-    name.show = !name.show;
+  selectSection(data){
+    if(data.sectionName == this.selectedSection){
+      this.selectedSection = ''
+    }else{
+      this.selectedSection = data.sectionName
+    }
   }
 
   redirectProject(data) {
