@@ -16,7 +16,6 @@
 
 .ui-container {
     &::after {
-      height: 12.75rem !important;
       background-image: none !important;
     }
   }
@@ -27,6 +26,9 @@
     z-index: 1;
     padding: 0px 20px;
     margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom-left-radius: 20px;
+    background-color: var(--app-primary-header);
 }
 
 .load-more{
