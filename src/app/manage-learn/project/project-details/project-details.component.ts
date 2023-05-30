@@ -67,7 +67,7 @@ export class ProjectDetailsComponent implements OnInit {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       })
       this.setHeaderConfig();
       this.projectId = parameters.projectId;
@@ -362,8 +362,9 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
-    if (!this.network.isNetworkAvailable) {
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+      return;
     }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`, this.projectDetails._id])
   }

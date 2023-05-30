@@ -80,7 +80,7 @@ export class ProjectListingComponent {
 
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
-            this.networkFlag = available;
+            this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
             this.projects = [];
             this.fetchProjectList();
         });
@@ -205,7 +205,6 @@ export class ProjectListingComponent {
 
     fetchProjectList() {
         this.projects = [];
-        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         if (this.networkFlag) {
             this.selectedFilterIndex !== 2 ? this.getProjectList() : this.getCreatedProjects()
         } else {

@@ -91,10 +91,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   ngOnInit() {
-   
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
       }
     );
@@ -210,7 +209,6 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   getAssessmentDetails(submission) {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (this.networkFlag) {
       this.showActionsheet = false;
       this.showEntityActionsheet = false;
@@ -250,7 +248,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async pushToLocal(submission) {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
       return
@@ -345,7 +342,6 @@ export class ObservationSubmissionComponent implements OnInit {
       });
   }
   async openMenu(event, submission, index) {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       if (!this.networkFlag) {
         this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
       } else {
@@ -390,7 +386,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
   //  entity actions
   entityActions(e) {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     } else {
@@ -481,7 +476,6 @@ export class ObservationSubmissionComponent implements OnInit {
     await popover.present();
   }
   async deleteSubmission(submissionId) {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
       return
@@ -560,7 +554,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async observeAgain() {
-    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage("FRMELEMENTS_MSG_FEATURE_USING_OFFLINE", "danger");
     } else {

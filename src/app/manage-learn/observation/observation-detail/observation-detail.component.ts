@@ -77,7 +77,7 @@ export class ObservationDetailComponent implements OnInit {
     });
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
        (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.networkFlag ? this.getObservationEntities() : this.getLocalData();
       }
     );
