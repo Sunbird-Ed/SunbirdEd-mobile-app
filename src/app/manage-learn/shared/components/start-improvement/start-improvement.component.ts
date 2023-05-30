@@ -10,6 +10,7 @@ export class StartImprovementComponent {
   @Input() header;
   @Input() message;
   @Input() message1;
+  @Input() button;
   constructor(
     private popOverCtrl: PopoverController,
   ) { }
