@@ -1,4 +1,5 @@
 <ion-content #pageTop>
+  <div (click)="showPopup()">
   <div   id="stop">
   <div class="_container"  *ngIf="submissionId || extrasState">
     <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
@@ -36,6 +37,7 @@
           [enableQuestionReadOut]="enableQuestionReadOut"></app-slider-type-input>
       </ng-container>
     </ng-container>
+  </div>
   </div>
   </div>
 </ion-content>
