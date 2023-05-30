@@ -13,6 +13,7 @@ import { GenericPopUpService } from '../../shared';
 import { AppGlobalService } from '../../../../services/app-global-service.service';
 import { PreferenceKey } from '../../../../app/app.constant';
 import { Subscription } from 'rxjs';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 import {
   SharedPreferences
@@ -89,7 +90,8 @@ export class ProjectTemplateviewPage implements OnInit {
     private alert: AlertController,
     private toast :ToastService,
     private platform : Platform,
-    private location :Location
+    private location :Location,
+    private commonUtils: CommonUtilService
   ) {
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
@@ -171,7 +173,12 @@ export class ProjectTemplateviewPage implements OnInit {
     this.project = resp.result;
     if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent){
      let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programInformation.programId}
-      await this.popupService.getConsent('Program',payloadData);
+     let profileData = await this.utils.getProfileInfo();
+      await this.popupService.getConsent('Program',payloadData,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((data)=>{
+        if(data){
+          this.project.programJoined = true
+        }
+      })
     }
     if(this.project.criteria){
       let criteria = Object.keys(this.project?.criteria?.conditions);
@@ -226,7 +233,7 @@ export class ProjectTemplateviewPage implements OnInit {
 
  doAction() {
     if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
-      this.popupService.joinProgram(this.project)
+      this.popupService.joinProgram(this.project,'project')
       .then(async resp => {
         if(resp){
           let profileData = await this.utils.getProfileInfo();
@@ -234,11 +241,21 @@ export class ProjectTemplateviewPage implements OnInit {
             if(data){
               this.project.programJoined = true
               let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programInformation.programId};
-              this.popupService.getConsent('Program',payload);
+              if(this.project.requestForPIIConsent){
+                this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
+                  if(data){
+                    this.project.programJoined = true
+                  }
+                })
+              }else{
+                this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
+              }
+              
             }
           },error =>{})
         }
       });
+      return
     }else{
     if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
       this.showProfileNameConfirmationPopup();
@@ -298,7 +315,7 @@ export class ProjectTemplateviewPage implements OnInit {
     if(this.programlisting){
      await this.router.navigate([`/${RouterLinks.HOME}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
-     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
+     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.DETAILS}`,  this.programId]);
     }
     setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
@@ -391,7 +408,8 @@ export class ProjectTemplateviewPage implements OnInit {
     });
     await alert.present();
   }
-  openStartIMPPopup(){
+  openStartIMPPopup(event){
+    event.stopPropagation()
     if(!this.project?.projectId){
       this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
         if(data){
@@ -442,5 +460,9 @@ export class ProjectTemplateviewPage implements OnInit {
         this.doAction();
       }
     }
+  }
+
+  ionViewWillLeave(){
+    this.popupService.closeConsent()
   }
 }

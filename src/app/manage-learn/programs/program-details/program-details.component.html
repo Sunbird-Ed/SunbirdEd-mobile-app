@@ -1,5 +1,6 @@
 <ion-content class="ion-padding">
-  <ion-card class="details-block w-100">
+  <div class="details-block">
+  <ion-card class="w-100">
     <div class="title">{{programDetails?.programName}}</div>
     <div class="description">{{description}}
       <span class="read-more" (click)="showMore=!showMore; readMoreOrLess()" *ngIf="programDetails?.description?.length > characterLimit">
@@ -18,6 +19,7 @@
       </ng-template>      
     </div>
   </ion-card>
+  </div>
 
   <div class="section-filter">
     <sb-library-filters [list]="filtersList" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"  
@@ -29,10 +31,10 @@
     <div class="d-flex flex-jc-space-between p-10 section-details" (click)="selectSection(data)">
       <div class="section-name">{{data?.sectionName}}</div>
       <div class="icon">
-        <ion-icon name="{{data?.show?'chevron-up':'chevron-down'}}"></ion-icon>
+        <ion-icon name="{{selectedSection == data?.sectionName?'chevron-up':'chevron-down'}}"></ion-icon>
       </div>
     </div>
-    <div *ngIf="data?.show">
+    <div *ngIf="data?.sectionName == selectedSection">
       <div *ngFor="let section of data?.sectionList">
         <app-item-list-card [title]="section?.name" (click)="cardClick(section)">
           <div class="certificate-tag" certificate *ngIf="section?.certificate || section?.certificateTemplateId">

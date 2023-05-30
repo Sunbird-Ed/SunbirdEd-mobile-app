@@ -1379,7 +1379,7 @@
   "DEFAULT_FONT": "Default font size",
   "DECREASE_FONT": "Decrease font size",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP":"Join program",
-  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG":"Please join {{name}} program to view and access this {{type}}",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG":"Please join {{name}} program to view and access this {{type}}.",
   "FRMELEMNTS_MSG_NO_SOLUTIONS_FOR_PROGRAM":"There are no {{type}} added to this program",
   "FRMELEMNTS_MSG_PROGRAM_JOINED":"You have joined this program, please complete the resources by {{date}}",
   "FRMELEMNTS_MSG_SHARE_DATA_INFO": "You have agreed to share your profile details with the {{type}} administrator",
@@ -1394,5 +1394,7 @@
   "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
   "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
   "EXPLORE_PROGRAMS":"Explore Programs",
-  "FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER":"Search your programs here"
+  "FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER":"Search your programs here",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG_FOR_OBSERVATION":"You must join {{name}} program to view and access this {{type}}.",
+  "FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS":"You have joined this program successfully"
 }

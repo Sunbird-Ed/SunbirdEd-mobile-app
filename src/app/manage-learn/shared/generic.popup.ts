@@ -104,7 +104,7 @@ async showJoinProgramForProjectPopup(header,name,type,button,message?){
 
 }
 
-async showConsent(type, payload){
+async showConsent(type, payload, details, profileData, message?){
   let componentProps={}
   let payloadData:any = { userId : this.appGlobalService.getUserId(), objectType: type, ...payload }
   switch (type.toLowerCase()) {
@@ -140,7 +140,13 @@ async showConsent(type, payload){
     await loader.present();
     await this.profileService.updateConsent(request).toPromise()
       .then(async (response) => {
-        this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
+        if(message){
+          this.commonUtils.showToast(message,'','',9000,'top');
+        }else{
+          this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
+        }
+        details.consentShared = true
+        await this.join(details,profileData)
         await loader.dismiss();
       })
       .catch((e) => {
@@ -158,14 +164,14 @@ async closeConsent(){
   this.consentPopup ? await this.consentPopup.dismiss() : null
 }
 
-  async getConsent(type, payload){
+  async getConsent(type, payload, details, profileData,message?){
     const request = { userId : this.appGlobalService.getUserId(), ...payload }
     let data:any=''
     await this.profileService.getConsent(request).toPromise().then((response)=>{
       data=response.consents[0]
     }).catch(async (error)=>{
       if (!error.response.body.result.consent && error.response.responseCode === 404) {
-        await this.showConsent(type, payload);
+        await this.showConsent(type, payload, details, profileData,message);
     } else if (error.code === 'NETWORK_ERROR') {
         this.commonUtils.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
@@ -173,10 +179,10 @@ async closeConsent(){
     return data
   }
 
-  joinProgram(payloadData){
+  joinProgram(payloadData,type,message?){
     let programName = payloadData?.programName ? payloadData?.programName : payloadData?.programInformation?.programName 
-  return  this.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",programName,'program',
-    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2").then(
+  return  this.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",programName,type,
+    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",message).then(
       async (data:any)=>{
         if(data){
           return data;
@@ -185,20 +191,19 @@ async closeConsent(){
     )
   }
    async join(payloadData,profileData){
-    // let payload = await this.utils.getProfileInfo();
     let programId = payloadData.programId ?payloadData.programId :payloadData?.programInformation?.programId;
     if (profileData) {
       const config = {
         url:`${urlConstants.API_URLS.JOIN_PROGRAM}${programId}`,
         payload: {userRoleInformation:profileData, consentShared:payloadData.consentShared}
       };
-     this.kendra.post(config).subscribe((response) => {
+      return await this.kendra.post(config).subscribe((response) => {
           if(response.status == 200){
-            return true;
+            return true
           }
         },
         (error) => {
-          return false;
+          return false
         }
       );
     }
@@ -208,7 +213,7 @@ async closeConsent(){
 async showConsentPopup(data,profileData){
     if(!data?.requestForPIIConsent){
       let payload = {consumerId: data.rootOrganisations, objectId: data.programId}
-       this.showConsent('Program',payload).then(resp =>{
+       this.showConsent('Program',payload, data,profileData).then(resp =>{
         if(data){
           this.join(true,profileData)
         }
