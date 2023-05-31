@@ -74,6 +74,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   };
   isTablet = false;
   orientationToSwitch = AppOrientation.LANDSCAPE;
+  isMenuOpen: boolean = false;
 
   // Font Increase Decrease Variables
   fontSize: any;
@@ -254,7 +255,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   async toggleMenu() {
     await this.menuCtrl.toggle();
-    if (await this.menuCtrl.isOpen()) {
+    this.isMenuOpen = await this.menuCtrl.isEnabled();
+    if (this.isMenuOpen) {
       const pageId = this.activePageService.computePageId(this.router.url);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -267,6 +269,18 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
   }
 
+  announceToTalkBack(state: string) {
+    const liveRegion = document.getElementById('talkback-live-region');
+    if (liveRegion) {
+      liveRegion.textContent = state;
+      liveRegion.setAttribute('aria-hidden', 'false');
+      setTimeout(() => {
+        liveRegion.textContent = '';
+        liveRegion.setAttribute('aria-hidden', 'true');
+      }, 100);
+    }
+  }
+  
   emitEvent($event, name) {
 
     if (name === 'filter') {

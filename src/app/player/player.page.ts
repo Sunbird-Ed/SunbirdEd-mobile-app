@@ -571,6 +571,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
               await this.closeIframe();
             } else {
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+                'END', 'ALERT_OK', 'EXIT', { type, stageId });
               this.location.back();
             }
           }
