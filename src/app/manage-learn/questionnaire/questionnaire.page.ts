@@ -10,6 +10,7 @@ import { RouterLinks } from '../../../app/app.constant';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
+import { GenericPopUpService } from '../shared';
 
 @Component({
   selector: 'app-questionnaire',
@@ -49,6 +50,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   networkAvailable;
   isTargeted :boolean;
   isSurvey : boolean = false;
+  payload: {}
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -70,7 +72,8 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private translate: TranslateService,
     private router: Router,
-    private commonUtilService:CommonUtilService
+    private commonUtilService:CommonUtilService,
+    private popupService: GenericPopUpService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
@@ -115,7 +118,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     }
   }
 
-  getQuestions(data){
+  async getQuestions(data){
     this.schoolData = data;
     const currentEvidences = this.schoolData['assessment']['evidences'];
     this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
@@ -140,8 +143,17 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
       currentViewIndex: this.start,
     };
+    this.payload = {consumerId: data.rootOrganisations||'', objectId: data.programId||data.program._id}
     this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
-    if (!this.isSurvey && this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+    if(data.hasOwnProperty('requestForPIIConsent') && data.programJoined && data?.requestForPIIConsent){
+      let profileData = await this.utils.getProfileInfo();
+      await this.popupService.getConsent('Program',this.payload,this.schoolData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((response)=>{
+        if(response){
+        }
+      })
+    }
+
+    if ((!this.isSurvey && this.isCurrentEvidenceSubmitted || this.isViewOnly)|| (!this.schoolData.programJoined) ) {
       document.getElementById('stop').style.pointerEvents = 'none';
     }
   }
@@ -155,9 +167,18 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   allowStart(){
-    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
-    this.isViewOnly = false;
-    document.getElementById('stop').style.pointerEvents = 'auto';
+    if(this.schoolData?.programJoined){
+      this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_OBSERVATION_POPUP', 'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1',
+      'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2','FRMELEMNTS_LBL_START_OBSERVATION_POPUP').then((data:any)=>{
+        if(data){
+          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
+          this.isViewOnly = false;
+          document.getElementById('stop').style.pointerEvents = 'auto';
+        }
+      })
+    }else{
+      this.joinProgram()
+    }
   }
  async startAction(){
     await this.router.navigate([`/${RouterLinks.HOME}`]);
@@ -168,6 +189,15 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewDidLoad() {}
 
   async openQuestionMap() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = ['questionMap'];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+    if(this.isSurvey && !this.schoolData.programJoined){
+      this.joinProgram()
+      return
+    }
     const questionModal = await this.modalCtrl.create({
       component: QuestionMapModalComponent,
       componentProps: {
@@ -185,6 +215,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   // images_CO_5bebcfcf92ec921dcf114828
 
   next(status?: string) {
+    if(this.isSurvey && !this.schoolData.programJoined){
+      this.joinProgram()
+      return
+    }
     this.pageTop.scrollToTop();
     if (this.questions[this.start].responseType === 'pageQuestions') {
       this.questions[this.start].endTime = this.questions[this.start] ? Date.now() : '';
@@ -494,6 +528,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.headerConfig.actionButtons = [];
     this.headerService.updatePageConfig(this.headerConfig);
+    this.popupService.closeConsent()
   }
 
   showMessageForNONTargetUsers(){
@@ -503,4 +538,55 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.toast.openToast(msg,'','top');
     });
   }
+
+  joinProgram(){
+    let solutionType = this.isSurvey ? 'survey' : 'observation'
+    let programName = this.schoolData.programName || this.schoolData.program.name
+    this.popupService.showJoinProgramForProjectPopup("FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP",programName, solutionType,
+    "FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP","FRMELEMNTS_LBL_JOIN_PROGRAM_MSG_FOR_OBSERVATION").then(
+      async (data:any)=>{
+        if(data){
+          this.join()
+        }
+      }
+    )
+  }
+
+  async join(){
+    let profileData = await this.utils.getProfileInfo();
+    await this.popupService.join(this.schoolData,profileData).then(async(response:any)=>{
+      if(response){
+        this.schoolData.programJoined = true
+        this.showConsentPopup()
+        if(!this.schoolData.requestForPIIConsent){
+          this.commonUtilService.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS');
+          if(this.isSurvey){
+            document.getElementById('stop').style.pointerEvents = 'auto';
+          }
+        }
+      }
+    })
+  }
+
+  async showConsentPopup(){
+    let profileData = await this.utils.getProfileInfo();
+    if(this.schoolData?.requestForPIIConsent){
+      this.popupService.showConsent('Program',this.payload,this.schoolData, profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async(data)=>{
+        if(data){
+          if(this.isSurvey){
+            document.getElementById('stop').style.pointerEvents = 'auto';
+          }
+        }
+      })
+    }
+  }
+
+  showPopup(){
+    if(!this.schoolData?.programJoined){
+      this.joinProgram()
+    }else if(this.schoolData.programJoined && !this.isSurvey && this.isViewOnly){
+      this.allowStart()
+    }
+  }
+
 }

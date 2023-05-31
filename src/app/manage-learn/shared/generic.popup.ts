@@ -71,13 +71,14 @@ export class GenericPopUpService {
     return data.isLeftButtonClicked;
   }
 
-  async showStartIMPForProjectPopUp(header,message, message1, ) {
+  async showStartIMPForProjectPopUp(header,message, message1, button) {
     const alert = await this.popOverCtrl.create({
         component: StartImprovementComponent,
         componentProps: {
             message: message,
             message1: message1,
             header: header,
+            button: button
         },
         cssClass: 'sb-popover',
     });
