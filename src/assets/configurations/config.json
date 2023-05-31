@@ -160,7 +160,7 @@
         },
         {
             "root": "",
-            "name": "qrscanner",
+            "name": "scan-qr-code",
             "icon": {
                 "active": "assets/imgs/ic_qr_scanner.svg",
                 "inactive": "assets/imgs/ic_qr_scanner.svg",
