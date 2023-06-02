@@ -157,7 +157,7 @@ export class ProgramDetailsComponent implements OnInit {
         this.programDetails.programJoined = true
         this.showConsentPopup()
         if(!this.programDetails.requestForPIIConsent){
-          this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS');
+          this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000);
         }
       }
     })
@@ -199,7 +199,7 @@ export class ProgramDetailsComponent implements OnInit {
     if(this.sharingStatus!==event){
       this.showConsentPopup()
     }else{
-      this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
+      this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS','','',9000);
     }
   }
 

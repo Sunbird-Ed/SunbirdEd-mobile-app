@@ -144,7 +144,7 @@ async showConsent(type, payload, details, profileData, message?){
         if(message){
           this.commonUtils.showToast(message,'','',9000,'top');
         }else{
-          this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS');
+          this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS','','',9000)
         }
         details.consentShared = true
         await this.join(details,profileData)
