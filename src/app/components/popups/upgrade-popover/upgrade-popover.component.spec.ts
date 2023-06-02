@@ -10,7 +10,7 @@ describe('UpgradePopoverComponent', () => {
 
     window.cordova.plugins = {
         InAppUpdateManager: {
-            checkForImmediateUpdate: jest.fn()
+            checkForImmediateUpdate: jest.fn((fn, fn1) => {fn(); fn1()})
         }
     };
 

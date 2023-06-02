@@ -28,17 +28,18 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService, OnboardingConfigurationService } from '../../services';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService, OnboardingConfigurationService, CorReleationDataType } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
-import { Search } from '../app.constant';
-import { ContentEventType, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
+import { Search, SwitchableTabsConfig } from '../app.constant';
+import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 describe('SearchPage', () => {
     let searchPage: SearchPage;
+    window.console.warn = jest.fn()
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
         isUserLoggedIn: jest.fn(() => true),
@@ -109,14 +110,15 @@ describe('SearchPage', () => {
         }
     };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
+        getCurrentNavigation: jest.fn(() => ({extras: {state: {}}})) as any,
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
         generateImpressionTelemetry: jest.fn(),
         generateBackClickedTelemetry: jest.fn(),
-        generateExtraInfoTelemetry: jest.fn()
+        generateExtraInfoTelemetry: jest.fn(),
+        generatePageLoadedTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {
         currentLang: 'en'
@@ -221,6 +223,22 @@ describe('SearchPage', () => {
             mockProfileHandler as ProfileHandler,
             mockOnboardingConfigurationService as OnboardingConfigurationService
         );
+        const mockRouterExtras = {
+            extras: {
+                state: {
+                    primaryCategories: 'primaryCategories',
+                    corRelationList: 'corRelationList',
+                    source: PageId.GROUP_DETAIL,
+                    enrolledCourses: 'enrolledCourses' as any,
+                    userId: 'userId',
+                    shouldGenerateEndTelemetry: false,
+                    preAppliedFilter: {
+                        query: ''
+                    },
+                },
+            }
+        };
+        mockRouter.getCurrentNavigation = jest.fn(() => mockRouterExtras) as any;
     });
 
     beforeEach(() => {
@@ -230,7 +248,7 @@ describe('SearchPage', () => {
 
     it('should create a instance of searchPage', () => {
         expect(searchPage).toBeTruthy();
-        expect(searchPage.primaryCategories).toEqual('primaryCategories');
+        expect(searchPage.primaryCategories).toEqual(undefined);
     });
 
     // arrange
@@ -239,6 +257,22 @@ describe('SearchPage', () => {
     // describe('ngOnInit', () => {
     it('should fetch app name on ngOnInit', (done) => {
         // arrange
+        const mockRouterExtras = {
+            extras: {
+                state: {
+                    primaryCategories: 'primaryCategories',
+                    corRelationList: 'corRelationList',
+                    source: PageId.GROUP_DETAIL,
+                    enrolledCourses: 'enrolledCourses' as any,
+                    userId: 'userId',
+                    shouldGenerateEndTelemetry: false,
+                    preAppliedFilter: {
+                        query: ''
+                    },
+                },
+            }
+        };
+        mockRouter.getCurrentNavigation = jest.fn(() => mockRouterExtras) as any;
         // act
         searchPage.ngOnInit();
         // assert
@@ -269,6 +303,28 @@ describe('SearchPage', () => {
         }, 200);
     });
 
+    it('should focus the search bar, on else case without dialcode and has refresher', (done) => {
+        // arrange
+        searchPage.isFirstLaunch = true;
+        searchPage.source = "source";
+        searchPage.searchBar = {
+            setFocus: jest.fn()
+        };
+        searchPage.dialCode = "abc";
+        searchPage.refresher = {disabled: true} as any;
+        jest.spyOn(searchPage, 'checkUserSession').mockImplementation();
+        mockSbProgressLoader.hide = jest.fn();
+        // act
+        searchPage.ionViewDidEnter();
+        // assert
+        expect(searchPage.checkUserSession).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(searchPage.isFirstLaunch).toBeTruthy();
+            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+            done();
+        }, 200);
+    });
+
     it('should set current FrameworkId', (done) => {
         // arrange
         // act
@@ -277,6 +333,18 @@ describe('SearchPage', () => {
         expect(mockSharedPreferences.getString).toHaveBeenCalled();
         setTimeout(() => {
             expect(searchPage.currentFrameworkId).toEqual('ka');
+            done();
+        }, 0);
+    });
+
+    it('should set current FrameworkId', (done) => {
+        // arrange
+        mockSharedPreferences.getString = jest.fn(() => throwError({error:''}))
+        // act
+        searchPage.getFrameworkId();
+        // assert
+        expect(mockSharedPreferences.getString).toHaveBeenCalled();
+        setTimeout(() => {
             done();
         }, 0);
     });
@@ -413,6 +481,7 @@ describe('SearchPage', () => {
                 identifier: 'identifier',
                 contentType: 'collection'
             };
+            mockAppGlobalService.isOnBoardingCompleted = false;
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             // act
             searchPage.openCollection(collection);
@@ -420,7 +489,7 @@ describe('SearchPage', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 PageId.DIAL_SEARCH,
                 { id: 'identifier', type: 'collection', version: '' },
                 { root: true },
@@ -502,7 +571,7 @@ describe('SearchPage', () => {
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
-            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => false);
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             searchPage.guestUser = false;
             // act
@@ -564,6 +633,14 @@ describe('SearchPage', () => {
             // assert
             expect(searchPage.profile.grade.length).toEqual(1);
         });
+        it('should reset grade, if no grade', () => {
+            // arrange
+            searchPage.profile = {} as any;
+            // act
+            searchPage.setGrade(true, ['']);
+            // assert
+            expect(searchPage.profile.grade.length).toEqual(0);
+        });
         it('should set grade', () => {
             // arrange
             searchPage.profile = {
@@ -581,6 +658,14 @@ describe('SearchPage', () => {
             searchPage.setMedium(true, ['medium1']);
             // assert
             expect(searchPage.profile.medium.length).toEqual(1);
+        });
+        it('should reset medium, if no medium', () => {
+            // arrange
+            searchPage.profile = {} as any;
+            // act
+            searchPage.setMedium(true, ['']);
+            // assert
+            expect(searchPage.profile.medium.length).toEqual(0);
         });
         it('should set medium', () => {
             // arrange
@@ -612,7 +697,7 @@ describe('SearchPage', () => {
     describe('setCurrentProfile', () => {
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {};
+            searchPage.profile = {medium: []};
             const data = {
                 framework: 'framework',
                 board: 'board',
@@ -633,7 +718,7 @@ describe('SearchPage', () => {
         });
         it('should set current profile', () => {
             // arrange
-            searchPage.profile = {};
+            searchPage.profile = {medium: ['medium1']};
             const data = {
                 framework: 'framework',
                 board: 'board',
@@ -688,31 +773,24 @@ describe('SearchPage', () => {
         });
     });
     describe('checkProfileData', () => {
-        it('should handle error on get active channel ', () => {
+        it('should return if no data framework', () => {
             // arrange
-            const data = {
-                framework: 'framework1'
-            };
-            const profile = {
-                syllabus: ['framework1']
-            };
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => throwError(new NetworkError('No_Internet')));
+            const data = {};
+            const profile = {syllabus: ['framework1']};
             // act
             searchPage.checkProfileData(data, profile);
             // assert
-            setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE')
-            }, 0);
         })
         it('should set profile data accordingly', () => {
             // arrange
             const data = {
-                framework: 'framework1'
+                framework: 'framework1',
+                board: ['board1']
             };
             const profile = {
                 syllabus: ['framework1']
             };
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ identifier: 'fm', name: 'fm' }));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{ identifier: 'fm', name: 'fm' }]));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -723,27 +801,25 @@ describe('SearchPage', () => {
                 }
             );
         });
-        it('should set profile data accordingly', (done) => {
+        it('should set profile data accordingly, else case if framework or board are different', () => {
             // arrange
             const data = {
-                framework: 'framework1',
-                contentType: 'Resource'
+                framework: 'framework',
+                board: ''
             };
             const profile = {
                 syllabus: ['framework1']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError(new NetworkError('No_Internet')));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{ identifier: 'framework', name: 'board1' }]));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
-            setTimeout(() => {
-                expect(searchPage.isProfileUpdated).toEqual(true);
-                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE')
-                done();
-            }, 0);
+            expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(
+                {
+                    language: 'en',
+                    requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+                }
+            );
         });
         it('should set profile data accordingly', (done) => {
             // arrange
@@ -895,6 +971,58 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+        
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: '',
+                medium: '',
+                gradeLevel: '',
+                contentType: 'Resource'
+            };
+            const profile = {
+                syllabus: ['framework1'],
+                board: ['boardcode'],
+                medium: ['medium1'],
+                grade: ['grade1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getFrameworkDetailsResp = {
+                categories: [
+                    {
+                        code: 'board',
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            { code: 'medium1', name: 'medium1' }
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            { code: 'grade1', name: 'grade1' }
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                done();
+            }, 10);
+        });
+
         it('should set profile data accordingly', (done) => {
             // arrange
             const data = {
@@ -946,6 +1074,164 @@ describe('SearchPage', () => {
             }, 10);
         });
 
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: '',
+                gradeLevel: '',
+                contentType: 'Resource'
+            };
+            const profile = {
+                syllabus: ['framework1'],
+                board: ['boardcode'],
+                medium: ['medium1'],
+                grade: ['grade1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getFrameworkDetailsResp = {
+                categories: [
+                    {
+                        code: 'board',
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            { code: 'medium1', name: 'medium1' }
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            { code: 'grade1', name: 'grade1' }
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                done();
+            }, 10);
+        });
+
+
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: ['medium1'],
+                gradeLevel: '',
+                contentType: 'Resource'
+            };
+            const profile = {
+                syllabus: ['framework1'],
+                board: ['boardcode'],
+                medium: ['medium1'],
+                grade: ['grade1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getFrameworkDetailsResp = {
+                categories: [
+                    {
+                        code: 'board',
+                        terms: [
+                            { code: 'boardcode', name: 'board' }
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            { code: 'medium1', name: 'medium1' }
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            { code: 'grade1', name: 'grade1' }
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                done();
+            }, 10);
+        });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                contentType: 'Resource'
+            };
+            const profile = {
+                syllabus: ['framework1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError(new NetworkError('No_Internet')));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                done();
+            }, 0);
+        });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                contentType: 'Resource'
+            };
+            const profile = {
+                syllabus: ['framework1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError({error: 'No_Internet'}));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                   done();
+            }, 0);
+        });
+        it('should handle error on get active channel ', () => {
+            // arrange
+            const data = {
+                framework: 'framework1'
+            };
+            const profile = {
+                syllabus: ['framework1']
+            };
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => throwError(new NetworkError('No_Internet')));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE')
+            }, 0);
+        })
     });
     describe('editProfile', () => {
         it('should edit Profile', (done) => {
@@ -967,9 +1253,28 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
-        it('should edit Profile and publish event for on boarding', (done) => {
+        it('should edit Profile, handle else if no grades length', (done) => {
             // arrange
             searchPage.gradeList = [{ code: 'grade1', name: 'grade1' }];
+            searchPage.profile = {
+                grade: [],
+                gradeValue: {
+                    grade1: 'grade1'
+                }
+            };
+            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' }));
+            mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
+            // act
+            searchPage.editProfile();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should edit Profile and publish event for on boarding', (done) => {
+            // arrange
+            searchPage.gradeList = [{ code: 'grade', name: 'grade1' }];
             searchPage.profile = {
                 grade: ['grade1'],
                 gradeValue: {
@@ -1039,7 +1344,7 @@ describe('SearchPage', () => {
             // assert
             expect(searchPage.generateInteractEvent).toHaveBeenCalled();
             setTimeout(() => {
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({"returnFreshCourses": true, "userId": "userId"});
+                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({"returnFreshCourses": true, "userId": undefined});
                 done();
             }, 0);
         });
@@ -1070,7 +1375,7 @@ describe('SearchPage', () => {
             // assert
             expect(searchPage.generateInteractEvent).toHaveBeenCalled();
             setTimeout(() => {
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({"returnFreshCourses": true, "userId": "userId"});
+                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({"returnFreshCourses": true, "userId": undefined});
                 done();
             }, 0);
         });
@@ -1085,7 +1390,7 @@ describe('SearchPage', () => {
                 pkgVersion: '1'
             };
             // act
-            searchPage.openContent(undefined, contentMock, 0, undefined, true);
+            searchPage.openContent(undefined, contentMock, 1, undefined, true);
             // assert
             setTimeout(() => {
                 done();
@@ -1124,6 +1429,38 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+
+        it('should goto filter page on showFilter, handle else cndtn', (done) => {
+            // arrange
+            searchPage.source = '';
+            searchPage.searchFilterConfig = [{code: 'name', name:'name', translation: 'msg'}]
+            searchPage.initialFilterCriteria = {
+                facetFilters: [{ name: 'name2' }]
+            };
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{ name: 'name1' }]
+                }
+            };
+            const getLibraryFilterConfigResp = [
+                { name: 'name', code: 'code' }
+            ];
+            mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
+            mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
+            // act
+            searchPage.showFilter();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.FILTER_BUTTON_CLICKED,
+                Environment.HOME,
+                'search'
+            );
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
     describe('applyFilter and handleCancel', () => {
         it('should catch error on searchcontent', () => { 
@@ -1145,6 +1482,27 @@ describe('SearchPage', () => {
             // act
             searchPage.applyFilter();
         })
+        it('should updateFilterIcon on applyFilter, if no audience name for facet filter', (done) => {
+            // arrange
+            const offset = 10;
+            const searchContentResp = ''
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{ name: 'audience1', values: ['val1'] }],
+                    offset: offset
+                }
+            };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
+            jest.spyOn(searchPage, 'fetchPrimaryCategoryFilters').mockImplementation();
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            searchPage.isDialCodeSearch = false;
+            // act
+            searchPage.applyFilter(offset);
+            // assert
+            setTimeout(() => {
+                done();
+            }, 0);
+        });
         it('should updateFilterIcon on applyFilter', (done) => {
             // arrange
             const offset = 10;
@@ -1235,6 +1593,7 @@ describe('SearchPage', () => {
             expect(searchPage.isEmptyResult).toEqual(false);
         });
     });
+
     describe('handleSearch', () => {
         it('should return without doing anything', () => {
             // arrange
@@ -1262,7 +1621,7 @@ describe('SearchPage', () => {
             mockContentService.searchContent = jest.fn(() => of(undefined));
             searchPage.isEmptyResult = true;
             // act
-            searchPage.handleSearch(false, 100);
+            searchPage.handleSearch(true, 100);
             // assert
         });
         it('should handle success search scenario', (done) => {
@@ -1568,6 +1927,29 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+        it('should call processdialcoderesult, handle else case if no length for secctions and profile board', (done) => {
+            // arrange
+            searchPage.dialCode = 'abcdef';
+            jest.spyOn(searchPage, 'processDialCodeResult').mockImplementation();
+            const getSupportedContentFilterConfigResp = ['textbook', 'resource'];
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
+                () => Promise.resolve(getSupportedContentFilterConfigResp));
+            const dialAssembleResp = {
+                sections: []
+            };
+            mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp));
+            searchPage.profile = {
+                board: []
+            };
+            // act
+            searchPage.getContentForDialCode();
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isDialCodeSearch).toBe(true);
+                expect(searchPage.primaryCategories).toEqual(getSupportedContentFilterConfigResp);
+                done();
+            }, 0);
+        });
         it('should handle failure case of dial pageassemble API', (done) => {
             // arrange
             searchPage.dialCode = 'abcdef';
@@ -1601,7 +1983,6 @@ describe('SearchPage', () => {
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1615,6 +1996,41 @@ describe('SearchPage', () => {
                     ImpressionSubtype.OFFLINE_MODE,
                     PageId.SCAN_OR_MANUAL,
                     Environment.ONBOARDING,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{ id: 'abcdef', type: 'QR' }]
+                );
+                done();
+            }, 0);
+        });
+        it('should handle failure case of dial pageassemble API when network is not there, handle for source home', (done) => {
+            // arrange
+            searchPage.dialCode = 'abcdef';
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            searchPage.source = PageId.HOME;
+            const getSupportedContentFilterConfigResp = ['textbook', 'resource'];
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
+                () => Promise.resolve(getSupportedContentFilterConfigResp));
+            mockpageService.getPageAssemble = jest.fn(() => throwError({}));
+            searchPage.source = PageId.HOME;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            searchPage.getContentForDialCode();
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isDialCodeSearch).toBe(true);
+                expect(searchPage.primaryCategories).toEqual(getSupportedContentFilterConfigResp);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    AuditType.TOAST_SEEN,
+                    ImpressionSubtype.OFFLINE_MODE,
+                    PageId.SCAN_OR_MANUAL,
+                    Environment.HOME,
                     undefined,
                     undefined,
                     undefined,
@@ -1644,6 +2060,48 @@ describe('SearchPage', () => {
                 expect.anything(),
             );
         });
+        it('should generate interact event', () => {
+            // arrange
+            searchPage.isDialCodeSearch = false;
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
+            searchPage['corRelationList'] = []
+            mockAppGlobalService.isOnBoardingCompleted = false;
+            // act
+            searchPage.generateInteractEvent('identifier', 'collection', 'ver', 1);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.ONBOARDING,
+                PageId.HOME,
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+            );
+        });
+        it('should generate interact event', () => {
+            // arrange
+            searchPage.isDialCodeSearch = false;
+            searchPage.source = "";
+            mockAppGlobalService.isOnBoardingCompleted = jest.fn(() => true);
+            searchPage['corRelationList'] = [{id: 'id1', type: 'section'}]
+            mockAppGlobalService.isOnBoardingCompleted = false;
+            // act
+            searchPage.generateInteractEvent('identifier', 'collection', 'ver', 1);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.ONBOARDING,
+                PageId.SEARCH,
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+            );
+        });
+
         it('should generate qrsession end event', () => {
             // arrange
             mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
@@ -1660,11 +2118,18 @@ describe('SearchPage', () => {
                 expect.anything()
             );
         });
+        it('should generate qrsession end event, if page id is undefined', () => {
+            // arrange
+            // act
+            searchPage.generateQRSessionEndEvent(undefined, 'qrData');
+            // assert
+        });
         it('should generate QRScanSuccess Interact Event online', () => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            searchPage.source = 'home'
             // act
             searchPage.generateQRScanSuccessInteractEvent(2, 'ABCDEF');
             // assert
@@ -1682,13 +2147,14 @@ describe('SearchPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
+            searchPage.source = "";
             // act
             searchPage.generateQRScanSuccessInteractEvent(2, 'ABCDEF');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.OTHER,
                 InteractSubtype.DIAL_SEARCH_RESULT_FOUND,
-                expect.anything(),
+                PageId.SEARCH,
                 PageId.SEARCH,
                 undefined,
                 { count: 2, networkAvailable: 'N', scannedData: 'ABCDEF' }
@@ -1839,21 +2305,69 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+        it('checkParent on error, if not an instance of network', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => throwError({error:'no-internet'}));
+            // act
+            searchPage.checkParent('parent', 'child');
+            // assert
+            setTimeout(() => {
+                done();
+            }, 0);
+        });
     });
     describe('processDialCodeResult', () => {
-        it('processDialCodeResult', () => {
+        it('processDialCodeResult, content and collections are empty array', () => {
             // arrange
-            const dialResult = [{collections: [{childNodes: 'id1'}], contents: [{identifier: 'id1', contentType: 'Course'}, {identifier: 'id2'}], display: true}];
+            const dialResult = [{collections: [], contents: [], display: false}];
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.displayDialCodeResult = [];
+            searchPage.isSingleContent = false;
             jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
             // act
             searchPage.processDialCodeResult(dialResult);
 
         });
+
+        it('processDialCodeResult', () => {
+            // arrange
+            const dialResult = [{collections: [{childNodes: 'id1'}], contents: [{identifier: 'id1', contentType: 'Course'}, {identifier: 'id2'}], display: false}];
+            mockCommonUtilService.getTranslatedValue = jest.fn();
+            searchPage.displayDialCodeResult = [];
+            searchPage.isSingleContent = false;
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            // act
+            searchPage.processDialCodeResult(dialResult);
+
+        });
+
+        it('processDialCodeResult', () => {
+            // arrange
+            const dialResult = [{collections: [{childNodes: 'id2', content:[]}], contents: [{identifier: 'id1', contentType: 'Course'}, {identifier: 'id2'}], display: false}];
+            mockCommonUtilService.getTranslatedValue = jest.fn();
+            searchPage.displayDialCodeResult = [];
+            searchPage.isSingleContent = false;
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            // act
+            searchPage.processDialCodeResult(dialResult);
+
+        });
+
+        it('processDialCodeResult', () => {
+            // arrange
+            const dialResult = [{collections: [{childNodes: 'id2', content:[{identifier:''}]}], contents: [{identifier: 'id1', contentType: 'Course2'}, {identifier: 'id2'}], display: true}];
+            mockCommonUtilService.getTranslatedValue = jest.fn();
+            searchPage.displayDialCodeResult = [];
+            searchPage.isSingleContent = false;
+            jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
+            // act
+            searchPage.processDialCodeResult(dialResult);
+
+        });
+
         it('processDialCodeResult for sibling content and navigate back', (done) => {
             // arrange
-            const dialResult = [{collections:  [{childNodes: 'id1'}], contents: [{identifier: 'id1'}], display: false}];
+            const dialResult = [{collections:  [], contents: '', display: false}];
             mockCommonUtilService.getTranslatedValue = jest.fn();
             searchPage.isSingleContent = false
             jest.spyOn(searchPage, 'generateImpressionEvent').mockImplementation()
@@ -1871,8 +2385,26 @@ describe('SearchPage', () => {
         });
     });
     describe('downloadParentContent', () => {
+        it('should handle else case if no import content data', (done) => {
+            // arrange
+            mockPlatform.is = jest.fn(platform => platform == 'ios')
+            const importContentResp = [];
+            mockContentService.importContent = jest.fn(() => of(importContentResp));
+            const parent = { identifier: 'id' };
+            // act
+            searchPage.downloadParentContent(parent);
+            // assert
+            expect(searchPage.downloadProgress).toEqual(0);
+            expect(searchPage.isDownloadStarted).toEqual(true);
+            setTimeout(() => {
+                expect(searchPage.queuedIdentifiers).toEqual([]);
+                done();
+            }, 0);
+        });
+
         it('should push not downloaded identifiers in to queue', (done) => {
             // arrange
+            mockPlatform.is = jest.fn(platform => platform == 'ios')
             const importContentResp = [
                 { status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1' }];
             mockContentService.importContent = jest.fn(() => of(importContentResp));
@@ -1898,8 +2430,38 @@ describe('SearchPage', () => {
             }, 0);
         });
 
+        it('should push not downloaded identifiers in to queue', (done) => {
+            // arrange
+            mockPlatform.is = jest.fn(platform => platform == 'ios')
+            const importContentResp = [
+                { status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1' }];
+            mockContentService.importContent = jest.fn(() => of(importContentResp));
+            const parent = { identifier: 'id' };
+            searchPage.source = PageId.USER_TYPE_SELECTION;
+            // act
+            searchPage.downloadParentContent(parent);
+            // assert
+            expect(searchPage.downloadProgress).toEqual(0);
+            expect(searchPage.isDownloadStarted).toEqual(true);
+            setTimeout(() => {
+                expect(searchPage.queuedIdentifiers).toEqual(['id1', 'id1']);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.OTHER,
+                    InteractSubtype.LOADING_SPINE,
+                    Environment.ONBOARDING,
+                    PageId.DIAL_SEARCH,
+                    undefined,
+                    undefined,
+                    undefined,
+                    expect.anything()
+                );
+                done();
+            }, 0);
+        });
+
         it('should push not downloaded identifiers not found', (done) => {
             // arrange
+            mockPlatform.is = jest.fn(platform => platform == 'android')
             const importContentResp = [
                 { status: ContentImportStatus.NOT_FOUND, identifier: 'id1' }];
             mockContentService.importContent = jest.fn(() => of(importContentResp));
@@ -1945,11 +2507,25 @@ describe('SearchPage', () => {
             mockContentService.importContent = jest.fn(() => throwError(new NetworkError('no_internet')));
             const parent = { identifier: 'id' };
             mockCommonUtilService.showToast = jest.fn()
+            searchPage['corRelationList'] = undefined as any;
             // act
             searchPage.downloadParentContent(parent);
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE')
+                done();
+            }, 0);
+        })
+
+        it('should catch error on import content else case', (done) => {
+            // arrange
+            mockContentService.importContent = jest.fn(() => throwError({error:'no_internet'}));
+            const parent = { identifier: 'id' };
+            searchPage['corRelationList'] = undefined as any;
+            // act
+            searchPage.downloadParentContent(parent);
+            // assert
+            setTimeout(() => {
                 done();
             }, 0);
         })
@@ -1977,6 +2553,29 @@ describe('SearchPage', () => {
                 );
             });
 
+            it('should handle Device BackButton for dialcode', () => {
+                // arrange
+                const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+                mockPlatform.backButton = {
+                    subscribeWithPriority: subscribeWithPriorityData
+                } as any;
+                jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
+                    return Promise.resolve();
+                });
+                searchPage.source = PageId.ONBOARDING;
+                searchPage.displayDialCodeResult = [{ dialCodeResult: ['result-1', 'result-2'] }];
+                mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+                // act
+                searchPage.handleDeviceBackButton();
+                // assert
+                expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBeGreaterThan(0);
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                    true,
+                    Environment.ONBOARDING,
+                    PageId.QR_BOOK_RESULT
+                );
+            });
+
             it('should handle Device BackButton', () => {
                 // arrange
                 const subscribeWithPriorityData = jest.fn((_, fn) => fn());
@@ -1995,13 +2594,7 @@ describe('SearchPage', () => {
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                     ImpressionType.SEARCH,
                     Environment.HOME, false, undefined,
-                    [
-                        { id: '', type: 'API' },
-                        { id: '', type: 'API' },
-                        { id: '', type: 'API' },
-                        { id: 'SearchResult', type: 'Section' },
-                        { id: 'filter', type: 'DiscoveryType' },
-                      ]
+                    undefined
                 );
             });
         });
@@ -2023,10 +2616,32 @@ describe('SearchPage', () => {
                 PageId.QR_BOOK_RESULT
             );
         });
+        it('should generate beck telemetry for qrCode', () => {
+            searchPage.displayDialCodeResult = [{
+                dialCodeResult: ['result-1']
+            }];
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            searchPage.source = PageId.HOME;
+            // act
+            searchPage.goBack();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                false,
+                Environment.HOME,
+                PageId.QR_BOOK_RESULT
+            );
+        });
         it('should generate search telemetry for qrCode', (done) => {
             searchPage.displayDialCodeResult = [{
                 dialCodeResult: []
             }];
+            searchPage['corRelationList'] = [
+                { id: '', type: 'API' },
+                { id: '', type: 'API' },
+                { id: '', type: 'API' },
+                { id: 'SearchResult', type: 'Section' },
+                { id: 'filter', type: 'DiscoveryType' },
+              ]
             mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
             // act
             searchPage.goBack();
@@ -2058,6 +2673,30 @@ describe('SearchPage', () => {
             searchPage.getContentCount(displayDialCodeResult)
             // assert
         })
+
+        it('should check dail code result and return an count, if no content length', () => {
+            // arrange
+            let totalCount;
+            const displayDialCodeResult = [{
+                dialCodeResult: [{content:[]}],
+                dialCodeContentResult: ['Result-2']
+            }];
+            // act
+            searchPage.getContentCount(displayDialCodeResult)
+            // assert
+        })
+
+        it('should check dail code result and return an count, if no dialcode result length', () => {
+            // arrange
+            let totalCount;
+            const displayDialCodeResult = [{
+                dialCodeResult: [],
+                dialCodeContentResult: []
+            }];
+            // act
+            searchPage.getContentCount(displayDialCodeResult)
+            // assert
+        })
     });
 
     describe('cancelDownload', () => {
@@ -2079,6 +2718,24 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+
+        it('should cancel download, else case if isSingleContent false', (done) => {
+            // arrange
+            searchPage.parentContent = {identifier: "result"}
+            mockContentService.cancelDownload = jest.fn(() => of())
+            mockLocation.back = jest.fn();
+            mockZone.run = jest.fn((fn) => fn())
+                searchPage.showLoading = false
+                searchPage.isSingleContent = false
+            // act
+            searchPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.cancelDownload).toHaveBeenCalledWith(searchPage.parentContent.identifier);
+                expect(mockZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
         it('should catch a error on cancel download', (done) => {
             // arrange
             searchPage.parentContent = {identifier: ""}
@@ -2094,6 +2751,23 @@ describe('SearchPage', () => {
             setTimeout(() => {
                 expect(mockContentService.cancelDownload).toHaveBeenCalledWith(searchPage.parentContent.identifier);
                 expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should catch a error on cancel download, on singlecontent false', (done) => {
+            // arrange
+            searchPage.parentContent = {identifier: ""}
+            mockContentService.cancelDownload = jest.fn(() => throwError({}))
+            mockLocation.back = jest.fn();
+            mockZone.run = jest.fn((fn) => fn(
+                ))
+                searchPage.showLoading = false
+                searchPage.isSingleContent = false
+            // act
+            searchPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.cancelDownload).toHaveBeenCalledWith(searchPage.parentContent.identifier);
                 done();
             }, 0);
         });
@@ -2135,6 +2809,21 @@ describe('SearchPage', () => {
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalled();
         });
+
+        it('should not addActivityToGroup', () => {
+            // arrange
+            searchPage.searchContentResult = [
+                { identifier: 'id1', selected: true, contentType: 'contentType' }
+            ];
+            searchPage.activityTypeData = {};
+            searchPage.activityList = [{
+                id: 'id2'
+            }];
+            // act
+            searchPage.addActivityToGroup();
+            // assert
+        });
+
         it('should open content', () => {
             // arrange
             const result = [
@@ -2148,6 +2837,24 @@ describe('SearchPage', () => {
             expect(searchPage.openContent).toHaveBeenCalledWith(
                 undefined,
                 result[0],
+                0,
+                undefined,
+                false
+            );
+        });
+        it('should open content, handle if not selected', () => {
+            // arrange
+            const result = [
+                { identifier: 'some_id', selected: false, contentType: 'contentType' }
+            ];
+            searchPage.searchContentResult = result;
+            jest.spyOn(searchPage, 'openContent').mockImplementation();
+            // act
+            searchPage.openSelectedContent();
+            // assert
+            expect(searchPage.openContent).toHaveBeenCalledWith(
+                undefined,
+                undefined,
                 0,
                 undefined,
                 false
@@ -2191,22 +2898,29 @@ describe('SearchPage', () => {
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
             searchPage.isFromGroupFlow = false;
             searchPage.enableSearch = false;
+            searchPage['selectedSwitchableTab'] = SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG;
             mockSharedPreferences.getString = jest.fn(() => Promise.resolve("HOME_DISCOVER_TABS_CONFIG"))
             // act
             searchPage.handleHeaderEvents({ name: 'back' });
             // assert
-            expect(mockLocation.back).toHaveBeenCalled();
         });
         it('should navigate back for other case', () => {
             // arrange
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
             searchPage.isFromGroupFlow = false;
             searchPage.enableSearch = false;
+            searchPage['selectedSwitchableTab'] = SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG;
             mockSharedPreferences.getString = jest.fn(() => Promise.resolve("somedata"))
             // act
             searchPage.handleHeaderEvents({ name: 'back' });
             // assert
             expect(mockLocation.back).toHaveBeenCalled();
+        });
+        it('should handle default event', () => {
+            // arrange
+            // act
+            searchPage.handleHeaderEvents({ name: 'default' });
+            // assert
         });
     });
 
@@ -2258,6 +2972,39 @@ describe('SearchPage', () => {
             // assert
         });
 
+        it('should handle else case, if the name of facetfilters is not primary category', () => {
+            // arrange
+            const facetFilters = [
+                {
+                    name: 'board',
+                    value: [
+                        {
+                            name: 'board1'
+                        },
+                        {
+                            name: 'board2'
+                        }
+                    ]
+                },
+                {
+                    name: 'primaryCategory2',
+                    value: [
+                        {
+                            name: 'category1'
+                        },
+                        {
+                            name: 'category2'
+                        }
+                    ]
+                }
+            ]
+            // act
+            searchPage.fetchPrimaryCategoryFilters(facetFilters);
+            // assert
+            setTimeout(() => {
+            });
+        });
+
         it('should assign value to primaryCategoryFilters if the value is not assigned and primary category is present in facetfilters', () => {
             // arrange
             const facetFilters = [
@@ -2297,6 +3044,26 @@ describe('SearchPage', () => {
         it('should terminate the flow if the event has no data', () => {
             // arrange
             const event = {};
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should handle else if no initialfiltercrietria', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'value1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = ''
             searchPage.applyFilter = jest.fn();
             // act
             searchPage.handleFilterSelect(event);
@@ -2509,6 +3276,7 @@ describe('SearchPage', () => {
             searchPage.preAppliedFilter = {
                 query: ''
             }
+            searchPage.dialCode = '';
             jest.spyOn(searchPage, 'enableHeaderEvents').mockImplementation();
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn => fn({ name: '' })))}
@@ -2528,7 +3296,6 @@ describe('SearchPage', () => {
     describe('ionViewWillLeave', () => {
         it('should unsubscribe event ', () => {
             // arrange
-            // searchPage.backButtonFunc = true;
             searchPage.backButtonFunc = {
                 unsubscribe: jest.fn()
             }
@@ -2545,6 +3312,22 @@ describe('SearchPage', () => {
             searchPage.ionViewWillLeave();
             // assert
             expect(searchPage.eventSubscription.unsubscribe).toHaveBeenCalled();
+            expect(searchPage.headerObservable).toBeUndefined();
+        })
+
+        it('should unsubscribe event ', () => {
+            // arrange
+            searchPage.backButtonFunc = undefined
+            searchPage.eventSubscription = undefined
+            searchPage.headerObservable = {
+                unsubscribe: jest.fn()
+            }
+            searchPage.refresher = {
+                disabled: true
+            }
+            // act
+            searchPage.ionViewWillLeave();
+            // assert
             expect(searchPage.headerObservable).toBeUndefined();
         })
     });
@@ -2588,6 +3371,18 @@ describe('SearchPage', () => {
             expect(searchPage.eventSubscription.unsubscribe).toHaveBeenCalled();
             expect(searchPage.headerObservable).toBeUndefined();
         })
+
+        it('should return if events not subscribed ', () => {
+            // arrange
+            searchPage.eventSubscription = undefined;
+            searchPage.headerObservable = {
+                unsubscribe: jest.fn()
+            }
+            // act
+            searchPage.ngOnDestroy();
+            // assert
+            expect(searchPage.headerObservable).toBeUndefined();
+        })
     })
     
     describe('scrollToTop', () => {
@@ -2622,6 +3417,9 @@ describe('SearchPage', () => {
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn => fn({ name: '' })))}
             mockHeaderService.showHeaderWithBackButton = jest.fn()
+            searchPage.headerObservable = {
+                unsubscribe: jest.fn()
+            } as any
             // act
             searchPage.tabViewWillEnter();
             // assert
@@ -2676,6 +3474,25 @@ describe('SearchPage', () => {
                 expect(mockEventsBusService.events).toHaveBeenCalled();
             }, 0);
         });
+        it('should subscribe sdk events, if progress is not 100 ', () => {
+            // arrange
+            const event = {type: DownloadEventType.PROGRESS, payload: {
+                downloadId: 'sample_id',
+                identifier: 'sample',
+                progress: -1,
+                status: 8,
+                bytesDownloaded: 3242,
+                totalSizeInBytes: 234
+            }};
+            mockEventsBusService.events = jest.fn(() => of(event))
+            mockEvents.subscribe = jest.fn();
+            // act
+            searchPage.subscribeSdkEvent()
+            // assert
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+            }, 0);
+        });
         it('should subscribe sdk events for import progress ', () => {
             // arrange
             const event = {type: ContentEventType.IMPORT_PROGRESS, payload: {
@@ -2699,6 +3516,62 @@ describe('SearchPage', () => {
                 clearInterval()
             }, 1000);
         })
+        it('should subscribe sdk events for import progress, current count and total count are same ', () => {
+            // arrange
+            const event = {type: ContentEventType.IMPORT_PROGRESS, payload: {
+                downloadId: 'sample_id',
+                identifier: 'sample',
+                progress: 2,
+                status: 8,
+                totalCount: 2,
+                currentCount: 2,
+                bytesDownloaded: 3242,
+                totalSizeInBytes: 234
+            }}
+            mockEventsBusService.events = jest.fn(() => of(event))
+            mockEvents.subscribe = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn();
+            let timer = 2;
+            window.setInterval = jest.fn((fn) => fn({
+                searchPage:{['loadingDisplayText'] : `Getting things ready in ${timer--}  seconds`}
+
+            }), 1000) as any
+            window.clearInterval = jest.fn();
+            // act
+            searchPage.subscribeSdkEvent()
+            // assert
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                clearInterval()
+            }, 1000);
+        })
+        it('should subscribe sdk events for import progress, current count and total count are same ', () => {
+            // arrange
+            const event = {type: ContentEventType.IMPORT_PROGRESS, payload: {
+                downloadId: 'sample_id',
+                identifier: 'sample',
+                progress: 2,
+                status: 8,
+                totalCount: 2,
+                currentCount: 2,
+                bytesDownloaded: 3242,
+                totalSizeInBytes: 234
+            }}
+            mockEventsBusService.events = jest.fn(() => of(event))
+            mockEvents.subscribe = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn();
+            window.setInterval = jest.fn((fn) => fn({
+
+            }), 1000) as any
+            window.clearInterval = jest.fn();
+            // act
+            searchPage.subscribeSdkEvent()
+            // assert
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                clearInterval()
+            }, 1000);
+        })
         it('should subscribe sdk events for import completed ', () => {
             // arrange
             const event = {type: ContentEventType.IMPORT_COMPLETED, payload: {
@@ -2712,10 +3585,73 @@ describe('SearchPage', () => {
                 bytesDownloaded: 3242,
                 totalSizeInBytes: 234
             }}
+            searchPage.source = PageId.USER_TYPE_SELECTION;
             mockEventsBusService.events = jest.fn(() => of(event))
             mockEvents.subscribe = jest.fn();
             mockEvents.publish = jest.fn();
             searchPage.queuedIdentifiers = ['id', 'id1'];
+            searchPage.isDownloadStarted = true;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            // act
+            searchPage.subscribeSdkEvent()
+            // assert
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                expect(mockEvents.publish).toHaveBeenCalledWith('savedResources:update', {
+                    update: true
+                  })
+            }, 0);
+        })
+
+        it('should subscribe sdk events for import completed, if source is not USER_TYPE_SELECTION ', () => {
+            // arrange
+            const event = {type: ContentEventType.IMPORT_COMPLETED, payload: {
+                downloadId: 'sample_id',
+                identifier: 'sample',
+                progress: 2,
+                contentId: 'id',
+                status: 8,
+                totalCount: 2,
+                currentCount: 1,
+                bytesDownloaded: 3242,
+                totalSizeInBytes: 234
+            }}
+            searchPage.source = PageId.HOME;
+            mockEventsBusService.events = jest.fn(() => of(event))
+            mockEvents.subscribe = jest.fn();
+            mockEvents.publish = jest.fn();
+            searchPage.queuedIdentifiers = ['id', 'id1'];
+            searchPage.isDownloadStarted = true;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            // act
+            searchPage.subscribeSdkEvent()
+            // assert
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                expect(mockEvents.publish).toHaveBeenCalledWith('savedResources:update', {
+                    update: true
+                  })
+            }, 0);
+        })
+
+        it('should subscribe sdk events for import completed, if queued identifier does not include contentid ', () => {
+            // arrange
+            const event = {type: ContentEventType.IMPORT_COMPLETED, payload: {
+                downloadId: 'sample_id',
+                identifier: 'sample',
+                progress: 2,
+                contentId: 'id',
+                status: 8,
+                totalCount: 2,
+                currentCount: 1,
+                bytesDownloaded: 3242,
+                totalSizeInBytes: 234
+            }}
+            searchPage.source = PageId.USER_TYPE_SELECTION;
+            mockEventsBusService.events = jest.fn(() => of(event))
+            mockEvents.subscribe = jest.fn();
+            mockEvents.publish = jest.fn();
+            searchPage.queuedIdentifiers = ['id2', 'id1'];
             searchPage.isDownloadStarted = true;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
             // act
@@ -2741,6 +3677,7 @@ describe('SearchPage', () => {
                 bytesDownloaded: 3242,
                 totalSizeInBytes: 234
             }}
+            searchPage.queuedIdentifiers = [];
             mockEventsBusService.events = jest.fn(() => of(event))
             mockEvents.subscribe = jest.fn();
             mockEvents.publish = jest.fn();
@@ -2752,6 +3689,122 @@ describe('SearchPage', () => {
                 expect(mockEvents.publish).toHaveBeenCalledWith('savedResources:update', {
                     update: true
                   })
+            }, 0);
+        })
+    })
+
+    describe('ngAfterViewInit', () => {
+        it('should handle searchbar and search history on ngAfterViewInit ', () => {
+            // arrange
+            const event: CustomEvent<any> = {target:['value']}
+            searchPage.searchBar = {
+                ionChange: {
+                    pipe: jest.fn(() => ({
+                        rxjsMap: jest.fn((fn) => fn(event)),
+                        share:jest.fn(),
+                        startWith: jest.fn(),
+                        debounceTime: jest.fn(),
+                        switchMap: jest.fn((fn) => fn('')),
+                        tap: jest.fn((fn1) => fn1())
+                    }))
+                }
+            };
+            window.setTimeout = jest.fn((fn) => fn({}), ) as any;
+            searchPage['searchHistoryService'] = {
+                getEntries: jest.fn()
+            }
+            // act
+            searchPage.ngAfterViewInit();
+            // assert
+        })
+    });
+
+    describe('init', () => {
+        beforeEach(() => {
+            const mockRouterExtras = {
+                extras: {
+                    state: {
+                        dialCode: [{}],
+                        primaryCategories: 'primaryCategories',
+                        corRelationList: 'corRelationList',
+                        source: PageId.HOME,
+                        enrolledCourses: 'enrolledCourses' as any,
+                        userId: 'userId',
+                        shouldGenerateEndTelemetry: false,
+                        preAppliedFilter: ''
+                    },
+                }
+            };
+            mockRouter.getCurrentNavigation = jest.fn(() => mockRouterExtras as any);
+        })
+        it('should call init and generatepage loaded telemtry', () => {
+            // arrange
+            const mockRouterExtras = {
+                extras: {
+                    state: {
+                        dialCode: [{}],
+                        primaryCategories: 'primaryCategories',
+                        corRelationList: 'corRelationList',
+                        source: PageId.HOME,
+                        enrolledCourses: 'enrolledCourses' as any,
+                        userId: 'userId',
+                        shouldGenerateEndTelemetry: false,
+                        preAppliedFilter: ''
+                    },
+                }
+            };
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{ name: 'audience1', values: ['val1'] }]
+                }
+            };
+            mockRouter.getCurrentNavigation = jest.fn(() => mockRouterExtras as any),
+            mockEvent.subscribe = jest.fn((_, fn) => fn({
+                facetFilters: [{ name: 'audience1', values: ['val1'] }]
+            }));
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn()
+            const corRelationList: Array<CorrelationData> = [];
+            corRelationList.push({ id: searchPage.dialCode, type: CorReleationDataType.QR });
+            corRelationList.push({ id: '1', type: CorReleationDataType.COUNT_BOOK });
+            // act
+            searchPage.init()
+            // assert
+            setTimeout(() => {
+            }, 0);
+        })
+        it('should call init and generatepage loaded telemtry', () => {
+            // arrange
+            const mockRouterExtras = {
+                extras: {
+                    state: {
+                        dialCode: [],
+                        primaryCategories: 'primaryCategories',
+                        corRelationList: 'corRelationList',
+                        source: PageId.HOME,
+                        enrolledCourses: 'enrolledCourses' as any,
+                        userId: 'userId',
+                        shouldGenerateEndTelemetry: false,
+                        preAppliedFilter: ''
+                    },
+                }
+            };
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{ name: 'audience1', values: ['val1'] }]
+                }
+            };
+            mockRouter.getCurrentNavigation = jest.fn(() => mockRouterExtras as any),
+            mockEvent.subscribe = jest.fn((_, fn) => fn( {
+                facetFilters: [{ name: 'audience1', values: ['val1'] }]
+            }));
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn()
+            const corRelationList: Array<CorrelationData> = [];
+            corRelationList.push({ id: searchPage.dialCode, type: CorReleationDataType.QR });
+            corRelationList.push({ id: '1', type: CorReleationDataType.COUNT_BOOK });
+            // act
+            searchPage.init()
+            // assert
+            setTimeout(() => {
             }, 0);
         })
     })

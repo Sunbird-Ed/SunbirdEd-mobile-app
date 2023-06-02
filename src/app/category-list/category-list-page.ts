@@ -223,7 +223,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                             applyFilters = applyFilters.concat(this.filterFields[e]);
                         }
                     });
-                    data.name.preference = applyFilters;
+                    if (data.name && data.name.preference && data.name.preference.length) {
+                        data.name.preference.push(selectedData);
+                    } else {
+                        data.name.preference = selectedData;
+                    }
                 });
             }
         }
@@ -497,7 +501,6 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === primaryFacetFilter.code);
-        const onSelectedFilter = [];
         if (facetFilter) {
             facetFilter.values.forEach(facetFilterValue => {
                 if (toApply.find(apply => facetFilterValue.name === apply.name)) {
@@ -505,9 +508,6 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 } else {
                     facetFilterValue.apply = false;
                 }
-            });
-            toApply.forEach((selectedValue) => {
-                onSelectedFilter.push(selectedValue.name);
             });
 
             await this.applyFilter(appliedFilterCriteria, true, toApply, primaryFacetFilter.code);

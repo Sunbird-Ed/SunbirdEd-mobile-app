@@ -32,8 +32,8 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
-import { File } from '@ionic-native/file/ngx';
 import { FormConstants } from '../form.constants';
+import { File } from '@ionic-native/file/ngx';
 
 declare const cordova;
 
@@ -149,7 +149,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.pauseSubscription = this.platform.pause.subscribe(() => {
       const iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
-        iframes[0].contentWindow.postMessage('pause.youtube', '*');
+        iframes[0].contentWindow.postMessage('pause.youtube', window.parent.origin);
       }
     });
 

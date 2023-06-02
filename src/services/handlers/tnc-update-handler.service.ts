@@ -99,8 +99,11 @@ export class TncUpdateHandlerService {
        (userDetails.profileType === ProfileType.OTHER.toUpperCase() &&
         userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())
         || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
-      if (onboarding.skipOnboardingForLoginUser) {
-        await this.updateUserAsGuest();
+          const guestProfile = await this.commonUtilService.getGuestUserConfig().then((profile) => {
+            return profile;
+        });
+      if ( guestProfile.board && guestProfile.board.length && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN) {
+        await this.updateUserAsGuest(guestProfile);
       } else {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       }
@@ -198,10 +201,10 @@ export class TncUpdateHandlerService {
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 
-  private async updateUserAsGuest() {
+  private async updateUserAsGuest(guestProfile?: any) {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const req = await this.frameworkDetailsService.getFrameworkDetails().then((data) => {
+    const req = await this.frameworkDetailsService.getFrameworkDetails(guestProfile).then((data) => {
       return data;
     });
     const request = {

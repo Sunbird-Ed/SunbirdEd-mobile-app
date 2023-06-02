@@ -147,14 +147,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private async handleDeeplink(payloadUrl: string) {
     const dialCode = await this.qrScannerResultHandler.parseDialCode(payloadUrl);
 
-    // const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
-    // const urlMatch = payloadUrl.match(urlRegex);
 
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
     const deepLinkUrlConfig: { name: string, code: string, pattern: string, route: string, priority?: number, params?: {} }[] =
         await this.formnFrameworkUtilService.getFormFields(FormConstants.DEEPLINK_CONFIG);
-
+  
     let matchedDeeplinkConfig: { name: string, code: string, pattern: string, route: string, priority?: number } = null;
     let urlMatch;
 
@@ -192,7 +190,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
 
-      // const session = await this.authService.getSession().toPromise();
 
       // If onboarding not completed
       if (!this.isOnboardingCompleted) {  // && !session

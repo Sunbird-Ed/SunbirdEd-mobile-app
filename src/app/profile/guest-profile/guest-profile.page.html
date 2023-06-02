@@ -17,7 +17,7 @@
       </p>
     </div>
 
-    <div class="content-preferences-info" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+    <div class="content-preferences-info">
       <div class="content-header-info" role="heading" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
 
       <div class="grid-container">
@@ -56,8 +56,8 @@
         </div>
 
         <!-- Board -->
-        <div *ngIf="!!supportedProfileAttributes['board']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category1'}}</div>
+        <div *ngIf="!!supportedProfileAttributes['board'] && frameworkData[0].code==='category1'"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[0].label | translateJson}}</div>
         <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
@@ -75,9 +75,9 @@
         </div>
         <!-- Medium -->
 
-        <div *ngIf="!!supportedProfileAttributes['medium']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category2'}}</div>
-        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item text-align-end"
+        <div *ngIf="!!supportedProfileAttributes['medium'] && frameworkData.length>1 && frameworkData[1].code==='category2'"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[1].label | translateJson}}</div>
+        <div *ngIf="!!supportedProfileAttributes['medium'] && frameworkData.length>1" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'medium')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
@@ -95,9 +95,9 @@
 
 
         <!-- Class -->
-        <div *ngIf="!!supportedProfileAttributes['gradeLevel']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category3'}}</div>
-        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item text-align-end"
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel'] && frameworkData.length>2 && frameworkData[2].code==='category3'"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[2].label | translateJson}}</div>
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel'] && frameworkData.length>2" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'class')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
@@ -116,9 +116,9 @@
 
 
         <!-- Subject -->
-        <div *ngIf="!!supportedProfileAttributes['subject']"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{'' | category: 'category4'}}</div>
-        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item text-align-end"
+        <div *ngIf="!!supportedProfileAttributes['subject'] && frameworkData.length>3 &&frameworkData[3].code==='category4'"
+          class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[3].label | translateJson}}</div>
+        <div *ngIf="!!supportedProfileAttributes['subject'] && frameworkData.length>3" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'subjects')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"

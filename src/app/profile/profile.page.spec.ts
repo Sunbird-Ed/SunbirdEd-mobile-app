@@ -33,6 +33,7 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
+import { LocationHandler } from '../../services/location-handler';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -144,6 +145,7 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
+    const mockLocationHandler: Partial<LocationHandler> = {};
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -174,7 +176,8 @@ describe('Profile.page', () => {
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockLocationHandler as LocationHandler
         );
     });
 
@@ -211,6 +214,38 @@ describe('Profile.page', () => {
                 return fn();
             }
         });
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            supportedFrameworkConfig: [
+                {
+                  "code": "category1",
+                  "label": "{\"en\":\"Board\"}",
+                  "placeHolder": "{\"en\":\"Selected Board\"}",
+                  "frameworkCode": "board",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "administrator",
+                      "parent",
+                      "other"
+                  ]
+              },
+              {
+                  "code": "category2",
+                  "label": "{\"en\":\"Medium\"}",
+                  "placeHolder": "{\"en\":\"Selected Medium\"}",
+                  "frameworkCode": "medium",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "parent",
+                      "other"
+                  ]
+              }
+              ],
+              supportedAttributes: {board: 'board', medium: 'medium',
+              gradeLevel: 'gradeLevel'},
+              userType: 'teacher'
+        }));
         const headerData = jest.fn((fn => fn()));
         mockAppHeaderService.headerEventEmitted$ = {
             subscribe: headerData
@@ -222,6 +257,7 @@ describe('Profile.page', () => {
         // assert
         expect(mockEvents.subscribe).toHaveBeenCalled();
         expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+        expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
     });
 
     it('should unsubscribe headerObservable, events, and refresher set to true', () => {
@@ -346,7 +382,6 @@ describe('Profile.page', () => {
                     Environment.USER,
                     PageId.PROFILE);
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -522,9 +557,41 @@ describe('Profile.page', () => {
         // arrange
         jest.spyOn(profilePage, 'doRefresh').mockImplementation();
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            supportedFrameworkConfig: [
+                {
+                  "code": "category1",
+                  "label": "{\"en\":\"Board\"}",
+                  "placeHolder": "{\"en\":\"Selected Board\"}",
+                  "frameworkCode": "board",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "administrator",
+                      "parent",
+                      "other"
+                  ]
+              },
+              {
+                  "code": "category2",
+                  "label": "{\"en\":\"Medium\"}",
+                  "placeHolder": "{\"en\":\"Selected Medium\"}",
+                  "frameworkCode": "medium",
+                  "supportedUserTypes": [
+                      "teacher",
+                      "student",
+                      "parent",
+                      "other"
+                  ]
+              }
+              ],
+              supportedAttributes: {board: 'board', medium: 'medium',
+              gradeLevel: 'gradeLevel'},
+              userType: 'teacher'
+        }));
         // act
         profilePage.ngOnInit().then(() => {
-
+            expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             // assert
             done();

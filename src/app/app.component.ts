@@ -182,7 +182,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      this.startOpenrapDiscovery();
+      //this.startOpenrapDiscovery();
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
@@ -259,7 +259,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   checkAndroidWebViewVersion() {
-    var that = this;
+    let that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
@@ -332,19 +332,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private syncStatus(status) {
+    let value = new Map();
     switch (status) {
       case SyncStatus.DOWNLOADING_PACKAGE:
-        const value = new Map();
         value['codepushUpdate'] = 'downloading-package';
         break;
       case SyncStatus.INSTALLING_UPDATE:
-        const value1 = new Map();
-        value1['codepushUpdate'] = 'installing-update';
+        value['codepushUpdate'] = 'installing-update';
         break;
       case SyncStatus.ERROR:
-        const value2 = new Map();
-        value2['codepushUpdate'] = 'error-in-update';
+        value['codepushUpdate'] = 'error-in-update';
     }
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
+      Environment.HOME, PageId.HOME, null, value);
   }
 
   private downloadProgress(downloadProgress) {
@@ -723,13 +723,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     window['segmentation'].SBTagService.pushTag([selectedLanguage], TagPrefixConstants.USER_LANG, true);
     if (selectedLanguage) {
-      await this.translate.use(selectedLanguage);
+      this.translate.use(selectedLanguage);
     }
   }
 
   private async makeEntryInSupportFolder() {
     return new Promise<void>((resolve => {
-      (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
+      (window).sbutility.makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
       }, () => {
@@ -747,9 +747,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
-    if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
       return new Observable((observer) => {
-        (window as any).openrap.startDiscovery(
+        (window).openrap.startDiscovery(
           (response: { ip: string, actionType: 'connected' | 'disconnected' }) => {
             observer.next(response);
           }, (e) => {
@@ -779,7 +778,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }),
         mapTo(undefined)
       ).toPromise();
-    }
   }
 
   private async checkAppUpdateAvailable() {
@@ -1073,8 +1071,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.preferences.addListener(CsClientStorage.TRACE_ID, (value) => {
       if (value) {
         // show toast
-      } else {
-        // do not show the toast.
       }
     });
   }

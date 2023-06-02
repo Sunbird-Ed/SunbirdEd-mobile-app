@@ -185,7 +185,7 @@ export class TermsAndConditionsPage implements OnInit {
             this.externalIdVerificationService.showExternalIdVerificationPopup();
             this.splashScreenService.handleSunbirdSplashScreenActions();
           } else {
-            if (onboarding.skipOnboardingForLoginUser) {
+            if (onboarding.skipOnboardingForLoginUser && profile.profileType !== ProfileType.ADMIN) {
               await this.updateUserAsGuest();
             } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 categoriesProfileData['status'] = value['status']

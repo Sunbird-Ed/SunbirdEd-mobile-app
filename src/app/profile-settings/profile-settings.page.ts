@@ -45,7 +45,7 @@ import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -69,6 +69,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   btnColor = '#8FC4FF';
   appName: string;
   showQRScanner = true;
+  categories = [];
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -143,8 +144,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
-
     this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
     });
@@ -152,12 +153,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.activeSessionProfile = await this.profileService.getActiveSessionProfile({
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
-
-    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(undefined, undefined, this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
-    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
-    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
-    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings') && this.onboardingConfigurationService.getOnboardingConfig('profile-settings'))
+    this.showQRScanner = !!(this.onboardingConfigurationService.getOnboardingConfig('profile-settings'));
   }
 
 
@@ -446,7 +443,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
             values
           );
         }
-        selector.open();
+        if (selector) {
+          selector.open();
+        }
         return;
       }
     }
@@ -785,8 +784,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
-    console.log('attributes', attributes);
-    
     Object.keys(attributes).forEach((attribute) => {
       console.log('attribute', attribute);
       switch (attribute) {
@@ -826,5 +823,20 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       element.setAttribute('tabindex', '0');
     });
 }
+
+private addAttributeSubscription() {
+  const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+  this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+}
+
+  private getCategoriesAndUpdateAttributes() {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
+      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
+        this.categories = categories.supportedFrameworkConfig;
+        this.supportedProfileAttributes = categories.supportedAttributes;
+        this.addAttributeSubscription();
+      }
+    });
+  }
 
 }

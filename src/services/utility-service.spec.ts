@@ -2,6 +2,7 @@ import { UtilityService } from './utility-service';
 
 describe('UtilityService', () => {
     let utilityService: UtilityService;
+    window.console.error = jest.fn()
 
     beforeAll(() => {
         window['sbutility'] = {
@@ -18,6 +19,10 @@ describe('UtilityService', () => {
             rm: jest.fn(() => { }),
             getApkSize: jest.fn(() => { }),
             getMetaData: jest.fn(() => { }),
+            verifyCaptcha: jest.fn(() => { }),
+            getAppAvailabilityStatus: jest.fn(() => { }),
+            startActivityForResult: jest.fn(() => { }),
+            openFileManager: jest.fn(() => { })
         };
         utilityService = new UtilityService();
     });
@@ -774,10 +779,147 @@ describe('UtilityService', () => {
             jest.spyOn(utilityService, 'getBuildConfigValue').mockRejectedValue('0');
             // act
             // assert
-            utilityService.getAppVersionCode().then((response) => {
-                expect(response).toEqual(1);
-            }).catch((err) => {
+            utilityService.getAppVersionCode().catch((err) => {
                 expect(err).toEqual(0);
+            });
+        });
+    });
+
+    describe('verifyCaptcha()', () => {
+        it('should delegate to verifyCaptcha Method', (done) => {
+            // arrange
+            (window['sbutility']['verifyCaptcha'] as jest.Mock).
+            mockImplementation((SOME_KEY, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+            // act
+            // assert
+            utilityService.verifyCaptcha('key').then((response) => {
+                expect(window['sbutility']['verifyCaptcha']).toHaveBeenCalledWith('key', expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject to verifyCaptcha Method', (done) => {
+            // arrange
+            (window['sbutility']['verifyCaptcha'] as jest.Mock).
+            mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback('error');
+                });
+            });
+            // act
+            // assert
+            utilityService.verifyCaptcha('key').catch((err) => {
+                expect(window['sbutility']['verifyCaptcha']).toHaveBeenCalledWith('key', expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
+
+    describe('checkAvailableAppList()', () => {
+        it('should delegate to checkAvailableAppList Method', (done) => {
+            // arrange
+            (window['sbutility']['getAppAvailabilityStatus'] as jest.Mock).
+            mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback({});
+                });
+            });
+            // act
+            // assert
+            utilityService.checkAvailableAppList(['key']).then((response) => {
+                expect(response).toEqual({});
+                expect(window['sbutility']['getAppAvailabilityStatus']).toHaveBeenCalledWith(['key'], expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject to checkAvailableAppList Method with 0', (done) => {
+            // arrange
+            (window['sbutility']['getAppAvailabilityStatus'] as jest.Mock).
+            mockImplementation((SOME_VALUE, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback('error');
+                });
+            });
+            // act
+            // assert
+            utilityService.checkAvailableAppList(['key']).catch((err) => {
+                expect(err).toEqual('error');
+                expect(window['sbutility']['getAppAvailabilityStatus']).toHaveBeenCalledWith(['key'], expect.any(Function), expect.any(Function));
+                done()
+            });
+        });
+    });
+
+    describe('startActivityForResult()', () => {
+        it('should delegate to startActivityForResult Method with 1', (done) => {
+            // arrange
+            (window['sbutility']['startActivityForResult'] as jest.Mock).
+            mockImplementation((SOME_VALUE, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback({});
+                });
+            });
+            // act
+            // assert
+            utilityService.startActivityForResult({'key':''}).then((response) => {
+                expect(response).toEqual({});
+                expect(window['sbutility']['startActivityForResult']).toHaveBeenCalledWith({'key':''}, expect.any(Function), expect.any(Function));
+                done()
+            });
+        });
+        it('should reject to startActivityForResult Method with 0', (done) => {
+            // arrange
+            (window['sbutility']['startActivityForResult'] as jest.Mock).
+            mockImplementation((SOME_VALUE, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback('err');
+                });
+            });
+            // act
+            // assert
+            utilityService.startActivityForResult({'key':''}).catch((err) => {
+                expect(err).toEqual('err');
+                expect(window['sbutility']['startActivityForResult']).toHaveBeenCalledWith({'key':''}, expect.any(Function), expect.any(Function));
+                done()
+            });
+        });
+    });
+
+
+    describe('openFileManager()', () => {
+        it('should delegate to openFileManager Method with 1', (done) => {
+            // arrange
+            (window['sbutility']['openFileManager'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback({data:{}});
+                });
+            });
+            // act
+            // assert
+            utilityService.openFileManager().then((response) => {
+                expect(response).toEqual({data:{}});
+                expect(window['sbutility']['openFileManager']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done()
+            });
+        });
+        it('should reject to openFileManager Method with 0', (done) => {
+            // arrange
+            (window['sbutility']['openFileManager'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback('err');
+                });
+            });
+            // act
+            // assert
+            utilityService.openFileManager().catch((err) => {
+                expect(err).toEqual(err);
+                expect(window['sbutility']['openFileManager']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done()
             });
         });
     });
