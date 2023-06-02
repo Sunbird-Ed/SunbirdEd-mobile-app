@@ -9,9 +9,9 @@
 ## What is the Sunbird Mobile app?
 The Sunbird Mobile app is the app-based interface for the Sunbird application stack. It provides a app(android/ios) through which all functionality of Sunbird can be accessed.
 
-Latest release- [release-5.1.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/releases/tag/release-5.1.0.9_RC1)
+Latest release- [release-5.2.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/releases/tag/release-5.2.0_RC13)
 
-Ongoing release- [release-5.2.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/tree/release-5.2.0)
+Ongoing release- [release-6.0.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/tree/release-6.0.0_v13)
 
 **Prerequisites:**
 |Package| Version | Recommended  Version |
