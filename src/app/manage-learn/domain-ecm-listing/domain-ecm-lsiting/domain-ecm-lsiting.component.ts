@@ -19,7 +19,7 @@ import { GenericPopUpService } from '../../shared';
 })
 export class DomainEcmLsitingComponent {
   entityName: any;
-  entityData: any;
+  entityData: any={};
   entityEvidences: any;
   generalQuestions: any;
   recentlyUpdatedEntity: any;
@@ -62,6 +62,7 @@ export class DomainEcmLsitingComponent {
       this.submissionId = params.submisssionId;
       this.entityName = params.schoolName;
       this.allowMultipleAssessemts = params.allowMultipleAssessemts;
+      this.entityData.programJoined = params.programJoined == 'true'
     });
     this.extrasState = this.router.getCurrentNavigation().extras.state;
   }
@@ -96,7 +97,7 @@ export class DomainEcmLsitingComponent {
   }
 
   getAssessmentDetails(successData){
-    this.entityData = successData;
+    this.entityData = {...this.entityData, ...successData};
     if(this.submissionId){
       this.entityEvidences = this.updateTracker.getLastModifiedInEvidences(
         this.entityData['assessment']['evidences'],
