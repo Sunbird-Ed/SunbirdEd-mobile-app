@@ -1,25 +1,19 @@
 buildscript {
     repositories {
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
         mavenCentral()
         google()
         jcenter()
     }
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
     }
 }
 
 repositories {
-    maven { 
-        url 'https://maven.fabric.io/public' 
-    }
     google()
 }
 
-apply plugin: com.crashlytics.tools.gradle.CrashlyticsPlugin
+apply plugin: 'com.google.firebase.crashlytics'
 
 allprojects {
     repositories {
@@ -63,20 +57,9 @@ android {
         minSdkVersion 22
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
         versionName "4.8.$ext.buildNumber"
-        manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
-
-        buildConfigField "boolean", "DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE", "${display_framework_categories_in_profile}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER", "${display_signin_footer_card_in_course_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER", "${display_signin_footer_card_in_library_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER", "${display_signin_footer_card_in_profile_tab_for_teacher}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT", "${display_signin_footer_card_in_library_tab_for_student}"
-        buildConfigField "boolean", "DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT", "${display_signin_footer_card_in_profile_tab_for_student}"
-        buildConfigField "boolean", "TRACK_USER_TELEMETRY", "${track_user_telemetry}"
-        buildConfigField "boolean", "CONTENT_STREAMING_ENABLED", "${content_streaming_enabled}"
-        buildConfigField "boolean", "DISPLAY_ONBOARDING_CATEGORY_PAGE", "${display_onboarding_category_page}"
-        buildConfigField "boolean", "OPEN_RAPDISCOVERY_ENABLED", "${open_rapdiscovery_enabled}"
+        
         buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
     }
 
@@ -260,6 +243,52 @@ android {
         tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
 
+    tasks.whenTaskAdded { task ->
+    def name = task.name
+
+    //Skip some unnecessary tasks
+    if (name.startsWith("bundle")
+            && !name.contains("Classes")
+            && !name.contains("Resources")
+            && name != "bundle"
+            && name != "bundleDebug"
+            && name != "bundleRelease") {
+
+        def renameTaskName = "rename${task.name.capitalize()}Aab"
+        def version = "${android.defaultConfig.versionName}-${android.defaultConfig.versionCode}"
+        println "task.name ${task.name}"
+        def flavor = task.name.substring("bundle".length()).toLowerCase().replace("debug", "").replace("release", "")
+        def type = task.name.toLowerCase().replace("bundle", "").replace("${flavor}", "").toLowerCase()
+        println "Flavour ${flavor}"
+        println "Type ${type}"
+        if(flavor == null || type == null) return
+
+        def outputName = "${app_name}-$flavor-$version".toLowerCase()
+        if (!flavor.equals("production")) {
+            outputName = "${app_name}-$flavor-$version".toLowerCase();
+        } else {
+            outputName = "${app_name}-$version".toLowerCase();
+        }
+        
+
+        tasks.create(renameTaskName) {
+            def typeInCaps = "${type}".capitalize()
+            def path = "${rootDir}/app/build/outputs/bundle/${flavor}${typeInCaps}/"
+            def originalFile = "${path}app-${flavor}-${type}.aab"
+            println "originalFile ${originalFile}"
+            println "outputName ${outputName}"
+            doLast {
+                if (file("$originalFile").exists()) {
+                    ant.move file: "$originalFile",
+                            tofile: "$path/${outputName}.aab"
+                }
+            }
+        }
+
+        task.finalizedBy(renameTaskName)
+    }
+}
+
     applicationVariants.all { variant ->
         def flavor = variant.mergedFlavor
         def name = flavor.getVersionName()
@@ -313,7 +342,5 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
-        transitive = true;
-    }
+    implementation 'com.google.firebase:firebase-crashlytics'
 }

@@ -15,7 +15,7 @@ import { filter, map } from 'rxjs/operators';
 import {
   CachedItemRequestSourceFrom,
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
-  EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
+  EventNamespace, EventsBusService, NotificationService as PushNotificationService,
   Profile, ProfileService, ProfileType,
   ServerProfile, SharedPreferences, UserFeedStatus
 } from 'sunbird-sdk';
@@ -283,7 +283,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitSideMenuItemEvent($event, menuItem) {
-    // this.toggleMenu();
     this.menuCtrl.close().then(() => {
       this.sideMenuItemEvent.emit({ menuItem });
     }).catch((e) => {
@@ -521,8 +520,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   private refreshLoginInButton() {
     const profileType = this.appGlobalService.getGuestUserType();
-    this.showLoginButton = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER ||
-        this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT;
+    this.showLoginButton = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
   private async checkCurrentOrientation() {

@@ -32,7 +32,7 @@ export class ShowCertificateComponent implements OnInit {
         this.objId = this.content.identifier;
         this.objType = this.content.contentType;
         this.objVer = this.content.pkgVersion; 
-        for(var key in this.certificateDetails) {
+        for(let key in this.certificateDetails) {
             const certCriteria = this.certificateDetails[key]['criteria'];
             if(typeof(certCriteria)== 'string') {
                this.criteria = JSON.parse(certCriteria);  

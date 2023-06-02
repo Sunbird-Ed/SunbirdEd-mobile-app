@@ -57,6 +57,17 @@ describe('GroupDetailsPage', () => {
             expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
             expect(accessDiscussionComponent.isForumEnabled).toBe(true);
         });
+
+        it('should check for forumIds, not enabled', () => {
+            // arrange
+            mockAppGlobalService.isForumEnabled = false;
+            mockDiscussionService.getForumIds = jest.fn(() => throwError({ error: 'error' })) as any;
+            // act
+            accessDiscussionComponent.ngOnInit()
+            // assert
+            expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+            expect(accessDiscussionComponent.isForumEnabled).toBe(true);
+        });
     })
 
     describe('checkAccess', () => {

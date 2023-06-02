@@ -257,13 +257,16 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
     }
   },
   "cli": {
+    "analytics": "59dc0c3a-113f-4dc4-aa8d-a710cbda80bc",
     "defaultCollection": "@ionic/angular-toolkit"
   },
   "schematics": {

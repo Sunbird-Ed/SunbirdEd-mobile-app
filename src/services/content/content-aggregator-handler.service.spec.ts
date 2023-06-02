@@ -16,6 +16,7 @@ describe('ContentAggregatorHandler', () => {
     const mockcourseService: Partial<CourseService> = {};
     const mockformService: Partial<FormService> = {};
     const mockprofileService: Partial<ProfileService> = {};
+    window.console.error = jest.fn()
 
     beforeAll(() => {
         contentAggregatorHandler = new ContentAggregatorHandler(
@@ -489,6 +490,13 @@ describe('ContentAggregatorHandler', () => {
             // arrange
             // act
             contentAggregatorHandler.populateIcons([{dataSrc: {type:'Some_type'}, data: {sections: [{contents: [{cardImg: '', courseLogoUrl: "", appIcon: "", content: {appIcon: ""}}]}]}}]);
+            // assert
+        })
+
+        it('should populateIcons for data src type is some other if no content appicon', () => {
+            // arrange
+            // act
+            contentAggregatorHandler.populateIcons([{dataSrc: {type:'TRACKABLE_COLLECTIONS'}, data: {sections: [{contents: [{cardImg: "", appIcon: ""}]}]}}]);
             // assert
         })
     })

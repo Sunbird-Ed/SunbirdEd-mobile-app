@@ -297,7 +297,7 @@ export class UserTypeSelectionPage implements OnDestroy {
 
     if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
       this.navigateToTabsAsGuest();
-    } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+    } else {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
@@ -307,9 +307,10 @@ export class UserTypeSelectionPage implements OnDestroy {
           this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
         }
       }
-    } else {
-      this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
     }
+    //  else {
+    //   this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
+    // }
   }
 
   generateInteractEvent(userType) {

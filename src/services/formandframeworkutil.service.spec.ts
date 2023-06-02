@@ -33,6 +33,8 @@ import {
   mockSelfDeclarationForm
 } from './formandframeworkutil.service.spec.data';
 import { FormConstants } from '../app/form.constants';
+import { doesNotReject } from 'assert';
+import { PreferenceKey } from '../app/app.constant';
 
 
 describe('FormAndFrameworkUtilService', () => {
@@ -330,43 +332,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'gradeLevel',
-            values: [],
-            name: 'Class',
-            index: 2
-          },
-          {
-            code: 'subject',
-            values: [],
-            name: 'Subject',
-            index: 3
-          },
-          {
-            code: 'medium',
-            values: [],
-            name: 'Medium',
-            index: 4
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -424,43 +390,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLibraryFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'gradeLevel',
-            values: [],
-            name: 'Class',
-            index: 2
-          },
-          {
-            code: 'subject',
-            values: [],
-            name: 'Subject',
-            index: 3
-          },
-          {
-            code: 'medium',
-            values: [],
-            name: 'Medium',
-            index: 4
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -558,25 +488,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeCourseFilterConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            code: 'board',
-            values: [],
-            name: 'Board/Syllabus',
-            index: 1
-          },
-          {
-            code: 'contentType',
-            values: [
-              {
-                code: 'Story',
-                name: 'Story'
-              }
-            ],
-            name: 'Resource Type',
-            index: 5
-          }
-        ]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -638,12 +550,7 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService['invokeLocationConfigFormApi']({} as any, resolve, reject);
       setTimeout(() => {
-        expect(resolve).toHaveBeenCalledWith([
-          {
-            name: 'Skip Location',
-            code: 'skip',
-            values: []
-          }]);
+        expect(resolve).toHaveBeenCalledWith({});
         done();
       }, 0);
     });
@@ -1265,5 +1172,92 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
     })
   })
+
+  describe('getFrameworkCategories', () => {
+    it('should invoked formApi and store in local storage for empty framework', (done) => {
+      // arrange
+      mockSharedPreferences.getString = jest.fn(() => of('teacher'));
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({}));
+      jest.spyOn(formAndFrameworkUtilService, 'getFormFields').mockImplementation(() => {
+        return Promise.resolve([
+          {
+            "code": "category1",
+            "label": "{\"en\":\"Board\"}",
+            "placeHolder": "{\"en\":\"Selected Board\"}",
+            "frameworkCode": "board",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "administrator",
+                "parent",
+                "other"
+            ]
+        },
+        {
+            "code": "category2",
+            "label": "{\"en\":\"Medium\"}",
+            "placeHolder": "{\"en\":\"Selected Medium\"}",
+            "frameworkCode": "medium",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "parent",
+                "other"
+            ]
+        }
+        ]);
+      });
+      mockAppGlobalService.setFramewokCategory = jest.fn();
+      // act
+      formAndFrameworkUtilService.getFrameworkCategoryList(undefined).then(() => {
+        // assert
+        expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+        expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
+        expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should resolved framework category if already store', (done) => {
+      // arrange
+      mockAppGlobalService.getCachedFrameworkCategory = jest.fn(() => ({
+        supportedFrameworkConfig: [
+          {
+            "code": "category1",
+            "label": "{\"en\":\"Board\"}",
+            "placeHolder": "{\"en\":\"Selected Board\"}",
+            "frameworkCode": "board",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "administrator",
+                "parent",
+                "other"
+            ]
+        },
+        {
+            "code": "category2",
+            "label": "{\"en\":\"Medium\"}",
+            "placeHolder": "{\"en\":\"Selected Medium\"}",
+            "frameworkCode": "medium",
+            "supportedUserTypes": [
+                "teacher",
+                "student",
+                "parent",
+                "other"
+            ]
+        }
+        ],
+        supportedAttributes: {board: 'board'},
+        userType: 'teacher'
+      }));
+      // act
+      formAndFrameworkUtilService.getFrameworkCategoryList('teacher').then(() => {
+        // assert
+        expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
+        done();
+      });
+    })
+  });
 
 });

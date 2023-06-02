@@ -33,6 +33,9 @@ describe('GroupHandlerService', () => {
                     type: 'some_type',
                     id: 'some_id',
                     pageid: 'some_pageid'
+                },
+                context: {
+                    cdata: []
                 }
             }
             const cData = {

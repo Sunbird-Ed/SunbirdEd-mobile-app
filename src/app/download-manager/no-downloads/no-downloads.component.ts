@@ -7,7 +7,9 @@ import { Component } from '@angular/core';
 })
 export class NoDownloadsComponent {
 
-  constructor() { }
+  constructor() { 
+    console.log('no-downloads-component');  
+  }
 
 
 }

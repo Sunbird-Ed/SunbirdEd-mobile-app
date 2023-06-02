@@ -59,7 +59,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView, IonRefresher, ModalController } from '@ionic/angular';
+import { IonContent as ContentView, IonRefresher, ModalController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -70,7 +70,6 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { FormConstants } from '@app/app/form.constants';
 import { SbPopoverComponent } from '../../components/popups';
-import { PopoverController } from '@ionic/angular'
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
@@ -299,7 +298,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
     this.showorHideBanners();
     this.refresh = false;
-    refresher ? refresher.target.complete() : null;
+    if (refresher) {
+       refresher.target.complete();
+    }
   }
 
   handlePillSelect(event, section, isFromPopover?: boolean) {
@@ -723,7 +724,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   navigateToSpecificLocation(event, section) {
     let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: banner || '', type: 'BannerType' });
+    let bannerType = ''
+    if (banner){
+      bannerType = banner.code
+    }
+    corRelationList.push({ id: bannerType, type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_BANNER,
       '',
@@ -743,16 +748,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }
         break;
       case 'banner_search':
-        // const extras = {
-        //   state: {
-        //     source: PageId.HOME,
-        //     corRelation: corRelationList,
-        //     preAppliedFilter: event.data.action.params.filter,
-        //     hideSearchOption: true,
-        //     searchWithBackButton: true
-        //   }
-        // };
-        // this.router.navigate(['search'], extras);
         if (banner.action && banner.action.params && banner.action.params.filter) {
           (banner['searchCriteria'] as ContentSearchCriteria) =
             this.contentService.formatSearchCriteria({ request: banner.action.params.filter });
@@ -853,9 +848,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
-      this.otherCategories = [],
+        this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
-
     }
   }
 

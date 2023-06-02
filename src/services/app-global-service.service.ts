@@ -92,6 +92,7 @@ export class AppGlobalService implements OnDestroy {
     private _isNativePopupVisible: boolean;
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
+    private frameworkCategory = {};
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -111,16 +112,6 @@ export class AppGlobalService implements OnDestroy {
     public averageTime = 0;
     public averageScore = 0;
     private frameworkData = [];
-    public DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-    public DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = false;
-    public DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = false;
-    public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = false;
-    public DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT = false;
-    public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = false;
-    public TRACK_USER_TELEMETRY = false;
-    public CONTENT_STREAMING_ENABLED = false;
-    public DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
-    public OPEN_RAPDISCOVERY_ENABLED = false;
     public SUPPORT_EMAIL = 'support@sunbird.com';
 
     isUserLoggedIn(): boolean {
@@ -274,6 +265,18 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
+     * This method store the Framework Category
+     */
+    setFramewokCategory(categories: any) {
+        this.frameworkCategory = categories;
+    }
+
+    /** This method return the framework categories if available */
+    getCachedFrameworkCategory(): any {
+        return this.frameworkCategory;
+    }
+
+    /**
      * @returns UserId or empty string if not available
      * getLoggedinUserId
      */
@@ -293,82 +296,6 @@ export class AppGlobalService implements OnDestroy {
     }
 
     readConfig() {
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE)
-            .then(response => {
-                this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER)
-            .then(response => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER)
-            .then(response => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER)
-            .then(response => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT)
-            .then(response => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)
-            .then(response => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = false;
-            });
-        this.utilityService.getBuildConfigValue(GenericAppConfig.TRACK_USER_TELEMETRY)
-            .then(response => {
-                this.TRACK_USER_TELEMETRY = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.TRACK_USER_TELEMETRY = false;
-            });
-        this.utilityService.getBuildConfigValue(GenericAppConfig.CONTENT_STREAMING_ENABLED)
-            .then(response => {
-                this.CONTENT_STREAMING_ENABLED = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.CONTENT_STREAMING_ENABLED = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_CATEGORY_PAGE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
-            });
-        this.utilityService.getBuildConfigValue(GenericAppConfig.OPEN_RAPDISCOVERY_ENABLED)
-            .then(response => {
-                this.OPEN_RAPDISCOVERY_ENABLED = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.OPEN_RAPDISCOVERY_ENABLED = false;
-            });
         this.utilityService.getBuildConfigValue(GenericAppConfig.SUPPORT_EMAIL)
             .then(response => {
                 this.SUPPORT_EMAIL = response;
@@ -538,35 +465,6 @@ export class AppGlobalService implements OnDestroy {
             if (pageId !== PageId.PROFILE) {
                 paramsMap['isProfileSettingsCompleted'] = isOnBoardingCompleted;
             }
-            const profileType = this.getGuestUserType();
-            if (profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER) {
-                switch (pageId) {
-                    case PageId.LIBRARY: {
-                        paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;
-                        break;
-                    }
-                    case PageId.COURSES: {
-                        paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
-                        break;
-                    }
-                    case PageId.GUEST_PROFILE: {
-                        paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER;
-                        break;
-                    }
-                }
-
-            } else {
-                switch (pageId) {
-                    case PageId.LIBRARY: {
-                        paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT;
-                        break;
-                    }
-                    case PageId.GUEST_PROFILE: {
-                        paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT;
-                        break;
-                    }
-                }
-            }
 
             this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
                 InteractSubtype.INITIAL_CONFIG,
@@ -579,7 +477,6 @@ export class AppGlobalService implements OnDestroy {
     }
 
     generateAttributeChangeTelemetry(oldAttribute, newAttribute, pageId, env?) {
-        if (this.TRACK_USER_TELEMETRY) {
             const values = new Map();
             values['oldValue'] = oldAttribute;
             values['newValue'] = newAttribute;
@@ -590,11 +487,9 @@ export class AppGlobalService implements OnDestroy {
                 pageId,
                 undefined,
                 values);
-        }
     }
 
     generateSaveClickedTelemetry(profile, validation, pageId, interactSubtype) {
-        if (this.TRACK_USER_TELEMETRY) {
             const values = new Map();
             values['profile'] = profile;
             values['validation'] = validation;
@@ -605,7 +500,6 @@ export class AppGlobalService implements OnDestroy {
                 pageId,
                 undefined,
                 values);
-        }
     }
 
     getPageIdForTelemetry() {
@@ -939,7 +833,9 @@ export class AppGlobalService implements OnDestroy {
     setAccessibilityFocus(id) {
         setTimeout(() => {
             const ele = document.getElementById(id);
-            ele ? ele.focus() : null;
+            if (ele) {
+                ele.focus();
+            } 
         }, 100);
     }
 
