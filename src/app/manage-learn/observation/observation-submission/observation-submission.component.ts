@@ -320,7 +320,8 @@ export class ObservationSubmissionComponent implements OnInit {
                 submisssionId: submissionId,
                 evidenceIndex: 0,
                 sectionIndex: 0,
-                schoolName: this.entityName
+                schoolName: this.entityName,
+                programJoined: this.programJoined
               }
             });
           } else {
@@ -343,7 +344,8 @@ export class ObservationSubmissionComponent implements OnInit {
           submisssionId: assessment._id,
           evidenceIndex: 0,
           sectionIndex: 0,
-          schoolName: this.entityName
+          schoolName: this.entityName,
+          programJoined: this.programJoined
         }
       });
   }

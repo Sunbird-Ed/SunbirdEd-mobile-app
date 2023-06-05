@@ -234,13 +234,14 @@ export class DomainEcmLsitingComponent {
       this.evidenceSections[selectedSection].progressStatus = this.currentEvidence.startTime ? 'inProgress' : '';
       this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.entityData);
     }
-
+    
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
       queryParams: {
         submisssionId: this.submissionId,
         evidenceIndex: this.selectedEvidenceIndex,
         sectionIndex: selectedSection,
         schoolName: this.entityName,
+        programJoined: this.entityData?.programJoined
       }, state: this.extrasState //State is using for Template view for Deeplink.
     });
   }

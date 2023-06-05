@@ -34,7 +34,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   selectedSectionIndex: any = 0;
   start: number = 0;
   end: number = 1;
-  schoolData: any;
+  schoolData: any = {};
   isLast: boolean;
   isFirst: boolean;
   selectedEvidenceId: string;
@@ -82,6 +82,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedSectionIndex = params.sectionIndex ? parseInt(params.sectionIndex): 0;
       this.schoolName = params.schoolName;
       this.isSurvey = params.isSurvey == 'true';
+      this.schoolData.programJoined = params?.programJoined == 'true'
     });
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
@@ -120,7 +121,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   async getQuestions(data){
-    this.schoolData = data;
+    this.schoolData = {...this.schoolData, ...data};
     const currentEvidences = this.schoolData['assessment']['evidences'];
     this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
     this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
@@ -147,6 +148,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.payload = {consumerId: data.rootOrganisations||'', objectId: data.programId||data.program._id}
     this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
     this.isNewProgram = data.hasOwnProperty('requestForPIIConsent') || data.program.hasOwnProperty('requestForPIIConsent')
+    if(!data.programJoined && this.isNewProgram && this.isSurvey){
+      this.joinProgram()
+    }
     if(this.isNewProgram && data.programJoined && data?.requestForPIIConsent){
       let profileData = await this.utils.getProfileInfo();
       await this.popupService.getConsent('Program',this.payload,this.schoolData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((response)=>{
@@ -553,6 +557,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       async (data:any)=>{
         if(data){
           this.join()
+        }else{
+          if(this.isSurvey){
+            this.location.back()
+          }
         }
       }
     )
@@ -565,7 +573,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         this.schoolData.programJoined = true
         this.showConsentPopup()
         if(!this.schoolData.requestForPIIConsent){
-          this.commonUtilService.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS');
+          this.commonUtilService.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
           if(this.isSurvey){
             document.getElementById('stop').style.pointerEvents = 'auto';
           }
@@ -594,5 +602,5 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.allowStart()
     }
   }
-
+  
 }
