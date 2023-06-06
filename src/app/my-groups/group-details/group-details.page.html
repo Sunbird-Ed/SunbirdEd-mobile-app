@@ -91,12 +91,12 @@
         </div>
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='activities'" tabindex="0">
-        <div class="gd-member-search" tabindex="0">
+        <div class="gd-member-search">
           <img src="assets/imgs/search.svg" class="gd-member-search-icon" alt="search">
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center" tabindex="0">
+        <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center" >
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
             <img src="assets/imgs/no_activity.svg" alt="no-activity">
           </div>
@@ -105,13 +105,13 @@
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
         </div>
-        <div *ngIf="isGroupLoading" tabindex="0">
+        <div *ngIf="isGroupLoading" >
           <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
             <sb-course-card [isLoading]="true"></sb-course-card>
           </div>
         </div>
-        <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length" tabindex="0">
-          <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8" tabindex="0">
+        <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length">
+          <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8" >
             <div class="gd-card-head" *ngIf="filteredGroupedActivityListMap[activityGroup?.title].length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt="book-icon"></span>
               <span class="gd-card-titile" role="heading" aria-level="2">{{activityGroup.title}}</span>
