@@ -500,7 +500,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
 
     if (this.navigateBackToContentDetails) {
-      window.history.go(-1);
+      window.history.go(1);
       await this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
@@ -564,6 +564,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               InteractSubtype.OK_CLICKED, 
               Environment.PLAYER,
               PageId.PLAYER_PAGE);
+              this.location.back();
             if (this.playerType === 'sunbird-old-player') {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
@@ -573,7 +574,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
             } else {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
-              this.location.back();
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
+              this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
+              this.closeIframe();
             }
           }
         }
