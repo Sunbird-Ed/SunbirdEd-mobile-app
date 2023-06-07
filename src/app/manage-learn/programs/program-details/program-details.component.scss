@@ -45,6 +45,12 @@
     color: $blue;
     text-decoration-line: underline;
     font-weight: 600;
+    display: inline-block;
+    text-transform: lowercase;
+}
+
+.read-more::first-letter{
+    text-transform: capitalize;
 }
 
 .section-filter{

@@ -1395,7 +1395,7 @@
   "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
   "EXPLORE_PROGRAMS":"Explore Programs",
   "FRMELEMNTS_LBL_SEARCH_PROGRAMS_PLACEHOLDER":"Search your programs here",
-  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG_FOR_OBSERVATION":"You must join {{name}} program to view and access this {{type}}.",
+  "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG_FOR_OBSERVATION":"Please join {{name}} program to view and access this {{type}}.",
   "FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS":"You have joined this program successfully",
   "FRMELEMNTS_LBL_START_OBSERVATION_POPUP":"Start observation",
   "FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1":"You must click on the Start observation button to access and edit the observation.",

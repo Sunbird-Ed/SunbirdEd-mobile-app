@@ -186,7 +186,8 @@ export class ObservationDetailComponent implements OnInit {
           solutionId: this.solutionId,
           observationId: this.observationId,
           entityId: entity._id,
-          entityName: entity.name
+          entityName: entity.name,
+          programJoined: this.solutionData.programJoined
         }
       }
     );
@@ -344,7 +345,8 @@ export class ObservationDetailComponent implements OnInit {
     this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
       queryParams: {
         submisssionId: submissionId,
-        schoolName: entityName
+        schoolName: entityName,
+        programJoined: this.solutionData.programJoined
       }
     });
   }
