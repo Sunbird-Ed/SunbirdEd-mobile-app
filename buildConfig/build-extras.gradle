@@ -90,6 +90,7 @@ android {
             resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
             if (project.hasProperty("dev_deeplink_ncert_url")) {
                 resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
             } else {
@@ -113,9 +114,6 @@ android {
             }
             if (System.properties['dev_producer_id']) {
                  buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
-            }
-            if (System.properties['dev_channel_id']) {
-                buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
             }
             if (System.properties['dev_oauth_redirect_url']) {
                 buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
