@@ -76,7 +76,6 @@ export class AccountRecoveryInfoComponent implements OnInit {
   async submitRecoveryId(type: RecoveryType) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let loader = await this.commonUtilService.getLoader();
-      let data;
       const req: UpdateServerProfileInfoRequest = this.getReqPayload(type);
       await loader.present();
       this.profileService.updateServerProfile(req).pipe(
@@ -87,8 +86,11 @@ export class AccountRecoveryInfoComponent implements OnInit {
           }
         })
       )
-        .subscribe((res: any) => {
-          data = res;
+      .subscribe((data: any) => {
+        if (data && data.response === 'SUCCESS') {
+          this.popOverCtrl.dismiss({ isEdited: true });
+          this.generateRecoveryTelemetry(type);
+        }
         }, (error) => {
           if (error && error.response && error.response.body && error.response.body.params &&
             error.response.body.params.err === 'UOS_USRUPD0062') {
@@ -98,10 +100,6 @@ export class AccountRecoveryInfoComponent implements OnInit {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
         });
-        if (data && data.response === 'SUCCESS') {
-          await this.popOverCtrl.dismiss({ isEdited: true });
-          this.generateRecoveryTelemetry(type);
-        }
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }
