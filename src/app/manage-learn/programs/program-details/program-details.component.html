@@ -27,14 +27,15 @@
     </sb-library-filters>
   </div>
 
-  <ion-card class="section-card" *ngFor="let data of filteredList">
+  <ion-card class="custom-card-style"  *ngFor="let data of filteredList">
+    <div class="section-card" *ngIf="!selectedFilterIndex || data?.sectionName == selectedSection">
     <div class="d-flex flex-jc-space-between p-10 section-details" (click)="selectSection(data)">
       <div class="section-name">{{data?.sectionName}}</div>
       <div class="icon">
-        <ion-icon name="{{selectedSection == data?.sectionName?'chevron-up':'chevron-down'}}"></ion-icon>
+        <ion-icon name="{{data?.show?'chevron-up':'chevron-down'}}"></ion-icon>
       </div>
     </div>
-    <div *ngIf="data?.sectionName == selectedSection">
+    <div *ngIf="data?.show">
       <div *ngFor="let section of data?.sectionList">
         <app-item-list-card [title]="section?.name" (click)="cardClick(section)">
           <div class="certificate-tag" certificate *ngIf="section?.certificate || section?.certificateTemplateId">
@@ -43,6 +44,7 @@
         </app-item-list-card>
       </div>
     </div>
+  </div>
   </ion-card>
 
   <div *ngIf="!solutionsList.length" class="no-data">

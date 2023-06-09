@@ -128,15 +128,29 @@ export class ProgramDetailsComponent implements OnInit {
      }
     });
     this.filteredList=this.solutionsList.sort((a,b)=>{return a.order - b.order})
+    if(this.selectedSection){
+      this.filteredList.forEach(element => {
+        if(this.selectedSection == element.sectionName){
+          element.show =true;
+        }else{
+          element.show =false;
+        }
+      });
+    }
   }
 
   onFilterChange(event){
     this.selectedFilterIndex = event.data.index
     this.filteredList=this.solutionsList
     this.selectedSection = ''
+    this.solutionsList.filter((data)=>{
+      data.show = false;
+    })
     if(event.data.index!==0){
       this.filteredList = this.solutionsList.filter((data)=>{
-        return data.sectionName == event.data.text.toLowerCase()
+        return (
+          data.show = true,
+          data.sectionName == event.data.text.toLowerCase())
       })
       this.selectedSection = event.data.text.toLowerCase()
     }
@@ -206,13 +220,20 @@ export class ProgramDetailsComponent implements OnInit {
   ionViewWillLeave(){
     this.solutionsList = []
     this.filteredList = []
-    this.selectedSection = ''
+    // this.selectedSection = ''
     this.popupService.closeConsent()
   }
 
   selectSection(data){
-    if(data.sectionName == this.selectedSection){
-      this.selectedSection = ''
+    this.filteredList.forEach(element => {
+      if(data.sectionName == element.sectionName){
+        data.show = ! data.show;
+      }else{
+        element.show =false;
+      }
+    });
+    if(data.sectionName != this.selectedSection){
+      this.selectedSection = '';
     }else{
       this.selectedSection = data.sectionName
     }

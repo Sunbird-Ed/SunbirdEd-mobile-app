@@ -11,8 +11,8 @@
     (cardSelect)="selectedProgram($event)" *ngFor="let data of programs">
     </app-item-list-card>
     <app-no-data *ngIf="!programs?.length" message="EMPTY_SEARCH_RESULTS"></app-no-data>
-    <ion-button class="custom-btn-txt-transform-none mx-8 mt-16 load-more" fill="outline" expand="block"
+  </ion-content>
+  <ion-button class="custom-btn-txt-transform-none mx-8 mt-16 load-more" fill="outline" expand="block"
     (click)="loadMore()" *ngIf="programs?.length && count > programs?.length">
       {{ 'FRMELEMNTS_BTN_LOAD_MORE' | translate }}
     </ion-button>
-  </ion-content>
