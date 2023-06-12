@@ -56,7 +56,7 @@ android {
     defaultConfig {
         minSdkVersion 22
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "4.8.$ext.buildNumber"
+        versionName "6.0.$ext.buildNumber"
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
         
@@ -90,6 +90,7 @@ android {
             resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
             if (project.hasProperty("dev_deeplink_ncert_url")) {
                 resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
             } else {
@@ -114,9 +115,6 @@ android {
             if (System.properties['dev_producer_id']) {
                  buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
             }
-            if (System.properties['dev_channel_id']) {
-                buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
-            }
             if (System.properties['dev_oauth_redirect_url']) {
                 buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
             }
@@ -140,6 +138,7 @@ android {
             resValue("string", "deeplink_base_url", "${staging_deeplink_base_url}")
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${staging_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
             if (project.hasProperty("dev_deeplink_ncert_url")) {
                 resValue("string", "deeplink_ncert_url", "${staging_deeplink_ncert_url}")
             } else {
@@ -163,9 +162,6 @@ android {
             }
             if (System.properties['staging_producer_id']) {
                  buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
-            }
-            if (System.properties['staging_channel_id']) {
-                buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
             }
             if (System.properties['staging_oauth_redirect_url']) {
                 buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
