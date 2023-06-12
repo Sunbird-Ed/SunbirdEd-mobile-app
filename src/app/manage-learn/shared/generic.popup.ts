@@ -172,7 +172,7 @@ async closeConsent(){
       data=response.consents[0]
     }).catch(async (error)=>{
       if (!error.response.body.result.consent && error.response.responseCode === 404) {
-        await this.showConsent(type, payload, details, profileData,message);
+        data = await this.showConsent(type, payload, details, profileData,message);
     } else if (error.code === 'NETWORK_ERROR') {
         this.commonUtils.showToast('ERROR_NO_INTERNET_MESSAGE');
     }

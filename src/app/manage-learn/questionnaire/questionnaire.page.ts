@@ -11,6 +11,8 @@ import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { GenericPopUpService } from '../shared';
+import { SurveyProviderService } from '../core/services/survey-provider.service';
+import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
 
 @Component({
   selector: 'app-questionnaire',
@@ -52,6 +54,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   isSurvey : boolean = false;
   payload: {}
   isNewProgram: boolean = false
+  surveyId
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -74,7 +77,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private translate: TranslateService,
     private router: Router,
     private commonUtilService:CommonUtilService,
-    private popupService: GenericPopUpService
+    private popupService: GenericPopUpService,
+    private surveyProvider: SurveyProviderService,
+    private ulsdp: UpdateLocalSchoolDataService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submisssionId;
@@ -83,13 +88,15 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.schoolName = params.schoolName;
       this.isSurvey = params.isSurvey == 'true';
       this.schoolData.programJoined = params?.programJoined == 'true'
+      this.surveyId = params.surveyId
     });
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
     if(this.extrasState){
       this.isTargeted = this.extrasState.isATargetedSolution;
+      this.isSurvey = this.extrasState?.isSurvey || false
     }
-    if(this.extrasState && !this.isTargeted){
+    if(this.extrasState && !this.isTargeted && !this.isSurvey){
       this.showMessageForNONTargetUsers();
       }
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
@@ -151,10 +158,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     if(!data.programJoined && this.isNewProgram && this.isSurvey){
       this.joinProgram()
     }
-    if(this.isNewProgram && data.programJoined && data?.requestForPIIConsent){
+    if(this.isNewProgram && data.programJoined && data?.requestForPIIConsent && !data?.consentShared){
       let profileData = await this.utils.getProfileInfo();
       await this.popupService.getConsent('Program',this.payload,this.schoolData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((response)=>{
         if(response){
+          if(this.isSurvey){
+            this.getSurveyDetails()
+          }
         }
       })
     }
@@ -574,9 +584,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         this.showConsentPopup()
         if(!this.schoolData.requestForPIIConsent){
           this.commonUtilService.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
-          if(this.isSurvey){
-            document.getElementById('stop').style.pointerEvents = 'auto';
-          }
+        }
+        if(this.isSurvey){
+          document.getElementById('stop').style.pointerEvents = 'auto';
+          
         }
       }
     })
@@ -589,6 +600,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         if(data){
           if(this.isSurvey){
             document.getElementById('stop').style.pointerEvents = 'auto';
+            this.getSurveyDetails()
           }
         }
       })
@@ -602,5 +614,39 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.allowStart()
     }
   }
-  
+
+  async getSurveyDetails(){
+    this.surveyProvider
+    .getDetailsById(this.surveyId, this.schoolData.solution._id)
+    .then(async(res) => {
+      if (res.result == false) {
+        this.surveyProvider.showMsg('surveyExpired');
+        this.location.back()
+        return;
+      }
+      this.ulsdp.mapSubmissionDataToQuestion(res.result,false,true);
+      await this.surveyProvider
+      .storeSurvey(res.result.assessment.submissionId, res.result)
+      .then((survey) => {
+        this.extrasState = null
+        this.submissionId = survey.assessment.submissionId
+        this.redirect(survey.assessment.submissionId)
+      });
+    });
+  }
+
+
+  redirect(submissionId){
+    this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+      replaceUrl: true,
+      queryParams: {
+        submisssionId: submissionId,
+        evidenceIndex: 0,
+        sectionIndex: 0,
+        isSurvey:true,
+      },
+    });
+    this.ngOnInit()
+  }
+
 }
