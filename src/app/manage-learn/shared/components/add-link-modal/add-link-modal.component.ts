@@ -8,6 +8,7 @@ import { ToastService} from '../../../core';
 export class AddLinkModalComponent implements OnInit {
   links:string='';
   isSubmit : boolean = false;
+  invalidLink = false;
   @Output() eventEmit = new EventEmitter();
   constructor(private toastService:ToastService) { }
 
@@ -39,8 +40,10 @@ export class AddLinkModalComponent implements OnInit {
   validateLink(link){
     let invalidCharacters = /^[^!@~#$%^*(){}><,\n; ]+$/
     if(invalidCharacters.test(link)){
+      this.invalidLink = false;
      return false
     }else{
+      this.invalidLink = true;
       this.toastService.showMessage('FRMELEMNTS_MSG_INVALID_ADDED_LINK','danger')
       return true
     }

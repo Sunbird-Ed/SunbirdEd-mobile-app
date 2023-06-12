@@ -141,6 +141,9 @@ export class ProjectTemplateviewPage implements OnInit {
       const extraPramas = `?link=${this.id}`
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
+        if (this.project?.projectId) {
+          this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+        }
         this.metaData = {
           title: this.project?.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -183,11 +186,14 @@ export class ProjectTemplateviewPage implements OnInit {
         this.certificateCriteria.push(config);
       })
     }
+    if (this.project?.projectId) {
+      this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+    }
     this.metaData = {
       title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
-    if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent){
+    if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent && !this.project.consentShared){
       let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programInformation.programId}
       let profileData = await this.utils.getProfileInfo();
        await this.popupService.getConsent('Program',payloadData,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((data)=>{
