@@ -1,0 +1,76 @@
+@import "../../../../../assets/styles/base/_variables.scss";
+@import "../../../../../assets/styles/_variables.scss";
+@import "../../../../../assets/styles/_custom-mixins.scss";
+
+#main-content {
+  overflow-y: scroll;
+}
+
+.consent-popover-info {  
+  overflow: hidden;
+}
+
+.flex-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 0px 10px;
+}
+.save-changes{
+  color: white;
+  background-color: $blue;
+  font-size: 1rem;
+  padding: 12px 20px;
+  margin-left: 18px;
+  border: 2px solid $blue;
+//   width: 80%;
+  border-radius: 18px !important;
+}
+
+.btn-info{
+  padding: 12px;
+//   text-align: center;
+  float: right;
+}
+
+
+.sb-popover-header {
+  border-radius: 4px 4px 0 0;
+  background-color: $info-color;
+  &::after {
+    background-image: none;
+  }
+  .sb-popover-toolbar {
+    min-height: 6rem !important;
+    max-height: 6rem !important;
+    background-color: $info-color;
+    border-radius: 4px 4px 0 0;
+    text-align: center;
+    //   @include padding(($base-block-space * 0.5), ($base-block-space * 1));
+    .toolbar-background {
+      border-radius: 4px 4px 0 0;
+      background-color: $info-color;
+    }
+    .sb-popover-close-btn {
+      color: $white-color;
+    }
+    .sb-popover-title {
+      font-size: 22px !important;
+      font-weight: 700 !important;
+      text-align: left !important;
+      margin: 10px 0px;
+      text-transform: capitalize;
+    }
+  }
+}
+
+.popover-message{
+  margin-left: 10px;
+  margin-bottom: 30px;
+}

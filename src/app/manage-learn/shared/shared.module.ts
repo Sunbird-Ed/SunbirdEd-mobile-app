@@ -36,7 +36,10 @@ import {
   AttachmentListsComponent,
   ReportListComponent,
   EntitySearchLocalComponent,
-  StartImprovementComponent
+  StartImprovementComponent,
+  ShareProfileDataComponent,
+  PiiConsentPopupComponent,
+  JoinProgramComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -131,7 +134,10 @@ import { EntitySearchPipe } from './pipe/entity-local-search';
         ReportListComponent,
         EntitySearchPipe,
         EntitySearchLocalComponent,
-        StartImprovementComponent
+        StartImprovementComponent,
+        ShareProfileDataComponent,
+        PiiConsentPopupComponent,
+        JoinProgramComponent
     ],
     imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -189,7 +195,10 @@ import { EntitySearchPipe } from './pipe/entity-local-search';
         AttachmentListsComponent,
         EntitySearchPipe,
         EntitySearchLocalComponent,
-        StartImprovementComponent
+        StartImprovementComponent,
+        ShareProfileDataComponent,
+        PiiConsentPopupComponent,
+        JoinProgramComponent
     ],
     providers: [
         Camera,

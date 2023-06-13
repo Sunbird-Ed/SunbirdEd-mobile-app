@@ -1,14 +1,30 @@
-Recommended Branch - release-4.9.0
 
-Kindly mail back to sunbird to get the starter kit Which consists of two files:
-a) google-services.json - To be Copied at the root of the project
-b) sunbird.properties.  - To be Copied into buildConfig/ folder
+[![Circle CI - master branch](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-portal/tree/master.svg?style=svg)](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-mobile-app/tree/master.svg?style=svg)
+[![Circle CI Badge](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-mobile-app.svg?style=shield)]((https://circleci.com/gh/Sunbird-Ed/SunbirdEd-mobile-app.svg?style=shield))
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-mobile-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-portal)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-mobile-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-mobile-app)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-mobile-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-mobile-app)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-mobile-app)
 
+## What is the Sunbird Mobile app?
+The Sunbird Mobile app is the app-based interface for the Sunbird application stack. It provides a app(android/ios) through which all functionality of Sunbird can be accessed.
 
-**Dependencies:**    
-NPM Version - above 6    
-Node Version - 14 (Recommended)
-Cordova Version - 9 (Recommended)
+Latest release- [release-5.2.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/releases/tag/release-5.2.0_RC13)
+
+Ongoing release- [release-6.0.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/tree/release-6.0.0_v13)
+
+**Prerequisites:**
+|Package| Version | Recommended  Version |
+|--|--|--|
+[Node](https://nodejs.org/en/) | 12+ | 12.22.10
+[NPM](https://nodejs.org/en/) | 6+ | 6.14.16
+[Cordova](https://cordova.apache.org/) | 10+ | 10.1.2
+[Ionic](https://ionicframework.com/docs/intro/cli) | 5 | 5.7.0
+[Java(For Android)](https://www.oracle.com/in/java/technologies/downloads/) | 11+ | 11.0.15.1
+[Gradle(For Android)](https://gradle.org/install/) | 7+ | 7.0.2
+[CocoaPods(For Ios)](https://cocoapods.org/) | 1.11.3 |
+
+**Project Setup**
 
 **1. Ionic-Android build Setup**    
     - [Install java](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)    
@@ -26,15 +42,12 @@ Cordova Version - 9 (Recommended)
     CLI Setup    
     - `npm install -g ionic`   
     - `npm install -g cordova`   
-
 **2. Project Setup**    
     - git clone the repo(https://github.com/Sunbird-Ed/SunbirdEd-mobile-app).    
     - Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.    
     - Run `./build.sh`    
-
 **3. Onboarding/Tabs Configuration**
     Onboarding steps and Tabs can be configured via this configuration settings.
-
 **Onboarding Configurations**
 |Name|Description|Options|
 |----|-----|-----|
@@ -42,7 +55,6 @@ Cordova Version - 9 (Recommended)
 |User Role Selection|User should select their role|If want to skip User Type selection, set skip as false and provide default user type|
 |Profile Settings|User should set their profile by choosing their framework fields|Provide deafult profile values to skip profile settings page|
 |District Maping|Here user need to provide details related to their location|To skip this page deafult location values are required|
-
 #### Language Selection
 ```
 {
@@ -58,7 +70,6 @@ Cordova Version - 9 (Recommended)
   ]
 }
 ```
-
 #### User Role Selection
 ```
 {
@@ -71,7 +82,6 @@ Cordova Version - 9 (Recommended)
   ]
 }
 ```
-
 #### Profile Settings
 ```
 {
@@ -115,11 +125,8 @@ Cordova Version - 9 (Recommended)
   ]
 }
 ```
-
 **Tabs Page COnfigurations**
-
 Configure the tabs page according to the requirement. Fllowing are the configurable settings for tabs.
-
 ```
 {
   "tabs": [
@@ -143,7 +150,6 @@ Configure the tabs page according to the requirement. Fllowing are the configura
   ]
 }
 ```
-
 |Property|Description|Value|
 |----|----|----|
 |`root`|On which page the tab should be shown.|`home`|
@@ -159,19 +165,18 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 |`status`|To display to a spefic user criteria|ex: 'logIn' will show to logged in users only|
 |`userTypeAdmin`|Wheather to show for only Admin users|Boolean value|
   
-
 **4. How to build apk**    
-    - To check attached devices do `adb devices`    
-    - `npm run ionic-build` (Make sure you have attached device)    
-    - `ionic cordova run android --prod`    
-    - Apk location `project_folder/platforms/android/app/build/outputs/apk/staging/debug/apk_name.apk`    
-
+   - To check attached devices do `adb devices`    
+   - `npm run ionic-build` (Make sure you have attached device)    
+   - `ionic cordova run android --prod`    
+   - Apk location `project_folder/platforms/android/app/build/outputs/apk/staging/debug/apk_name.apk`    
+   
 **5. How to debug apk**    
-    - Open chrome and enter `chrome://inspect`    
-    - Select app    
 
+   - Open chrome and enter `chrome://inspect`    
+    - Select app    
 ---------------------------------------
-# IOS Development setup
+## IOS Development setup
 ## Prerequisites
     1. Node js version 14.20.1
     2. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
@@ -180,7 +185,6 @@ Configure the tabs page according to the requirement. Fllowing are the configura
     5. ios-deploy  1.11.4 - using `brew install ios-deploy`
     all of the above should be installed globally
     Xcode 12.4 Build version 12D4e or above
-
     NOTE: For M1 chipset users please go through FAQ section for ROSETA 2 compatibility and usage.
     
 ## Steps
@@ -209,4 +213,3 @@ Configure the tabs page according to the requirement. Fllowing are the configura
   For Further details follow the link - https://stackoverflow.com/a/50683158/4259981
 4. (iOS Setup only) POD installation - https://cocoapods.org/
 5. (Android Setup only) Gradle installation - https://gradle.org/install/
-

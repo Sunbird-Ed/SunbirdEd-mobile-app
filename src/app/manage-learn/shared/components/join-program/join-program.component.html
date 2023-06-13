@@ -1,23 +1,18 @@
-
 <ion-header class="sb-popover-header">
   <ion-toolbar class="sb-popover-toolbar">
-    <ion-title class="sb-popover-title">{{header| translate}} ?
+    <ion-title class="sb-popover-title">{{header | translate}} ?
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="sb-popover-container ion-no-padding">
-
   <div id="main-content" class="sb-popover-content-details">
     <div class="consent-popover-info">
       <div class="flex-container">
         <div class="footer">
           <div lines="none">
-              <p class="cr-terms-checkbox-label">
-                <b>{{message | translate }} </b>
-                </p>
-                <p class="cr-terms-checkbox-label">
-                {{message1 | translate }}
-                 </p>
+              <p class="popover-message">
+                <b>{{ (message ? message : 'FRMELEMNTS_LBL_JOIN_PROGRAM_MSG') | translate:{'name':name,'type':type} }}</b>
+              </p>
           </div>
           <div class="btn-info">
             <button  class="save-changes"
