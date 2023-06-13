@@ -69,7 +69,7 @@ export class ConsentService {
                 }
             });
         if (isOrgConsent) {
-            this.updateProfileDeclaration(userDetails);
+            await this.updateProfileDeclaration(userDetails);
         }
     }
 

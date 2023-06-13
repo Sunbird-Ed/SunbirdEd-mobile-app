@@ -23,7 +23,7 @@ export class ApplicationHeaderKebabMenuComponent {
   ) {
   }
 
-  public onOptionSelect($event: MouseEvent, option: KebabMenuOption) {
-    this.popOverCtrl.dismiss({ option });
+  public async onOptionSelect($event: MouseEvent, option: KebabMenuOption) {
+    await this.popOverCtrl.dismiss({ option });
   }
 }

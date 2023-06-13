@@ -19,68 +19,68 @@ export class NavigationService {
         private events: Events
     ) { }
 
-    navigateToDetailPage(content, navExtras) {
+    async navigateToDetailPage(content, navExtras) {
         content = !content.trackable ? ((content.contentData && content.contentData.trackable) ? content.contentData : content) : content;
         if (content.trackable && content.trackable.enabled) {
             if (content.trackable.enabled === TrackingEnabled.YES) {
                 // Trackable
-                this.navigateToTrackableCollection(navExtras);
+                await this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
                 // Collection
-                this.navigateToCollection(navExtras);
+                await this.navigateToCollection(navExtras);
             } else {
                 // Content
-                this.navigateToContent(navExtras);
+                await this.navigateToContent(navExtras);
             }
         } else {
             // for backward compatibility, remove once not requried
             if (content.content ? (content.content.contentType.toLowerCase()
                 === CsContentType.COURSE.toLowerCase()) : content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
                 // Trackable
-                this.navigateToTrackableCollection(navExtras);
+                await this.navigateToTrackableCollection(navExtras);
             } else if (content.mimeType === MimeType.COLLECTION) {
                 // Collection
-                this.navigateToCollection(navExtras);
+                await this.navigateToCollection(navExtras);
             } else {
                 // Content
-                this.navigateToContent(navExtras);
+                await this.navigateToContent(navExtras);
             }
         }
     }
 
-    navigateToTrackableCollection(navExtras) {
+    async navigateToTrackableCollection(navExtras) {
         if (this.router.url && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
             this.events.publish(EventTopics.DEEPLINK_COURSE_PAGE_OPEN, navExtras);
         } else {
-            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+            await this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
                 state: navExtras
             });
         }
     }
 
-    navigateToCollection(navExtras) {
+    async navigateToCollection(navExtras) {
         if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
             this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, navExtras);
         } else {
-            this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+            await this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
                 state: navExtras
             });
         }
     }
 
-    navigateToContent(navExtras) {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+    async navigateToContent(navExtras) {
+        await this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: navExtras
         });
     }
 
-    navigateTo(path, navExtras) {
-        this.router.navigate(path, {
+    async navigateTo(path, navExtras) {
+        await this.router.navigate(path, {
             state: navExtras
         });
     }
 
-    navigateToEditPersonalDetails(profile, pageId,payload?) {
+    async navigateToEditPersonalDetails(profile, pageId,payload?) {
         if (this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
@@ -96,7 +96,7 @@ export class NavigationService {
                     payload
                 }
             };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         } else {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         }

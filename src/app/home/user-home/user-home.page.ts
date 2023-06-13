@@ -146,35 +146,35 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   ngOnInit() {
-    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
-      this.getUserProfileDetails();
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, async () => {
+      await this.getUserProfileDetails();
     });
 
-    this.events.subscribe('refresh:loggedInProfile', () => {
-      this.getUserProfileDetails();
+    this.events.subscribe('refresh:loggedInProfile', async () => {
+      await this.getUserProfileDetails();
     });
 
-    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, async (data: string) => {
       if (data === '') {
-        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+        await this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
   }
 
   async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.getUserProfileDetails();
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.getUserProfileDetails();
   }
 
-  doRefresh(refresher?) {
+  async doRefresh(refresher?) {
     this.refresh = true;
-    this.fetchDisplayElements(refresher);
+    await this.fetchDisplayElements(refresher);
     this.events.publish(EventTopics.NOTIFICATION_REFRESH);
   }
 
@@ -187,15 +187,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     if (this.guestUser) {
       this.audienceFilter = AudienceFilter.GUEST_TEACHER;
-    } else if (this.guestUser && this.profile.profileType === ProfileType.STUDENT) {
-      this.audienceFilter = AudienceFilter.GUEST_STUDENT;
+      if (this.profile?.profileType === ProfileType.STUDENT) {
+        this.audienceFilter = AudienceFilter.GUEST_STUDENT;
+      }
     } else {
       this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
     }
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appLabel = appName;
-      });
+    this.appLabel = await this.appVersion.getAppName()
     // impression telemetry
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,
@@ -206,9 +204,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
 
-  editProfileDetails() {
+  async editProfileDetails() {
     if (!this.guestUser) {
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], { state: { shouldUpdatePreference: true } });
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], { state: { shouldUpdatePreference: true } });
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -216,7 +214,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           isCurrentUser: true
         }
       };
-      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+      await this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }
   }
 
@@ -290,7 +288,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     };
     const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
-    this.getOtherMLCategories();
+    await this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
     this.displaySections = this.contentAggregatorHandler.populateIcons(displayItems);
@@ -301,7 +299,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  handlePillSelect(event, section, isFromPopover?: boolean) {
+  async handlePillSelect(event, section, isFromPopover?: boolean) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -340,10 +338,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       title: (section && section.landingDetails && section.landingDetails.title) || '',
       description: (section && section.landingDetails && section.landingDetails.description) || ''
     };
-    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
+    await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToViewMoreContentsPage(section, subsection) {
+  async navigateToViewMoreContentsPage(section, subsection) {
     let state = {};
     switch (section.dataSrc.type) {
       case 'TRACKABLE_COLLECTIONS':
@@ -385,52 +383,52 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const params: NavigationExtras = {
       state
     };
-    this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] :
+    await this.router.navigate(section.dataSrc.type !== 'CONTENTS' ? [RouterLinks.VIEW_MORE_ACTIVITY] :
       [RouterLinks.TEXTBOOK_VIEW_MORE], params);
   }
 
-  navigateToDetailPage(event, sectionName) {
+  async navigateToDetailPage(event, sectionName) {
     const item = event.data;
     const index = event.index;
     const values = {};
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item });
+      await this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
-        this.redirectToActivedownloads();
+        await this.redirectToActivedownloads();
         break;
       case 'notification':
-        this.redirectToNotifications();
+        await this.redirectToNotifications();
         break;
 
       default: console.warn('Use Proper Event name');
     }
   }
 
-  redirectToActivedownloads() {
+  async redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.HOME);
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  redirectToNotifications() {
+  async redirectToNotifications() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SELECT_BELL,
       Environment.HOME,
       PageId.HOME);
-    this.router.navigate([RouterLinks.NOTIFICATION]);
+    await this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
   ionViewWillLeave(): void {
@@ -493,7 +491,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
     if (data && data.showPreference) {
-      this.editProfileDetails();
+      await this.editProfileDetails();
     }
   }
 
@@ -520,7 +518,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data, section, true);
+    await this.handlePillSelect(data, section, true);
   }
 
   mapContentFacteTheme(displayItems) {
@@ -555,7 +553,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       item.icon = item.icon ? item.icon : subjectMap.icon;
       item.theme = item.theme ? item.theme : subjectMap.theme;
       if (!item.theme) {
-        const colorTheme = ColorMapping[Math.floor(Math.random() * ColorMapping.length)];
+        let val = Math.random();
+        const colorTheme = ColorMapping[Math.floor(val * ColorMapping.length)];
         item.theme = {
           iconBgColor: colorTheme.primary,
           pillBgColor: colorTheme.secondary
@@ -625,7 +624,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
       {
         state: {
           showHeader: true,
@@ -696,7 +695,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         selectedMedium: this.profile.medium
       }
     };
-    this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
+    await this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
   }
 
   async getFrameworkData(frameworkId, requiredCategories, currentCategoryCode): Promise<CategoryTerm[]> {
@@ -714,12 +713,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  tabViewWillEnter() {
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.getUserProfileDetails();
+  async tabViewWillEnter() {
+    await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    await this.getUserProfileDetails();
   }
 
-  navigateToSpecificLocation(event, section) {
+  async navigateToSpecificLocation(event, section) {
     let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
     let bannerType = ''
@@ -740,9 +739,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         break;
       case 'banner_internal_url':
         if (this.guestUser && banner.action.params.route === RouterLinks.PROFILE) {
-          this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
+          await this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
         } else {
-          this.router.navigate([banner.action.params.route]);
+          await this.router.navigate([banner.action.params.route]);
         }
         break;
       case 'banner_search':
@@ -759,10 +758,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           }
         }
         section['description'] = (banner.ui && banner.ui.landing && banner.ui.landing.description) || '';
-        this.handlePillSelect({ data: [{ value: banner }] }, section);
+        await this.handlePillSelect({ data: [{ value: banner }] }, section);
         break;
       case 'banner_content':
-        this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
+        await this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(banner.action.params.identifier,
           undefined, undefined, undefined, undefined, corRelationList);
         break;
     }
@@ -878,16 +877,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       await confirm.present();
       const { data } = await confirm.onDidDismiss();
       if (data && data.canDelete) {
-        this.router.navigate([RouterLinks.SIGN_IN], { state: { navigateToCourse: true } });
+        await this.router.navigate([RouterLinks.SIGN_IN], { state: { navigateToCourse: true } });
       }
       return;
     }
     switch (selectedPill) {
       case 'observation':
-        this.router.navigate([RouterLinks.OBSERVATION], {});
+        await this.router.navigate([RouterLinks.OBSERVATION], {});
         break;
       case 'project':
-        this.router.navigate([RouterLinks.PROJECT], {});
+        await this.router.navigate([RouterLinks.PROJECT], {});
         break;  
       default:
         break;

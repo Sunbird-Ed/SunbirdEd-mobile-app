@@ -26,8 +26,8 @@ export class CourseCompletionPopoverComponent {
     this.course = this.navParams.get('course');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
 }

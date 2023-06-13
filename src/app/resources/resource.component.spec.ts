@@ -1011,7 +1011,7 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.classClickHandler(0, true);
             // assert
-            expect(resourcesComponent.currentGrade).toBe('sample');
+            expect(resourcesComponent.currentGrade).toBe('grade1');
         });
         it('should handle else part when index does not match and classClicked is false ', () => {
             // arrange

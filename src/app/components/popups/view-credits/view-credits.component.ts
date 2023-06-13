@@ -26,8 +26,8 @@ export class ViewCreditsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -54,8 +54,8 @@ export class ViewCreditsComponent implements OnInit {
     return ContentUtil.mergeProperties(this.content, mergeProp);
   }
 
-  cancel() {
-    this.popOverCtrl.dismiss();
+  async cancel() {
+    await this.popOverCtrl.dismiss();
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }

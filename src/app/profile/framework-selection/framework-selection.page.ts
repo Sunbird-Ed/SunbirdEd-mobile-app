@@ -65,9 +65,9 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     this.corRelation.push({ id: PageId.FRAMEWORK_SELECTION, type: CorReleationDataType.FROM_PAGE });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initializeFormConfig();
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',

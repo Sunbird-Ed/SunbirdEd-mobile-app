@@ -114,16 +114,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
@@ -132,7 +132,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       }
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
@@ -160,7 +160,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async ionViewWillEnter() {
     const playerInterval = setInterval(async () => {
       if (this.playerType === 'sunbird-old-player') {
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
         this.statusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
@@ -189,7 +189,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
               this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
               this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-              this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+              this.previewElement.nativeElement.contentWindow.addEventListener('message', async resp => {
                 if (resp.data === 'renderer:question:submitscore') {
                   this.courseService.syncAssessmentEvents().subscribe();
                 } else if (resp.data === 'renderer:question:reviewAssessment') {
@@ -208,7 +208,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                         ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
                         undefined,
                         ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
-                      this.openPDF(downloadUrl);
+                      await this.openPDF(downloadUrl);
                     }
                   } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
                     || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
@@ -217,14 +217,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                       () => { }
                     );
                   } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                    this.closeIframe();
+                    await this.closeIframe();
                   }
                 } else if (this.isJSON(resp.data)) {
                   const response = JSON.parse(resp.data);
                   if (response.event === 'renderer:navigate') {
                     this.navigateBackToTrackableCollection = true;
                     this.navigateBackToContentDetails = false;
-                    this.closeIframe({
+                    await this.closeIframe({
                       identifier: response.data.identifier
                     });
                   }
@@ -239,26 +239,26 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
       if (!activeAlert) {
-        this.showConfirm();
+        await this.showConfirm();
       }
     });
 
-    this.events.subscribe('endGenieCanvas', (res) => {
+    this.events.subscribe('endGenieCanvas', async (res) => {
       if (res.showConfirmBox) {
-        this.showConfirm();
+        await this.showConfirm();
       } else {
-        this.closeIframe();
+        await this.closeIframe();
       }
     });
   }
 
-  toggleDeviceOrientation() {
+  async toggleDeviceOrientation() {
     if (this.screenOrientation.type.includes(AppOrientation.LANDSCAPE.toLocaleLowerCase())) {
       this.screenOrientation.unlock();
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       } else {
         this.screenOrientation.unlock();
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     }
   }
 
@@ -266,10 +266,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.statusBar.show();
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
     if (currentOrientation === AppOrientation.LANDSCAPE) {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     } else {
       this.screenOrientation.unlock();
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
 
     if (this.events) {
@@ -289,8 +289,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-  handleNavBackButton() {
-    this.showConfirm();
+  async handleNavBackButton() {
+    await this.showConfirm();
   }
 
   async playerEvents(event) {
@@ -308,7 +308,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
-            this.showConfirm();
+            await this.showConfirm();
           }
         } else {
           this.location.back();
@@ -329,7 +329,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       } else if (event.edata['type'] === 'DOWNLOAD') {
         this.handleDownload();
       } else if (event.edata['type'] === 'PRINT') {
-        this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
+        await this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
            this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
@@ -343,10 +343,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
             isContentDisabled: event.edata.maxLimitExceeded,
             isLastAttempt: event.edata.isLastAttempt
           };
-          this.commonUtilService.handleAssessmentStatus(attemptInfo);
+          await this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
       } else if (event.edata.type === 'DEVICE_ROTATION_CLICKED') {
-        this.toggleDeviceOrientation();
+        await this.toggleDeviceOrientation();
       }
     }
   }
@@ -468,8 +468,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    setTimeout(() => {
-      this.closeIframe(content);
+    setTimeout(async () => {
+      await this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
       content,
@@ -488,7 +488,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   /**
    * This will close the player page and will fire some end telemetry events from the player
    */
-  closeIframe(content?: any) {
+  async closeIframe(content?: any) {
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     try {
       this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
@@ -500,8 +500,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
 
     if (this.navigateBackToContentDetails) {
-      window.history.go(-1);
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+      window.history.go(1);
+      await this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
           corRelation: this.corRelationList,
@@ -512,7 +512,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         replaceUrl: true
       });
     }  else if (this.navigateBackToTrackableCollection) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      await this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content
         },
@@ -564,14 +564,19 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               InteractSubtype.OK_CLICKED, 
               Environment.PLAYER,
               PageId.PLAYER_PAGE);
+              this.location.back();
             if (this.playerType === 'sunbird-old-player') {
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
                 'END', 'ALERT_OK', 'EXIT', { type, stageId });
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
               this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
-              this.closeIframe();
+              await this.closeIframe();
             } else {
-              this.location.back();
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+                'END', 'ALERT_OK', 'EXIT', { type, stageId });
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
+              this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
+              this.closeIframe();
             }
           }
         }

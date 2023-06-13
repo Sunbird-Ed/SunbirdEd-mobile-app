@@ -15,7 +15,7 @@ export class IsGuestUserGuard implements CanLoad {
             return true;
         }
 
-        this.router.navigate(['/', 'profile-settings']);
+        await this.router.navigate(['/', 'profile-settings']);
         return false;
     }
 }

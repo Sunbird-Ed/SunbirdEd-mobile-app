@@ -47,9 +47,9 @@ export class SearchFilterPage implements OnInit {
     ) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.isPageLoadedFirstTime = true;
-        this.initilizeSearchFilter();
+        await this.initilizeSearchFilter();
     }
 
     private async initilizeSearchFilter(){
@@ -69,14 +69,14 @@ export class SearchFilterPage implements OnInit {
         }
     }
 
-    applyFilter() {
+    async applyFilter() {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.APPLY_FILTER_CLICKED,
             Environment.HOME,
             PageId.COURSE_SEARCH_FILTER,
             undefined);
-        this.modalController.dismiss({
+        await this.modalController.dismiss({
             appliedFilterCriteria: this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria)
         });
     }
@@ -84,7 +84,7 @@ export class SearchFilterPage implements OnInit {
     cancel() {
         this.router.navigate([], { relativeTo: this.activatedRoute }).then(() => {
             this.modalController.dismiss();
-        });
+        }).catch(e => console.error(e));
     }
 
     private async refreshForm(formValue) {
@@ -140,7 +140,7 @@ export class SearchFilterPage implements OnInit {
         );
     }
 
-    valueChanged(event) {
+    async valueChanged(event) {
         if (!event) {
             return;
         }
@@ -149,6 +149,6 @@ export class SearchFilterPage implements OnInit {
             return;
         }
 
-        this.refreshForm(event);
+        await this.refreshForm(event);
     }
 }

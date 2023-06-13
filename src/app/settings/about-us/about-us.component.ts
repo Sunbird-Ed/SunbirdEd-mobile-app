@@ -77,7 +77,7 @@ export class AboutUsComponent implements OnInit {
       })
       .then(val => {
         this.getVersionName(val);
-      });
+      }).catch(e => console.error(e));
   }
 
   ionViewWillLeave() {
@@ -127,8 +127,8 @@ export class AboutUsComponent implements OnInit {
                   console.error('Sharing Data is not possible', error);
                 });
               }
-            });
-        });
+            }).catch(e => console.error(e));
+        }).catch(e => console.error(e));
     }, async (error) => {
       if (loader) {
         await loader.dismiss();
@@ -159,7 +159,7 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
-      });
+      }).catch(e => console.error(e));
   }
 
   getVersionCode(appName, versionName): any {
@@ -167,7 +167,7 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.version = appName + ' v' + versionName + '.' + response;
         return response;
-      });
+      }).catch(e => console.error(e));
   }
 
   goBack() {

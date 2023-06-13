@@ -35,7 +35,7 @@ export class ProfileNameConfirmationPopoverComponent {
 
   async ionViewWillEnter() {
     this.buttonLabel = this.projectContent ? "FRMELEMNTS_LBL_START_IMPROVEMENT" : "START_LEARNING";
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
 
     const userId = await this.appGlobalService.getActiveProfileUid();
 
@@ -53,20 +53,20 @@ export class ProfileNameConfirmationPopoverComponent {
       });
   }
 
-  onSubmitClick() {
+  async onSubmitClick() {
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.profile.userId;
-    this.preferences.putBoolean(key, this.doNotShowAgain).toPromise().then();
-    this.closePopover({ buttonClicked: true });
+    await this.preferences.putBoolean(key, this.doNotShowAgain).toPromise().then();
+    await this.closePopover({ buttonClicked: true });
   }
 
-  closePopover(data?) {
-    this.popoverCtrl.dismiss(data);
+  async closePopover(data?) {
+    await this.popoverCtrl.dismiss(data);
   }
 
-  onProfilePageClick() {
+  async onProfilePageClick() {
     let payload = this.projectContent ? {code:'name',children:[]} : ''
-    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP,payload);
-    this.closePopover({ editProfileClicked: true });
+    await this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP,payload);
+    await this.closePopover({ editProfileClicked: true });
   }
 
 }

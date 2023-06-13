@@ -50,21 +50,21 @@ export class NotificationPage implements OnInit {
     private events: Events
   ) { }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
     });
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
   }
 
-  ngOnInit() {
-    this.fetchNotificationList();
-    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
-      this.fetchNotificationList();
+  async ngOnInit() {
+    await this.fetchNotificationList();
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, async () => {
+      await this.fetchNotificationList();
     });
   }
 
@@ -112,7 +112,7 @@ export class NotificationPage implements OnInit {
     valuesMap['swipeDirection'] = swipeDirection;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
 
-    this.notificationService.deleteNotification({ event: {}, data: notification });
+    await this.notificationService.deleteNotification({ event: {}, data: notification });
   }
 
   handleTelemetry(event) {
@@ -147,7 +147,11 @@ export class NotificationPage implements OnInit {
     }
   }
 
-  handleShowLess(event: any) {}
-  handleShowMore(event: any) {}
+  handleShowLess(event: any) {
+    console.log('show less');
+  }
+  handleShowMore(event: any) {
+    console.log('show more');
+  }
 
 }

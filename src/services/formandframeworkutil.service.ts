@@ -52,7 +52,7 @@ export class FormAndFrameworkUtilService {
         await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
             this.selectedLanguage = val ? val : 'en';
         });
-        this.invokeUrlRegexFormApi();
+        await this.invokeUrlRegexFormApi();
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate' | 'register' | 'state'): Promise<WebviewSessionProviderConfig> {
@@ -386,7 +386,7 @@ export class FormAndFrameworkUtilService {
      * @param profileData : Local profile of current user
      */
     updateLoggedInUser(profileRes, profileData, eventParams?: EventParams) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const profile = {
                 board: [],
                 grade: [],
@@ -410,8 +410,8 @@ export class FormAndFrameworkUtilService {
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
                             frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
-                        await this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
-                            .then((categoryTerms: CategoryTerm[]) => {
+                        this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
+                            .then(async (categoryTerms: CategoryTerm[]) => {
                                 keysLength++;
                                 profileRes.framework[categoryKey].forEach(element => {
                                     if (categoryKey === 'gradeLevel') {
@@ -431,7 +431,7 @@ export class FormAndFrameworkUtilService {
                                     this.updateProfileInfo(profile, profileData, eventParams)
                                         .then((response) => {
                                             resolve(response);
-                                        });
+                                        }).catch((e) => console.error(e));
                                 }
                             })
                             .catch(err => {
@@ -440,7 +440,7 @@ export class FormAndFrameworkUtilService {
                                     this.updateProfileInfo(profile, profileData, eventParams)
                                         .then((response) => {
                                             resolve(response);
-                                        });
+                                        }).catch((e) => console.error(e));
                                 }
                             });
                     } else {
@@ -449,14 +449,14 @@ export class FormAndFrameworkUtilService {
                             this.updateProfileInfo(profile, profileData, eventParams)
                                 .then((response) => {
                                     resolve(response);
-                                });
+                                }).catch((e) => console.error(e));
                         }
                     }
                 }
             } else {
                 resolve({ status: false });
             }
-        });
+        })
     }
 
     updateProfileInfo(profile, profileData, eventParams?: EventParams) {
@@ -756,19 +756,19 @@ export class FormAndFrameworkUtilService {
     }
 
     getFrameworkCategoryList(userType?: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (!userType) {
-                await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
+                this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
                     userType = type;
-                });
+                }).catch((e) => console.error(e));
             }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
             console.log('................', framework);
             if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
-             (framework.userType !== userType || !userType))) {
-                  this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
+                (framework.userType !== userType || !userType))) {
+                this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
                 resolve(res);
-                });
+                }).catch((e) => console.error(e));
             } else {
                 resolve(framework);
             }

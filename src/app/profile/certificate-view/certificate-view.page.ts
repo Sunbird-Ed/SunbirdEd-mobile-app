@@ -49,6 +49,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   onPopupOpen = false;
   projectData:any;
   message:string;
+  paramData;
   constructor(
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
     private certificateDownloadService: CertificateDownloadService,
@@ -63,16 +64,17 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private apiService : UnnatiDataService
-  ) {}
+  ) {
+    this.paramData = this.router.getCurrentNavigation().extras.state.request;
+  }
 
-  ngOnInit() {
-    this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
-    let paramData = this.router.getCurrentNavigation().extras.state.request;
-      if( paramData.type == 'project'){
-        this.projectData =  paramData;
+  async ngOnInit() {
+    await this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId).catch(err => console.log(err));
+      if(this.paramData.type == 'project'){
+        this.projectData = this.paramData;
         let keys = Object.keys(this.projectData.certificate);
         if( this.projectData.certificate &&  this.projectData.certificate.eligible && this.projectData.certificate.osid){
-          this.getProjectCertificate();
+          await this.getProjectCertificate();
         }else{
           if((this.projectData.certificate && (keys[this.projectData.certificate.eligible]  && !this.projectData.certificate.eligible) ) || (this.projectData.certificate && this.projectData.certificate.eligible && !this.projectData.certificate.osid)){
             this.message = 'FRMELEMNTS_MSG_PROJECT_SUBMITTED_CERTIFICATE_SOON'
@@ -82,15 +84,15 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }else{
-        this.pageData =paramData;
-        this.loadCertificate();
+        this.pageData = this.paramData;
+        await this.loadCertificate();
       } 
 
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
   }
 
   ngAfterViewInit() {}
-  getProjectCertificate(){
+  async getProjectCertificate(){
     const config ={
       url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
      headers:{
@@ -98,7 +100,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       accept:this.acceptType
      }
     }
-    this.apiService.get(config).pipe(
+    await this.apiService.get(config).pipe(
       tap(this.initCertificateTemplate.bind(this)),
     ).toPromise();
   }
@@ -258,7 +260,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
               };
             }
             default: {
-              toast.dismiss();
+              await toast.dismiss();
               throw new Error('INVALID_OPTION');
             }
           }
@@ -270,7 +272,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
         console.error(e);
       } finally {
-        toast.dismiss();
+        await toast.dismiss();
       }
 
   }
@@ -307,13 +309,13 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       cssClass: 'certificate-popup'
     });
     this.onPopupOpen = true;
-    certificatePopover.present();
+    await certificatePopover.present();
     const { data } = await certificatePopover.onDidDismiss();
     this.onPopupOpen = false;
     if (!data) {
       return;
     }
-    this.listenActionEvents(data.option);
+    await this.listenActionEvents(data.option);
   }
 }
 

@@ -51,9 +51,9 @@ export class CategoriesEditService {
       } catch {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         if (hasFilledLocation) {
-          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile, noOfStepsToCourseToc);
+          await this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile, noOfStepsToCourseToc);
         } else {
-          this.navigateToDistrictMapping(noOfStepsToCourseToc);
+          await this.navigateToDistrictMapping(noOfStepsToCourseToc);
         }
       }
 
@@ -63,9 +63,9 @@ export class CategoriesEditService {
       } else {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         if (hasFilledLocation || isSSOUser) {
-          this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile)
+          await this.executeUserPostOnboardingSteps(isSSOUser, updatedProfile)
         } else {
-          this.navigateToDistrictMapping();
+          await this.navigateToDistrictMapping();
         }
       }
     } else {
@@ -94,32 +94,32 @@ export class CategoriesEditService {
       });
       window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
       window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-      this.segmentationTagService.evalCriteria();
+      await this.segmentationTagService.evalCriteria();
     } catch (e) {
       console.log(e);
     }
   }
 
-  private executeUserPostOnboardingSteps(isSSOUser, updatedProfile, navigateToCourse?) {
+  private async executeUserPostOnboardingSteps(isSSOUser, updatedProfile, navigateToCourse?) {
     if (!isSSOUser) {
-      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
+      await this.appGlobalService.showYearOfBirthPopup(updatedProfile);
     }
     if (this.appGlobalService.isJoinTraningOnboardingFlow) {
       window.history.go(-navigateToCourse);
     } else {
-      this.router.navigate([RouterLinks.TABS]);
+      await this.router.navigate([RouterLinks.TABS]);
     }
     this.events.publish('update_header');
-    this.externalIdVerificationService.showExternalIdVerificationPopup();
+    await this.externalIdVerificationService.showExternalIdVerificationPopup();
   }
 
-  private navigateToDistrictMapping(navigateToCourse?) {
+  private async navigateToDistrictMapping(navigateToCourse?) {
     const navigationExtras: NavigationExtras = {
       state: {
         isShowBackButton: false,
         noOfStepsToCourseToc: navigateToCourse + 1
       }
     };
-    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+    await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 }

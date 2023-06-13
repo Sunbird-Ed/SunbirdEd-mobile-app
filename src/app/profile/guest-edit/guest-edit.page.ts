@@ -183,7 +183,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       Environment.USER,
       PageId.CREATE_USER
     );
-    this.getCategoriesAndUpdateAttributes(this.profile.profileType || undefined);
+    await this.getCategoriesAndUpdateAttributes(this.profile.profileType || undefined);
     this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
   }
 
@@ -193,11 +193,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     const headerTitle = this.isNewUser ? this.commonUtilService.translateMessage('CREATE_USER') :
       this.commonUtilService.translateMessage('EDIT_PROFILE');
-    this.headerService.showHeaderWithBackButton([], headerTitle);
-    this.getSyllabusDetails();
+    await this.headerService.showHeaderWithBackButton([], headerTitle);
+    await this.getSyllabusDetails();
   }
 
   ionViewWillLeave() {
@@ -210,11 +210,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.formControlSubscriptions.unsubscribe();
   }
 
-  onProfileTypeChange() {
+  async onProfileTypeChange() {
     if (this.formControlSubscriptions) {
       this.formControlSubscriptions.unsubscribe();
     }
-    this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
+    await this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
     this.guestEditForm.patchValue({
       syllabus: [],
       boards: [],
@@ -235,7 +235,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
 
-    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
         if (!frameworks || !frameworks.length) {
           await this.loader.dismiss();
@@ -434,9 +434,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
     } else {
       await loader.present();
       if (this.isNewUser) {
-        this.submitNewUserForm(formVal, loader);
+        await this.submitNewUserForm(formVal, loader);
       } else {
-        this.submitEditForm(formVal, loader);
+        await this.submitEditForm(formVal, loader);
       }
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'passed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
@@ -471,7 +471,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   /**
    * This will submit edit form.
    */
-  submitEditForm(formVal, loader): void {
+  async submitEditForm(formVal, loader): Promise<void> {
     const req = {} as Profile;
     req.board = formVal.boards;
     req.grade = formVal.grades;
@@ -497,27 +497,27 @@ export class GuestEditPage implements OnInit, OnDestroy {
         }
       });
     }
-    this.profileService.updateProfile(req)
-      .subscribe(() => {
-        this._dismissLoader(loader);
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.OTHER,
-          InteractSubtype.EDIT_USER_SUCCESS,
-          Environment.USER,
-          PageId.EDIT_USER
-        );
-        if (this.isCurrentUser) {
-          this.commonUtilService.handleToTopicBasedNotification();
-          this.publishProfileEvents(formVal);
-        } else {
-          this.location.back();
-        }
-        this.refreshSegmentTags();
-      }, () => {
-        this._dismissLoader(loader);
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
-      });
+    try {
+      await this.profileService.updateProfile(req).toPromise()
+      await this._dismissLoader(loader);
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.OTHER,
+        InteractSubtype.EDIT_USER_SUCCESS,
+        Environment.USER,
+        PageId.EDIT_USER
+      );
+      if (this.isCurrentUser) {
+        this.commonUtilService.handleToTopicBasedNotification();
+        await this.publishProfileEvents(formVal);
+      } else {
+        this.location.back();
+      }
+      this.refreshSegmentTags();
+    } catch {
+      await this._dismissLoader(loader);
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+    }
   }
 
   refreshSegmentTags() {
@@ -532,11 +532,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag(res.profileType, TagPrefixConstants.USER_ROLE, true);
-        this.segmentationTagService.evalCriteria();
-      });
+        await this.segmentationTagService.evalCriteria();
+      }).catch(e => console.error(e));
 }
 
-  publishProfileEvents(formVal) {
+  async publishProfileEvents(formVal) {
     // Publish event if the all the fields are submitted
     if (formVal.syllabus && formVal.syllabus.length
       && (formVal.boards && formVal.boards.length)
@@ -552,12 +552,12 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
     if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
       if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, formVal.profileType).toPromise().then();
+        await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, formVal.profileType).toPromise().then();
         if (formVal.profileType === ProfileType.ADMIN) {
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
-            this.router.navigate([RouterLinks.SIGN_IN]);
-          }
+          await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
+          await this.router.navigate([RouterLinks.SIGN_IN]);
         }
+      }
     }
     if (formVal.profileType !== ProfileType.ADMIN) {
       this.location.back();
@@ -568,7 +568,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   /**
    * It will submit new user form
    */
-  submitNewUserForm(formVal, loader): void {
+  async submitNewUserForm(formVal, loader): Promise<void> {
     const req = {} as Profile;
     req.board = formVal.boards;
     req.grade = formVal.grades;
@@ -592,17 +592,17 @@ export class GuestEditPage implements OnInit, OnDestroy {
         }
       });
     }
-
-    this.profileService.createProfile(req, req.source).subscribe(() => {
-      this._dismissLoader(loader);
+    try {
+      await this.profileService.createProfile(req, req.source).toPromise();
+      await this._dismissLoader(loader);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_CREATED_SUCCESSFULLY'));
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER, InteractSubtype.CREATE_USER_SUCCESS, Environment.USER, PageId.CREATE_USER);
       this.location.back();
-    }, () => {
-      this._dismissLoader(loader);
+    } catch {
+      await this._dismissLoader(loader);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('FILL_THE_MANDATORY_FIELDS'));
-    });
+    }
   }
 
   private async _dismissLoader(loader?) {
@@ -638,14 +638,14 @@ export class GuestEditPage implements OnInit, OnDestroy {
     return subscriptionArray;
   }
 
-  private getCategoriesAndUpdateAttributes(userType: string) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then((categories) => {
+  private async getCategoriesAndUpdateAttributes(userType: string) {
+    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then(async (categories) => {
       if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
         this.categories = categories.supportedFrameworkConfig;
         this.supportedProfileAttributes = categories.supportedAttributes;
-        this.addAttributeSubscription();
+        await this.addAttributeSubscription();
       }
-    });
+    }).catch(e => console.error(e));
   }
 
 }

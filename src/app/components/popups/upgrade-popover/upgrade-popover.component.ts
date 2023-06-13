@@ -79,8 +79,8 @@ export class UpgradePopoverComponent {
     );
   }
 
-  cancel() {
-    this.popCtrl.dismiss();
+  async cancel() {
+    await this.popCtrl.dismiss();
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER,
         '',
@@ -94,7 +94,7 @@ export class UpgradePopoverComponent {
     );
   }
 
-  upgradeApp(link) {
+  async upgradeApp(link) {
     // for in app update
     cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
         () => {},
@@ -107,7 +107,7 @@ export class UpgradePopoverComponent {
       PageId.UPGRADE_POPUP
     );
     if (this.upgradeType.type === 'optional') {
-      this.popCtrl.dismiss();
+      await this.popCtrl.dismiss();
     }
   }
 }

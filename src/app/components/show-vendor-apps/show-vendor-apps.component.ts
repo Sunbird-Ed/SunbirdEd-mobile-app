@@ -35,7 +35,7 @@ export class ShowVendorAppsComponent implements OnInit {
         });
     }
 
-    openThirdPartyApps(packageId: string, appListAvailability) {
+    async openThirdPartyApps(packageId: string, appListAvailability) {
         if (appListAvailability) {
             this.utilityService.startActivityForResult({
                 package: packageId,
@@ -43,7 +43,7 @@ export class ShowVendorAppsComponent implements OnInit {
                     content: this.content
                 },
                 requestCode: 101,
-            }).then((result: any) => {
+            }).then(async (result: any) => {
                 const telemetryResult = result.extras;
                 this.telemetryGeneratorService.generateSummaryTelemetry(
                     telemetryResult.edata.type,
@@ -54,13 +54,13 @@ export class ShowVendorAppsComponent implements OnInit {
                     telemetryResult.edata.interactions,
                     'home'
                 );
-                this.popOverCtrl.dismiss();
+                await this.popOverCtrl.dismiss();
             }).catch((error) => {
                 // error
                 console.log('------------', error);
             });
         } else {
-            this.utilityService.openPlayStore(packageId);
+            await this.utilityService.openPlayStore(packageId);
         }
     }
 }

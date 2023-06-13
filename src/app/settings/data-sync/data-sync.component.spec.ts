@@ -207,14 +207,14 @@ describe('DataSyncComponent', () => {
         mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
 
         dataSyncComponent.ngOnInit();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW, '',
-            PageId.SETTINGS_DATASYNC,
-            Environment.SETTINGS, '', '', ''
-        );
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-            .toHaveBeenCalledWith(PageId.SETTINGS_DATASYNC, Environment.SETTINGS, false);
         setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW, '',
+                PageId.SETTINGS_DATASYNC,
+                Environment.SETTINGS, '', '', ''
+            );
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
+                .toHaveBeenCalledWith(PageId.SETTINGS_DATASYNC, Environment.SETTINGS, false);
             expect(dataSyncComponent.dataSyncType).toBe(undefined);
             expect(mockLocation.back).toHaveBeenCalled();
             expect(unsubscribeFn).toHaveBeenCalled();

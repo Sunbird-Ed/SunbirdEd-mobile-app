@@ -56,22 +56,22 @@ export class RatingHandler {
                     this.preferences.getString(PreferenceKey.APP_RATING_DATE).toPromise().then(async res => {
                         if (await this.shouldShowAppRating(res)) {
                             paramsMap['isPlayed'] = 'N';
-                            this.showAppRatingPopup();
+                            await this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                            await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                         }
-                    }).catch(err => {
+                    }).catch(async err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                        await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                    await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
-                this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                await this.showContentRatingPopup(content, popupType, shouldNavigateBack);
             }
 
         } else {
@@ -141,7 +141,7 @@ export class RatingHandler {
             }
             case StoreRating.RETURN_HELP: {
                 this.setInitialDate();
-                this.router.navigate([RouterLinks.FAQ_HELP]);
+                await this.router.navigate([RouterLinks.FAQ_HELP]);
                 break;
             }
         }
