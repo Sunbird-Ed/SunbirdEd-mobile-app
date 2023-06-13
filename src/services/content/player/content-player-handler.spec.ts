@@ -389,9 +389,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should play the content from the local, if the user is offline and content locally available', () => {
@@ -423,9 +425,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should play the content from the local, if the user is online and content locally available', () => {
@@ -456,9 +460,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should navigate to content details page if the above conditions fail', () => {

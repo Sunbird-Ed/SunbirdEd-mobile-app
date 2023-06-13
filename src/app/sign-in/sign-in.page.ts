@@ -65,25 +65,25 @@ export class SignInPage implements OnInit {
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
-        this.appHeaderService.hideHeader();
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
             window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
         }
     }
             
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.appHeaderService.hideStatusBar();
+        await this.appHeaderService.hideHeader()
     }
 
-    ionViewWillLeave() {
-        this.appHeaderService.showStatusBar();
-        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
+    async ionViewWillLeave() {
+        await this.appHeaderService.showStatusBar();
+        await this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
     }
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
-        this.login();
+        await this.login();
     }
 
     async login() {
@@ -167,7 +167,7 @@ export class SignInPage implements OnInit {
                 keycloakMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
                 await loginSessionProviderConfigloader.dismiss();
             } catch (e) {
-                this.sbProgressLoader.hide({id: 'login'});
+                await this.sbProgressLoader.hide({id: 'login'});
                 await loginSessionProviderConfigloader.dismiss();
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;

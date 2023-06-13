@@ -35,7 +35,7 @@ export class SignupBasicInfoPage implements OnInit {
 
   async ngOnInit() {
     this.appName = await this.commonUtilService.getAppName();
-    this.appHeaderService.hideHeader();
+    await this.appHeaderService.hideHeader();
     this.initiateYearSelecter();
   }
 
@@ -72,8 +72,8 @@ export class SignupBasicInfoPage implements OnInit {
     });
   }
 
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
 
   goBack() {

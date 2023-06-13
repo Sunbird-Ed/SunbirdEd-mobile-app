@@ -80,7 +80,7 @@ export class ProjectListingComponent {
 
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
-            this.networkFlag = available;
+            this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
             this.projects = [];
             this.fetchProjectList();
         });
@@ -197,7 +197,6 @@ export class ProjectListingComponent {
         this.projects = [];
         this.page = 1;
         this.currentOnlineProjectLength = 0;
-
         this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
         this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
         this.searchText = '';

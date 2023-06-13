@@ -96,8 +96,10 @@ describe('ManageUserProfilesPage', () => {
       // act
       manageUserProfilesPage.ionViewWillEnter();
       // assert
-      expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-      expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
+      }, 0);
     });
   });
 

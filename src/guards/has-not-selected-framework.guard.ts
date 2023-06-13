@@ -35,7 +35,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
 
     async resolve(): Promise<any> {
         if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.PROFILE_SETTINGS)) {
-            this.navigateToNext();
+            await this.navigateToNext();
             return false;
         }
 
@@ -46,23 +46,23 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         this.guardActivated = true;
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (!HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
-            this.splashScreenService.handleSunbirdSplashScreenActions();
+            await this.splashScreenService.handleSunbirdSplashScreenActions();
             return true;
         }
 
-        this.navigateToNext();
+        await this.navigateToNext();
         return false;
     }
 
     private async navigateToNext() {
         this.appGlobalService.isProfileSettingsCompleted = true;
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
 
         if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.appGlobalService.setOnBoardingCompleted();
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            await this.appGlobalService.setOnBoardingCompleted();
+            await this.router.navigate([`/${RouterLinks.TABS}`]);
         } else {
-            this.navigateToDistrictMapping();
+            await this.navigateToDistrictMapping();
         }
     }
 
@@ -73,7 +73,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
                     loginMode: 'guest'
                 }
             };
-            this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+            await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
             this.events.publish('update_header');
         } else {
             const navigationExtras: NavigationExtras = {
@@ -81,7 +81,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
                     isShowBackButton: (this.onboardingConfigurationService.initialOnboardingScreenName !== OnboardingScreenType.DISTRICT_MAPPING)
                 }
             };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
     }
 }

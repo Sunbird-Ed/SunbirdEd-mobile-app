@@ -25,8 +25,8 @@ export class HasNotBeenOnboardedGuard implements CanLoad {
         }
 
         this.appGlobalService.isProfileSettingsCompleted = true;
-        this.router.navigate(['/', 'tabs']);
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.router.navigate(['/', 'tabs']);
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
         return false;
     }
 }

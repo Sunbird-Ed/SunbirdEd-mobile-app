@@ -48,7 +48,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.getProfileInfo();
       }
     );

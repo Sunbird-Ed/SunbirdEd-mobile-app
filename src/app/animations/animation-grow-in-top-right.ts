@@ -5,10 +5,10 @@ export const animationGrowInTopRight: AnimationBuilder = (baseEl: HTMLElement) =
     const baseAnimation = createAnimation();
 
     const backdropAnimation = createAnimation();
-    backdropAnimation.addElement(baseEl.querySelector('ion-backdrop'));
+    backdropAnimation.addElement(baseEl.shadowRoot.querySelector('ion-backdrop'));
 
     const wrapperAnimation = createAnimation();
-    wrapperAnimation.addElement(baseEl.querySelector('.popover-wrapper'));
+    wrapperAnimation.addElement(baseEl.shadowRoot.querySelector('.popover-wrapper'));
 
     wrapperAnimation
         .beforeStyles({

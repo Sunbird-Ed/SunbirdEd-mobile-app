@@ -63,7 +63,7 @@ export class LearningResourcesPage {
     });
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       })
   }
 
@@ -129,7 +129,7 @@ export class LearningResourcesPage {
       .getContentDetails(req)
       .toPromise()
       .then(async (data: Content) => {
-        this.navigateService.navigateToDetailPage(data, { content: data });
+        await this.navigateService.navigateToDetailPage(data, { content: data });
       });
   }
 }

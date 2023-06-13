@@ -131,7 +131,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content: Content, depth) {
+  async navigateToDetailsPage(content: Content, depth) {
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = {
         contentClicked: content.identifier
@@ -154,7 +154,7 @@ export class CollectionChildComponent implements OnInit {
       const values = {
         contentClicked: content.identifier
       };
-      this.zone.run(async () => {
+      await this.zone.run(async () => {
          if(ContentUtil.isTrackable(content)) {
             this.isDepthChild = true;
             const collectionDetailsParams: NavigationExtras = {
@@ -165,11 +165,11 @@ export class CollectionChildComponent implements OnInit {
                 breadCrumb: this.breadCrumb
               }
             };
-            this.navService.navigateToCollection(collectionDetailsParams.state);
+            await this.navService.navigateToCollection(collectionDetailsParams.state);
           }
 
           else{
-            const goToContentDetails = () => {
+            const goToContentDetails = async () => {
               this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
               this.telemetryService.generateInteractTelemetry(
@@ -190,7 +190,7 @@ export class CollectionChildComponent implements OnInit {
                   ...this.addActivityToGroupData
                 }
               };
-              this.navService.navigateToContent(contentDetailsParams.state);
+              await this.navService.navigateToContent(contentDetailsParams.state);
             };
 
             if (content.primaryCategory === CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase()
@@ -221,10 +221,10 @@ export class CollectionChildComponent implements OnInit {
               await this.assessemtnAlert.present();
               const { data } = await this.assessemtnAlert.onDidDismiss();
               if (data && data.isLeftButtonClicked === false) {
-                goToContentDetails();
+                await goToContentDetails();
               }
             } else {
-              goToContentDetails();
+              await goToContentDetails();
             }
         }
       });

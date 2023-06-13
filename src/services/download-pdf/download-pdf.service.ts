@@ -14,7 +14,7 @@ export class DownloadPdfService {
   ) { }
 
 
-  async downloadPdf(content: Content) {
+  downloadPdf(content: Content) {
     return new Promise(async (resolve, reject) => {
       const checkedStatus = await this.permissionService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise();
       if (checkedStatus.isPermissionAlwaysDenied) {

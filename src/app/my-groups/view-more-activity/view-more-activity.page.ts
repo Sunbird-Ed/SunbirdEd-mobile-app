@@ -50,11 +50,11 @@ export class ViewMoreActivityPage implements  OnDestroy {
     }
 
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.telemetryGeneratorService.generateImpressionTelemetry(
             ImpressionType.VIEW,
@@ -105,7 +105,7 @@ export class ViewMoreActivityPage implements  OnDestroy {
                 if (isRemoved) {
                     this.activityGroup.items.splice(i, 1);
                 }
-            });
+            }).catch(e => console.error(e));
         }
     }
 

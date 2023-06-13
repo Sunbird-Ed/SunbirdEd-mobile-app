@@ -86,7 +86,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -151,12 +151,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  openActivityToc() {
+  async openActivityToc() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED, Environment.GROUP, PageId.ACTIVITY_DETAIL,
       undefined, undefined, undefined, this.corRelationList);
 
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
+    await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
       {
         state: {
           courseList: this.courseList,
@@ -237,7 +237,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
           console.log('writeFile err', err)
         });
       } else{
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
       }
     });
     
@@ -245,7 +245,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -263,7 +263,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
           } else {
             resolve(false);
           }
-        });
+        }).catch(e => console.error(e));
       }
     });
   }
@@ -324,6 +324,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       ID.SELECT_ACTIVITY_DASHBOARD
     );
   }
-  onActivityCardClick($event, activity) {  }
-  activityMenuClick($event, activity, i) {}
+  onActivityCardClick(e, activity) { 
+    console.log('event on card', e)
+  }
+
+  activityMenuClick(e, activity, i) {
+    console.log('event on menu', e)
+  }
 }

@@ -22,13 +22,13 @@ export class SbInsufficientStoragePopupComponent {
     this.sbPopoverMessage = this.navParams.get('sbPopoverMessage');
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover() {
+    await this.popoverCtrl.dismiss();
   }
 
-  navigateToStorageSettings() {
-    this.popoverCtrl.dismiss();
-    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
+  async navigateToStorageSettings() {
+    await this.popoverCtrl.dismiss();
+    await this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
 }

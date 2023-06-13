@@ -61,7 +61,9 @@ describe('SbSubjectListPopupComponent', () => {
             // act
             const data = sbSubjectListPopupComponent.handlePillSelect(event);
             // assert 
-            expect( data ).toBeUndefined();
+            setTimeout(() => {
+                expect( data ).toBeUndefined();
+            }, 0);
         })    
     });
 

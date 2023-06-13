@@ -93,10 +93,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   ngOnInit() {
-   
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.networkFlag ? this.getProgramFromStorage() : this.getLocalData();
       }
     );

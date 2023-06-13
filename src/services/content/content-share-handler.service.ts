@@ -30,7 +30,8 @@ export class ContentShareHandlerService {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion,
     private appGlobalService: AppGlobalService, private platform: Platform) {
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.commonUtilService.getAppName().then((res) => this.appName = res)
+    .catch(err => console.error(err));
   }
 
   public async shareContent(
@@ -64,7 +65,7 @@ export class ContentShareHandlerService {
         subContentIds,
         destinationFolder: this.platform.is("ios")?cordova.file.documentsDirectory+"content/":this.storageService.getStorageDestinationDirectoryPath()
       };
-      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
+      await this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     } else if (shareParams && shareParams.byLink && shareParams.link) {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
@@ -86,9 +87,9 @@ export class ContentShareHandlerService {
       });
       this.appGlobalService.isNativePopupVisible = true;
       if(this.platform.is('ios')) {
-        this.social.share(null, null, null, contentLink);
+        await this.social.share(null, null, null, contentLink);
       } else {
-        this.social.share(null, null, null, shareLink);
+        await this.social.share(null, null, null, shareLink);
       }
       
       this.appGlobalService.setNativePopupVisible(false, 2000);
@@ -100,7 +101,7 @@ export class ContentShareHandlerService {
         destinationFolder: folderPath + 'Download/',
         saveLocally: true
       };
-      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
+      await this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     }
   }
 
@@ -122,7 +123,7 @@ export class ContentShareHandlerService {
             play_store_url: await this.getPackageNameWithUTM()
           });
           this.appGlobalService.isNativePopupVisible = true;
-          this.social.share(shareLink, '', '' + response.exportedFilePath, '');
+          await this.social.share(shareLink, '', '' + response.exportedFilePath, '');
           this.appGlobalService.setNativePopupVisible(false, 2000);
         }
         this.generateShareInteractEvents(InteractType.OTHER,

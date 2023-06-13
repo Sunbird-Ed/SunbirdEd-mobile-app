@@ -90,11 +90,11 @@ export class TeacherIdVerificationComponent implements OnInit {
           this.count = 0;
           if ((response.responseCode).toLowerCase() === TeacherIdPopupFlags.OK) {
             this.teacherIdFlag = TeacherIdPopupFlags.VERIFIED_STATE_ID;
-            this.closePopup();
+            await this.closePopup();
           }
         })
-        .catch((error) => {
-          this.closePopup();
+        .catch(async (error) => {
+          await this.closePopup();
         });
     }
   }
@@ -154,7 +154,7 @@ export class TeacherIdVerificationComponent implements OnInit {
           this.events.publish('loggedInProfile:update');
         }
       })
-      .catch((error) => {
+      .catch(async (error) => {
         if (HttpClientError.isInstance(error)) {
           if (error.response.responseCode === 400) {
             this.generateTelemetryForFailedVerification();
@@ -163,13 +163,13 @@ export class TeacherIdVerificationComponent implements OnInit {
             this.generateTelemetryForFailedVerification();
             this.teacherIdFlag = TeacherIdPopupFlags.FAILED_STATE_ID;
           } else if (error.response.responseCode === 429) {
-            this.closePopup();
+            await this.closePopup();
             this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           } else if (error.response.responseCode === 401) {
-            this.closePopup();
+            await this.closePopup();
             this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           } else {
-            this.closePopup();
+            await this.closePopup();
             this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           }
         }

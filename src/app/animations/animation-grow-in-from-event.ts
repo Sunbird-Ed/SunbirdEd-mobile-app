@@ -5,10 +5,10 @@ export const animationGrowInFromEvent = (event) => {
         const baseAnimation = createAnimation();
 
         const backdropAnimation = createAnimation();
-        backdropAnimation.addElement(baseEl.querySelector('ion-backdrop'));
+        backdropAnimation.addElement(baseEl.shadowRoot.querySelector('ion-backdrop'));
 
         const wrapperAnimation = createAnimation();
-        wrapperAnimation.addElement(baseEl.querySelector('.popover-wrapper'));
+        wrapperAnimation.addElement(baseEl.shadowRoot.querySelector('.popover-wrapper'));
 
         const transformOrigin = `${event.target.getBoundingClientRect().left + (event.target.getBoundingClientRect().width / 2)}px ${event.target.getBoundingClientRect().top + (event.target.getBoundingClientRect().height / 2)}px`;
 
