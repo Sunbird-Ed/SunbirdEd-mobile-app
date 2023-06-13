@@ -633,7 +633,7 @@ export class UtilsService {
                   }
                   for (const org of profileData["organisations"]) {
                     if (org.isSchool) {
-                      obj["school"] = org.externalId;
+                      obj["school"] = org.id;
                     }
                   }
                   const roles = [];
