@@ -845,7 +845,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
-        this.otherCategories = [];
+        // this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
     }
   }
@@ -888,6 +888,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'project':
         await this.router.navigate([RouterLinks.PROJECT], {});
         break;  
+        case 'program':
+          this.router.navigate([RouterLinks.PROGRAM], {});
+          break;  
       default:
         break;
     }

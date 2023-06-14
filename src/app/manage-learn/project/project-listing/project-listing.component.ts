@@ -80,7 +80,7 @@ export class ProjectListingComponent {
 
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
-            this.networkFlag = available;
+            this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
             this.projects = [];
             this.fetchProjectList();
         });

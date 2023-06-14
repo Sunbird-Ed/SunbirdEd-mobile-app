@@ -26,6 +26,7 @@ export class ProgramListingComponent implements OnInit {
     description;
     page = 1;
     limit = 25;
+    search = ''
 
 
     constructor(private router: Router, private location: Location,
@@ -41,7 +42,7 @@ export class ProgramListingComponent implements OnInit {
         let payload = await this.utils.getProfileInfo();
         if (payload) {
             const config = {
-                url: urlConstants.API_URLS.PROGRAM_LISTING +false+ '&page=' + this.page + '&limit=' + this.limit + '&search=',
+                url: urlConstants.API_URLS.PROGRAM_LISTING +false+ '&page=' + this.page + '&limit=' + this.limit + '&search=' + encodeURIComponent(this.search),
                 payload: payload
             }
             this.kendraService.post(config).subscribe(success => {
@@ -84,7 +85,7 @@ export class ProgramListingComponent implements OnInit {
     }
 
     selectedProgram(id) {
-        this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, id]);
+        this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.DETAILS}`, id]);
     }
 
     handleNavBackButton() {
@@ -94,6 +95,11 @@ export class ProgramListingComponent implements OnInit {
     loadMore() {
         this.page = this.page + 1;
         this.getPrograms();
+    }
+
+    searchPrograms(event){
+        this.programs=[]
+        this.getPrograms()
     }
 
 }
