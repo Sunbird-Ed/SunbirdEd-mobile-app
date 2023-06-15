@@ -10,7 +10,7 @@
     <app-item-list-card [title]="data?.name"  [id]="data?._id" [state]="data?.metaInformation?.state" [roles]="data?.metaInformation?.roles"
     (cardSelect)="selectedProgram($event)" *ngFor="let data of programs">
     </app-item-list-card>
-    <app-no-data *ngIf="!programs?.length" message="EMPTY_SEARCH_RESULTS"></app-no-data>
+    <app-no-data *ngIf="!programs?.length" message="NO_DATA_FOUND"></app-no-data>
   </ion-content>
   <ion-button class="custom-btn-txt-transform-none mx-8 mt-16 load-more" fill="outline" expand="block"
     (click)="loadMore()" *ngIf="programs?.length && count > programs?.length">
