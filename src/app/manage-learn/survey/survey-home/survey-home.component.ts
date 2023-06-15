@@ -145,7 +145,10 @@ export class SurveyHomeComponent {
       this.surveyProvider.showMsg('surveyExpired');
       return;
     }
-      
+
+    if(this.IsSurveyExpired(survey)){
+      return
+    }
     // surveyId changed to _id
     if(!survey.submissionId){
       this.getSurveyTemplateDetails(survey)
@@ -300,6 +303,18 @@ export class SurveyHomeComponent {
       this.redirect(details.submissionId)
     }else{
       this.getSurveyById(details.surveyId, details.solutionId, details.isCreator)
+    }
+  }
+
+  IsSurveyExpired(data){
+    const lastDate:any = new Date(data.endDate)
+    const timeDiff:any = lastDate - Date.now()
+    const diff = Math.ceil(timeDiff/(1000*60*60*24))
+    if(diff<=0){
+      this.getSurveyById(data._id, data.solutionId, data.isCreator)
+      return true
+    }else{
+      return false
     }
   }
 
