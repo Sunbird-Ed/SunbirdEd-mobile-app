@@ -698,14 +698,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.corRelationList);
         let msg = '';
         let fields;
-      if(cb) {
-        msg = 'FRMELEMNTS_MSG_COURSE_UNENROLLED';
-        fields = this.course;
-        this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
-      } else {
-        msg = (e?.error === 'CONNECTION_ERROR') ? 'ERROR_NO_INTERNET_MESSAGE' : "FRMELEMNTS_MSG_UNABLE_TO_ENROLL"
-      }
-      this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg, fields));
+        if(cb) {
+          msg = 'CRS_TRK_FRMELEMNTS_MSG_COURSE_UNENROLLED';
+          fields = this.course;
+          this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+        } else {
+          msg = (e?.error === 'CONNECTION_ERROR') ? 'ERROR_NO_INTERNET_MESSAGE' : "FRMELEMNTS_MSG_UNABLE_TO_ENROLL"
+        }
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg, fields));
     });
   }
 
