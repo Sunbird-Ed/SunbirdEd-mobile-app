@@ -579,7 +579,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   async join(){
     let profileData = await this.utils.getProfileInfo();
     await this.popupService.join(this.schoolData,profileData).then(async(response:any)=>{
-      if(response){
+      if(response && response.status == 200){
         this.schoolData.programJoined = true
         this.showConsentPopup()
         if(!this.schoolData.requestForPIIConsent){
