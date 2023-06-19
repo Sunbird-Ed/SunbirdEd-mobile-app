@@ -18,6 +18,7 @@ import { urlConstants } from '../core/constants/urlConstants';
 })
 export class GenericPopUpService {
   consentPopup: any
+  joinProgramPopup:any
   constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService, @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
      private kendra : KendraApiService
@@ -88,7 +89,7 @@ export class GenericPopUpService {
 }
 
 async showJoinProgramForProjectPopup(header,name,type,button,message?){
-  const alert = await this.popOverCtrl.create({
+  this.joinProgramPopup = await this.popOverCtrl.create({
     component : JoinProgramComponent,
     componentProps: {
       header: header,
@@ -99,8 +100,8 @@ async showJoinProgramForProjectPopup(header,name,type,button,message?){
     },
     cssClass: 'sb-popover',
   });
-  await alert.present();
-  const {data} = await alert.onDidDismiss();
+  await this.joinProgramPopup.present();
+  const {data} = await this.joinProgramPopup.onDidDismiss();
   return data
 
 }
@@ -220,5 +221,9 @@ async showConsentPopup(data,profileData){
         }
       })
     }
+  }
+
+  async closeJoinProgramPopup(){
+    this.joinProgramPopup ? await this.joinProgramPopup.dismiss() : null
   }
 }

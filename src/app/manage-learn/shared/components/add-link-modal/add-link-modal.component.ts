@@ -44,7 +44,9 @@ export class AddLinkModalComponent implements OnInit {
      return false
     }else{
       this.invalidLink = true;
-      this.toastService.showMessage('FRMELEMNTS_MSG_INVALID_ADDED_LINK','danger')
+      if(link){
+        this.toastService.showMessage('FRMELEMNTS_MSG_INVALID_ADDED_LINK','danger')
+      }
       return true
     }
   }
