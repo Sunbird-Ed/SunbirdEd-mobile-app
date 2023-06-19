@@ -182,9 +182,15 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  allowStart(){
+  allowStart(hidePopup=true){
     if(!this.schoolData?.programJoined && this.isNewProgram){
       this.joinProgram()
+      return
+    }
+    if(hidePopup){
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
+      this.isViewOnly = false;
+      document.getElementById('stop').style.pointerEvents = 'auto';
       return
     }
     this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_OBSERVATION_POPUP', 'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1',
@@ -611,7 +617,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     if(!this.schoolData?.programJoined && this.isNewProgram){
       this.joinProgram()
     }else if(this.schoolData.programJoined && !this.isSurvey && this.isViewOnly && this.isNewProgram){
-      this.allowStart()
+      this.allowStart(false)
     }
   }
 
