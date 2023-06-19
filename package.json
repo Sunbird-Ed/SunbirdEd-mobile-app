@@ -14,6 +14,7 @@
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "debug-sdk": "node sdk-local.js",
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
+    "debug-sdk": "node sdk-local.js",
     "ionic-build": "ng build --source-map && node attach-source-maps.js && cordova build android",
     "ionic-build:prod": "ng build --configuration=$npm_config_angular_configuration && cordova build android --prod --release --verbose --buildConfig ./buildConfig/build.json",
     "ionic-build:debug": "ng build --configuration=$npm_config_angular_configuration && cordova build android --debug --buildConfig ./buildConfig/build.json",

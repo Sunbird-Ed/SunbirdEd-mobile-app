@@ -48,7 +48,7 @@ export class ProjectService {
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-      this.networkFlag = available;
+      this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     })
   }
   async getTemplateBySoluntionId(id) {
@@ -79,6 +79,9 @@ export class ProjectService {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
+    if(detailsPayload && isProfileInfoRequired){
+      detailsPayload = {detailsPayload, ...payload}
+    }
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: detailsPayload ? detailsPayload : payload

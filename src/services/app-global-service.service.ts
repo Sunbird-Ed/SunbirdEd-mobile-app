@@ -93,6 +93,7 @@ export class AppGlobalService implements OnDestroy {
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
     private frameworkCategory = {};
+    private _isSplashscreenDisplay: boolean = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -718,6 +719,14 @@ export class AppGlobalService implements OnDestroy {
         return this._isForumEnabled;
     }
 
+    set isSplashscreenDisplay(value) {
+        this._isSplashscreenDisplay = value;
+    }
+
+    get isSplashscreenDisplay() {
+        return this._isSplashscreenDisplay;
+    }
+
     setNativePopupVisible(value, timeOut?) {
         if (timeOut) {
             setTimeout(() => {
@@ -835,6 +844,36 @@ export class AppGlobalService implements OnDestroy {
                 ele.focus();
             } 
         }, 100);
+    }
+
+    async generateTelemetryForSplashscreen() {
+        const isFirstTime = await this.preferences.getString('KEY_IS_FIRST_TIME').toPromise().then((data) => {
+            return data ? false : true;
+        });
+        console.log('isFirstTime', isFirstTime);
+        if (isFirstTime ) {
+            this.preferences.putString('KEY_IS_FIRST_TIME', 'false').toPromise().then();
+        }
+        const action: {type: string, payload: any}[] = [
+            {
+                type: 'TELEMETRY',
+                payload: {
+                    eid: 'IMPRESSION',
+                    extraInfo: {
+                        isFirstTime
+                    }
+                }
+            }, {
+                type: 'TELEMETRY',
+                payload: {
+                    eid: 'INTERACT',
+                    extraInfo: {
+                        isFirstTime
+                    }
+                }
+            }
+        ];
+        return action;
     }
 
 }

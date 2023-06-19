@@ -11,6 +11,7 @@ import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { EventEmitter } from '@angular/core';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
 import { ObservationService } from '../observation.service';
+import { GenericPopUpService } from '../../shared';
 describe('ObservationHomeComponent', () => {
   let observationDetailComponent: ObservationDetailComponent;
   const mockLocation: Partial<Location> = {};
@@ -79,6 +80,8 @@ describe('ObservationHomeComponent', () => {
     })) as any,
   };
 
+  const mockGenericPopUpService: Partial<GenericPopUpService> = {}
+
   const mockCommonUtils: Partial<CommonUtilService> = {
     networkAvailability$: of(true),
     networkInfo: { isNetworkAvailable: true },
@@ -98,7 +101,8 @@ describe('ObservationHomeComponent', () => {
       mockToast as ToastService,
       mockObservationService as ObservationService,
       mockLocalStorage as LocalStorageService,
-      mockCommonUtils as CommonUtilService
+      mockCommonUtils as CommonUtilService,
+      mockGenericPopUpService as GenericPopUpService
     );
   });
   beforeEach(() => {
@@ -384,6 +388,7 @@ describe('ObservationHomeComponent', () => {
           unsubscribe: jest.fn(),
 
       } as any;
+      mockGenericPopUpService.closeConsent = jest.fn();
       // act
       observationDetailComponent.ionViewWillLeave();
       // assert

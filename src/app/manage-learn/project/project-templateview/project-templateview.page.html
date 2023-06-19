@@ -34,8 +34,10 @@
       <app-accordion-list *ngIf="certificateCriteria.length" [data]="certificateCriteria" [showCard]="false"
     [title]="'FRMELEMNTS_LBL_CERTIFICATION_CRITERIA'"> </app-accordion-list>
   </div>
-  <div *ngIf="segmentType == 'tasks' && project?.tasks?.length">
-    <app-task-card [data]="project" [viewOnly] ="true" (click)="openStartIMPPopup()"></app-task-card>
+  <div *ngIf="segmentType == 'tasks' && project?.tasks?.length" (click)='doAction()'>
+    <div [ngClass]="{'no-action':!project?.programJoined}">
+      <app-task-card [data]="project" [viewOnly] ="true" (click)="openStartIMPPopup($event)"></app-task-card>
+    </div>
   </div>
 
 </ion-content>

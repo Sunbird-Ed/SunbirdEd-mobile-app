@@ -1,0 +1,40 @@
+<ion-card class="ion-no-padding w-100 m-0">
+  <div class="ion-padding">
+    <div class="font-14-new d-flex flex-jc-space-between heading-icon-block" (click)="toggleDataShare()">
+      <span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
+      <ion-icon class="consent-arrow" name="{{isDataShare ? 'arrow-up-circle-outline' : 'arrow-down-circle-outline'}}"></ion-icon>
+    </div>
+    <div *ngIf="isDataShare" class="data-share-header">
+      <div class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'"><b>{{'FRMELEMNTS_LBL_DATA_SHARING_ON' | translate}}</b></div>
+      <div class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'"><b>{{'FRMELEMNTS_LBL_DATA_SHARING_OFF' | translate}}</b></div>
+      <p *ngIf="dataSharingStatus=='ACTIVE'">{{"FRMELEMNTS_MSG_SHARE_DATA_INFO" | translate:{'type':type} }}
+        <br/>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdatedOn | date: 'dd/MM/yyyy'} }}
+      </p>
+      <p *ngIf="dataSharingStatus=='REVOKED'">{{"FRMELEMNTS_MSG_DONOT_SHARE_DATA_INFO" | translate:{'type':type} }}</p>
+      <div class="edit-setting" (click)="toggleEditSettings()">{{ (showShareData ? 'FRMELEMNTS_BTN_CLOSE' : 'FRMELEMNTS_BTN_EDIT_SETTING') | translate }}</div>
+    </div>
+  </div>
+  <div *ngIf="isDataShare && showShareData">
+    <div class="ion-padding">
+      <div class="hr"></div>
+      <ion-card-title class="label-margin-bottom">
+        <strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
+      </ion-card-title>
+      <ion-list lines="none" class="data-list">
+        <ion-radio-group [(ngModel)]="dataSharingStatus">
+          <ion-item class="radio-item">
+            <ion-label class="radio-detail">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
+            <ion-radio class="radio-detail" [value]="'ACTIVE'" slot="start" ></ion-radio>
+          </ion-item>
+          <ion-item class="radio-item">
+            <ion-label class="radio-detail">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
+            <ion-radio class="radio-detail" [value]="'REVOKED'" slot="start" ></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+        </ion-list>
+        <div class="ion-text-center">
+        <ion-button class="custom-btn-txt-transform-none" (click)="saveChanges()">{{'SAVE' | translate}}</ion-button>
+      </div>
+    </div>
+  </div>
+</ion-card>
