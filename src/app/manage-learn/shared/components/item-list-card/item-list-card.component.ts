@@ -30,4 +30,14 @@ export class ItemListCardComponent implements OnChanges {
   programDetails(id){
     this.cardSelect.emit(id);
   }
+
+  ngOnInit(){
+    if(!Array.isArray(this.state)){
+      this.state=[]
+    }
+
+    if(!Array.isArray(this.roles)){
+      this.roles=[]
+    }
+  }
 }
