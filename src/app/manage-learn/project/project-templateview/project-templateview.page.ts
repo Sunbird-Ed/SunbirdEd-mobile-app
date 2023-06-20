@@ -154,6 +154,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
  async ngOnInit() {
+  this.popupService.closeJoinProgramPopup()
   this.userId = await this.appGlobalService.getActiveProfileUid();
   const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
   this.hideNameConfirmPopup = await this.preferences.getBoolean(key).toPromise();
