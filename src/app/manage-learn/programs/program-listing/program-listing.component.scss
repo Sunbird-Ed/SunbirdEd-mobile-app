@@ -38,3 +38,7 @@
     height: 44px;
     font-size: 16px;
 }
+
+ion-searchbar ::ng-deep button{
+    box-shadow: none !important;
+}
