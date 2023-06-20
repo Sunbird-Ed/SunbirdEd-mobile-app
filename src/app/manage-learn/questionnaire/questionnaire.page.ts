@@ -115,6 +115,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.popupService.closeJoinProgramPopup()
     if(this.extrasState){
       this.isViewOnly = true;
       this.getQuestions(this.extrasState);
