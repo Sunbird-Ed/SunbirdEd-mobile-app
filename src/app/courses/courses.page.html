@@ -15,6 +15,9 @@
       </sb-course-cards-hlist>
     </ng-container>
   </div>
+  <h1>
+    {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
+  </h1>
   <div *ngFor="let section of dynamicCourses">
     <div *ngIf="!guestUser && section?.theme?.component === 'sb-course-cards-hlist'" class="pt-8 enrolled-course-bg">
       <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
