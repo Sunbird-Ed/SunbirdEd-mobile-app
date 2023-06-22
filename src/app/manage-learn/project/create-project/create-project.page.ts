@@ -337,7 +337,7 @@ export class CreateProjectPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: CreateTaskComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass:'sb-popover input-focus'
     });
     await popover.present();
     popover.onWillDismiss().then(({ data }) => {

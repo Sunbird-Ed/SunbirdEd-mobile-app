@@ -240,6 +240,7 @@ export class ProjectService {
           observationId: data.observationId,
           entityId: data.entityId,
           entityName: data.entityName,
+          programJoined: true
         },
       });
     }, (error) => {
