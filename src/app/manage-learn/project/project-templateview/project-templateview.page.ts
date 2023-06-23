@@ -243,6 +243,10 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
  doAction() {
+  if(!this.appGlobalService.isUserLoggedIn()){
+    this.triggerLogin();
+    return
+  }
     if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
       this.popupService.joinProgram(this.project,'project')
       .then(async resp => {
@@ -275,10 +279,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.startProjectConfirmation();
       return;
     }
-    if(!this.appGlobalService.isUserLoggedIn()){
-      this.triggerLogin();
-      return
-    }
+   
     if ( !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
       if (data && data.isClicked) {
@@ -390,6 +391,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   triggerLogin() {
+    this.toast.showMessage("FRMELEMNTS_BTN_IMPORT_PROJECT", "danger")
     this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: false}});
   }
 
