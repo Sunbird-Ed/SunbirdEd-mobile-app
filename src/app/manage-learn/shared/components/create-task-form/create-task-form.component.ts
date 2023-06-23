@@ -66,31 +66,6 @@ export class CreateTaskFormComponent implements OnInit {
     this.istaskDateModalOpen = isOpen;
   }
 
-  async deleteConfirm(index) {
-    let data;
-    this.translate.get(["FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM", "NO", "FRMELEMNTS_LBL_YES"]).subscribe((text) => {
-      data = text;
-    });
-    const alert = await this.alert.create({
-      cssClass: 'attachment-delete-alert',
-      message: data['FRMELEMNTS_MSG_DELETE_ATTACHMENT_CONFIRM'],
-      buttons: [
-        {
-          text: data["FRMELEMNTS_LBL_YES"],
-          handler: () => {
-            this.delete(index);
-          },
-        }, {
-          text: data["NO"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => { },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   delete(index) {
     this.newTask.attachments.splice(index, 1);
     this.newTask.isEdit = true;

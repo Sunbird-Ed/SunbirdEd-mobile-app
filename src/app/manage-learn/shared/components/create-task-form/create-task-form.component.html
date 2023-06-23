@@ -54,7 +54,7 @@
         <ion-icon name="videocam" slot="start" *ngIf="file?.type == 'video/mp4'"></ion-icon>
        <span> {{file.name}} </span></div>
         <div>
-          <button slot="icon-only" (click)="deleteConfirm(i)" class="action-btn">
+          <button slot="icon-only" (click)="delete(i)" class="action-btn">
             <ion-icon name="close-circle" slot="end"></ion-icon>
             <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
             </p>
