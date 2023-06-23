@@ -156,6 +156,9 @@ async showConsent(type, payload, details, profileData, message?){
         loader.dismiss();
         if (e.code === 'NETWORK_ERROR') {
           this.commonUtils.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }else{
+          this.commonUtils.showToast(e.response?.body?.params?.errmsg,'','red-toast','','top');
+          this.showConsent(type, payload, details, profileData, message?message:null)
         }
       });
   }
@@ -199,15 +202,16 @@ async closeConsent(){
         url:`${urlConstants.API_URLS.JOIN_PROGRAM}${programId}`,
         payload: {userRoleInformation:profileData, consentShared:payloadData.consentShared}
       };
-      return await this.kendra.post(config).subscribe((response) => {
-          if(response.status == 200){
-            return true
-          }
-        },
-        (error) => {
-          return false
-        }
-      );
+      const loader = await this.commonUtils.getLoader();
+      await loader.present();
+      let response = await this.kendra.post(config).toPromise()
+      if(response && response.status == 200){
+        loader.dismiss()
+        return true
+      }else{
+        loader.dismiss()
+        return false
+      }
     }
   }
   
