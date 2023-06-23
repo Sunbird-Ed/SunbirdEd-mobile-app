@@ -83,7 +83,7 @@ export class ProgramDetailsComponent implements OnInit {
             this.payload = {consumerId: success.result.rootOrganisations, objectId: success.result.programId}
             this.formatList()
             this.readMoreOrLess()
-            if(this.isNewProgram && this.programDetails.programJoined && this.programDetails?.requestForPIIConsent && !this.programDetails?.consentShared){
+            if(this.isNewProgram && this.programDetails.programJoined && this.programDetails?.requestForPIIConsent){
               let profileData = await this.utils.getProfileInfo();
               await this.popupService.getConsent('Program',this.payload,this.programDetails,profileData).then((response)=>{
                 if(response){
