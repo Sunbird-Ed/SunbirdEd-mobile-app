@@ -12,8 +12,6 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 import { storageKeys } from '../../storageKeys';
 import { CommonUtilService } from '../../../../services/common-util.service';
-
-import * as strings from '../../../../assets/i18n/en.json'
 @Component({
   selector: 'app-program-details',
   templateUrl: './program-details.component.html',
@@ -60,7 +58,6 @@ export class ProgramDetailsComponent implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter(){
-    console.log(strings,"strings")
     this.headerConfig = this.headerService.getDefaultPageConfig()
     this.headerConfig.showHeader = true
     this.headerConfig.showBurgerMenu = false
