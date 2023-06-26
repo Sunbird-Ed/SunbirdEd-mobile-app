@@ -214,6 +214,7 @@
   "CRS_TRK_FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "CRS_TRK_FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
   "TBK_TRK_FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your book certificate. Check if it is correct.",
+  "DFLT_TRK_FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your content certificate. Check if it is correct.",
   "CURRENT_LANGUAGE": "Current Language ",
   "DATA_SYNC": "Data Sync",
   "DATA_SYNC_FAILURE": "Could not sync data,  try again later",
