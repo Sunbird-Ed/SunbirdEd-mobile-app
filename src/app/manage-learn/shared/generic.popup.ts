@@ -148,8 +148,8 @@ async showConsent(type, payload, details, profileData, message?){
           this.commonUtils.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS','','',9000)
         }
         details.consentShared = true
-        await this.join(details,profileData)
         await loader.dismiss();
+        await this.join(details,profileData)
       })
       .catch((e) => {
         data=''
