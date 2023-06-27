@@ -276,6 +276,7 @@ export class ProjectTemplateviewPage implements OnInit {
       return;
     }
     if(!this.appGlobalService.isUserLoggedIn()){
+      this.toast.showMessage('FRMELEMNTS_MSG_NOT_LOGGEDIN_USER','danger')
       this.triggerLogin();
       return
     }
