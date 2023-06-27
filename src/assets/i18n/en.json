@@ -1400,5 +1400,6 @@
   "FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS":"You have joined this program successfully",
   "FRMELEMNTS_LBL_START_OBSERVATION_POPUP":"Start observation",
   "FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1":"You must click on the Start observation button to access and edit the observation.",
-  "FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2":"Click on the Start observation to get complete access to the content"
+  "FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2":"Click on the Start observation to get complete access to the content",
+  "FRMELEMNTS_MSG_NOT_LOGGEDIN_USER":"Please login with HT & Officials to access this content"
 }
