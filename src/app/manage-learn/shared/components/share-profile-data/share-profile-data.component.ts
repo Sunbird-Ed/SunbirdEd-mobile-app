@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { GenericPopUpService } from '../../generic.popup';
 
 @Component({
   selector: 'app-share-profile-data',
@@ -12,17 +13,28 @@ export class ShareProfileDataComponent implements OnInit {
   @Output() save = new EventEmitter()
   showShareData = false;
   isDataShare = false;
+  previouStatus = ''
 
-  constructor() { }
+  constructor(private popupService: GenericPopUpService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.popupService.consentStatus.subscribe((status) => {
+      this.dataSharingStatus = status;
+    });
+  }
 
   toggleDataShare() {
+    if(this.isDataShare){
+      this.dataSharingStatus = this.previouStatus
+    }
     this.isDataShare = !this.isDataShare;
     this.showShareData = false;
   }
 
   toggleEditSettings(){
+    if(this.showShareData){
+      this.dataSharingStatus = this.previouStatus
+    }
     this.showShareData = !this.showShareData;
   }
 
@@ -32,5 +44,9 @@ export class ShareProfileDataComponent implements OnInit {
     this.save.emit(this.dataSharingStatus)
 
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.previouStatus = changes['dataSharingStatus']?.currentValue
+}
 
 }

@@ -17,7 +17,7 @@
         <ion-button class="custom-btn-txt-transform-none"  color="light" (click)="cancel()">
           {{'CANCEL' | translate}}
         </ion-button>
-        <ion-button class="custom-btn-txt-transform-none" [ngClass]="{'btn-disabled': !links || invalidLink}" (click)="submit()" [disabled]="!links || invalidLink">
+        <ion-button class="custom-btn-txt-transform-none" [ngClass]="{'btn-disabled': !links}" (click)="submit()" [disabled]="!links">
           {{'FRMELEMNTS_BTN_ADD_LINK' | translate}}
         </ion-button>
       </div>

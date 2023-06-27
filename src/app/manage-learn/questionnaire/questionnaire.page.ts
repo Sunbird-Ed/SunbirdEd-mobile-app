@@ -87,8 +87,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedSectionIndex = params.sectionIndex ? parseInt(params.sectionIndex): 0;
       this.schoolName = params.schoolName;
       this.isSurvey = params.isSurvey == 'true';
-      this.schoolData.programJoined = params?.programJoined == 'true'
       this.surveyId = params.surveyId
+      if(params.hasOwnProperty('programJoined')){
+        this.schoolData.programJoined = params.programJoined == 'true'
+      }
     });
     // State is using for Template view for Deeplink.
     this.extrasState = this.router.getCurrentNavigation().extras.state;
