@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { PrivacyPolicyAndTCComponent } from './components/privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -19,6 +19,7 @@ import { urlConstants } from '../core/constants/urlConstants';
 export class GenericPopUpService {
   consentPopup: any
   joinProgramPopup:any
+  consentStatus: EventEmitter<any> = new EventEmitter<any>();
   constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService, @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
      private kendra : KendraApiService
@@ -162,6 +163,7 @@ async showConsent(type, payload, details, profileData, message?){
         }
       });
   }
+  this.consentStatus.emit(data);
   return data
 }
 
