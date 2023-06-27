@@ -188,14 +188,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   allowStart(hidePopup=true){
     if(!this.schoolData?.programJoined && this.isNewProgram){
       this.joinProgram()
-      return
-    }
+    }else 
     if(hidePopup){
       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
       this.isViewOnly = false;
       document.getElementById('stop').style.pointerEvents = 'auto';
       return
-    }
+    }else{
     this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_OBSERVATION_POPUP', 'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1',
     'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2','FRMELEMNTS_LBL_START_OBSERVATION_POPUP').then((data:any)=>{
       if(data){
@@ -205,15 +204,16 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       }
     })
   }
+  }
  async startAction(){
   if(!this.schoolData?.programJoined && this.isNewProgram){
     this.joinProgram()
-    return
-  }
+  }else{
     await this.router.navigate([`/${RouterLinks.HOME}`]);
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
       {queryParams: {solutionId: this.extrasState.solution._id, programId: this.extrasState.programId,
         solutionName: this.extrasState.solution.name}})
+  }
   }
   ionViewDidLoad() {}
 
@@ -617,9 +617,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   showPopup(){
+    console.log(this.schoolData,"this.schoolData")
     if(!this.schoolData?.programJoined && this.isNewProgram){
       this.joinProgram()
-    }else if(this.schoolData.programJoined && !this.isSurvey && this.isViewOnly && this.isNewProgram){
+    }else if(!this.isSurvey && this.isViewOnly){
       this.allowStart(false)
     }
   }
