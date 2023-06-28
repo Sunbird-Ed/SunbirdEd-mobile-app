@@ -46,7 +46,9 @@ export class ShareProfileDataComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.previouStatus = changes['dataSharingStatus']?.currentValue
+    if(changes['dataSharingStatus']){
+      this.previouStatus = changes['dataSharingStatus']?.currentValue
+    }
 }
 
 }
