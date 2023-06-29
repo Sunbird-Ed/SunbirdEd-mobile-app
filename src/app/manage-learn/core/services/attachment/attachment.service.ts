@@ -82,7 +82,7 @@ export class AttachmentService {
           icon: "document",
           handler: () => {
             console.log(path,"oath");
-            path ? this.openLocalLibrary() : this.openFile();
+            path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
           },
         },
@@ -134,7 +134,7 @@ export class AttachmentService {
           icon: "document",
           handler: () => {
             // this.openAllFile()
-            this.openFile();
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
           },
         },
@@ -184,7 +184,7 @@ export class AttachmentService {
         }
       })
       .catch((err) => {
-        if (err !== "No Image Selected") {
+        if (err && err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
       });
@@ -342,7 +342,7 @@ export class AttachmentService {
         await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
       case 'openFiles':
-        await this.openFile();
+        await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
     }
   }
