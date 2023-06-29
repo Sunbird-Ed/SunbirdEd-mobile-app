@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DiscussionEventsService, DiscussionUiModule } from '@project-sunbird/discussions-ui-v8'
+import { DiscussionEventsService, DiscussionUiModule } from '@project-sunbird/discussions-ui'
 import { DiscussionTelemetryService } from '../../services/discussion/discussion-telemetry.service';
 
 @NgModule({
