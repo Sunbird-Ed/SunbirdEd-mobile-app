@@ -131,6 +131,9 @@ export class ObservationDetailComponent implements OnInit {
             this.entityType = success.result.entityType;
             this.isNewProgram = success.result.hasOwnProperty('requestForPIIConsent')
             this.payload = {consumerId: success.result.rootOrganisations, objectId: this.programId}
+            if (!this.observationId) {
+              this.observationId = success.result._id; // for autotargeted if get observationId
+            }
             if(this.isNewProgram && this.solutionData?.programJoined && this.solutionData?.requestForPIIConsent){
               let profileData = await this.utils.getProfileInfo();
               await this.popupService.getConsent('Program',this.payload,this.solutionData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((response)=>{
@@ -138,9 +141,6 @@ export class ObservationDetailComponent implements OnInit {
                   this.solutionData.consentShared = true
                 }
               })
-            }
-            if (!this.observationId) {
-              this.observationId = success.result._id; // for autotargeted if get observationId
             }
             this.localStorage.setLocalStorage(this.generatedKey,success.result);
 

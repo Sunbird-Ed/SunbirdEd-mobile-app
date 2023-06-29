@@ -88,8 +88,8 @@ export class ProgramDetailsComponent implements OnInit {
               let profileData = await this.utils.getProfileInfo();
               await this.popupService.getConsent('Program',this.payload,this.programDetails,profileData).then((response)=>{
                 if(response){
-                  this.sharingStatus = response.status
-                  this.lastUpdatedOn = response.lastUpdatedOn
+                  this.sharingStatus = response?.status || response
+                  this.lastUpdatedOn = response?.lastUpdatedOn || Date.now()
                 }
               })
             }
@@ -184,6 +184,7 @@ export class ProgramDetailsComponent implements OnInit {
         if(data){
           this.sharingStatus = data
           this.programDetails.consentShared = true
+          this.lastUpdatedOn = Date.now()
         }
       })
     }
