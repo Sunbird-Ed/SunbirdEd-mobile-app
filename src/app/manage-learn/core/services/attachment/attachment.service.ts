@@ -81,7 +81,6 @@ export class AttachmentService {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           icon: "document",
           handler: () => {
-            console.log(path,"oath");
             path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
           },
@@ -356,7 +355,6 @@ export class AttachmentService {
         this.actionSheetController.dismiss({imageData, multiple:true});
       }
     }).catch(err => {
-      console.log(err)
     });
   }
   async openAllFile(path?) {
