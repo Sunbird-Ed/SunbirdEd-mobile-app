@@ -468,7 +468,7 @@ export class FormAndFrameworkUtilService {
                 medium: profile.medium,
                 subject: profile.subject,
                 gradeValue: profile.gradeValue,
-                uid: profileData.uid,
+                uid: profileData.userId || profileData.uid,
                 handle: profileData.uid,
                 profileType: profileData.profileType,
                 source: profileData.source,

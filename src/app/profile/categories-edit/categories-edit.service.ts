@@ -41,7 +41,7 @@ export class CategoriesEditService {
     await this.refreshSegmentTags(profile);
     if (showOnlyMandatoryFields || shouldUpdatePreference) {
       const reqObj: ServerProfileDetailsRequest = {
-        userId: profile.uid,
+        userId: profile.userId || profile.uid,
         requiredFields: ProfileConstants.REQUIRED_FIELDS,
         from: CachedItemRequestSourceFrom.SERVER
       };
@@ -75,7 +75,7 @@ export class CategoriesEditService {
 
   async refreshSegmentTags(profile) {
     const reqObj: ServerProfileDetailsRequest = {
-      userId: profile.uid,
+      userId: profile.userId || profile.uid,
       requiredFields: ProfileConstants.REQUIRED_FIELDS,
       from: CachedItemRequestSourceFrom.SERVER
     };
