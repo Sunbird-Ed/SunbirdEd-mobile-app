@@ -218,8 +218,10 @@ export class AddFilePage implements OnInit {
     if (event) {
       this.attachments = this.attachments.concat(this.projectService.getLinks(event));
       if (this.taskId) {
+        this.task.isEdit = true;
         this.task.attachments =  this.task?.attachments.concat(this.projectService.getLinks(event));
       } else {
+       this.project.isEdit = true;
         this.project.attachments =  this.project?.attachments.concat(this.projectService.getLinks(event));
       }
       this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED', 'success');
