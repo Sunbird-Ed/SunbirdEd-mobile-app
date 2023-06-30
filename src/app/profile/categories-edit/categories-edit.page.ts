@@ -269,7 +269,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
 
         try {
-          await this.getFrameworkData(value[0]);
+          await this.getFrameworkData(value[0] || this.frameworkId);
 
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
