@@ -218,8 +218,10 @@ export class AddFilePage implements OnInit {
     if (event) {
       this.attachments = this.attachments.concat(this.projectService.getLinks(event));
       if (this.taskId) {
+        this.task.isEdit = true;
         this.task.attachments =  this.task?.attachments.concat(this.projectService.getLinks(event));
       } else {
+       this.project.isEdit = true;
         this.project.attachments =  this.project?.attachments.concat(this.projectService.getLinks(event));
       }
       this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED', 'success');
@@ -233,6 +235,15 @@ export class AddFilePage implements OnInit {
   }
 
   update(type?) {
+    if (this.taskId) {
+      this.task.attachments = this.attachments;
+      this.task.remarks = this.remarks;
+      if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
+        this.task.isEdit = true;
+        this.project.isEdit = true;
+        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
+      }
+    }
     this.project.isEdit = true;
     this.db
       .update(this.project)

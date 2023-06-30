@@ -196,11 +196,17 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       return
     }else{
     this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_OBSERVATION_POPUP', 'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG1',
-    'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2','FRMELEMNTS_LBL_START_OBSERVATION_POPUP').then((data:any)=>{
+    'FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2','FRMELEMNTS_LBL_START_OBSERVATION_POPUP').then(async (data:any)=>{
       if(data){
         this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].startTime = Date.now();
         this.isViewOnly = false;
         document.getElementById('stop').style.pointerEvents = 'auto';
+        if(this.extrasState){
+          await this.router.navigate([`/${RouterLinks.HOME}`]);
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {queryParams: {solutionId: this.extrasState.solution._id, programId: this.extrasState.programId,
+        solutionName: this.extrasState.solution.name}})
+        }
       }
     })
   }
