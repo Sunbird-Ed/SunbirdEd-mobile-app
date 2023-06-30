@@ -235,6 +235,15 @@ export class AddFilePage implements OnInit {
   }
 
   update(type?) {
+    if (this.taskId) {
+      this.task.attachments = this.attachments;
+      this.task.remarks = this.remarks;
+      if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
+        this.task.isEdit = true;
+        this.project.isEdit = true;
+        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
+      }
+    }
     this.project.isEdit = true;
     this.db
       .update(this.project)
