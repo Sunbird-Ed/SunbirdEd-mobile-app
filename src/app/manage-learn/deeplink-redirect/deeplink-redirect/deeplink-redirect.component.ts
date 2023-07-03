@@ -110,7 +110,8 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   goToTemplateDetails(params) {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, params.solutionId], {
+    let solutionId = params.isATargetedSolution ? params.solutionId : params.privateSolutionId
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, solutionId], {
       queryParams: params,
       skipLocationChange: true,
       replaceUrl: true,
