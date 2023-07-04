@@ -77,8 +77,8 @@ export class ProgramDetailsComponent implements OnInit {
         url:`${urlConstants.API_URLS.SOLUTIONS_LISTING}${this.programId}?page=${this.page}&limit=${this.limit}&search=`,
         payload: payload,
       };
-      this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
       this.dataloaded = true;
+      this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
         async(success) => {
           this.loader.stopLoader();
           if (success.result.data) {
