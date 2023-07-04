@@ -47,8 +47,8 @@
   </div>
   </ion-card>
 
-  <div *ngIf="!solutionsList.length" class="no-data">
-    <app-no-data message="{{'FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES'|translate}}" [color]="'text-primary'"></app-no-data>
+  <div *ngIf="dataloaded && !solutionsList.length" class="no-data">
+    <app-no-data message="{{'FRMELEMNTS_MSG_PROGRAM_NO_RESOURCES'}}" [color]="'text-primary'"></app-no-data>
   </div>
   <div class="text-center no-data" *ngIf="solutionsList.length && !filteredList.length">
     <div class="message-1"><b>{{"EMPTY_SEARCH_RESULTS" | translate}}.</b></div>

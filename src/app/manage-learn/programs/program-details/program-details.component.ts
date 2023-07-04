@@ -45,7 +45,7 @@ export class ProgramDetailsComponent implements OnInit {
   lastUpdatedOn:any
   payload
   public unsubscribe$: Subject<void>= new Subject<void>()
-
+  dataloaded : boolean = false;
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
     private toastService: ToastService, private router: Router, private surveyProvider: SurveyProviderService, private ulsdp: UpdateLocalSchoolDataService,
@@ -78,6 +78,7 @@ export class ProgramDetailsComponent implements OnInit {
         payload: payload,
       };
       this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
+      this.dataloaded = true;
         async(success) => {
           this.loader.stopLoader();
           if (success.result.data) {
