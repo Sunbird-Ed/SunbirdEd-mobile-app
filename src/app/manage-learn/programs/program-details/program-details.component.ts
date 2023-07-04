@@ -42,7 +42,7 @@ export class ProgramDetailsComponent implements OnInit {
   isNewProgram = false
   lastUpdatedOn:any
   payload
-
+  dataloaded : boolean = false;
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
     private toastService: ToastService, private router: Router, private surveyProvider: SurveyProviderService, private ulsdp: UpdateLocalSchoolDataService,
@@ -74,6 +74,7 @@ export class ProgramDetailsComponent implements OnInit {
         url:`${urlConstants.API_URLS.SOLUTIONS_LISTING}${this.programId}?page=${this.page}&limit=${this.limit}&search=`,
         payload: payload,
       };
+      this.dataloaded = true;
       this.kendraService.post(config).subscribe(
         async(success) => {
           this.loader.stopLoader();
