@@ -12,6 +12,8 @@ import { ConsentStatus } from '@project-sunbird/client-services/models';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { KendraApiService } from '../core/services/kendra-api.service';
 import { urlConstants } from '../core/constants/urlConstants';
+import { Subscription } from 'rxjs';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +22,10 @@ export class GenericPopUpService {
   consentPopup: any
   joinProgramPopup:any
   consentStatus: EventEmitter<any> = new EventEmitter<any>();
+  backButton: Subscription;
   constructor(private popOverCtrl: PopoverController, private commonUtils: CommonUtilService, @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
-     private kendra : KendraApiService
+     private kendra : KendraApiService, private platform: Platform
      ) {}
 
     async showPPPForProjectPopUp(message, message1, linkLabel, header, link, type) {
@@ -172,11 +175,20 @@ async closeConsent(){
 }
 
   async getConsent(type, payload, details, profileData,message?){
+    this.backButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      return;
+    });
     const request = { userId : this.appGlobalService.getUserId(), ...payload }
     let data:any=''
+    const loader = await this.commonUtils.getLoader();
+    await loader.present();
     await this.profileService.getConsent(request).toPromise().then((response)=>{
+      loader.dismiss()
+      this.enableBackButton()
       data=response.consents[0]
     }).catch(async (error)=>{
+      loader.dismiss()
+      this.enableBackButton()
       if (!error.response.body.result.consent && error.response.responseCode === 404) {
         data = await this.showConsent(type, payload, details, profileData,message);
     } else if (error.code === 'NETWORK_ERROR') {
@@ -184,6 +196,12 @@ async closeConsent(){
     }
     })
     return data
+  }
+
+  enableBackButton(){
+    if(this.backButton){
+      this.backButton.unsubscribe()
+    }
   }
 
   joinProgram(payloadData,type,message?){
