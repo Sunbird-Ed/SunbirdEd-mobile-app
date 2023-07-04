@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import {
   Platform,
   PopoverController
@@ -195,6 +195,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
   showMoreFlag: any = false;
+  @ViewChild('video') video: ElementRef | undefined;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1202,6 +1203,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
       this.isPlayerPlaying = true;
+      this.playWebVideoContent();
     }
   }
 
@@ -1716,5 +1718,31 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       extraInfo: {}
     };
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then().catch(e => console.log(e));
+  }
+
+  playWebVideoContent() {
+    if (this.playerType === 'sunbird-video-player' && this.config) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };
+
+      setTimeout(() => {
+        const videoElement = document.createElement('sunbird-video-player');
+
+        videoElement.setAttribute('player-config', JSON.stringify(playerConfig));
+        videoElement.addEventListener('playerEvent', (event: any) => {
+          if (event && event.detail) {
+            this.playerEvents(event.detail);
+          }
+        });
+        videoElement.addEventListener('telemetryEvent', (event: any) => {
+          this.playerTelemetryEvents(event.detail);
+        });
+  
+        this.video?.nativeElement.append(videoElement);
+      }, 100);
+    }
   }
 }

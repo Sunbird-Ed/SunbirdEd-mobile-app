@@ -227,3 +227,12 @@ sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
   margin: 5px 5px;
   word-break: keep-all;
 }
+
+
+html.PlayerMediaQueryClass {
+  font-size: calc(12px + (18 - 12) * ((100vw - 320px) / (1920 - 320)));
+}
+
+body {
+  background: white !important; 
+}
