@@ -72,6 +72,7 @@ export class ProjectTemplateviewPage implements OnInit {
   clickedOnProfile :boolean = false;
   projectlisting:boolean = false;
   programlisting:boolean = false;
+  projectLink = ''
 
   public backButtonFunc: Subscription;
 
@@ -104,6 +105,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
       this.programlisting = (parameters.listing == "program");
       this.projectlisting = (parameters.listing == "project");
+      this.projectLink = parameters.link
 
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
@@ -393,8 +395,7 @@ export class ProjectTemplateviewPage implements OnInit {
           hasAcceptedTAndC: this.project.hasAcceptedTAndC,
           certificate:false,
           isProfileInfoRequired: true,
-          reference: { referenceFrom: "link" },
-          privateSolutionId: this.id,
+          reference: { referenceFrom: "link", link: this.projectLink }
         }
         this.projectService.getProjectDetails(params)
       })

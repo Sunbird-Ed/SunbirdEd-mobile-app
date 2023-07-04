@@ -75,11 +75,10 @@ export class ProjectService {
   }
 
   async getProjectDetails({ projectId = '', solutionId, isProfileInfoRequired = false,
-    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true ,certificate, reference = null, privateSolutionId = null}) {
+    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true ,certificate, reference = null}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
-    let id = privateSolutionId ? privateSolutionId : solutionId
-    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${id ? ('&&solutionId=' + id) : ''}`;
+    const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
     if(detailsPayload && isProfileInfoRequired){
       detailsPayload = {detailsPayload, ...payload}
     }
