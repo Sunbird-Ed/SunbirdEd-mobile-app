@@ -253,7 +253,7 @@ export class SurveyHomeComponent {
     };
     this.assessmentService.post(config).subscribe((success) => {
       if (success.result) {
-        if(success.result.hasOwnProperty('requestForPIIConsent') && !success.result.programJoined){
+        if(success.result.hasOwnProperty('requestForPIIConsent') && !success.result.consentShared){
           this.redirect(success.result.assessment.submissionId,success.result);
         }else{
           data.downloaded
@@ -281,11 +281,13 @@ export class SurveyHomeComponent {
       switch (resp.result.type) {
         case 'survey':
           let details = resp.result
+          if(details?.submissionId){
           await this.localStorage
           .getLocalStorage(storageKeys.submissionIdArray)
           .then(async (allId) => {
             await allId.includes(details.submissionId) ? (details.downloaded = true) : null;
           });
+        }
           resp.result.submissionId ? this.checkIsDownloaded(details) : this.getSurveyTemplateDetails(details);
         default:
           break;
