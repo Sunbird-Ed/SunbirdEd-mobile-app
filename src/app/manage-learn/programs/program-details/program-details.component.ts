@@ -12,6 +12,8 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 import { storageKeys } from '../../storageKeys';
 import { CommonUtilService } from '../../../../services/common-util.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-program-details',
@@ -42,6 +44,7 @@ export class ProgramDetailsComponent implements OnInit {
   isNewProgram = false
   lastUpdatedOn:any
   payload
+  public unsubscribe$: Subject<void>= new Subject<void>()
   dataloaded : boolean = false;
   constructor(private headerService: AppHeaderService, private translate: TranslateService, private popupService: GenericPopUpService,
     private activatedRoute: ActivatedRoute, private loader: LoaderService, private utils: UtilsService, private kendraService: KendraApiService,
@@ -74,8 +77,8 @@ export class ProgramDetailsComponent implements OnInit {
         url:`${urlConstants.API_URLS.SOLUTIONS_LISTING}${this.programId}?page=${this.page}&limit=${this.limit}&search=`,
         payload: payload,
       };
+      this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
       this.dataloaded = true;
-      this.kendraService.post(config).subscribe(
         async(success) => {
           this.loader.stopLoader();
           if (success.result.data) {
@@ -103,6 +106,12 @@ export class ProgramDetailsComponent implements OnInit {
     } else {
       this.loader.stopLoader();
     }
+  }
+
+  ngOnDestroy(){
+    this.popupService.closeConsent()
+    this.unsubscribe$.next()
+    this.unsubscribe$.complete()
   }
 
   readMoreOrLess(){
