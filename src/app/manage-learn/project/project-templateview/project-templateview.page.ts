@@ -72,6 +72,7 @@ export class ProjectTemplateviewPage implements OnInit {
   clickedOnProfile :boolean = false;
   projectlisting:boolean = false;
   programlisting:boolean = false;
+  projectLink = ''
 
   public backButtonFunc: Subscription;
 
@@ -104,6 +105,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
       this.programlisting = (parameters.listing == "program");
       this.projectlisting = (parameters.listing == "project");
+      this.projectLink = parameters.link
 
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
@@ -194,7 +196,7 @@ export class ProjectTemplateviewPage implements OnInit {
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
     if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent && !this.project.consentShared){
-      let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programInformation.programId}
+      let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programId}
       let profileData = await this.utils.getProfileInfo();
        await this.popupService.getConsent('Program',payloadData,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((data)=>{
          if(data){
@@ -251,7 +253,7 @@ export class ProjectTemplateviewPage implements OnInit {
           this.popupService.join(this.project,profileData).then((data :any) =>{
             if(data){
               this.project.programJoined = true
-              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programInformation.programId};
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programId};
               if(this.project.requestForPIIConsent){
                 this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
                   if(data){
@@ -379,14 +381,24 @@ export class ProjectTemplateviewPage implements OnInit {
           this.projectService.getProjectDetails(payload);
         })
     } else {
-        const payload = {
-          templateId: this.project._id,
+      this.router
+      .navigate([`/${RouterLinks.PROJECT}`], {
+        queryParams: {
+          selectedFilter: 'discoveredByMe',
+        },
+      }).then(() => {
+        const params = {
+          projectId: this.project.projectId,
           programId: this.programId,
           solutionId: this.solutionId,
-          isATargetedSolution: false,
-          hasAcceptedTAndC: this.project.hasAcceptedTAndC
+          replaceUrl: false,
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC,
+          certificate:false,
+          isProfileInfoRequired: true,
+          reference: { referenceFrom: "link", link: this.projectLink }
         }
-        this.projectService.mapProjectToUser(payload);
+        this.projectService.getProjectDetails(params)
+      })
     }
   }
 
