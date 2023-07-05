@@ -297,8 +297,8 @@ export class AddFilePage implements OnInit {
       this.project.remarks = this.remarks;
       this.project.status = statusType.submitted;
       this.attachments = [];
+      this.update();
       this.doSyncAction(true);
     }, 0)
-    this.location.back()
   }
 }

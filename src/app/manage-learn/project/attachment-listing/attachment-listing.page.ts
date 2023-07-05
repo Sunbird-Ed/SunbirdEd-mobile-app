@@ -238,6 +238,7 @@ export class AttachmentListingPage implements OnInit {
           });
           if(i >= 0){
             task.attachments.splice(i, 1);
+            task.isEdit = true;
            loopAgain = false;
           }
         }
