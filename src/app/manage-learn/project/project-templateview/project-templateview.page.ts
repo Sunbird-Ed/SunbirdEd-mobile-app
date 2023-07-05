@@ -477,4 +477,33 @@ export class ProjectTemplateviewPage implements OnInit {
   ionViewWillLeave(){
     this.popupService.closeConsent()
   }
+  checkForActions(event){
+    if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
+      this.popupService.joinProgram(this.project,'project')
+      .then(async resp => {
+        if(resp){
+          let profileData = await this.utils.getProfileInfo();
+          this.popupService.join(this.project,profileData).then((data :any) =>{
+            if(data){
+              this.project.programJoined = true
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programInformation.programId};
+              if(this.project.requestForPIIConsent){
+                this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
+                  if(data){
+                    this.project.programJoined = true
+                  }
+                })
+              }else{
+                this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
+              }
+              
+            }
+          },error =>{})
+        }
+      });
+      return
+    }else {
+      this.openStartIMPPopup()
+    }
+  }
 }
