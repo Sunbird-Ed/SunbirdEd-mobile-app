@@ -33,7 +33,7 @@ export class ProgramDetailsComponent implements OnInit {
   showMore:boolean=false
   description
   characterLimit = 150
-  programDetails:any={}
+  programDetails:any={};
   solutionsList:any=[]
   filteredList:any=[]
   sharingStatus:any='REVOKED'
@@ -324,6 +324,10 @@ export class ProgramDetailsComponent implements OnInit {
     this.surveyProvider
       .getDetailsById(surveyId, data._id)
       .then((res) => {
+        if (!res.result) {
+          this.surveyProvider.showMsg('surveyExpired');
+          return;
+        }
         if (res.result && res.result.status == 'completed') {
           // this.toast.openToast(res.message)
           this.surveyProvider.showMsg('surveyCompleted');
