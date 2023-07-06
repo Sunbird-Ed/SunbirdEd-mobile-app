@@ -77,10 +77,10 @@ export class ProgramDetailsComponent implements OnInit {
         url:`${urlConstants.API_URLS.SOLUTIONS_LISTING}${this.programId}?page=${this.page}&limit=${this.limit}&search=`,
         payload: payload,
       };
-      this.dataloaded = true;
       this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
         async(success) => {
           this.loader.stopLoader();
+          this.dataloaded = true;
           if (success.result.data) {
             this.programDetails = success.result
             this.count = success.result.count;
@@ -101,10 +101,12 @@ export class ProgramDetailsComponent implements OnInit {
         },
         (error) => {
           this.loader.stopLoader();
+          this.dataloaded = true;
         }
       );
     } else {
       this.loader.stopLoader();
+      this.dataloaded = true;
     }
   }
 
