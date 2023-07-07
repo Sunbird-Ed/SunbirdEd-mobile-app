@@ -87,8 +87,11 @@
       </div>
     </div>
     <div *ngIf="playerType === 'sunbird-video-player' && config"  [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}" data-ratio="16:9" #aspectRatio>
-      <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
-        (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
+      <!-- <sunbird-video-player [player-config]="config" (playerEvent)="playerEvents($event)"
+        (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player> -->
+        <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+          <div #video></div>
+          </div>
     </div>
   </div>
   <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'">
@@ -138,8 +141,11 @@
       </div>
       <div *ngIf="playerType === 'sunbird-video-player' && config" [ngClass]="{'aspectratio' : isPlayerPlaying, '': !isPlayerPlaying}"
         data-ratio="16:9" #aspectRatio>
-        <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
-          (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
+        <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+          <div #video></div>
+          </div>
+        <!-- <sunbird-video-player [player-config]="config" (playerEvent)="playerEvents($event)"
+          (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player> -->
       </div>
     </div>
     <div class="sb-player-container sb-offline-container" *ngIf="!contentDownloadable[content?.identifier]">
