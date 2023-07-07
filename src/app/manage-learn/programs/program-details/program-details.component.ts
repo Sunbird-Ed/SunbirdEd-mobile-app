@@ -33,7 +33,7 @@ export class ProgramDetailsComponent implements OnInit {
   showMore:boolean=false
   description
   characterLimit = 150
-  programDetails:any={}
+  programDetails:any={};
   solutionsList:any=[]
   filteredList:any=[]
   sharingStatus:any='REVOKED'
@@ -77,10 +77,10 @@ export class ProgramDetailsComponent implements OnInit {
         url:`${urlConstants.API_URLS.SOLUTIONS_LISTING}${this.programId}?page=${this.page}&limit=${this.limit}&search=`,
         payload: payload,
       };
-      this.dataloaded = true;
       this.kendraService.post(config).pipe(takeUntil(this.unsubscribe$)).subscribe(
         async(success) => {
           this.loader.stopLoader();
+          this.dataloaded = true;
           if (success.result.data) {
             this.programDetails = success.result
             this.count = success.result.count;
@@ -101,10 +101,12 @@ export class ProgramDetailsComponent implements OnInit {
         },
         (error) => {
           this.loader.stopLoader();
+          this.dataloaded = true;
         }
       );
     } else {
       this.loader.stopLoader();
+      this.dataloaded = true;
     }
   }
 
@@ -322,6 +324,10 @@ export class ProgramDetailsComponent implements OnInit {
     this.surveyProvider
       .getDetailsById(surveyId, data._id)
       .then((res) => {
+        if (!res.result) {
+          this.surveyProvider.showMsg('surveyExpired');
+          return;
+        }
         if (res.result && res.result.status == 'completed') {
           // this.toast.openToast(res.message)
           this.surveyProvider.showMsg('surveyCompleted');

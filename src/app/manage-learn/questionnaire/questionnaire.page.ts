@@ -623,7 +623,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   }
 
   showPopup(){
-    console.log(this.schoolData,"this.schoolData")
+    if(this.extrasState && !this.isTargeted && !this.isSurvey){
+      return
+    }
     if(!this.schoolData?.programJoined && this.isNewProgram){
       this.joinProgram()
     }else if(!this.isSurvey && this.isViewOnly){
