@@ -281,6 +281,10 @@ export class SurveyHomeComponent {
       switch (resp.result.type) {
         case 'survey':
           let details = resp.result
+          if(details.submissionStatus && details.submissionStatus == 'completed'){
+            this.surveyProvider.showMsg('surveyCompleted', true);
+            return
+          }
           if(details?.submissionId){
           await this.localStorage
           .getLocalStorage(storageKeys.submissionIdArray)
