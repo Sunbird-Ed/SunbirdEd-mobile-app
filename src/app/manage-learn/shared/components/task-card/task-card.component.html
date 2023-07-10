@@ -1,6 +1,6 @@
 <div *ngFor="let task of data?.tasks | slice:0:upperLimit ;let i = index">
   <ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngIf="!task?.isDeleted">
-    <ion-row>
+    <ion-row [ngClass]="{'no-action': viewOnly}">
       <ion-col size="1">
         <ion-icon *ngIf="task?.status == statuses['completed'].value" name="checkmark-circle" class="check-icon"
           color="success"></ion-icon>
