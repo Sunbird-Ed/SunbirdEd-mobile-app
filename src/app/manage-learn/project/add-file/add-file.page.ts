@@ -249,6 +249,7 @@ export class AddFilePage implements OnInit {
       .update(this.project)
       .then((success) => {
         this.project._rev = success.rev;
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         if(type !== 'save'){
           this.location.back()
         }
