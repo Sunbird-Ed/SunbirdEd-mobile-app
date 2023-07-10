@@ -130,7 +130,6 @@
     "ionic-plugin-keyboard": "2.2.1",
     "ionic4-rating": "^1.0.9",
     "jest-preset-angular": "^12.2.6",
-    "jquery": "^3.7.0",
     "jspdf": "^2.0.0",
     "jwt-decode": "^2.2.0",
     "katex": "^0.11.1",
