@@ -522,11 +522,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails(
         { channelId: this.frameworkService.activeChannelId }).toPromise();
       const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
-        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       }).toPromise();
       const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
         language: '',
-        requiredCategories: []
+        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       }).toPromise();
       this.frameworkId = activeChannelDetails.defaultFramework;
       this.categories = defaultFrameworkDetails.categories;
