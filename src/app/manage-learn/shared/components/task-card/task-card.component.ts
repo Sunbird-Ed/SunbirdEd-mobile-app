@@ -54,6 +54,10 @@ export class TaskCardComponent implements OnInit {
     });
   }
   onObservatonActionButtonClick(task, index) {
+    if(this.viewOnly){
+      this.clickAction.emit()
+      return;
+    }
     const submissionDetails = this.data?.tasks[index]?.submissionDetails;
     if(submissionDetails?.observationId) {
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
