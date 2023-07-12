@@ -1202,8 +1202,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-video-player';
-      this.isPlayerPlaying = true;
-      this.playWebVideoContent();
+      if (!this.isPlayerPlaying) {
+        this.isPlayerPlaying = true;
+        this.playWebVideoContent();
+      }
     }
   }
 
