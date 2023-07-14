@@ -132,8 +132,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            // this.openAllFile()
-            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            this.openAllFile()
             return false;
           },
         },
@@ -345,7 +344,7 @@ export class AttachmentService {
         await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
       case 'openFiles':
-        await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        await this.openFile();
         break;
     }
   }
