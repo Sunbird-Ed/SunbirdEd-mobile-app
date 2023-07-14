@@ -190,7 +190,7 @@ export class TncUpdateHandlerService {
       await this.consentService.getConsent(profile, true);
     }
     if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
-      if (onboarding.skipOnboardingForLoginUser) {
+      if (onboarding.skipOnboardingForLoginUser && !isSSoUser) {
         await this.updateUserAsGuest();
       } else {
         await this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -233,7 +233,8 @@ export class TncUpdateHandlerService {
   private async checkBmc(profile) {
     const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (await this.isSSOUser(userDetails)) {
+    const isSSOUser = await this.isSSOUser(userDetails);
+    if (isSSOUser) {
       await this.consentService.getConsent(userDetails, true);
     }
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
@@ -245,8 +246,8 @@ export class TncUpdateHandlerService {
           const guestProfile = await this.commonUtilService.getGuestUserConfig().then((profile) => {
             return profile;
         });
-      if ( guestProfile.board && guestProfile.board.length && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN) {
-        await this.updateUserAsGuest(guestProfile);
+      if ( guestProfile.board && guestProfile.board.length && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN && !isSSOUser) {
+          await this.updateUserAsGuest(guestProfile);
       } else {
         await this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       }

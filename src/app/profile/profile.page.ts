@@ -363,7 +363,7 @@ export class ProfilePage implements OnInit {
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
                   }).catch(e => console.error(e));
-                  if(profileData && profileData.framework && Object.keys(profileData.framework).length == 0) {
+                  if(profileData && profileData.framework && Object.keys(profileData.framework).length == 0 && this.isCustodianOrgId) {
                     await this.getFrameworkDetails();
                   }
               });
