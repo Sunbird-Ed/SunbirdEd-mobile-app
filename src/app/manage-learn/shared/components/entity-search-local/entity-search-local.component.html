@@ -9,6 +9,7 @@
         [(ngModel)]="searchQuery"
         placeholder="Search {{data.entityType}}"
         (ionClear)="searchQuery = ''; onSearch()"
+        (keyup.enter)="onSearch()"
       ></ion-searchbar>
       <ion-button ion-button icon-only (click)="onSearch()" class="serachBtn">
         <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
