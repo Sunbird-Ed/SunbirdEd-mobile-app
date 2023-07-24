@@ -117,7 +117,9 @@ async showConsent(type, payload, details, profileData, message?){
     case 'program':
       componentProps={
         consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
-        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage2 : this.commonUtils.translateMessage('FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG', {
+          'app_name': (await this.commonUtils.getAppName() || '')
+        }),
         consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
         redirectLink : RouterLinks.TERM_OF_USE
       }
@@ -126,7 +128,9 @@ async showConsent(type, payload, details, profileData, message?){
     default:
       componentProps={
         consentMessage1 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1",
-        consentMessage2 : "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG",
+        consentMessage2 : this.commonUtils.translateMessage('FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG', {
+          'app_name': (await this.commonUtils.getAppName() || '')
+        }),
         consentMessage3 : "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2",
         redirectLink : RouterLinks.TERM_OF_USE
       }

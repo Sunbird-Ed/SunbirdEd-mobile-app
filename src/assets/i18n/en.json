@@ -1391,7 +1391,7 @@
   "FRMELEMNTS_LBL_SURVEYS":"Surveys",
   "FRMELEMNTS_LBL_CONSENT_POPUP_MSG1": "I consent to share my details with the administrators of this program. All program administrators are bound by the ",
   "FRMELEMNTS_LBL_CONSENT_POPUP_MSG2":"in their use of my data",
-  "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and DIKSHA Terms ",
+  "FRMELEMNTS_LBL_CONSENT_POPUP_POLICY_MSG": "Privacy Policy and {{app_name}} Terms ",
   "FRMELEMNTS_LBL_JOIN_PROGRAM_MSG2":"Please join {{name}} {{type}} to view and access all the resources in this {{type}}.",
   "FRMELEMNTS_MSG_DATA_SETTINGS_UPDATE_SUCCESS":"Your data setting has been updated successfully",
   "EXPLORE_PROGRAMS":"Explore Programs",
