@@ -1402,5 +1402,6 @@
   "FRMELEMNTS_LBL_START_OBSERVATION_POPUP_MSG2":"Click on the Start observation to get complete access to the content",
   "FRMELEMNTS_MSG_NOT_LOGGEDIN_USER":"Please login with HT & Officials to access this content",
   "FRMELEMENTS_MSG_YOU_MUST_LOGIN_TO_ACCESS":"You must log in to access {{%s}}",
-  "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_ACCESS": "Only registered users can take {{%s}}"
+  "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_ACCESS": "Only registered users can take {{%s}}",
+  "FRMELEMNTS_LBL_TASKS_COMPLETED": "tasks completed"
 }
