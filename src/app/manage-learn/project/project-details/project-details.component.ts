@@ -140,7 +140,7 @@ export class ProjectDetailsComponent implements OnInit {
             this.setActionButtons();
             this.isNotSynced = this.projectDetails ? (this.projectDetails.isNew || this.projectDetails.isEdit) : false;
             this.projectDetails.categories.forEach((category: any) => {
-              category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+              category.label ? this.categories.push(` ${category.label}`) : this.categories.push(` ${category.name}`);
             });
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
