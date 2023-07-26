@@ -236,3 +236,14 @@ html.PlayerMediaQueryClass {
 body {
   background: white !important; 
 }
+
+table.dataTable {
+  overflow: unset !important;
+}
+
+table.dataTable thead th:first-child, tbody td:first-child{
+  background: white !important;
+  position: sticky !important;
+  left:0 !important;
+  z-index: 2;
+}
