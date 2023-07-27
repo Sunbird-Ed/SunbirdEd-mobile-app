@@ -854,14 +854,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    const title = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_PROJECT' :'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS';
-    const meta = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT': 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION';
+    let type = `${event.data[0]['name'].toLowerCase()}s`
+    const title = 'FRMELEMENTS_MSG_YOU_MUST_LOGIN_TO_ACCESS';
+    const meta = 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_ACCESS';
     const selectedPill = event.data[0].value.name;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage(title),
-        metaInfo: this.commonUtilService.translateMessage(meta),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage(title, type),
+        metaInfo: this.commonUtilService.translateMessage(meta, type),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
