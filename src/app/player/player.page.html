@@ -21,8 +21,11 @@
         <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
       </div>
     </div>
-    <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
-      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
+    <!-- <sunbird-video-player [player-config]="config" (playerEvent)="playerEvents($event)"
+      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player> -->
+      <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+        <div #video></div>
+      </div>
   </div>
 </ion-content>
 

@@ -47,7 +47,7 @@ declare const cordova;
 
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
-  config = {};
+  config: any;
   backButtonSubscription: Subscription;
   course: Course;
   pauseSubscription: any;
@@ -65,6 +65,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
+  @ViewChild('video') video: ElementRef | undefined;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -137,6 +138,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
+       await this.playWebVideoContent();
     } else {
       this.playerType = 'sunbird-old-player';
     }
@@ -655,5 +657,30 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   checkIsPlayerEnabled(config , playerType) {
     return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled);
+  }
+
+  playWebVideoContent() {
+    if (this.playerType === 'sunbird-video-player' && this.config) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+      setTimeout(() => {
+        const videoElement = document.createElement('sunbird-video-player');
+
+        videoElement.setAttribute('player-config', JSON.stringify(playerConfig));
+        videoElement.addEventListener('playerEvent', (event: any) => {
+          if (event && event.detail) {
+            this.playerEvents(event.detail);
+          }
+        });
+        videoElement.addEventListener('telemetryEvent', (event: any) => {
+          this.playerTelemetryEvents(event.detail);
+        });
+  
+        this.video?.nativeElement.append(videoElement);
+      }, 100);
+    }
   }
 }
