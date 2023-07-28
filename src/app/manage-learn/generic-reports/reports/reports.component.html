@@ -87,7 +87,7 @@
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
       </ion-card>
       <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadMoreReports(element,section?.questionArray,i+1)"   *ngIf="element?.answers?.length && element?.count > element?.answers?.length">
-        {{ "VIEW_MORE" | translate }}
+        {{ "FRMELEMNTS_BTN_VIEW_MORE" | translate }}
       </ion-button>
       <ion-grid>
         <ion-row>
