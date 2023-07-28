@@ -213,7 +213,7 @@
     </div>
     <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || projects?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
-            <div class="bolder heading f16">
+            <div class="bolder heading f16" role="heading">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
                 <span role="button" aria-label="Refresh"><ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
                     (click)="getEnrolledCourses(true, true)"></ion-icon></span>
@@ -312,7 +312,7 @@
                     </div>
                 </div>
         <div class="trainings" *ngIf="learnerPassbook?.length > 0">
-            <div class="bolder heading f16">
+            <div class="bolder heading f16" role="heading">
                 <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>
             </div>
             <div class="content">
@@ -352,7 +352,7 @@
             </div>
         </div>
         <div class="contributions" *ngIf="contentCreatedByMe.length > 0">
-            <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;">
+            <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;" role="heading">
                 {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
             </div>
             <div class="cards-container" style="padding:0 5px; background-color: #fff; overflow-x: scroll; ">

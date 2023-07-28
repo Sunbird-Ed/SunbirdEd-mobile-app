@@ -21,6 +21,7 @@ import {
     WebviewSessionProviderConfig,
     SignInError,
     FrameworkCategoryCode,
+    ProfileType,
 } from '@project-sunbird/sunbird-sdk';
 
 import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '../app/app.constant';
@@ -468,7 +469,7 @@ export class FormAndFrameworkUtilService {
                 medium: profile.medium,
                 subject: profile.subject,
                 gradeValue: profile.gradeValue,
-                uid: profileData.uid,
+                uid: profileData.userId || profileData.uid,
                 handle: profileData.uid,
                 profileType: profileData.profileType,
                 source: profileData.source,
@@ -728,7 +729,7 @@ export class FormAndFrameworkUtilService {
     }
 
     private async setSupportedAttributes(framework, userType?: string) {
-        if (!userType) {
+        if (!userType || userType === ProfileType.NONE) {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
         const frameworkDetails = {};
@@ -757,7 +758,7 @@ export class FormAndFrameworkUtilService {
 
     getFrameworkCategoryList(userType?: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!userType) {
+            if (!userType || userType === ProfileType.NONE) {
                 this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
                     userType = type;
                 }).catch((e) => console.error(e));
@@ -765,7 +766,7 @@ export class FormAndFrameworkUtilService {
             const framework = this.appGlobalService.getCachedFrameworkCategory();
             console.log('................', framework);
             if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
-                (framework.userType !== userType || !userType))) {
+                (framework.userType !== userType || !userType || userType === ProfileType.NONE))) {
                 this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
                 resolve(res);
                 }).catch((e) => console.error(e));

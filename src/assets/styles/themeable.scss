@@ -1825,6 +1825,12 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  sunbird-video-player .sunbird-video-player-container{
+    .sb-player-side-menu-icon label {
+      display: none !important;
+    }
+  }
+
   app-sign-in {
     .sign-in-button {
       margin: 1rem;
