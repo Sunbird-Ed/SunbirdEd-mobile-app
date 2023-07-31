@@ -25,6 +25,7 @@ export class MatrixTypeInputComponent implements OnInit {
   @Input() inputIndex;
   @Input() enableGps;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   mainInstance: any;
   initilaData;
 
@@ -64,7 +65,8 @@ export class MatrixTypeInputComponent implements OnInit {
       generalQuestion: this.generalQuestion,
       submissionId: this.submissionId,
       questionIndex: this.inputIndex,
-      enableQuestionReadOut: this.enableQuestionReadOut
+      enableQuestionReadOut: this.enableQuestionReadOut,
+      isSubmitted: this.isSubmitted
     }
     let matrixModal = await this.modalCtrl.create({
       component: MatrixModalComponent,

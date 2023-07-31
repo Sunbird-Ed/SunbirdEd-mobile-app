@@ -57,6 +57,7 @@ export class ImageUploadComponent implements OnInit {
   @Input() submissionId: any;
   @Input() imageLocalCopyId: string;
   @Input() generalQuestion: boolean;
+  @Input() isSubmitted: boolean;
 
   imageList: Array<any> = [];
   imageNameCounter: number = 0;
