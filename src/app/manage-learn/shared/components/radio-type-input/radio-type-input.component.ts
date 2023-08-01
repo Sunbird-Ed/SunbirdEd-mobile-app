@@ -22,6 +22,7 @@ export class RadioTypeInputComponent implements OnInit {
   @Input() generalQuestion: boolean;
   @Input() submissionId: any;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
 
   color: string = 'light';
   isComplete: boolean;

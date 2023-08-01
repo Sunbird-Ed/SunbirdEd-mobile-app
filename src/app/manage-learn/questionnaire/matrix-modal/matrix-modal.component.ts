@@ -18,6 +18,7 @@ export class MatrixModalComponent  {
   @Input() generalQuestion: boolean;
   @Input() submissionId: string;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
 
   constructor(
     private modal: ModalController,

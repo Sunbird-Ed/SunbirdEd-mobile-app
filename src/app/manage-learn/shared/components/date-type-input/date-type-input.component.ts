@@ -21,6 +21,7 @@ export class DateTypeInputComponent implements OnInit {
   @Input() inputIndex;
   @Input() hideButton: boolean;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   questionValid: boolean;
   currentDate;
   futureDate;

@@ -22,6 +22,7 @@ export class SliderTypeInputComponent implements OnInit {
   @Input() submissionId: any;
   @Input() inputIndex;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   color: string = 'light';
   isComplete: boolean;
 
