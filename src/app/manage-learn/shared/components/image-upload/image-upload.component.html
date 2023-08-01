@@ -12,7 +12,7 @@
   </div>
 
   <div class="_cards _flex-box  _justify-content-center" *ngFor="let image of imageList; let i = index">
-    <ion-icon name="trash" class="_closeBtn" (click)="deleteImageAlert(i)"></ion-icon>
+    <ion-icon name="trash" class="_closeBtn" (click)="deleteImageAlert(i)" *ngIf="!isSubmitted"></ion-icon>
     <div class="_overlay" (click)="previewFile(image?.imageName,image?.extension)"></div>
     <img [src]="image?.data" alt="">
     <span>

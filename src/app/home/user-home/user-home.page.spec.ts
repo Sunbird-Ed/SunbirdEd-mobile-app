@@ -791,7 +791,7 @@ describe('UserHomePage', () => {
           
         it('should navigate to project listing page', (done) => {
         userHomePage.guestUser = false;
-        let event = { data: [{name:'Project', value: {name:'project'}}] };
+        let event = { data: [{name:'Project', value: {name:'projects'}}] };
         mockPopoverController.create = jest.fn(() =>
             Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
@@ -809,7 +809,7 @@ describe('UserHomePage', () => {
 
         it('should navigate to Observatoin page, if event value is observation', (done) => {
             userHomePage.guestUser = false;
-            let event = { data: [{name:'Project', value: {name:'observation'}}] };
+            let event = { data: [{name:'Project', value: {name:'observations'}}] };
             mockPopoverController.create = jest.fn(() =>
                 Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),

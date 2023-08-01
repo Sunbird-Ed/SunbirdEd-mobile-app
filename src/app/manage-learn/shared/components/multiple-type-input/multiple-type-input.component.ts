@@ -24,6 +24,7 @@ export class MultipleTypeInputComponent implements OnInit {
   @Input() submissionId: any;
   @Input() inputIndex;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   constructor(
     private utils: UtilsService,
     // private hintService: HintProvider

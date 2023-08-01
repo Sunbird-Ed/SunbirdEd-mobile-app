@@ -22,6 +22,7 @@ export class PageQuestionsComponent implements OnInit,OnDestroy {
   @Input() generalQuestion: boolean;
   @Input() schoolId;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   notNumber: boolean;
   questionValid: boolean;
   text: string;
