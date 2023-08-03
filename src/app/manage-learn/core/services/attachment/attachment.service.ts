@@ -132,7 +132,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            this.openAllFile()
+            this.openFile()
             return false;
           },
         },
