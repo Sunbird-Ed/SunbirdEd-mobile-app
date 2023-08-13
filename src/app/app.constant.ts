@@ -516,8 +516,12 @@ export class RouterLinks {
     public static readonly STORAGE_SETTINGS = 'storage-settings';
 
     // Search Routes
+    
     public static readonly SEARCH = 'search';
 
+    // Discover Mentors Routes
+    public static readonly DISCOVER_MENTORS ='discover-mentors-search';
+    
     // QR Scanner Routes
     public static readonly QRSCANNER_ALERT = 'qrscanner-alert';
     public static readonly QRCODERESULT = 'qrcoderesult';

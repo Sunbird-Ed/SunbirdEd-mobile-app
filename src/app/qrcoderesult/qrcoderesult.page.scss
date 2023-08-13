@@ -223,7 +223,46 @@
         position: absolute;
         margin-top: 2px;
     }
+
+    /* Styling for the extracted information section */
+  h4 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  /* Styling for the search results section */
+  h2 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 5px;
+  }
+  
 }
+
     
     
     

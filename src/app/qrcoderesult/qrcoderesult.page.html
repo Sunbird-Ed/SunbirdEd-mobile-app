@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar style="min-height: 3.5rem;">
-
+    <!-- Back button and title -->
     <ion-buttons class="sb-hamburger" slot="start">
       <ion-button icon-only (click)="handleBackButton()">
         <ion-icon role="button" aria-label="back" name="arrow-back"></ion-icon>
@@ -9,6 +9,7 @@
 
     <ion-title>{{'RESULTS' | translate}}</ion-title>
     <ion-buttons slot="primary">
+      <!-- Skip button -->
       <ion-button fill="clear"
         *ngIf="!appGlobalService?.isUserLoggedIn() && !appGlobalService?.isProfileSettingsCompleted"
         (click)="skipSteps()">
@@ -18,14 +19,18 @@
 
   </ion-toolbar>
 </ion-header>
+
+<!-- Sticky pills content -->
 <div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="(results.length>1 || (results.length===1 && results[0].contentData.trackable.enabled === 'Yes'))">
   <span class="pull-left">{{stckyParent || ('SELECT_CHAPTER' | translate)}}</span>
   <span class="pull-right">
     <ion-icon md="caret-forward-circle" ios="chevron-forward-circle"></ion-icon>
   </span>
 </div>
+
+<!-- Sheen animation content -->
 <div class="m-n" *ngIf="showSheenAnimation" style="margin-top: 50px;">
-  <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" style="display: flex;padding-left: 10px;">
+  <!-- <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" style="display: flex;padding-left: 10px;">
     <ion-avatar slot="start" class="skleton-avatar">
       <app-skeleton-item height="3.5rem" width="3.5rem" style="height:3.5rem; width:3.5rem;"></app-skeleton-item>
     </ion-avatar>
@@ -35,12 +40,16 @@
       <app-skeleton-item height="0.75rem" width="50%"
         style="height:0.75rem; width:100%; padding-bottom: 16px;margin-top:8px;"></app-skeleton-item>
     </div>
-  </div>
+  </div> -->
+  <!-- Add your sheen animation code here -->
 </div>
+
+<!-- Content before search results -->
 <ion-content *ngIf="(results.length>1 || (results.length===1 && results[0].contentData.trackable.enabled === 'Yes'))" class="ion-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="card-container" *ngFor="let content of results; let i = index"
   [ngClass]="{'offline': !content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
     <ion-row class="P010">
+      <!-- Breadcrumbs -->
       <ul class="breadcrumbs">
         <li *ngFor="let result of paths[i]" (click)="navigateToDetailsPage(paths[i][0], paths[i], content?.identifier)">
           {{ (result?.contentData?.name?.length>30)? (result?.contentData?.name | slice:0:30)+'...' :
@@ -54,19 +63,24 @@
           <ion-card-content (click)="playOnline(content, true)">
             <ion-row class="top">
               <ion-col size="3" class="img-container">
+                <!-- App icon -->
                 <img class="app-icon" alt="app-icon"
                   [src]="commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg" />
               </ion-col>
               <ion-col size="9">
                 <ion-row>
                   <ion-col size="12" class="PT0">
+                    <!-- Content name and creator -->
                     <h6 class="name font-size-20">{{content?.contentData?.name}}</h6>
                     <p class="author">{{content?.contentData?.creator}}</p>
                   </ion-col>
                   <ion-col size="12" class="bottom-fix">
                     <span class="badge" *ngIf="content?.contentData?.resourceType">
+                      <!-- Content resource type -->
                       {{content?.contentData?.resourceType}} </span>
-                    <span class="size" *ngIf="content?.contentData?.size"> {{content?.contentData?.size | fileSize}}
+                    <span class="size" *ngIf="content?.contentData?.size"> 
+                      <!-- Content size -->
+                      {{content?.contentData?.size | fileSize}}
                     </span>
                   </ion-col>
                 </ion-row>
@@ -80,6 +94,7 @@
         <ion-row class="ion-no-padding">
           <ion-col class="ion-no-padding btn-space" style="z-index: 100;" *ngIf="!content?.downloadable"
             (click)="navigateToDetailsPage(content)">
+            <!-- Download button -->
             <button class="qr-result-btn download-info ion-no-padding ion-text-uppercase" expand="block" color="light"
               style="color:#0D7DFC; z-index: 100;" [ngClass]="!(content.contentData?.downloadUrl) ? 'download-disabled' : null">
               <ion-icon class="downloadicon" name="arrow-down"></ion-icon>&nbsp;
@@ -88,6 +103,7 @@
           </ion-col>
           <ion-col class="ion-no-padding"
             *ngIf="content.contentData?.streamingUrl && !(content.mimeType === 'application/vnd.ekstep.h5p-archive')">
+            <!-- Play button -->
             <button class="custom-btn play qr-result-btn ion-no-padding" expand="block" (click)="playContent(content, true)">
               <ion-icon name="play" style="margin-left: -1rem;"></ion-icon>&nbsp;<span class="play-btn-info">{{'PLAY' | translate}}</span>
             </button>
@@ -115,12 +131,14 @@
         <ion-row class="ion-no-padding">
           <ion-col style="z-index: 100;" *ngIf="content.isUpdateAvailable" (click)="navigateToDetailsPage(content)"
             class="ion-no-padding">
+            <!-- Update button -->
             <button class="qr-result-btn ion-text-uppercase ion-no-margin" expand="block" color="light"
               style="color:#0D7DFC; z-index: 100;">
               <ion-icon class="downloadicon" name="arrow-down"></ion-icon>&nbsp;{{ 'UPDATE' | translate }}
             </button>
           </ion-col>
           <ion-col class="ion-no-padding" *ngIf="content.contentData?.streamingUrl">
+            <!-- Play button -->
             <button class="custom-btn play qr-result-btn default ion-no-margin" expand="block"
               (click)="navigateToDetailsPage(content)">
               <ion-icon name="play" style="margin-left: -1rem;"></ion-icon>&nbsp;<span class="play-btn-info">{{'PLAY' | translate}}</span>

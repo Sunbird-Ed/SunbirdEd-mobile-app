@@ -172,7 +172,20 @@
         </ng-container>
       </section>
       <ion-list class="sb-menu-list" lines="none">
+        <!-- ... existing code ... -->
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'DISCOVER_MENTORS')">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/discover_mentors.svg" class="tool-icon" aria-hidden="true" alt="Discover mentors">
+          </span>
+          <span class="sb-menu-item" role="button" menuClose>{{'DISCOVER_MENTORS' | translate}}</span>
+          <div class="new-feature-badge">
+            <div class="square-badge">New</div>
+            <div class="circle-badge"></div>
+          </div>
+        </ion-item>
+
+<!-- ... existing code ... -->
         <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/my_group.svg" class="tool-icon" aria-hidden="true" alt="my group">
@@ -215,7 +228,7 @@
           </span>
           <div class="sb-language">
             <div class="sb-menu-item" role="button">{{'LANGUAGE' | translate}}</div>
-            <div class="sb-menu-item-language">{{selectedLanguage}}</div>
+            <div class="sb-menu-item-langu  `age">{{selectedLanguage}}</div>
           </div>
         </ion-item>
 
@@ -235,6 +248,9 @@
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
+
+        
+
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
           <span class="sb-menu-icon">
@@ -328,6 +344,13 @@
           <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
 
+        <ion-item (click)="emitSideMenuItemEvent($event, 'DISCOVER_MENTORS')">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/discover_mentors.svg" aria-hidden="true" class="tool-icon" alt="Discover mentors">
+          </span>
+          <span class="sb-menu-item" role="button" menuClose>{{'DISCOVER_MENTORS' | translate}}</span>
+        </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="showReports">
             <span class="sb-menu-icon">
               <img src="./assets/imgs/Reports.png" aria-hidden="true" class="tool-icon" alt="reports">
@@ -398,6 +421,17 @@
             <div class="sb-menu-item-language">{{selectedLanguage}}</div>
           </div>
         </ion-item>
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'DISCOVER_MENTORS')">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/discover_mentors.svg" aria-hidden="true" class="tool-icon" alt="Discover mentors">
+          </span>
+          <div class="sb-language">
+            <div class="sb-menu-item" role="button">{{'DISCOVER_MENTORS' | translate}}</div>
+            <!-- You can display additional information or any other relevant content here -->
+          </div>
+        </ion-item>
+        
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
           <span class="sb-menu-icon">
