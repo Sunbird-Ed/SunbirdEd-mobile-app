@@ -2117,7 +2117,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
   }
-  .message,.projects-labels, .clr-primary {
+  .message,.projects-labels, .clr-primary, .alert-sub-title.sc-ion-alert-md {
     color: $white;
   }
   .attach-label, .action-sheet-icon {

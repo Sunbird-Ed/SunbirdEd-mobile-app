@@ -36,6 +36,11 @@ export class MatrixTypeInputComponent implements OnInit {
     private utils: UtilsService) { }
 
   ngOnInit() {
+    if(this.data?.completedInstance?.length){
+      this.data.completedInstance.forEach(element => {
+        this.data.value[element].isInstanceCompleted = true;
+      });
+    }
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
     this.initilaData = JSON.parse(JSON.stringify(this.data));
   }

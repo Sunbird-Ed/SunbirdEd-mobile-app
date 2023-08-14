@@ -498,7 +498,7 @@ export class ProjectTemplateviewPage implements OnInit {
           this.popupService.join(this.project,profileData).then((data :any) =>{
             if(data){
               this.project.programJoined = true
-              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programInformation.programId};
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programId};
               if(this.project.requestForPIIConsent){
                 this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
                   if(data){
