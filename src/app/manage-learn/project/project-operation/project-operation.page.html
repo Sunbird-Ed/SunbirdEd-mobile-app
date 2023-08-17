@@ -27,7 +27,7 @@
             {{'FRMELEMNTS_LBL_FROM' | translate }}  <ion-icon name="caret-down" slot="end"></ion-icon>
           </ion-label>
           <ion-input
-          (click)="setStartDate(true)" value="{{template.startDate | date :'dd/MM/YYYY'}}"
+          (click)="setStartDate(true)" value="{{template.startDate | date :'MMM dd, YYYY'}}"
           ></ion-input>
           <ion-popover [isOpen]="projecStartDateModalOpen"  (ionPopoverWillDismiss)="setStartDate(false)">
             <ng-template>
@@ -45,7 +45,7 @@
             {{'FRMELEMNTS_LBL_TO' | translate }} <ion-icon name="caret-down" slot="end"></ion-icon>
           </ion-label>
           <ion-input
-          (click)="setEndDate(true)" value="{{template.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+          (click)="setEndDate(true)" value="{{template.endDate | date :'MMM dd, YYYY'}}"></ion-input>
           <ion-popover [isOpen]="projectEndDateModalOpen" (ionPopoverWillDismiss)="setEndDate(false)">
             <ng-template>
           <ion-datetime presentation="date" id="endDate" min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"

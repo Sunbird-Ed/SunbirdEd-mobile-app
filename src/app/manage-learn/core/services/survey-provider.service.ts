@@ -147,7 +147,7 @@ export class SurveyProviderService {
   }
 
   createExpiryMsg(survey) {
-    const format = 'Do MMM YY';
+    const format = 'MMM DD, YYYY';
     const today = Date.now();
     const expiryDate:any = new Date(survey.endDate);
     const diffTime = expiryDate - today;
