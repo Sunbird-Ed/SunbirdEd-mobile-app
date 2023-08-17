@@ -847,6 +847,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.DISCOVER_MENTORS) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.SETTINGS}/${RouterLinks.DATA_SYNC}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.ADD_FILE}/`) !== -1)
@@ -887,6 +888,16 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
         await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
+        break;
+
+      case 'DISCOVER_MENTORS':
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.DISCOVER_MENTORS_CLICKED,
+          Environment.USER,
+          PageId.PROFILE
+        );
+        await this.router.navigate([`/${RouterLinks.DISCOVER_MENTORS}`], navigationExtrasUG);
         break;
 
       case 'SETTINGS': {

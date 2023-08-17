@@ -60,9 +60,9 @@ const routes: Routes = [
   { path: RouterLinks.SEARCH, loadChildren: () => import('./search/search.module').then(m => m.SearchPageModule) },
   { 
     path: RouterLinks.DISCOVER_MENTORS, 
-    loadChildren: () => import('./discover-mentors-search/discover-mentors.module').then(m => m.DiscoverMentorsModule) 
+    loadChildren: () => import('./discover-mentors/discover-mentors.module').then(m => m.DiscoverMentorsPageModule) 
   },
-  { path: 'filters-mentors', loadChildren: () => import('./discover-mentors-search/filters-mentors/filters-mentors.module').then(m => m.FiltersMentorsPageModule) },
+  // { path: 'filters-mentors', loadChildren: () => import('./discover-mentors/filters-mentors/filters-mentors.module').then(m => m.FiltersMentorsPageModule) },
   { path: RouterLinks.PROFILE, loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule) },
   { path: RouterLinks.ACTIVE_DOWNLOADS, loadChildren: () => import('./active-downloads/active-downloads.module').then(m => m.ActiveDownloadsPageModule) },
   { path: RouterLinks.COURSE_BATCHES, loadChildren: () => import('./course-batches/course-batches.module').then(m => m.CourseBatchesPageModule) },

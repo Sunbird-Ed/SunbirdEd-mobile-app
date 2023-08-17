@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { DiscoverMentors } from './discover-mentors.page';
+import { DiscoverMentorsPage } from './discover-mentors.page';
 import { ComponentsModule } from '../components/components.module';
 import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '../../directives/directives.module';
@@ -16,7 +16,7 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 const routes: Routes = [
   {
     path: '',
-    component: DiscoverMentors
+    component: DiscoverMentorsPage
   }
 ];
 
@@ -33,7 +33,7 @@ const routes: Routes = [
         CommonConsumptionModule
     ],
     declarations: [
-        DiscoverMentors
+        DiscoverMentorsPage
     ]
 })
-export class DiscoverMentorsModule {}
+export class DiscoverMentorsPageModule {}

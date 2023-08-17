@@ -520,7 +520,7 @@ export class RouterLinks {
     public static readonly SEARCH = 'search';
 
     // Discover Mentors Routes
-    public static readonly DISCOVER_MENTORS ='discover-mentors-search';
+    public static readonly DISCOVER_MENTORS ='discover-mentors';
     
     // QR Scanner Routes
     public static readonly QRSCANNER_ALERT = 'qrscanner-alert';
@@ -540,6 +540,7 @@ export class RouterLinks {
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
     public static readonly SEARCH_TAB = `/${RouterLinks.TABS}/${RouterLinks.SEARCH}`;
+    public static readonly DISCOVER_MENTORS_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER_MENTORS}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;

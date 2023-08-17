@@ -365,6 +365,7 @@ export enum InteractSubtype {
     CREATE_GROUP_CLICKED = 'create-group-clicked',
     EDIT_GROUP_SUCCESS = 'edit-group-success',
     MY_GROUPS_CLICKED = 'my-groups-clicked',
+    DISCOVER_MENTORS_CLICKED = 'discover-mentors-clicked',
     SUBMIT_CLICKED = 'submit-clicked',
     LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',
