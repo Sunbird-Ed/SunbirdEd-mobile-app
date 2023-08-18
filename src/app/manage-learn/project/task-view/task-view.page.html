@@ -10,7 +10,7 @@
         <img src="assets/imgs/timetable.png" class="filter-icon-calendar" (click)="setOpen(true)"  alt=""/>
       </ion-col>
       <ion-col size="9">
-      <ion-input  (click)="setOpen(true)" value="{{task.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+      <ion-input  (click)="setOpen(true)" value="{{task.endDate | date :'MMM dd, YYYY'}}"></ion-input>
     <ion-popover  [isOpen]="taskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
       <ng-template>
     <ion-datetime presentation="date" id="taskEndDate" #dateTime value="{{task?.endDate}}" display-timezone="utc"
@@ -73,7 +73,7 @@
           <ion-col size="6">
             <ion-item class="ion-date-time" lines="none">
               <img src="assets/imgs/timetable.png"  (click)="openSubtaskCalendar(true,subTaskIndex)" class="filter-icon subtask-date-picker" alt=""/>
-              <ion-input  (click)="openSubtaskCalendar(true,subTaskIndex)" value="{{subtask?.endDate | date :'dd/MM/YYYY'}}"></ion-input>
+              <ion-input  (click)="openSubtaskCalendar(true,subTaskIndex)" value="{{subtask?.endDate | date :'MMM dd, YYYY'}}"></ion-input>
               <ion-popover  [isOpen]="popoverReferences[subTaskIndex]" (ionPopoverWillDismiss)="openSubtaskCalendar(false,subTaskIndex)">
                 <ng-template>
               <ion-datetime presentation="date" id="subTaskEndDate" #dateTime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate"

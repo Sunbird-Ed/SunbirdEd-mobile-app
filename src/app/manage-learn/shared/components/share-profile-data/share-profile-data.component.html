@@ -8,7 +8,7 @@
       <div class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'"><b>{{'FRMELEMNTS_LBL_DATA_SHARING_ON' | translate}}</b></div>
       <div class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'"><b>{{'FRMELEMNTS_LBL_DATA_SHARING_OFF' | translate}}</b></div>
       <p *ngIf="dataSharingStatus=='ACTIVE'">{{"FRMELEMNTS_MSG_SHARE_DATA_INFO" | translate:{'type':type} }}
-        <br/>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdatedOn | date: 'dd/MM/yyyy'} }}
+        <br/>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdatedOn | date: 'MMM dd, YYYY'} }}
       </p>
       <p *ngIf="dataSharingStatus=='REVOKED'">{{"FRMELEMNTS_MSG_DONOT_SHARE_DATA_INFO" | translate:{'type':type} }}</p>
       <div class="edit-setting" (click)="toggleEditSettings()">{{ (showShareData ? 'FRMELEMNTS_BTN_CLOSE' : 'FRMELEMNTS_BTN_EDIT_SETTING') | translate }}</div>
