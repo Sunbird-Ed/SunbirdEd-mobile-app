@@ -500,6 +500,10 @@ export class ProjectListingComponent {
                 this.selectedProgram(project);
             }
         } else {
+            if(!this.networkFlag){
+                this.toastService.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
+                return
+            }
             this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                 data && data.isClicked ? this.createProject(data.isChecked) : '';
             })

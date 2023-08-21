@@ -22,7 +22,7 @@
     </ion-label>
     </div>
     <div class="flex">
-    <ion-input  (click)="setOpen(true)" value="{{newTask.endDate | date :'dd/MM/YYYY'}}" class="text-right"></ion-input>
+    <ion-input  (click)="setOpen(true)" value="{{newTask.endDate | date :'MMM dd, YYYY'}}" class="text-right"></ion-input>
     <ion-icon name="caret-down-outline" slot="end"></ion-icon>
     <ion-popover  [isOpen]="istaskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
       <ng-template>

@@ -14,7 +14,7 @@
       </ion-button>
       <ng-template #showMessage>
         <div class="program-joined-message">
-          {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'd/M/yyyy')}  }}
+          {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'MMM dd, YYYY')}  }}
         </div>
       </ng-template>      
     </div>
