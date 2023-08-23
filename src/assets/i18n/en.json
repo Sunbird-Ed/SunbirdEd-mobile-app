@@ -1376,9 +1376,9 @@
   "DEFAULT_FONT": "Default font size",
   "DECREASE_FONT": "Decrease font size",
   
-  "DISCOVER_MENTORS": "Discover Mentors",
+  "DISCOVER_MENTORS": "Discover Tutors/Mentors",
   "SEARCH_TO_FIND_MENTORS": "Search {{%s}} to find mentors",
 
-  "SEARCH_MENTORS": "Search Mentors",
-  "SEARCH_MENTORS_DESCRIPTION": "Search and find mentors on {{app_name}} from all classes, mediums and subjects",
+  "SEARCH_TUTORS": "Search Tutors/Mentors",
+  "SEARCH_TUTORS_DESCRIPTION": "Search and find mentors on {{app_name}} from all classes, mediums and subjects"
 }

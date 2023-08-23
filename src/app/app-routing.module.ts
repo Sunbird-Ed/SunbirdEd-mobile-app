@@ -59,8 +59,8 @@ const routes: Routes = [
   { path: RouterLinks.COURSES, loadChildren: () => import('./courses/courses.module').then(m => m.CoursesPageModule) },
   { path: RouterLinks.SEARCH, loadChildren: () => import('./search/search.module').then(m => m.SearchPageModule) },
   { 
-    path: RouterLinks.DISCOVER_MENTORS, 
-    loadChildren: () => import('./discover-mentors/discover-mentors.module').then(m => m.DiscoverMentorsPageModule) 
+    path: RouterLinks.DISCOVER_TUTORS, 
+    loadChildren: () => import('./discover-tutors/discover-tutors.module').then(m => m.DiscoverTutorsPageModule) 
   },
   // { path: 'filters-mentors', loadChildren: () => import('./discover-mentors/filters-mentors/filters-mentors.module').then(m => m.FiltersMentorsPageModule) },
   { path: RouterLinks.PROFILE, loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule) },

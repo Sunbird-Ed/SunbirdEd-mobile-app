@@ -497,31 +497,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             }
         }).catch(e => console.error(e));
     }
-    // async navigateToFilterMentorFormPage() {
-    //     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //         InteractSubtype.FILTER_BUTTON_CLICKED,
-    //         Environment.COURSE,
-    //         PageId.COURSE_PAGE_FILTER
-    //         );
-    //     const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true;
-    //     const inputFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria(isDataEmpty);
-    //     const openFiltersMentorsPage = await this.modalController.create({
-    //         component: SearchFiltersMentorsPage,
-    //         componentProps: {
-    //             initialFilterCriteria: inputFilterCriteria,
-    //             defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
-    //             existingSearchFilters: this.existingSearchFilters,
-    //             formAPIFacets: this.formAPIFacets
-    //         }
-    //     });
-    //     await openFiltersMentorsPage.present();
-    //     openFiltersMentorsPage.onDidDismiss().then(async (result) => {
-    //         if (result && result.data) {
-    //             this.resentFilterCriteria = result.data.appliedFilterCriteria;
-    //             await this.applyFilter(result.data.appliedFilterCriteria);
-    //         }
-    //     }).catch(e => console.error(e));
-    // }
+    
 
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria();
