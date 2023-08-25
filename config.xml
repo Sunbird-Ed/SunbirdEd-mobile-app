@@ -71,7 +71,6 @@
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/drawable-ldpi-splash.png" />
         <resource-file src="resources/android/icon/mipmap-hdpi-icon.png" target="app/src/main/res/mipmap-hdpi/n_icon.png" />
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
-        <resource-file src="splash_styles.xml" target="app/src/main/res/drawable/splash_styles.xml" />
     </platform>
     <platform name="ios">
         <allow-navigation href="*" />
