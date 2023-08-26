@@ -1,0 +1,36 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Filter Tutors</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="dismissModal()">Cancel</ion-button>
+        <ion-button (click)="applyFilter()">Apply</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <ion-label>Classes:</ion-label>
+    <ion-button-group>
+      <ion-button *ngFor="let classItem of classes" [class.active]="classItem.selected"
+                  (click)="toggleClass(classItem)">
+        {{ classItem.name }}
+      </ion-button>
+    </ion-button-group>
+  
+    <ion-label>Subjects:</ion-label>
+    <ion-button-group>
+      <ion-button *ngFor="let subjectItem of subjects" [class.active]="subjectItem.selected"
+                  (click)="toggleSubject(subjectItem)">
+        {{ subjectItem.name }}
+      </ion-button>
+    </ion-button-group>
+  
+    <ion-label>Mediums:</ion-label>
+    <ion-button-group>
+      <ion-button *ngFor="let mediumItem of mediums" [class.active]="mediumItem.selected"
+                  (click)="toggleMedium(mediumItem)">
+        {{ mediumItem.name }}
+      </ion-button>
+    </ion-button-group>
+  </ion-content>
+  

@@ -1,0 +1,27 @@
+ion-list {
+    ion-item {
+      ion-thumbnail {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+  
+      ion-label {
+        display: block;
+        overflow: hidden;
+      }
+  
+      h2 {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+      }
+  
+      p {
+        font-size: 0.8rem;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+  

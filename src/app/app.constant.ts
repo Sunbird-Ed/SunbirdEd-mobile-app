@@ -519,7 +519,7 @@ export class RouterLinks {
     
     public static readonly SEARCH = 'search';
 
-    // Discover Mentors Routes
+    // Discover Tutors Routes
     public static readonly DISCOVER_TUTORS ='discover-tutors';
     
     // QR Scanner Routes

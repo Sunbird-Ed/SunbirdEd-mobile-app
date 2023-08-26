@@ -1,88 +1,89 @@
-<!-- <ion-searchbar (ionChange)="searchTutors($event.detail.value)"></ion-searchbar>
-<app-tutor-list [tutors]="tutors"></app-tutor-list> -->
-
-<ion-content #contentView class="search-bg"></ion-content>
-    <div class="spinner-div" *ngIf="refresh">
-        <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
-    </div>
-    <ion-refresher #refresher slot="fixed" (ionRefresh)="discoverCmp.doRefresh($event)">
-        <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
-    </ion-refresher>
-    <div class="container-focus sticky-position" *ngIf="!hideSearchOption" [ngClass]="{'pt-0': searchInfolVisibility==='hide', '': searchInfolVisibility==='show'}">
-        <div class="search-info pt-8 mx-24">
-            <div [@labelVisibility]="searchInfolVisibility" [attr.aria-hidden]="searchInfolVisibility === 'hide'">
-                <strong class="title" role="heading" aria-level="1">{{'SEARCH_TUTORS' | translate}}</strong>
-                <p class="description">{{'SEARCH_TUTORS_DESCRIPTION' | translate}}</p>
-            </div>
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Discover Tutors</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <!-- Search Bar and Filter -->
+    <div class="container-focus sticky-position" *ngIf="!hideSearchOption">
+      <!-- Search Information -->
+      <div class="search-info pt-8 mx-24">
+        <div [@labelVisibility]="searchInfolVisibility" [attr.aria-hidden]="searchInfolVisibility === 'hide'">
+          <strong class="title" role="heading" aria-level="1">{{ 'SEARCH_TUTORS' | translate }}</strong>
+          <p class="description">{{ 'SEARCH_TUTORS_DESCRIPTION' | translate }}</p>
         </div>
-        <div class="search-container">
-            <div class="search-input d-flex">
-                <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-                    (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
-                    (ngModelChange)="searchContentResult = undefined; isEmptyResult = false"
-                    [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
-                </ion-input>
-                <button (click)="handleSearch()" aria-label="search" *ngIf="searchKeywords">
-                    <img src="assets/imgs/search.svg" alt="search">
-                </button>
-                <button (click)="handleCancel()" aria-label="clear search" *ngIf="searchKeywords">
-                    <img src="assets/imgs/ic_action_close.svg" alt="clear search">
-                </button>
-            </div>
+      </div>
+      
+      <!-- Search Input -->
+      <div class="search-container">
+        <div class="search-input d-flex">
+          <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{ commonUtilService.getAppDirection() }}"
+            (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
+            (ngModelChange)="searchContentResult = undefined; isEmptyResult = false"
+            [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
+          </ion-input>
+          <button (click)="handleSearch()" aria-label="search" *ngIf="searchKeywords">
+            <img src="assets/imgs/search.svg" alt="search">
+          </button>
+          <button (click)="handleCancel()" aria-label="clear search" *ngIf="searchKeywords">
+            <img src="assets/imgs/ic_action_close.svg" alt="clear search">
+          </button>
         </div>
+      </div>
     </div>
-
-
+  
+    <!-- Search History and Results -->
     <ng-container *ngIf="enableSearch">
-        <ng-container *ngIf="searchHistory$">
-            <ng-container *ngIf="searchHistory$ | async as searchHistory">
-                <ng-container *ngIf="!(
-                        showLoader ||
-                        isEmptyResult ||
-                        (dialCodeContentResult && dialCodeContentResult.length) ||
-                        (searchContentResult && searchContentResult.length) ||
-                        (!showLoader && showEmptyMessage)
-                    )">
-                    <ng-container *ngIf="!searchHistory.length && !searchKeywords">
-                        <div class="sb-no-search-history text-center">
-                            <span>
-                                {{'SEARCH_TO_FIND_MENTORS' | translate: {'%s': appName} }}
-                            </span>
-                        </div>
-                    </ng-container>
-
-                    <ng-container *ngIf="searchKeywords">
-                        <div class="sb-search-history-entry sb-search-header-meta row">
-                            <div class="col">
-                                {{'FRMELEMENTS_LBL_SEARCH_SUB_HEADING' | translate: {'appName': appName, 'searchText': searchKeywords} }}
-                            </div>
-                        </div>
-                    </ng-container>
-
-                    <ng-container *ngIf="searchHistory.length">
-                        <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
-                            class="sb-search-history-entry row">
-                            <div class="col">
-                                {{searchEntry.query}}
-                            </div>
-                        </div>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-        </ng-container>
-
-        <ng-container *ngIf="isEmptyResult">
-            <div class="sb-no-search-history">
+      <!-- Search History -->
+      <ng-container *ngIf="searchHistory$">
+        <ng-container *ngIf="searchHistory$ | async as searchHistory">
+          <!-- Display Search History or Empty Message -->
+          <ng-container *ngIf="!showLoader && !showEmptyMessage">
+            <ng-container *ngIf="!searchHistory.length && !searchKeywords">
+              <div class="sb-no-search-history text-center">
                 <span>
-                    {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+                  {{ 'SEARCH_TO_FIND_MENTORS' | translate: { '%s': appName } }}
                 </span>
-            </div>
+              </div>
+            </ng-container>
+  
+            <ng-container *ngIf="searchKeywords">
+              <div class="sb-search-history-entry sb-search-header-meta row">
+                <div class="col">
+                  {{ 'FRMELEMENTS_LBL_SEARCH_SUB_HEADING' | translate: { 'appName': appName, 'searchText': searchKeywords } }}
+                </div>
+              </div>
+            </ng-container>
+  
+            <ng-container *ngIf="searchHistory.length">
+              <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
+                class="sb-search-history-entry row">
+                <div class="col">
+                  {{ searchEntry.query }}
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
         </ng-container>
-
-
-
-
-    <ng-container *ngIf="!enableSearch">
-        <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
+      </ng-container>
+  
+      <!-- Empty Search Result Message -->
+      <ng-container *ngIf="isEmptyResult">
+        <div class="sb-no-search-history">
+          <span>
+            {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+          </span>
+        </div>
+      </ng-container>
+  
+      <!-- Display Tutor List -->
+      <app-tutor-list [tutors]="filteredTutors"></app-tutor-list>
     </ng-container>
-</ion-content>
+  
+    <!-- Display Discover Component -->
+    <ng-container *ngIf="!enableSearch">
+      <app-discover (hideRefresher)="hideRefresher($event)"></app-discover>
+    </ng-container>
+  </ion-content>
+  

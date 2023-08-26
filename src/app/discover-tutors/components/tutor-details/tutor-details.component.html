@@ -1,9 +1,18 @@
-<ion-card>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Tutor Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <img [src]="tutor.image" alt="Tutor Image">
     <ion-card-header>
       <ion-card-title>{{ tutor.name }}</ion-card-title>
+      <ion-card-subtitle>{{ tutor.occupation }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      Qualifications: {{ tutor.qualifications }}
-      <!-- Add other detailed information here -->
+      {{ tutor.description }}
     </ion-card-content>
   </ion-card>
+</ion-content>

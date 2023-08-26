@@ -1884,6 +1884,28 @@ describe('AppComponent', () => {
             );
         });
 
+        it('should navigate to discover tutors page when discover tutors is clicked in menu', () => {
+            // Arrange
+            const menuName = {
+                menuItem: 'DISCOVER_TUTORS'
+            };
+            const routeUrl = [`/${RouterLinks.DISCOVER_TUTORS}`];
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            
+            // Act
+            appComponent.menuItemAction(menuName);
+        
+            // Assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.DISCOVER_TUTORS_CLICKED,
+                Environment.USER,
+                PageId.PROFILE
+            );
+        });
+        
+
         it('should navigate to SETTINGS page when settings is clicked in menu', () => {
             // arrange
             const menuName = {

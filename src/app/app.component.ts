@@ -856,22 +856,24 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       } else {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
-          || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
-          || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
-          this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
-            if (this.platform.is('ios')) {
-              await this.headerService.showHeaderWithHomeButton();
+                || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
+                || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
+                this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
+                if (this.platform.is('ios')) {
+                    await this.headerService.showHeaderWithHomeButton();
+                } else {
+                    await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+                }
+            } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
+                this.headerService.sidebarEvent($event);
+            } else if (this.router.url === RouterLinks.DISCOVER_TUTORS_TAB) { // Handle the DISCOVER_TUTORS_TAB
+                this.headerService.sidebarEvent($event);
             } else {
-              await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+                if (this.location.back) {
+                    this.location.back();
+                }
             }
-        } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
-          this.headerService.sidebarEvent($event);
-        } else {
-          if (this.location.back) {
-            this.location.back();
-          }
         }
-      }
     } else {
       this.headerService.sidebarEvent($event);
     }
@@ -890,7 +892,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
-      case 'DISCOVER_MENTORS':
+      case 'DISCOVER_TUTORS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.DISCOVER_TUTORS_CLICKED,

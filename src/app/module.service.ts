@@ -48,7 +48,7 @@ const SCANNER_TAB = {
 
 const DOWNLOADS_TAB = {
     root: 'download-manager',
-    icon: 'downloads',
+    icon: 'downloe placeholders in thads',
     label: 'TAB_5',
     index: 4
 };
