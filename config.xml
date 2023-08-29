@@ -22,8 +22,8 @@
         <preference name="android-targetSdkVersion" value="33" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-        <hook src="scripts/android/fix-android-11-migration.js" type="before_run" />
-        <hook src="scripts/android/fix-android-11-migration.js" type="before_build" />
+        <hook src="scripts/android/fix-android-sdk33-migration.js" type="before_run" />
+        <hook src="scripts/android/fix-android-sdk33-migration.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_build" />
         <hook src="scripts/copyBundledData.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
