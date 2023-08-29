@@ -19,11 +19,11 @@
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <platform name="android">
         <hook src="attach-source-maps.js" type="before_build" />
-        <preference name="android-targetSdkVersion" value="32" />
+        <preference name="android-targetSdkVersion" value="33" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
-        <hook src="scripts/android/fix-android-11-migration.js" type="before_run" />
-        <hook src="scripts/android/fix-android-11-migration.js" type="before_build" />
+        <hook src="scripts/android/fix-android-sdk33-migration.js" type="before_run" />
+        <hook src="scripts/android/fix-android-sdk33-migration.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_build" />
         <hook src="scripts/copyBundledData.js" type="before_build" />
         <hook src="scripts/copyGradleFiles.js" type="before_run" />
@@ -52,6 +52,7 @@
         <preference name="android-manifest/application/@android:allowBackup" value="false" />
         <preference name="loadUrlTimeoutValue" value="700000" />
         <preference name="CodePushDeploymentKey" value="agojO-OZt4dZlt_pu9r9j2Ipy_jY90dbb065-3633-45a5-9c55-c0405eafaebb" />
+        <preference name="AndroidWindowSplashScreenAnimationDuration" value="5000" />
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <preference name="AndroidPersistentFileLocation" value="Compatibility" />
