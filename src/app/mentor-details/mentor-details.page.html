@@ -1,21 +1,20 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="yellow"> <!-- Set color to "primary" for the yellow background -->
-    <ion-buttons slot="start">
+  <ion-toolbar color="yellow">
+    <ion-buttons slots="start">
       <ion-back-button defaultHref="/mentors"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ mentor?.name }}</ion-title> <!-- Display mentor's name as the title -->
+    <ion-title>{{ mentor?.name }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <div class="profile-section">
-    <ion-img *ngIf="mentor" [src]="mentor.profileImageURL" alt="Mentor Image"></ion-img>
-  </div> -->
-
   <div class="info-section">
     <h2>{{ mentor?.name }}</h2>
     <p><strong>Specialist In:</strong> {{ mentor?.specialistIn }}</p>
   </div>
+
+  
+  
 
   <ion-card class="mentor-summary-card">
     <ion-card-header>
@@ -33,6 +32,33 @@
     <p>{{ mentor?.aboutMentor }}</p>
   </div>
   
-  <!-- Extra Booking Slots Button -->
-  <ion-button expand="full" class="extra-booking-button">Extra Booking Slots</ion-button>
+
+  <!-- Display slotss -->
+  <ion-list>
+    <!-- Use *ngFor to iterate through slotss and generate items -->
+    <ion-item *ngFor="let slot of slots">
+      <!-- <ion-avatar slots="start">
+        
+        <ion-img [src]="slot.item?.image" alt="{{ slot.item?.title }}"></ion-img>
+      </ion-avatar> -->
+      <div>
+        <h2>{{ slot.item?.title }}</h2>
+        <!-- <p><strong>Description:</strong> {{ slot.item?.description }}</p> -->
+        <p><strong>Price:</strong> {{ slot.item?.price }}</p>
+        <p><strong>Recommended For:</strong> {{ slot.recommendedFor[0]?.name }}</p>
+        <p><strong>Category:</strong> {{ slot.categories[0]?.name }}</p>
+        <!-- <p><strong>Provider:</strong> {{ slot.provider?.name }}</p> -->
+        <p><strong>Start Time:</strong> {{ slot.fulfillment?.startTime }}</p>
+        <p><strong>End Time:</strong> {{ slot.fulfillment?.endTime }}</p>
+        <p><strong>Language:</strong> {{ slot.fulfillment?.language[0] }}</p>
+        <p><strong>Type:</strong> {{ slot.fulfillment?.type }}</p>
+        <p><strong>Status:</strong> {{ slot.fulfillment?.status }}</p>
+        <p><strong>Time Zone:</strong> {{ slot.fulfillment?.timeZone }}</p>
+      </div>
+    </ion-item>
+  </ion-list>
+  
+
+
+  <!-- <ion-button expand="full" class="extra-booking-button">Extra Booking slotss</ion-button> -->
 </ion-content>
