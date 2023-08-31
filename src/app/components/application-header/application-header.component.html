@@ -183,17 +183,19 @@
             <div class="circle-badge"></div>
           </div>
         </ion-item>
-        
-        <ion-item (click)="emitSideMenuItemEvent($event, 'DISCOVER_TUTORS')">
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MENTORS')">
           <span class="sb-menu-icon">
-            <img src="./assets/imgs/discover_mentors.svg" class="tool-icon" aria-hidden="true" alt="my group">
+            <img src="./assets/imgs/ic_action_search.svg" aria-hidden="true" class="tool-icon" alt="mentors">
           </span>
-          <span class="sb-menu-item" role="button" menuClose>{{'DISCOVER_TUTORS' | translate}}</span>
+          <span class="sb-menu-item" role="button" menuClose>{{ 'MENTORS' | translate }}</span>
           <div class="new-feature-badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
           </div>
         </ion-item>
+        
+
 
         <ion-item (click)="switchTheme()">
           <span class="sb-menu-icon">
@@ -342,12 +344,6 @@
           <span class="sb-menu-item" role="button" menuClose>{{'MY_GROUPS' | translate}}</span>
         </ion-item>
         
-        <ion-item (click)="emitSideMenuItemEvent($event, 'DISCOVER_TUTORS')">
-          <span class="sb-menu-icon">
-            <img src="./assets/imgs/discover_mentors.svg" aria-hidden="true" class="tool-icon" alt="Discover tutors">
-          </span>
-          <span class="sb-menu-item" role="button" menuClose>{{'DISCOVER_TUTORS' | translate}}</span>
-        </ion-item>
 
         <ion-item (click)="emitSideMenuItemEvent($event, 'MLREPORTS')" *ngIf="showReports">
             <span class="sb-menu-icon">
@@ -359,6 +355,18 @@
               <div class="circle-badge"></div>
             </div>
         </ion-item>
+
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MENTORS')">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/ic_action_search.svg" aria-hidden="true" class="tool-icon" alt="mentors">
+          </span>
+          <span class="sb-menu-item" role="button" menuClose>{{ 'MENTORS' | translate }}</span>
+          <div class="new-feature-badge">
+            <div class="square-badge">New</div>
+            <div class="circle-badge"></div>
+          </div>
+        </ion-item>
+        
 
         <ion-item (click)="switchTabs()">
           <div class="beta-info">

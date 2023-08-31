@@ -26,7 +26,6 @@ describe('ContentPlayerHandler', () => {
             expect(activePageService.computePageId(RouterLinks.COURSE_TAB)).toEqual(PageId.COURSES);
             expect(activePageService.computePageId(RouterLinks.HOME_TAB)).toEqual(PageId.HOME);
             expect(activePageService.computePageId(RouterLinks.SEARCH_TAB)).toEqual(PageId.SEARCH);
-            expect(activePageService.computePageId(RouterLinks.DISCOVER_TUTORS_TAB)).toEqual(PageId.DISCOVER_TUTORS);
             expect(activePageService.computePageId(RouterLinks.PROFILE_TAB)).toEqual(PageId.PROFILE);
             expect(activePageService.computePageId(RouterLinks.GUEST_PROFILE_TAB)).toEqual(PageId.GUEST_PROFILE);
             expect(activePageService.computePageId(RouterLinks.DOWNLOAD_TAB)).toEqual(PageId.DOWNLOADS);

@@ -6,7 +6,9 @@
     </ion-button>
   </div>
   <div *ngIf="facetsFilter && facetsFilter.length">
+    <!-- Content inside this div will be displayed if facetsFilter is truthy and has a length greater than 0. -->
     <div *ngFor="let facet of facetsFilter">
+      <!-- Content inside this div will be repeated for each 'facet' in the 'facetsFilter' array. -->
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
         <div class="card-text">
           <ion-label class="ion-text-capitalize">{{ facet?.translatedName }}</ion-label>
@@ -18,6 +20,7 @@
       </div>
     </div>
   </div>
+  
 </ion-content>
 <ion-footer class="footer">
   <ion-row>

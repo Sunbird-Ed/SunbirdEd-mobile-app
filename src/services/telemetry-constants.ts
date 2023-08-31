@@ -169,8 +169,6 @@ export enum PageId {
     ACTIVITY_DASHBOARD = 'activity-dashboard',
     USER = 'user',
     RESOURCES = 'resources',
-
-    DISCOVER_TUTORS = 'discover-tutors'
 }
 
 export enum LogType {
@@ -343,6 +341,7 @@ export enum InteractSubtype {
     ANNOUNCEMENT_CLICKED = 'announcement-clicked',
     SIGNIN_OVERLAY_CLICKED = 'signin-overlay-clicked',
     SETTINGS_CLICKED = 'settings-clicked',
+    MENTORS_CLICKED = 'settings-clicked',
     NOT_NOW_CLICKED = 'not-now-clicked',
     ALLOW_CLICKED = 'allow-clicked',
     LANGUAGE_CLICKED = 'language-clicked',
@@ -367,7 +366,6 @@ export enum InteractSubtype {
     CREATE_GROUP_CLICKED = 'create-group-clicked',
     EDIT_GROUP_SUCCESS = 'edit-group-success',
     MY_GROUPS_CLICKED = 'my-groups-clicked',
-    DISCOVER_TUTORS_CLICKED = 'discover-tutors-clicked',
     SUBMIT_CLICKED = 'submit-clicked',
     LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',

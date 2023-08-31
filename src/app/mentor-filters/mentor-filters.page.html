@@ -1,0 +1,34 @@
+<!-- filter.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Filter By</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="applyFilter()">Apply</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Class</ion-label>
+      <ion-select [(ngModel)]="selectedClass">
+        <ion-select-option *ngFor="let cls of classes" [value]="cls">{{ cls }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Medium</ion-label>
+      <ion-select [(ngModel)]="selectedMedium">
+        <ion-select-option *ngFor="let medium of mediums" [value]="medium">{{ medium }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Subject</ion-label>
+      <ion-select [(ngModel)]="selectedSubject">
+        <ion-select-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</ion-content>

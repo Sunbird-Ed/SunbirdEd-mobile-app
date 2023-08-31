@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="yellow"> <!-- Set color to "primary" for the yellow background -->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/mentors"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ mentor?.name }}</ion-title> <!-- Display mentor's name as the title -->
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- <div class="profile-section">
+    <ion-img *ngIf="mentor" [src]="mentor.profileImageURL" alt="Mentor Image"></ion-img>
+  </div> -->
+
+  <div class="info-section">
+    <h2>{{ mentor?.name }}</h2>
+    <p><strong>Specialist In:</strong> {{ mentor?.specialistIn }}</p>
+  </div>
+
+  <ion-card class="mentor-summary-card">
+    <ion-card-header>
+      <ion-card-title>Mentor Summary</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Experience:</strong> {{ mentor?.experience }}</p>
+      <p><strong>Total Meetings:</strong> {{ mentor?.totalMeetings }}</p>
+      <p><strong>Qualification:</strong> {{ mentor?.qualification }}</p>
+      <p><strong>Professional Experience:</strong> {{ mentor?.professionalExperience }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="about-mentor">
+    <p>{{ mentor?.aboutMentor }}</p>
+  </div>
+  
+  <!-- Extra Booking Slots Button -->
+  <ion-button expand="full" class="extra-booking-button">Extra Booking Slots</ion-button>
+</ion-content>

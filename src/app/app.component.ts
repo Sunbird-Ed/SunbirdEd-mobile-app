@@ -847,7 +847,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
-        || (routeUrl.indexOf(RouterLinks.DISCOVER_TUTORS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.MENTORS) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.SETTINGS}/${RouterLinks.DATA_SYNC}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.ADD_FILE}/`) !== -1)
@@ -865,8 +865,6 @@ export class AppComponent implements OnInit, AfterViewInit {
                     await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
                 }
             } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
-                this.headerService.sidebarEvent($event);
-            } else if (this.router.url === RouterLinks.DISCOVER_TUTORS_TAB) { // Handle the DISCOVER_TUTORS_TAB
                 this.headerService.sidebarEvent($event);
             } else {
                 if (this.location.back) {
@@ -892,15 +890,16 @@ export class AppComponent implements OnInit, AfterViewInit {
         await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
-      case 'DISCOVER_TUTORS':
+      case 'MENTORS': {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.DISCOVER_TUTORS_CLICKED,
+          InteractSubtype.MENTORS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
-        await this.router.navigate([`/${RouterLinks.DISCOVER_TUTORS}`], navigationExtrasUG);
+        await this.router.navigate([`/${RouterLinks.MENTORS}`]);
         break;
+      }
 
       case 'SETTINGS': {
         this.telemetryGeneratorService.generateInteractTelemetry(

@@ -1,0 +1,106 @@
+ion-header {
+    
+    ion-toolbar {
+      --background: #000000; /* Set header background color to yellow */
+      ion-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #000000; /* Set title color */
+      }
+      ion-back-button {
+        color: #000000; /* Set back button color */
+      }
+    }
+  }
+  
+  ion-content {
+    background-color: #afabab;
+    .profile-section {
+    background: #ffc400;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      ion-img {
+        display: block;
+    margin: 0 auto;
+    max-width: 100%; /* Ensure the image fits within its container */
+    border-radius: 50%; /* Make the image circular */
+    overflow: hidden; /* Hide any overflowing content */
+    border: 8px solid #ffffff; /* Add a 2px solid black border */
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: transform 0.3s ease-in-out; /* Add smooth transition for transform */
+    cursor: pointer; /* Change cursor to indicate interactivity */
+    &:hover {
+      transform: scale(1.05); /* Slightly scale up the image on hover */
+    }
+      }
+    }
+    
+    .info-section {
+      text-align: center;
+      padding: 16px;
+      h2 {
+        font-weight: bold;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      p {
+        font-size: 16px;
+        color: #777;
+      }
+    }
+  
+    .mentor-summary-card {
+      margin: 16px;
+      ion-card-header {
+        ion-card-title {
+          font-size: 20px;
+          font-weight: bold;
+        }
+      }
+      ion-card-content {
+        ion-label {
+          color: #555;
+          font-size: 16px;
+          line-height: 1.5;
+        }
+      }
+    }
+  
+    .about-mentor {
+      padding: 16px;
+      ion-img {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%; /* Ensure the image fits within its container */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+        transform: rotate(-2deg); /* Apply a slight rotation to the image */
+        transition: transform 0.3s ease-in-out; /* Add smooth transition for rotation */
+        cursor: pointer; /* Change cursor to indicate interactivity */
+        &:hover {
+          transform: rotate(0deg); /* Reset rotation on hover */
+        }
+      }s
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #555;
+        margin-top: 8px;
+      }
+    }
+    .extra-booking-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        margin: 16px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+  }
+  

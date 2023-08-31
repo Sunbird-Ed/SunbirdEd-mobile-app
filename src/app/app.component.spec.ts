@@ -1884,22 +1884,21 @@ describe('AppComponent', () => {
             );
         });
 
-        it('should navigate to discover tutors page when discover tutors is clicked in menu', () => {
-            // Arrange
+        it('should navigate to mentors page when mentors is clicked in menu', () => {
+            // arrange
             const menuName = {
-                menuItem: 'DISCOVER_TUTORS'
+                menuItem: 'MENTORS'
             };
-            const routeUrl = [`/${RouterLinks.DISCOVER_TUTORS}`];
+            const routeUrl = [`/${RouterLinks.MENTORS}`];
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            
-            // Act
+            // act
             appComponent.menuItemAction(menuName);
-        
-            // Assert
+
+            // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
-                InteractSubtype.DISCOVER_TUTORS_CLICKED,
+                InteractSubtype.MENTORS_CLICKED,
                 Environment.USER,
                 PageId.PROFILE
             );

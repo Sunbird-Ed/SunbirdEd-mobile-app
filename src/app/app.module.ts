@@ -91,6 +91,8 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
 import onboarding from './../assets/configurations/config.json';
+
+
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
