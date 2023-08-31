@@ -1,34 +1,48 @@
-<!-- tutor-list.page.html -->
-<ion-header>
-    <ion-toolbar>
-      <ion-title>Discover Mentors</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>mentors</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="top-section">
+    <ion-item>
+      <ion-select (ionChange)="onClassChange($event)" placeholder="Class">
+        <ion-select-option *ngFor="let classOption of classes" [value]="classOption">
+          {{ classOption }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select (ionChange)="onSubjectChange($event)" placeholder="Subject">
+        <ion-select-option *ngFor="let subjectOption of subjects" [value]="subjectOption">
+          {{ subjectOption }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select (ionChange)="onLanguageChange($event)" placeholder="Medium">
+        <ion-select-option *ngFor="let languageOption of languageOptions" [value]="languageOption">
+          {{ languageOption }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
   
-  <ion-content>
-    <div class="top-section">
-      <ion-item>
-        <ion-select (ionChange)="onSessionTitleChange($event)" placeholder="Select a Session Title">
-          <ion-select-option *ngFor="let title of sessionTitles" [value]="title.title">
-            {{ title.title }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-    </div>
-    
-    <ion-list>
-      <!-- Use *ngFor to iterate through mentors and generate items -->
-      <ion-item button *ngFor="let item of mentors" [routerLink]="['/mentor', item.mentor.id]">
-        <ion-avatar slot="start">
-          <!-- Use a random image URL from the web as the src attribute -->
-          <img [src]="getRandomImageURL()" alt="Mentor Image" />
-        </ion-avatar>
-        <div>
-          <h2>{{ item.mentor.name }}</h2>
-          <p>{{ item.mentor.professionalExperience }}</p>
-          <p>{{ item.mentor.qualification }}</p>
-        </div>
-      </ion-item>
-    </ion-list>
-  </ion-content>
-  
+  <ion-list>
+    <!-- Use *ngFor to iterate through mentors and generate items -->
+    <ion-item button *ngFor="let item of mentors" [routerLink]="['/mentor', item.mentor.id]">
+      <ion-avatar slot="start">
+        <!-- Use a random image URL from the web as the src attribute -->
+        <img [src]="getRandomImageURL()" alt="Mentor Image" />
+      </ion-avatar>
+      <div>
+        <h2>{{ item.mentor.name }}</h2>
+        <p>{{ item.mentor.professionalExperience }}</p>
+        <p>{{ item.mentor.qualification }}</p>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

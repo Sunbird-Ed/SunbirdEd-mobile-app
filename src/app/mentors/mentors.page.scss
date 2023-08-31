@@ -1,70 +1,69 @@
 ion-content {
-    .top-section {
-      background-color: rgba(255, 196, 0, 0.87);
-      padding: 16px;
+  .top-section {
+    background-color: rgba(255, 196, 0, 0.87);
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // .filter-button {
+  //   background-color: #007bff; /* Blue background color */
+  //   color: white;
+  //   border: none;
+  //   padding: 10px 20px;
+  //   border-radius: 4px; /* Curved boundary */
+  //   cursor: pointer;
+  //   font-size: 14px;
+  //   transition: background-color 0.3s ease-in-out;
+  // }
+
+  // .filter-button:hover {
+  //   background-color: #0056b3; /* Darker blue on hover */
+  // }
+
+  ion-list {
+    background: rgb(218, 208, 208);
+
+    ion-item {
       display: flex;
-      justify-content: center;
       align-items: center;
-    }
-  
-    // .filter-button {
-    //   background-color: #007bff; /* Blue background color */
-    //   color: white;
-    //   border: none;
-    //   padding: 10px 20px;
-    //   border-radius: 4px; /* Curved boundary */
-    //   cursor: pointer;
-    //   font-size: 14px;
-    //   transition: background-color 0.3s ease-in-out;
-    // }
-  
-    // .filter-button:hover {
-    //   background-color: #0056b3; /* Darker blue on hover */
-    // }
-  
-    ion-list {
-      background: rgb(218, 208, 208);
-  
-      ion-item {
+      gap: 16px;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+      margin: 10px;
+
+      ion-avatar {
+        width: 30%;
+        height: 100%;
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 16px;
-        border-radius: 8px; /* Curved boundary */
-        background-color: white;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Box shadow */
-        padding: 12px;
-        margin: 10px;
-  
-        ion-avatar {
-          width: 30%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-  
-          img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-          }
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
         }
-  
-        ion-label {
-          flex: 1;
-  
-          h2 {
-            font-size: 18px;
-            margin-bottom: 4px;
-          }
-  
-          p {
-            font-size: 14px;
-            color: #777;
-            margin-bottom: 3px;
-          }
+      }
+
+      ion-label {
+        flex: 1;
+
+        h2 {
+          font-size: 18px;
+          margin-bottom: 4px;
+        }
+
+        p {
+          font-size: 14px;
+          color: #777;
+          margin-bottom: 3px;
         }
       }
     }
   }
-  
+}

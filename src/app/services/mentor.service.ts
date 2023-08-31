@@ -1,25 +1,3 @@
-// // mentor.service.ts
-
-// import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class MentorService {
-//   private baseUrl = 'your-backend-api-url'; // Replace with your actual backend API URL
-
-//   constructor(private http: HttpClient) {}
-
-//   getMentors(): Observable<any[]> {
-//     return this.http.get<any[]>(`${this.baseUrl}/mentors`);
-//   }
-
-//   getMentorDetails(mentorId: string): Observable<any> {
-//     return this.http.get<any>(`${this.baseUrl}/mentors/${mentorId}`);
-//   }
-// }
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -38,12 +16,12 @@ export class MentorService {
 
   constructor(private http: HttpClient) {}
 
-   searchMentorsBySessionTitle(sessionTitle: string): Observable<any[]> {
+  searchMentorsByCriteria(criteria: string): Observable<any[]> {
     const url = `${this.baseUrl}search`;
 
     const headers = new HttpHeaders().set('Authorization', this.authToken);
     const body = {
-      sessionTitle: sessionTitle,
+      sessionTitle: criteria, // Use criteria as sessionTitle
       type: 'mentor'
     };
 
@@ -56,7 +34,7 @@ export class MentorService {
         console.error('Error fetching mentors:', error);
         throw error; // Rethrow the error to propagate it to the caller
       })
-    )
+    );
   }
 
   getMentorDetails(mentorId: string): Observable<any> {
