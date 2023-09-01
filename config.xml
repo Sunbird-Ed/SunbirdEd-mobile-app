@@ -19,7 +19,7 @@
     <hook src="scripts/copyContentPlayer.js" type="before_run" />
     <platform name="android">
         <hook src="attach-source-maps.js" type="before_build" />
-        <preference name="android-targetSdkVersion" value="33" />
+        <preference name="android-targetSdkVersion" value="32" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_run" />
         <hook src="scripts/deleteUnUsableIosIcon.js" type="before_build" />
         <hook src="scripts/android/fix-android-11-migration.js" type="before_run" />
