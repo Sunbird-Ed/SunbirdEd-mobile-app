@@ -195,6 +195,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   nextContentToBePlayed: any;
   isPlayerPlaying = false;
   showMoreFlag: any = false;
+  navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
 
   constructor(
@@ -537,7 +538,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         }
-        this.location.back();
+        if (!this.navigateBackFlag) {
+          this.navigateBackFlag = true;
+          this.location.back();
+        }
       });
   }
 
