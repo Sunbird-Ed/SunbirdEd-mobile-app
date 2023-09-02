@@ -2,14 +2,14 @@
 
 ion-header {
   ion-toolbar {
-    --background: #000000; /* Set header background color to black */
+    --background: #f7ca00; /* Set header background color */
     ion-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #ffffff; /* Set title color to white */
+      font-size: 24px; /* Header title font size */
+      font-weight: bold; /* Header title font weight */
+      color: #333; /* Header title text color */
     }
     ion-back-button {
-      color: #ffffff; /* Set back button color to white */
+      color: #333; /* Back button color */
     }
   }
 }
@@ -17,51 +17,99 @@ ion-header {
 ion-content {
   background-color: #f5f5f5; /* Set background color for the content area */
   
-    /* mentor-details.page.scss */
-
-/* mentor-details.page.scss */
-
-/* mentor-details.page.scss */
-
-ion-list {
-  display: flex;
-  flex-direction: column; /* Align items vertically */
-  align-items: center; /* Center align items horizontally */
-}
-
-ion-item {
-  background-color: #ffffff; /* Set item background color to white */
-  border: 3px solid #3880ff; /* Add a subtle border to each item */
-  border-radius: 10px; /* Add rounded corners to each item */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add a shadow to each item */
-  padding: 15px; /* Add padding to each item (top and bottom) */
-  margin-bottom: 20px; /* Add spacing between items */
-  width: 90%; /* Set the width of the item */
-  max-width: 400px; /* Add a maximum width to limit the card size */
-
-  div {
-    display: flex;
-    flex-direction: column; /* Stack item details vertically */
-    align-items: flex-start; /* Align details to the left */
+  .info-section {
+    text-align: center;
+    padding: 16px;
 
     h2 {
-      font-size: 1.4rem; /* Reduce font size for the title */
       font-weight: bold;
-      margin: 0;
-      color: #333; /* Text color for the title */
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #f7ca00; /* Yellow color for mentor name */
     }
 
     p {
-      font-size: 1rem; /* Reduce the font size for the details */
-      margin: 8px 0; /* Add margin to separate details */
-      color: #555; /* Text color for details */
+      font-size: 16px;
+      color: #777;
+    }
+  }
+
+  .mentor-summary-card {
+    margin: 16px;
+    background-color: #ffdb58; /* Different color for summary card */
+
+    ion-card-header {
+      ion-card-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
     }
 
-    /* Add more styles as needed for different elements */
+    ion-card-content {
+      ion-label {
+        color: #555;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+    }
   }
-}
 
+  .about-mentor {
+    padding: 16px;
 
+    ion-img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%; /* Ensure the image fits within its container */
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+      transform: rotate(-2deg); /* Apply a slight rotation to the image */
+      transition: transform 0.3s ease-in-out; /* Add smooth transition for rotation */
+      cursor: pointer; /* Change cursor to indicate interactivity */
+
+      &:hover {
+        transform: rotate(0deg); /* Reset rotation on hover */
+      }
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #555;
+      margin-top: 8px;
+    }
+  }
+
+  ion-list {
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    align-items: center; /* Center align items horizontally */
+  }
+
+  ion-item {
+    
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    background-color: white;
+    
+    
+
+    h2 {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    ion-button {
+      display: none; // Initially hide the booking button
+    }
+  }
+
+  ion-item.active {
+    ion-button {
+      display: block; // Show the booking button on item click
+    }
+  }
 
   .profile-section {
     background: #ffc400;
@@ -79,65 +127,43 @@ ion-item {
       box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1); /* Add shadow */
       transition: transform 0.3s ease-in-out; /* Add smooth transition for transform */
       cursor: pointer; /* Change cursor to indicate interactivity */
+
       &:hover {
         transform: scale(1.05); /* Slightly scale up the image on hover */
       }
     }
   }
 
-  .info-section {
-    text-align: center;
-    padding: 16px;
-    h2 {
-      font-weight: bold;
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: #333;
-    }
-    p {
-      font-size: 16px;
-      color: #777;
-    }
-  }
+  /* Update the slot card styling based on your preferences */
+  .slot-card {
+    background-color: #ffffff; /* Card background color */
+    margin: 8px; /* Card margin */
+    border-radius: 8px; /* Card border radius */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card box shadow */
 
-  .mentor-summary-card {
-    margin: 16px;
     ion-card-header {
+      background-color: #ffcc00; /* Header background color */
+
       ion-card-title {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 18px; /* Header title font size */
+        color: #333; /* Header title text color */
       }
     }
+
     ion-card-content {
-      ion-label {
-        color: #555;
-        font-size: 16px;
-        line-height: 1.5;
+      p {
+        margin-top: 8px; /* Spacing between content and title */
+        font-size: 16px; /* Content font size */
+        color: #777; /* Content text color */
+      }
+
+      strong {
+        font-weight: bold; /* Make strong text bold */
       }
     }
-  }
 
-  .about-mentor {
-    padding: 16px;
-    ion-img {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%; /* Ensure the image fits within its container */
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
-      transform: rotate(-2deg); /* Apply a slight rotation to the image */
-      transition: transform 0.3s ease-in-out; /* Add smooth transition for rotation */
-      cursor: pointer; /* Change cursor to indicate interactivity */
-      &:hover {
-        transform: rotate(0deg); /* Reset rotation on hover */
-      }
-    }
-    p {
-      font-size: 16px;
-      line-height: 1.5;
-      color: #555;
-      margin-top: 8px;
+    ion-button {
+      margin: 8px; /* Spacing between button and content */
     }
   }
-
-  
 }

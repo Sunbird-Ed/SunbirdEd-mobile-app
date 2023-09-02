@@ -5,48 +5,57 @@ ion-content {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  // .filter-button {
-  //   background-color: #007bff; /* Blue background color */
-  //   color: white;
-  //   border: none;
-  //   padding: 10px 20px;
-  //   border-radius: 4px; /* Curved boundary */
-  //   cursor: pointer;
-  //   font-size: 14px;
-  //   transition: background-color 0.3s ease-in-out;
-  // }
-
-  // .filter-button:hover {
-  //   background-color: #0056b3; /* Darker blue on hover */
-  // }
-
-  ion-list {
-    background: rgb(218, 208, 208);
 
     ion-item {
-      display: flex;
+      ion-select {
+        --ion-background-color: rgba(255, 255, 255, 0.9);
+        --ion-border-color: #ffcc00;
+        --ion-placeholder-color: #ffcc00;
+        --ion-color: #333; /* Text color */
+        --ion-color-focused: #333;
+        --ion-color-hover: #333;
+        --ion-color-disabled: #777;
+
+        &.select-icon {
+          color: #ffcc00;
+        }
+      }
+    }
+  }
+
+  ion-list {
+    background: #f3f3f3; /* Light gray background color */
+
+    ion-item {
+      
       align-items: center;
       gap: 16px;
       border-radius: 8px;
       background-color: white;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 12px;
+      border: 2px solid #ffcc00; /* Yellow border */
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow */
       margin: 10px;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+      &:hover {
+        transform: translateY(-5px); /* More prominent lift on hover */
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Highlight on hover */
+      }
 
       ion-avatar {
-        width: 30%;
-        height: 100%;
+        width: 60px;
+        height: 60px;
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: #ffcc00; /* Yellow background */
+        border-radius: 50%;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 
         img {
           width: 100%;
           height: auto;
-          border-radius: 8px;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          border-radius: 50%; /* Make the avatar image circular */
         }
       }
 
@@ -54,16 +63,32 @@ ion-content {
         flex: 1;
 
         h2 {
-          font-size: 18px;
-          margin-bottom: 4px;
+          font-size: 20px;
+          margin-bottom: 8px;
+          color: #333; /* Text color */
         }
 
         p {
-          font-size: 14px;
+          font-size: 16px;
           color: #777;
-          margin-bottom: 3px;
+          margin-bottom: 6px;
         }
       }
     }
+  }
+}
+
+// Styling for buttons
+ion-button {
+  background-color: #007bff; /* Blue background color */
+  color: white;
+  border: none;
+  border-radius: 12px; /* Rounded edges */
+  padding: 12px 24px; /* Increased padding */
+  font-size: 18px; /* Improved font size */
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #0056b3; /* Darker blue on hover */
   }
 }

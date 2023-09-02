@@ -13,9 +13,6 @@
     <p><strong>Specialist In:</strong> {{ mentor?.specialistIn }}</p>
   </div>
 
-  
-  
-
   <ion-card class="mentor-summary-card">
     <ion-card-header>
       <ion-card-title>Mentor Summary</ion-card-title>
@@ -31,34 +28,19 @@
   <div class="about-mentor">
     <p>{{ mentor?.aboutMentor }}</p>
   </div>
-  
 
-  <!-- Display slotss -->
   <ion-list>
-    <!-- Use *ngFor to iterate through slotss and generate items -->
+    <!-- Use *ngFor to iterate through slots and generate items -->
     <ion-item *ngFor="let slot of slots">
-      <!-- <ion-avatar slots="start">
-        
-        <ion-img [src]="slot.item?.image" alt="{{ slot.item?.title }}"></ion-img>
-      </ion-avatar> -->
-      <div>
-        <h2>{{ slot.item?.title }}</h2>
-        <!-- <p><strong>Description:</strong> {{ slot.item?.description }}</p> -->
-        <p><strong>Price:</strong> {{ slot.item?.price }}</p>
-        <p><strong>Recommended For:</strong> {{ slot.recommendedFor[0]?.name }}</p>
-        <p><strong>Category:</strong> {{ slot.categories[0]?.name }}</p>
-        <!-- <p><strong>Provider:</strong> {{ slot.provider?.name }}</p> -->
-        <p><strong>Start Time:</strong> {{ slot.fulfillment?.startTime }}</p>
-        <p><strong>End Time:</strong> {{ slot.fulfillment?.endTime }}</p>
-        <p><strong>Language:</strong> {{ slot.fulfillment?.language[0] }}</p>
-        <p><strong>Type:</strong> {{ slot.fulfillment?.type }}</p>
-        <p><strong>Status:</strong> {{ slot.fulfillment?.status }}</p>
-        <p><strong>Time Zone:</strong> {{ slot.fulfillment?.timeZone }}</p>
-      </div>
+      <ion-card class="slot-card">
+        <ion-card-header>
+          <ion-card-title>{{ slot.fulfillment?.startTime | date: 'short' }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p><strong>Status:</strong> {{ slot.fulfillment?.status }}</p>
+        </ion-card-content>
+        <ion-button slot="end" expand="block" fill="clear" color="primary">BOOK SLOT</ion-button>
+      </ion-card>
     </ion-item>
   </ion-list>
-  
-
-
-  <!-- <ion-button expand="full" class="extra-booking-button">Extra Booking slotss</ion-button> -->
 </ion-content>
