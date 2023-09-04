@@ -2,6 +2,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MentorService } from '../services/mentor.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-mentor-details',
@@ -14,7 +15,7 @@ export class MentorDetailsPage implements OnInit {
   mentor: any
   slots: any[] = []
 
-  constructor(private route: ActivatedRoute, private mentorService: MentorService) {}
+  constructor(private route: ActivatedRoute, private mentorService: MentorService, private modalController: ModalController) {}
 
   ngOnInit() {
     // Get the mentor ID from the route parameter
@@ -28,6 +29,19 @@ export class MentorDetailsPage implements OnInit {
     this.slots = res.slots
     console.log(res)
   }
+
+  // async bookSlot(slot: any) {
+  //   // You can implement your booking logic here
+  //   // For now, let's just open a modal to simulate booking
+  //   const modal = await this.modalController.create({
+  //     component: BookingModalPage, // Create a Booking Modal Page
+  //     componentProps: {
+  //       slot: slot
+  //     }
+  //   });
+    
+  //   await modal.present();
+  // }
 }
 
 

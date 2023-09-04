@@ -1,19 +1,22 @@
 /* mentor-details.page.scss */
 
-ion-header {
-  ion-toolbar {
-    --background: #f7ca00; /* Set header background color */
-    ion-title {
-      font-size: 24px; /* Header title font size */
-      font-weight: bold; /* Header title font weight */
-      color: #333; /* Header title text color */
-    }
-    ion-back-button {
-      color: #333; /* Back button color */
-    }
-  }
-}
-
+// ion-header {
+//   ion-toolbar {
+//     --background: #f7ca00; /* Set header background color */
+//     ion-title {
+//       font-size: 24px; /* Header title font size */
+//       font-weight: bold; /* Header title font weight */
+//       color: #333; /* Header title text color */
+//     }
+//     ion-back-button {
+//       color: #333; /* Back button color */
+//     }
+//   }
+// }
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 ion-content {
   background-color: #f5f5f5; /* Set background color for the content area */
   

@@ -34,7 +34,7 @@ html[data-theme="JOYFUL"]{
   --app-light-green:#BFE1CF; // take it out
 
   --app-shadow:rgba(0,0,0,0.1);
-  --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  // --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
   --button-sm-style-shadow: 3px 3px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
@@ -72,7 +72,7 @@ html[data-theme="JOYFUL"]{
   }
 
   button{
-    border-radius: 20px !important;
+    // border-radius: 20px !important;
     color: var(--app-white);
     // background-color: var(--app-primary) !important;
   }
@@ -131,10 +131,10 @@ html[data-theme="JOYFUL"]{
         background-color: var(--app-primary) !important;
       }
     }
-    button {
-      background-color: var(--app-primary) !important;
-      color: var(--app-white) !important;
-    }
+    // button {
+    //   background-color: var(--app-primary) !important;
+    //   color: var(--app-white) !important;
+    // }
   }
 
   ion-card{
