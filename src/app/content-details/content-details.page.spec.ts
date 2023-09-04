@@ -899,6 +899,7 @@ describe('ContentDetailsPage', () => {
             mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }));
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
+            contentDetailsPage.navigateBackFlag = false; 
             jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
             jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
                 return Promise.resolve();
@@ -937,6 +938,7 @@ describe('ContentDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             contentDetailsPage.isDownloadStarted = false;
+            contentDetailsPage.navigateBackFlag = false; 
             mockLocation.back = jest.fn();
             // act
             contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
@@ -964,6 +966,7 @@ describe('ContentDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             contentDetailsPage.isDownloadStarted = true;
+            contentDetailsPage.navigateBackFlag = false; 
             mockLocation.back = jest.fn();
             // act
             contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
@@ -991,6 +994,7 @@ describe('ContentDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             contentDetailsPage.isDownloadStarted = true;
+            contentDetailsPage.navigateBackFlag = false; 
             mockLocation.back = jest.fn();
             // act
             contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
