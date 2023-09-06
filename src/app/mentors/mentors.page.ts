@@ -9,7 +9,7 @@ import { MD5 } from 'crypto-js';
   styleUrls: ['mentors.page.scss']
 })
 export class MentorsPage {
-  mentors: any[] = [];
+  mentors: any[] = []; // Array to store mentor data
   subjects: string[] = [
     'Accountancy',
     'Agriculture Science',
@@ -42,6 +42,7 @@ export class MentorsPage {
   ) {}
 
   async presentLoading() {
+    // Create and present a loading indicator
     this.loader = await this.loadingController.create({
       message: 'Fetching mentors...',
     });
@@ -50,6 +51,7 @@ export class MentorsPage {
 
   async dismissLoading() {
     if (this.loader) {
+      // Dismiss the loading indicator if it exists
       await this.loader.dismiss();
       this.loader = null;
     }
@@ -72,6 +74,7 @@ export class MentorsPage {
 
   async searchMentors() {
     if (!this.selectedClass || !this.selectedSubject || !this.selectedLanguage) {
+      // If any of the selection criteria is missing, reset the mentors array and return
       this.mentors = [];
       return;
     }
@@ -80,7 +83,7 @@ export class MentorsPage {
     const criteria = `${this.selectedClass.replace(' ', '')}${this.selectedSubject}${this.selectedLanguage}OLT`;
 
     try {
-      this.presentLoading();
+      this.presentLoading(); // Show loading indicator
       const resp = await this.mentorService.searchMentorsByCriteria(criteria).toPromise();
       if (resp) {
         this.mentors = resp;
@@ -91,7 +94,7 @@ export class MentorsPage {
     } catch (error) {
       console.log(`Error fetching mentors for Criteria ${criteria}:`, error);
     } finally {
-      this.dismissLoading();
+      this.dismissLoading(); // Dismiss loading indicator whether successful or not
     }
   }
 

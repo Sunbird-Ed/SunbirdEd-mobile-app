@@ -22,8 +22,10 @@ export class MentorDetailsPage implements OnInit {
     const mentorId = this.route.snapshot.paramMap.get('mentorId');
     console.log(mentorId)
     
+    // Get the list of mentors from the MentorService
     this.mentors = this.mentorService.getMentorsList()
     // console.log(`Mentors : ${JSON.stringify(this.mentors)}`)
+    // Find the mentor and slots corresponding to the given mentorId
     let res = this.mentors.find(i => i.mentor.id === mentorId)
     this.mentor = res.mentor
     this.slots = res.slots
