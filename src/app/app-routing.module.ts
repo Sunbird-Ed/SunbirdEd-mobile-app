@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'mentor/:mentorId', // Change ':id' to ':mentorId'
     loadChildren: () => import('./mentor-details/mentor-details.module').then(m => m.MentorDetailsPageModule)
   },
+  {
+    path: 'booking-popup',
+    loadChildren: () => import('./booking-popup/booking-popup.module').then( m => m.BookingPopupPageModule)
+  },
 
   {
     path: `${RouterLinks.LANGUAGE_SETTING}/:isFromSettings`,

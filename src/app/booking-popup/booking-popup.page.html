@@ -1,0 +1,20 @@
+<!-- src/app/pages/booking-popup/booking-popup.page.html -->
+
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Book a Slot</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeModal()">Close</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input [(ngModel)]="email" type="email"></ion-input>
+    </ion-item>
+  
+    <ion-button expand="block" color="primary" (click)="bookSession()">Book Slot</ion-button>
+  </ion-content>
+  

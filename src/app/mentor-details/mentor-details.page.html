@@ -30,17 +30,23 @@
   </div>
 
   <ion-list>
-    <!-- Use *ngFor to iterate through slots and generate items -->
     <ion-item *ngFor="let slot of slots">
-      <ion-card class="slot-card">
-        <ion-card-header>
-          <ion-card-title>{{ slot.fulfillment?.startTime | date: 'short' }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p><strong>Status:</strong> {{ slot.fulfillment?.status }}</p>
-        </ion-card-content>
-        <ion-button slot="end" expand="block" fill="clear" color="primary">BOOK SLOT</ion-button>
-      </ion-card>
+      <div class="slot-card-button" (click)="openBookingPopup()">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ slot.fulfillment?.startTime | date: 'short' }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>Status:</strong> {{ slot.fulfillment?.status }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-button color="primary">BOOK SLOT</ion-button>
+      </div>
     </ion-item>
   </ion-list>
+  <div *ngIf="bookingSuccess" class="success-message">
+    Session booked successfully!
+  </div>
+  <!-- <button (click)="openBookingPopup()">BOOK SLOT</button> -->
+
 </ion-content>
