@@ -721,7 +721,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   async navigateToSpecificLocation(event, section) {
     let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: banner || '', type: 'BannerType' });
+    let bannerType = ''
+    if (banner){
+      bannerType = banner.code
+    }
+    corRelationList.push({ id: bannerType, type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_BANNER,
       '',

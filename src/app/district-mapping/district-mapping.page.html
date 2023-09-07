@@ -48,7 +48,7 @@
 <div class="footer" *ngIf="platform.is('android')">
   <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
     <button class="block-button-clear"
-            [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+            [ngClass]="{'blur-clear-btn': formGroup?.invalid || hideClearButton}" [disabled]="formGroup?.invalid || hideClearButton"
             (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
     </button>
     <button class="block-button-save"

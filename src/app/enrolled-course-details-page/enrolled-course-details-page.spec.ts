@@ -2289,6 +2289,9 @@ describe('EnrolledCourseDetailsPage', () => {
                     }
                 ]
             };
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState').mockImplementation(() => {
+                return Promise.resolve();
+            });
             enrolledCourseDetailsPage.contentStatusData = {
                 contentList: [
                     {

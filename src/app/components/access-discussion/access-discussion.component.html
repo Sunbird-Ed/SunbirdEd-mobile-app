@@ -1,4 +1,4 @@
-<span role="button" aria-label="Discussions" (click)="openDiscussionForum()">
+<span *ngIf="isForumEnabled" role="button" aria-label="Discussions" (click)="openDiscussionForum()">
     <ion-icon src="assets/imgs/ic_chat.svg" class="card-icons" *ngIf="fetchForumIdReq.type==='group' && isForumEnabled"></ion-icon>
 </span>
 <button (click)="openDiscussionForum()" *ngIf="(fetchForumIdReq.type==='course' || fetchForumIdReq.type==='batch') && isForumEnabled"
