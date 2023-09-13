@@ -6,12 +6,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '../../core/constants/statuses.constant';
 import { UtilsService } from '../../../../app/manage-learn/core/services/utils.service';
 import { AppHeaderService } from '../../../../services/app-header.service';
-import {  ProjectService, ToastService } from '../../core';
+import {  ProjectService, ToastService, LoaderService } from '../../core';
 import { RouterLinks, PreferenceKey } from '../../../../app/app.constant';
 import { actions } from '../../core/constants/actions.constants';
 import { GenericPopUpService } from '../../shared';
 import { AppGlobalService } from '../../../../services/app-global-service.service';
 import { Subscription } from 'rxjs';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 import {
   SharedPreferences
@@ -71,6 +72,7 @@ export class ProjectTemplateviewPage implements OnInit {
   clickedOnProfile :boolean = false;
   projectlisting:boolean = false;
   programlisting:boolean = false;
+  projectLink = ''
 
   public backButtonFunc: Subscription;
 
@@ -88,7 +90,9 @@ export class ProjectTemplateviewPage implements OnInit {
     private alert: AlertController,
     private toast :ToastService,
     private platform : Platform,
-    private location :Location
+    private location :Location,
+    private commonUtils: CommonUtilService,
+    private loader: LoaderService
   ) {
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
@@ -101,6 +105,7 @@ export class ProjectTemplateviewPage implements OnInit {
       this.isAssignedProject = parameters.type  == 'assignedToMe'  ? true : false
       this.programlisting = (parameters.listing == "program");
       this.projectlisting = (parameters.listing == "project");
+      this.projectLink = parameters.link
 
     });
     this.stateData = this.router.getCurrentNavigation().extras.state;
@@ -137,6 +142,9 @@ export class ProjectTemplateviewPage implements OnInit {
       const extraPramas = `?link=${this.id}`
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
+        if (this.project?.projectId) {
+          this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+        }
         this.metaData = {
           title: this.project?.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -148,6 +156,7 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
  async ngOnInit() {
+  this.popupService.closeJoinProgramPopup()
   this.userId = await this.appGlobalService.getActiveProfileUid();
   const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
   this.hideNameConfirmPopup = await this.preferences.getBoolean(key).toPromise();
@@ -165,9 +174,11 @@ export class ProjectTemplateviewPage implements OnInit {
    this.location.back();
   }
   async getProjectApi() {
+    this.loader.startLoader();
     this.actionItems = await actions.PROJECT_ACTIONS;
     let resp = await this.projectService.getTemplateBySoluntionId(this.id);
     this.project = resp.result;
+    this.loader.stopLoader();
     if(this.project.criteria){
       let criteria = Object.keys(this.project?.criteria?.conditions);
       criteria.forEach(element => {
@@ -177,18 +188,32 @@ export class ProjectTemplateviewPage implements OnInit {
         this.certificateCriteria.push(config);
       })
     }
+    if (this.project?.projectId) {
+      this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
+    }
     this.metaData = {
       title: this.project?.title,
       subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
     }
+    if( this.project.hasOwnProperty('requestForPIIConsent') && this.project.programJoined && this.project?.requestForPIIConsent && !this.project.consentShared){
+      let payloadData = {consumerId:  this.project.rootOrganisations, objectId:  this.project.programId}
+      let profileData = await this.utils.getProfileInfo();
+       await this.popupService.getConsent('Program',payloadData,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((data)=>{
+         if(data){
+           this.project.programJoined = true
+         }
+       })
+     }
     // if (this.project.tasks && this.project.tasks.length)
     //   this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
   async getTemplateByExternalId() {
+    this.loader.startLoader();
     let resp = await this.projectService.getTemplateByExternalId(this.id);
     this.programId = resp?.result?.programInformation?.programId || null;
     this.project = resp?.result;
+    this.loader.stopLoader();
     if(this.project.certificate){
       let criteria = Object.keys(this.project?.criteria?.conditions);
       criteria.forEach(element => {
@@ -219,7 +244,32 @@ export class ProjectTemplateviewPage implements OnInit {
     this.projectService.openResources(resource);
   }
 
-  doAction() {
+ doAction() {
+    if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
+      this.popupService.joinProgram(this.project,'project')
+      .then(async resp => {
+        if(resp){
+          let profileData = await this.utils.getProfileInfo();
+          this.popupService.join(this.project,profileData).then((data :any) =>{
+            if(data){
+              this.project.programJoined = true
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programId};
+              if(this.project.requestForPIIConsent){
+                this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
+                  if(data){
+                    this.project.programJoined = true
+                  }
+                })
+              }else{
+                this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
+              }
+              
+            }
+          },error =>{})
+        }
+      });
+      return
+    }else{
     if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
       this.showProfileNameConfirmationPopup();
     }else{
@@ -228,10 +278,11 @@ export class ProjectTemplateviewPage implements OnInit {
       return;
     }
     if(!this.appGlobalService.isUserLoggedIn()){
+      this.toast.showMessage('FRMELEMNTS_MSG_NOT_LOGGEDIN_USER','danger')
       this.triggerLogin();
       return
     }
-    if ( !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
+    if ( this.stateData?.referenceFrom != 'observation' && !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
       if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
@@ -251,6 +302,7 @@ export class ProjectTemplateviewPage implements OnInit {
     }
     }
   }
+}
   }
 
   gotoDetails() {
@@ -265,8 +317,8 @@ export class ProjectTemplateviewPage implements OnInit {
   }
 
   async start() {
-    await this.router.navigate([`/${RouterLinks.HOME}`]);
-    if(this.projectlisting){
+    if(this.projectlisting || this.stateData?.referenceFrom === 'link'){
+    this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
     await this.router
       .navigate([`/${RouterLinks.PROJECT}`], {
         queryParams: {
@@ -275,9 +327,10 @@ export class ProjectTemplateviewPage implements OnInit {
       })
     }
     if(this.programlisting){
+     await this.router.navigate([`/${RouterLinks.HOME}`]);
      await this.router.navigate([`/${RouterLinks.PROGRAM}`]);
-     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`,  this.programId]);
-      }
+     await this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.DETAILS}`,  this.programId]);
+    }
     setTimeout(() => {
     if (this.stateData?.referenceFrom === 'link') {
       this.startProjectsFromLink();
@@ -287,6 +340,7 @@ export class ProjectTemplateviewPage implements OnInit {
           projectId: this.project.projectId,
           programId: this.programId,
           solutionId: this.solutionId,
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC,
         },
       });
     } else {
@@ -327,14 +381,24 @@ export class ProjectTemplateviewPage implements OnInit {
           this.projectService.getProjectDetails(payload);
         })
     } else {
-        const payload = {
-          templateId: this.project._id,
+      this.router
+      .navigate([`/${RouterLinks.PROJECT}`], {
+        queryParams: {
+          selectedFilter: 'discoveredByMe',
+        },
+      }).then(() => {
+        const params = {
+          projectId: this.project.projectId,
           programId: this.programId,
           solutionId: this.solutionId,
-          isATargetedSolution: false,
-          hasAcceptedTAndC: this.project.hasAcceptedTAndC
+          replaceUrl: false,
+          hasAcceptedTAndC: this.project.hasAcceptedTAndC,
+          certificate:false,
+          isProfileInfoRequired: true,
+          reference: { referenceFrom: "link", link: this.projectLink }
         }
-        this.projectService.mapProjectToUser(payload);
+        this.projectService.getProjectDetails(params)
+      })
     }
   }
 
@@ -369,11 +433,14 @@ export class ProjectTemplateviewPage implements OnInit {
     await alert.present();
   }
   openStartIMPPopup(){
-    this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2',).then((data: any) => {
-      if(data){
-        this.doAction();
-      }
-    })
+    if(!this.project?.projectId){
+      this.popupService.showStartIMPForProjectPopUp('FRMELEMNTS_LBL_START_IMPROVEMENT', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG1', 'FRMELEMNTS_LBL_START_IMP_POPUP_MSG2', 'FRMELEMNTS_LBL_START_IMPROVEMENT')
+      .then((data: any) => {
+        if(data){
+          this.doAction();
+        }
+      })
+    }
    }
    private async showProfileNameConfirmationPopup() {
      let listing;
@@ -416,6 +483,39 @@ export class ProjectTemplateviewPage implements OnInit {
         this.clickedOnProfile = false;
         this.doAction();
       }
+    }
+  }
+
+  ionViewWillLeave(){
+    this.popupService.closeConsent()
+  }
+  checkForActions(event){
+    if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
+      this.popupService.joinProgram(this.project,'project')
+      .then(async resp => {
+        if(resp){
+          let profileData = await this.utils.getProfileInfo();
+          this.popupService.join(this.project,profileData).then((data :any) =>{
+            if(data){
+              this.project.programJoined = true
+              let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programId};
+              if(this.project.requestForPIIConsent){
+                this.popupService.showConsent('Program',payload,this.project,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async (data)=>{
+                  if(data){
+                    this.project.programJoined = true
+                  }
+                })
+              }else{
+                this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
+              }
+              
+            }
+          },error =>{})
+        }
+      });
+      return
+    }else {
+      this.openStartIMPPopup()
     }
   }
 }

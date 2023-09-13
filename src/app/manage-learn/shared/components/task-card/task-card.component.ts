@@ -17,6 +17,7 @@ import * as _ from 'underscore';
 export class TaskCardComponent implements OnInit {
   @Input() data: any;
   @Output() actionEvent = new EventEmitter();
+  @Output() clickAction = new EventEmitter();
   @Input() viewOnly: boolean = false;
   statuses = taskStatus;
   upperLimit=2;
@@ -41,6 +42,7 @@ export class TaskCardComponent implements OnInit {
 
   onCardClick(task) {
     if(this.viewOnly){
+      this.clickAction.emit()
       return;
     }
     const viewOnlyMode = (this.data.status === statusType.submitted);
@@ -50,9 +52,12 @@ export class TaskCardComponent implements OnInit {
         projectDetails: this.data
       }
     });
-
   }
   onObservatonActionButtonClick(task, index) {
+    if(this.viewOnly){
+      this.clickAction.emit()
+      return;
+    }
     const submissionDetails = this.data?.tasks[index]?.submissionDetails;
     if(submissionDetails?.observationId) {
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
@@ -63,6 +68,7 @@ export class TaskCardComponent implements OnInit {
           entityId: submissionDetails.entityId,
           entityName: submissionDetails.entityName,
           disableObserveAgain: this.data?.tasks[index].status === statusType.completed,
+          programJoined:true
         },
       });
     } else {

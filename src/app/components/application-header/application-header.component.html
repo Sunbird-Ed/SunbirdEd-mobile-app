@@ -1,11 +1,17 @@
 <ion-header class="sb-header" [hidden]="!headerConfig?.showHeader" [ngClass]="{'z-index-0': decreaseZindex}">
   <ion-toolbar class="sb-header-toolbar">
-
+    <div id="talkback-live-region" aria-live="assertive" aria-atomic="true" style="position: absolute;">
+    </div>
     <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
-      <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
+      <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()"  [attr.aria-label]="isMenuOpen ? 'Expanded' : 'Collapsed'"
+      [attr.aria-live]="isMenuOpen ? 'polite' : null"
+      [attr.aria-atomic]="true"
+      [attr.aria-relevant]="isMenuOpen ? 'additions text' : null"
+      (ionFocus)="announceToTalkBack('Expanded')">
         <img src="./assets/imgs/ic_burger_menu.svg" role="button" class="tool-icon" alt="menu">
       </ion-button>
     </ion-buttons>
+
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
       <ion-button icon-only (click)="emitEvent($event, 'back');" aria-label="back">
         <ion-icon class="arrow-icon" name="arrow-back" role="button" aria-label="back"></ion-icon>

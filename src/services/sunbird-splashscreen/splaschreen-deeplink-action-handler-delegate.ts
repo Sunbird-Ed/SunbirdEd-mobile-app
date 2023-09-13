@@ -37,7 +37,10 @@ import {
   ContentImport,
   Rollup,
   FetchEnrolledCourseRequest,
-  CourseService
+  CourseService,
+  Framework,
+  FrameworkDetailsRequest,
+  GetSuggestedFrameworksRequest
 } from '@project-sunbird/sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { AppGlobalService } from '../app-global-service.service';
@@ -614,6 +617,9 @@ private async upgradeAppPopover(requiredVersionCode) {
           route = this.getRouterPath(content);
         }
         if (content.mimeType === MimeType.COLLECTION) {
+          if (!this.appGlobalServices.isOnBoardingCompleted) {
+            this.completedOnboardingUsingContentData(content.contentData)
+          }
           await this.navigateToCollection(identifier, content, payloadUrl, route, false, false, coreRelationList);
         } else {
           this.setTabsRoot();
@@ -1015,5 +1021,57 @@ private async upgradeAppPopover(requiredVersionCode) {
       default:
         return of (undefined);
     }
+  }
+
+  completedOnboardingUsingContentData(content) {
+    const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+      language: this.translateService.currentLang,
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+    };
+    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+      .then((res: Framework[]) => {
+        res.forEach(element => {
+          let board = content.board || content.se_boards[0];
+          if (element.name === board) {
+            const frameworkDetailsRequest: FrameworkDetailsRequest = {
+              frameworkId: element.identifier,
+              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            };
+            this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
+              .then((framework: Framework) => {
+                  const user = this.appGlobalServices.getCurrentUser();
+                  let medium = content.medium || content.se_mediums;
+                  let grade = content.gradeLevel || content.se_gradeLevels;
+                  let subject = content.subject || content.se_subjects
+                  const req: Profile = {
+                    board: [board.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')],
+                    grade: grade.map((ele) => ele.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')),
+                    medium: Array.isArray(medium) ? medium.map((ele) => ele.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')) :
+                    [medium.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')],
+                    subject: Array.isArray(subject) ? subject : [subject],
+                    uid: user.uid,
+                    handle: user.handle,
+                    profileType: user.profileType,
+                    source: user.source,
+                    createdAt: user.createdAt,
+                    syllabus: [framework.identifier]
+                  };
+
+                  this.profileService.updateProfile(req).toPromise()
+                    .then(async (res: any) => {
+                      if (res.syllabus && res.syllabus.length && res.board && res.board.length
+                        && res.grade && res.grade.length && res.medium && res.medium.length) {
+                        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+                        this.events.publish('refresh:profile');
+                        await this.appGlobalServices.setOnBoardingCompleted();
+                      }
+                      this.commonUtilService.handleToTopicBasedNotification();
+                      this.appGlobalServices.guestUserProfile = res;
+                    })
+                    .catch(e => console.error(e));
+              }).catch(e => console.error(e));
+          }
+        });
+      }).catch(e => console.error(e));;
   }
 }

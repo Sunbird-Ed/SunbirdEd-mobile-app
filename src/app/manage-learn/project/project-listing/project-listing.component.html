@@ -16,7 +16,7 @@
     <ion-icon class="mg-popup-btn-icon clr-primary" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
   <div class="header">
-  <app-item-list-header *ngIf="selectedFilter" headerLabel="{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{selectedFilter | lowercase}}"></app-item-list-header>
+  <app-item-list-header *ngIf="selectedFilter" headerLabel="{{'FRMELEMNTS_LBL_PROJECTS' | translate}} {{filters[selectedFilterIndex] | lowercase}}"></app-item-list-header>
   </div>
   <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title" id="projectsCard"
     [subTitle]="project?.programName" [id]="project?._id" (cardSelect)="doAction($event, project)">

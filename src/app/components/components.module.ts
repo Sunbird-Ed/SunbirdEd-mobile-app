@@ -67,7 +67,6 @@ import { ShowVendorAppsComponent} from '../../app/components/show-vendor-apps/sh
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet';
@@ -157,7 +156,6 @@ import { DownloadTranscriptPopupComponent } from './popups/download-transcript-p
         PipesModule,
         CommonConsumptionModule,
         IonicRatingModule,
-        SunbirdVideoPlayerModule,
         DashletModule,
         TranslateModule.forChild(),
     ],

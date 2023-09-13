@@ -17,6 +17,8 @@ export class ItemListCardComponent implements OnChanges {
   @Input() ellipsis:Boolean =false
   @Input() arrIndex:any;
   @Input() selectedEvidenceIndex:any;
+  @Input() state:any =[]
+  @Input() roles:any =[]
   constructor(private commonUtilService: CommonUtilService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -27,5 +29,15 @@ export class ItemListCardComponent implements OnChanges {
  
   programDetails(id){
     this.cardSelect.emit(id);
+  }
+
+  ngOnInit(){
+    if(!Array.isArray(this.state)){
+      this.state=[]
+    }
+
+    if(!Array.isArray(this.roles)){
+      this.roles=[]
+    }
   }
 }

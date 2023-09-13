@@ -564,6 +564,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async showOverflowMenu(event) {
+    this.telemetryGeneratorService.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.COURSE_KEBAB_MENU_CLICKED,
+          Environment.COURSE,
+          PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList);
     this.leaveTrainigPopover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       event,
@@ -691,14 +698,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.corRelationList);
         let msg = '';
         let fields;
-      if(cb) {
-        msg = 'FRMELEMNTS_MSG_COURSE_UNENROLLED';
-        fields = this.course;
-        this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
-      } else {
-        msg = (e?.error === 'CONNECTION_ERROR') ? 'ERROR_NO_INTERNET_MESSAGE' : "FRMELEMNTS_MSG_UNABLE_TO_ENROLL"
-      }
-      this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg, fields));
+        if(cb) {
+          msg = 'CRS_TRK_FRMELEMNTS_MSG_COURSE_UNENROLLED';
+          fields = this.course;
+          this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+        } else {
+          msg = (e?.error === 'CONNECTION_ERROR') ? 'ERROR_NO_INTERNET_MESSAGE' : "FRMELEMNTS_MSG_UNABLE_TO_ENROLL"
+        }
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg, fields));
     });
   }
 
@@ -1397,10 +1404,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      if (this.nextContent && !this.nextContent) {
-        this.initNextContent();
+      if (!this.nextContent) {
+        await this.getContentState(true).then(() => {
+          this.navigateToContentDetails(this.nextContent, 1);
+        });
+      } else {
+        this.navigateToContentDetails(this.nextContent, 1);
       }
-      await this.navigateToContentDetails(this.nextContent, 1);
+     // awaitthis.navigateToContentDetails(this.nextContent, 1);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
@@ -1411,7 +1422,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * Function gets executed when user click on resume course button.
    */
   async resumeContent(): Promise<void> {
-    await this.navigateToContentDetails(this.nextContent, 1);
+    if (!this.nextContent) {
+      await this.getContentState(true).then(async () => {
+        await this.navigateToContentDetails(this.nextContent, 1);
+      });
+    } else {
+      await this.navigateToContentDetails(this.nextContent, 1);
+    }
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
@@ -1903,7 +1920,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await this.courseUtilService.showCredits(this.course, this.pageId, undefined, this.corRelationList);
   }
 
-  getContentState(returnRefresh: boolean) {
+  async getContentState(returnRefresh: boolean) {
     if (this.courseCardData.batchId) {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
@@ -1913,7 +1930,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         batchId: this.courseCardData.batchId,
         fields: ['progress', 'score']
       };
-      this.courseService.getContentState(request).toPromise()
+      await this.courseService.getContentState(request).toPromise()
         .then(async (contentStateResponse: ContentStateResponse) => {
           this.contentStatusData = contentStateResponse;
 

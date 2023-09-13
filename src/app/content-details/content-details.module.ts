@@ -7,8 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { ContentDetailsPage } from './content-details.page';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
-
 const routes: Routes = [
   {
     path: '',
@@ -24,8 +22,7 @@ const routes: Routes = [
     ComponentsModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    PipesModule,
-    SunbirdVideoPlayerModule
+    PipesModule
   ],
   declarations: [ContentDetailsPage]
 })

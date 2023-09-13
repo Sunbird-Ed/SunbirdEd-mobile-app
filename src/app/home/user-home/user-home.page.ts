@@ -721,7 +721,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   async navigateToSpecificLocation(event, section) {
     let banner = Array.isArray(event.data) ? event.data[0].value : event.data;
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: banner || '', type: 'BannerType' });
+    let bannerType = ''
+    if (banner){
+      bannerType = banner.code
+    }
+    corRelationList.push({ id: bannerType, type: 'BannerType' });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_BANNER,
       '',
@@ -841,7 +845,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.events.publish('onPreferenceChange:showReport', false);
       }
     } catch (error) {
-        this.otherCategories = [];
+        // this.otherCategories = [];
         this.events.publish('onPreferenceChange:showReport', false);
     }
   }
@@ -850,14 +854,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    const title = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_PROJECT' :'FRMELEMENTS_MSG_YOU_MUST_JOIN_TO_OBSERVATIONS';
-    const meta = event.data[0]['name'] === 'Project' ? 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_PROJECT': 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_TAKE_OBSERVATION';
+    const title = 'FRMELEMENTS_MSG_YOU_MUST_LOGIN_TO_ACCESS';
+    const meta = 'FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_ACCESS';
     const selectedPill = event.data[0].value.name;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage(title),
-        metaInfo: this.commonUtilService.translateMessage(meta),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage(title, selectedPill),
+        metaInfo: this.commonUtilService.translateMessage(meta, selectedPill),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -878,12 +882,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       return;
     }
     switch (selectedPill) {
-      case 'observation':
+      case 'observations':
         await this.router.navigate([RouterLinks.OBSERVATION], {});
         break;
-      case 'project':
+      case 'projects':
         await this.router.navigate([RouterLinks.PROJECT], {});
         break;  
+        case 'programs':
+          this.router.navigate([RouterLinks.PROGRAM], {});
+          break;  
       default:
         break;
     }

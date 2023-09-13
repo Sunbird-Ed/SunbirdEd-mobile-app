@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AttachmentService, statuses, ToastService, UtilsService } from '../../../../../app/manage-learn/core';
 import { ModalController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
-
+import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-create-task-form',
   templateUrl: './create-task-form.component.html',
@@ -12,14 +13,18 @@ export class CreateTaskFormComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
   statuses = statuses;
-  today
+  today;
+  istaskDateModalOpen = false;
+
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,
     private attachmentService: AttachmentService,
     private toast: ToastService,
     private popupService: GenericPopUpService,
-    public platform: Platform
+    public platform: Platform,
+    private translate: TranslateService,
+    private alert: AlertController
   ) { }
 
   ngOnInit() {
@@ -55,5 +60,14 @@ export class CreateTaskFormComponent implements OnInit {
 
   share() {
     this.toast.showMessage('FRMELEMNTS_MSG_COMING_SOON', 'danger');
+  }
+
+  setOpen(isOpen: boolean) {
+    this.istaskDateModalOpen = isOpen;
+  }
+
+  delete(index) {
+    this.newTask.attachments.splice(index, 1);
+    this.newTask.isEdit = true;
   }
 }

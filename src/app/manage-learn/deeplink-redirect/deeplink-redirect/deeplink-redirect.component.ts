@@ -149,6 +149,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       if (success.result) {
         success.result.isATargetedSolution = data.isATargetedSolution;
         success.result.programId = data.programId;
+        success.result.programName = data.programName;
         this.redirectObservation(success.result);
       }else{
       this.location.back();
@@ -163,13 +164,12 @@ export class DeeplinkRedirectComponent implements OnInit {
    async goToEntities(data) {
     await  this.router.navigate([`/${RouterLinks.HOME}`])
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId }
+      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId, programName: data.programName }
     });
   }
 
   async verifyLink(link) {
-    let payload = await this.utils.getProfileData();
-
+    let payload = await this.utils.getProfileData('SERVER');
     const config = {
       url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
       payload: payload,

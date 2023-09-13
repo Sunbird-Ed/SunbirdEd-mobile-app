@@ -9,6 +9,7 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Router } from '@angular/router';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 @Component({
   selector: 'app-survey-home',
   templateUrl: './survey-home.component.html',
@@ -28,6 +29,7 @@ export class SurveyHomeComponent {
   submissionArr: any;
   count: any;
   isReport: boolean = false;
+  surveyId
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -38,6 +40,7 @@ export class SurveyHomeComponent {
     private kendra: KendraApiService,
     private toast: ToastService,
     private ulsdp: UpdateLocalSchoolDataService,
+    private assessmentService: AssessmentApiService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -52,7 +55,7 @@ export class SurveyHomeComponent {
   ionViewWillEnter() {
     this.page=1
     this.surveyList = [];
-    this.link ? this.deepLinkRedirect() : this.getSurveyListing();
+    this.link ? this.verifyLink(this.link) : this.getSurveyListing();
 
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -107,7 +110,6 @@ export class SurveyHomeComponent {
 
   applySubmission(): void {
     this.surveyList.map((survey) => {
-      console.log(this.submissionArr.includes(survey.submissionsId));
       this.submissionArr.includes(survey.submissionId) ? (survey.downloaded = true) : null;
     });
   }
@@ -134,7 +136,8 @@ export class SurveyHomeComponent {
       });
   }
 
-  onSurveyClick(survey) {
+  async onSurveyClick(survey) {
+    this.surveyId = survey._id
     if (!this.isReport) {
 
     if (survey.status == 'expired') {
@@ -142,8 +145,16 @@ export class SurveyHomeComponent {
       this.surveyProvider.showMsg('surveyExpired');
       return;
     }
-      
+
+    if(this.IsSurveyExpired(survey)){
+      return
+    }
     // surveyId changed to _id
+    if(!survey.submissionId){
+      this.getSurveyTemplateDetails(survey)
+      return
+    }
+
     survey.downloaded
       ? this.redirect(survey.submissionId)
       : this.getSurveyById(survey._id, survey.solutionId, survey.isCreator);
@@ -153,14 +164,17 @@ export class SurveyHomeComponent {
   
   }
 
-  redirect(submissionId: any): void {
+  redirect(submissionId: any,data?): void {
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
       replaceUrl: this.link ? true : false,
       queryParams: {
         submisssionId: submissionId,
         evidenceIndex: 0,
         sectionIndex: 0,
+        isSurvey:true,
+        surveyId:this.surveyId
       },
+      state:data?{...data,isSurvey:true}:null
     });
   }
 
@@ -230,4 +244,84 @@ export class SurveyHomeComponent {
     this.page = this.page + 1;
     this.getSurveyListing();
   }
+
+  async getSurveyTemplateDetails(data) {
+    let payload = await this.utils.getProfileData();
+    const config = {
+      url: urlConstants.API_URLS.TEMPLATE_DETAILS + data.solutionId,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe((success) => {
+      if (success.result) {
+        if(success.result.hasOwnProperty('requestForPIIConsent') && !success.result.consentShared){
+          this.redirect(success.result.assessment.submissionId,success.result);
+        }else{
+          data.downloaded
+          ? this.redirect(data.submissionId)
+          : this.getSurveyById(data._id, data.solutionId, data.isCreator);
+        }
+      }else{
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
+      }
+    },error =>{
+      this.toast.showMessage('FRMELEMNTS_MSG_TEMPLATE_DETAILS_NOTFOUND','danger');
+    });
+  }
+
+  async verifyLink(link) {
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileData('SERVER');
+    const config = {
+      url: urlConstants.API_URLS.DEEPLINK.VERIFY_LINK + link+'?createProject=false',
+      payload: payload,
+    };
+    let resp = await this.kendra.post(config).toPromise();
+    if (resp && resp.result) {
+      this.loader.stopLoader();
+      switch (resp.result.type) {
+        case 'survey':
+          let details = resp.result
+          if(details.submissionStatus && details.submissionStatus == 'completed'){
+            this.surveyProvider.showMsg('surveyCompleted', true);
+            return
+          }
+          if(details?.submissionId){
+          await this.localStorage
+          .getLocalStorage(storageKeys.submissionIdArray)
+          .then(async (allId) => {
+            await allId.includes(details.submissionId) ? (details.downloaded = true) : null;
+          });
+        }
+          resp.result.submissionId ? this.checkIsDownloaded(details) : this.getSurveyTemplateDetails(details);
+        default:
+          break;
+      }
+    }else{
+      this.loader.stopLoader();
+      if(resp && resp.status){
+        this.toast.showMessage('FRMELEMNTS_MSG_INVALID_LINK','danger');
+      }
+    }
+  }
+
+  async checkIsDownloaded(details){
+    if(details.downloaded){
+      this.redirect(details.submissionId)
+    }else{
+      this.getSurveyById(details.surveyId, details.solutionId, details.isCreator)
+    }
+  }
+
+  IsSurveyExpired(data){
+    const lastDate:any = new Date(data.endDate)
+    const timeDiff:any = lastDate - Date.now()
+    const diff = Math.ceil(timeDiff/(1000*60*60*24))
+    if(diff<=0){
+      this.getSurveyById(data._id, data.solutionId, data.isCreator)
+      return true
+    }else{
+      return false
+    }
+  }
+
 }

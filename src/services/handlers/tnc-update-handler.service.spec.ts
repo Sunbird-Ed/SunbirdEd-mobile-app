@@ -1552,7 +1552,7 @@ describe('TncUpdateHandlerService', () => {
         }));
         mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({status: false}))
         mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());
-        tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+        tncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockConsentService.getConsent = jest.fn(() => Promise.resolve())
         let onboardingTrue = onboarding;

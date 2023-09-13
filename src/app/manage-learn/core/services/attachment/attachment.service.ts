@@ -8,6 +8,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 import { localStorageConstants } from "../../constants/localStorageConstants";
 import { LoaderService } from "../loader/loader.service";
+import { ImagePicker, ImagePickerOptions } from '@awesome-cordova-plugins/image-picker/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AttachmentService {
   texts: any;
   payload: any;
   actionSheetOpen: boolean = false;
+  storagePath;
   constructor(
     private camera: Camera,
     private file: File,
@@ -27,7 +29,9 @@ export class AttachmentService {
     private chooser: Chooser,
     // private filePickerIOS: IOSFilePicker,
     private translate: TranslateService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private imgPicker: ImagePicker,
+
   ) {
     this.translate
       .get([
@@ -39,21 +43,27 @@ export class AttachmentService {
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
         "FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT",
-        "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"
+        "FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED",
+        "FRMELEMENTS_LBL_CAMERA",
+        "FRMELEMENTS_LBL_UPLOAD_IMAGE",
+        "FRMELEMENTS_LBL_UPLOAD_FILE",
+        "FRMELEMENTS_LBL_UPLOAD_VIDEO"
       ])
       .subscribe((data) => {
         this.texts = data;
       });
   }
 
-  async selectImage() {
-    this.actionSheetOpen = true
+  async selectImage(path?) {
+    this.actionSheetOpen = true;
+    this.storagePath = path;
     const actionSheet = await this.actionSheetController.create({
       header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
       cssClass: 'sb-popover',
       buttons: [
         {
           text: this.texts["FRMELEMNTS_MSG_LOAD_FROM_LIBRARY"],
+          icon: "cloud-upload",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
@@ -61,6 +71,7 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMNTS_MSG_USE_CAMERA"],
+          icon: "camera",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
@@ -68,8 +79,9 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
+          icon: "document",
           handler: () => {
-            this.openFile();
+            path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
           },
         },
@@ -83,25 +95,75 @@ export class AttachmentService {
     return actionSheet.onDidDismiss();
   }
 
-  takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
+
+  // Evidence upload for survey and observation
+  async evidenceUpload(path?) {
+    this.actionSheetOpen = true;
+    this.storagePath = path;
+    const actionSheet = await this.actionSheetController.create({
+      header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
+      cssClass: 'sb-popover',
+      buttons: [
+        {
+          text: this.texts["FRMELEMENTS_LBL_CAMERA"],
+          icon: "camera",
+          handler: () => {
+            this.takePicture(this.camera.PictureSourceType.CAMERA);
+            return false;
+          },
+        },
+        {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
+          icon: "cloud-upload",
+          handler: () => {
+            this.openLocalLibrary()
+            return false;
+          },
+        },
+        {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_VIDEO"],
+          icon: "videocam",
+          handler: () => {
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
+            return false;
+          },
+        },
+        {
+          text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          icon: "document",
+          handler: () => {
+            this.openFile()
+            return false;
+          },
+        },
+        {
+          text: this.texts["CANCEL"],
+          role: "cancel",
+        },
+      ],
+    });
+    await actionSheet.present();
+    return actionSheet.onDidDismiss();
+  }
+  async takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
       quality: 20,
       sourceType: sourceType,
       saveToPhotoAlbum: false,
       correctOrientation: true,
       mediaType: mediaType,
-      destinationType: this.camera.DestinationType.FILE_URI,
+      destinationType: this.camera.DestinationType.FILE_URI
     };
 
-    this.camera
+    await this.camera
       .getPicture(options)
-      .then((imagePath) => {
+      .then(async(imagePath) => {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
-          if (!newFilePath.includes("file://")) {
+          if (!newFilePath.includes("content://") && !newFilePath.includes("file://")) {
             newFilePath = "file://" + imagePath
           }
-            this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
+            await this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
               if (isValidFile) {
                 this.filePath
                   .resolveNativePath(newFilePath)
@@ -112,7 +174,7 @@ export class AttachmentService {
               }
             })
         } else {
-          this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
+          await this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
             if (isValidFile) {
               this.copyFile(imagePath);
             }
@@ -120,8 +182,7 @@ export class AttachmentService {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err !== "No Image Selected") {
+        if (err && err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
       });
@@ -130,20 +191,20 @@ export class AttachmentService {
   writeFileToPrivateFolder(filePath) {
     this.checkForFileSizeRestriction(filePath).then(isValidFile => {
       if (isValidFile) {
+        this.loader.startLoader();
         let path = filePath.substr(0, filePath.lastIndexOf("/") + 1);
         let currentName = filePath.split("/").pop();
-        this.loader.startLoader();
         this.file.readAsArrayBuffer(path, currentName).then(success => {
           const pathToWrite = this.directoryPath();
           const newFileName = this.createFileName(currentName)
-          this.file.writeFile(pathToWrite, newFileName, success).then(fileWrite => {
+          this.file.writeFile(pathToWrite, newFileName, success).then(async fileWrite => {
             const data = {
               name: newFileName,
               type: this.mimeType(newFileName),
               isUploaded: false,
               url: "",
             };
-            this.loader.stopLoader();
+            await this.loader.stopLoader();
             this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
             this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
           }).catch(error => {
@@ -160,7 +221,8 @@ export class AttachmentService {
 
   checkForFileSizeRestriction(filePath): Promise<Boolean> {
     return new Promise((resolve, reject) => {
-      this.file.resolveLocalFilesystemUrl(filePath).then(success => {
+      this.filePath.resolveNativePath(filePath).then(fileData =>{
+      this.file.resolveLocalFilesystemUrl(fileData).then(success => {
         success.getMetadata((metadata) => {
           if (metadata.size > localStorageConstants.FILE_LIMIT) {
             this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"],'danger', 5000);
@@ -172,6 +234,9 @@ export class AttachmentService {
       }).catch(error => {
         reject(false)
       })
+    }).catch(error => {
+      reject(false)
+    })
     })
   }
 
@@ -184,7 +249,6 @@ export class AttachmentService {
           isUploaded: false,
           url: "",
         };
-
         this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
         this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
       },
@@ -205,7 +269,7 @@ export class AttachmentService {
     toast.present();
   }
 
-  async openFile() {
+  async openFile(path?) {
     try {
       const file: any = await this.chooser.getFile({mimeTypes:'application/pdf'});
       let sizeOftheFile: number = file.data.length
@@ -213,7 +277,7 @@ export class AttachmentService {
         this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
       } else {
-        const pathToWrite = this.directoryPath();
+        const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
         const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
         if (writtenFile.isFile) {
@@ -231,22 +295,6 @@ export class AttachmentService {
     } catch (error) {
       this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
-
-    // non working code for sdk30-android 11
-    // new Promise((resolve) => {
-    //   if (this.platform.is('ios')) {
-    //     // resolve(this.filePickerIOS.pickFile());
-    //   } else {
-    //     resolve(this.chooser.getFileMetadata());
-    //   }
-    // })
-    //   .then((res: any) => {
-    //     return this.filePath.resolveNativePath(res.uri);
-    //   })
-    //   .then((filePath) => {
-    //     this.copyFile(filePath);
-    //   })
-    //   .catch((err) => {});
   }
 
   copyFile(filePath) {
@@ -265,6 +313,9 @@ export class AttachmentService {
   }
 
   directoryPath(): string {
+    if(this.actionSheetOpen && this.storagePath){
+      return this.storagePath;
+    }else
     if (this.platform.is("ios")) {
       return this.file.documentsDirectory;
     } else {
@@ -287,14 +338,53 @@ export class AttachmentService {
     this.payload = payload;
     switch (type) {
       case 'openCamera':
-        this.takePicture(this.camera.PictureSourceType.CAMERA);
+        await this.takePicture(this.camera.PictureSourceType.CAMERA);
         break;
       case 'openGallery':
-        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
       case 'openFiles':
-        this.openFile();
+        await this.openFile();
         break;
+    }
+  }
+  openLocalLibrary(): void {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 50,
+      quality: 10,
+    };
+    this.imgPicker.getPictures(options).then((imageData) => {
+      for (const image of imageData) {
+        this.actionSheetController.dismiss({imageData, multiple:true});
+      }
+    }).catch(err => {
+    });
+  }
+  async openAllFile(path?) {
+    try {
+      const file = await this.chooser.getFile();
+      let sizeOftheFile: number = file.size
+      if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
+        this.actionSheetController.dismiss();
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+      } else {
+        const pathToWrite = path ? path :this.directoryPath();
+        const newFileName = this.createFileName(file.name)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.path)
+        if (writtenFile.isFile) {
+          const data = {
+            name: newFileName,
+            type: this.mimeType(newFileName),
+            isUploaded: false,
+            url: "",
+          };
+          this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
+          this.actionSheetOpen ? this.actionSheetController.dismiss(data) : this.payload.push(data);
+        }
+      }
+
+    } catch (error) {
+      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
     }
   }
 }

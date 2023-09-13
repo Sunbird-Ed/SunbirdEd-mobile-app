@@ -12,11 +12,11 @@
 
   <ion-card-content>
     <h5>{{ submission?.title }}</h5>
-    <p>Created On : {{ submission?.createdAt | date }}</p>
+    <p>Created On : {{ submission?.createdAt | date : 'MMM dd, YYYY' }}</p>
     <p *ngIf="submission?.submissionDate">
       Submitted On :
 
-      {{ submission?.submissionDate | date }}
+      {{ submission?.submissionDate | date : 'MMM dd, YYYY' }}
     </p>
   </ion-card-content>
 </ion-content>

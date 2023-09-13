@@ -116,6 +116,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async (eventName) => {
       await this.handleHeaderEvents(eventName);
+      await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
     await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }

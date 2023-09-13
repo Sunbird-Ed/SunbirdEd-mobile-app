@@ -137,7 +137,8 @@ describe('CategoryEditPage', () => {
             mockSegmentationTagService as SegmentationTagService,
             mockCategoriesEditService as CategoriesEditService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockTncUpdateHandler as TncUpdateHandlerService
         );
     });
 
@@ -291,6 +292,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
@@ -358,6 +360,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
@@ -430,6 +433,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
@@ -502,6 +506,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
@@ -571,6 +576,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'grade', code:'ka'}])) as any;
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
@@ -640,6 +646,7 @@ describe('CategoryEditPage', () => {
                 dismiss: jest.fn(() => Promise.resolve())
             }))
             mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'grade', code:'ka'}])) as any;
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert

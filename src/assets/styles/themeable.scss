@@ -108,6 +108,10 @@ html[data-theme="JOYFUL"]{
     --color: var(--app-gray) !important;
   }
 
+  ion-searchbar .searchbar-clear-button{
+    box-shadow: none !important;
+  }
+
   ion-card, button{
     box-shadow: var(--button-style-shadow) !important;
   }
@@ -1818,6 +1822,12 @@ html[data-theme="JOYFUL"]{
           color: var(--sbt-language-dropdown-bg) !important;
         }
       }
+    }
+  }
+
+  sunbird-video-player .sunbird-video-player-container{
+    .sb-player-side-menu-icon label {
+      display: none !important;
     }
   }
 

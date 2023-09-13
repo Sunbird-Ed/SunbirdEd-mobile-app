@@ -53,6 +53,7 @@ export const urlConstants = {
     PROJECT_CERTIFICATES:'/api/userProjects/mlprojects/v1/certificates',
     GET_PROJECT_CERTIFICATE:'/api/v1/ProjectCertificate/',
     PROJECT_CERTIFICATE_DOWNLOAD:'/api/rc/projectCertificate/v1/download/',
-    CERTIFICATE_VERIFY:'/api/rc/certificate/v1/key/'
+    CERTIFICATE_VERIFY:'/api/rc/certificate/v1/key/',
+    JOIN_PROGRAM:'/api/programs/mlcore/v1/join/'
   },
 };

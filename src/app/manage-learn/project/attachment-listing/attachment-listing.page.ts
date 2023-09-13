@@ -10,7 +10,7 @@ import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
-import { statusType, UtilsService } from '../../core';
+import { statusType, ToastService, UtilsService } from '../../core';
 import * as _ from "underscore";
 
 @Component({
@@ -50,7 +50,8 @@ export class AttachmentListingPage implements OnInit {
     private photoViewer: PhotoViewer,
     private routeParam: ActivatedRoute,
     private util: UtilsService,
-    private alert: AlertController
+    private alert: AlertController,
+    private toast: ToastService
   ) {
     this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
     routeParam.params.subscribe(parameters => {
@@ -100,15 +101,13 @@ export class AttachmentListingPage implements OnInit {
       project: {},
       tasks: []
     };
-    if (this.project.status == this.statuses.submitted) {
+    if (this.project.remarks || (this.project.attachments && this.project.attachments.length)) {
       let evidence = {
         title: this.project.title,
         remarks: this.project.remarks ? this.project.remarks : '',
         attachments: []
       }
-      if(this.project.attachments && this.project.attachments.length){
         this.getEvidences(this.project.attachments, evidence);
-      }
       if ((this.type && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
       }
@@ -182,7 +181,9 @@ export class AttachmentListingPage implements OnInit {
   openFile(attachment) {
     this.fileOpener.open(this.path + '/' + attachment.name, attachment.type)
       .then(() => { console.log('File is opened'); })
-      .catch(e => console.log('Error opening file', e));
+      .catch(e => {
+        this.toast.showMessage(e.message,'danger');
+      });
   }
   async deleteConfirmation(attachment) {
     let data;
@@ -214,6 +215,18 @@ export class AttachmentListingPage implements OnInit {
     this.deleteConfirmation(event.data);
   }
   deleteAttachment(attachment) {
+    let ProjectLoopAgain : boolean = true;
+    if(this.project.attachments &&this.project.attachments.length ){
+        let i = _.findIndex( this.project.attachments, (item) => {
+          if(item.type == this.type){
+              return item.name == attachment.name;
+          }
+          });
+          if(i >= 0){
+            this.project.attachments.splice(i, 1);
+            ProjectLoopAgain = false;
+          }
+    }
     if (this.project.tasks && this.project.tasks.length) {
       let loopAgain : boolean = true;
       this.project.tasks.forEach(task => {
@@ -225,6 +238,7 @@ export class AttachmentListingPage implements OnInit {
           });
           if(i >= 0){
             task.attachments.splice(i, 1);
+            task.isEdit = true;
            loopAgain = false;
           }
         }

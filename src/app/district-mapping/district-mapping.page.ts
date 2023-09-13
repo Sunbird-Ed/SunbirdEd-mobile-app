@@ -53,6 +53,7 @@ export class DistrictMappingPage implements OnDestroy {
   formGroup?: FormGroup;
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
+  hideClearButton : boolean = false;
   profile?: Profile;
   navigateToCourse = 0;
   isGoogleSignIn = false;
@@ -274,7 +275,7 @@ export class DistrictMappingPage implements OnDestroy {
                 this.location.back();
             } else if (this.profile && this.source === PageId.PROFILE) {
                 this.location.back();
-                this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+              //  this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
             } else {
               if (this.profile && !isSSOUser) {
                 await this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
@@ -505,6 +506,7 @@ export class DistrictMappingPage implements OnDestroy {
     }
     this.initialFormLoad = false;
     this.locationFormConfig = locationMappingConfig;
+    this.hideClearButton = false;
      if(this.params){
     this.fieldConfig();
   }
@@ -717,6 +719,7 @@ export class DistrictMappingPage implements OnDestroy {
             element.children[key].forEach(childEl => {
               childEl.templateOptions.hidden =true;
               childEl.templateOptions.disabled =true;
+              this.hideClearButton = true;
              });
           });
         }

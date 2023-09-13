@@ -1016,4 +1016,52 @@ describe('DistrictMappingPage', () => {
             expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN])
         })
     })
+
+    describe('fieldConfig', () => {
+        it('should disable and hide fields that do not match the code in params', () => {
+            //arrange
+            const locationFormConfig = [      { code: 'sample', templateOptions: { hidden: false, disabled: false }, children: {} },      { code: 'sample1', templateOptions: { hidden: false, disabled: false }, children: {} },    ];
+            const params = { code: 'sample', children: null };
+        
+            districtMappingPage.locationFormConfig = locationFormConfig;
+            districtMappingPage.params = params;
+            //act
+            districtMappingPage.fieldConfig();
+        
+            //assert
+            expect(locationFormConfig[0].templateOptions.hidden).toBe(false);
+            expect(locationFormConfig[0].templateOptions.disabled).toBe(false);
+            expect(locationFormConfig[1].templateOptions.hidden).toBe(true);
+            expect(locationFormConfig[1].templateOptions.disabled).toBe(true);
+          });
+        
+          it('should disable and hide child fields when there are children and the parent field is disabled', () => {
+            //arrange
+            const locationFormConfig = [      {        code: 'sample',        templateOptions: { hidden: false, disabled: true },        children: {          'child1': [            { templateOptions: { hidden: false, disabled: false } },            { templateOptions: { hidden: false, disabled: false } }          ],
+                  'child2': [
+                    { templateOptions: { hidden: false, disabled: false } },
+                    { templateOptions: { hidden: false, disabled: false } }
+                  ]
+                }
+              },
+              {
+                code: 'sample1',
+                templateOptions: { hidden: false, disabled: false },
+                children: {}
+              },
+            ];
+            const params = { code: 'sample1', children: true };
+            districtMappingPage.locationFormConfig = locationFormConfig;
+            districtMappingPage.params = params;
+
+            //act
+            districtMappingPage.fieldConfig();
+        
+            //assert
+            expect(locationFormConfig[0].templateOptions.hidden).toBe(true);
+            expect(locationFormConfig[0].templateOptions.disabled).toBe(true);
+            expect(locationFormConfig[1].templateOptions.hidden).toBe(false);
+            expect(locationFormConfig[1].templateOptions.disabled).toBe(false);
+    })
+});
 });

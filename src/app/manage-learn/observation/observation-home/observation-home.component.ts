@@ -48,7 +48,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.getProfileInfo();
       }
     );
@@ -134,7 +134,8 @@ export class ObservationHomeComponent implements OnInit {
             solutionId: solutionId,
             observationId: observationId,
             solutionName: solutionName,
-            entityType : solution.entityType ? solution.entityType  :''
+            entityType : solution.entityType ? solution.entityType  :'',
+            programName: programName
           }
         }
       )

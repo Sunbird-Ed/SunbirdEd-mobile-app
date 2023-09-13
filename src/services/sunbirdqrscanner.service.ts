@@ -330,6 +330,7 @@ private generateEndEvent(pageId: string, qrData: string) {
   }
 
   private async showInvalidCodeAlert(scannedData) {
+    await this.stopScanner();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QR_CODE_INVALID,

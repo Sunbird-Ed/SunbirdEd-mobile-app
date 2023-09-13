@@ -1,9 +1,10 @@
 
 
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-textarea [(ngModel)]="data.remarks" placeholder="Remarks" #remarkInput style="height: 40vh"></ion-textarea>
-  </ion-item>
+  <div class="text-area-container">
+    <ion-textarea [(ngModel)]="data.remarks" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" #remarkInput
+    [autoGrow]="true" class="text-area"></ion-textarea>
+  </div>
 </ion-content>
 
 <div class="_footer" no-padding>

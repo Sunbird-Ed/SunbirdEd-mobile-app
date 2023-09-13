@@ -21,6 +21,7 @@ export class TextTypeInputComponent implements OnInit {
   @Input() generalQuestion: boolean;
   @Input() schoolId;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   notNumber: boolean;
   questionValid: boolean;
   keyboard: Keyboard;

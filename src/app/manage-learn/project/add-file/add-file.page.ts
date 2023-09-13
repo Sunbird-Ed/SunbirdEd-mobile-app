@@ -65,6 +65,7 @@ export class AddFilePage implements OnInit {
       this.description = params.taskId ? actions.TASK_FILE_DESCRIPTION.label : actions.PROJECT_FILE_DESCRIPTION.label;
       this.taskId = params.taskId;
     })
+    this.updateRemarks = _.debounce(this.updateRemarks,1500)
   }
 
   ngOnInit() { }
@@ -75,14 +76,7 @@ export class AddFilePage implements OnInit {
   }
 
   handleHeaderEvents($event) {
-    if ($event.name == 'back') {
-      if (JSON.stringify(this.projectCopy) !== JSON.stringify(this.project) ||
-        JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
-        this.pageExitConfirm();
-      } else {
-        this.location.back()
-      }
-    }
+    this.location.back()
   }
   getProject() {
     this.db.query({ _id: this.projectId }).then(
@@ -110,6 +104,7 @@ export class AddFilePage implements OnInit {
     } else {
       this.project.remarks = this.remarks
     }
+    this.update('save')
   }
 
   setHeaderConfig() {
@@ -164,20 +159,24 @@ export class AddFilePage implements OnInit {
 
   delete(index) {
     this.attachments.splice(index, 1);
-    this.task.isEdit = true;
-    this.update('delete');
+    this.update('save');
+    this.taskId ? this.task.isEdit = true :'';
   }
 
-  onAction(event) {
+  async onAction(event) {
     if(!this.taskId){
-      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then(async(data: any) => {
         if (data.isClicked) {
           if(data.isChecked){
             if (event == 'openLink') {
               this.toggleLinkModal();
               return;
             }
-            this.attachmentService.openAttachmentSource(event, this.attachments);
+            await this.attachmentService.openAttachmentSource(event, this.attachments);
+            setTimeout(() => {
+              this.update('save')
+            }, 1000);
+
           }else{
             this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
           }
@@ -188,7 +187,10 @@ export class AddFilePage implements OnInit {
         this.toggleLinkModal();
         return;
       }
-      this.attachmentService.openAttachmentSource(event, this.attachments);
+      await this.attachmentService.openAttachmentSource(event, this.attachments);
+      setTimeout(() => {
+        this.update('save')
+      }, 1000);
     }
   }
 
@@ -197,13 +199,11 @@ export class AddFilePage implements OnInit {
     if (this.taskId) {
       this.task.attachments = this.attachments;
       this.task.remarks = this.remarks;
+      this.location.back();
       if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
         this.task.isEdit = true;
         this.project.isEdit = true;
-        this.update('submit');
         this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
-      } else {
-        this.location.back();
       }
     } else {
       if (this.network.isNetworkAvailable) {
@@ -218,11 +218,14 @@ export class AddFilePage implements OnInit {
     if (event) {
       this.attachments = this.attachments.concat(this.projectService.getLinks(event));
       if (this.taskId) {
+        this.task.isEdit = true;
         this.task.attachments =  this.task?.attachments.concat(this.projectService.getLinks(event));
       } else {
+       this.project.isEdit = true;
         this.project.attachments =  this.project?.attachments.concat(this.projectService.getLinks(event));
       }
       this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED', 'success');
+      this.update('save')
      }
     this.toggleLinkModal();
   }
@@ -231,54 +234,34 @@ export class AddFilePage implements OnInit {
     this.isLinkModalOpen = !this.isLinkModalOpen;
   }
 
-  update(type) {
+  update(type?) {
+    if (this.taskId) {
+      this.task.attachments = this.attachments;
+      this.task.remarks = this.remarks;
+      if (JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
+        this.task.isEdit = true;
+        this.project.isEdit = true;
+        this.toast.showMessage('FRMELEMNTS_LBL_FILES_ATTACHED', 'success')
+      }
+    }
     this.project.isEdit = true;
     this.db
       .update(this.project)
       .then((success) => {
         this.project._rev = success.rev;
-        if (type == 'submit') {
-          this.attachments = [];
-          this.project.status == statusType.submitted ? this.doSyncAction() : this.location.back();
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
+        if(type !== 'save'){
+          this.location.back()
         }
       })
   }
-  doSyncAction() {
+  doSyncAction(isSubmission:boolean = false) {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
         ? this.projectServ.createNewProject(this.project)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission } });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
-    }
-  }
-
-  async pageExitConfirm() {
-    let data;
-    this.translate.get(["FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM", "FRMELEMNTS_BTN_EXIT_PAGE", "FRMELEMNTS_BTN_YES_PAGE", "FRMELEMNTS_LBL_YES", "NO"]).subscribe((text) => {
-      data = text;
-    });
-    const alert = await this.alert.create({
-      cssClass: 'central-alert',
-      header: data['FRMELEMNTS_BTN_EXIT_PAGE'],
-      message: data['FRMELEMNTS_MSG_ATTACHMENT_PAGE_EXIT_CONFIRM'],
-      buttons: [
-        {
-          text: this.taskId ? data["FRMELEMNTS_BTN_YES_PAGE"] : data["FRMELEMNTS_LBL_YES"],
-          handler: () => { },
-        }, {
-          text: data["NO"],
-          role: "cancel",
-          cssClass: "secondary",
-          handler: (blah) => {
-          },
-        },
-      ],
-    });
-    await alert.present();
-    let resp = await alert.onDidDismiss();
-    if (resp.role !== 'cancel') {
-      this.location.back();
     }
   }
 
@@ -314,14 +297,9 @@ export class AddFilePage implements OnInit {
       this.project.attachments = this.attachments;
       this.project.remarks = this.remarks;
       this.project.status = statusType.submitted;
-      this.update('submit');
+      this.attachments = [];
+      this.update();
+      this.doSyncAction(true);
     }, 0)
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      queryParams: {
-        projectId: this.project._id,
-        programId: this.project.programId,
-        solutionId: this.project.solutionId,
-      }, replaceUrl: true
-    });
   }
 }
