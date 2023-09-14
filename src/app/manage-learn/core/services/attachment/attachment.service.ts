@@ -81,7 +81,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           icon: "document",
           handler: () => {
-            path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
         },
@@ -116,7 +116,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
           icon: "cloud-upload",
           handler: () => {
-            this.openLocalLibrary()
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
             return false;
           },
         },
