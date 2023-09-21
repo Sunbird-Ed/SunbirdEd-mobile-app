@@ -79,7 +79,6 @@ export class AttachmentService {
         {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           handler: () => {
-            console.log(path,"oath");
             path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
@@ -115,7 +114,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
           icon: "cloud-upload",
           handler: () => {
-            this.openLocalLibrary()
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
             return false;
           },
         },
@@ -160,7 +159,7 @@ export class AttachmentService {
       .then((imagePath) => {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
-          if (!newFilePath.includes("file://")) {
+          if (!newFilePath.includes("content://") && !newFilePath.includes("file://")) {
             newFilePath = "file://" + imagePath
           }
             this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
@@ -221,7 +220,8 @@ export class AttachmentService {
 
   checkForFileSizeRestriction(filePath): Promise<Boolean> {
     return new Promise((resolve, reject) => {
-      this.file.resolveLocalFilesystemUrl(filePath).then(success => {
+      this.filePath.resolveNativePath(filePath).then(fileData =>{
+      this.file.resolveLocalFilesystemUrl(fileData).then(success => {
         success.getMetadata((metadata) => {
           if (metadata.size > localStorageConstants.FILE_LIMIT) {
             this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"],'danger', 5000);
@@ -230,6 +230,9 @@ export class AttachmentService {
             resolve(true)
           }
         })
+      }).catch(error => {
+        reject(false)
+      })
       }).catch(error => {
         reject(false)
       })
