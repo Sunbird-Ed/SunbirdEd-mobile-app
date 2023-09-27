@@ -189,36 +189,45 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   }
 
   async shareFile() {
-    await this.checkForPermissions().then((result) => {
-      if (result) {
-        this.generateConfirmClickTelemetry(ShareMode.SEND);
-        const shareParams = {
-          byFile: true,
-          link: this.shareUrl
-        };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-      }
-    });
+    const shareParams = {
+      byFile: true,
+      link: this.shareUrl
+    };
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.handleSaveShareFile(ShareMode.SEND, shareParams);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.handleSaveShareFile(ShareMode.SEND, shareParams);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        }
+      });
+    }
+  }
+
+  async handleSaveShareFile(mode, shareParams) {
+    this.generateConfirmClickTelemetry(mode);
+    await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+      this.corRelationList, this.objRollup, this.pageId);
+    await this.popoverCtrl.dismiss();
   }
 
   async saveFile() {
-    await this.checkForPermissions().then((result) => {
-      if (result) {
-        this.generateConfirmClickTelemetry(ShareMode.SAVE);
-        const shareParams = {
-          saveFile: true,
-        };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-      }
-    });
+    const shareParams = {
+      saveFile: true,
+    };
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.handleSaveShareFile(ShareMode.SAVE, shareParams);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.handleSaveShareFile(ShareMode.SAVE, shareParams);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        }
+      });
+    }
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
