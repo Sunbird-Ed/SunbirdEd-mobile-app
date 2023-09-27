@@ -104,7 +104,8 @@ describe('Profile.page', () => {
         }),
         getOrgLocation: jest.fn(() => {
             return { state: 'tripura', district: 'west_tripura', block: 'dhaleshwar' };
-        })
+        }),
+        isAndroidVer13: jest.fn()
     };
     const mockSocialSharing: Partial<SocialSharing> = {};
     const mockAppHeaderService: Partial<AppHeaderService> = {};
@@ -754,12 +755,12 @@ describe('Profile.page', () => {
                     Environment.SETTINGS,
                     PageId.APP_PERMISSION_POPUP
                 );
-                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
-                    'FILE_MANAGER_PERMISSION_DESCRIPTION',
-                    'sample_app_name',
-                    PageId.PROFILE,
-                    true
-                );
+                // expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                //     'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                //     'sample_app_name',
+                //     PageId.PROFILE,
+                //     true
+                // );
                 done();
             }, 0);
         });

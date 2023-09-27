@@ -61,7 +61,9 @@ describe('SbSharePopupComponent', () => {
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(),
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        isAndroidVer13: jest.fn()
+    };
     const mockPermissionService: Partial<AndroidPermissionsService> = {
         checkPermissions: jest.fn()
     };

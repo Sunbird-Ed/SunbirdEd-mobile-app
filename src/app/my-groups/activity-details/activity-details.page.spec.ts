@@ -21,7 +21,8 @@ describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        isAndroidVer13: jest.fn()
     };
     const mockFilterPipe: Partial<FilterPipe> = {};
     const mockGroupService: Partial<GroupService> = {};

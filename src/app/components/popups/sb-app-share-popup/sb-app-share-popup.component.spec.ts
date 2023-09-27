@@ -23,7 +23,8 @@ describe('SbAppSharePopupComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any))
+        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any)),
+        isAndroidVer13: jest.fn()
     };
     const mockUtilityService: Partial<UtilityService> = {
         exportApk: jest.fn(() => Promise.resolve('filePath')),

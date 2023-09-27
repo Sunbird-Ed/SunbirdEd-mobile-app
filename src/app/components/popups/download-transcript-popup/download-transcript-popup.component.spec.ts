@@ -10,7 +10,9 @@ import {
 
 describe('DownloadTranscriptPopupComponent', () => {
   let downloadTranscriptPopupComponent: DownloadTranscriptPopupComponent;
-  const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    isAndroidVer13: jest.fn()
+  };
   const mockContentService: Partial<ContentService> = {};
   const mockPopOverCtrl: Partial<PopoverController> = {};
   const mockPlatform: Partial<Platform> = {
