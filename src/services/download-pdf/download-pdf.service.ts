@@ -40,7 +40,7 @@ export class DownloadPdfService {
   }
 
   handlePDFDownlaod(content) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const fileUri = content.contentData.downloadUrl;
       const fileName = content.name;
       const displayDescription = content.contentData.description;
