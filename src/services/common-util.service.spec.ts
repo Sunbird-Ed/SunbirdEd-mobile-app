@@ -17,13 +17,13 @@ import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { of, Subject, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService, ImpressionType, ObjectType } from '.';
 import { ProfileType, TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { AndroidPermission } from './android-permissions/android-permission';
 import GraphemeSplitter from 'grapheme-splitter';
-
+import { Device } from '@ionic-native/device/ngx';
 declare const FCMPlugin;
 
 describe('CommonUtilService', () => {
@@ -86,6 +86,9 @@ describe('CommonUtilService', () => {
   const mockRouter: Partial<Router> = {};
   const mockPermissionService: Partial<AndroidPermissionsService> = {};
   const mockComingSoonMessageService: Partial<ComingSoonMessageService> = {};
+  let mockDevice: Partial<Device> = {
+    version: ""
+  };
 
   beforeAll(() => {
     commonUtilService = new CommonUtilService(
@@ -105,7 +108,8 @@ describe('CommonUtilService', () => {
       mockRouter as Router,
       mockToastController as ToastController,
       mockPermissionService as AndroidPermissionsService,
-      mockComingSoonMessageService as ComingSoonMessageService
+      mockComingSoonMessageService as ComingSoonMessageService,
+      mockDevice as Device
     );
   });
 
@@ -1043,10 +1047,13 @@ describe('CommonUtilService', () => {
       // arrange
       fetch = jest.fn(() => { jest.fn(); }) as any
       let file = "assets/imgs/ic_launcher.png"
-        const sub = new Subject<any>();
-        sub.next = jest.fn()
-        sub.complete = jest.fn()
-        sub.asObservable = jest.fn()
+        // const sub = new Subject<any>();
+        // sub.next = jest.fn()
+        // sub.complete = jest.fn()
+        // sub.asObservable = jest.fn()
+
+        // let sub = new Observable = jest.fn(res => {})
+        // sub.asObservable = jest.fn()
         const reader = new FileReader();
         reader.onload = jest.fn(() => ({result: ''}))
         reader.readAsDataURL = jest.fn()
@@ -1326,19 +1333,6 @@ describe('CommonUtilService', () => {
   });
 
   describe('getPlatformBasedActiveElement', () => {
-    it('shopuld getPlatformBasedActiveElement return active element', () => {
-      // arrange
-      window.document = {
-        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
-        activeElement: {
-          shadowRoot: null
-        }
-      } as any
-      // act
-      commonUtilService.getPlatformBasedActiveElement();
-      // assert
-    })
-
     it('shopuld getPlatformBasedActiveElement check platfrom and return childe node of active element', () => {
       // arrange
       window.document = {
@@ -1349,6 +1343,19 @@ describe('CommonUtilService', () => {
         }
       } as any
       mockPlatform.is = jest.fn(platform => platform == "android");
+      // act
+      commonUtilService.getPlatformBasedActiveElement();
+      // assert
+    })
+
+    it('shopuld getPlatformBasedActiveElement return active element', () => {
+      // arrange
+      window.document = {
+        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
+        activeElement: {
+          shadowRoot: null
+        }
+      } as any
       // act
       commonUtilService.getPlatformBasedActiveElement();
       // assert
@@ -1416,4 +1423,29 @@ describe('CommonUtilService', () => {
     });
 
   });
+
+  describe('isAndroidVer13', () => {
+    it("should return true on android API >= 13 ", () => {
+      // arrange
+      mockDevice.version = '13';
+      mockPlatform.is = jest.fn(fn => (fn === "android"));
+      commonUtilService['device'] = { version: '13', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
+      // act
+      commonUtilService.isAndroidVer13();
+      // assert
+      expect(mockDevice.version).toEqual('13');
+    })
+
+    it("should return false on android API < 13 ", () => {
+      // arrange
+      mockDevice.version = '11';
+      mockPlatform.is = jest.fn(fn => (fn === "android"));
+      const deviceVer = { version: '11', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
+      commonUtilService['device'] = deviceVer
+      // act
+      commonUtilService.isAndroidVer13();
+      // assert
+      expect(mockDevice.version).toEqual('11');
+    })
+  })
 });
