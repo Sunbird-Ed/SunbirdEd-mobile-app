@@ -18,8 +18,7 @@ import {
   CachedItemRequestSourceFrom,
   Channel,
   FrameworkCategoryCode,
-  SharedPreferences,
-  InteractType
+  SharedPreferences
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -27,8 +26,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Environment, ActivePageService, TelemetryGeneratorService,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, } from '@app/services';
+import { Environment, ActivePageService } from '@app/services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
@@ -79,7 +77,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   shouldUpdatePreference: boolean;
   noOfStepsToCourseToc = 0;
   guestUserProfile: any;
-  frameworkData = [];
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -138,9 +135,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private profileHandler: ProfileHandler,
     private segmentationTagService: SegmentationTagService,
-    private categoriesEditService: CategoriesEditService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private categoriesEditService: CategoriesEditService
 
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -162,9 +157,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(false);
+    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-    this.getCategoriesAndUpdateAttributes((this.profile.serverProfile.profileUserTypes.length > 1 ?
-      this.profile.serverProfile.profileUserTypes[0].type : this.profile.profileType) || undefined);
   }
 
   ngOnDestroy() {
@@ -291,9 +287,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             language: this.translate.currentLang,
             selectedTermsCodes: this.boardControl.value
           };
-          if(Object.keys(this.supportedProfileAttributes).length == 1  && this.supportedProfileAttributes['board']) {
-            this.disableSubmitButton = false;
-          }
+
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.mediumControl.value) {
@@ -313,8 +307,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
       tap(async () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SUBMIT_CLICKED,
-          Environment.USER, PageId.PROFILE);
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -329,9 +321,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             language: this.translate.currentLang,
             selectedTermsCodes: this.mediumControl.value
           };
-          if(Object.keys(this.supportedProfileAttributes).length == 2 && this.supportedProfileAttributes['medium']) {
-            this.disableSubmitButton = false;
-          }
+
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.gradeControl.value) {
@@ -351,8 +341,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SUBMIT_CLICKED,
-          Environment.USER, PageId.PROFILE);
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -422,7 +410,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
    */
   enableSubmitButton() {
     if (this.profileEditForm.value.grades.length) {
-      this.disableSubmitButton = false;
       this.btnColor = '#006DE5';
     } else {
       this.btnColor = '#8FC4FF';
@@ -585,25 +572,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   async setDefaultBMG() {
     await this.commonUtilService.getGuestUserConfig().then((profile) => {
       this.guestUserProfile = profile;
-    });
-  }
-
-  private addAttributeSubscription() {
-    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
-    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
-    if (Object.keys(this.supportedProfileAttributes).length > 0) {
-      console.log('disable button ', this.disableSubmitButton);
-      this.disableSubmitButton = true;
-    }
-  }
-
-  private getCategoriesAndUpdateAttributes(userType) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then((categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.frameworkData = categories.supportedFrameworkConfig;
-        this.supportedProfileAttributes = categories.supportedAttributes;
-        this.addAttributeSubscription();
-      }
     });
   }
 }
