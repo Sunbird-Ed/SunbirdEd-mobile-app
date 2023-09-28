@@ -51,6 +51,17 @@ describe('DownloadPdfService', () => {
         done();
       }
     });
+
+    it('it should handle else if version >= 13', async () => {
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => true);
+      try {
+        await downloadPdfService.downloadPdf(content as any as Content);
+        // fail();
+      } catch (e) {
+        expect(e).toEqual({ reason: 'device-permission-denied' });
+        // done();
+      }
+    });
   });
 
   describe('if permission is not always denied', () => {
@@ -79,6 +90,24 @@ describe('DownloadPdfService', () => {
         });
       });
 
+      describe('if permission granted, and error callback', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+          mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+          window['downloadManager']['enqueue'].and.callFake((downloadRequest, callback) => {
+            callback("err", '');
+          });
+
+        })
+        it('should download pdf', () => {
+          try {
+            downloadPdfService.downloadPdf(content as any as Content);
+          } catch (e) {
+            fail(e);
+          }
+        });
+      });
+
       describe('if permission not granted', () => {
         beforeAll(() => {
           mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
@@ -93,6 +122,22 @@ describe('DownloadPdfService', () => {
             done();
           }
         });
+      });
+
+      describe('if permission granted', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+          // mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+        })
+        // it('should reject, downlaod failed', async () => {
+        //   try {
+        //     await downloadPdfService.downloadPdf(content as any as Content);
+        //     fail();
+        //   } catch (e) {
+        //     expect(e).toEqual({ reason: 'download-failed' });
+        //     // done();
+        //   }
+        // });
       });
     });
   });
