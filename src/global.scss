@@ -227,3 +227,7 @@ sunbird-pdf-player .sunbird-pdf-palyer-container pdf-viewer iframe{
   margin: 5px 5px;
   word-break: keep-all;
 }
+
+ion-popover [popover]:not(:popover-open):not(dialog[open]) {
+  display: contents;
+}
