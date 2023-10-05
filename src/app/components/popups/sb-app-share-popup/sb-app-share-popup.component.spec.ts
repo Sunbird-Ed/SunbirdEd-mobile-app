@@ -23,7 +23,8 @@ describe('SbAppSharePopupComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any))
+        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any)),
+        isAndroidVer13: jest.fn()
     };
     const mockUtilityService: Partial<UtilityService> = {
         exportApk: jest.fn(() => Promise.resolve('filePath')),
@@ -236,6 +237,7 @@ describe('SbAppSharePopupComponent', () => {
         sbAppSharePopupComponent.shareUrl = 'sample_url';
         const url = `Get Sunbird from the Play Store:` + '\n' + 'sample_url';
         mockCommonUtilService.translateMessage = jest.fn(() => url);
+        mockPlatform.is = jest.fn((fn) => fn == "android");
         // act
         sbAppSharePopupComponent.shareLink();
         // assert
@@ -262,15 +264,70 @@ describe('SbAppSharePopupComponent', () => {
         }, 0);
     });
 
+    it('should call sharecontent on shareLink for platform ios', (done) => {
+        // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "ios")
+        mockPopoverCtrl.dismiss = jest.fn();
+        sbAppSharePopupComponent.shareUrl = 'sample_url';
+        const url = 'sample_url';
+        mockCommonUtilService.translateMessage = jest.fn(() => url);
+        // act
+        sbAppSharePopupComponent.shareLink();
+        // assert
+        setTimeout(() => {
+            expect(mocksocialSharing.share).toHaveBeenCalledWith(null, null, null, url);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SHARE,
+                '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined, undefined, undefined, undefined,
+                ID.SHARE_CONFIRM);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                'share', '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SHARE_CONFIRM);
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should call sharecontent on shareFile, for API 13', (done) => {
+        // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "android");
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => true);
+        sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
+        mockPopoverCtrl.dismiss = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SEND,
+                '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined, undefined, undefined, undefined,
+                ID.SHARE_CONFIRM);
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
     it('should call sharecontent on shareFile', (done) => {
         // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "ios");
         sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
         mockPopoverCtrl.dismiss = jest.fn();
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
             {hasPermission: true}));
         mockCommonUtilService.translateMessage = jest.fn();
         const presentFN = jest.fn(() => Promise.resolve());
-
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => false);
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
         }));
@@ -290,13 +347,14 @@ describe('SbAppSharePopupComponent', () => {
     });
 
     it('should call permission popup on shareFile if not given', (done) => {
+        // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "android");
         sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
         mockPopoverCtrl.dismiss = jest.fn();
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
             {hasPermission: false}));
         mockCommonUtilService.translateMessage = jest.fn();
         const presentFN = jest.fn(() => Promise.resolve());
-
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
         }));
@@ -310,15 +368,37 @@ describe('SbAppSharePopupComponent', () => {
         }, 0);
     });
 
+    it('should call sharecontent on saveFile, for API 13', (done) => {
+        // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "android");
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => true)
+        sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
+        mockPopoverCtrl.dismiss = jest.fn();
+        // act
+        sbAppSharePopupComponent.saveFile();
+        // assert
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SAVE,
+                '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined, undefined, undefined, undefined,
+                ID.SHARE_CONFIRM);
+            // expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
     it('should call sharecontent on saveFile', (done) => {
         // arrange
+        mockPlatform.is = jest.fn((fn) => fn == "android");
         sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
         mockPopoverCtrl.dismiss = jest.fn();
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
             {hasPermission: true}));
         mockCommonUtilService.translateMessage = jest.fn();
         const presentFN = jest.fn(() => Promise.resolve());
-
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
         })) as any;
@@ -345,7 +425,6 @@ describe('SbAppSharePopupComponent', () => {
             {hasPermission: false}));
         mockCommonUtilService.translateMessage = jest.fn();
         const presentFN = jest.fn(() => Promise.resolve());
-
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
         }));

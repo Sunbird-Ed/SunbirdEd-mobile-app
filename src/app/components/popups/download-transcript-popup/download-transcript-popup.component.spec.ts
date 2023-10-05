@@ -12,7 +12,11 @@ import { of } from 'rxjs';
 describe('DownloadTranscriptPopupComponent', () => {
   let downloadTranscriptPopupComponent: DownloadTranscriptPopupComponent;
   const mockCommonUtilService: Partial<CommonUtilService> = {
-    getGivenPermissionStatus: jest.fn(() => Promise.resolve({hasPermission: true}))
+    isAndroidVer13: jest.fn(),
+    getGivenPermissionStatus: jest.fn(),
+    buildPermissionPopover: jest.fn(),
+    showSettingsPageToast: jest.fn(),
+    translateMessage: jest.fn()
   };
   const mockContentService: Partial<ContentService> = {};
   const mockPopOverCtrl: Partial<PopoverController> = {};
@@ -26,7 +30,7 @@ describe('DownloadTranscriptPopupComponent', () => {
     setNativePopupVisible: jest.fn()
   };
   const mockPermissionService: Partial<AndroidPermissionsService> = {
-    requestPermission: jest.fn(() => of({hasPermission: true}))
+    requestPermission: jest.fn(() => {})
   };
 
   beforeAll(() => {
@@ -54,8 +58,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         dismiss: dismissFn,
       }));
       mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockPlatform.is = jest.fn(platform => platform === 'ios')
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.reject());
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => true);
       downloadTranscriptPopupComponent.contentData = {
         transcripts: [{
           identifier: 'sample-do_id',
@@ -83,16 +86,15 @@ describe('DownloadTranscriptPopupComponent', () => {
       }, 0);
     });
 
-    it('should not download transcript file if api failed and hasPermission', (done) => {
+    it('should not download transcript file if api failed', (done) => {
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
       mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}));
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false);
       downloadTranscriptPopupComponent.contentData = {
         transcripts: JSON.stringify([{
           identifier: 'sample-do_id',
@@ -120,310 +122,6 @@ describe('DownloadTranscriptPopupComponent', () => {
       }, 0);
     });
 
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: true}));
-      mockCommonUtilService.showSettingsPageToast = jest.fn(() => {})
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([{
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'english'
-        }, {
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'hindi'
-        }]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied and hasPermission has false', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      const presentPopover = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}));
-      mockCommonUtilService.translateMessage = jest.fn();
-      mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
-        present: presentPopover
-      }));
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([{
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'english'
-        }, {
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'hindi'
-        }]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied and hasPermission has false and not now is selected', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false})); 
-      mockCommonUtilService.translateMessage = jest.fn(v => v);
-        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-          await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
-          mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-          mockCommonUtilService.showSettingsPageToast = jest.fn()
-          return {
-            present: jest.fn(() => Promise.resolve())
-        };
-      });   
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([{
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'english'
-        }, {
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'hindi'
-        }]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied and hasPermission has false and allow is selected', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false})); 
-      mockCommonUtilService.translateMessage = jest.fn(v => v);
-        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-          await callback(mockCommonUtilService.translateMessage('ALLOW'));
-          mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-          mockAppGlobalService.isNativePopupVisible = true;
-          mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}))
-          mockAppGlobalService.setNativePopupVisible = jest.fn();
-          return {
-            present: jest.fn(() => Promise.resolve())
-        };
-      });   
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([{
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'english'
-        }, {
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'hindi'
-        }]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-        expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
-        expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied and hasPermission has false and allow is selected and request isPermissionAlwaysDenied', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false})); 
-      mockCommonUtilService.translateMessage = jest.fn(v => v);
-        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-          await callback(mockCommonUtilService.translateMessage('ALLOW'));
-          mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-          mockAppGlobalService.isNativePopupVisible = true;
-          mockPermissionService.requestPermission = jest.fn(() => of({isPermissionAlwaysDenied: true}))
-          mockAppGlobalService.setNativePopupVisible = jest.fn();
-          return {
-            present: jest.fn(() => Promise.resolve())
-        };
-      });   
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-        expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
-        expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file if api failed and isPermissionAlwaysDenied and hasPermission has false and allow is selected and no request with hasPermission and isPermissionAlwaysDenied', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false})); 
-      mockCommonUtilService.translateMessage = jest.fn(v => v);
-        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-          await callback(mockCommonUtilService.translateMessage('ALLOW'));
-          mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-          mockAppGlobalService.isNativePopupVisible = true;
-          mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false, isPermissionAlwaysDenied: false}))
-          mockAppGlobalService.setNativePopupVisible = jest.fn();
-          mockCommonUtilService.showSettingsPageToast = jest.fn();
-          return {
-            present: jest.fn(() => Promise.resolve())
-        };
-      });   
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([{
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'english'
-        }, {
-          identifier: 'sample-do_id',
-          artifactUrl: 'http//:sample-url/do_id',
-          language: 'hindi'
-        }]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-        expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
-        expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not download transcript file and allow is selected and no request with hasPermission and isPermissionAlwaysDenied', (done) => {
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      }));
-      mockPlatform.is = jest.fn(platform => platform === 'android')
-      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false})); 
-      mockCommonUtilService.translateMessage = jest.fn(v => v);
-        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
-          await callback(mockCommonUtilService.translateMessage('Sample'));
-          mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-          mockAppGlobalService.isNativePopupVisible = true;
-          mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false, isPermissionAlwaysDenied: false}))
-          mockAppGlobalService.setNativePopupVisible = jest.fn();
-          mockCommonUtilService.showSettingsPageToast = jest.fn();
-          return {
-            present: jest.fn(() => Promise.resolve())
-        };
-      });   
-      downloadTranscriptPopupComponent.contentData = {
-        transcripts: JSON.stringify([]),
-        name: 'transcript-content'
-      };
-      downloadTranscriptPopupComponent.transcriptLanguage = 'english';
-      mockContentService.downloadTranscriptFile = jest.fn(() => Promise.reject({error: 'api-failed'}));
-      // act
-      downloadTranscriptPopupComponent.download();
-      // assert
-      setTimeout(() => {
-        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-        expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
-        expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
     it('should not download transcript file if transcript is not available', (done) => {
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -431,12 +129,14 @@ describe('DownloadTranscriptPopupComponent', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
       mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
       downloadTranscriptPopupComponent.contentData = {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: true}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn();
       // act
       downloadTranscriptPopupComponent.download();
       // assert
@@ -444,6 +144,209 @@ describe('DownloadTranscriptPopupComponent', () => {
         expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
         expect(presentFn).toHaveBeenCalled();
         expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        // expect(dismissFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file checkpermission isPermission denied true', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: JSON.stringify([]),
+        name: 'transcript-content'
+      };
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: true}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn();
+      mockAppGlobalService.isNativePopupVisible = true;
+      mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: true, isPermissionDenied: false }));
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+     // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        // expect(dismissFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file checkpermission hasPermission true, translate message is empty', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: JSON.stringify([]),
+        name: 'transcript-content'
+      };
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(v => v);
+      mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+        await callback(mockCommonUtilService.translateMessage(''));
+        return {
+            present: jest.fn(() => Promise.resolve())
+        };
+      });
+      mockAppGlobalService.isNativePopupVisible = true;
+      mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: true, isPermissionDenied: false }));
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file checkpermission hasPermission true', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: JSON.stringify([]),
+        name: 'transcript-content'
+      };
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(v => v);
+      mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+        await callback(mockCommonUtilService.translateMessage('ALLOW'));
+        return {
+            present: jest.fn(() => Promise.resolve())
+        };
+      });
+      mockAppGlobalService.isNativePopupVisible = true;
+      mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: true, isPermissionDenied: false }));
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file checkpermission isPermission denied, hasPermission false', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: JSON.stringify([]),
+        name: 'transcript-content'
+      };
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(v => v);
+      mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+        await callback(mockCommonUtilService.translateMessage('ALLOW'));
+        return {
+            present: jest.fn(() => Promise.resolve())
+        };
+      });
+      mockAppGlobalService.isNativePopupVisible = true;
+      mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false, isPermissionDenied: true}))
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file checkpermission isPermission denied, hasPermission false, storage Permission build permission', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "android");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: JSON.stringify([]),
+        name: 'transcript-content'
+      };
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.showSettingsPageToast = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.translateMessage = jest.fn(v => v);
+      mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+        await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+        return {
+          present: jest.fn(() => Promise.resolve())
+        };
+      });
+      mockCommonUtilService.showSettingsPageToast = jest.fn(() => Promise.resolve());
+      // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        // expect(dismissFn).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not download transcript file if transcript is undefined', (done) => {
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockPlatform.is = jest.fn(fn => fn == "ios");
+      mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false);
+      downloadTranscriptPopupComponent.contentData = {
+        transcripts: undefined,
+        name: 'transcript-content'
+      };
+      // act
+      downloadTranscriptPopupComponent.download();
+      // assert
+      setTimeout(() => {
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+        // expect(dismissFn).toHaveBeenCalled();
         done();
       }, 0);
     });
