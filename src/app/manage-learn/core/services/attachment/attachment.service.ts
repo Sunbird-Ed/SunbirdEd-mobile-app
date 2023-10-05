@@ -79,7 +79,7 @@ export class AttachmentService {
         {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           handler: () => {
-            path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.ALLMEDIA);
+            path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
         },
@@ -130,7 +130,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.ALLMEDIA);
+            this.openFile();
             return false;
           },
         },
@@ -342,7 +342,7 @@ export class AttachmentService {
         this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
       case 'openFiles':
-        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.ALLMEDIA);
+        this.openFile();
         break;
     }
   }
