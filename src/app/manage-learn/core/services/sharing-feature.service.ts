@@ -11,6 +11,7 @@ import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { NetworkService } from './network.service';
+import { Device } from '@ionic-native/device/ngx';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,8 @@ export class SharingFeatureService {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
-    public network :NetworkService
+    public network :NetworkService,
+    private device: Device
   ) {
     console.log('Hello SharingFeaturesProvider Provider');
   }
@@ -140,7 +142,7 @@ export class SharingFeatureService {
   }
 
   requestPermission() {
-    if (this.platform.is('android')) {
+    if (this.platform.is('android') && this.device.version < "13") {
       this.androidPermissions.requestPermissions([
         this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
         this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
