@@ -211,34 +211,41 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async downloadCsv() {
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.DOWNLOAD_CLICKED,
-          Environment.USER,
-          PageId.ACTIVITY_DETAIL
-        );
-        const expTime = new Date().getTime();
-        const csvData: any = this.convertToCSV(this.memberList);
-        const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
-        const downloadDirectory = `${folderPath}Download/`;
-        
-        this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
-        .then((res)=> {
-          console.log('rs write file', res);
-          this.openCsv(res.nativeURL)
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-        })
-        .catch((err) => {
-          console.log('writeFile err', err)
-        });
-      } else{
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
-      }
-    });
+    if(this.commonUtilService.isAndroidVer13()) {
+      this.convertToCSVandDownlaod();
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          this.convertToCSVandDownlaod();
+        } else{
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
+        }
+      });
+    }
+  }
+
+  convertToCSVandDownlaod() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CLICKED,
+      Environment.USER,
+      PageId.ACTIVITY_DETAIL
+    );
+    const expTime = new Date().getTime();
+    const csvData: any = this.convertToCSV(this.memberList);
+    const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+    const downloadDirectory = `${folderPath}Download/`;
     
+    this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
+    .then((res)=> {
+      console.log('rs write file', res);
+      this.openCsv(res.nativeURL)
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+    })
+    .catch((err) => {
+      console.log('writeFile err', err)
+    });
   }
 
   async checkForPermissions(): Promise<boolean | undefined> {

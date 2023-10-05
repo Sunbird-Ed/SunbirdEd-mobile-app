@@ -10,7 +10,7 @@ import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { DhitiApiService } from '@app/app/manage-learn/core/services/dhiti-api.service';
-
+import { Device } from '@ionic-native/device/ngx';
 @Component({
   selector: 'download-share',
   templateUrl: './download-share.component.html',
@@ -39,7 +39,8 @@ export class DownloadShareComponent {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
-    public dhiti: DhitiApiService
+    public dhiti: DhitiApiService,
+    private device: Device
   ) {
     this.translate
       .get(['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING', 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED'])
@@ -122,7 +123,7 @@ export class DownloadShareComponent {
   }
 
   requestPermission() {
-    if (this.platform.is('android')) {
+    if (this.platform.is('android') && this.device.version < "13") {
       this.androidPermissions.requestPermissions([
         this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
         this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
