@@ -891,7 +891,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       return;
     }
     switch (selectedPill) {
-      case 'observation':
+      case 'observations':
         this.router.navigate([RouterLinks.OBSERVATION], {});
         break;
       case 'project':
