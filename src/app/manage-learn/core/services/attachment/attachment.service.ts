@@ -272,8 +272,8 @@ export class AttachmentService {
       const file = await this.chooser.getFile('application/pdf');
       let sizeOftheFile: number = file.data.length
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
-        this.actionSheetController.dismiss();
-        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+        this.actionSheetOpen ?  this.actionSheetController.dismiss() :'';
       } else {
         const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
@@ -291,7 +291,11 @@ export class AttachmentService {
       }
 
     } catch (error) {
-      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      if(error == "OutOfMemory"){
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+      }else{
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      }
     }
   }
 
