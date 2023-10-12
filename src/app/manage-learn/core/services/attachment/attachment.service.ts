@@ -345,6 +345,12 @@ export class AttachmentService {
       case 'openGallery':
         this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
         break;
+      case 'openImage':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
+        break;
+      case 'openVideo':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
+        break;
       case 'openFiles':
         this.openFile();
         break;
