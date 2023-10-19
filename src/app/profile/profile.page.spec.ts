@@ -35,6 +35,7 @@ import { SegmentationTagService } from '../../services/segmentation-tag/segmenta
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
 import { ContentCard } from '../app.constant';
+import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -148,7 +149,8 @@ describe('Profile.page', () => {
         evalCriteria: jest.fn()
     };
     const mockLocationHandler: Partial<LocationHandler> = {};
-
+    const mockUnnatiDataService: Partial<UnnatiDataService> = {
+    };
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
@@ -179,7 +181,8 @@ describe('Profile.page', () => {
             mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
             mockPlatform as Platform,
-            mockLocationHandler as LocationHandler
+            mockLocationHandler as LocationHandler,
+            mockUnnatiDataService as UnnatiDataService
         );
     });
 
