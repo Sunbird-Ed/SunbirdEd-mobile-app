@@ -14,7 +14,7 @@
     <ion-popover  [isOpen]="taskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
       <ng-template>
     <ion-datetime presentation="date" id="taskEndDate" #dateTime value="{{task?.endDate}}" display-timezone="utc"
-    min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="task.endDate" (ngModelChange)="setOpen(false,'update')">
+    min="{{project?.startDate ? project?.startDate  :  currentYear - 2 }}" max="{{project?.endDate ? project?.endDate : currentYear + 5}}" display-timezone="utc" [(ngModel)]="task.endDate" (ngModelChange)="setOpen(false,'update')">
     </ion-datetime>
   </ng-template>
     </ion-popover>

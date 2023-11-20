@@ -781,4 +781,8 @@ return data;
     ];
     return tabs;
   }
+
+ checkDateofTask(template){
+    return template.tasks.find(task => task.endDate >= template.endDate || task.endDate < template.startDate);
+ }
 }

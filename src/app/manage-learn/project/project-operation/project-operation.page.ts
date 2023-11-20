@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
-import { NetworkService, ProjectService, statusType, ToastService } from '../../core';
+import { NetworkService, ProjectService, projectStatus, statusType, ToastService, UtilsService } from '../../core';
 import { RouterLinks } from '../../../../app/app.constant';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -39,7 +39,7 @@ export class ProjectOperationPage  {
   private backButtonFunc: Subscription;
   projectEndDateModalOpen : boolean = false;
   projecStartDateModalOpen : boolean = false;
-
+  dateChangeForTask: boolean = false;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -59,6 +59,7 @@ export class ProjectOperationPage  {
     private networkService: NetworkService,
     private toast: ToastService,
     private projectServ: ProjectService,
+    private utils : UtilsService
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -336,7 +337,17 @@ export class ProjectOperationPage  {
     if (this.button == 'FRMELEMNTS_LBL_VIEW_PROJECT') {
       this.newProjectCreate();
     } else {
-      this.update();
+      let showPopup;
+      if(this.template.tasks && this.template.tasks.length){
+        showPopup = this.utils.checkDateofTask(this.template);
+        if(showPopup){
+          this.showConfirmationPopup();
+        }else{
+          this.update();
+        }
+      } else{
+        this.update();
+      } 
     }
   }
 
@@ -356,5 +367,61 @@ export class ProjectOperationPage  {
   }
   setStartDate(isOpen: boolean) {
   this.projecStartDateModalOpen = isOpen;
+  }
+  async showConfirmationPopup() {
+    let text;
+    this.translate
+      .get([
+        'FRMELEMNTS_LBL_PROJECT_END_DATE',
+        'FRMELEMNTS_MSG_PROJECT_END_DATE',
+        'YES',
+        'NO',
+      ])
+      .subscribe((data) => {
+        text = data;
+      });
+    this.viewProjectAlert = await this.alertController.create({
+      cssClass: 'dark-background central-alert',
+      header:text['FRMELEMNTS_LBL_PROJECT_END_DATE'],
+      subHeader: text['FRMELEMNTS_MSG_PROJECT_END_DATE'],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: text['NO'],
+          cssClass: 'secondary',
+          handler: (blah) => {
+         
+          }
+        },
+        {
+          text: text['YES'],
+          cssClass: 'secondary',
+          handler: (blah) => {
+          this.dateMapping();
+          }
+        }
+      ]
+    });
+    await this.viewProjectAlert.present();
+  }
+  dateMapping() {
+    let taskCount = 0;
+    this.template.tasks.forEach(task => {
+      taskCount++;
+      if (task.endDate < this.template.startDate || task.endDate > this.template.endDate) {
+        task.endDate = this.template.endDate;
+        if (task.children && task.children.length) {
+          task.children.forEach(subTask => {
+            if (subTask.endDate > task.endDate) {
+              subTask.endDate = task.endDate;
+            }
+          });
+        }
+      }
+    });
+
+    if (this.template.tasks.length === taskCount) {
+     this.update();
+    }
   }
 }
