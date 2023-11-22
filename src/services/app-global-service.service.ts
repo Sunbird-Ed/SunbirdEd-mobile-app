@@ -92,7 +92,7 @@ export class AppGlobalService implements OnDestroy {
     private _isNativePopupVisible: boolean;
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
-    private frameworkCategory = {};
+    private frameworkCategory: any;
     private _isSplashscreenDisplay: boolean = false;
 
     constructor(

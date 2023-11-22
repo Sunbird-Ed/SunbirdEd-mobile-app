@@ -227,8 +227,8 @@ export class ProfilePage implements OnInit {
   }
 
   async ngOnInit() {
-    this.getCategories();
     await this.doRefresh();
+    this.getCategories();
     this.appName = await this.appVersion.getAppName();
   }
 
@@ -1274,8 +1274,8 @@ export class ProfilePage implements OnInit {
   }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories.supportedFrameworkConfig;
+    this.formAndFrameworkUtilService.getFrameworkCategoryList(this.profile.framework.id[0]).then((categories) => {
+      this.categories = categories;
     }).catch(e => console.error(e));
   }
   

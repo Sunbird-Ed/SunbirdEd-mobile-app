@@ -1,6 +1,6 @@
 <ion-content class="padding-bottom-if-header">
-	<div class="">
-		<form [formGroup]="profileSettingsForm" class="ps-container">
+	<div class="" *ngIf="isCategoryLabelLoded">
+		<form [formGroup]="profileSettingsForms" class="ps-container">
 			<div  role="button" aria-label="back" (click)="handleBackButton(true)" class='back-btn-container'>
 				<img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !(showQRScanner && isInitialScreen)"
 					 class="top-back-button" alt="back">
@@ -34,7 +34,7 @@
 						<ion-item appCustomIonSelect>
 							<ion-label position="stacked" class="label-font text-uppercase align-text">
 								{{categories[0].label | translateJson}}</ion-label>
-							<ion-select multiple="false" class="ion-text-capitalize" formControlName="syllabus"
+							<ion-select multiple="false" class="ion-text-capitalize" [formControlName]="categories[0].identifier"
 										[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()"
 										okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 										placeholder="{{categories[0].placeHolder | translateJson}}">
@@ -53,20 +53,20 @@
 				</div>
 			</div>
 			<div novalidate class="form-position" *ngIf="!showQRScanner">
-				<div *ngFor="let category of categories">
-					<ion-item *ngIf="!!supportedProfileAttributes['board'] && category.code=== 'category1'" appCustomIonSelect (click)="onCategoryCliked('board')">
+				<div *ngFor="let category of categories; let i = index">
+					<ion-item appCustomIonSelect (click)="onCategoryCliked('board')">
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
 						</ion-label>
-						<ion-select multiple="false" #boardSelect class="ion-text-capitalize" formControlName="syllabus"
-							[disabled]="!syllabusList.length" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent('board')"
+						<ion-select [multiple]="isMultipleVales(category)" #boardSelect class="ion-text-capitalize" [formControlName]="category.identifier"
+							[disabled]="!(i === 0 || category.isDisable)" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent('board')"
 							okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-							placeholder="{{category.placeHolder | translateJson}}">
-							<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+							placeholder="{{category.placeHolder | translateJson}}" (ngModelChange)="getCategoriesDetails($event, category, i)">
+							<ion-select-option *ngFor="let eachSyllabus of category.itemList" value="{{eachSyllabus.code}}">
 								{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 						</ion-select>
 					</ion-item>
 
-					<ion-item *ngIf="!!supportedProfileAttributes['medium'] && category.code=== 'category2'" appCustomIonSelect (click)="onCategoryCliked('medium')">
+					<!-- <ion-item *ngIf="category.identifier=== 'fw_category2'" appCustomIonSelect (click)="onCategoryCliked('medium')">
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
 						</ion-label>
 						<ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize"
@@ -77,9 +77,9 @@
 								value="{{medium.code}}">
 								{{medium.name}}</ion-select-option>
 						</ion-select>
-					</ion-item>
+					</ion-item> -->
 	
-					<ion-item *ngIf="!!supportedProfileAttributes['gradeLevel'] && category.code=== 'category3'" appCustomIonSelect (click)="onCategoryCliked('grade')">
+					<!-- <ion-item *ngIf="category.identifier=== 'fw_category3'" appCustomIonSelect (click)="onCategoryCliked('grade')">
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
 						</ion-label>
 						<ion-select multiple="true" #gradeSelect class="ion-text-capitalize" formControlName="grade"
@@ -90,18 +90,26 @@
 								value="{{grade.code}}">
 								{{grade.name}}</ion-select-option>
 						</ion-select>
-					</ion-item>
+					</ion-item> -->
 				</div>
 
 			</div>
 		</form>
+		<!-- <form [formGroup]="profileSettingsForm_1">
+			<div *ngFor="let data of categories; let i=index">
+				<div class="label-name">
+					<label>{{data.label}}</label>
+					<input type="text" style="margin-left: 10px;" (ngModelChange)="modelChanged($event, data)" placeholder={{data.placeHolder}} [formControlName]="data.identifier">
+				</div>
+			</div>
+		  </form> -->
 	</div>
 </ion-content>
 
 <div class="ion-padding ion-no-border" style="background: white;" *ngIf="!showQRScanner">
-	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
+	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase" [ngClass]="{'disable-submit-btn' : !profileSettingsForms.valid}" [disabled]="!profileSettingsForms.valid"
 		[style.background-color]="btnColor" (click)="onSubmitAttempt()">
 		{{ 'CONTINUE' | translate }}
-		<img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="profileSettingsForm.valid" alt="">
+		<img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="profileSettingsForms.valid" alt="">
 	</button>
 </div>

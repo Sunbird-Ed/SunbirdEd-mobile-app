@@ -116,6 +116,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     profile: Profile;
     private existingSearchFilters = {};
     filterIdentifier: any;
+    userPreferences: any;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -134,6 +135,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.userPreferences = extrasState.userPreferences;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
             if (this.formField && this.formField.facet && this.formField.facet.toLowerCase() === 'course') {
@@ -245,12 +247,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             (this.formService, this.courseService, this.profileService)
             .aggregate({
                 interceptSearchCriteria: () => (searchCriteria),
-                userPreferences: {
-                    board: this.profile.board,
-                    medium: this.profile.medium,
-                    gradeLevel: this.profile.grade,
-                    subject: this.profile.subject,
-                  }
+                userPreferences: this.userPreferences
             },
                 [], null, [{
                     dataSrc: {

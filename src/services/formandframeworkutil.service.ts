@@ -728,50 +728,27 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    private async setSupportedAttributes(framework, userType?: string) {
-        if (!userType || userType === ProfileType.NONE) {
-            userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-        }
-        const frameworkDetails = {};
-        frameworkDetails['userType'] = userType;
-        const supportedFrameworkConfig = framework.filter((item) => {
-            return (item.supportedUserTypes.find((type) => type === userType));
-        });
-        frameworkDetails['supportedFrameworkConfig'] = supportedFrameworkConfig;
-        const  supportedAttributes = supportedFrameworkConfig.reduce((map, item) => {
-            map[item.frameworkCode] = item.frameworkCode;
-            return map;
-        }, {});
-        frameworkDetails['supportedAttributes'] = supportedAttributes;
-        return frameworkDetails;
+
+
+    private async getCategoriesConfig(frameworkId: string, formRequest): Promise<any> {
+        console.log('.....getCategoriesConfig', formRequest)
+       return await this.frameworkService.getFrameworkConfig(frameworkId, formRequest).toPromise();
     }
 
-    private invokeFrameworkCategoriesFormApi(userType?: string): Promise<any> {
-        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then(async (res) => {
-            const categoryConfig = await this.setSupportedAttributes(res, userType);
-            this.appGlobalService.setFramewokCategory(categoryConfig);
-            return categoryConfig;
-        }).catch((error) => {
-            return error;
-        });
-    }
-
-    getFrameworkCategoryList(userType?: string): Promise<any> {
+    getFrameworkCategoryList(frameworkId?: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!userType || userType === ProfileType.NONE) {
-                this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
-                    userType = type;
-                }).catch((e) => console.error(e));
-            }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
             console.log('................', framework);
-            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
-                (framework.userType !== userType || !userType || userType === ProfileType.NONE))) {
-                this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
-                resolve(res);
+            if (!framework || (framework && framework.id !== frameworkId)) {
+                 this.getCategoriesConfig(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId}).then((res) => {
+                    if(res) {
+                        let fraeworkDetails = {id: frameworkId, value: res }
+                        this.appGlobalService.setFramewokCategory(fraeworkDetails);
+                        resolve(res);
+                    }
                 }).catch((e) => console.error(e));
             } else {
-                resolve(framework);
+                resolve(framework.value);
             }
         });
     }

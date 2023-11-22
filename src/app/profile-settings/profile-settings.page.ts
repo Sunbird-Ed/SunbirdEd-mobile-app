@@ -5,7 +5,7 @@ import { delay, tap } from 'rxjs/operators';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../../app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
 import {
@@ -107,6 +107,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isInitialScreen = false;
+  profileSettingsForms: FormGroup;
+  group: any = {};
+  isCategoryLabelLoded = false;
+  defaultFrameworkID: string;
+  isDisable = true;
   
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -131,6 +136,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private segmentationTagService: SegmentationTagService,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
+    this.navParams = window.history.state;
+    this.defaultFrameworkID = this.navParams.defaultFrameworkID;
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([]),
       board: new FormControl([]),
@@ -140,7 +147,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.getCategoriesAndUpdateAttributes();
+    await this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
     await this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
@@ -340,6 +347,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     if (this.showQRScanner === false) {
       this.showQRScanner = true;
       this.resetProfileSettingsForm();
+      this.resetCategoriesValues();
     } else {
       await this.dismissPopup();
     }
@@ -455,7 +463,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: []
     };
 
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -467,6 +475,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+        this.categories[0]['itemList'] = this.syllabusList;
 
 
         /* New Telemetry */
@@ -506,7 +515,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           this.framework = await this.frameworkService.getFrameworkDetails({
             from: CachedItemRequestSourceFrom.SERVER,
             frameworkId: value[0],
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            requiredCategories: []
           }).toPromise();
 
           /* New Telemetry */
@@ -514,8 +523,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.BOARD],
-            currentCategoryCode: FrameworkCategoryCode.BOARD,
+            requiredCategories: [this.categories[0].code],
+            currentCategoryCode: this.categories[0].code,
             language: this.translate.currentLang
           };
 
@@ -526,9 +535,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.MEDIUM],
-            prevCategoryCode: FrameworkCategoryCode.BOARD,
-            currentCategoryCode: FrameworkCategoryCode.MEDIUM,
+            requiredCategories: [this.categories[1].code],
+            prevCategoryCode: this.categories[0].code,
+            currentCategoryCode: this.categories[1].code,
             language: this.translate.currentLang,
             selectedTermsCodes: this.boardControl.value
           };
@@ -561,9 +570,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-            prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-            currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+            requiredCategories: [this.categories[2].code],
+            prevCategoryCode: this.categories[1].code,
+            currentCategoryCode: this.categories[2].code,
             language: this.translate.currentLang,
             selectedTermsCodes: this.mediumControl.value
           };
@@ -598,11 +607,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     });
     const updateProfileRequest: Profile = {
       ...this.activeSessionProfile,
-      syllabus: this.syllabusControl.value,
+      syllabus: [this.framework.identifier],
       board: this.boardControl.value,
       medium: this.mediumControl.value,
       grade: this.gradeControl.value,
-      profileType: (this.navParams && this.navParams.selectedUserType) || this.activeSessionProfile.profileType
+      profileType: (this.navParams && this.navParams.selectedUserType) || this.activeSessionProfile.profileType,
+      categories: this.profileSettingsForms.value
     };
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
@@ -656,7 +666,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.loader = await this.commonUtilService.getLoader(2000);
         await this.loader.present();
       })
-      .catch(async () => {
+      .catch(async (e) => {
+        console.log('errorrrrrrrrrr', e)
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
@@ -676,12 +687,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private resetProfileSettingsForm() {
-    this.profileSettingsForm.reset({
-      syllabus: [],
-      board: [],
-      medium: [],
-      grade: []
-    });
+    this.profileSettingsForms.reset();
+    console.log('profileSettingsForms', this.profileSettingsForms);
+    console.log('profileSettingsForms', this.categories)
   }
 
   boardClicked(e?: Event) {
@@ -826,14 +834,85 @@ private addAttributeSubscription() {
   this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
 }
 
-  private getCategoriesAndUpdateAttributes() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.categories = categories.supportedFrameworkConfig;
-        this.supportedProfileAttributes = categories.supportedAttributes;
-        this.addAttributeSubscription();
+  private async getCategoriesAndUpdateAttributes(change = false) {
+    await this.formAndFrameworkUtilService.getFrameworkCategoryList(this.defaultFrameworkID).then((categories) => {
+      if (categories) {
+        this.categories = categories.sort((a, b) => a.index - b.index)
+        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        console.log('///////////////////', this.defaultFrameworkID)
+          this.addAttributeSubscription();
+        // }
+        let resultMap = new Map();
+        this.categories.forEach((ele: any, index) => {
+          this.group[ele.identifier] = new FormControl([], ele.required ? Validators.required : []);
+        });
+        if (Object.keys(this.group).length) {
+          this.isCategoryLabelLoded = true;
+        }
+        console.log('...............', resultMap)
+        this.profileSettingsForms = new FormGroup(this.group);
+        this.group = {};
+        if (change) {
+          this.profileSettingsForms.get(this.categories[0].identifier).patchValue([this.defaultFrameworkID]);
+        }
+        this.isCategoryLabelLoded = true;
+        console.log('...............', this.group)
       }
     }).catch(e => console.error(e));
+  }
+
+
+  // async getNewFrameworkLabel() {
+  //   await this.frameworkService.getFrameworkConfig('agriculture_framework').toPromise()
+  //   .then((data) => {
+  //     console.log('.............../////', data)
+  //   })
+  //   .catch((error) => console.log('error....', error))
+  // }
+
+  async getCategoriesDetails(event, data, index) {
+    if (index !== this.categories.length - 1) {
+      console.log('.............................', event, data);
+      if (this.syllabusList.find(e => e.name === event) || index === 0) {
+        if (this.defaultFrameworkID !== event) {
+          this.defaultFrameworkID = event;
+          this.appGlobalService.setFramewokCategory('');
+         // this.profileSettingsForms.reset();
+          await this.getCategoriesAndUpdateAttributes(true)
+        }
+        this.framework = await this.frameworkService.getFrameworkDetails({
+          from: CachedItemRequestSourceFrom.SERVER,
+          frameworkId: event,
+          requiredCategories: []
+        }).toPromise();
+      }
+      if (index <= this.categories.length && this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
+        for (let i = index + 1; i < this.categories.length; i++) {
+          this.profileSettingsForms.get(this.categories[i].identifier).patchValue([]);
+          //  this.profileSettingsForms.get(this.categories[i].identifier).disable()
+        }
+      }
+    const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+      frameworkId: this.framework.identifier,
+      requiredCategories: [this.categories[index + 1].code],
+      // prevCategoryCode: this.categories[index].code,
+      currentCategoryCode: this.categories[index + 1].code,
+      language: this.translate.currentLang
+    };
+    const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+      .map(t => ({ name: t.name, code: t.code }))
+
+    this.categories[index + 1]['itemList'] = categoryTerms;
+    this.categories[index + 1]['isDisable'] = true;
+  }
+}
+
+  isMultipleVales(category) {
+    return category.identifier === 'fwCategory1' ? "false" : "true";
+  }
+
+  resetCategoriesValues() {
+   // this.categories.map((e) => e.itemList = [])
   }
 
 }
