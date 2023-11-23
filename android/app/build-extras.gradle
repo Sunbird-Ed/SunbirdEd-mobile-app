@@ -1,0 +1,430 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
+    }
+}
+
+repositories {
+    google()
+}
+
+apply plugin: 'com.google.firebase.crashlytics'
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    // task verifyAppId {
+    //     doFirst {
+    //         println("Application Id : ${app_id}")
+
+    //         if (app_id.isEmpty()) {
+    //             throw new GradleException("'app_id' is Emptry")
+    //         }
+
+    //         if (app_id.equalsIgnoreCase("org.sunbird.app")) {
+    //             throw new GradleException("Don't use app_id as 'org.sunbird.app'")
+    //         }
+    //     }
+    // }
+    // verifyAppId.execute()
+}
+
+ext {
+    // To make minimum SDK as 21
+    // cdvMinSdkVersion = null
+    cdvVersionCode=Integer.parseInt('' + "${app_version_code}")
+}
+
+android {
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
+
+    defaultConfig {
+        minSdkVersion 22
+        ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
+        versionName "6.0.$ext.buildNumber"
+        resValue("string", "_app_name", "${app_name}")
+        multiDexEnabled true
+        
+        buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
+    }
+
+    signingConfigs {
+        release {
+
+        }
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
+            ext.enableCrashlytics = true
+        }
+        debug{
+            buildConfigField "boolean", "USE_CRASHLYTICS", "false"
+            ext.enableCrashlytics = false
+        }
+    }
+
+    flavorDimensions "default"
+
+    productFlavors {
+         dev {
+            flavorDimensions "default"
+            applicationId "${dev_app_id}"
+            buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
+            resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
+            if (project.hasProperty("dev_deeplink_ncert_url")) {
+                resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
+            } else {
+                resValue("string", "deeplink_ncert_url", '"dev.sunbirded.org"')
+            }
+
+            if (project.hasProperty("dev_deeplink_igot_url")) {
+                 resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
+            } else {
+                resValue("string", "deeplink_igot_url", '"dev.sunbirded.org"')
+            }
+
+            if (project.hasProperty("dev_custom_scheme")) {
+                 resValue("string", "custom_scheme_url", "${dev_custom_scheme}")
+            } else {
+                resValue("string", "custom_scheme_url", '"dev.sunbirded.app"')
+            }
+
+            if (System.properties['dev_merge_account_base_url']) {
+                buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
+            }
+            if (System.properties['dev_producer_id']) {
+                 buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
+            }
+            if (System.properties['dev_oauth_redirect_url']) {
+                buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
+            }
+            if (System.properties['dev_tou_base_url']) {
+                 buildConfigField 'String', 'TOU_BASE_URL', "\"${dev_tou_base_url}\""
+            }
+            if (System.properties['dev_survey_base_url']) {
+                buildConfigField 'String', 'SURVEY_BASE_URL', "\"${dev_survey_base_url}\""
+            }
+            if (System.properties['dev_projects_base_url']) {
+                buildConfigField 'String', 'TOU_BASE_URL', "\"${dev_tou_base_url}\""
+            }
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+        }
+
+        staging {
+            flavorDimensions "default"
+            applicationId "${staging_app_id}"
+            buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
+            resValue("string", "deeplink_base_url", "${staging_deeplink_base_url}")
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${staging_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
+            if (project.hasProperty("dev_deeplink_ncert_url")) {
+                resValue("string", "deeplink_ncert_url", "${staging_deeplink_ncert_url}")
+            } else {
+                resValue("string", "deeplink_ncert_url", '"staging.sunbirded.org"')
+            }
+
+            if (project.hasProperty("staging_deeplink_igot_url")) {
+                 resValue("string", "deeplink_igot_url", "${staging_deeplink_igot_url}")
+            } else {
+                resValue("string", "deeplink_igot_url", '"dev.sunbirded.org"')
+            }
+
+            if (project.hasProperty("staging_custom_scheme")) {
+                 resValue("string", "custom_scheme_url", "${staging_custom_scheme}")
+            } else {
+                resValue("string", "custom_scheme_url", '"staging.sunbirded.app"')
+            }
+
+            if (System.properties['staging_merge_account_base_url']) {
+                buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
+            }
+            if (System.properties['staging_producer_id']) {
+                 buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
+            }
+            if (System.properties['staging_oauth_redirect_url']) {
+                buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
+            }
+            if (System.properties['staging_tou_base_url']) {
+                 buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
+            }
+            if (System.properties['staging_survey_base_url']) {
+                buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
+            }
+            if (System.properties['staging_projects_base_url']) {
+                buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
+            }
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+        
+        }
+
+        production {
+            flavorDimensions "default"
+            applicationId "${production_app_id}"
+            buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
+            resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
+            if (project.hasProperty("production_deeplink_ncert_url")) {
+                resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
+            } else {
+                resValue("string", "deeplink_ncert_url", '"production.sunbirded.org"')
+            }
+
+            if (project.hasProperty("production_deeplink_igot_url")) {
+                 resValue("string", "deeplink_igot_url", "${production_deeplink_igot_url}")
+            } else {
+                resValue("string", "deeplink_igot_url", '"production.sunbirded.org"')
+            }
+
+            if (project.hasProperty("production_custom_scheme")) {
+                 resValue("string", "custom_scheme_url", "${production_custom_scheme}")
+            } else {
+                resValue("string", "custom_scheme_url", '"production.sunbirded.app"')
+            }
+            if (System.properties['production_merge_account_base_url']) {
+                buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
+            }
+            if (System.properties['production_producer_id']) {
+                 buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
+            }
+            if (System.properties['production_channel_id']) {
+                buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
+            }
+            if (System.properties['production_oauth_redirect_url']) {
+                buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
+            }
+            if (System.properties['production_tou_base_url']) {
+                 buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
+            }
+            if (System.properties['production_survey_base_url']) {
+                buildConfigField 'String', 'SURVEY_BASE_URL', "\"${production_survey_base_url}\""
+            }
+            if (System.properties['production_projects_base_url']) {
+                buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
+            }
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+        
+        }
+    }
+
+    task myclean(type: Delete) {
+        def data
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            data = new File( "$rootDir\\app\\src\\main\\assets\\www\\assets\\data" )
+        } else {
+            data = new File( "$rootDir/app/src/main/assets/www/assets/data" )
+        }
+
+        if (data.exists() ) {
+            delete data
+            printf "deleted data"
+        }
+    }
+
+    task copyDirNotificationConfig(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\notificationconfig"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data"
+            println "inside copydir notificationconfig windows OS"
+        } else {
+            from "$rootDir/app/data/notificationconfig"
+            into "$rootDir/app/src/main/assets/www/assets/data"
+            println "inside copydir notificationconfig linux OS"
+        }
+    }
+
+    task copyDirFaq(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\faq"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\faq"
+            println "inside copydir faq windows OS"
+        } else {
+            from "$rootDir/app/data/faq"
+            into "$rootDir/app/src/main/assets/www/assets/data/faq"
+            println "inside copydir faq linux OS"
+        }
+    }
+
+    task copyDirContentRating(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\content-rating"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\content-rating"
+            println "inside copydir content-rating windows OS"
+        } else {
+            from "$rootDir/app/data/content-rating"
+            into "$rootDir/app/src/main/assets/www/assets/data/content-rating"
+            println "inside copydir content-rating linux OS"
+        }
+    }
+
+    task copyDirDev(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\dev"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data"
+            println "inside copydir dev windows OS"
+        } else {
+            from "$rootDir/app/data/dev"
+            into "$rootDir/app/src/main/assets/www/assets/data"
+            println "inside copydir dev linux OS"
+        }
+    }
+
+    task copyDirStaging(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\staging"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data"
+            println "inside copydir staging windows OS"
+        } else {
+            from "$rootDir/app/data/staging"
+            into "$rootDir/app/src/main/assets/www/assets/data"
+            println "inside copydir staging linux OS"
+        }
+    }
+
+    task copyDirProd(type: Copy) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\prod"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data"
+            println "inside copydir prod windows OS"
+        } else {
+            from "$rootDir/app/data/prod"
+            into "$rootDir/app/src/main/assets/www/assets/data"
+            println "inside copydir prod linux OS"
+        }
+    }
+
+    task dev(type: GradleBuild) {
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
+    }      
+    task staging(type: GradleBuild) {
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
+    }
+    task prod(type: GradleBuild) {
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
+    }
+
+    tasks.whenTaskAdded { task ->
+    def name = task.name
+
+    //Skip some unnecessary tasks
+    if (name.startsWith("bundle")
+            && !name.contains("Classes")
+            && !name.contains("Resources")
+            && name != "bundle"
+            && name != "bundleDebug"
+            && name != "bundleRelease") {
+
+        def renameTaskName = "rename${task.name.capitalize()}Aab"
+        def version = "${android.defaultConfig.versionName}-${android.defaultConfig.versionCode}"
+        println "task.name ${task.name}"
+        def flavor = task.name.substring("bundle".length()).toLowerCase().replace("debug", "").replace("release", "")
+        def type = task.name.toLowerCase().replace("bundle", "").replace("${flavor}", "").toLowerCase()
+        println "Flavour ${flavor}"
+        println "Type ${type}"
+        if(flavor == null || type == null) return
+
+        def outputName = "${app_name}-$flavor-$version".toLowerCase()
+        if (!flavor.equals("production")) {
+            outputName = "${app_name}-$flavor-$version".toLowerCase();
+        } else {
+            outputName = "${app_name}-$version".toLowerCase();
+        }
+        
+
+        tasks.create(renameTaskName) {
+            def typeInCaps = "${type}".capitalize()
+            def path = "${rootDir}/app/build/outputs/bundle/${flavor}${typeInCaps}/"
+            def originalFile = "${path}app-${flavor}-${type}.aab"
+            println "originalFile ${originalFile}"
+            println "outputName ${outputName}"
+            doLast {
+                if (file("$originalFile").exists()) {
+                    ant.move file: "$originalFile",
+                            tofile: "$path/${outputName}.aab"
+                }
+            }
+        }
+
+        task.finalizedBy(renameTaskName)
+    }
+}
+
+    applicationVariants.all { variant ->
+        def flavor = variant.mergedFlavor
+        def name = flavor.getVersionName()
+        def flavorName = variant.properties.get('flavorName')
+        def versionName = name
+
+        if (flavorName.equals("dev")) {
+            // preBuild.dependsOn(dev)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirDev
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
+            println "inside dev task"
+        }
+        if (flavorName.equals("staging")) {
+            // preBuild.dependsOn(staging)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirStaging
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
+            println "inside staging task"
+        }
+        if (flavorName.equals("production")) {
+            // preBuild.dependsOn(prod)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirProd
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
+            println "inside production task"
+        }
+
+        if (!flavorName.equals("production")) {
+            versionName += ".0";
+        }
+        if (variant.buildType.isDebuggable()) {
+            versionName += '-debug';
+        }
+        // flavor.versionName = versionName;
+        variant.buildConfigField("String", "REAL_VERSION_NAME", "\"${versionName}\"");
+        variant.outputs.each { output ->
+            // output.versionNameOverride = versionName
+            // output.outputFileName = new File(output.outputFile.parent, "${app_name}-".toLowerCase() + versionName + ".apk")
+            output.outputFileName = "${variant.name}-${variant.versionName}.apk"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.firebase:firebase-crashlytics'
+}
