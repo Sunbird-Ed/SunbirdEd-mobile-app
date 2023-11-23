@@ -373,6 +373,7 @@ export class ProjectOperationPage  {
     this.translate
       .get([
         'FRMELEMNTS_LBL_PROJECT_END_DATE',
+        'FRMELEMNTS_LBL_PROJECT_START_DATE',
         'FRMELEMNTS_MSG_PROJECT_END_DATE',
         'YES',
         'NO',
@@ -382,7 +383,7 @@ export class ProjectOperationPage  {
       });
     this.viewProjectAlert = await this.alertController.create({
       cssClass: 'dark-background central-alert',
-      header:text['FRMELEMNTS_LBL_PROJECT_END_DATE'],
+      header: this.template.startDate && !this.template.endDate ?  text['FRMELEMNTS_LBL_PROJECT_START_DATE'] : text['FRMELEMNTS_LBL_PROJECT_END_DATE'],
       subHeader: text['FRMELEMNTS_MSG_PROJECT_END_DATE'],
       backdropDismiss: false,
       buttons: [
@@ -408,18 +409,16 @@ export class ProjectOperationPage  {
     let taskCount = 0;
     this.template.tasks.forEach(task => {
       taskCount++;
-      if (task.endDate < this.template.startDate || task.endDate > this.template.endDate) {
-        task.endDate = this.template.endDate;
-        if (task.children && task.children.length) {
-          task.children.forEach(subTask => {
-            if (subTask.endDate > task.endDate) {
-              subTask.endDate = task.endDate;
-            }
-          });
+      if (task.endDate && ( this.template.startDate && task.endDate < this.template.startDate || this.template.endDate && task.endDate > this.template.endDate)) {
+        if(!this.template.endDate && this.template.startDate && task.endDate < this.template.startDate){
+          task.endDate = this.template.startDate;
+        }else if(!this.template.startDate && this.template.endDate && task.endDate < this.template.endDate){
+          task.endDate = this.template.endDate;
+        }else if(this.template.startDate && this.template.endDate &&( task.endDate < this.template.startDate || task.endDate > this.template.endDate)){
+          task.endDate = this.template.endDate;
         }
       }
     });
-
     if (this.template.tasks.length === taskCount) {
      this.update();
     }

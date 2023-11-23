@@ -783,6 +783,6 @@ return data;
   }
 
  checkDateofTask(template){
-    return template.tasks.find(task => task.endDate >= template.endDate || task.endDate < template.startDate);
+    return template.tasks.find(task => task.endDate && (template.endDate && task.endDate >=  template.endDate || template.startDate && task.endDate < template.startDate))
  }
 }

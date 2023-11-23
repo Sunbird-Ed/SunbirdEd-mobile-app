@@ -1406,5 +1406,6 @@
   "FRMELEMENTS_MSG_ONLY_REGISTERED_USERS_CAN_ACCESS": "Only registered users can take {{%s}}",
   "FRMELEMNTS_LBL_TASKS_COMPLETED": "tasks completed",
   "FRMELEMNTS_LBL_PROJECT_END_DATE":"Project end date",
+  "FRMELEMNTS_LBL_PROJECT_START_DATE":"Project start date",
   "FRMELEMNTS_MSG_PROJECT_END_DATE":"Are you sure? Task end date will also be changed to this if it is later"
 }
