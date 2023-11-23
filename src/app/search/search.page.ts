@@ -41,7 +41,7 @@ import {
   AuditType, ImpressionSubtype, ObjectType
 } from '../../services/telemetry-constants';
 import { AppHeaderService } from '../../services/app-header.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { SearchHistoryNamespaces } from '../../config/search-history-namespaces';
 import { featureIdMap } from '../../app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
@@ -181,7 +181,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SEARCH_HISTORY_SERVICE') private searchHistoryService: SearchHistoryService,
-    private appVersion: AppVersion,
     private changeDetectionRef: ChangeDetectorRef,
     private zone: NgZone,
     private event: Events,
@@ -349,9 +348,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   }
 
   private async getAppName() {
-    return this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
+    return await App.getInfo()
+      .then((info: any) => {
+        this.appName = info.name;
       });
   }
 

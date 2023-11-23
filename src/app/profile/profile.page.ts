@@ -61,15 +61,15 @@ import {
 import {
   AccountRecoveryInfoComponent
 } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { Share } from '@capacitor/share';
 import { AndroidPermissionsService } from '../../services/android-permissions/android-permissions.service';
 import {
   AndroidPermissionsStatus,
   AndroidPermission
 } from '../../services/android-permissions/android-permission';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileOpener } from '@capacitor-community/file-opener';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
 import { CertificateDownloadAsPdfService } from "@project-sunbird/sb-svg2pdf";
@@ -81,9 +81,10 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { LocationHandler } from '../../services/location-handler';
-import { urlConstants } from '../manage-learn/core/constants/urlConstants';
-import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-import { statusType } from '../manage-learn/core';
+// TODO: Capacitor temp fix 
+// import { urlConstants } from '../manage-learn/core/constants/urlConstants';
+// import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
+// import { statusType } from '../manage-learn/core';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -160,7 +161,8 @@ export class ProfilePage implements OnInit {
   categories: any;
   projects=[];
   projectsCount =0;
-  projectStatus =statusType;
+  // TODO: Capacitor temp fix 
+  // projectStatus =statusType;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -177,13 +179,10 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     public commonUtilService: CommonUtilService,
-    private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
-    private appVersion: AppVersion,
     private navService: NavigationService,
     private sbProgressLoader: SbProgressLoader,
-    private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
     private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
@@ -191,7 +190,8 @@ export class ProfilePage implements OnInit {
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,
     private locationHandler: LocationHandler,
-    private unnatiDataService : UnnatiDataService
+    // TODO: Capacitor temp fix 
+    // private unnatiDataService : UnnatiDataService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -229,7 +229,7 @@ export class ProfilePage implements OnInit {
   async ngOnInit() {
     this.getCategories();
     await this.doRefresh();
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
   }
 
   async ionViewWillEnter() {
@@ -697,9 +697,10 @@ export class ProfilePage implements OnInit {
   }
 
   openpdf(path) {
-    this.fileOpener
-      .open(path, 'application/pdf')
-      .then(() => console.log('File is opened'))
+    FileOpener.open({
+      filePath: path,
+      contentType: 'application/pdf'
+    }).then(() => console.log('File is opened'))
       .catch((e) => {
         console.log('Error opening file', e);
         this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
@@ -1215,7 +1216,7 @@ export class ProfilePage implements OnInit {
       user_name: fullName,
       sunbird_id: this.profile.userName
     });
-    await this.socialSharing.share(translatedMsg);
+    await Share.share({title: translatedMsg});
   }
 
   private async getFrameworkDetails() {
@@ -1280,11 +1281,12 @@ export class ProfilePage implements OnInit {
   }
   
   getProjectsCertificate(){
-    const config ={
-      url : urlConstants.API_URLS.PROJECT_CERTIFICATES
-    }
-    this.unnatiDataService.get(config).subscribe(resp =>{
-      this.projects =  resp.result.data;
-    })
+    // TODO: Capacitor temp fix 
+    // const config ={
+    //   url : urlConstants.API_URLS.PROJECT_CERTIFICATES
+    // }
+    // this.unnatiDataService.get(config).subscribe(resp =>{
+    //   this.projects =  resp.result.data;
+    // })
   }
 }

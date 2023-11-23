@@ -5,7 +5,7 @@ import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
 import { AndroidPermission, AndroidPermissionsStatus } from '../../services/android-permissions/android-permission';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
 
@@ -17,7 +17,6 @@ export class StoragePermissionHandlerService {
   constructor(
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
     private permissionService: AndroidPermissionsService,
     private platform: Platform
   ) {
@@ -29,7 +28,7 @@ export class StoragePermissionHandlerService {
         resolve(true);
       });
     }
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {

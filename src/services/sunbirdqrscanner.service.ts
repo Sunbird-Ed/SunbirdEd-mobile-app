@@ -5,7 +5,7 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../app/module.
 import { AppGlobalService } from '../services/app-global-service.service';
 import { AndroidPermissionsService } from '../services/android-permissions/android-permissions.service';
 import { ContainerService } from '../services/container.services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
@@ -20,7 +20,8 @@ import {
   Mode,
   PageId
 } from './telemetry-constants';
-import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
+ // TODO: Capacitor temp fix
+// import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { CommonUtilService } from './common-util.service';
@@ -54,10 +55,10 @@ export class SunbirdQRScanner {
     private container: ContainerService,
     private permission: AndroidPermissionsService,
     private commonUtilService: CommonUtilService,
-    private appVersion: AppVersion,
     private router: Router,
     private modalCtrl: ModalController,
-    private projectCert : ManageLearnCertificateService
+     // TODO: Capacitor temp fix
+    // private projectCert : ManageLearnCertificateService
   ) {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
@@ -68,7 +69,7 @@ export class SunbirdQRScanner {
       that.mQRScannerText = that.translate.instant(that.QR_SCANNER_TEXT);
     });
 
-    this.appVersion.getAppName().then((appName: any) => this.appName = appName).catch(e => console.error(e));
+    App.getInfo().then((info: any) => this.appName = info.name).catch(e => console.error(e));
   }
 
   public async startScanner(
@@ -260,8 +261,9 @@ private async getProfileSettingConfig() {
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
-            } else if(scannedData.includes('ProjectCertificate')) {
-              this.projectCert.getProjectCertificate(scannedData);
+             // TODO: Capacitor temp fix
+              // } else if(scannedData.includes('ProjectCertificate')) {
+            //   this.projectCert.getProjectCertificate(scannedData);
             } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
               await this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SignInWithApple } from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 
 import { SignInPage } from './sign-in.page';
 
@@ -13,7 +12,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-  providers: [SignInWithApple]
+  exports: [RouterModule]
 })
 export class SignInPageRoutingModule {}

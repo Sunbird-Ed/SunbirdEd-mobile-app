@@ -14,7 +14,8 @@ import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, P
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
+// TODO: Capacitor temp fix 
+// import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
@@ -45,7 +46,7 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    public obsService: ObservationService,
+    // public obsService: ObservationService, // TODO: Capacitor temp fix 
     private router:Router) {
   }
 
@@ -349,11 +350,12 @@ export class DownloadsTabComponent implements OnInit {
         solutionName: solutionName,
       },
     }).then(success => {
-      this.obsService.obsTraceObj.programId = programId;
-      this.obsService.obsTraceObj.solutionId = solutionId;
-      this.obsService.obsTraceObj.name = solutionName;
-      this.obsService.obsTraceObj.programName = solution.programName;
-      this.obsService.obsTraceObj.observationId = solution.observationId;
+      // TODO: Capacitor temp fix 
+      // this.obsService.obsTraceObj.programId = programId;
+      // this.obsService.obsTraceObj.solutionId = solutionId;
+      // this.obsService.obsTraceObj.name = solutionName;
+      // this.obsService.obsTraceObj.programName = solution.programName;
+      // this.obsService.obsTraceObj.observationId = solution.observationId;
     });
  }
 

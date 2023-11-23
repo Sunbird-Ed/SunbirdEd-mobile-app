@@ -5,7 +5,7 @@ import { CommonUtilService } from '../../services/common-util.service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
@@ -32,7 +32,6 @@ export class TermsAndConditionsPage implements OnInit {
     private sanitizer: DomSanitizer,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
     private modalCtrl: ModalController,
     private appGlobalService: AppGlobalService,
     private sbProgressLoader: SbProgressLoader,
@@ -41,7 +40,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   public async ngOnInit() {
     await this.appGlobalService.closeSigninOnboardingLoader();
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
     const url = this.sanitizer.sanitize(SecurityContext.URL, this.userProfileDetails.tncLatestVersionUrl.toString());

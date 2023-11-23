@@ -54,7 +54,7 @@ import {
   SubjectMapping,
   ViewMore
 } from '../../app.constant';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '../../../services/content/content-aggregator-namespaces';
 import { NavigationService } from '../../../services/navigation-handler.service';
@@ -127,7 +127,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
     private contentAggregatorHandler: ContentAggregatorHandler,
     private navService: NavigationService,
     private headerService: AppHeaderService,
@@ -193,7 +192,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     } else {
       this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
     }
-    this.appLabel = await this.appVersion.getAppName()
+    this.appLabel = await (await App.getInfo()).name;
     // impression telemetry
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_LOADED,

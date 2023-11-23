@@ -7,10 +7,10 @@ import { IonicModule } from '@ionic/angular';
 
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player-v9';
 import { SunbirdEpubPlayerModule } from '@project-sunbird/sunbird-epub-player-v9';
-import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v9';
+// TODO: Capacitor temp fix 
+// import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
 
 
 
@@ -29,14 +29,13 @@ const routes: Routes = [
     FormsModule,
     SunbirdPdfPlayerModule,
     SunbirdEpubPlayerModule,
-    QumlLibraryModule,
+    // QumlLibraryModule, // TODO: Capacitor temp fix 
     IonicModule,
     RouterModule.forChild(routes)
   ],
   declarations: [PlayerPage],
   providers: [
-    CanvasPlayerService,
-    ScreenOrientation,
+    CanvasPlayerService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

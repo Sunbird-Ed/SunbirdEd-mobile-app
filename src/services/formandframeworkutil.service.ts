@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { AppGlobalService } from '../services/app-global-service.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../util/events';
 import {
@@ -29,6 +29,7 @@ import { map } from 'rxjs/operators';
 import { EventParams } from '../app/components/sign-in-card/event-params.interface';
 import { Observable } from 'rxjs';
 import { FormConstants } from '../app/form.constants';
+import { AppInfo } from '@capacitor/app';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -44,7 +45,6 @@ export class FormAndFrameworkUtilService {
         @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private appGlobalService: AppGlobalService,
-        private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
     ) { }
@@ -158,8 +158,9 @@ export class FormAndFrameworkUtilService {
         return new Promise((resolve, reject) => {
             console.log('checkNewAppVersion Called');
 
-            return this.appVersion.getVersionCode()
-                .then((versionCode: any) => {
+            return App.getInfo()
+                .then((info: AppInfo) => {
+                    let versionCode = info.build
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
                     this.getFormFields(FormConstants.UPGRADE_INFO).then((fields: any) => {
                         let ranges: Array<any> = [];

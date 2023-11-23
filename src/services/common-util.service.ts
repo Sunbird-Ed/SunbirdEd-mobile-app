@@ -7,8 +7,7 @@ import {
 } from '@ionic/angular';
 import { Events } from '../util/events';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
+import { ConnectionStatus, Network } from '@capacitor/network';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
     CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
@@ -26,13 +25,14 @@ import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-p
 import { QRAlertCallBack, QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { SbPopoverComponent } from '../app/components/popups/sb-popover/sb-popover.component';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
+import { Capacitor } from '@capacitor/core';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -60,27 +60,22 @@ export class CommonUtilService {
         private loadingCtrl: LoadingController,
         private events: Events,
         private popOverCtrl: PopoverController,
-        private network: Network,
         private zone: NgZone,
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private webView: WebView,
-        private appVersion: AppVersion,
         private router: Router,
         private toastController: ToastController,
         private permissionService: AndroidPermissionsService,
         private comingSoonMessageService: ComingSoonMessageService
     ) {
         this.networkAvailability$ = merge(
-            this.network.onChange().pipe(
-                map((status) => {
-                    this.zone.run(() => {
-                        this.networkInfo = {
-                            isNetworkAvailable: status === 'connected'
-                        }
-                    });
-                }),
-            )
+            Network.getStatus().then((value: ConnectionStatus) => {
+                this.zone.run(() => {
+                    this.networkInfo = {
+                        isNetworkAvailable: value.connected
+                    }
+                })
+            })
         )
     }
 
@@ -373,7 +368,7 @@ export class CommonUtilService {
 
 
     async getAppName() {
-        return this.appVersion.getAppName();
+        return await (await App.getInfo()).name;
     }
 
     openUrlInBrowser(url) {
@@ -409,7 +404,7 @@ export class CommonUtilService {
         if (img === null) {
             return '';
         } else {
-            return this.webView.convertFileSrc(img);
+            return Capacitor.convertFileSrc(img);
         }
     }
 

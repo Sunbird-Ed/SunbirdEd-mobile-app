@@ -11,7 +11,8 @@ import {
   InteractType, PageId
 } from '../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
+// TODO: Capacitor temp fix - doesn't support cap app
+// import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { Platform } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
@@ -59,7 +60,8 @@ export class LanguageSettingsPage {
     private router: Router,
     private location: Location,
     private activatedRoute: ActivatedRoute,
-    private nativePageTransitions: NativePageTransitions,
+    // TODO: Capacitor temp fix - doesn't support cap app
+    // private nativePageTransitions: NativePageTransitions,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
@@ -271,7 +273,8 @@ export class LanguageSettingsPage {
 
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
-        window['segmentation'].SBTagService.pushTag([this.selectedLanguage.code], TagPrefixConstants.USER_LANG, true);
+        // TODO: Capacitor temp fix
+        // window['segmentation'].SBTagService.pushTag([this.selectedLanguage.code], TagPrefixConstants.USER_LANG, true);
         await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
         await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
         this.translateService.use(this.language);
@@ -297,15 +300,16 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
-        const options: NativeTransitionOptions = {
-          direction: 'up',
-          duration: 500,
-          androiddelay: 500,
-          iosdelay: 500,
-          fixedPixelsTop: 0,
-          fixedPixelsBottom: 0
-        };
-        await this.nativePageTransitions.slide(options);
+        // TODO: Capacitor temp fix - doesn't support cap app
+        // const options: NativeTransitionOptions = {
+        //   direction: 'up',
+        //   duration: 500,
+        //   androiddelay: 500,
+        //   iosdelay: 500,
+        //   fixedPixelsTop: 0,
+        //   fixedPixelsBottom: 0
+        // };
+        // await this.nativePageTransitions.slide(options);
         await this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
         await this.preferences.putBoolean(PreferenceKey.IS_NEW_USER, true).toPromise();
       }

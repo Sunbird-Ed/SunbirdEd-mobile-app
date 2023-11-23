@@ -18,7 +18,7 @@ import {
 import { SbPopoverComponent } from '../../app/components/popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '../../services/telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { AndroidPermissionsService } from 'services/android-permissions/android-permissions.service';
 import { AndroidPermission, AndroidPermissionsStatus } from 'services/android-permissions/android-permission';
 import { Location } from '@angular/common';
@@ -87,7 +87,6 @@ export class StorageSettingsPage implements OnInit {
     private fileSizePipe: FileSizePipe,
     private changeDetectionRef: ChangeDetectorRef,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
     private permissionsService: AndroidPermissionsService,
     private location: Location,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
@@ -102,8 +101,8 @@ export class StorageSettingsPage implements OnInit {
       }),
       map((summary) => summary[0].sizeOnDevice) as any
     );
-    this.appVersion.getAppName().then((appName) => {
-      this.appName = appName;
+    App.getInfo().then((info) => {
+      this.appName = info.name;
     }).catch((e) => console.error(e));
   }
 

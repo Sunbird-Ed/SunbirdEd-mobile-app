@@ -5,6 +5,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen
 import { Platform } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 
+declare var window;
 @Injectable()
 export class SplashScreenService {
 
@@ -20,8 +21,9 @@ export class SplashScreenService {
 
     async handleSunbirdSplashScreenActions(): Promise<undefined> {
         const stringifiedActions = await new Promise<string>((resolve) => {
-            if(this.platform.is('android') && splashscreen){
-                splashscreen.getActions((actionsTobeDone) => {
+            if(this.platform.is('android') && window.splashscreen){
+                window.splashscreen.getActions((actionsTobeDone) => {
+                    console.log('action ', actionsTobeDone)
                     resolve(actionsTobeDone);
                 });
             }
@@ -55,8 +57,8 @@ export class SplashScreenService {
                 }
             }
         }
-        if(splashscreen){
-            splashscreen.markImportDone();
+        if(window.splashscreen){
+            window.splashscreen.markImportDone();
         }
     }
 

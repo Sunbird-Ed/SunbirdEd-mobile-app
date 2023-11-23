@@ -10,7 +10,7 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { SunbirdQRScanner } from '../../../services/sunbirdqrscanner.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { Platform } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import { of, Subscription } from 'rxjs';
@@ -51,13 +51,12 @@ export class PermissionComponent implements OnInit {
     private event: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
-    private appVersion: AppVersion,
     private router: Router,
     private platform: Platform,
     private route: ActivatedRoute
   ) {
-    this.appVersion.getAppName().then((appName: string) => {
-      this.appName = appName;
+    App.getInfo().then((info: any) => {
+      this.appName = info.name;
       this.permissionListDetails = [
         {
           title: this.commonUtilService.translateMessage('CAMERA'),

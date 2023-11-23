@@ -5,24 +5,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // ionic cordova dependencies/plugins
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+// import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 // ionic cordova dependencies/plugins
-import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
-import { LocalNotifications } from '@awesome-cordova-plugins/local-notifications/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 // 3rd party dependencies
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+// TODO: Capacitor temp fix 
+// import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from '@project-sunbird/sunbird-sdk';
 import { QumlPlayerService } from '../services/quml-player/quml-player.service';
@@ -64,21 +58,25 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { LocalCourseService } from '../services/local-course.service';
 import { ExternalIdVerificationService } from '../services/externalid-verification.service';
 import { TextbookTocService } from '../app/collection-detail-etb/textbook-toc-service';
-import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
+// TODO: Capacitor temp fix - not supporting cap app
+// import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { NavigationService } from '../services/navigation-handler.service';
 import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '../services/download-pdf/download-pdf.service';
 import {ConsentService} from '../services/consent-service';
 import { ProfileHandler } from '../services/profile-handler';
 import { IonicStorageModule } from '@ionic/storage';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+// TODO: Capacitor temp fix 
+// import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+// import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
-import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
-import { StreamingMedia } from '@awesome-cordova-plugins/streaming-media/ngx';
+// TODO: Capacitor temp fix 
+// import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
+// import { StreamingMedia } from '@awesome-cordova-plugins/streaming-media/ngx';
 import {configuration} from '../configuration/configuration';
 import { LocationHandler } from '../services/location-handler';
-import { CoreModule } from './manage-learn/core/core.module';
+// TODO: Capacitor temp fix 
+// import { CoreModule } from './manage-learn/core/core.module';
 import { DiscussionTelemetryService } from '../services/discussion/discussion-telemetry.service';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { RouteReuseStrategy } from '@angular/router';
@@ -317,17 +315,35 @@ export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFac
 export const sunbirdSdkFactory =
   () => {
     return async () => {
-      const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-        document.addEventListener('deviceready', () => {
-          sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
-            resolve(v);
-          }, (err) => {
-            reject(err);
-          });
-        }, false);
+      // TODO: Capacitor temp fix 
+      // const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
+      //   document.addEventListener('deviceready', () => {
+      //     sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
+      //       resolve(v);
+      //     }, (err) => {
+      //       reject(err);
+      //     });
+      //   }, false);
 
-      }));
-
+      // }));
+      const buildConfigValues = {
+        APPLICATION_ID: "org.sunbird.app.staging",
+        BASE_URL: "https://staging.sunbirded.org",
+        BUILD_TYPE: "debug",
+        CHANNEL_ID: "505c7c48ac6dc1edc9b08f21db5a571d",
+        DEBUG: true,
+        FLAVOR: "staging",
+        MAX_COMPATIBILITY_LEVEL: 5,
+        MOBILE_APP_CONSUMER: "mobile_device",
+        MOBILE_APP_KEY: "sunbird-0.1",
+        MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
+        REAL_VERSION_NAME: "6.0.local.0-debug",
+        SUPPORT_EMAIL: "dummy@example.com",
+        USE_CRASHLYTICS: false,
+        VERSION_CODE: 1,
+        VERSION_NAME: "6.0.local"
+      }
+      console.log('buildConfigValues before sdk init ', buildConfigValues);
       await SunbirdSdk.instance.init({
         platform: 'cordova',
         fileConfig: {
@@ -483,18 +499,12 @@ declare const sbutility;
         PageFilterOptionsPageModule,
         TermsAndConditionsPageModule,
         IonicStorageModule.forRoot(),
-        CoreModule,
+        // CoreModule, // TODO: Capacitor temp fix 
         SbSearchFilterModule.forRoot('mobile')
     ],
     providers: [
-        StatusBar,
-        AppVersion,
-        LocalNotifications,
-        SocialSharing,
-        WebView,
         File,
         FileTransferObject,
-        FileOpener,
         FileTransfer,
         AppGlobalService,
         CourseUtilService,
@@ -514,8 +524,7 @@ declare const sbutility;
         DownloadPdfService,
         PrintPdfService,
         CollectionService,
-        Device,
-        Network,
+        // Device,
         AndroidPermissionsService,
         ComingSoonMessageService,
         ActivePageService,
@@ -527,7 +536,7 @@ declare const sbutility;
         ExternalIdVerificationService,
         TextbookTocService,
         GroupHandlerService,
-        NativePageTransitions,
+        // NativePageTransitions,
         NavigationService,
         ContentAggregatorHandler,
         AliasBoardName,
@@ -545,12 +554,13 @@ declare const sbutility;
         ...sunbirdSdkServicesProvidersFactory(),
         { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
         { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-        Camera,
-        FilePath,
+        // Camera,
+        // FilePath,
         Chooser,
-        PhotoViewer,
-        StreamingMedia,
-        { provide: QuestionCursor, useClass: QumlPlayerService },
+        // TODO: Capacitor temp fix 
+        // PhotoViewer,
+        // StreamingMedia,
+        // { provide: QuestionCursor, useClass: QumlPlayerService },
         { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
         TranslateJsonPipe
     ],

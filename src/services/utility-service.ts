@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {DeviceSpecification} from '@project-sunbird/sunbird-sdk';
 import {GenericAppConfig} from '../app/app.constant';
+// TODO: Capacitor temp fix
+import { buildConfig } from '../environments/environment.stag';
 
-declare const sbutility;
+declare const window;
 
 @Injectable()
 export class UtilityService {
@@ -10,11 +12,18 @@ export class UtilityService {
     getBuildConfigValue(property): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
+                window.sbutility.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
                     resolve(entry);
                 }, err => {
-                    console.error(err);
-                    reject(err);
+                    if(property) {
+                        console.log('config value for property ', buildConfig[property]);
+                        resolve(buildConfig[property].toString())
+                    } else {
+                        resolve(buildConfig.toString())
+                        // TODO: Capacitor temp fix
+                        // console.error(err);
+                        // reject(err);
+                    }
                 });
             } catch (xc) {
                 console.error(xc);
@@ -26,7 +35,7 @@ export class UtilityService {
     rm(directoryPath, directoryToBeSkipped): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
+                window.sbutility.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -42,7 +51,7 @@ export class UtilityService {
     openPlayStore(appId): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.openPlayStore(appId, (entry: string) => {
+                window.sbutility.openPlayStore(appId, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -58,7 +67,7 @@ export class UtilityService {
     getDeviceAPILevel(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.getDeviceAPILevel((entry: string) => {
+                window.sbutility.getDeviceAPILevel((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -74,7 +83,7 @@ export class UtilityService {
     checkAppAvailability(packageName): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.checkAppAvailability(packageName, (entry: string) => {
+                window.sbutility.checkAppAvailability(packageName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -90,7 +99,7 @@ export class UtilityService {
     getDownloadDirectoryPath(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.getDownloadDirectoryPath((entry: string) => {
+                window.sbutility.getDownloadDirectoryPath((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -106,7 +115,7 @@ export class UtilityService {
     exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.exportApk(destination, (entry: string) => {
+                window.sbutility.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -122,12 +131,12 @@ export class UtilityService {
     getDeviceSpec(): Promise<DeviceSpecification> {
         return new Promise<DeviceSpecification>((resolve, reject) => {
             try {
-                sbutility.getDeviceSpec((deviceSpec: DeviceSpecification) => {
+                window.sbutility.getDeviceSpec((deviceSpec: DeviceSpecification) => {
                     resolve(deviceSpec);
-                }, err => {
+                },err => {
                     console.error(err);
                     reject(err);
-                });
+                })
             } catch (xc) {
                 console.error(xc);
                 reject(xc);
@@ -138,7 +147,7 @@ export class UtilityService {
     getUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                sbutility.getUtmInfo((utmInfo: any) => {
+                window.sbutility.getUtmInfo((utmInfo: any) => {
                     console.log('utm parameter', utmInfo);
                     resolve(utmInfo);
                 }, err => {
@@ -153,7 +162,7 @@ export class UtilityService {
     clearUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                sbutility.clearUtmInfo(() => {
+                window.sbutility.clearUtmInfo(() => {
                     console.log('utm paramter clear');
                     resolve(true);
                 }, err => {
@@ -169,7 +178,7 @@ export class UtilityService {
     readFileFromAssets(fileName: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.readFromAssets(fileName, (entry: string) => {
+                window.sbutility.readFromAssets(fileName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
@@ -183,7 +192,7 @@ export class UtilityService {
     getApkSize(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.getApkSize((entry: string) => {
+                window.sbutility.getApkSize((entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
@@ -196,7 +205,7 @@ export class UtilityService {
 
     getMetaData(filePath: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            sbutility.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
+            window.sbutility.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
                 resolve(data.ecar.size);
             }, err => {
                 reject(err);
@@ -206,7 +215,7 @@ export class UtilityService {
 
     removeFile(filePath: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            sbutility.rm([filePath], false, (successfullyDeleted) => {
+            window.sbutility.rm([filePath], false, (successfullyDeleted) => {
                 resolve(successfullyDeleted);
             }, error => {
                 reject(error);
@@ -224,12 +233,14 @@ export class UtilityService {
                     console.log('Error--', error);
                     resolve(0);
                 });
+                // TODO: Capacitor temp fix
+            resolve(buildConfig.VERSION_CODE)
         });
     }
 
     verifyCaptcha(apiKey: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            sbutility.verifyCaptcha(apiKey, (data) => {
+            window.sbutility.verifyCaptcha(apiKey, (data) => {
                 resolve(data);
             }, err => {
                 reject(err);
@@ -239,7 +250,7 @@ export class UtilityService {
 
     checkAvailableAppList(packageIds: Array<string>): Promise<{[packageId: string]: boolean}> {
         return new Promise((resolve, reject) => {
-            sbutility.getAppAvailabilityStatus(packageIds, (data) => {
+            window.sbutility.getAppAvailabilityStatus(packageIds, (data) => {
                 resolve(data);
             }, err => {
                 reject(err);
@@ -249,7 +260,7 @@ export class UtilityService {
 
     startActivityForResult(params: {}): Promise<string> {
         return new Promise((resolve, reject) => {
-            sbutility.startActivityForResult(params, (data) => {
+            window.sbutility.startActivityForResult(params, (data) => {
                 resolve(data);
             }, err => {
                 reject(err);
@@ -259,7 +270,7 @@ export class UtilityService {
 
     openFileManager(): Promise<any> {
         return new Promise((resolve, reject) => {
-            sbutility.openFileManager((res) => {
+            window.sbutility.openFileManager((res) => {
                 resolve(res);
             }, err => {
                 reject(err);

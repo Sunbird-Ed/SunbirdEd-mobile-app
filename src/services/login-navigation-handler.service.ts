@@ -18,7 +18,7 @@ import { Events } from '../util/events';
 import { AppGlobalService } from '../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { ContainerService } from '../services/container.services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { CommonUtilService } from '../services/common-util.service';
 import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { mergeMap, tap } from 'rxjs/operators';
@@ -39,7 +39,6 @@ export class LoginNavigationHandlerService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private container: ContainerService,
         private ngZone: NgZone,
-        private appVersion: AppVersion,
         private commonUtilService: CommonUtilService,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private platform: Platform,
@@ -168,7 +167,7 @@ export class LoginNavigationHandlerService {
                 const tenantInfo = await this.profileService.getTenantInfo({ slug: '' }).toPromise();
                 const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
                 if (isDefaultChannelProfile) {
-                    appName = await this.appVersion.getAppName();
+                    appName = await (await App.getInfo()).name;
                 }
                 await this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise();
                 await this.preferences.putString(PreferenceKey.APP_NAME, appName).toPromise();

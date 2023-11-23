@@ -32,8 +32,8 @@ import {
 } from '../../services/telemetry-constants';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { CommonUtilService } from '../../services/common-util.service';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { Share } from '@capacitor/share';
+import { App } from '@capacitor/app';
 import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -116,8 +116,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private location: Location,
-    private socialSharing: SocialSharing,
-    private appVersion: AppVersion,
     private translate: TranslateService,
     private modalCtrl: ModalController,
     public zone: NgZone,
@@ -182,9 +180,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName) => {
-        this.appName = appName;
+    App.getInfo()
+      .then((info) => {
+        this.appName = info.name;
         console.log('AppName', this.appName);
       }
     ).catch(e => console.error(e));
@@ -255,15 +253,16 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
                 this.subjectDetails = this.appName + ' ' + SUBJECT_NAME + ' for ' + this.categories;
-                this.socialSharing.shareViaEmail(message,
-                  this.subjectDetails,
-                  [this.supportEmail ? this.supportEmail : this.appGlobalService.SUPPORT_EMAIL],
-                  undefined,
-                  undefined,
-                  this.fileUrl)
-                  .catch(error => {
-                    console.error(error);
-                  });
+                // TODO: Capacitor temp fix 
+                // this.socialSharing.shareViaEmail(message,
+                //   this.subjectDetails,
+                //   [this.supportEmail ? this.supportEmail : this.appGlobalService.SUPPORT_EMAIL],
+                //   undefined,
+                //   undefined,
+                //   this.fileUrl)
+                //   .catch(error => {
+                //     console.error(error);
+                //   });
               }
             }).catch(e => console.error(e));
         }).catch(e => console.error(e));

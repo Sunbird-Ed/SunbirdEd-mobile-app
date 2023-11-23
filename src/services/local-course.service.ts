@@ -15,7 +15,7 @@ import { EnrollCourse } from './../app/enrolled-course-details-page/course.inter
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '../app/app.constant';
 import { Events } from '../util/events';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { ContentUtil } from '../util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -45,7 +45,6 @@ export class LocalCourseService {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private zone: NgZone,
-    private appVersion: AppVersion,
     private router: Router,
     private location: Location,
     private sbProgressLoader: SbProgressLoader,
@@ -207,7 +206,7 @@ export class LocalCourseService {
             batchId: batch.id,
             courseId: batch.courseId
           });
-          const appLabel = await this.appVersion.getAppName();
+          const appLabel = (await App.getInfo()).name;
           this.events.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: false, appName: appLabel });
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           await this.getEnrolledCourses();

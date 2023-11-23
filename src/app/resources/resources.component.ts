@@ -36,8 +36,8 @@ import {
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { ContentUtil } from '../../util/content-util';
 import { applyProfileFilter } from '../../util/filter.util';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { App } from '@capacitor/app';
+import { ConnectionStatus, Network } from '@capacitor/network';
 import { IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
@@ -247,8 +247,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     private qrScanner: SunbirdQRScanner,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
-    private network: Network,
     private telemetryGeneratorService: TelemetryGeneratorService,
     public commonUtilService: CommonUtilService,
     public formAndFrameworkUtilService: FormAndFrameworkUtilService,
@@ -272,9 +270,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       }).catch(e => console.error(e));
     this.subscribeUtilityEvents();
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appLabel = appName;
+    App.getInfo().then((info: any) => {
+        this.appLabel = info.name;
       });
     this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
     this.cardDefaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
@@ -341,12 +338,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   generateNetworkType() {
-    const values = {};
-    values['network-type'] = this.network.type;
-    this.telemetryGeneratorService.generateExtraInfoTelemetry(
-      values,
-      PageId.LIBRARY
-    );
+    Network.getStatus().then(val => {
+      const values = new Map();
+      values['network-type'] = val.connectionType;
+      this.telemetryGeneratorService.generateExtraInfoTelemetry(
+        values,
+        PageId.LIBRARY
+      );
+    })
   }
 
   ngAfterViewInit() {

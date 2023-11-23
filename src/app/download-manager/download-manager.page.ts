@@ -35,9 +35,10 @@ import {
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '../../util/content-util';
-import { DbService } from '../manage-learn/core/services/db.service';
-import { UtilsService, LocalStorageService } from '../manage-learn/core';
-import { storageKeys } from '../manage-learn/storageKeys';
+// TODO: Capacitor temp fix 
+// import { DbService } from '../manage-learn/core/services/db.service';
+// import { UtilsService, LocalStorageService } from '../manage-learn/core';
+// import { storageKeys } from '../manage-learn/storageKeys';
 
 @Component({
   selector: 'app-download-manager',
@@ -71,9 +72,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private db: DbService,
-    private storage: LocalStorageService,
-    private utils: UtilsService
+    // TODO: Capacitor temp fix 
+    // private db: DbService,
+    // private storage: LocalStorageService,
+    // private utils: UtilsService
   ) {
     this.events.subscribe(EventTopics.LAST_ACCESS_ON, async (data) => {
       if (data) {
@@ -163,36 +165,37 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
            downloaded: true,
           },
         }; 
-        if(this.db.pdb){
-          let projectData: any = await this.db.customQuery(query);
-          if (projectData.docs) {
-            projectData.docs.sort(function (a, b) {
-                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
-              });
-              projectData.docs.map(doc => {
-                doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-                doc.type = 'project'
-                doc.identifier=doc._id;
-                data.push(doc)
-            })
-          }
-        }
-        await this.storage
-        .getLocalStorage(storageKeys.downloadedObservations)
-        .then(resp => {
-          resp.sort(function(a, b) {
-            return ( new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf());
-          });
-          resp.map(res => {
-            res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name, subject:res.programName };
-            res.type = 'observation';
-            res.identifier = res.programId + res.solutionId;
-            data.push(res);
-          });
-        }).catch(err => console.log(err));
-        await this.ngZone.run(async () => {
-          this.downloadedContents = data;
-        });
+        // TODO: Capacitor temp fix 
+        // if(this.db.pdb){
+        //   let projectData: any = await this.db.customQuery(query);
+        //   if (projectData.docs) {
+        //     projectData.docs.sort(function (a, b) {
+        //         return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+        //       });
+        //       projectData.docs.map(doc => {
+        //         doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+        //         doc.type = 'project'
+        //         doc.identifier=doc._id;
+        //         data.push(doc)
+        //     })
+        //   }
+        // }
+        // await this.storage
+        // .getLocalStorage(storageKeys.downloadedObservations)
+        // .then(resp => {
+        //   resp.sort(function(a, b) {
+        //     return ( new Date(b.lastViewedAt).valueOf() - new Date(a.lastViewedAt).valueOf());
+        //   });
+        //   resp.map(res => {
+        //     res.contentData = { lastUpdatedOn: res.lastViewedAt, name: res.name, subject:res.programName };
+        //     res.type = 'observation';
+        //     res.identifier = res.programId + res.solutionId;
+        //     data.push(res);
+        //   });
+        // }).catch(err => console.log(err));
+        // await this.ngZone.run(async () => {
+        //   this.downloadedContents = data;
+        // });
       }).catch(err => console.log(err));
   }
 
@@ -418,9 +421,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   deleteProjects(contents) {
 
     contents.forEach(async (element) => {
-      let project = await this.db.getById(element.contentId)
-      project.downloaded = false
-      await this.db.delete(project._id, project._rev)
+      // TODO: Capacitor temp fix 
+      // let project = await this.db.getById(element.contentId)
+      // project.downloaded = false
+      // await this.db.delete(project._id, project._rev)
       this.events.publish('savedResources:update', {
         update: true,
       });
@@ -430,21 +434,22 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     });
   }
   async deleteObservations(content) {
-    let downloadedObs = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
-    const contentIds = content.map(c => c.contentId)
-    downloadedObs = downloadedObs.filter(obs => {
-      const shouldDelete = contentIds.includes(obs.programId + obs.solutionId)
-      if (shouldDelete) {
-        obs.downloadedSubmission.forEach(async submission => {
-          await this.storage.deleteOneStorage(this.utils.getAssessmentLocalStorageKey(submission));
-        });
-      } 
-      return !shouldDelete
-    })
-    await this.storage.setLocalStorage(storageKeys.downloadedObservations,downloadedObs);
-    this.events.publish("savedResources:update", {update: true});
-      this.commonUtilService.showToast(
-        this.commonUtilService.translateMessage("MSG_RESOURCE_DELETED")
-      );
+    // TODO: Capacitor temp fix 
+    // let downloadedObs = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
+    // const contentIds = content.map(c => c.contentId)
+    // downloadedObs = downloadedObs.filter(obs => {
+    //   const shouldDelete = contentIds.includes(obs.programId + obs.solutionId)
+    //   if (shouldDelete) {
+    //     obs.downloadedSubmission.forEach(async submission => {
+    //       await this.storage.deleteOneStorage(this.utils.getAssessmentLocalStorageKey(submission));
+    //     });
+    //   } 
+    //   return !shouldDelete
+    // })
+    // await this.storage.setLocalStorage(storageKeys.downloadedObservations,downloadedObs);
+    // this.events.publish("savedResources:update", {update: true});
+    //   this.commonUtilService.showToast(
+    //     this.commonUtilService.translateMessage("MSG_RESOURCE_DELETED")
+    //   );
   }
 }

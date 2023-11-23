@@ -19,7 +19,7 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -85,7 +85,6 @@ export class FaqHelpPage implements OnInit {
     private headerService: AppHeaderService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private location: Location,
-    private appVersion: AppVersion,
     private platform: Platform,
     private translate: TranslateService,
     private http: HttpClient,
@@ -105,7 +104,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.appName = await this.appVersion.getAppName()
+    this.appName = await (await App.getInfo()).name;
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
