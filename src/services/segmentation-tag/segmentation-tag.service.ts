@@ -209,7 +209,4 @@ export class SegmentationTagService {
     }
 }
 
-function SEGMENTATION(SEGMENTATION: any) {
-    throw new Error('Function not implemented.');
-}
 

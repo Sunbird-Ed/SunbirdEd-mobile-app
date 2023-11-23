@@ -10,14 +10,15 @@ import { LogoutHandlerService } from '../services/handlers/logout-handler.servic
 import { TncUpdateHandlerService } from '../services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '../services/network-availability-toast/network-availability-toast.service';
 import { NotificationService as LocalNotification } from '../services/notification.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+// TODO: Capacitor temp fix 
+// import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
   CorReleationDataType, Environment,
   ID, ImpressionType, InteractSubtype, InteractType,
   PageId
 } from '../services/telemetry-constants';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { Network } from '@capacitor/network';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
 import { Events } from '../util/events';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,7 +40,8 @@ import { TelemetryGeneratorService } from '../services/telemetry-generator.servi
 import { UtilityService } from '../services/utility-service';
 import { AppHeaderService } from '../services/app-header.service';
 import { AppRatingService } from '../services/app-rating.service';
-import { SplashScreenService } from '../services/splash-screen.service';
+// TODO: Capacitor temp fix 
+// import { SplashScreenService } from '../services/splash-screen.service';
 import { LocalCourseService } from '../services/local-course.service';
 import { LoginHandlerService } from '../services/login-handler.service';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
@@ -48,10 +50,14 @@ import {
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation, OnboardingScreenType
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
-import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
+// TODO: Capacitor temp fix 
+// import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '../services/segmentation-tag/segmentation-tag.service';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { LocalNotifications } from '@capacitor/local-notifications';
+// TODO: Capacitor temp fix 
+import { buildConfig } from '../environments/environment.stag';
 
 declare const cordova;
 declare const window;
@@ -99,7 +105,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('DEBUGGING_SERVICE') private debuggingService: DebuggingService,
     private platform: Platform,
-    private statusBar: StatusBar,
     private translate: TranslateService,
     private events: Events,
     private zone: NgZone,
@@ -111,7 +116,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
-    private network: Network,
     private appRatingService: AppRatingService,
     private activePageService: ActivePageService,
     private notificationSrc: LocalNotification,
@@ -119,16 +123,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     private location: Location,
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
-    private splashScreenService: SplashScreenService,
+    // private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private utils: ApiUtilsService,
-    private networkServ: NetworkService,
-    private db: DbService,
+    // TODO: Capacitor temp fix 
+    // private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    // private utils: ApiUtilsService,
+    // private networkServ: NetworkService,
+    // private db: DbService,
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
-    private mlloader: LoaderService,
-    private screenOrientation: ScreenOrientation,
+    // private mlloader: LoaderService,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
@@ -144,7 +148,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, (nomatch) => {
         // nomatch.$link - the full link data
         // Only URL has to sent to the deeplink service
-        this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
+        // TODO: Capacitor temp fix 
+        // this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: nomatch.$link.url });
       });
   }
 
@@ -167,7 +172,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         .then(versionName => {
           this.appVersion = versionName;
           window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
-        }).catch((e) => console.error(e));
+        }).catch((e) => {
+          // TODO: Capacitor temp fix 
+          console.error(e);
+          this.appVersion = buildConfig.VERSION_NAME;
+          window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
+        });
       this.checkForExperiment();
       await this.receiveNotification();
       this.utilityService.getDeviceSpec()
@@ -199,9 +209,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleAuthErrors();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
-      this.statusBar.styleBlackTranslucent();
+      await StatusBar.setStyle({style: Style.Light});
       if (this.platform.is('ios')) {
-        this.statusBar.styleDefault();
+        await StatusBar.setStyle({style: Style.Default});
         if (window['Keyboard']) {
           window['Keyboard'].hideFormAccessoryBar(false);
         }
@@ -213,8 +223,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
-      await this.utils.initilizeML();
-      this.networkServ.netWorkCheck();
+      // TODO: Capacitor temp fix 
+      // await this.utils.initilizeML();
+      // this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
     }).catch(e => console.error(e));
     await this.handleEvents();
@@ -233,15 +244,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
     });
-    cordova.plugins.notification.local.on('click', (notification) => {
-      // My data is now available in objects.heading, objects.subheading and so on.
-      this.segmentationTagService.localNotificationId = notification.id;
+    LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
+     // My data is now available in objects.heading, objects.subheading and so on.
+      this.segmentationTagService.localNotificationId = action.notification.id;
       this.segmentationTagService.handleLocalNotificationTap();
     });
 
-    if (cordova?.plugins?.notification?.local?.launchDetails?.action === 'click') {
-      const corRelationList: Array<CorrelationData> = [];
-      this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
+   if (LocalNotifications.addListener('localNotificationActionPerformed', (action) => { if(action.actionId) {
+    const corRelationList: Array<CorrelationData> = [];
+      this.segmentationTagService.localNotificationId = action.notification.id;
 
       corRelationList.push({
         id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + ''
@@ -253,7 +264,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         undefined,
         corRelationList
       );
-    }
+   }}))
     await this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
@@ -263,7 +274,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   checkAndroidWebViewVersion() {
     let that = this;
-    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    window.plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
           let ver = webviewVersion as number;
@@ -286,7 +297,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   openPlaystore() {
-    plugins['webViewChecker'].openGooglePlayPage()
+    window.plugins['webViewChecker'].openGooglePlayPage()
       .then(function () { })
       .catch(function (error) { 
         console.error(error);
@@ -318,12 +329,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private checkForCodeUpdates() {
     this.preferences.getString(PreferenceKey.DEPLOYMENT_KEY).toPromise().then(deploymentKey => {
-      if (codePush != null && deploymentKey) {
+      if (window.codePush != null && deploymentKey) {
         const value = new Map();
         value['deploymentKey'] = deploymentKey;
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
           Environment.HOME, PageId.HOME, null, value);
-        codePush.sync((status => {
+        window.codePush.sync((status => {
           this.syncStatus(status);
         }), {
           deploymentKey
@@ -340,13 +351,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   private syncStatus(status) {
     let value = new Map();
     switch (status) {
-      case SyncStatus.DOWNLOADING_PACKAGE:
+      case window.SyncStatus.DOWNLOADING_PACKAGE:
         value['codepushUpdate'] = 'downloading-package';
         break;
-      case SyncStatus.INSTALLING_UPDATE:
+      case window.SyncStatus.INSTALLING_UPDATE:
         value['codepushUpdate'] = 'installing-update';
         break;
-      case SyncStatus.ERROR:
+      case window.SyncStatus.ERROR:
         value['codepushUpdate'] = 'error-in-update';
     }
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
@@ -361,11 +372,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private checkForExperiment() {
-    if (codePush === null) {
+    if (window.codePush === null) {
       return;
     }
 
-    codePush.getCurrentPackage((update) => {
+    window.codePush.getCurrentPackage((update) => {
       if (update) {
         this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
           if (key !== update.deploymentKey && this.appVersion === update.appVersion) {
@@ -389,12 +400,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async fcmTokenWatcher() {
     const fcmToken = await this.preferences.getString(PreferenceKey.FCM_TOKEN).toPromise();
     if (!fcmToken) {
-      FCMPlugin.getToken(async (token) => {
+      // await FCM.getToken().then(async (fcmRes) => {
+      window.FCMPlugin.getToken(async (token) => {
         await this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
     } else {
-      FCMPlugin.onTokenRefresh(async (token) => {
+      // await FCM.refreshToken().then(async (fcmRef) => {
+      window.FCMPlugin.onTokenRefresh(async (token) => {
         await this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
@@ -426,7 +439,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       );
       await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
-    FCMPlugin.onNotification(async (data) => {
+    window.FCMPlugin.onNotification(async (data) => {
       data['isRead'] = data.wasTapped ? 1 : 0;
       data['actionData'] = JSON.parse(data['actionData']);
       this.notificationServices.addNotification(data).subscribe((status) => {
@@ -494,7 +507,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         await this.reloadSigninEvents();
-        await this.db.createDb();
+        // await this.db.createDb(); // TODO: Capacitor temp fix 
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
@@ -538,7 +551,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!this.appGlobalService.isNativePopupVisible) {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
-      await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
+      // TODO: Capacitor temp fix 
+      // await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
       this.checkForCodeUpdates();
       await this.notificationSrc.handleNotification().then().catch();
       this.isForeground = true;
@@ -585,7 +599,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
-          await this.mlloader.stopLoader()
+          // await this.mlloader.stopLoader() // TODO: Capacitor temp fix 
           this.location.back();
         }
       }
@@ -593,10 +607,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private generateNetworkTelemetry() {
-    const value = new Map();
-    value['network-type'] = this.network.type;
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-      InteractSubtype.NETWORK_STATUS, Environment.HOME, PageId.SPLASH_SCREEN, undefined, value);
+    Network.getStatus().then(val => {
+      const value = new Map();
+      value['network-type'] = val.connectionType;
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+        InteractSubtype.NETWORK_STATUS, Environment.HOME, PageId.SPLASH_SCREEN, undefined, value);
+    });
   }
 
   private subscribeEvents() {
@@ -617,7 +633,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     // planned maintenance
     this.eventSubscription = this.eventsBusService.events(EventNamespace.ERROR).pipe(
-      filter((event) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
+      filter((event: any) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
       take(1)
     ).subscribe(() => {
       this.isPlannedMaintenanceStarted = true;
@@ -720,7 +736,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         };
         await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-        await this.splashScreenService.handleSunbirdSplashScreenActions();
+        // TODO: Capacitor temp fix 
+        // await this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }
   }
@@ -821,7 +838,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.headerConfig = config;
     });
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
+      StatusBar.setStyle({style: Style.Default});
     }).catch((error) => { 
       console.error(error);
     });
@@ -921,7 +938,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
       case 'UPDATE':
-        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        window.cordova['plugins'].InAppUpdateManager.checkForImmediateUpdate(
           () => { },
           () => { }
         );
@@ -952,11 +969,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       case 'ORIENTATION':
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
         if (currentOrientation === AppOrientation.LANDSCAPE) {
-          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          await ScreenOrientation.lock({orientation: "portrait"})
           await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         } else {
-          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+          await ScreenOrientation.lock({orientation: "landscape"})
           await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
           this.events.publish(EventTopics.ORIENTATION);
         }
@@ -965,7 +982,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private handleAuthAutoMigrateEvents() {
     this.eventsBusService.events(EventNamespace.AUTH).pipe(
-      filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
+      filter((e: any) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
     ).subscribe((e) => {
       switch (e.type) {
         case AuthEventType.AUTO_MIGRATE_SUCCESS: {
@@ -982,7 +999,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
-      filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
+      filter((e: any) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
     ).subscribe(async () => {
       await this.logoutHandlerService.onLogout();
     });
@@ -994,7 +1011,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         const response = JSON.parse(data);
         const utmValue = response['val'];
         if (response.val && response.val.length) {
-          this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
+          // TODO: Capacitor temp fix 
+          // this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
         }
         const utmTelemetry = {
           utm_data: utmValue
@@ -1094,10 +1112,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async checkCurrentOrientation() {
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
     if (currentOrientation === AppOrientation.LANDSCAPE) {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await ScreenOrientation.lock({orientation: "landscape"})
       await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.LANDSCAPE).toPromise();
     } else {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      await ScreenOrientation.lock({orientation: "portrait"})
       await this.preferences.putString(PreferenceKey.ORIENTATION, AppOrientation.PORTRAIT).toPromise();
     }
   }

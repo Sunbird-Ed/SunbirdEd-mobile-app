@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationExtras, Resolve, Router } from '@angular/router';
 import { OnboardingScreenType, PreferenceKey } from '../app/app.constant';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
-import { SplashScreenService } from '../services/splash-screen.service';
+// TODO: Capacitor temp fix 
+// import { SplashScreenService } from '../services/splash-screen.service';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 @Injectable()
@@ -11,7 +12,8 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         private router: Router,
-        private splashScreenService: SplashScreenService,
+        // TODO: Capacitor temp fix 
+        // private splashScreenService: SplashScreenService,
         private onboardingConfigurationService: OnboardingConfigurationService
     ) { }
 
@@ -36,7 +38,8 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
             await this.navigateToUserTypeSelection();
             return false;
         }
-        await this.splashScreenService.handleSunbirdSplashScreenActions();
+        // TODO: Capacitor temp fix 
+        // await this.splashScreenService.handleSunbirdSplashScreenActions();
         return true;
     }
 
