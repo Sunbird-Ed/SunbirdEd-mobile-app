@@ -8,6 +8,21 @@ const config: CapacitorConfig = {
     androidScheme: 'https'
   },
   plugins: {
+    SplashScreen: {
+      launchShowDuration: 3000,
+      launchAutoHide: true,
+      backgroundColor: "#ffffffff",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: true,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#999999",
+      splashFullScreen: true,
+      splashImmersive: true,
+      layoutName: "launch_screen",
+      useDialog: true,
+    },
     "PushNotifications": {
       "presentationOptions": [
         "badge",
@@ -33,10 +48,7 @@ const config: CapacitorConfig = {
     "window.plugins.googleplus": {
       "PLAY_SERVICES_VERSION": "15.0.1"
     },
-    downloadManager: {},
-    SplashScreen: {
-      "launchShowDuration": 0
-    }
+    downloadManager: {}
   },
   cordova: {
     accessOrigins: ["*"],
@@ -62,10 +74,9 @@ const config: CapacitorConfig = {
       "AndroidWindowSplashScreenBackground":"#ffffff",
       "SplashScreen":"splash.png",
       "AndroidWindowSplashScreenAnimatedIcon":"splash.png",
-        
       "SplashMaintainAspectRatio": "true",
       "SplashShowOnlyFirstTime": "false",
-      "SplashScreenDelay": "1000"
+      "SplashScreenDelay": "3000"
     }
   }
 };

@@ -41,7 +41,7 @@ import { UtilityService } from '../services/utility-service';
 import { AppHeaderService } from '../services/app-header.service';
 import { AppRatingService } from '../services/app-rating.service';
 // TODO: Capacitor temp fix 
-// import { SplashScreenService } from '../services/splash-screen.service';
+import { SplashScreenService } from '../services/splash-screen.service';
 import { LocalCourseService } from '../services/local-course.service';
 import { LoginHandlerService } from '../services/login-handler.service';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
@@ -58,6 +58,7 @@ import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 // TODO: Capacitor temp fix 
 import { buildConfig } from '../environments/environment.stag';
+import { Keyboard } from '@capacitor/keyboard';
 
 declare const cordova;
 declare const window;
@@ -123,7 +124,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private location: Location,
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
-    // private splashScreenService: SplashScreenService,
+    private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     // TODO: Capacitor temp fix 
     // private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
@@ -168,6 +169,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.networkAvailability.init();
       await this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
+      buildConfig.VERSION_NAME
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;
@@ -212,8 +214,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       await StatusBar.setStyle({style: Style.Light});
       if (this.platform.is('ios')) {
         await StatusBar.setStyle({style: Style.Default});
-        if (window['Keyboard']) {
-          window['Keyboard'].hideFormAccessoryBar(false);
+        if (Keyboard) {
+          Keyboard.setAccessoryBarVisible({isVisible: false});
         }
       }
       this.handleBackButton();
@@ -552,7 +554,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
       // TODO: Capacitor temp fix 
-      // await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
+      await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
       this.checkForCodeUpdates();
       await this.notificationSrc.handleNotification().then().catch();
       this.isForeground = true;
@@ -737,7 +739,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         };
         await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
         // TODO: Capacitor temp fix 
-        // await this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }
   }

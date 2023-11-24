@@ -46,13 +46,8 @@
                 "output": "/assets/"
               },
               {
-                "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/discussions-ui/assets",
-                "output": "./assets/discussion-ui"
-              },
-              {
                 "glob": "**/*",
-                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               },
               {
@@ -71,7 +66,6 @@
               "node_modules/katex/dist/katex.min.css",
               "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sb-styles/assets/styles.scss",
-              "node_modules/@project-sunbird/discussions-ui/assets/styles/global.scss",
               "node_modules/@project-sunbird/sunbird-video-player-web-component/styles.css",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.css",
@@ -206,7 +200,7 @@
           }
         },
         "ionic-cordova-build": {
-          "builder": "@ionic/cordova-builders:cordova-build",
+          "builder": "@ionic/angular-toolkit:cordova-build",
           "options": {
             "browserTarget": "app:build"
           },
@@ -220,7 +214,7 @@
           }
         },
         "ionic-cordova-serve": {
-          "builder": "@ionic/cordova-builders:cordova-serve",
+          "builder": "@ionic/angular-toolkit:cordova-serve",
           "options": {
             "cordovaBuildTarget": "app:ionic-cordova-build",
             "devServerTarget": "app:serve"
@@ -259,13 +253,13 @@
   },
   "cli": {
     "analytics": "59dc0c3a-113f-4dc4-aa8d-a710cbda80bc",
-    "defaultCollection": "@ionic/cordova-builders"
+    "defaultCollection": "@ionic/angular-toolkit"
   },
   "schematics": {
-    "@ionic/cordova-builders:component": {
+    "@ionic/angular-toolkit:component": {
       "styleext": "scss"
     },
-    "@ionic/cordova-builders:page": {
+    "@ionic/angular-toolkit:page": {
       "styleext": "scss"
     },
     "@schematics/angular:component": {

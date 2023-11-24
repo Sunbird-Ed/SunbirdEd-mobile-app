@@ -61,6 +61,7 @@ import { FormConstants } from '../form.constants';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DiscoverComponent } from '../components/discover/discover.page';
 import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
+import { Keyboard } from '@capacitor/keyboard';
 
 declare const cordova;
 @Component({
@@ -931,7 +932,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
-    (window as any).Keyboard.hide();
+    Keyboard.hide();
     const facets = this.searchFilterConfig.reduce((acc, filterConfig) => {
       acc.push(filterConfig.code);
       return acc;

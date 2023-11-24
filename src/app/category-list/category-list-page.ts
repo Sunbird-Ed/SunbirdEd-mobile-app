@@ -219,7 +219,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.formField.aggregate.groupSortBy.forEach((data) => {
                     let applyFilters = [];
                     Object.keys(this.filterFields).forEach((e) => {
-                        if (this.filterFields[e].length) {
+                        if (this.filterFields[e]?.length) {
                             applyFilters = applyFilters.concat(this.filterFields[e]);
                         }
                     });
@@ -232,7 +232,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             }
         }
 
-        if (this.profile.subject.length >= 1) {
+        if (this.profile?.subject?.length >= 1) {
             if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
                 this.formField.aggregate.groupSortBy.forEach((sortData) => {
                     if (sortData.name.preference) {
@@ -317,9 +317,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.filterPillList = [];
                 setTimeout(() => {
                     this.filterPillList = (this.facetFilters[this.formField.filterPillBy] && JSON.parse(JSON.stringify(this.facetFilters[this.formField.filterPillBy]))) || [];
-                    if (this.filterPillList.length) {
+                    if (this.filterPillList?.length) {
                         this.preFetchedFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
-                        if (this.filterPillList.length === 1) {
+                        if (this.filterPillList?.length === 1) {
                             this.selectedFilterPill = this.filterPillList[0];
                         } else {
                             this.pillFilterHandler(this.filterPillList[0]).then(() => {}).catch();
@@ -549,7 +549,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         let filterCriteriaData: ContentSearchCriteria;
         if (isDataEmpty && this.resentFilterCriteria) {
             filterCriteriaData = JSON.parse(JSON.stringify(this.resentFilterCriteria));
-        } else if (this.filterPillList.length && this.formField.filterPillBy && this.preFetchedFilterCriteria) {
+        } else if (this.filterPillList?.length && this.formField?.filterPillBy && this.preFetchedFilterCriteria) {
             filterCriteriaData = JSON.parse(JSON.stringify(this.preFetchedFilterCriteria));
         } else {
             filterCriteriaData = JSON.parse(JSON.stringify(this.filterCriteria))

@@ -39,6 +39,7 @@ import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-s
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-explore-books',
@@ -196,8 +197,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     });
     this.handleBackButton();
     await this.headerService.showHeaderWithBackButton();
-    window.addEventListener('keyboardDidHide', this.showSortByButton);
-    window.addEventListener('keyboardWillShow', this.hideSortByButton);
+    Keyboard.addListener('keyboardDidHide', this.showSortByButton);
+    Keyboard.addListener('keyboardWillShow', this.hideSortByButton);    
   }
 
   ngOnDestroy(): void {
@@ -292,7 +293,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         );
       }),
       tap(() => {
-        (window as any).Keyboard.hide();
+        Keyboard.hide();
       }),
       tap((result?: ContentSearchResult) => {
         this.zone.run(() => {
@@ -369,8 +370,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     if (this.searchFormSubscription) {
       this.searchFormSubscription.unsubscribe();
     }
-    window.removeEventListener('keyboardDidHide', this.showSortByButton);
-    window.removeEventListener('keyboardWillShow', this.hideSortByButton);
+    Keyboard.addListener('keyboardDidHide', this.showSortByButton);
+    Keyboard.addListener('keyboardWillShow', this.hideSortByButton);
   }
 
   async openSortOptionsModal() {

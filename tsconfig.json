@@ -23,8 +23,7 @@
     "skipLibCheck": true,
     "types": [
       "node",
-      "reflect-metadata",
-      "jest"
+      "reflect-metadata"
     ],
     "typeRoots": [
       "./node_modules/@types"

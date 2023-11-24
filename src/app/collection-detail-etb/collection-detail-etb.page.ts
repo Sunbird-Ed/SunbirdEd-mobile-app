@@ -552,7 +552,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getContentDetails(option).toPromise()
       .then(async (data: Content | any) => {
         if (data) {
-          this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          this.licenseDetails = data.contentData?.licenseDetails || this.licenseDetails;
           if (data.contentData.attributions && data.contentData.attributions.length) {
             data.contentData.attributions = (data.contentData.attributions.sort()).join(', ');
           }
@@ -732,7 +732,7 @@ export class CollectionDetailEtbPage implements OnInit {
               );
             }
 
-            if (this.queuedIdentifiers.length === 0) {
+            if (this.queuedIdentifiers?.length === 0) {
               if (this.isDownloadStarted) {
                 this.showDownloadBtn = true;
                 this.isDownloadStarted = false;
@@ -740,7 +740,7 @@ export class CollectionDetailEtbPage implements OnInit {
                 this.refreshHeader();
               }
             }
-            if (this.faultyIdentifiers.length > 0) {
+            if (this.faultyIdentifiers?.length > 0) {
               const stackTrace: any = {};
               stackTrace.parentIdentifier = this.cardData.identifier;
               stackTrace.faultyIdentifiers = this.faultyIdentifiers;
