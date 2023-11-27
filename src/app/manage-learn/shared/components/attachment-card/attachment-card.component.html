@@ -9,13 +9,19 @@
       </ion-col>
       <ion-col size="6" class="img-wrapper" *ngFor="let attachment of data.attachments| slice:0:limit; let i=index;">
         <ion-card>
+          <div class="d-flex flex-jc-flex-end">
+            <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(attachment,i)"></ion-icon>
+          </div>
           <ion-card-content>
-            <div >
-              <ion-icon class="close-icon" *ngIf="!viewOnly" name="close-circle" (click)="delete(attachment,i)"></ion-icon>
-            </div>
+            <div class="relative">
             <img [src]="getImgContent(attachment?.localUrl)"
               *ngIf="attachment.type.includes('image') && !attachment.url"  alt=""/>
-            <img [src]="attachment?.url" *ngIf="attachment.type.includes('image') && attachment.url"  alt=""/>
+            <img [src]="attachment?.url.split('?')[0]" *ngIf="attachment.type.includes('image') && attachment.url"  alt=""/>
+            <div class="error-overlay" *ngIf="attachment?.uploadFailed">
+              <ion-icon name="alert" class="alert-icon"></ion-icon>
+              <div>{{ "FRMELEMNTS_LBL_FILE_CORRUPTED" | translate }}</div>
+            </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
