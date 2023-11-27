@@ -1407,5 +1407,8 @@
   "FRMELEMNTS_LBL_TASKS_COMPLETED": "tasks completed",
   "FRMELEMNTS_LBL_FILE_UPLOAD_ERROR": "Error in uploading files",
   "FRMELEMNTS_MSG_FILE_UPLOAD_ERROR_MSG": "Some files seem to be corrupted or deleted. Re-upload files to proceed.",
-  "FRMELEMNTS_LBL_FILE_CORRUPTED": "File corrupted"
+  "FRMELEMNTS_LBL_FILE_CORRUPTED": "File corrupted",
+  "FRMELEMNTS_LBL_PROJECT_END_DATE":"Project end date",
+  "FRMELEMNTS_LBL_PROJECT_START_DATE":"Project start date",
+  "FRMELEMNTS_MSG_PROJECT_END_DATE":"Are you sure? Task end date will also be changed to this if it is later"
 }
