@@ -250,16 +250,13 @@ export class AddFilePage implements OnInit {
       .then((success) => {
         this.project._rev = success.rev;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
-        if(type !== 'save'){
-          this.location.back()
-        }
       })
   }
   doSyncAction(isSubmission:boolean = false) {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
         ? this.projectServ.createNewProject(this.project)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission },replaceUrl:true });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -296,7 +293,6 @@ export class AddFilePage implements OnInit {
     setTimeout(() => {
       this.project.attachments = this.attachments;
       this.project.remarks = this.remarks;
-      this.project.status = statusType.submitted;
       this.attachments = [];
       this.update();
       this.doSyncAction(true);
