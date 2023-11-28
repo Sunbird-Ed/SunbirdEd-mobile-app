@@ -16,7 +16,7 @@
             <div class="relative">
             <img [src]="getImgContent(attachment?.localUrl)"
               *ngIf="attachment.type.includes('image') && !attachment.url"  alt=""/>
-            <img [src]="attachment?.url.split('?')[0]" *ngIf="attachment.type.includes('image') && attachment.url"  alt=""/>
+            <img [src]="attachment?.url" *ngIf="attachment.type.includes('image') && attachment.url"  alt=""/>
             <div class="error-overlay" *ngIf="attachment?.uploadFailed">
               <ion-icon name="alert" class="alert-icon"></ion-icon>
               <div>{{ "FRMELEMNTS_LBL_FILE_CORRUPTED" | translate }}</div>

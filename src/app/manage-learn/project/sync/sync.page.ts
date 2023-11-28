@@ -238,7 +238,7 @@ export class SyncPage implements  OnDestroy {
       for (let i = 0; i < this.attachments.length; i++) {
         this.attachments[i].uploadUrl = imageInfo[i].url;
         this.attachments[i].cloudStorage = imageInfo[i].cloudStorage;
-        this.attachments[i].url = imageInfo[i].url
+        this.attachments[i].url = imageInfo[i].url.split('?')[0]
         for (const key of Object.keys(imageInfo[i].payload)) {
           this.attachments[i][key] = imageInfo[i].payload[key];
         }

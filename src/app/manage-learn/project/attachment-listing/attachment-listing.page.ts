@@ -171,8 +171,7 @@ export class AttachmentListingPage implements OnInit {
   }
   downloadFile(attachment) {
     const fileTransfer: FileTransferObject = this.transfer.create();
-    let url = attachment.url.split('?')[0]
-    fileTransfer.download(url, this.path + '/' + attachment.name).then(success => {
+    fileTransfer.download(attachment.url, this.path + '/' + attachment.name).then(success => {
       this.openFile(attachment)
     })
   }
