@@ -119,7 +119,7 @@
     "cordova.plugins.diagnostic": "^5.0.2",
     "core-js": "^2.6.10",
     "datatables.net-fixedcolumns": "^3.3.3",
-    "dayjs": "1.9.8",
+    "dayjs": "1.11.10",
     "dom-to-image": "^2.6.0",
     "epubjs": "^0.3.89",
     "es6-promise-plugin": "^4.2.2",
