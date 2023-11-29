@@ -170,6 +170,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   totalCount: number;
   isFilterApplied: boolean = false;
   rootOrgId: string;
+  categoryKeys: any;
   
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -256,10 +257,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
-    let filterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
-    let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory().value
-    this.searchFilterConfig = frameworkCategory.concat(filterConfig);
-    console.log('.....new form', this.searchFilterConfig);
+    let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory();
+    this.getCategoriesLabel(frameworkCategory.id);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId || '*';
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       await this.handleSearch(true);
@@ -1894,5 +1895,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
         }
         this.enableHeaderEvents();
+    }
+
+    async getCategoriesLabel(frameworkId) {
+      await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkId).then((data) => {
+        this.categoryKeys = data;
+        this.categoryKeys.push({code: 'lastPublishedBy', name: 'Published by'})
+    });
     }
 }

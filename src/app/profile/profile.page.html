@@ -101,7 +101,7 @@
         </div>
     </div>
     </div>
-    <div class="framework-block" *ngIf="profile?.framework && categories.length>0">
+    <div class="framework-block" *ngIf="profile?.framework && isCategoryLoaded">
         <div *ngFor="let category of categories">
             <div class="container" *ngIf="profile?.framework[category.code]">
                 <span>{{category.label | translateJson}}: </span>

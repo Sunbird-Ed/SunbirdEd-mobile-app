@@ -1,6 +1,6 @@
 import { CorReleationDataType, ImpressionType, PageId } from './../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from './../../../services/telemetry-generator.service';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {
@@ -120,7 +120,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   };
   userFrameworkCategories: any;
   frameworkCategoriesValue = {}
-  categoriesLabel: any;
+  categoriesLabel = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -144,7 +144,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private zone: NgZone
   ) {
   }
 
@@ -187,14 +188,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     ).toPromise();
     this.frameworkCategoriesValue = {};
     this.userFrameworkCategories = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
-    if (this.profile.categories) {await this.getFrameworkCategoriesLabel() }
+    await this.getFrameworkCategoriesLabel()
     this.preferenceList = [];
-    Object.keys(this.userFrameworkCategories).forEach((key) => {
-      if (key !== 'id' && this.userFrameworkCategories[key].length) {
-        this.preferenceList.push(this.userFrameworkCategories[key]);
-      }
-    });
-    console.log('.............frameworkCategories', this.preferenceList);
+    setTimeout(() => {
+      this.preferenceList = [];
+      this.categoriesLabel.forEach((e) => {
+        if (this.userFrameworkCategories[e.code].length){
+          this.preferenceList.push(this.userFrameworkCategories[e.code]);
+        }
+      })
+    }, 0);
     await this.getFrameworkDetails();
     await this.fetchDisplayElements();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
@@ -345,7 +348,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       fromLibrary: false,
       title: (section && section.landingDetails && section.landingDetails.title) || '',
       description: (section && section.landingDetails && section.landingDetails.description) || '',
-      userPreferences: this.userFrameworkCategories
+      userPreferences: this.userFrameworkCategories,
+      frameworkId: this.profile.syllabus[0]
     };
     await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -906,14 +910,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async getFrameworkCategoriesLabel() {
-    let frameworkValue = JSON.parse(this.profile.categories);
-    this.userFrameworkCategories = {}
-    await this.formAndFrameworkUtilService.getFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
       if (categories) {
-        categories = categories.sort((a, b) => a.index - b.index)
-        categories.forEach((e) => {
-            this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
-          })
+        this.categoriesLabel = categories.sort((a, b) => a.index - b.index)
+        if (this.profile.categories) {
+          this.userFrameworkCategories = {}
+          let frameworkValue = JSON.parse(this.profile.categories);
+          this.categoriesLabel.forEach((e) => {
+              this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+            })
+        }
       }
     });
   }

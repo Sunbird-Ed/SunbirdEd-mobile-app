@@ -64,40 +64,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   supportedUserTypeConfig: Array<any>;
   isUserTypeSelected = false;
   defaultFrameworkID: any;
-  supportedUserTypes = [
-    {
-        "code": "farmer",
-        "name": "Farmer",
-        "formConfig": {
-            "request": {
-                "type": "profileConfig",
-                "subType": "default",
-                "action": "get"
-            },
-            "url": "/api/data/v1/form"
-        },
-        "translations": "{\"en\":\"Farmer\",\"as\":\"শিক্ষক\",\"bn\":\"শিক্ষক\",\"gu\":\"શિક્ષક\",\"hi\":\"शिक्षक\",\"kn\":\"ಶಿಕ್ಷಕ/ಕಿ\",\"mr\":\"शिक्षक\",\"or\":\"ଶିକ୍ଷକ\",\"pa\":\"ਅਧਿਆਪਕ\",\"ta\":\"ஆசிரியர்\",\"te\":\"ఉపాధ్యాయుడు\",\"ur\":\"استاد\"}",
-        "image": "ic_teacher.svg",
-        "ambiguousFilters": [
-            "user1",
-            "instructor"
-        ],
-        "searchFilter": [
-            "User1",
-            "Instructor"
-        ],
-        "attributes": {
-            "mandatory": [
-                "board",
-                "medium",
-                "gradeLevel"
-            ],
-            "optional": [
-                "subject"
-            ]
-        },
-        "isActive": true
-    }]
+  loader: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -155,7 +122,7 @@ export class UserTypeSelectionPage implements OnDestroy {
       this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     }
     await this.setUserTypeForNewUser();
-    this.supportedUserTypeConfig = this.defaultFrameworkID !== 'agriculture_framework' ? await this.profileHandler.getSupportedUserTypes(this.defaultFrameworkID) : this.supportedUserTypes;
+    this.getSupportedUserTypes()
 
     console.log('supportedUserTypeConfigsupportedUserTypeConfigsupportedUserTypeConfigsupportedUserTypeConfig', this.supportedUserTypeConfig)
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
@@ -526,5 +493,13 @@ export class UserTypeSelectionPage implements OnDestroy {
       undefined,
       correlationlist
     );
+  }
+
+  async getSupportedUserTypes() {
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes(rootOrgId);
+    await this.loader.dismiss();
   }
 }

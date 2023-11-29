@@ -76,40 +76,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
   defaultFID = 'NCF';
   defaultFrameworkID: any;
   isDisable = true;
-  supportedUserType = [
-    {
-        "code": "farmer",
-        "name": "Farmer",
-        "formConfig": {
-            "request": {
-                "type": "profileConfig",
-                "subType": "default",
-                "action": "get"
-            },
-            "url": "/api/data/v1/form"
-        },
-        "translations": "{\"en\":\"Farmer\",\"as\":\"শিক্ষক\",\"bn\":\"শিক্ষক\",\"gu\":\"શિક્ષક\",\"hi\":\"शिक्षक\",\"kn\":\"ಶಿಕ್ಷಕ/ಕಿ\",\"mr\":\"शिक्षक\",\"or\":\"ଶିକ୍ଷକ\",\"pa\":\"ਅਧਿਆਪਕ\",\"ta\":\"ஆசிரியர்\",\"te\":\"ఉపాధ్యాయుడు\",\"ur\":\"استاد\"}",
-        "image": "ic_teacher.svg",
-        "ambiguousFilters": [
-            "user1",
-            "instructor"
-        ],
-        "searchFilter": [
-            "User1",
-            "Instructor"
-        ],
-        "attributes": {
-            "mandatory": [
-                "board",
-                "medium",
-                "gradeLevel"
-            ],
-            "optional": [
-                "subject"
-            ]
-        },
-        "isActive": true
-    }]
 
   private availableProfileTypes = [
     { profileType: ProfileType.STUDENT, name: this.commonUtilService.translateMessage('USER_TYPE_2') },
@@ -225,7 +191,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       PageId.CREATE_USER
     );
     await this.getCategoriesAndUpdateAttributes();
-    this.supportedUserTypes = this.profile.syllabus[0] !== 'agriculture_framework' ? await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId) : this.supportedUserType;
+    this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
   }
 
   private async addAttributeSubscription() {
@@ -718,7 +684,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   private async getCategoriesAndUpdateAttributes(change = false) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(this.defaultFrameworkID).then(async (categories) => {
+    this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID).then(async (categories) => {
       if (categories) {
         this.categories = categories.sort((a,b) => a.index - b.index);
         let categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;

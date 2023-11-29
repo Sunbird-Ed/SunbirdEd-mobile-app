@@ -204,7 +204,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.formControlSubscriptions.unsubscribe();
+  //  this.formControlSubscriptions.unsubscribe();
   }
 
   handleActiveScanner() {
@@ -835,28 +835,23 @@ private addAttributeSubscription() {
 }
 
   private async getCategoriesAndUpdateAttributes(change = false) {
-    await this.formAndFrameworkUtilService.getFrameworkCategoryList(this.defaultFrameworkID).then((categories) => {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID).then((categories) => {
       if (categories) {
         this.categories = categories.sort((a, b) => a.index - b.index)
         this.categories[0]['itemList'] = change ? this.syllabusList : [];
-        console.log('///////////////////', this.defaultFrameworkID)
-          this.addAttributeSubscription();
-        // }
-        let resultMap = new Map();
+  
         this.categories.forEach((ele: any, index) => {
           this.group[ele.identifier] = new FormControl([], ele.required ? Validators.required : []);
         });
         if (Object.keys(this.group).length) {
           this.isCategoryLabelLoded = true;
         }
-        console.log('...............', resultMap)
         this.profileSettingsForms = new FormGroup(this.group);
         this.group = {};
         if (change) {
           this.profileSettingsForms.get(this.categories[0].identifier).patchValue([this.defaultFrameworkID]);
         }
         this.isCategoryLabelLoded = true;
-        console.log('...............', this.group)
       }
     }).catch(e => console.error(e));
   }

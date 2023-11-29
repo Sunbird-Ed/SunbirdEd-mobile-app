@@ -321,7 +321,7 @@ export class GuestProfilePage implements OnInit {
   async signin() { await this.router.navigate([RouterLinks.SIGN_IN]); }
 
   private getCategoriesAndUpdateAttributes(frameworkId) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkId).then((categories) => {
+    this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((categories) => {
       if (categories) {
         this.frameworkData = categories;
         this.categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
@@ -329,14 +329,7 @@ export class GuestProfilePage implements OnInit {
           if(this.categoryDetails[e.identifier]) {
             e['value'] = this.categoryDetails[e.identifier]
           }
-        })
-        // this.frameworkCategories = [];
-        // Object.keys(categories).forEach((key) => {
-        //   if (key !== 'id') {
-        //     this.frameworkCategories.push(categories[key]);
-        //   }
-        // });
-        console.log('.............///////////', this.frameworkData);
+        });
         this.supportedProfileAttributes = categories.supportedAttributes;
       }
     }).catch(e => console.error(e));

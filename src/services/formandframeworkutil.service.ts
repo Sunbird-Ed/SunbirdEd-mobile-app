@@ -730,27 +730,27 @@ export class FormAndFrameworkUtilService {
 
 
 
-    private async getCategoriesConfig(frameworkId: string, formRequest): Promise<any> {
-        console.log('.....getCategoriesConfig', formRequest)
+    private async getCategoriesConfig(frameworkId: string, formRequest?:any): Promise<any> {
        return await this.frameworkService.getFrameworkConfig(frameworkId, formRequest).toPromise();
     }
 
-    getFrameworkCategoryList(frameworkId?: string): Promise<any> {
+    getFrameworkCategoryList(frameworkId: string, formRequest?: any, isStore = false): Promise<any> {
         return new Promise((resolve, reject) => {
             const framework = this.appGlobalService.getCachedFrameworkCategory();
-            console.log('................', framework);
-            if (!framework || (framework && framework.id !== frameworkId)) {
-                 this.getCategoriesConfig(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId}).then((res) => {
+                 this.getCategoriesConfig(frameworkId, formRequest).then((res) => {
                     if(res) {
-                        let fraeworkDetails = {id: frameworkId, value: res }
-                        this.appGlobalService.setFramewokCategory(fraeworkDetails);
+                        if (isStore) {
+                            let fraeworkDetails = {id: frameworkId, value: res }
+                            this.appGlobalService.setFramewokCategory(fraeworkDetails);
+                        }
                         resolve(res);
                     }
                 }).catch((e) => console.error(e));
-            } else {
-                resolve(framework.value);
-            }
         });
+    }
+
+    invokedGetFrameworkCategoryList (frameworkId) {
+        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId}, true)
     }
 
 }

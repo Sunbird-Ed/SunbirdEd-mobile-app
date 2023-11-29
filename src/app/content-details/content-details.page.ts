@@ -197,6 +197,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   showMoreFlag: any = false;
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
+  frameworkCategories= [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -370,6 +371,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    this.frameworkCategories = this.appGlobalService.getCachedFrameworkCategory().value;
     this.headerService.hideStatusBar();
     await this.headerService.hideHeader();
 
