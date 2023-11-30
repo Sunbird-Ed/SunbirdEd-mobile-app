@@ -20,9 +20,14 @@
 
   <div *ngFor="let attachment of attachments; let i = index" class="attachments-list">
     <div class="attachment-label" *ngIf="attachment?.type != 'link'">
+      <span *ngIf="!attachment?.uploadFailed; else showAlertIcon" class="m-0">
       <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image/jpeg'"></ion-icon>
       <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'application/pdf'"></ion-icon>
       <ion-icon name="videocam" slot="start" *ngIf="attachment?.type == 'video/mp4'"></ion-icon>
+      </span>
+      <ng-template #showAlertIcon>
+        <ion-icon name="alert" slot="start" *ngIf="attachment?.uploadFailed" class="alert-icon"></ion-icon>
+      </ng-template>
       <span>{{attachment?.name || attachment?.url}} </span>
     </div>
     <div class="attachment-label" *ngIf="attachment?.type == 'link'">
