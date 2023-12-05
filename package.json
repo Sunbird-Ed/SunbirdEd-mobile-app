@@ -63,7 +63,7 @@
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "5.1.1",
+    "@project-sunbird/client-services": "7.0.4",
     "@project-sunbird/common-consumption-v9": "5.1.0",
     "@project-sunbird/common-form-elements-v9": "5.0.3",
     "@project-sunbird/content-player": "5.1.0",
