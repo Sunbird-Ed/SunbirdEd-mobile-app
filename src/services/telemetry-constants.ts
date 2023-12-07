@@ -621,7 +621,8 @@ export enum ID {
     SELECT_DEACTIVATE = 'select-deactivate',
     SELECT_DELETE = 'select-delete',
     SELECT_ACTIVITY_DASHBOARD = 'select-activity-dashboard',
-    DOWNLOAD_CLICKED = 'download-clicked'
+    DOWNLOAD_CLICKED = 'download-clicked',
+    DELETE_CLICKED = 'delete-clicked'
 }
 
 export enum ActionButtonType {
