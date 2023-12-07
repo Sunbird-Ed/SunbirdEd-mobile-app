@@ -557,26 +557,6 @@ export class ProfilePage implements OnInit {
       undefined,
       undefined,
       ID.DELETE_CLICKED);
-      let isUserDeleted = false;
-    // const uid = this.profile.userId;
-    // this.events.publish('deep-link');
-    // this.profileService.deleteProfileData(uid).toPromise();
-  //   this.utilityService.startActivityForResult({
-  //     package: 'org.sunbird.customdeeplink',
-  //     extras: {
-  //         content: {}
-  //     },
-  //     requestCode: 101,
-  // }).then((result: any) => {
-  //     const telemetryResult = result.extras;
-
-  // }).catch((error) => {
-  //     // error
-  //     console.log('------------', error);
-  // });  
-  // customtabs.launchInBrowser('https://dev.sunbirded.org/profile', {} as any, resolved => {
-                                     
-  // });  
   customtabs.launchInBrowser(
     'https://dev.sunbirded.org/profile/delete-user',
     (callbackUrl) => {
@@ -589,16 +569,16 @@ export class ProfilePage implements OnInit {
               if(profile.uid === userId && userDeleted) {   
                 this.loader = this.commonUtilService.getLoader();
               if (this.loader) {
-                  this.logoutHandler.onLogout();
-              }     
+                  this.logoutHandler.onLogout(); 
               await this.profileService.deleteProfileData(profile.uid).toPromise()
-              .then((result) => {
-                  if (result) {
-                      console.log('Profile data deleted successfully');
-                  } else {
-                      console.log('Unable to delete profile data');
-                  }
-              });  
+                  .then((result) => {
+                      if (result) {
+                          console.log('Profile data deleted successfully');
+                      } else {
+                          console.log('Unable to delete profile data');
+                      }
+                  });  
+            }
           }
           else {
             console.log('userID does not match')
@@ -615,49 +595,6 @@ export class ProfilePage implements OnInit {
         console.error('Error launching Custom Tab:', error);
     }
 );
-// customtabs.launch('https://dev.sunbirded.org/profile', (success)=> {
-//   console.log('Deeplink value', success);
-//     this.profileService.getActiveProfileSession().toPromise()
-//     .then(async (profile) => {
-//       this.events.publish('logout-handler');
-//       await this.profileService.deleteProfileData(profile.uid).toPromise()
-//       .then((result) => {
-//           if (result) {
-//             console.log('Profile data deleted successfully');
-//           } else {
-//             console.log('Unable to delete profile data');
-//           }
-//       })
-      
-//     })
-  
-// }, (error)=> {
-//   console.log(error);
-  
-// })
-// customtabs.launch('https://dev.sunbirded.org/profile', (success) => {
-//     console.log('Deeplink value', success);
-    
-//     this.profileService.getActiveProfileSession().toPromise()
-//     .then(async (profile) => {
-//         this.events.publish('logout-handler');
-//         try {
-//             const result = await this.profileService.deleteProfileData(profile.uid).toPromise();
-//             if (result) {
-//                 console.log('Profile data deleted successfully');
-//             } else {
-//                 console.log('Unable to delete profile data');
-//             }
-//         } catch (error) {
-//             console.error('Error occurred while deleting profile data:', error);
-//         }
-//     })
-//     .catch((error) => {
-//         console.error('Error occurred while getting active profile session:', error);
-//     });
-// }, (error) => {
-//     console.error('Error launching Custom Tab:', error);
-// });
 }
 
 async isUserDeleted(userId: string):Promise<boolean> {
