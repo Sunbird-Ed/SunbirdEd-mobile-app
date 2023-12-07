@@ -84,6 +84,10 @@ import { LocationHandler } from '../../services/location-handler';
 import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { statusType } from '../manage-learn/core';
+import { UtilityService } from '../../services/utility-service';
+// import { DeleteUserService } from '../../services/delete-user.service';
+import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
+import { error } from 'console';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -113,6 +117,8 @@ export class ProfilePage implements OnInit {
   mediumList = [];
   gradeLevelList = [];
   subjectList = [];
+      loader?: HTMLIonLoadingElement;
+
 
   imageUri = 'assets/imgs/ic_profile_default.png';
 
@@ -191,8 +197,10 @@ export class ProfilePage implements OnInit {
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,
     private locationHandler: LocationHandler,
-    private unnatiDataService : UnnatiDataService
-  ) {
+    private unnatiDataService : UnnatiDataService,
+    private utilityService: UtilityService,
+    private logoutHandler: LogoutHandlerService,
+    ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.userId = extrasState.userId || '';
@@ -539,6 +547,136 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
+  async launchDeleteUrl() {  
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DELETE_CLICKED,
+      undefined,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.DELETE_CLICKED);
+      let isUserDeleted = false;
+    // const uid = this.profile.userId;
+    // this.events.publish('deep-link');
+    // this.profileService.deleteProfileData(uid).toPromise();
+  //   this.utilityService.startActivityForResult({
+  //     package: 'org.sunbird.customdeeplink',
+  //     extras: {
+  //         content: {}
+  //     },
+  //     requestCode: 101,
+  // }).then((result: any) => {
+  //     const telemetryResult = result.extras;
+
+  // }).catch((error) => {
+  //     // error
+  //     console.log('------------', error);
+  // });  
+  // customtabs.launchInBrowser('https://dev.sunbirded.org/profile', {} as any, resolved => {
+                                     
+  // });  
+  customtabs.launchInBrowser(
+    'https://dev.sunbirded.org/profile/delete-user',
+    (callbackUrl) => {
+      console.log('Custom Tab launched successfully. Callback URL:', callbackUrl);
+      const userId = callbackUrl.substring('userId'.length);
+      this.profileService.getActiveProfileSession().toPromise()
+      .then(async (profile) => {
+          try {
+              const userDeleted = await this.isUserDeleted(profile.uid);
+              if(profile.uid === userId && userDeleted) {   
+                this.loader = this.commonUtilService.getLoader();
+              if (this.loader) {
+                  this.logoutHandler.onLogout();
+              }     
+              await this.profileService.deleteProfileData(profile.uid).toPromise()
+              .then((result) => {
+                  if (result) {
+                      console.log('Profile data deleted successfully');
+                  } else {
+                      console.log('Unable to delete profile data');
+                  }
+              });  
+          }
+          else {
+            console.log('userID does not match')
+          }
+          } catch (error) {
+              console.error('Error occurred while deleting profile data:', error);
+          }
+      })
+      .catch((error) => {
+          console.error('Error occurred while getting active profile session:', error);
+      });        
+    },
+    (error) => {
+        console.error('Error launching Custom Tab:', error);
+    }
+);
+// customtabs.launch('https://dev.sunbirded.org/profile', (success)=> {
+//   console.log('Deeplink value', success);
+//     this.profileService.getActiveProfileSession().toPromise()
+//     .then(async (profile) => {
+//       this.events.publish('logout-handler');
+//       await this.profileService.deleteProfileData(profile.uid).toPromise()
+//       .then((result) => {
+//           if (result) {
+//             console.log('Profile data deleted successfully');
+//           } else {
+//             console.log('Unable to delete profile data');
+//           }
+//       })
+      
+//     })
+  
+// }, (error)=> {
+//   console.log(error);
+  
+// })
+// customtabs.launch('https://dev.sunbirded.org/profile', (success) => {
+//     console.log('Deeplink value', success);
+    
+//     this.profileService.getActiveProfileSession().toPromise()
+//     .then(async (profile) => {
+//         this.events.publish('logout-handler');
+//         try {
+//             const result = await this.profileService.deleteProfileData(profile.uid).toPromise();
+//             if (result) {
+//                 console.log('Profile data deleted successfully');
+//             } else {
+//                 console.log('Unable to delete profile data');
+//             }
+//         } catch (error) {
+//             console.error('Error occurred while deleting profile data:', error);
+//         }
+//     })
+//     .catch((error) => {
+//         console.error('Error occurred while getting active profile session:', error);
+//     });
+// }, (error) => {
+//     console.error('Error launching Custom Tab:', error);
+// });
+}
+
+async isUserDeleted(userId: string):Promise<boolean> {
+  
+  try {
+    const req: ServerProfileDetailsRequest = {
+      userId: userId,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER,
+      forceRefresh: true
+    };
+    const profileResponse = await this.profileService.getServerProfilesDetails(req).toPromise();         
+    return !profileResponse;
+  }catch {
+    return true;
+  }
+}
+
+
   async getLearnerPassbook() {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
@@ -548,6 +686,8 @@ export class ProfilePage implements OnInit {
         schemaName: 'certificate',
         size: this.learnerPassbookCount? this.learnerPassbookCount : null
       };
+
+
 
       await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
         this.learnerPassbookCount = response.certRegCount + response.rcCount || null;
