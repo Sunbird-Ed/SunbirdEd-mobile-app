@@ -83,7 +83,7 @@ import { FrameworkCategory } from '@project-sunbird/client-services/models/chann
 import { LocationHandler } from '../../services/location-handler';
 import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-import { statusType } from '../manage-learn/core';
+import { ToastService, statusType } from '../manage-learn/core';
 import { UtilityService } from '../../services/utility-service';
 // import { DeleteUserService } from '../../services/delete-user.service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
@@ -200,6 +200,7 @@ export class ProfilePage implements OnInit {
     private unnatiDataService : UnnatiDataService,
     private utilityService: UtilityService,
     private logoutHandler: LogoutHandlerService,
+    private toast: ToastService,
     ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -547,8 +548,16 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
+  verifyUser() {
+    if (this.profile.roles && this.profile.roles.length === 0) {
+        this.launchDeleteUrl();
+    } else {
+        this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+    }
+}
+
   async launchDeleteUrl() {  
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,   //telemetry for delete button clicked
       InteractSubtype.DELETE_CLICKED,
       undefined,
       PageId.PROFILE,
@@ -557,44 +566,45 @@ export class ProfilePage implements OnInit {
       undefined,
       undefined,
       ID.DELETE_CLICKED);
-  customtabs.launchInBrowser(
-    'https://dev.sunbirded.org/profile/delete-user',
-    (callbackUrl) => {
-      console.log('Custom Tab launched successfully. Callback URL:', callbackUrl);
-      const userId = callbackUrl.substring('userId'.length);
-      this.profileService.getActiveProfileSession().toPromise()
-      .then(async (profile) => {
-          try {
-              const userDeleted = await this.isUserDeleted(profile.uid);
-              if(profile.uid === userId && userDeleted) {   
-                this.loader = this.commonUtilService.getLoader();
-              if (this.loader) {
-                  this.logoutHandler.onLogout(); 
-              await this.profileService.deleteProfileData(profile.uid).toPromise()
-                  .then((result) => {
-                      if (result) {
-                          console.log('Profile data deleted successfully');
-                      } else {
-                          console.log('Unable to delete profile data');
-                      }
-                  });  
-            }
-          }
-          else {
-            console.log('userID does not match')
-          }
-          } catch (error) {
-              console.error('Error occurred while deleting profile data:', error);
-          }
-      })
-      .catch((error) => {
-          console.error('Error occurred while getting active profile session:', error);
-      });        
-    },
-    (error) => {
-        console.error('Error launching Custom Tab:', error);
-    }
-);
+      
+      customtabs.launchInBrowser(          //opening in browser
+        'https://dev.sunbirded.org/profile/delete-user',
+        (callbackUrl) => {          //if user is deleted and getting a success callback
+          console.log('Custom Tab launched successfully. Callback URL:', callbackUrl);
+          const userId = callbackUrl.substring('userId'.length);     //separating userId from callbackUrl
+          this.profileService.getActiveProfileSession().toPromise()   //getting active profile uid
+          .then(async (profile) => {
+              try {
+                  const userDeleted = await this.isUserDeleted(profile.uid);    //checking whether this user is already deleted
+                  if(profile.uid === userId && userDeleted) {       //if active profile uid and user is deleted
+                    this.loader = this.commonUtilService.getLoader();
+                  if (this.loader) {
+                      this.logoutHandler.onLogout(); 
+                  await this.profileService.deleteProfileData(profile.uid).toPromise()       //deleting local data
+                      .then((result) => {
+                          if (result) {
+                              console.log('Profile data deleted successfully');
+                          } else {
+                              console.log('Unable to delete profile data');
+                          }
+                      });  
+                }
+              }
+              else {
+                console.log('userID does not match')
+              }
+              } catch (error) {
+                  console.error('Error occurred while deleting profile data:', error);
+              }
+          })
+          .catch((error) => {
+              console.error('Error occurred while getting active profile session:', error);
+          });        
+        },
+        (error) => {
+            console.error('Error launching Custom Tab:', error);
+        }
+    );
 }
 
 async isUserDeleted(userId: string):Promise<boolean> {

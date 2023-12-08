@@ -17,8 +17,9 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId,
-    TelemetryGeneratorService
+    FormAndFrameworkUtilService, ID, InteractSubtype, InteractType, PageId,
+    TelemetryGeneratorService,
+    UtilityService
 } from '../../services';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
@@ -150,6 +151,9 @@ describe('Profile.page', () => {
     const mockUnnatiDataService: Partial<UnnatiDataService> = {
         get: jest.fn(() => of()) 
     }as any
+    const mockUtilityService: Partial<UtilityService> = {};
+
+
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
@@ -1372,6 +1376,62 @@ describe('Profile.page', () => {
             jest.useRealTimers();
         });
     });
+
+    class CustomTabsService {
+        launchInBrowser(url, callback) {
+            console.log(callback,'callback url getting');
+            
+          // Simulate the behavior of the method
+          // You can use the callback with a mock callback URL or implement further logic here
+          const callbackUrl = 'userId12345'; // Replace this with the expected callback URL
+          
+          // Simulate the asynchronous behavior with a setTimeout
+          setTimeout(() => {
+            callback(callbackUrl);
+          }, 100);
+        }
+        // Other methods or properties if present
+      }
+      
+    describe('launching the url on button click', () => {
+        it('it should open the url while click on button', () => {
+        //arrange
+        const customTabsInstance = new CustomTabsService();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const mockCallbackUrl = 'userId12345';
+    
+        const mockProfile = { uid: 'userId123456' };        
+        const userDeleted = true;
+    
+        const mockLoader = jest.fn();
+        const mockLogoutHandler = {
+          onLogout: jest.fn()
+        };
+        customTabsInstance.launchInBrowser('https://dev.sunbirded.org/profile/delete-user', async (callbackUrl) => {
+            // Simulate the callback behavior with the mocked callbackUrl
+        expect(callbackUrl).toBe(mockCallbackUrl);
+        mockProfileService.getActiveProfileSession = jest.fn(() =>
+                of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
+        // mockProfileService.getServerProfilesDetails = jest.fn(() => of() as any);
+        // mockProfileService.deleteProfileData = jest.fn().mockReturnValue(new Promise<boolean>((resolve) => {
+        //             resolve(true); 
+        //           }));
+        //act
+        profilePage.launchDeleteUrl();
+
+        //assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.DELETE_CLICKED,
+            undefined,
+            PageId.PROFILE,
+            undefined, undefined, undefined, undefined,undefined, ID.DELETE_CLICKED);
+        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
+        // expect(mockProfileService.deleteProfileData).toHaveBeenCalled();
+        })
+    })
+    
+
 
     it('shareUsername', () => {
         // arrange
