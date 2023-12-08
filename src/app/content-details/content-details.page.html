@@ -217,7 +217,7 @@
   <div class="sb-content-info-container">
 
     <div class="sb-content-info-items"
-      *ngIf="frameworkCategories.length">
+      *ngIf="contentCategories.length">
       <div class="sb-content-info-title">{{'ABOUT' | translate}}</div>
 
       <div class="audience-info" *ngIf="content?.contentData.audience">
@@ -235,16 +235,12 @@
       </div>
 
       <ion-card class="sb-content-info-card">
-        <div class="sb-content-info-heading"
-          *ngIf="content?.contentData?.description && content?.contentData?.description?.length">
+        <div class="sb-content-info-heading">
           {{content?.description}}</div>
-        <div class="sb-info" *ngFor="let category of frameworkCategories">
+        <div class="sb-info" *ngFor="let category of contentCategories">
           <div class="sb-content-title" *ngIf="content?.contentData[category.code]">{{category.label}}</div>
-          <div class="sb-content-title-data">{{content?.contentData[category.code]}}</div>
-        </div>
-        <div class="sb-info" *ngIf="content?.contentData?.se_boards; else previousBoard">
-          <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
-          <div class="sb-content-title-data">{{content?.contentData?.se_boards | aliased}}</div>
+          <div class="sb-content-title-data" *ngIf="content?.contentData[category.alterNativeCode]">{{content?.contentData[category.alterNativeCode]}}</div>
+          <div class="sb-content-title-data" *ngIf="!content?.contentData[category.alterNativeCode]">{{content?.contentData[category.code]}}</div>
         </div>
    
 
@@ -311,7 +307,7 @@
 
         </div>
         <div role="button" class="read-more" id="read-more-less-btn" tabindex="0" *ngIf="content && content.contentData.description &&
-         content.contentData.description.length > 10 || frameworkCategories.length>1" 
+         content.contentData.description.length > 10 || contentCategories.length>1" 
          (click)="showMoreFlag = !showMoreFlag; readLessorReadMore(showMoreFlag ? 'read-more-clicked' : 'read-less-clicked')">
           <div *ngIf="showMoreFlag">
             {{ 'READ_LESS' | translate }}

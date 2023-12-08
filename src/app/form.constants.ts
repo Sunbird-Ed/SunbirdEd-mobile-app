@@ -230,4 +230,11 @@ export class FormConstants {
         component: 'app',
         rootOrgId: '*'
     };
+
+    public static CONTENT_FRAMEWORK_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'contentframeworkcategory',
+        action: 'get',
+        component: 'app',
+    };
 }

@@ -753,4 +753,8 @@ export class FormAndFrameworkUtilService {
         return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId}, true)
     }
 
+    getContentFrameworkCategory(frameworkId: string, rootOrgId?: string) {
+        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.CONTENT_FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')})
+    }
+
 }

@@ -179,11 +179,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
+        this.getContentDetailsFrameworkCategory()
         if (!this.supportedFacets) {
-            await this.formAndFrameworkUtilService.getFrameworkCategoryList(this.frameworkId).then((data) => {
-                this.categoriesList = data;
-                this.categoriesList.push({code: 'lastPublishedBy', name: 'Published by'})
-            });
             this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier, this.frameworkId);
             this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
                     acc.push(filterConfig.code);
@@ -586,5 +583,12 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscriptions.forEach(s => s.unsubscribe());
+    }
+
+    async getContentDetailsFrameworkCategory() {
+        await this.formAndFrameworkUtilService.getContentFrameworkCategory(this.frameworkId).then((data) => {
+            this.categoriesList = data;
+            this.categoriesList.push({code: 'lastPublishedBy', name: 'Published by'})
+        });
     }
 }

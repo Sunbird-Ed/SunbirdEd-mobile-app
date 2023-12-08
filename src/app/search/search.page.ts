@@ -258,7 +258,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.handleDeviceBackButton();
     let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory();
-    this.getCategoriesLabel(frameworkCategory.id);
+    this.getCategoriesKeyForContent(frameworkCategory.id);
     const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId || '*';
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
@@ -1897,8 +1897,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
         this.enableHeaderEvents();
     }
 
-    async getCategoriesLabel(frameworkId) {
-      await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkId).then((data) => {
+    async getCategoriesKeyForContent(frameworkId) {
+      await this.formAndFrameworkUtilService.getContentFrameworkCategory(frameworkId).then((data) => {
         this.categoryKeys = data;
         this.categoryKeys.push({code: 'lastPublishedBy', name: 'Published by'})
     });

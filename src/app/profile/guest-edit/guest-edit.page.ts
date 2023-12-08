@@ -388,18 +388,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
    * This method is added as we are not getting subject value in reset form method
    */
   async onCategoryChanged(category, event, index) {
-    // if (event.detail.value && event.detail.value.length) {
-    //   const oldAttribute: any = {};
-    //   const newAttribute: any = {};
-    //   oldAttribute[category.code] = this.profileForTelemetry[category.code] ? this.profileForTelemetry[category.code] : '';
-    //   newAttribute[category.code] = event.detail.value ? event.detail.value : '';
-    //   if (!isEqual(oldAttribute, newAttribute)) {
-    //     this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
-    //   }
-    //   if (category.code === 'subject') {
-    //     this.profileForTelemetry.subject = event.detail.value ? event.detail.value : '';
-    //   }
-    // } 
     if (index !== this.categories.length - 1) {
       if (index === 0) {
         if (this.defaultFrameworkID !== event) {

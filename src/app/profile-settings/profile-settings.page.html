@@ -58,51 +58,17 @@
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
 						</ion-label>
 						<ion-select [multiple]="isMultipleVales(category)" #boardSelect class="ion-text-capitalize" [formControlName]="category.identifier"
-							[disabled]="!(i === 0 || category.isDisable)" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent('board')"
+							[disabled]="!(i === 0 || category.isDisable)" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent(category, $event)"
 							okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 							placeholder="{{category.placeHolder | translateJson}}" (ngModelChange)="getCategoriesDetails($event, category, i)">
 							<ion-select-option *ngFor="let eachSyllabus of category.itemList" value="{{eachSyllabus.code}}">
 								{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 						</ion-select>
 					</ion-item>
-
-					<!-- <ion-item *ngIf="category.identifier=== 'fw_category2'" appCustomIonSelect (click)="onCategoryCliked('medium')">
-						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
-						</ion-label>
-						<ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize"
-							[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent('medium')" okText="{{'BTN_SUBMIT' | translate}}"
-							cancelText="{{'CANCEL' | translate}}" [disabled]="!mediumList.length || !boardControl.value.length"
-							placeholder="{{category.placeHolder | translateJson}}">
-							<ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize"
-								value="{{medium.code}}">
-								{{medium.name}}</ion-select-option>
-						</ion-select>
-					</ion-item> -->
-	
-					<!-- <ion-item *ngIf="category.identifier=== 'fw_category3'" appCustomIonSelect (click)="onCategoryCliked('grade')">
-						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
-						</ion-label>
-						<ion-select multiple="true" #gradeSelect class="ion-text-capitalize" formControlName="grade"
-							[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
-							cancelText="{{'CANCEL' | translate}}" [disabled]="!gradeList.length || !mediumControl.value.length"
-							(ionCancel)="cancelEvent('grade')" placeholder="{{category.placeHolder | translateJson}}">
-							<ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize"
-								value="{{grade.code}}">
-								{{grade.name}}</ion-select-option>
-						</ion-select>
-					</ion-item> -->
 				</div>
 
 			</div>
 		</form>
-		<!-- <form [formGroup]="profileSettingsForm_1">
-			<div *ngFor="let data of categories; let i=index">
-				<div class="label-name">
-					<label>{{data.label}}</label>
-					<input type="text" style="margin-left: 10px;" (ngModelChange)="modelChanged($event, data)" placeholder={{data.placeHolder}} [formControlName]="data.identifier">
-				</div>
-			</div>
-		  </form> -->
 	</div>
 </ion-content>
 
