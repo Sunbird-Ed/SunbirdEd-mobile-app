@@ -17,7 +17,7 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService, ID, InteractSubtype, InteractType, PageId,
+    FormAndFrameworkUtilService, ID, InteractSubtype, InteractType, LogoutHandlerService, PageId,
     TelemetryGeneratorService,
     UtilityService
 } from '../../services';
@@ -36,6 +36,7 @@ import { SegmentationTagService } from '../../services/segmentation-tag/segmenta
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
+import { ToastService } from '../manage-learn/core';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -49,7 +50,9 @@ describe('Profile.page', () => {
             mockProfileData
         )),
         isDefaultChannelProfile: jest.fn(() => of(true)),
-        generateOTP: jest.fn(() => true)
+        generateOTP: jest.fn(() => true),
+        getActiveProfileSession: jest.fn().mockResolvedValue({ uid: 'mockedUID' }),
+        deleteProfileData: jest.fn().mockResolvedValue(true)
     };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({
@@ -57,9 +60,6 @@ describe('Profile.page', () => {
             refresh_token: '',
             userToken: 'sample_user_token'
         }))
-    };
-    const mockPlatform: Partial<Platform> = {
-        is: jest.fn(platform => platform === 'ios')
     };
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
@@ -107,7 +107,8 @@ describe('Profile.page', () => {
         }),
         getOrgLocation: jest.fn(() => {
             return { state: 'tripura', district: 'west_tripura', block: 'dhaleshwar' };
-        })
+        }),
+        getLoader: jest.fn()
     };
     const mockSocialSharing: Partial<SocialSharing> = {};
     const mockAppHeaderService: Partial<AppHeaderService> = {};
@@ -147,11 +148,22 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
+    };
     const mockLocationHandler: Partial<LocationHandler> = {};
     const mockUnnatiDataService: Partial<UnnatiDataService> = {
         get: jest.fn(() => of()) 
     }as any
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn()
+    };
+    const mockLogoutHandlerService: Partial<LogoutHandlerService> = {
+        onLogout: jest.fn()
+    };
+    const mockToastService: Partial<ToastService> = {
+        showMessage: jest.fn()
+    };
 
 
     beforeAll(() => {
@@ -185,7 +197,10 @@ describe('Profile.page', () => {
             mockSegmentationTagService as SegmentationTagService,
             mockPlatform as Platform,
             mockLocationHandler as LocationHandler,
-            mockUnnatiDataService as UnnatiDataService
+            mockUnnatiDataService as UnnatiDataService,
+            mockUtilityService as UtilityService,
+            mockLogoutHandlerService as LogoutHandlerService,
+            mockToastService as ToastService
         );
     });
 
@@ -1377,60 +1392,39 @@ describe('Profile.page', () => {
         });
     });
 
-    class CustomTabsService {
-        launchInBrowser(url, callback) {
-            console.log(callback,'callback url getting');
-            
-          // Simulate the behavior of the method
-          // You can use the callback with a mock callback URL or implement further logic here
-          const callbackUrl = 'userId12345'; // Replace this with the expected callback URL
-          
-          // Simulate the asynchronous behavior with a setTimeout
-          setTimeout(() => {
-            callback(callbackUrl);
-          }, 100);
-        }
-        // Other methods or properties if present
-      }
-      
-    describe('launching the url on button click', () => {
-        it('it should open the url while click on button', () => {
-        //arrange
-        const customTabsInstance = new CustomTabsService();
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        const mockCallbackUrl = 'userId12345';
-    
-        const mockProfile = { uid: 'userId123456' };        
-        const userDeleted = true;
-    
-        const mockLoader = jest.fn();
-        const mockLogoutHandler = {
-          onLogout: jest.fn()
-        };
-        customTabsInstance.launchInBrowser('https://dev.sunbirded.org/profile/delete-user', async (callbackUrl) => {
-            // Simulate the callback behavior with the mocked callbackUrl
-        expect(callbackUrl).toBe(mockCallbackUrl);
-        mockProfileService.getActiveProfileSession = jest.fn(() =>
-                of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
-        // mockProfileService.getServerProfilesDetails = jest.fn(() => of() as any);
-        // mockProfileService.deleteProfileData = jest.fn().mockReturnValue(new Promise<boolean>((resolve) => {
-        //             resolve(true); 
-        //           }));
-        //act
-        profilePage.launchDeleteUrl();
 
-        //assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.DELETE_CLICKED,
-            undefined,
-            PageId.PROFILE,
-            undefined, undefined, undefined, undefined,undefined, ID.DELETE_CLICKED);
-        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
-        // expect(mockProfileService.deleteProfileData).toHaveBeenCalled();
-        })
-    })
-    
+
+describe('it should verify user based on user roles', () => {
+    it('should call launchDeleteUrl if user roles are empty', () => {
+        // Arrange
+        profilePage.profile = { roles: [] };
+        jest.spyOn(profilePage, 'launchDeleteUrl');
+        const appendMock = jest.fn();
+        const URLMock = jest.fn().mockImplementation(() => ({
+            searchParams: { append: appendMock },
+        }));
+
+        // Act
+        profilePage.verifyUser();
+
+        // Assert
+        expect(profilePage.launchDeleteUrl).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
+
+    });
+
+    it('should call showMessage if user roles are not empty', () => {
+        // Arrange
+        profilePage.profile = { roles: ['sample_role'] };
+
+        // Act
+        profilePage.verifyUser();
+
+        // Assert
+        expect(mockToastService.showMessage).toHaveBeenCalledWith('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+    });
+})   
 
 
     it('shareUsername', () => {
