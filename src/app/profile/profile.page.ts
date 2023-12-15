@@ -566,12 +566,25 @@ export class ProfilePage implements OnInit {
       undefined,
       undefined,
       ID.DELETE_CLICKED);
+
+      const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
+      const deeplinkValue = await this.utilityService.getBuildConfigValue('URL_SCHEME');
       
-      customtabs.launchInBrowser(          //opening in browser
-        'https://dev.sunbirded.org/profile/delete-user',
-        (callbackUrl) => {          //if user is deleted and getting a success callback
-          console.log('Custom Tab launched successfully. Callback URL:', callbackUrl);
-          const userId = callbackUrl.substring('userId'.length);     //separating userId from callbackUrl
+      const formattedBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+      
+      const deleteEndpoint = 'profile/delete-user'; 
+
+      const modifiedDeeplinkValue = deeplinkValue + '://mobile';
+      
+      const url = new URL(formattedBaseUrl + deleteEndpoint);
+      url.searchParams.append('deeplink', modifiedDeeplinkValue);
+
+      
+      customtabs.launchInBrowser(
+        url.toString(),
+        (callbackUrl) => {
+          const params = new URLSearchParams(callbackUrl); // Parse the callbackUrl as URLSearchParams
+          const userId = params.get('userId'); // Get the value of 'userId' parameter
           this.profileService.getActiveProfileSession().toPromise()   //getting active profile uid
           .then(async (profile) => {
               try {
@@ -599,12 +612,12 @@ export class ProfilePage implements OnInit {
           })
           .catch((error) => {
               console.error('Error occurred while getting active profile session:', error);
-          });        
+          }); 
         },
         (error) => {
-            console.error('Error launching Custom Tab:', error);
+          console.error('Error launching Custom Tab:', error);
         }
-    );
+      );
 }
 
 async isUserDeleted(userId: string):Promise<boolean> {

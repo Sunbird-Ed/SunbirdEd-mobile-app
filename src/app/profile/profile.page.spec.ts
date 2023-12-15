@@ -1426,6 +1426,27 @@ describe('it should verify user based on user roles', () => {
     });
 })   
 
+describe('isUserDeleted()', () => {
+    it('should return true if an error occurs', async () => {
+      //arrange
+      mockProfileService.getServerProfilesDetails = jest.fn(() => throwError('sample_error'));
+      //act
+      const result = await profilePage.isUserDeleted('mocked-user-id');
+      //assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false if profileResponse is not null', async () => {
+      //arrange
+      mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
+      //act
+      const result = await profilePage.isUserDeleted('mocked-user-id');
+      //assert
+      expect(result).toBe(false);
+    });
+  });
+
+
 
     it('shareUsername', () => {
         // arrange
