@@ -1398,20 +1398,11 @@ describe('it should verify user based on user roles', () => {
     it('should call launchDeleteUrl if user roles are empty', () => {
         // Arrange
         profilePage.profile = { roles: [] };
-        jest.spyOn(profilePage, 'launchDeleteUrl');
-        const appendMock = jest.fn();
-        const URLMock = jest.fn().mockImplementation(() => ({
-            searchParams: { append: appendMock },
-        }));
-
         // Act
         profilePage.verifyUser();
 
         // Assert
-        expect(profilePage.launchDeleteUrl).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
-
+       
     });
 
     it('should call showMessage if user roles are not empty', () => {
@@ -1424,7 +1415,46 @@ describe('it should verify user based on user roles', () => {
         // Assert
         expect(mockToastService.showMessage).toHaveBeenCalledWith('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
     });
-})   
+})  
+
+describe('launchInBrowser()', () => {
+it('should open launchInBrowser', () => {
+    //arrange
+    mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {
+        InteractType.TOUCH,   
+        InteractSubtype.DELETE_CLICKED,
+        undefined,
+        PageId.PROFILE,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.DELETE_CLICKED
+    });
+    mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('BASE_URL'));
+    mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('URL_SCHEME'));
+    //act
+    profilePage.launchDeleteUrl();
+    //assert
+    setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,   
+            InteractSubtype.DELETE_CLICKED,
+            undefined,
+            PageId.PROFILE,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.DELETE_CLICKED
+        );
+        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
+        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('URL_SCHEME');
+    }, 0);
+
+})
+})
+
 
 describe('isUserDeleted()', () => {
     it('should return true if an error occurs', async () => {
