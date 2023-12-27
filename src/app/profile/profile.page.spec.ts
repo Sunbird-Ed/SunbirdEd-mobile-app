@@ -156,7 +156,6 @@ describe('Profile.page', () => {
         get: jest.fn(() => of()) 
     }as any
     const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn()
     };
     const mockLogoutHandlerService: Partial<LogoutHandlerService> = {
         onLogout: jest.fn()
@@ -1418,7 +1417,7 @@ describe('it should verify user based on user roles', () => {
 })  
 
 describe('launchInBrowser()', () => {
-it('should open launchInBrowser', () => {
+it('should open launchInBrowser', (done) => {
     //arrange
     mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {
         InteractType.TOUCH,   
@@ -1431,8 +1430,23 @@ it('should open launchInBrowser', () => {
         undefined,
         ID.DELETE_CLICKED
     });
-    mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('BASE_URL'));
-    mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('URL_SCHEME'));
+    mockUtilityService.getBuildConfigValue = jest.fn((key) => {
+      switch(key) {
+        case 'BASE_URL': 
+        return Promise.resolve('http://dev/');
+
+        case 'URL_SCHEME':
+        return Promise.resolve('dev');
+
+        default:
+            return Promise.resolve('default');
+      }
+    })
+    mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+        profile : {
+            uid: "001"
+        }
+    } as any))
     //act
     profilePage.launchDeleteUrl();
     //assert
@@ -1450,6 +1464,8 @@ it('should open launchInBrowser', () => {
         );
         expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
         expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('URL_SCHEME');
+        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
+        done();
     }, 0);
 
 })
