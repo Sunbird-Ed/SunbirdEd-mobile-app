@@ -142,9 +142,6 @@ export class ProjectTemplateviewPage implements OnInit {
       const extraPramas = `?link=${this.id}`
       this.projectService.getTemplateByExternalId(null,extraPramas ).then(data =>{
         this.project = data?.result;
-        if (this.project?.projectId) {
-          this.buttonLabel = 'FRMELEMNTS_LBL_CONTINUE_IMPROVEMENT'
-        }
         this.metaData = {
           title: this.project?.title,
           subTitle: this.project?.programInformation ? this.project?.programInformation?.programName : ''
@@ -167,7 +164,7 @@ export class ProjectTemplateviewPage implements OnInit {
     this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.clickedOnProfile ? this.showProfileNameConfirmationPopup():'';
+    this.clickedOnProfile || this.projectService.showProfileNamepopup ? this.showProfileNameConfirmationPopup() : '';
     this.templateDetailsInit();
   }
   handleBackButton() {
@@ -244,13 +241,13 @@ export class ProjectTemplateviewPage implements OnInit {
     this.projectService.openResources(resource);
   }
 
- doAction() {
-    if(!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')){
-      this.popupService.joinProgram(this.project,'project')
+
+  consentFlow() {
+    this.popupService.joinProgram(this.project,'project')
       .then(async resp => {
         if(resp){
           let profileData = await this.utils.getProfileInfo();
-          this.popupService.join(this.project,profileData).then((data :any) =>{
+          this.popupService.join(this.project,profileData).then((data:any) =>{
             if(data){
               this.project.programJoined = true
               let payload = {consumerId: this.project.rootOrganisations, objectId: this.project.programId};
@@ -263,27 +260,14 @@ export class ProjectTemplateviewPage implements OnInit {
               }else{
                 this.commonUtils.showToast('FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS','','',9000,'top');
               }
-              
             }
           },error =>{})
         }
       });
-      return
-    }else{
-    if(!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted  && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)){
-      this.showProfileNameConfirmationPopup();
-    }else{
-    if(this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId){
-      this.startProjectConfirmation();
-      return;
-    }
-    if(!this.appGlobalService.isUserLoggedIn()){
-      this.toast.showMessage('FRMELEMNTS_MSG_NOT_LOGGEDIN_USER','danger')
-      this.triggerLogin();
-      return
-    }
-    if ( this.stateData?.referenceFrom != 'observation' && !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
-      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+    return
+  }
+  showPPF() {
+    this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
       if (data && data.isClicked) {
           this.project.hasAcceptedTAndC = data.isChecked;
           if(this.project.criteria && !this.isStarted && !this.hideNameConfirmPopup){
@@ -291,12 +275,37 @@ export class ProjectTemplateviewPage implements OnInit {
           }else{
           this.start();
           this.toast.showMessage('FRMELEMNTS_LBL_PROJECT_STARTED','success');
-          }
         }
-      })
+      }
+    })
+  }
+  doAction() {
+    //  Generic functions
+    // Login
+    if (!this.appGlobalService.isUserLoggedIn()) {
+      this.toast.showMessage('FRMELEMNTS_MSG_NOT_LOGGEDIN_USER', 'danger')
+      this.triggerLogin();
+      return
+    }
+    // consent flow
+    if (!this.project?.programJoined && this.project.hasOwnProperty('requestForPIIConsent')) {
+      this.consentFlow();
+    } else {
+      // certificate profile name popup
+      if (!this.hideNameConfirmPopup && this.project.criteria && !this.isStarted && this.project.hasAcceptedTAndC && (this.isAssignedProject || this.isTargeted || this.isATargetedSolution)) {
+        this.showProfileNameConfirmationPopup();
+        return;
     } else {
       if(this.project.criteria && !this.isStarted && !this.hideNameConfirmPopup){
         this.showProfileNameConfirmationPopup();
+          return;
+        } else {
+          if (this.templateDetailsPayload?.referenceFrom == "observation" && !this.project?.projectId) {
+            this.startProjectConfirmation();
+            return;
+          }
+          if (this.stateData?.referenceFrom != 'observation' && !this.isAssignedProject && !this.project.hasAcceptedTAndC && !this.isTargeted && !this.isATargetedSolution && !this.isStarted) {
+            this.showPPF();
       }else{
       this.start();
     }
@@ -451,23 +460,27 @@ export class ProjectTemplateviewPage implements OnInit {
      }else{
       listing = false
      }
+     if(this.stateData && this.stateData.referenceFrom == 'observation'){
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`,this.id,], {
+        state: this.stateData,
+      });
+     }else{
     let params ={
       isTargeted :this.isTargeted,
        programId: this.programId,
-       solutionId :this.solutionId,
+       solutionId :this.project.solutionId,
        isATargetedSolution :this.isATargetedSolution ,
        type  :this.isAssignedProject ? 'assignedToMe' : 'createdByMe',
        listing : listing
      }
-   this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.solutionId], {
+   this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, this.project.solutionId], {
      queryParams: params,
      skipLocationChange: false,
      replaceUrl: true,
-     state: {
-       "referenceFrom": "link",
-   }})
-  
+     state: { "referenceFrom": "link"}})
+  }
     this.clickedOnProfile = true;
+    this.projectService.setNamePop(true);
     const popUp = await this.popoverController.create({
       component: ProfileNameConfirmationPopoverComponent,
       componentProps: {
@@ -481,6 +494,7 @@ export class ProjectTemplateviewPage implements OnInit {
       if (data.buttonClicked) {
         this.isStarted = true;
         this.clickedOnProfile = false;
+        this.projectService.setNamePop(false);
         this.doAction();
       }
     }
