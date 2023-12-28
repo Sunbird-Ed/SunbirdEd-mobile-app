@@ -29,6 +29,7 @@ export class ProjectService {
   project;
   projectId;
   shareTaskId;
+  showProfileNamepopup : boolean = false;
   constructor(
     private kendra: KendraApiService,
     private utils: UtilsService,
@@ -453,5 +454,8 @@ export class ProjectService {
       url: "",
     };
     return links ? link : links;
+  }
+  setNamePop(value){
+    this.showProfileNamepopup = value;
   }
 }
