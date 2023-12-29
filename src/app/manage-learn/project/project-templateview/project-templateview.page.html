@@ -6,7 +6,7 @@
 </ion-toolbar>
 <ion-content class="ion-padding">
   <app-metadata-details translucent="true" [data]="metaData">
-    <div class="certificate-tag" certificate *ngIf="project?.certificateTemplateId">
+    <div class="certificate-tag" certificate *ngIf="project?.criteria">
       {{'CERTIFICATE' | translate}}
     </div>
     <ion-button (click)="doAction()" expand="block" class="ion-text-none ion-margin-top">{{buttonLabel |
