@@ -1417,7 +1417,7 @@ describe('it should verify user based on user roles', () => {
 })  
 
 describe('launchInBrowser()', () => {
-it('should open launchInBrowser', (done) => {
+it('should open launchInBrowser', () => {
     //arrange
     mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {
         InteractType.TOUCH,   
@@ -1465,7 +1465,6 @@ it('should open launchInBrowser', (done) => {
         expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
         expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('URL_SCHEME');
         expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
-        done();
     }, 0);
 
 })
