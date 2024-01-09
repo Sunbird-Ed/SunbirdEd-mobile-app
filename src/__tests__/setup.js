@@ -116,6 +116,11 @@ global.sbsync = {
     onSyncSucces: () => {}
 }
 
+global.customtabs = {
+    launchInBrowser: (url, callbackUrl, error) => {}
+}
+
+
 global.qrScanner = {
     startScanner: (screenTitle, displayText, displayTextColor, buttonText, showButton, isRTL, callback) => {},
     stopScanner: () => {}

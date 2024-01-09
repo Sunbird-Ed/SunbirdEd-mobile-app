@@ -251,6 +251,16 @@
     }
   }
 
+  .delete_button {
+    border-radius: 20px!important;
+    background-color:white;
+    color: #024F9D;
+    height: 2.5rem!important;
+    width: 16rem!important;
+    margin-bottom: 6%;
+    margin-top: 5%;
+  }
+
   .contributions {
     min-height: 14.375rem;
     @include margin(0, 0, 16px, 0);
