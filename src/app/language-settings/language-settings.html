@@ -1,4 +1,4 @@
-<ion-content [ngClass]="{ 'ui-container': !platform.is('ios') }">
+<ion-content class="qa_language-settings" [ngClass]="{ 'ui-container': !platform.is('ios') }">
   <div class="ui-container" *ngIf="platform.is('ios')"></div>
   <div class="ui-content">
     <div *ngIf="!isFromSettings" tabindex="0" class="app-title ion-text-center" role="heading" aria-level="1">{{'APP_TITLE' | translate:{'%s': appName } }}</div>
@@ -8,21 +8,23 @@
 
     <div class="language-container">
       <div class="language-card" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}"
-      tabindex="0" [attr.aria-label]="lang.code === language ? lang?.name + ', selected' : lang?.name" role="button">
+      tabindex="0" [attr.aria-label]="lang.code === language ? lang?.name + ', selected' : lang?.name" role="button"
+      [attr.id]="'Automation_' + lang.code">
         <label class="language-selection" [for]="'language-selection' + lang.code">
           <span class="label-text">
             {{lang?.label | translate}}
           </span>
           <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
         </label>
-      </div>
+</div>
       <div class="bottom-section"></div>
     </div>
 
     <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
-            [style.background-color]="btnColor" [attr.aria-label]="'Continue'" role="button" tabindex="0" [hidden]="!isLanguageSelected" (click)="continue()">
-      <span>{{ 'CONTINUE' | translate }}</span>
-      <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected" alt="">
-    </button>
+        [style.background-color]="btnColor" [attr.aria-label]="'Continue'" role="button" tabindex="0" [hidden]="!isLanguageSelected" (click)="continue()"
+        [attr.id]="'Automation_language-selection_continue'">
+  <span>{{ 'CONTINUE' | translate }}</span>
+  <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected" alt="">
+</button>
   </div>
 </ion-content>

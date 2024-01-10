@@ -3,7 +3,7 @@
     <div id="talkback-live-region" aria-live="assertive" aria-atomic="true" style="position: absolute;">
     </div>
     <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
-      <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()"  [attr.aria-label]="isMenuOpen ? 'Expanded' : 'Collapsed'"
+      <ion-button class="sb-hamburger-menu sb-hamburger-icon" [attr.id]="'Automation_'+'HamburgerMenu'" icon-only (click)="toggleMenu()"  [attr.aria-label]="isMenuOpen ? 'Expanded' : 'Collapsed'"
       [attr.aria-live]="isMenuOpen ? 'polite' : null"
       [attr.aria-atomic]="true"
       [attr.aria-relevant]="isMenuOpen ? 'additions text' : null"
@@ -190,15 +190,16 @@
           </div>
         </ion-item>
 
-        <ion-item (click)="switchTheme()">
+        <ion-item id="Automation_tryNewExperience" (click)="switchTheme()">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
-          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" role="button"
+          <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" role="button" 
             menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
-          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" role="button"
+          <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" role="button" 
             menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
-          <div class="new-feature-badge">
+          <div class="new-feature-
+              badge">
             <div class="square-badge">New</div>
             <div class="circle-badge"></div>
           </div>
