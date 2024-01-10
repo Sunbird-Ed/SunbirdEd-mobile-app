@@ -26,7 +26,7 @@
   <ion-label *ngIf="(lastSyncDateTime | async) as lastSyncDateTime">
     {{ 'LAST_SYNC' | translate }} {{lastSyncDateTime}}
   </ion-label>
-  <ion-button expand="block" class="MT16 btn" (click)="onSyncClick()">
+  <ion-button expand="block" class="MT16 btn" (click)="onSyncClick()" id="Automation_SyncNow">
     {{ 'SYNC_NOW' | translate }}
   </ion-button>
   <hr>

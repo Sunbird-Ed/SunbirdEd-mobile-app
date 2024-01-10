@@ -13,7 +13,7 @@
         (valueChanges)="onFormLoginChange($event)"
         (labelClickEvent)="onLabelClickEvent($event)">
         </sb-form>
-        <button [ngClass]="loginButtonValidation ? 'validLoginButton':'log-in-button'" (click)="loginWithKeyCloak()" [disabled]="!loginButtonValidation">
+        <button [ngClass]="loginButtonValidation ? 'validLoginButton':'log-in-button'" (click)="loginWithKeyCloak()" [disabled]="!loginButtonValidation" id="Automation_ClickLoginButton">
             <p class="text-overlay">{{'OVERLAY_SIGN_IN' | translate }}</p>
         </button>
 

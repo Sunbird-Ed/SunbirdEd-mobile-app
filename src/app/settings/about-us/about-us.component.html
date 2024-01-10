@@ -6,7 +6,7 @@
         <ion-icon role="button" aria-label="back" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title role="heading" aria-level="1">{{ 'ABOUT_US' | translate }}</ion-title>
+    <ion-title role="heading" aria-level="1" id="Automation_DeviceId">{{ 'ABOUT_US' | translate }}</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="shareInformation()" icon-only *ngIf="!platform.is('ios')">
         <ion-icon name="share" role="button" aria-label="share information" class="ion-float-end"></ion-icon>
@@ -19,7 +19,7 @@
 <ion-content>
   <ion-list>
     <!-- Device Id -->
-    <ion-item class="ion-text-wrap">
+    <ion-item class="ion-text-wrap" id="Automation_DeviceId">
       <ion-label>
         <h2>{{ 'DEVICE_ID' | translate }}</h2>
         <p class="settings-item-style" user-select: auto>{{ deviceId | translate}}</p>
