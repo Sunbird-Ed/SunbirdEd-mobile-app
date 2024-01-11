@@ -171,7 +171,7 @@
 
         <div class="sb-btn-tile-group">
           <div *ngIf="content && !this.limitedShareContentFlag">
-            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
+            <button *ngIf="!contentDownloadable[content?.identifier]" id="qa_content_details_page_download" (click)="openConfirmPopUp()"
               [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
               [disabled]="isDownloadStarted || (isContentDownloading$ | async) || (content.mimeType === 'video/webm' && platform.is('ios'))" fill="clear" icon-only
               class="sb-btn-tile">
@@ -188,15 +188,15 @@
             <span class="sb-btn-footer-text">{{'FRMELEMNTS_LBL_OPEN_WITH' | translate}}</span>
           </button>
 
-          <button class="sb-btn-tile" *ngIf="contentDownloadable[content?.identifier]" (click)="showDeletePopup()">
+          <button class="sb-btn-tile" id="qa_content_details_page_delete" *ngIf="contentDownloadable[content?.identifier]" (click)="showDeletePopup()">
             <img src="assets/imgs/outline_delete.svg" alt="delete content" class="mb-4">
             <span class="sb-btn-footer-text">{{'DELETE' | translate}}</span>
           </button>
-          <button (click)="share()" class="sb-btn-tile" *ngIf="!this.limitedShareContentFlag">
+          <button (click)="share()" id="qa_content_details_page_share" class="sb-btn-tile" *ngIf="!this.limitedShareContentFlag">
             <img src="assets/imgs/outline_share.svg" alt="share content" class="mb-4">
             <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
           </button>
-          <button class="sb-btn-tile" (click)="rateContent('manual')">
+          <button class="sb-btn-tile" id="qa_content_details_page_rate" (click)="rateContent('manual')">
             <img src="assets/imgs/outline_rate_star.svg" alt="rate content" class="mb-4">
             <span class="sb-btn-footer-text">{{'RATE' | translate}}</span>
           </button>
