@@ -179,7 +179,7 @@
       </section>
       <ion-list class="sb-menu-list" lines="none">
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')" id="qa_header_component_mygroups">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/my_group.svg" class="tool-icon" aria-hidden="true" alt="my group">
           </span>
@@ -190,7 +190,7 @@
           </div>
         </ion-item>
 
-        <ion-item (click)="switchTheme()">
+        <ion-item (click)="switchTheme()" id="qa_header_component_switchTheme">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" aria-hidden="true" alt="help">
           </span>
@@ -204,7 +204,7 @@
           </div>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')" id="qa_header_component_import">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_import.png" aria-hidden="true" class="tool-icon" alt="import">
           </span>
@@ -215,7 +215,7 @@
           </div>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')" id="qa_header_component_language">
           <span class="sb-menu-icon sb-pt-6">
             <img src="./assets/imgs/Language.png" aria-hidden="true" class="tool-icon" alt="select app language">
           </span>
@@ -235,28 +235,28 @@
           </div>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')" id="qa_header_component_settings">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Settings.png" aria-hidden="true" class="tool-icon" alt="app settings">
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SETTINGS' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')" id="qa_header_component_help">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Help.png" aria-hidden="true" class="tool-icon" alt="help">
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton" id="qa_header_component_login">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>
           <span class="sb-menu-item" role="button" menuClose>{{'SIGN_IN' | translate}}</span>
         </ion-item>
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn" id="qa_header_component_logout">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/Sign_out.png" aria-hidden="true" class="tool-icon" alt="logout">
           </span>
@@ -327,7 +327,7 @@
       <ion-list class="sb-menu-list" lines="none">
        
 
-        <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
+        <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')" id="qa_header_component_mygroups">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/my_group.svg" aria-hidden="true" class="tool-icon" alt="my group">
           </span>
