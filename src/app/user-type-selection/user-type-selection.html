@@ -12,7 +12,7 @@
 
         <div class="container">
             <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
-                <div class="card-container" role="button" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code">
+                <div class="card-container" role="button" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code" [attr.id]="'qa_user-type_' + userTypeConfig?.code">
                     <div class="check-icon">
                         <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
                     </div>

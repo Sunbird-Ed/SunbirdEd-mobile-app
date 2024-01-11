@@ -1,7 +1,7 @@
 <ion-content>
   <ion-list mode="ios">
 
-    <ion-item class="PT2 PB2" (click)="dataSync()" role="button" detail>
+    <ion-item class="PT2 PB2" (click)="dataSync()" role="button" detail id="qa_settings_DataSync">
       <ion-label>
         <p class="setting-label">{{ 'DATA_SYNC' | translate }}</p>
         <p class="settings-item-style">{{ 'DATA_SYNC_SUB' | translate }}</p>
@@ -14,7 +14,7 @@
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="shareApp()" role="button" detail *ngIf="!platform.is('ios')">
+    <ion-item class="PT2 PB2" (click)="shareApp()" role="button" detail *ngIf="!platform.is('ios')" id="qa_settings_Share_SunbirdApp">
       <ion-label>
         <p class="setting-label">{{ shareAppLabel }}</p>
       </ion-label>
@@ -27,7 +27,7 @@
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="aboutUs()" role="button" detail>
+    <ion-item class="PT2 PB2" (click)="aboutUs()" role="button" detail id="qa_settings_AboutUs">
       <ion-label>
         <p class="setting-label">{{ 'ABOUT_US' | translate }}</p>
       </ion-label>

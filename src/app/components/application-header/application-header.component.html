@@ -3,7 +3,7 @@
     <div id="talkback-live-region" aria-live="assertive" aria-atomic="true" style="position: absolute;">
     </div>
     <ion-buttons class="sb-hamburger pl-10" slot="start" *ngIf="headerConfig?.showBurgerMenu">
-      <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()"  [attr.aria-label]="isMenuOpen ? 'Expanded' : 'Collapsed'"
+      <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()" [attr.id]="qa_Menu_Hamburger" [attr.aria-label]="isMenuOpen ? 'Expanded' : 'Collapsed'"
       [attr.aria-live]="isMenuOpen ? 'polite' : null"
       [attr.aria-atomic]="true"
       [attr.aria-relevant]="isMenuOpen ? 'additions text' : null"
