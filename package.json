@@ -172,7 +172,7 @@
     "@angular/compiler-cli": "13.4.0",
     "@angular/language-service": "13.4.0",
     "@angularclass/hmr": "3.0.0",
-    "@capacitor/assets": "^3.0.1",
+    "@capacitor/assets": "^3.0.4",
     "@capacitor/cli": "5.5.1",
     "@ionic/angular-toolkit": "6.0.0",
     "@project-sunbird/sb-themes": "0.0.88",

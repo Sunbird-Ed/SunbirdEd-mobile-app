@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sunbird</string>
+    <string name="title_activity_main">Sunbird</string>
+    <string name="package_name">org.sunbird.app</string>
+    <string name="custom_url_scheme">org.sunbird.app</string>
+</resources>
