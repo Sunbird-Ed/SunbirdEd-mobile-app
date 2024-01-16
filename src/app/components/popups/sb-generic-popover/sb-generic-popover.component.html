@@ -1,7 +1,7 @@
 <ion-header class="sb-popover-header" *ngIf="showHeader">
   <ion-toolbar class="sb-popover-toolbar">
     <ion-title class="sb-popover-title">{{sbPopoverHeading}}
-      <ion-icon name="close" aria-label="close button" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+      <ion-icon name="close" aria-label="close button" class="sb-modal-close" id="'qa_sb-generic_'+btn.btntxt" (click)="closePopover()"></ion-icon>
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -29,7 +29,7 @@
 
 <ion-footer>
   <div class="sb-popover-footer">
-    <button class="sb-popover-action-btn " [ngClass]="btn.btnClass"
+    <button class="sb-popover-action-btn " id="'qa_sb-generic_'+btn.btntxt" [ngClass]="btn.btnClass"
       *ngFor="let btn of actionsButtons,let btn_index=index" (click)="deleteContent(btn_index)">
       {{btn.btntext }}</button>
   </div>
