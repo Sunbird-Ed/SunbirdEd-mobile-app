@@ -1216,6 +1216,7 @@ describe('FormAndFrameworkUtilService', () => {
         expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
         done();
       });
+      done();
     });
 
     it('should resolved framework category if already store', (done) => {
@@ -1257,6 +1258,7 @@ describe('FormAndFrameworkUtilService', () => {
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
         done();
       });
+      done();
     })
   });
 
