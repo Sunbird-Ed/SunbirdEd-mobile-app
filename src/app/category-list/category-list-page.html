@@ -11,7 +11,7 @@
             <ion-grid class="filter-container">
                 <ion-row>
                     <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
-                        <ion-item class="filter-items">
+                        <ion-item class="filter-items" id="qa_category-list_filter">
                             <ion-label position="stacked" class="hide-label">
                                 {{primaryFacetFilter.translations | translateJson}}
                             </ion-label>
