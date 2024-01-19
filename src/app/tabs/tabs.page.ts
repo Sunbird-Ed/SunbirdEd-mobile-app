@@ -137,6 +137,19 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ionTabsDidChange(event: any) {
     this.selectedTab = event.tab;
     this.setQRTabRoot(event.tab);
+    if (this.selectedTab) {
+      const tabButtons = document.querySelectorAll('ion-tab-button');
+  
+      tabButtons.forEach((tabButton: HTMLElement) => {
+        const iconElement = tabButton.querySelector('ion-icon');
+        const tabRoot = iconElement.ariaLabel;
+        console.log(tabRoot);
+        
+        if (tabRoot === this.selectedTab) {
+          tabButton.setAttribute('id', 'qa_tabs_' + this.selectedTab);
+        }
+      });
+    }
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
