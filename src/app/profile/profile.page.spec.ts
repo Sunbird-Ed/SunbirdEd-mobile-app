@@ -333,7 +333,6 @@ describe('Profile.page', () => {
                 );
                 done();
             }, 0);
-            done();
         });
 
         it('should go to reject part if session is null', () => {

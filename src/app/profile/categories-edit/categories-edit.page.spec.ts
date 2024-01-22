@@ -1006,7 +1006,6 @@ describe('CategoryEditPage', () => {
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
                 done();
             }, 0);
-            done();
         });
 
         it('should return error message for medium', (done) => {
