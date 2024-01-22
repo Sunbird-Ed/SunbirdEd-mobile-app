@@ -303,6 +303,36 @@ describe('GuestEditPage', () => {
     });
 
     describe('submitNewUserForm', () => {
+        it('should cretae a new profile', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['sample-board'],
+                medium: ['english', 'tamil'],
+                subjects: ['subjects'],
+                grades: ['class-1'],
+                syllabus: ['sample-board'],
+                profileType: ProfileType.ADMIN,
+                name: 'guest'
+            };
+
+            guestEditPage.gradeList = [{code: 'class-1', name: 'class-1'}];
+            mockProfileService.createProfile = jest.fn(() => of({}as any));
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.showToast = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            // act
+            guestEditPage.submitNewUserForm(formVal, false);
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.createProfile).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
+                done()
+            }, 0);
+        });
 
         it('should cretae a new profile', (done) => {
             // arrange
