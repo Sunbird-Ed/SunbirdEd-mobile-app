@@ -76,10 +76,10 @@
     </ion-list>
 
     <div *ngIf="!showSheenAnimation">
-        <div *ngFor="let section of sectionGroup?.sections">
+        <div *ngFor="let section of sectionGroup?.sections; let i = index;">
             <div [id]="sectionGroup.name + '_'+ section.name"
-                 *ngIf="section?.contents && section?.contents?.length" class="pb-8">
-                <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
+                 *ngIf="section?.contents && section?.contents?.length && categoriesList.length" class="pb-8">
+                <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents" [categoryKeys]="categoriesList"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
                                         (viewMoreClick)="navigateToViewMorePage(section?.contents, section.name, section?.totalCount)"

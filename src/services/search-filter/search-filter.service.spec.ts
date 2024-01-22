@@ -130,6 +130,7 @@ describe('SearchFilterService', () => {
             expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
             done();
         });
+        done();
     });
 
     it('Should get Form Fields without specifying the subtype', (done) => {
@@ -231,6 +232,7 @@ describe('SearchFilterService', () => {
             expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
             done();
         });
+        done();
     });
 
     it('Should get Form Fields and execute catch block', (done) => {
@@ -248,6 +250,7 @@ describe('SearchFilterService', () => {
                 expect(mockFormAndFrameworkUtilService.getFormFields).toHaveBeenCalledWith(formRequest, 'SAMPLE_CHANNEL_ID');
                 done();
             });
+            done();
     }); 
 }); 
 

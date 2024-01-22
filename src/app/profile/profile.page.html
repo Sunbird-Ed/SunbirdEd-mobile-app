@@ -101,11 +101,11 @@
         </div>
     </div>
     </div>
-    <div class="framework-block" *ngIf="profile?.framework && categories.length>0">
+    <div class="framework-block" *ngIf="profile?.framework && isCategoryLoaded">
         <div *ngFor="let category of categories">
-            <div class="container" *ngIf="profile?.framework[category.frameworkCode]">
+            <div class="container" *ngIf="profile?.framework[category.code]">
                 <span>{{category.label | translateJson}}: </span>
-                <span class="bolder">{{profile?.framework[category.frameworkCode].join(', ') | aliased}} &lrm;</span>
+                <span class="bolder">{{profile?.framework[category.code].join(', ') | aliased}} &lrm;</span>
             </div>
         </div>
         <div class="container">
