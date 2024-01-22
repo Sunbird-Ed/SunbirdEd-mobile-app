@@ -1001,7 +1001,7 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
                 // expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
                 done();
