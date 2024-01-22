@@ -163,10 +163,11 @@ export class ProfilePage implements OnInit {
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
   enrolledCourseList = [];
-  categories: any;
+  categories = [];
   projects=[];
   projectsCount =0;
   projectStatus =statusType;
+  isCategoryLoaded = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -236,13 +237,13 @@ export class ProfilePage implements OnInit {
   }
 
   async ngOnInit() {
-    this.getCategories();
     await this.doRefresh();
+    // this.getCategories();
     this.appName = await this.appVersion.getAppName();
   }
 
   async ionViewWillEnter() {
-    this.getCategories();
+   // this.getCategories();
     this.events.subscribe('update_header', async () => {
       await this.headerService.showHeaderWithHomeButton();
     });
@@ -332,6 +333,7 @@ export class ProfilePage implements OnInit {
               await that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                this.getCategories();
                 // ******* Segmentation
                 let segmentDetails = JSON.parse(JSON.stringify(profileData.framework));
                 Object.keys(segmentDetails).forEach((key) => {
@@ -1374,9 +1376,10 @@ async isUserDeleted(userId: string):Promise<boolean> {
   }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories.supportedFrameworkConfig;
-    }).catch(e => console.error(e));
+      this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.framework.id[0] || this.profile.syllabus[0]).then((categories) => {
+        this.categories = categories;
+        this.isCategoryLoaded = true;
+      }).catch(e => console.error(e));
   }
   
   getProjectsCertificate(){

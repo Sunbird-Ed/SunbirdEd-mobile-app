@@ -170,6 +170,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   totalCount: number;
   isFilterApplied: boolean = false;
   rootOrgId: string;
+  categoryKeys: any;
   
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -256,7 +257,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
-    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
+    let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory();
+    this.getCategoriesKeyForContent(frameworkCategory.id);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId || '*';
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       await this.handleSearch(true);
@@ -835,7 +839,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     filterCriteriaData.facetFilters.forEach(async element => {
       this.searchFilterConfig.forEach(item => {
         if (element.name === item.code) {
-          element.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
+          element.translatedName = item.translations ? this.commonUtilService.getTranslatedValue(item.translations, item.name) : item.label;
           return;
         }
       });
@@ -843,7 +847,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.initialFilterCriteria.facetFilters.forEach(newElement => {
         this.searchFilterConfig.forEach(item => {
           if (newElement.name === item.code) {
-            newElement.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
+            newElement.translatedName = item.translations ? this.commonUtilService.getTranslatedValue(item.translations, item.name) : item.label;
             return;
           }
         });
@@ -1891,5 +1895,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
         }
         this.enableHeaderEvents();
+    }
+
+    async getCategoriesKeyForContent(frameworkId) {
+      await this.formAndFrameworkUtilService.getContentFrameworkCategory(frameworkId).then((data) => {
+        this.categoryKeys = data;
+        this.categoryKeys.push({code: 'lastPublishedBy', name: 'Published by'})
+    });
     }
 }

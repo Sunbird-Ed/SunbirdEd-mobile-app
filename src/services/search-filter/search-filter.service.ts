@@ -21,14 +21,17 @@ export class SearchFilterService {
         return this.facetFilterFormConfig;
     }
 
-    async fetchFacetFilterFormConfig(subType?) {
-        FormConstants.FACET_FILTERS['subType'] = subType || 'default';
+    async fetchFacetFilterFormConfig(subType?, frameworkId?) {
+        FormConstants.FACET_FILTERS['subType'] = subType || FormConstants.FACET_FILTERS.subType;
+        if (frameworkId) {
+            FormConstants.FACET_FILTERS['framework'] = frameworkId;
+        }
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
         try {
             this.facetFilterFormConfig = await this.formAndFrameworkUtilService
-               .getFormFields({...FormConstants.FACET_FILTERS, subType: subType || 'default'}, rootOrgId);
+               .getFrameworkCategoryList(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         } catch {
-            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.FACET_FILTERS, rootOrgId);
+            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         }
         return this.facetFilterFormConfig;
     }

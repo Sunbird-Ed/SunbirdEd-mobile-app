@@ -31,7 +31,11 @@ import {
   ProfileSource,
   ProfileType,
   SharedPreferences,
-  UpdateServerProfileInfoRequest
+  UpdateServerProfileInfoRequest,
+  FrameworkService,
+  CachedItemRequestSourceFrom,
+  Framework,
+  GetSuggestedFrameworksRequest
 } from '@project-sunbird/sunbird-sdk';
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
@@ -59,10 +63,13 @@ export class UserTypeSelectionPage implements OnDestroy {
   categoriesProfileData: any;
   supportedUserTypeConfig: Array<any>;
   isUserTypeSelected = false;
+  defaultFrameworkID: any;
+  loader: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
     private zone: NgZone,
@@ -100,12 +107,24 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
+  async setValue() {
+
+    await this.frameworkService.getDefaultChannelDetails().toPromise()
+      .then( (data) => {
+        this.defaultFrameworkID = data.defaultFramework;
+        console.log('klkkkkkkkkkkkkkkkkkkkkkkkkk', data)
+      })
+  }
+
   async ionViewWillEnter() {
+    await this.setValue();
     if (this.appGlobalService.isUserLoggedIn()) {
       this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     }
     await this.setUserTypeForNewUser();
-    this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
+    this.getSupportedUserTypes()
+
+    console.log('supportedUserTypeConfigsupportedUserTypeConfigsupportedUserTypeConfigsupportedUserTypeConfig', this.supportedUserTypeConfig)
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -298,12 +317,12 @@ export class UserTypeSelectionPage implements OnDestroy {
       await this.navigateToTabsAsGuest();
     } else {
       if (isUserTypeChanged) {
-        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
+        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true , defaultFrameworkID: this.defaultFrameworkID});
       } else {
         if (this.selectedUserType === ProfileType.ADMIN) {
           await this.router.navigate([RouterLinks.SIGN_IN]);
         } else {
-          await this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+          await this.navigateToProfileSettingsPage({ showProfileSettingPage: true , defaultFrameworkID: this.defaultFrameworkID});
         }
       }
     }
@@ -474,5 +493,13 @@ export class UserTypeSelectionPage implements OnDestroy {
       undefined,
       correlationlist
     );
+  }
+
+  async getSupportedUserTypes() {
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
+    this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes(rootOrgId);
+    await this.loader.dismiss();
   }
 }

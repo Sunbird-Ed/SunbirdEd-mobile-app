@@ -36,6 +36,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '../../util/object.util';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
 
 @Component({
     selector: 'app-category-list-page',
@@ -116,6 +118,10 @@ export class CategoryListPage implements OnInit, OnDestroy {
     profile: Profile;
     private existingSearchFilters = {};
     filterIdentifier: any;
+    userPreferences: any;
+    frameworkId: string;
+    categoriesList = [];
+    layoutConfigurations = {layout: 'v3'};
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -129,11 +135,14 @@ export class CategoryListPage implements OnInit, OnDestroy {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private scrollService: ScrollToService,
         private searchFilterService: SearchFilterService,
-        private modalController: ModalController
+        private modalController: ModalController,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.userPreferences = extrasState.userPreferences;
+            this.frameworkId = extrasState.frameworkId;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
             if (this.formField && this.formField.facet && this.formField.facet.toLowerCase() === 'course') {
@@ -170,8 +179,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
+        this.getContentDetailsFrameworkCategory()
         if (!this.supportedFacets) {
-            this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier);
+            this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier, this.frameworkId);
             this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
                     acc.push(filterConfig.code);
                     return acc;
@@ -245,12 +255,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             (this.formService, this.courseService, this.profileService)
             .aggregate({
                 interceptSearchCriteria: () => (searchCriteria),
-                userPreferences: {
-                    board: this.profile.board,
-                    medium: this.profile.medium,
-                    gradeLevel: this.profile.grade,
-                    subject: this.profile.subject,
-                  }
+                userPreferences: this.userPreferences
             },
                 [], null, [{
                     dataSrc: {
@@ -301,11 +306,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     if (p.sort) {
                         this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
                     }
-                    acc[p.code] = this.facetFilters[p.code]
+                    acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
                         .filter(v => v.apply)
                         .map(v => {
                             return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
-                        });
+                        }) : '';
                     return acc;
                 }, {}),
                 { emitEvent: false }
@@ -578,5 +583,12 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscriptions.forEach(s => s.unsubscribe());
+    }
+
+    async getContentDetailsFrameworkCategory() {
+        await this.formAndFrameworkUtilService.getContentFrameworkCategory(this.frameworkId).then((data) => {
+            this.categoriesList = data;
+            this.categoriesList.push({code: 'lastPublishedBy', name: 'Published by'})
+        });
     }
 }
