@@ -15,7 +15,8 @@ interface SearchFilterConfig {
     name: string,
     placeholder?: string,
     multiple?: boolean,
-    index?: number
+    index?: number,
+    placeHolder?: string,
 }
 
 @Injectable()
@@ -60,10 +61,10 @@ export class FilterFormConfigMapper {
                 mappedFilters.defaults[filterConfig.code] = FilterFormConfigMapper.buildDefault(facetFilters[filterConfig.code], filterConfig.multiple);
                 mappedFilters.config.push({
                     facet: filterConfig.code,
-                    type: filterConfig.type as ('dropdown' | 'pills'),
+                    type: filterConfig.type ? filterConfig.type as ('dropdown' | 'pills') : 'dropdown',
                     labelText: this.translateJsonPipe.transform(filterConfig.name),
-                    placeholderText: this.translateJsonPipe.transform(filterConfig.placeholder),
-                    multiple: filterConfig.multiple
+                    placeholderText: this.translateJsonPipe.transform(filterConfig.placeholder || filterConfig.placeHolder),
+                    multiple: (filterConfig.multiple || true)
                 });
             }
         });

@@ -152,4 +152,9 @@
       @include margin(null, null, 10px, null);
     }
   }
+
+  .frameworkInfo{
+    width: 100%;
+    display: contents;
+  }
 }

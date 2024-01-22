@@ -51,6 +51,41 @@ export class GuestProfilePage implements OnInit {
   public supportedProfileAttributes: { [key: string]: string } = {};
   public currentUserTypeConfig: any = {};
   frameworkData = [];
+  categoryDetails: any;
+  supportedUserType = [
+    {
+        "code": "farmer",
+        "name": "Farmer",
+        "formConfig": {
+            "request": {
+                "type": "profileConfig",
+                "subType": "default",
+                "action": "get"
+            },
+            "url": "/api/data/v1/form"
+        },
+        "translations": "{\"en\":\"Farmer\",\"as\":\"শিক্ষক\",\"bn\":\"শিক্ষক\",\"gu\":\"શિક્ષક\",\"hi\":\"शिक्षक\",\"kn\":\"ಶಿಕ್ಷಕ/ಕಿ\",\"mr\":\"शिक्षक\",\"or\":\"ଶିକ୍ଷକ\",\"pa\":\"ਅਧਿਆਪਕ\",\"ta\":\"ஆசிரியர்\",\"te\":\"ఉపాధ్యాయుడు\",\"ur\":\"استاد\"}",
+        "image": "ic_teacher.svg",
+        "ambiguousFilters": [
+            "user1",
+            "instructor"
+        ],
+        "searchFilter": [
+            "User1",
+            "Instructor"
+        ],
+        "attributes": {
+            "mandatory": [
+                "board",
+                "medium",
+                "gradeLevel"
+            ],
+            "optional": [
+                "subject"
+            ]
+        },
+        "isActive": true
+    }]
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -74,7 +109,6 @@ export class GuestProfilePage implements OnInit {
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-    this.getCategoriesAndUpdateAttributes();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -138,6 +172,7 @@ export class GuestProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then(async (res: any) => {
         this.profile = res;
+        this.getCategoriesAndUpdateAttributes(this.profile.syllabus[0]);
         const tagObj = {
           board: res.board,
           grade: res.grade,
@@ -150,7 +185,7 @@ export class GuestProfilePage implements OnInit {
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-        const supportedUserTypes = await this.profileHandler.getSupportedUserTypes(rootOrgId);
+        const supportedUserTypes = this.profile.syllabus[0] !== 'agriculture_framework' ? await this.profileHandler.getSupportedUserTypes(rootOrgId) : this.supportedUserType;
         this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
@@ -285,10 +320,16 @@ export class GuestProfilePage implements OnInit {
 
   async signin() { await this.router.navigate([RouterLinks.SIGN_IN]); }
 
-  private getCategoriesAndUpdateAttributes() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.frameworkData = categories.supportedFrameworkConfig;
+  private getCategoriesAndUpdateAttributes(frameworkId) {
+    this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((categories) => {
+      if (categories) {
+        this.frameworkData = categories;
+        this.categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+        this.frameworkData.forEach((e) => {
+          if(this.categoryDetails[e.identifier]) {
+            e['value'] = this.categoryDetails[e.identifier]
+          }
+        });
         this.supportedProfileAttributes = categories.supportedAttributes;
       }
     }).catch(e => console.error(e));

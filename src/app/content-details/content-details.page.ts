@@ -197,6 +197,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   showMoreFlag: any = false;
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
+  contentCategories: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -370,6 +371,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    const frameworkId = this.appGlobalService.getCachedFrameworkCategory().id;
+    this.getContentCategories(frameworkId);
     this.headerService.hideStatusBar();
     await this.headerService.hideHeader();
 
@@ -1750,5 +1753,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.video?.nativeElement.append(videoElement);
       }, 100);
     }
+  }
+
+
+  async getContentCategories(frameworkId) {
+    await this.formFrameworkUtilService.getContentFrameworkCategory(frameworkId).then((data) => {
+      this.contentCategories = data;
+  });
   }
 }
